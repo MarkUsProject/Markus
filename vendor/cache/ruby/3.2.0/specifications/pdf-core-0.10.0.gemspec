@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.homepage = "http://prawnpdf.org/".freeze
   s.licenses = ["Nonstandard".freeze, "GPL-2.0-only".freeze, "GPL-3.0-only".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.7".freeze)
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Low level PDF generator.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

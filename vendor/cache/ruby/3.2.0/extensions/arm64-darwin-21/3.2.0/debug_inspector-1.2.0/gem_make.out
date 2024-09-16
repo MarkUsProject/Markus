@@ -1,18 +1,18 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/debug_inspector-1.2.0/ext/debug_inspector
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 creating Makefile
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/debug_inspector-1.2.0/ext/debug_inspector
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-q3vrku sitelibdir\=./.gem.20240915-53657-q3vrku clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-2udvav sitelibdir\=./.gem.20240915-82450-2udvav clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/debug_inspector-1.2.0/ext/debug_inspector
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-q3vrku sitelibdir\=./.gem.20240915-53657-q3vrku
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-2udvav sitelibdir\=./.gem.20240915-82450-2udvav
 compiling debug_inspector.c
 linking shared-object debug_inspector.bundle
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/debug_inspector-1.2.0/ext/debug_inspector
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-q3vrku sitelibdir\=./.gem.20240915-53657-q3vrku install
-/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 debug_inspector.bundle ./.gem.20240915-53657-q3vrku
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-2udvav sitelibdir\=./.gem.20240915-82450-2udvav install
+/usr/bin/install -c -m 0755 debug_inspector.bundle ./.gem.20240915-82450-2udvav
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/debug_inspector-1.2.0/ext/debug_inspector
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-q3vrku sitelibdir\=./.gem.20240915-53657-q3vrku clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-2udvav sitelibdir\=./.gem.20240915-82450-2udvav clean

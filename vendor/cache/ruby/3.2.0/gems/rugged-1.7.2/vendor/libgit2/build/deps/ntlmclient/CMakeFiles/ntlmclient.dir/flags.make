@@ -6,9 +6,9 @@ C_DEFINES = -DCRYPT_COMMONCRYPTO -DNTLM_STATIC=1 -DUNICODE_ICONV=1
 
 C_INCLUDES = 
 
-C_FLAGSarm64 = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -Wno-implicit-fallthrough -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+C_FLAGSarm64 = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -Wno-implicit-fallthrough -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.7
 
-C_FLAGS = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -Wno-implicit-fallthrough -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+C_FLAGS = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -Wno-implicit-fallthrough -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.7
 
 # Custom flags: deps/ntlmclient/CMakeFiles/ntlmclient.dir/crypt_commoncrypto.c.o_FLAGS = -Wno-deprecated
 

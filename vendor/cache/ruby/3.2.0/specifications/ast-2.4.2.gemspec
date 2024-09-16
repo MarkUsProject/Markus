@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.email = ["whitequark@whitequark.org".freeze]
   s.homepage = "https://whitequark.github.io/ast/".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "A library for working with Abstract Syntax Trees.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

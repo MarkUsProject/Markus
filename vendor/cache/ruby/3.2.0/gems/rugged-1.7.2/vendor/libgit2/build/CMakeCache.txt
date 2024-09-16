@@ -178,11 +178,11 @@ CMAKE_OSX_ARCHITECTURES:STRING=
 
 //Minimum OS X version to target for deployment (at runtime); newer
 // APIs weak linked. Set to empty string for default value.
-CMAKE_OSX_DEPLOYMENT_TARGET:STRING=
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=12.7
 
 //The product will be built against the headers and libraries located
 // inside the indicated SDK.
-CMAKE_OSX_SYSROOT:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+CMAKE_OSX_SYSROOT:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
 
 //Value Computed by CMake
 CMAKE_PROJECT_DESCRIPTION:STATIC=
@@ -274,10 +274,10 @@ CMAKE_TAPI:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/tapi
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Path to a file.
-COREFOUNDATION_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers
+COREFOUNDATION_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers
 
 //Path to a library.
-COREFOUNDATION_LIBRARIES:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework
+COREFOUNDATION_LIBRARIES:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreFoundation.framework
 
 //Enable debug pool allocator
 DEBUG_POOL:BOOL=OFF
@@ -301,19 +301,19 @@ ENABLE_WERROR:BOOL=OFF
 EXPERIMENTAL_SHA256:BOOL=OFF
 
 //Path to a file.
-GSSAPI_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/GSS.framework/Headers
+GSSAPI_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GSS.framework/Headers
 
 //Path to a file.
-GSSAPI_ROOT_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr
+GSSAPI_ROOT_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr
 
 //Path to a file.
-GSSFRAMEWORK_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/GSS.framework/Headers
+GSSFRAMEWORK_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GSS.framework/Headers
 
 //Path to a library.
-GSSFRAMEWORK_LIBRARIES:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/GSS.framework
+GSSFRAMEWORK_LIBRARIES:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GSS.framework
 
 //Path to a file.
-ICONV_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include
+ICONV_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/include
 
 //Path to a program.
 KRB5_CONFIG:FILEPATH=/usr/bin/krb5-config
@@ -343,10 +343,10 @@ OPENSSL_INCLUDE_DIR:PATH=/opt/homebrew/Cellar/openssl@3/3.3.2/include
 OPENSSL_SSL_LIBRARY:FILEPATH=/opt/homebrew/Cellar/openssl@3/3.3.2/lib/libssl.dylib
 
 //Path to a file.
-PCRE_INCLUDE_DIR:PATH=/opt/homebrew/include
+PCRE_INCLUDE_DIR:PATH=PCRE_INCLUDE_DIR-NOTFOUND
 
 //Path to a library.
-PCRE_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib/libpcre.tbd
+PCRE_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/lib/libpcre.tbd
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -359,10 +359,10 @@ PKG_CONFIG_EXECUTABLE:FILEPATH=/opt/homebrew/bin/pkg-config
 REGEX_BACKEND:STRING=builtin
 
 //Path to a file.
-SECURITY_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Security.framework
+SECURITY_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/Security.framework
 
 //Path to a library.
-SECURITY_LIBRARIES:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Security.framework
+SECURITY_LIBRARIES:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/Security.framework
 
 //Set the (SO)VERSION of the target
 SONAME:BOOL=ON
@@ -409,19 +409,19 @@ USE_STANDALONE_FUZZERS:BOOL=OFF
 USE_THREADS:BOOL=ON
 
 //Path to a file.
-ZLIB_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include
+ZLIB_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/include
 
 //Path to a library.
 ZLIB_LIBRARY_DEBUG:FILEPATH=ZLIB_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
-ZLIB_LIBRARY_RELEASE:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib/libz.tbd
+ZLIB_LIBRARY_RELEASE:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd
 
 //Path to a file.
 _GSSAPI_ROKEN:PATH=_GSSAPI_ROKEN-NOTFOUND
 
 //Path to a library.
-iconv_lib:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib/libiconv.tbd
+iconv_lib:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/lib/libiconv.tbd
 
 //Value Computed by CMake
 libgit2_BINARY_DIR:STATIC=/Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rugged-1.7.2/vendor/libgit2/build
@@ -433,7 +433,7 @@ libgit2_IS_TOP_LEVEL:STATIC=ON
 libgit2_SOURCE_DIR:STATIC=/Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rugged-1.7.2/vendor/libgit2
 
 //Dependencies for the target
-libgit2package_LIB_DEPENDS:STATIC=general;-framework CoreFoundation;general;-framework Security;general;/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib/libz.tbd;general;-L/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib -liconv;
+libgit2package_LIB_DEPENDS:STATIC=general;-framework CoreFoundation;general;-framework Security;general;/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd;general;-L/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/lib -liconv;
 
 //Path to a library.
 pkgcfg_lib__OPENSSL_crypto:FILEPATH=/opt/homebrew/Cellar/openssl@3/3.3.2/lib/libcrypto.dylib
@@ -613,14 +613,12 @@ COREFOUNDATION_INCLUDE_DIR-ADVANCED:INTERNAL=1
 COREFOUNDATION_LIBRARIES-ADVANCED:INTERNAL=1
 //Details about finding OpenSSL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/opt/homebrew/Cellar/openssl@3/3.3.2/lib/libcrypto.dylib][/opt/homebrew/Cellar/openssl@3/3.3.2/include][c ][v3.3.2()]
-//Details about finding PCRE
-FIND_PACKAGE_MESSAGE_DETAILS_PCRE:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib/libpcre.tbd][/opt/homebrew/include][v()]
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/opt/homebrew/bin/pkg-config][v0.29.2()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding ZLIB
-FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/lib/libz.tbd][/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include][c ][v1.2.11()]
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd][/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/usr/include][c ][v1.2.11()]
 //Have symbol poll
 GIT_IO_POLL:INTERNAL=1
 //Have symbol select
@@ -757,7 +755,7 @@ OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL=1
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
-//Have library /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Security.framework
+//Have library /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/Security.framework
 SECURITY_HAS_SSLCREATECONTEXT:INTERNAL=1
 //ADVANCED property for variable: SECURITY_INCLUDE_DIR
 SECURITY_INCLUDE_DIR-ADVANCED:INTERNAL=1

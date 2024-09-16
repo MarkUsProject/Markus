@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.email = "mike@dvorkin.net".freeze
   s.homepage = "https://github.com/awesome-print/awesome_print".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Pretty print Ruby objects with proper indentation and colors".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

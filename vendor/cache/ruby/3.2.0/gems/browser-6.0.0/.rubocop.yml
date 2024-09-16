@@ -1,0 +1,21 @@
+---
+inherit_gem:
+  rubocop-fnando: .rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.5
+  NewCops: enable
+  Exclude:
+    - bin/**/*
+    - gemfiles/**/*
+    - vendor/**/*
+    - Gemfile
+    - Rakefile
+    - "*.gemspec"
+    - config.ru
+
+Naming/VariableNumber:
+  Enabled: false
+
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false

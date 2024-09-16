@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.email = ["steve@steveklabnik.com".freeze]
   s.homepage = "http://github.com/steveklabnik/mono_logger".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "A lock-free logger compatible with Ruby 2.0.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

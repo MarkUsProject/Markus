@@ -6,7 +6,7 @@ C_DEFINES =
 
 C_INCLUDES = 
 
-C_FLAGSarm64 = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+C_FLAGSarm64 = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.7
 
-C_FLAGS = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+C_FLAGS = -D_GNU_SOURCE -fPIC -Werror -Wno-error -Wall -Wextra -Wdocumentation -Wno-documentation-deprecated-sync -Wno-missing-field-initializers -Wmissing-declarations -Wstrict-aliasing -Wstrict-prototypes -Wdeclaration-after-statement -Wshift-count-overflow -Wunused-const-variable -Wunused-function -Wint-conversion -Wc11-extensions -Wformat -Wformat-security -O2 -g -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.7
 

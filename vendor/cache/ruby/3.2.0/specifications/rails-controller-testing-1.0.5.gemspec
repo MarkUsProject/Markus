@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/rails/rails-controller-testing".freeze
   s.licenses = ["MIT".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.2.2".freeze)
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Extracting `assigns` and `assert_template` from ActionDispatch.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

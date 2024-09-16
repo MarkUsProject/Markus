@@ -1,5 +1,5 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 checking for unistd.h... yes
 checking for rb_io_descriptor()... yes
 checking for linux/aio_abi.h... no
@@ -14,27 +14,354 @@ checking for sys/resource.h... yes
 creating Makefile
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30 clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-ra8dce sitelibdir\=./.gem.20240915-82450-ra8dce clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-ra8dce sitelibdir\=./.gem.20240915-82450-ra8dce
 compiling bytebuffer.c
 compiling monitor.c
 compiling nio4r_ext.c
 In file included from nio4r_ext.c:6:
+./../libev/ev.c:234:5: warning: 'EV_NO_THREADS' is not defined, evaluates to 0 [-Wundef]
+#if EV_NO_THREADS
+    ^
+./../libev/ev.c:240:5: warning: 'EV_NO_SMP' is not defined, evaluates to 0 [-Wundef]
+#if EV_NO_SMP
+    ^
+./../libev/ev.c:292:6: warning: '__linux' is not defined, evaluates to 0 [-Wundef]
+# if __linux && __GLIBC__ == 2 && __GLIBC_MINOR__ < 17
+     ^
+./../libev/ev.c:321:6: warning: '_POSIX_C_SOURCE' is not defined, evaluates to 0 [-Wundef]
+# if _POSIX_C_SOURCE >= 199309L
+     ^
+./../libev/ev.c:341:6: warning: '__linux' is not defined, evaluates to 0 [-Wundef]
+# if __linux && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 4))
+     ^
+./../libev/ev.c:365:6: warning: '__linux' is not defined, evaluates to 0 [-Wundef]
+# if __linux && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 4))
+     ^
+./../libev/ev.c:381:6: warning: '__linux' is not defined, evaluates to 0 [-Wundef]
+# if __linux && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 7))
+     ^
+./../libev/ev.c:389:6: warning: '__linux' is not defined, evaluates to 0 [-Wundef]
+# if __linux && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 7))
+     ^
+./../libev/ev.c:397:6: warning: '__linux' is not defined, evaluates to 0 [-Wundef]
+# if __linux && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8))
+     ^
 ./../libev/ev.c:573:48: warning: '/*' within block comment [-Wcomment]
 /*#define MIN_INTERVAL  0.00000095367431640625 /* 1/2**20, good till 2200 */
                                                ^
+./../libev/ev.c:691:7: warning: '__OPTIMIZE_SIZE__' is not defined, evaluates to 0 [-Wundef]
+  #if __OPTIMIZE_SIZE__
+      ^
+./../libev/ev.c:699:5: warning: '__amd64' is not defined, evaluates to 0 [-Wundef]
+#if ECB_GCC_AMD64 || ECB_MSVC_AMD64
+    ^
+./../libev/ev.c:687:24: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                       ^
+./../libev/ev.c:699:5: warning: '__amd64__' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:35: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                  ^
+./../libev/ev.c:699:5: warning: '__x86_64' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:48: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                               ^
+./../libev/ev.c:699:5: warning: '__x86_64__' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:60: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                                           ^
+./../libev/ev.c:699:22: warning: '_M_AMD64' is not defined, evaluates to 0 [-Wundef]
+#if ECB_GCC_AMD64 || ECB_MSVC_AMD64
+                     ^
+./../libev/ev.c:688:25: note: expanded from macro 'ECB_MSVC_AMD64'
+#define ECB_MSVC_AMD64 (_M_AMD64 || _M_X64)
+                        ^
+./../libev/ev.c:699:22: warning: '_M_X64' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:688:37: note: expanded from macro 'ECB_MSVC_AMD64'
+#define ECB_MSVC_AMD64 (_M_AMD64 || _M_X64)
+                                    ^
+./../libev/ev.c:739:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP
+    ^
+./../libev/ev.c:734:20: note: expanded from macro 'ECB_CPP'
+#define ECB_CPP   (__cplusplus+0)
+                   ^
+./../libev/ev.c:751:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP
+    ^
+./../libev/ev.c:734:20: note: expanded from macro 'ECB_CPP'
+#define ECB_CPP   (__cplusplus+0)
+                   ^
+./../libev/ev.c:766:5: warning: 'ECB_NO_THREADS' is not defined, evaluates to 0 [-Wundef]
+#if ECB_NO_THREADS
+    ^
+./../libev/ev.c:770:5: warning: 'ECB_NO_SMP' is not defined, evaluates to 0 [-Wundef]
+#if ECB_NO_SMP
+    ^
+./../libev/ev.c:775:5: warning: '__xlC__' is not defined, evaluates to 0 [-Wundef]
+#if __xlC__ && ECB_CPP
+    ^
+./../libev/ev.c:779:13: warning: '_MSC_VER' is not defined, evaluates to 0 [-Wundef]
+#if 1400 <= _MSC_VER
+            ^
+./../libev/ev.c:786:9: warning: '__i386' is not defined, evaluates to 0 [-Wundef]
+    #if __i386 || __i386__
+        ^
+./../libev/ev.c:786:19: warning: '__i386__' is not defined, evaluates to 0 [-Wundef]
+    #if __i386 || __i386__
+                  ^
+./../libev/ev.c:790:11: warning: '__amd64' is not defined, evaluates to 0 [-Wundef]
+    #elif ECB_GCC_AMD64
+          ^
+./../libev/ev.c:687:24: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                       ^
+./../libev/ev.c:790:11: warning: '__amd64__' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:35: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                  ^
+./../libev/ev.c:790:11: warning: '__x86_64' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:48: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                               ^
+./../libev/ev.c:790:11: warning: '__x86_64__' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:60: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                                           ^
+./../libev/ev.c:794:11: warning: '__powerpc__' is not defined, evaluates to 0 [-Wundef]
+    #elif __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__
+          ^
+./../libev/ev.c:794:26: warning: '__ppc__' is not defined, evaluates to 0 [-Wundef]
+    #elif __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__
+                         ^
+./../libev/ev.c:794:37: warning: '__powerpc64__' is not defined, evaluates to 0 [-Wundef]
+    #elif __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__
+                                    ^
+./../libev/ev.c:794:54: warning: '__ppc64__' is not defined, evaluates to 0 [-Wundef]
+    #elif __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__
+                                                     ^
+./../libev/ev.c:924:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP
+    ^
+./../libev/ev.c:734:20: note: expanded from macro 'ECB_CPP'
+#define ECB_CPP   (__cplusplus+0)
+                   ^
+./../libev/ev.c:981:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP11
+    ^
+./../libev/ev.c:735:20: note: expanded from macro 'ECB_CPP11'
+#define ECB_CPP11 (__cplusplus >= 201103L)
+                   ^
+./../libev/ev.c:989:5: warning: '_MSC_VER' is not defined, evaluates to 0 [-Wundef]
+#if _MSC_VER >= 1300
+    ^
+./../libev/ev.c:995:5: warning: '_MSC_VER' is not defined, evaluates to 0 [-Wundef]
+#if _MSC_VER >= 1500
+    ^
+./../libev/ev.c:1003:5: warning: '_MSC_VER' is not defined, evaluates to 0 [-Wundef]
+#if _MSC_VER >= 1400
+    ^
+./../libev/ev.c:1192:26: warning: implicit conversion loses integer precision: 'uint64_t' (aka 'unsigned long long') to 'unsigned int' [-Wshorten-64-to-32]
+  return ecb_popcount32 (x) + ecb_popcount32 (x >> 32);
+         ~~~~~~~~~~~~~~~~^~
+./../libev/ev.c:1054:49: note: expanded from macro 'ecb_popcount32'
+  #define ecb_popcount32(x) __builtin_popcount (x)
+                            ~~~~~~~~~~~~~~~~~~  ^
+./../libev/ev.c:1213:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP
+    ^
+./../libev/ev.c:734:20: note: expanded from macro 'ECB_CPP'
+#define ECB_CPP   (__cplusplus+0)
+                   ^
+./../libev/ev.c:1374:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP
+    ^
+./../libev/ev.c:734:20: note: expanded from macro 'ECB_CPP'
+#define ECB_CPP   (__cplusplus+0)
+                   ^
+./../libev/ev.c:1409:5: warning: '__cplusplus' is not defined, evaluates to 0 [-Wundef]
+#if ECB_CPP
+    ^
+./../libev/ev.c:734:20: note: expanded from macro 'ECB_CPP'
+#define ECB_CPP   (__cplusplus+0)
+                   ^
+./../libev/ev.c:1425:5: warning: 'ecb_cplusplus_does_not_suck' is not defined, evaluates to 0 [-Wundef]
+#if ecb_cplusplus_does_not_suck
+    ^
+./../libev/ev.c:1540:8: warning: '__i386' is not defined, evaluates to 0 [-Wundef]
+    || __i386 || __i386__ \
+       ^
+./../libev/ev.c:1540:18: warning: '__i386__' is not defined, evaluates to 0 [-Wundef]
+    || __i386 || __i386__ \
+                 ^
+./../libev/ev.c:1541:8: warning: '__amd64' is not defined, evaluates to 0 [-Wundef]
+    || ECB_GCC_AMD64 \
+       ^
+./../libev/ev.c:687:24: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                       ^
+./../libev/ev.c:1541:8: warning: '__amd64__' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:35: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                  ^
+./../libev/ev.c:1541:8: warning: '__x86_64' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:48: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                               ^
+./../libev/ev.c:1541:8: warning: '__x86_64__' is not defined, evaluates to 0 [-Wundef]
+./../libev/ev.c:687:60: note: expanded from macro 'ECB_GCC_AMD64'
+#define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
+                                                           ^
+./../libev/ev.c:1542:8: warning: '__powerpc__' is not defined, evaluates to 0 [-Wundef]
+    || __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__ \
+       ^
+./../libev/ev.c:1542:23: warning: '__ppc__' is not defined, evaluates to 0 [-Wundef]
+    || __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__ \
+                      ^
+./../libev/ev.c:1542:34: warning: '__powerpc64__' is not defined, evaluates to 0 [-Wundef]
+    || __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__ \
+                                 ^
+./../libev/ev.c:1542:51: warning: '__ppc64__' is not defined, evaluates to 0 [-Wundef]
+    || __powerpc__ || __ppc__ || __powerpc64__ || __ppc64__ \
+                                                  ^
+./../libev/ev.c:1510:13: warning: comparison of integers of different signs: 'unsigned int' and 'int' [-Wsign-compare]
+      if (e < (14 - 24)) /* might not be sharp, but is good enough */
+          ~ ^  ~~~~~~~
+./../libev/ev.c:1746:5: warning: 'ECB_MEMORY_FENCE_NEEDS_PTHREADS' is not defined, evaluates to 0 [-Wundef]
+#if ECB_MEMORY_FENCE_NEEDS_PTHREADS
+    ^
+./../libev/ev.c:1774:5: warning: 'EV_NEED_SYSCALL' is not defined, evaluates to 0 [-Wundef]
+#if EV_NEED_SYSCALL
+    ^
+./../libev/ev.c:1976:5: warning: 'EV_AVOID_STDIO' is not defined, evaluates to 0 [-Wundef]
+#if EV_AVOID_STDIO
+    ^
+./../libev/ev.c:2005:5: warning: 'EV_AVOID_STDIO' is not defined, evaluates to 0 [-Wundef]
+#if EV_AVOID_STDIO
+    ^
+./../libev/ev.c:2050:5: warning: 'EV_AVOID_STDIO' is not defined, evaluates to 0 [-Wundef]
+#if EV_AVOID_STDIO
+    ^
+./../libev/ev.c:2080:5: warning: 'EV_SELECT_IS_WINSOCKET' is not defined, evaluates to 0 [-Wundef]
+#if EV_SELECT_IS_WINSOCKET || EV_USE_IOCP
+    ^
+./../libev/ev.c:2080:31: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_SELECT_IS_WINSOCKET || EV_USE_IOCP
+                              ^
+./../libev/ev.c:2083:5: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOCP
+    ^
+In file included from nio4r_ext.c:6:
+In file included from ./../libev/ev.c:2130:
+./../libev/ev_vars.h:88:24: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if defined(_WIN32) || EV_GENWRAP
+                       ^
+./../libev/ev_vars.h:102:21: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_EPOLL || EV_GENWRAP
+                    ^
+./../libev/ev_vars.h:110:24: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_LINUXAIO || EV_GENWRAP
+                       ^
+./../libev/ev_vars.h:121:23: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOURING || EV_GENWRAP
+                      ^
+./../libev/ev_vars.h:159:20: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_PORT || EV_GENWRAP
+                   ^
+./../libev/ev_vars.h:164:5: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOCP || EV_GENWRAP
+    ^
+./../libev/ev_vars.h:164:20: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOCP || EV_GENWRAP
+                   ^
+./../libev/ev_vars.h:216:23: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_INOTIFY || EV_GENWRAP
+                      ^
+./../libev/ev_vars.h:224:24: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_SIGNALFD || EV_GENWRAP
+                       ^
+./../libev/ev_vars.h:230:23: warning: 'EV_GENWRAP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_TIMERFD || EV_GENWRAP
+                      ^
+In file included from nio4r_ext.c:6:
 ./../libev/ev.c:2136:31: warning: 'extern' variable has an initializer [-Wextern-initializer]
   EV_API_DECL struct ev_loop *ev_default_loop_ptr = 0; /* needs to be initialised to make it a definition despite extern */
                               ^
-2 warnings generated.
+./../libev/ev.c:2227:7: warning: implicit conversion loses integer precision: 'long' to '__darwin_suseconds_t' (aka 'int') [-Wshorten-64-to-32]
+      EV_TV_SET (tv, delay);
+      ^~~~~~~~~~~~~~~~~~~~~
+./../libev/ev.c:591:65: note: expanded from macro 'EV_TV_SET'
+# define EV_TV_SET(tv,t) do { tv.tv_sec = (long)t; tv.tv_usec = (long)((t - tv.tv_sec) * 1e6); } while (0)
+                                                              ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./../libev/ev.c:2249:19: warning: comparison of integers of different signs: 'int' and 'unsigned long' [-Wsign-compare]
+  if (elem * ncur > MALLOC_ROUND - sizeof (void *) * 4)
+      ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./../libev/ev.c:2402:5: warning: 'EV_SELECT_IS_WINSOCKET' is not defined, evaluates to 0 [-Wundef]
+#if EV_SELECT_IS_WINSOCKET || EV_USE_IOCP
+    ^
+./../libev/ev.c:2402:31: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_SELECT_IS_WINSOCKET || EV_USE_IOCP
+                              ^
+./../libev/ev.c:2619:18: warning: implicit conversion loses integer precision: 'long' to 'int' [-Wshorten-64-to-32]
+      k = minpos - heap;
+        ~ ~~~~~~~^~~~~~
+./../libev/ev.c:3073:5: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOCP
+    ^
+In file included from nio4r_ext.c:6:
+In file included from ./../libev/ev.c:3080:
+./../libev/ev_kqueue.c:116:34: warning: implicit conversion loses integer precision: 'uintptr_t' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]
+      int fd = kqueue_events [i].ident;
+          ~~   ~~~~~~~~~~~~~~~~~~^~~~~
+./../libev/ev_kqueue.c:120:39: warning: implicit conversion loses integer precision: 'intptr_t' (aka 'long') to 'int' [-Wshorten-64-to-32]
+          int err = kqueue_events [i].data;
+              ~~~   ~~~~~~~~~~~~~~~~~~^~~~
+In file included from nio4r_ext.c:6:
+In file included from ./../libev/ev.c:3095:
+./../libev/ev_select.c:57:5: warning: 'EV_SELECT_IS_WINSOCKET' is not defined, evaluates to 0 [-Wundef]
+#if EV_SELECT_IS_WINSOCKET
+    ^
+./../libev/ev_select.c:109:24: warning: implicit conversion loses integer precision: 'unsigned long' to 'fd_mask' (aka 'int') [-Wshorten-64-to-32]
+    fd_mask mask = 1UL << (fd % NFDBITS);
+            ~~~~   ~~~~^~~~~~~~~~~~~~~~~
+./../libev/ev_select.c:176:11: warning: 'EV_SELECT_IS_WINSOCKET' is not defined, evaluates to 0 [-Wundef]
+      #if EV_SELECT_IS_WINSOCKET
+          ^
+./../libev/ev_select.c:147:3: warning: implicit conversion loses integer precision: 'long' to '__darwin_suseconds_t' (aka 'int') [-Wshorten-64-to-32]
+  EV_TV_SET (tv, timeout);
+  ^~~~~~~~~~~~~~~~~~~~~~~
+./../libev/ev.c:591:65: note: expanded from macro 'EV_TV_SET'
+# define EV_TV_SET(tv,t) do { tv.tv_sec = (long)t; tv.tv_usec = (long)((t - tv.tv_sec) * 1e6); } while (0)
+                                                              ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from nio4r_ext.c:6:
+In file included from ./../libev/ev.c:3095:
+./../libev/ev_select.c:259:34: warning: implicit conversion loses integer precision: 'unsigned long' to 'fd_mask' (aka 'int') [-Wshorten-64-to-32]
+              fd_mask mask = 1UL << bit;
+                      ~~~~   ~~~~^~~~~~
+In file included from nio4r_ext.c:6:
+./../libev/ev.c:3318:5: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOCP
+    ^
+./../libev/ev.c:3409:5: warning: 'EV_USE_IOCP' is not defined, evaluates to 0 [-Wundef]
+#if EV_USE_IOCP
+    ^
+./../libev/ev.c:4417:34: warning: '&' within '|' [-Wbitwise-op-parentheses]
+  fd_change (EV_A_ fd, w->events & EV__IOFDSET | EV_ANFD_REIFY);
+                       ~~~~~~~~~~^~~~~~~~~~~~~ ~
+./../libev/ev.c:4417:34: note: place parentheses around the '&' expression to silence this warning
+  fd_change (EV_A_ fd, w->events & EV__IOFDSET | EV_ANFD_REIFY);
+                                 ^
+                       (                      )
+89 warnings generated.
 compiling selector.c
 linking shared-object nio4r_ext.bundle
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30 install
-/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 nio4r_ext.bundle ./.gem.20240915-53657-mgxs30
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-ra8dce sitelibdir\=./.gem.20240915-82450-ra8dce install
+/usr/bin/install -c -m 0755 nio4r_ext.bundle ./.gem.20240915-82450-ra8dce
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/nio4r-2.7.3/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-mgxs30 sitelibdir\=./.gem.20240915-53657-mgxs30 clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-ra8dce sitelibdir\=./.gem.20240915-82450-ra8dce clean

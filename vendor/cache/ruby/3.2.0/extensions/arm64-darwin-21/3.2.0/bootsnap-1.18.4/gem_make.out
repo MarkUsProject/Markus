@@ -1,5 +1,5 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bootsnap-1.18.4/ext/bootsnap
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 checking for fdatasync() in unistd.h... yes
 checking for whether -D_GNU_SOURCE is accepted as CPPFLAGS... yes
 checking for whether -O3 is accepted as CFLAGS... yes
@@ -7,16 +7,16 @@ checking for whether -std=c99 is accepted as CFLAGS... yes
 creating Makefile
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bootsnap-1.18.4/ext/bootsnap
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qcotet sitelibdir\=./.gem.20240915-53657-qcotet clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-lq3k5v sitelibdir\=./.gem.20240915-82450-lq3k5v clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bootsnap-1.18.4/ext/bootsnap
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qcotet sitelibdir\=./.gem.20240915-53657-qcotet
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-lq3k5v sitelibdir\=./.gem.20240915-82450-lq3k5v
 compiling bootsnap.c
 linking shared-object bootsnap/bootsnap.bundle
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bootsnap-1.18.4/ext/bootsnap
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qcotet sitelibdir\=./.gem.20240915-53657-qcotet install
-/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 bootsnap.bundle ./.gem.20240915-53657-qcotet/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-lq3k5v sitelibdir\=./.gem.20240915-82450-lq3k5v install
+/usr/bin/install -c -m 0755 bootsnap.bundle ./.gem.20240915-82450-lq3k5v/bootsnap
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bootsnap-1.18.4/ext/bootsnap
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-qcotet sitelibdir\=./.gem.20240915-53657-qcotet clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-lq3k5v sitelibdir\=./.gem.20240915-82450-lq3k5v clean

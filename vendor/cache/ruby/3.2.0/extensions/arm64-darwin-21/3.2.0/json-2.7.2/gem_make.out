@@ -1,16 +1,16 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/json-2.7.2/ext/json
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 creating Makefile
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/json-2.7.2/ext/json
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-vv6xrg sitelibdir\=./.gem.20240915-53657-vv6xrg clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sk49vx sitelibdir\=./.gem.20240915-82450-sk49vx clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/json-2.7.2/ext/json
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-vv6xrg sitelibdir\=./.gem.20240915-53657-vv6xrg
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sk49vx sitelibdir\=./.gem.20240915-82450-sk49vx
 make: Nothing to be done for `all'.
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/json-2.7.2/ext/json
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-vv6xrg sitelibdir\=./.gem.20240915-53657-vv6xrg install
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sk49vx sitelibdir\=./.gem.20240915-82450-sk49vx install
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/json-2.7.2/ext/json
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-vv6xrg sitelibdir\=./.gem.20240915-53657-vv6xrg clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sk49vx sitelibdir\=./.gem.20240915-82450-sk49vx clean

@@ -1,5 +1,5 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/shoulda-callback-matchers-1.1.4/ext
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby mkrf_conf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby mkrf_conf.rb
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/shoulda-callback-matchers-1.1.4/ext
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 -rrubygems /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rake-13.2.1/exe/rake RUBYARCHDIR\=/Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/extensions/arm64-darwin-21/3.2.0/shoulda-callback-matchers-1.1.4 RUBYLIBDIR\=/Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/extensions/arm64-darwin-21/3.2.0/shoulda-callback-matchers-1.1.4
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby -rrubygems /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rake-13.2.1/exe/rake RUBYARCHDIR\=/Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/extensions/arm64-darwin-21/3.2.0/shoulda-callback-matchers-1.1.4 RUBYLIBDIR\=/Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/extensions/arm64-darwin-21/3.2.0/shoulda-callback-matchers-1.1.4

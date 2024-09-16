@@ -10,12 +10,12 @@ repos:
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
   -   repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v3.1.0
+      rev: v4.0.0-alpha.8
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v16.6.1
+      rev: v16.9.0
       hooks:
         - id: stylelint
           additional_dependencies: [
@@ -32,7 +32,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.64.1
+    rev: v1.66.1
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -55,3 +55,6 @@ exclude: vendor
 
 ci:
   autoupdate_schedule: monthly
+   
+default_language_version:
+    ruby: system

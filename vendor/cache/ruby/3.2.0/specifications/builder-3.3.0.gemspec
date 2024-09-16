@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/rails/builder".freeze
   s.licenses = ["MIT".freeze]
   s.rdoc_options = ["--title".freeze, "Builder -- Easy XML Building".freeze, "--main".freeze, "README.rdoc".freeze, "--line-numbers".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Builders for MarkUp.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 end

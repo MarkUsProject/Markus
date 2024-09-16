@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.email = ["stjepan.hadjic@infinum.hr".freeze, "gabrijel.skoro@gmail.com".freeze]
   s.homepage = "https://github.com/infinum/cookies_eu".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Displays a cookie consent. If you dont disable cokkies in settings, we assume you are ok with us using cookies".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

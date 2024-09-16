@@ -1,9 +1,9 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rmagick-6.0.1/ext/RMagick
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 checking for brew... yes
 checking for Ruby version >= 3.0.0... yes
 checking for outdated ImageMagick version (<= 6.8.9)... no
-checking for g++... yes
+checking for clang++... yes
 checking for MagickCore/MagickCore.h... yes
 checking for malloc.h... no
 checking for malloc/malloc.h... yes
@@ -18,19 +18,19 @@ checking for SetMagickAlignedMemoryMethods() in assert.h,ctype.h,stdio.h,stdlib.
 creating extconf.h
 creating Makefile
 ======================================================================
-Sun 15 Sep 24 11:13:21
+Sun 15 Sep 24 19:16:06
 This installation of RMagick 6.0.1 is configured for
-Ruby 3.2.1 (arm64-darwin21) and ImageMagick 7.1.1
+Ruby 3.2.2 (arm64-darwin21) and ImageMagick 7.1.1
 ======================================================================
 
 
-Configured compile options: {:magick_version=>"7.1.1", :local_libs=>"  -L/opt/homebrew/Cellar/imagemagick/7.1.1-38/lib -lMagickCore-7.Q16HDRI", :cppflags=>"-D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT $(DEFS) $(cppflags)  -Xpreprocessor -fopenmp -DMAGICKCORE_HDRI_ENABLE=1 -DMAGICKCORE_QUANTUM_DEPTH=16 -DMAGICKCORE_CHANNEL_MASK_DEPTH=32 -I/opt/homebrew/Cellar/imagemagick/7.1.1-38/include/ImageMagick-7 -x c++ -std=c++11 -Wno-register $(optflags) $(debugflags) -fomit-frame-pointer", :ldflags=>"-L. -L/opt/homebrew/opt/libyaml/lib -L/opt/homebrew/opt/libksba/lib -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/openssl@1.1/lib -fstack-protector-strong  -L/opt/homebrew/Cellar/imagemagick/7.1.1-38/lib -lMagickCore-7.Q16HDRI -Wl,-rpath,/opt/homebrew/Cellar/imagemagick/7.1.1-38/lib", :defs=>["-DHAVE_MAGICKCORE_MAGICKCORE_H", "-DHAVE_MALLOC_MALLOC_H", "-DHAVE_POSIX_MEMALIGN", "-DHAVE_MALLOC_SIZE", "-DHAVE_SETIMAGEGRAY", "-DHAVE_SETMAGICKALIGNEDMEMORYMETHODS", "-DRUBY_VERSION_STRING=\"ruby 3.2.1\"", "-DRMAGICK_VERSION_STRING=\"RMagick 6.0.1\"", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_6_9_0=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_6_9_10=1", "-DIMAGEMAGICK_7=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_7_0_8=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_7_0_10=1"], :config_h=>"Makefile"}
+Configured compile options: {:magick_version=>"7.1.1", :local_libs=>"  -L/opt/homebrew/Cellar/imagemagick/7.1.1-38_1/lib -lMagickCore-7.Q16HDRI", :cppflags=>"-I/opt/homebrew/opt/gmp/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT $(DEFS) $(cppflags)  -Xpreprocessor -fopenmp -DMAGICKCORE_HDRI_ENABLE=1 -DMAGICKCORE_QUANTUM_DEPTH=16 -DMAGICKCORE_CHANNEL_MASK_DEPTH=32 -I/opt/homebrew/Cellar/imagemagick/7.1.1-38_1/include/ImageMagick-7 -x c++ -std=c++11 -Wno-register $(optflags) $(debugflags) -fomit-frame-pointer", :ldflags=>"-L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib  -L/opt/homebrew/Cellar/imagemagick/7.1.1-38_1/lib -lMagickCore-7.Q16HDRI -Wl,-rpath,/opt/homebrew/Cellar/imagemagick/7.1.1-38_1/lib", :defs=>["-DHAVE_MAGICKCORE_MAGICKCORE_H", "-DHAVE_MALLOC_MALLOC_H", "-DHAVE_POSIX_MEMALIGN", "-DHAVE_MALLOC_SIZE", "-DHAVE_SETIMAGEGRAY", "-DHAVE_SETMAGICKALIGNEDMEMORYMETHODS", "-DRUBY_VERSION_STRING=\"ruby 3.2.2\"", "-DRMAGICK_VERSION_STRING=\"RMagick 6.0.1\"", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_6_9_0=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_6_9_10=1", "-DIMAGEMAGICK_7=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_7_0_8=1", "-DIMAGEMAGICK_GREATER_THAN_EQUAL_7_0_10=1"], :config_h=>"Makefile"}
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rmagick-6.0.1/ext/RMagick
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-bmaah8 sitelibdir\=./.gem.20240915-53657-bmaah8 clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-t9bsbu sitelibdir\=./.gem.20240915-82450-t9bsbu clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rmagick-6.0.1/ext/RMagick
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-bmaah8 sitelibdir\=./.gem.20240915-53657-bmaah8
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-t9bsbu sitelibdir\=./.gem.20240915-82450-t9bsbu
 compiling rmagick.cpp
 compiling rmdraw.cpp
 compiling rmenum.cpp
@@ -47,8 +47,8 @@ compiling rmutil.cpp
 linking shared-object RMagick2.bundle
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rmagick-6.0.1/ext/RMagick
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-bmaah8 sitelibdir\=./.gem.20240915-53657-bmaah8 install
-/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 RMagick2.bundle ./.gem.20240915-53657-bmaah8
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-t9bsbu sitelibdir\=./.gem.20240915-82450-t9bsbu install
+/usr/bin/install -c -m 0755 RMagick2.bundle ./.gem.20240915-82450-t9bsbu
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/rmagick-6.0.1/ext/RMagick
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-bmaah8 sitelibdir\=./.gem.20240915-53657-bmaah8 clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-t9bsbu sitelibdir\=./.gem.20240915-82450-t9bsbu clean

@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
   s.licenses = ["Apache License 2.0".freeze]
   s.rdoc_options = ["--title".freeze, "Prawn/QRCode Documentation--main".freeze, "README.md".freeze, "-q".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.2.0".freeze)
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Print QR Codes in PDF".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

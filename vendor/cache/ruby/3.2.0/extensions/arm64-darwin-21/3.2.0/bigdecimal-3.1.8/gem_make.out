@@ -1,5 +1,5 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bigdecimal-3.1.8/ext/bigdecimal
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 checking for __builtin_clz()... yes
 checking for __builtin_clzl()... yes
 checking for __builtin_clzll()... yes
@@ -32,17 +32,17 @@ checking for RB_WARN_CATEGORY_DEPRECATED in ruby.h... yes
 creating Makefile
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bigdecimal-3.1.8/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-h5rdtn sitelibdir\=./.gem.20240915-53657-h5rdtn clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-yvth7q sitelibdir\=./.gem.20240915-82450-yvth7q clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bigdecimal-3.1.8/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-h5rdtn sitelibdir\=./.gem.20240915-53657-h5rdtn
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-yvth7q sitelibdir\=./.gem.20240915-82450-yvth7q
 compiling bigdecimal.c
 compiling missing.c
 linking shared-object bigdecimal.bundle
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bigdecimal-3.1.8/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-h5rdtn sitelibdir\=./.gem.20240915-53657-h5rdtn install
-/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 bigdecimal.bundle ./.gem.20240915-53657-h5rdtn
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-yvth7q sitelibdir\=./.gem.20240915-82450-yvth7q install
+/usr/bin/install -c -m 0755 bigdecimal.bundle ./.gem.20240915-82450-yvth7q
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/bigdecimal-3.1.8/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-h5rdtn sitelibdir\=./.gem.20240915-53657-h5rdtn clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-yvth7q sitelibdir\=./.gem.20240915-82450-yvth7q clean

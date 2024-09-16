@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT".freeze]
   s.post_install_message = "# Install default configuration:\ncp $(bundle exec i18n-tasks gem-path)/templates/config/i18n-tasks.yml config/\n# Add an RSpec for missing and unused keys:\ncp $(bundle exec i18n-tasks gem-path)/templates/rspec/i18n_spec.rb spec/\n# Or for minitest:\ncp $(bundle exec i18n-tasks gem-path)/templates/minitest/i18n_test.rb test/\n".freeze
   s.required_ruby_version = Gem::Requirement.new([">= 2.6".freeze, "< 4.0".freeze])
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Manage localization and translation with the awesome power of static analysis".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

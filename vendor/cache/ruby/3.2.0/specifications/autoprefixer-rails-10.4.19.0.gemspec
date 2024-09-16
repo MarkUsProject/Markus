@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ai/autoprefixer-rails".freeze
   s.licenses = ["MIT".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.4".freeze)
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Parse CSS and add vendor prefixes to CSS rules using values from the Can I Use website.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

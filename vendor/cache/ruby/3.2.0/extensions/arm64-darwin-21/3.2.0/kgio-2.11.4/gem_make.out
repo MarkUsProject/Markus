@@ -1,5 +1,5 @@
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/kgio-2.11.4/ext/kgio
-/Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/bin/ruby -I /Users/anubhajoshi/.rvm/rubies/ruby-3.2.1/lib/ruby/3.2.0 extconf.rb
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
 checking for CLOCK_MONOTONIC in time.h... yes
 checking for clockid_t in time.h... yes
 checking for clock_gettime() in -lrt... no
@@ -38,25 +38,79 @@ checking for rb_ary_subseq()... yes
 creating Makefile
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/kgio-2.11.4/ext/kgio
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-aqfgt sitelibdir\=./.gem.20240915-53657-aqfgt clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sxptst sitelibdir\=./.gem.20240915-82450-sxptst clean
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/kgio-2.11.4/ext/kgio
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-aqfgt sitelibdir\=./.gem.20240915-53657-aqfgt
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sxptst sitelibdir\=./.gem.20240915-82450-sxptst
 compiling accept.c
+In file included from accept.c:7:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+1 warning generated.
 compiling autopush.c
+In file included from autopush.c:16:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+1 warning generated.
 compiling connect.c
+In file included from connect.c:3:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+connect.c:8:1: warning: function 'close_fail' could be declared with attribute 'noreturn' [-Wmissing-noreturn]
+{
+^
+In file included from connect.c:3:
+./my_fileno.h:23:12: warning: unused function 'my_fileno' [-Wunused-function]
+static int my_fileno(VALUE io)
+           ^
+3 warnings generated.
 compiling kgio_ext.c
+kgio_ext.c:11:8: warning: unused variable 'mKgio' [-Wunused-variable]
+        VALUE mKgio = rb_define_module("Kgio");
+              ^
+1 warning generated.
 compiling poll.c
+In file included from poll.c:3:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+poll.c:136:6: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
+        int rc;
+            ^
+2 warnings generated.
 compiling read.c
+In file included from read.c:4:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+1 warning generated.
 compiling tryopen.c
 compiling wait.c
+In file included from wait.c:2:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+1 warning generated.
 compiling write.c
+In file included from write.c:3:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+1 warning generated.
 compiling writev.c
+In file included from writev.c:8:
+./my_fileno.h:16:25: warning: 'RUBY_VERSION_MAJOR' is not defined, evaluates to 0 [-Wundef]
+#  if !HAVE_RB_IO_T || (RUBY_VERSION_MAJOR == 1 && RUBY_VERSION_MINOR == 8)
+                        ^
+1 warning generated.
 linking shared-object kgio_ext.bundle
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/kgio-2.11.4/ext/kgio
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-aqfgt sitelibdir\=./.gem.20240915-53657-aqfgt install
-/opt/homebrew/opt/coreutils/bin/ginstall -c -m 0755 kgio_ext.bundle ./.gem.20240915-53657-aqfgt
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sxptst sitelibdir\=./.gem.20240915-82450-sxptst install
+/usr/bin/install -c -m 0755 kgio_ext.bundle ./.gem.20240915-82450-sxptst
 
 current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/kgio-2.11.4/ext/kgio
-make DESTDIR\= sitearchdir\=./.gem.20240915-53657-aqfgt sitelibdir\=./.gem.20240915-53657-aqfgt clean
+make DESTDIR\= sitearchdir\=./.gem.20240915-82450-sxptst sitelibdir\=./.gem.20240915-82450-sxptst clean

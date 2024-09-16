@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.email = ["girish.sonawane@gmail.com".freeze]
   s.homepage = "https://github.com/girishso/pluck_to_hash".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Extend ActiveRecord pluck to return hash".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

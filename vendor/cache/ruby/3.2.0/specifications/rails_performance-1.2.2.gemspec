@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.email = ["igorkasyanchuk@gmail.com".freeze]
   s.homepage = "https://github.com/igorkasyanchuk/rails_performance".freeze
   s.licenses = ["MIT".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Simple Rails Performance tracker. Alternative to the NewRelic, Datadog or other services.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 

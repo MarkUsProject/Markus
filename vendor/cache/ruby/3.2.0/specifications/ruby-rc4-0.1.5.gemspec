@@ -14,10 +14,10 @@ Gem::Specification.new do |s|
   s.files = ["README.md".freeze]
   s.homepage = "http://www.caigenichols.com/".freeze
   s.rdoc_options = ["--main".freeze, "README.md".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "RubyRC4 is a pure Ruby implementation of the RC4 algorithm.".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 3
 

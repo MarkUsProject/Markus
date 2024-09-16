@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/jeremyevans/erubi".freeze
   s.licenses = ["MIT".freeze]
   s.rdoc_options = ["--quiet".freeze, "--line-numbers".freeze, "--inline-source".freeze, "--title".freeze, "Erubi: Small ERB Implementation".freeze, "--main".freeze, "README.rdoc".freeze]
-  s.rubygems_version = "3.4.6".freeze
+  s.rubygems_version = "3.4.10".freeze
   s.summary = "Small ERB Implementation".freeze
 
-  s.installed_by_version = "3.4.6" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.4.10" if s.respond_to? :installed_by_version
 
   s.specification_version = 4
 
