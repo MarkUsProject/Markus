@@ -10,6 +10,8 @@
 
 ### 🐛 Bug fixes
 
+- Fix test coverage for ExamTemplate.create_with_file method (#7213)
+
 ### 🔧 Internal changes
 
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
