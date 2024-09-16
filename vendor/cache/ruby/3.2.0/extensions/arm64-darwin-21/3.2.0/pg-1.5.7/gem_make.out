@@ -1,0 +1,70 @@
+current directory: /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/gems/pg-1.5.7/ext
+/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/ruby extconf.rb
+Calling libpq with GVL unlocked
+checking for pg_config... no
+checking for libpq per pkg-config... no
+Using libpq from 
+checking for libpq-fe.h... no
+Can't find the 'libpq-fe.h header
+*****************************************************************************
+
+Unable to find PostgreSQL client library.
+
+Please install libpq or postgresql client package like so:
+  brew install libpq
+
+or try again with:
+  gem install pg -- --with-pg-config=/path/to/pg_config
+
+or set library paths manually with:
+  gem install pg -- --with-pg-include=/path/to/libpq-fe.h/ --with-pg-lib=/path/to/libpq.so/
+
+*** extconf.rb failed ***
+Could not create Makefile due to some reason, probably lack of necessary
+libraries and/or headers.  Check the mkmf.log file for more details.  You may
+need configuration options.
+
+Provided configuration options:
+	--with-opt-dir
+	--without-opt-dir
+	--with-opt-include
+	--without-opt-include=${opt-dir}/include
+	--with-opt-lib
+	--without-opt-lib=${opt-dir}/lib
+	--with-make-prog
+	--without-make-prog
+	--srcdir=.
+	--curdir
+	--ruby=/Users/anubhajoshi/.rbenv/versions/3.2.2/bin/$(RUBY_BASE_NAME)
+	--with-pg
+	--without-pg
+	--enable-gvl-unlock
+	--disable-gvl-unlock
+	--enable-windows-cross
+	--disable-windows-cross
+	--with-pg-config
+	--without-pg-config
+	--with-pg_config
+	--without-pg_config
+	--with-libpq-dir
+	--without-libpq-dir
+	--with-libpq-include
+	--without-libpq-include=${libpq-dir}/include
+	--with-libpq-lib
+	--without-libpq-lib=${libpq-dir}/lib
+	--with-libpq-config
+	--without-libpq-config
+	--with-pkg-config
+	--without-pkg-config
+	--with-pg-dir
+	--without-pg-dir
+	--with-pg-include
+	--without-pg-include=${pg-dir}/include
+	--with-pg-lib
+	--without-pg-lib=${pg-dir}/lib
+
+To see why this extension failed to compile, please check the mkmf.log which can be found here:
+
+  /Users/anubhajoshi/Desktop/SDS/Markus-Anubha/vendor/cache/ruby/3.2.0/extensions/arm64-darwin-21/3.2.0/pg-1.5.7/mkmf.log
+
+extconf failed, exit code 1
