@@ -655,5 +655,11 @@ describe CoursesController do
               params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
       expect(Resque.fetch_schedule("LtiRosterSync_#{lti_deployment.id}_#{root_path.tr!('/', '')}")).to be_nil
     end
+
+    it 'does not raise an error when no schedule can be unset' do
+      post_as instructor, :sync_roster,
+              params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
+      expect(response).to have_http_status :redirect
+    end
   end
 end
