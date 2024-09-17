@@ -26,6 +26,7 @@ Anthony Labaere
 Anthony Le Jallé
 Anton Braverman
 Anushiya Antony
+Anubha Joshi
 Arianne Dee
 Augustin Doury
 Benjamin Thorent
@@ -212,4 +213,3 @@ Yujin Cho
 Yusi Fan
 Zachary Munro-Cape
 Ziyuan (Jerry) Zhang
-Anubha Joshi
