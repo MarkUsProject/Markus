@@ -9,6 +9,7 @@
 - Improve textviewer rendering speed (#7211)
 
 ### 🐛 Bug fixes
+- Fix incorrect calculation of token penalties when submissions are on time (#7216)
 
 ### 🔧 Internal changes
 
@@ -17,6 +18,7 @@
 - Manually specify chromedriver port number in Github actions (#7209)
 - Move Exception message in student model to a localization file
 - Add test cases for the student model to cover Group or Grouping save method failure
+- Create tests for overtime messages of the submission rule classes (#7216)
 
 ## [v2.5.1]
 
