@@ -10,6 +10,7 @@ class LtiRosterModal extends React.Component {
       include_tas: true,
       include_students: true,
       include_instructors: true,
+      automatic_sync: true,
     };
   }
 
@@ -36,6 +37,7 @@ class LtiRosterModal extends React.Component {
         include_students: this.state.include_students,
         include_tas: this.state.include_tas,
         include_instructors: this.state.include_instructors,
+        automatic_sync: this.state.automatic_sync,
         lti_deployment_id: this.props.roster_deployment_id,
       },
     });
@@ -82,11 +84,23 @@ class LtiRosterModal extends React.Component {
                   <input
                     type="checkbox"
                     name="include_instructors"
-                    key="1"
+                    key="3"
                     defaultChecked="true"
                     onChange={this.handleChange}
                   />
                   {I18n.t("lti.sync_instructors")}
+                </label>
+              </p>
+              <p>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="automatic_sync"
+                    key="4"
+                    defaultChecked="true"
+                    onChange={this.handleChange}
+                  />
+                  {I18n.t("lti.sync_automatically")}
                 </label>
               </p>
 

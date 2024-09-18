@@ -7,13 +7,16 @@
 ### ✨ New features and improvements
 
 - Improve textviewer rendering speed (#7211)
-- Added a new feature to allow instructors to assign graders by section (#7179)
+- Add periodic roster syncing via LTI (#7178)
+- Allow instructors to assign graders by section (#7179)
 
 ### 🐛 Bug fixes
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
 
 ### 🔧 Internal changes
 
+- Fix test coverage for ExamTemplate.create_with_file method (#7213)
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
 - Upgrade to Rails v7.2 (#7185)
 - Manually specify chromedriver port number in Github actions (#7209)

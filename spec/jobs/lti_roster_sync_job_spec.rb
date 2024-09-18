@@ -30,7 +30,7 @@ describe LtiRosterSyncJob do
 
   context 'when running as a background job' do
     let(:job_args) do
-      [lti_deployment.id, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]]]
+      [lti_deployment.id, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]]]
     end
 
     include_examples 'background job'

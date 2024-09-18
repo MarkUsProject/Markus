@@ -95,8 +95,8 @@ describe LtiHelper do
 
       context 'when run by an admin user' do
         subject do
-          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
-                                                                                    can_create_roles: true
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
+                                                                            can_create_roles: true
         end
 
         it 'creates a new user' do
@@ -127,8 +127,8 @@ describe LtiHelper do
 
       context 'when run by an instructor' do
         subject do
-          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
-                                                                                    can_create_roles: true
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true,
+                                                                            can_create_roles: true
         end
 
         it 'does create users' do
@@ -171,7 +171,7 @@ describe LtiHelper do
 
       context 'when run by an admin user' do
         subject do
-          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
                       can_create_users: true, can_create_roles: true
         end
 
@@ -203,7 +203,7 @@ describe LtiHelper do
 
       context 'when run by an instructor' do
         subject do
-          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
                       can_create_users: true, can_create_roles: true
         end
 
@@ -247,8 +247,8 @@ describe LtiHelper do
 
       context 'when run by an admin user' do
         subject do
-          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
-                                               LtiDeployment::LTI_ROLES[:instructor]],
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
+                                       LtiDeployment::LTI_ROLES[:instructor]],
                       can_create_users: true, can_create_roles: true
         end
 
@@ -280,8 +280,8 @@ describe LtiHelper do
 
       context 'when run by an instructor' do
         subject do
-          roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
-                                               LtiDeployment::LTI_ROLES[:instructor]],
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
+                                       LtiDeployment::LTI_ROLES[:instructor]],
                       can_create_users: true, can_create_roles: true
         end
 
@@ -318,8 +318,8 @@ describe LtiHelper do
 
     context 'with paginated results' do
       subject do
-        roster_sync lti_deployment, course, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
-                                             LtiDeployment::LTI_ROLES[:instructor]],
+        roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta],
+                                     LtiDeployment::LTI_ROLES[:instructor]],
                     can_create_users: true, can_create_roles: true
       end
 

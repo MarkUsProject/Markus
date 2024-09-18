@@ -619,4 +619,47 @@ describe CoursesController do
       expect(response.parsed_body[0]).to have_key('lti_client')
     end
   end
+
+  describe 'sync_roster' do
+    let!(:lti_deployment) { create(:lti_deployment, course: course) }
+
+    before do
+      create(:lti_service_namesrole, lti_deployment: lti_deployment)
+      create(:lti_service_lineitem, lti_deployment: lti_deployment)
+    end
+
+    after do
+      Resque.remove_schedule("LtiRosterSync_#{lti_deployment.id}_#{root_path.tr!('/', '')}")
+      clear_enqueued_jobs
+      clear_performed_jobs
+    end
+
+    it 'enqueues a job' do
+      post_as instructor, :sync_roster,
+              params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
+      expect { LtiRosterSyncJob.perform_later }.to have_enqueued_job
+    end
+
+    it 'creates a schedule' do
+      post_as instructor, :sync_roster,
+              params: { id: course.id, lti_deployment_id: lti_deployment.id,
+                        include_students: 'true', automatic_sync: 'true' }
+      expect(Resque.fetch_schedule("LtiRosterSync_#{lti_deployment.id}_#{root_path.tr!('/', '')}")).not_to be_nil
+    end
+
+    it 'unsets a schedule' do
+      post_as instructor, :sync_roster,
+              params: { id: course.id, lti_deployment_id: lti_deployment.id,
+                        include_students: 'true', automatic_sync: 'true' }
+      post_as instructor, :sync_roster,
+              params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
+      expect(Resque.fetch_schedule("LtiRosterSync_#{lti_deployment.id}_#{root_path.tr!('/', '')}")).to be_nil
+    end
+
+    it 'does not raise an error when no schedule can be unset' do
+      post_as instructor, :sync_roster,
+              params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
+      expect(response).to have_http_status :redirect
+    end
+  end
 end

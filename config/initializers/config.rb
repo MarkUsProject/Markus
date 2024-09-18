@@ -193,6 +193,7 @@ Config.setup do |config|
         required(:domains).array(:str?)
         required(:token_endpoint).filled(:string)
         optional(:unpermitted_new_course_message).filled(:string)
+        required(:sync_schedule).filled(:string)
       end
     end
   end
