@@ -183,7 +183,7 @@ describe AssignmentsController do
       test_results = CSV.parse(response.body, headers: true)
 
       expect(test_results.to_a.size).to eq 4
-      expect(test_results.headers.length).to eq 10
+      expect(test_results.headers.length).to eq 4
     end
 
     it 'returns the correct csv headers' do
@@ -219,7 +219,7 @@ describe AssignmentsController do
             count += 1
           end
         end
-        expect(count).to eq 3
+        expect(count).to eq 1
       end
     end
 

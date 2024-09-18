@@ -2058,7 +2058,7 @@ describe Assignment do
       end
     end
 
-    context 'an assignment with test results' do
+    context 'an assignment with test results across multiple test groups' do
       let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
       it 'has the correct group and test names' do
@@ -2093,6 +2093,20 @@ describe Assignment do
               expect(test_result.keys).to match_array expected_keys
             end
           end
+        end
+      end
+
+      it 'has multiple test groups' do
+        expect(assignment.test_groups.size).to be > 1
+      end
+
+      # despite having multiple test groups, assignment is set up so every test
+      # run contains results from exactly one test group; so this should also
+      # return results from only one test group
+      it 'returns results from only one test group for each group' do
+        summary_test_results = JSON.parse(assignment.summary_test_result_json)
+        summary_test_results.map do |_group_name, group|
+          expect(group.count).to eq 1
         end
       end
     end
