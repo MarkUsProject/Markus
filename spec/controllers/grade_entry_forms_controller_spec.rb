@@ -446,7 +446,7 @@ describe GradeEntryFormsController do
     it 'does not allow students to see hidden grade entry forms' do
       grade_entry_form.update!(is_hidden: true)
       get_as @student, :student_interface, params: { course_id: course.id, id: grade_entry_form.id }
-      assert_response 404
+      assert_response :not_found
     end
 
     it 'allows students to see non hidden grade entry forms' do
