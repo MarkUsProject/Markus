@@ -71,8 +71,8 @@ class GradersController < ApplicationController
   # These actions act on all currently selected graders & groups
   def global_actions
     @assignment = Assignment.find(params[:assignment_id])
-    grader_ids = params[:graders]
-    if grader_ids.blank?
+    grader_ids = params[:graders] || []
+    if grader_ids.blank? && params[:global_actions] != 'assign_sections'
       grader_ids = current_course.tas.joins(:user).where('users.user_name': params[:grader_user_names]).ids
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
@@ -106,8 +106,13 @@ class GradersController < ApplicationController
 
     case params[:current_table]
     when 'groups_table'
-      if params[:groupings] == 'assign_sections'
+      if params[:global_actions] == 'assign_sections'
         assignments = params[:assignments]
+        if assignments.blank?
+          flash_now(:error, I18n.t('graders.select_a_grader'))
+          head :bad_request
+          return
+        end
         grouping_hash = filter_grouping_by_section(assignments)
       else
         grouping_ids = params[:groupings]
