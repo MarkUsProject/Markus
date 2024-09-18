@@ -97,6 +97,7 @@ class GracePeriodSubmissionRule < SubmissionRule
   # Given a certain number of hours into the grace periods, calculate how many credits to
   # deduct
   def calculate_deduction_amount(overtime_hours)
+    return 0 if overtime_hours <= 0
     total_deduction = 0
     periods.each do |period|
       total_deduction += 1

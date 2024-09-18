@@ -48,6 +48,7 @@ en:
     select_course: Select the course that matches %{course_name}
     start_grade_sync: Syncing Grades
     start_roster_sync: Syncing Roster
+    sync_automatically: Enable automatic syncing
     sync_grades: Sync Grades
     sync_grades_lms: Sync grades with LMS
     sync_instructors: Sync Instructor roster

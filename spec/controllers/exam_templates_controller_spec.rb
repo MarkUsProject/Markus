@@ -11,7 +11,7 @@ describe ExamTemplatesController do
     end
 
     describe '#create' do
-      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf', 'application/pdf') }
       let(:params) do
         { create_template: { file_io: file_io, name: 'Template 1' },
           assignment_id: exam_template.assignment.id, course_id: course.id }
@@ -20,6 +20,38 @@ describe ExamTemplatesController do
       before { post_as user, :create, params: params }
 
       it('should respond with 302') { expect(response).to have_http_status :found }
+    end
+
+    describe '#create with empty filename' do
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf', 'application/pdf') }
+      let(:params) do
+        { create_template: { file_io: file_io, name: '' },
+          assignment_id: exam_template.assignment.id, course_id: course.id }
+      end
+
+      before { post_as user, :create, params: params }
+
+      it('should create an ExamTemplate with a default name') do
+        expect(ExamTemplate.count).to eq 1
+        created_template = ExamTemplate.last
+        expect(created_template.name).to eq 'midterm1-v2-test' # default name should be the filename w/ no extension
+      end
+
+      it('should respond with 302') { expect(response).to have_http_status :found }
+    end
+
+    describe '#create without specified content type' do
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+      let(:params) do
+        { create_template: { file_io: file_io, name: '' },
+          assignment_id: exam_template.assignment.id, course_id: course.id }
+      end
+
+      before { post_as user, :create, params: params }
+
+      it 'flashes an exam template create failure error message' do
+        expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t('exam_templates.create.failure')]
+      end
     end
 
     describe '#edit' do
