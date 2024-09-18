@@ -10,6 +10,7 @@
 
 ### 🐛 Bug fixes
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
 
 ### 🔧 Internal changes
 
