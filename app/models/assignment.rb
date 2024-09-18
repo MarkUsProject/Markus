@@ -635,28 +635,29 @@ class Assignment < Assessment
   # Generates the summary of the most test results associated with an assignment.
   def summary_test_results
     latest_test_run_by_grouping = TestRun.group('grouping_id').select('MAX(created_at) as test_runs_created_at',
-                                                                      'grouping_id').to_sql
+                                                                      'grouping_id')
+                                         .where.not(submission_id: nil)
+                                         .to_sql
 
-    latest_test_runs = TestRun.joins("INNER JOIN (#{latest_test_run_by_grouping}) latest_test_run_by_grouping \
-                  ON latest_test_run_by_grouping.grouping_id = test_runs.grouping_id \
-                  AND latest_test_run_by_grouping.test_runs_created_at = test_runs.created_at")
-                              .select('id', 'submission_id', 'grouping_id')
-                              .to_sql
+    latest_test_runs = TestRun
+                       .joins(grouping: :group)
+                       .joins("INNER JOIN (#{latest_test_run_by_grouping}) latest_test_run_by_grouping \
+            ON latest_test_run_by_grouping.grouping_id = test_runs.grouping_id \
+            AND latest_test_run_by_grouping.test_runs_created_at = test_runs.created_at")
+                       .select('id', 'test_runs.grouping_id', 'groups.group_name')
+                       .to_sql
 
     self.test_groups.joins(test_group_results: :test_results)
         .joins("INNER JOIN (#{latest_test_runs}) latest_test_runs \
               ON test_group_results.test_run_id = latest_test_runs.id")
-        .joins('INNER JOIN groupings ON latest_test_runs.grouping_id = groupings.id')
-        .joins('INNER JOIN groups ON groups.id = groupings.group_id')
         .select('test_groups.name',
                 'test_groups.id as test_groups_id',
-                'groups.group_name',
+                'latest_test_runs.group_name',
                 'test_results.name as test_result_name',
                 'test_results.status',
                 'test_results.marks_earned',
                 'test_results.marks_total',
                 :output, :extra_info, :error_type)
-        .where.not('latest_test_runs.submission_id': nil)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
