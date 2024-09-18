@@ -10,10 +10,9 @@
 
 ### 🐛 Bug fixes
 
-- Fix test coverage for ExamTemplate.create_with_file method (#7213)
-
 ### 🔧 Internal changes
 
+- Fix test coverage for ExamTemplate.create_with_file method (#7213)
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
 - Upgrade to Rails v7.2 (#7185)
 - Manually specify chromedriver port number in Github actions (#7209)

@@ -40,6 +40,20 @@ describe ExamTemplatesController do
       it('should respond with 302') { expect(response).to have_http_status :found }
     end
 
+    describe '#create without specified content type' do
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+      let(:params) do
+        { create_template: { file_io: file_io, name: '' },
+          assignment_id: exam_template.assignment.id, course_id: course.id }
+      end
+
+      before { post_as user, :create, params: params }
+
+      it 'flashes an exam template create failure error message' do
+        expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t('exam_templates.create.failure')]
+      end
+    end
+
     describe '#edit' do
       it 'should respond with 200 with html format' do
         get_as user, :edit, format: 'html', params: { course_id: course.id, id: exam_template.id }
