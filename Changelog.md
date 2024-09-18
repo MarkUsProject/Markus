@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 - Improve textviewer rendering speed (#7211)
+- Add periodic roster syncing via LTI (#7178)
 
 ### 🐛 Bug fixes
 
@@ -42,7 +43,6 @@
 - Calculate and display the exact future time for the next token generation to help students plan their test runs more effectively. (#7127)
 - Set the default date for "Tokens available on" to the current time (#7173).
 - Add setting to enable filtering of new course creation from LTI launch (#7151)
-- Add daily roster syncing via LTI (#7178)
 
 ### 🐛 Bug fixes
 
