@@ -1,5 +1,27 @@
 # Changelog
 
+## [unreleased]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
+- Improve textviewer rendering speed (#7211)
+- Add periodic roster syncing via LTI (#7178)
+
+### 🐛 Bug fixes
+- Fix incorrect calculation of token penalties when submissions are on time (#7216)
+
+### 🔧 Internal changes
+
+- Fix test coverage for ExamTemplate.create_with_file method (#7213)
+- Upgrade Docker environment to use Ruby v3.3 (#7185)
+- Upgrade to Rails v7.2 (#7185)
+- Manually specify chromedriver port number in Github actions (#7209)
+- Move Exception message in student model to a localization file (#7218)
+- Add test cases for the student model to cover Group or Grouping save method failure (#7218)
+- Create tests for overtime messages of the submission rule classes (#7216)
+
 ## [v2.5.1]
 
 ### 🐛 Bug fixes
