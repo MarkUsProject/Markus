@@ -113,7 +113,7 @@ class GradersController < ApplicationController
           head :bad_request
           return
         end
-        grouping_hash = filter_grouping_by_section(assignments)
+        grouping_hash = filter_grouping_by_section(assignments, @assignment)
       else
         grouping_ids = params[:groupings]
         if grouping_ids.blank?
@@ -122,6 +122,7 @@ class GradersController < ApplicationController
           return
         end
       end
+
       case params[:global_actions]
       when 'assign'
         if params[:skip_empty_submissions] == 'true'
@@ -175,12 +176,10 @@ class GradersController < ApplicationController
             if filtered_grouping_ids.count != group_ids.count
               found_empty_submission = true
             end
-            # Add the filtered results to the new hash
-            filtered_grouping_hash[ta_id] = filtered_grouping_ids
           else
-            # If not skipping empty submissions, copy the original values
-            filtered_grouping_hash[ta_id] = group_ids
+            filtered_grouping_ids = group_ids
           end
+          filtered_grouping_hash[ta_id] = filtered_grouping_ids
         end
 
         begin
@@ -260,13 +259,13 @@ class GradersController < ApplicationController
     end
   end
 
-  def filter_grouping_by_section(assignments)
+  def filter_grouping_by_section(section_assignments, assignment)
     ta_groupings = {}
 
-    assignments.each do |section_name, ta_id|
-      grouping_ids = Grouping.joins(:section)
-                             .where(section: { name: section_name })
-                             .ids
+    section_assignments.each do |section_name, ta_id|
+      grouping_ids = assignment.groupings.joins(:section)
+                               .where(section: { name: section_name })
+                               .ids
 
       ta_groupings[ta_id] = grouping_ids
     end

@@ -138,7 +138,6 @@ class Grouping < ApplicationRecord
 
   def self.assign_by_section(groupings_by_ta, assignment)
     groupings_by_ta.each do |ta_id, grouping_ids|
-      # Call assign_tas with the grouping_ids and ta_id
       assign_tas(grouping_ids, [ta_id], assignment) do |grouping_ids_, ta_ids_|
         # Return the pairs of grouping_ids and the single ta_id
         grouping_ids_.product(ta_ids_)

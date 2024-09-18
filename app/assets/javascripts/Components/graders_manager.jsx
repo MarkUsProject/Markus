@@ -131,6 +131,7 @@ class GradersManager extends React.Component {
       },
     }).then(this.fetchData);
   };
+
   assignSections = assignments => {
     let sections = Object.keys(assignments);
     let graders = Object.values(assignments);
@@ -141,7 +142,6 @@ class GradersManager extends React.Component {
       ),
       data: {
         global_actions: "assign_sections",
-        groupings: "assign_sections",
         current_table: this.state.tableName,
         skip_empty_submissions: this.state.skip_empty_submissions,
         assignments: assignments,
@@ -831,5 +831,4 @@ class GradersActionBox extends React.Component {
 export function makeGradersManager(elem, props) {
   render(<GradersManager {...props} />, elem);
 }
-
 export {GradersManager};

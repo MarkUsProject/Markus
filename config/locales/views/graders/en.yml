@@ -2,11 +2,13 @@
 en:
   graders:
     actions:
-      assign_by_section: Assign TA(s) to sections
+      assign_by_section: Assign graders by section
       assign_grader: Assign grader(s)
       randomly_assign_graders: Randomly assign grader(s)
       unassign_grader: Unassign grader(s)
     anonymize_groups: Hide group membership information from graders
+    assign_by_section_instruction: Select a grader to assign to each section. The same grader can be assigned to multiple sections. Leave a section blank if no grader should be assigned.
+    assign_by_section_modal_title: Assign Graders by Section
     assign_to_criteria: Assign graders to individual criteria (if unselected, all graders will be able to edit all criteria)
     assigned_graders: Assigned Graders
     coverage: Coverage

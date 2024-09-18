@@ -59,11 +59,12 @@ export class SectionDistributionModal extends React.Component {
       >
         <form onSubmit={this.onSubmit} ref={this.input}>
           <div className={"modal-container-vertical"}>
-            <h2>Distribute TAs to Sections</h2>
+            <h2>{I18n.t("graders.assign_by_section_modal_title")}</h2>
+            <p style={{"max-width": "300px"}}>{I18n.t("graders.assign_by_section_instruction")}</p>
             {this.sectionsArray.map(section => this.renderSectionRow(section))}
           </div>
           <div className={"modal-container"}>
-            <input type="submit" value="Assign TAs" />
+            <input type="submit" value={I18n.t("graders.actions.assign_by_section")} />
           </div>
         </form>
       </Modal>
