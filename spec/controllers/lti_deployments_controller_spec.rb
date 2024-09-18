@@ -62,9 +62,11 @@ describe LtiDeploymentsController do
     end
   end
 
-  describe '#new_course' do
-    let!(:lti_deployment) { create(:lti_deployment) }
-    let(:course_params) { { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: 'csc108' } }
+  describe '#create_course' do
+    let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108') }
+    let(:course_params) do
+      { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
+    end
 
     context 'as an instructor' do
       before do
@@ -106,7 +108,7 @@ describe LtiDeploymentsController do
 
     context 'when a course already exists' do
       before do
-        create(:course, display_name: 'Introduction to Computer Science', name: 'csc108')
+        create(:course, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name)
         session[:lti_deployment_id] = lti_deployment.id
       end
 
@@ -118,6 +120,38 @@ describe LtiDeploymentsController do
       it 'does redirect to choose_course' do
         post_as instructor, :create_course, params: course_params
         expect(response).to have_http_status(:found)
+      end
+    end
+
+    context 'when the LTI deployment course name has invalid characters' do
+      let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108 fall 3000!') }
+
+      before do
+        session[:lti_deployment_id] = lti_deployment.id
+      end
+
+      it 'creates a new course with a sanitized name' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.exists?(name: 'csc108-fall-3000-')).not_to be_nil
+      end
+    end
+
+    context 'when the course is rejected by the filter' do
+      # NOTE: the default filter in config/dummy_lti_config.rb only accepts course names starting with 'csc'
+      let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'sta130') }
+
+      before do
+        session[:lti_deployment_id] = lti_deployment.id
+      end
+
+      it 'does not create a new course' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.count).to eq(1)
+      end
+
+      it 'responds with an error message' do
+        post_as instructor, :create_course, params: course_params
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end

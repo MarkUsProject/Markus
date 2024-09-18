@@ -5,7 +5,9 @@ import {TextViewer} from "../Result/text_viewer";
 describe("TextViewer", () => {
   let props;
 
-  beforeEach(() => {
+  afterEach(cleanup);
+
+  it("should render its text content when the content ends with a new line", () => {
     props = {
       content: "def f(n: int) -> int:\n    return n + 1\n",
       annotations: [],
@@ -14,11 +16,20 @@ describe("TextViewer", () => {
     };
 
     render(<TextViewer {...props} />);
+
+    expect(screen.getByText("def f(n: int) -> int:")).toBeInTheDocument();
   });
 
-  afterEach(cleanup);
+  it("should render its text content when the content doesn't end with a new line", () => {
+    props = {
+      content: "def f(n: int) -> int:\n    return n + 1",
+      annotations: [],
+      focusLine: null,
+      submission_file_id: 1,
+    };
 
-  it("should render its text content", () => {
+    render(<TextViewer {...props} />);
+
     expect(screen.getByText("def f(n: int) -> int:")).toBeInTheDocument();
   });
 });

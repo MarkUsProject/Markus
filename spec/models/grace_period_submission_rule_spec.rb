@@ -23,6 +23,21 @@ describe GracePeriodSubmissionRule do
         expect { apply_rule }.not_to(change { grouping.inviter.grace_period_deductions.count })
       end
     end
+
+    context 'when the student has one grace credit' do
+      before do
+        grouping.inviter.update!(grace_credits: 1)
+      end
+
+      it 'has an overtime message mentioning the number of credits remaining and the number of credits to use' do
+        pretend_now_is(due_date - 1.day)
+        apply_rule
+        rule_overtime_message = rule.overtime_message(grouping)
+        expected_overtime_message = I18n.t 'grace_period_submission_rules.overtime_message_with_credits_left',
+                                           grace_credits_remaining: 1, grace_credits_to_use: 0
+        expect(rule_overtime_message).to eq expected_overtime_message
+      end
+    end
   end
 
   context 'when the group submitted during the first penalty period' do
@@ -142,6 +157,14 @@ describe GracePeriodSubmissionRule do
 
       it 'does not deduct credits' do
         expect { apply_rule }.not_to(change { grouping.reload.grace_period_deductions.count })
+      end
+
+      it 'has an overtime message mentioning that there are no credits remaining' do
+        pretend_now_is(due_date + 5.days)
+        apply_rule
+        rule_overtime_message = rule.overtime_message(grouping)
+        expected_overtime_message = I18n.t 'grace_period_submission_rules.overtime_message_without_credits_left'
+        expect(rule_overtime_message).to eq expected_overtime_message
       end
     end
 

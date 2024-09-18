@@ -133,9 +133,7 @@ class Student < Role
         m_logger.log("Could not create a group for Student '#{user_name}'. " \
                      "The group was #{@group.inspect} - errors: " \
                      "#{@group.errors.inspect}", MarkusLogger::ERROR)
-        raise 'Sorry! For some reason, your group could not be created. ' \
-              'Please wait a few seconds, then hit refresh to try again. ' \
-              'If you come back to this page, you should inform the course instructor.'
+        raise I18n.t('students.errors.group_creation_failure')
       end
 
       # a grouping can be found if the student has an (empty) existing grouping that he is not a member of
@@ -146,9 +144,7 @@ class Student < Role
         m_logger.log("Could not create a grouping for Student '#{user_name}'. " \
                      "The grouping was:  #{@grouping.inspect} - errors: " \
                      "#{@grouping.errors.inspect}", MarkusLogger::ERROR)
-        raise 'Sorry! For some reason, your grouping could not be created. ' \
-              'Please wait a few seconds, and hit refresh to try again. If you ' \
-              'come back to this page, you should inform the course instructor.'
+        raise I18n.t('students.errors.grouping_creation_failure')
       end
 
       # Create the membership

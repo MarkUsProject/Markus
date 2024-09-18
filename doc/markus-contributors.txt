@@ -25,6 +25,7 @@ Ante Zheng
 Anthony Labaere
 Anthony Le Jallé
 Anton Braverman
+Anubha Joshi
 Anushiya Antony
 Arianne Dee
 Augustin Doury
@@ -95,6 +96,7 @@ Ignas Panero Armoska
 Irene Fung
 Isabelle Chan
 Ishan Thukral
+Ivan Chepelev
 Jackson Lee
 Jakub Subczynski
 Jason Mai
