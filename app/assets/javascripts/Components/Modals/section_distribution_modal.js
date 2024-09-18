@@ -10,7 +10,7 @@ export class SectionDistributionModal extends React.Component {
   constructor(props) {
     super(props);
     this.input = React.createRef();
-    this.sectionsArray = Object.values(this.props.sections);
+    this.sectionsArray = Object.values(this.props.sections).sort();
     this.graderMap = this.props.graders.reduce((map, grader) => {
       map[grader.user_name] = grader._id;
       return map;
@@ -39,7 +39,7 @@ export class SectionDistributionModal extends React.Component {
           {section}
         </label>
         <select className={`input-${section}`} name={section}>
-          <option value="">Select TA</option>
+          <option value=""></option>
           {graders.map(grader => (
             <option key={grader.user_name} value={grader.user_name}>
               {grader.user_name}
