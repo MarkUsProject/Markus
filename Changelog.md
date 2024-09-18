@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 - Improve textviewer rendering speed (#7211)
+- Add periodic roster syncing via LTI (#7178)
 
 ### 🐛 Bug fixes
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
