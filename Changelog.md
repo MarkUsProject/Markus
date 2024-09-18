@@ -8,6 +8,7 @@
 
 - Improve textviewer rendering speed (#7211)
 - Add periodic roster syncing via LTI (#7178)
+- Allow instructors to assign graders by section (#7179)
 
 ### 🐛 Bug fixes
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
