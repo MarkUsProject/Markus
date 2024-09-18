@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
+import {SectionDistributionModal} from "./Modals/section_distribution_modal";
 
 class GradersManager extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class GradersManager extends React.Component {
       hide_unassigned_criteria: false,
       sections: {},
       isGraderDistributionModalOpen: false,
+      isSectionDistributionModalOpen: false,
       show_hidden: false,
       show_hidden_groups: false,
       hidden_graders_count: 0,
@@ -49,6 +51,11 @@ class GradersManager extends React.Component {
 
     this.setState({
       isGraderDistributionModalOpen: true,
+    });
+  };
+  openSectionDistributionModal = () => {
+    this.setState({
+      isSectionDistributionModalOpen: true,
     });
   };
 
@@ -87,6 +94,7 @@ class GradersManager extends React.Component {
           anonymize_groups: res.anonymize_groups,
           hide_unassigned_criteria: res.hide_unassigned_criteria,
           isGraderDistributionModalOpen: false,
+          isSectionDistributionModalOpen: false,
           hidden_graders_count: res.graders.filter(grader => grader.hidden).length,
           inactive_groups_count: inactive_groups_count,
         });
@@ -119,6 +127,25 @@ class GradersManager extends React.Component {
         skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
+        graders: graders,
+      },
+    }).then(this.fetchData);
+  };
+
+  assignSections = assignments => {
+    let sections = Object.keys(assignments);
+    let graders = Object.values(assignments);
+    $.post({
+      url: Routes.global_actions_course_assignment_graders_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        global_actions: "assign_sections",
+        current_table: this.state.tableName,
+        skip_empty_submissions: this.state.skip_empty_submissions,
+        assignments: assignments,
+        sections: sections,
         graders: graders,
       },
     }).then(this.fetchData);
@@ -305,6 +332,7 @@ class GradersManager extends React.Component {
         <GradersActionBox
           assignAll={this.assignAll}
           openGraderDistributionModal={this.openGraderDistributionModal}
+          openSectionDistributionModal={this.openSectionDistributionModal}
           unassignAll={this.unassignAll}
           showHidden={this.state.show_hidden}
           showHiddenGroups={this.state.show_hidden_groups}
@@ -404,6 +432,15 @@ class GradersManager extends React.Component {
             }
             graders={this.getAssignedGraderObjects()}
             onSubmit={this.assignRandomly}
+          />
+        )}
+        {this.state.isSectionDistributionModalOpen && (
+          <SectionDistributionModal
+            isOpen={this.state.isSectionDistributionModalOpen}
+            onRequestClose={() => this.setState({isSectionDistributionModalOpen: false})}
+            onSubmit={this.assignSections}
+            graders={this.state.graders}
+            sections={this.state.sections}
           />
         )}
       </div>
@@ -777,6 +814,10 @@ class GradersActionBox extends React.Component {
         <button onClick={this.props.openGraderDistributionModal}>
           <FontAwesomeIcon icon="fa-solid fa-dice" />
           {I18n.t("graders.actions.randomly_assign_graders")}
+        </button>
+        <button onClick={this.props.openSectionDistributionModal}>
+          <FontAwesomeIcon icon="fa-solid fa-list" />
+          {I18n.t("graders.actions.assign_by_section")}
         </button>
         <button onClick={this.props.unassignAll}>
           <FontAwesomeIcon icon="fa-solid fa-user-minus" />
