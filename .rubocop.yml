@@ -4,6 +4,7 @@ require:
   - rubocop-factory_bot
   - rubocop-rspec
   - rubocop-rspec_rails
+  - rubocop-capybara
 
 AllCops:
   Exclude:
@@ -209,9 +210,6 @@ RSpec/ExampleWording:
 RSpec/ExpectChange:
   EnforcedStyle: block
 
-RSpec/FactoryBot:  # Extracted into rubocop-factory_bot gem
-  Enabled: false
-
 RSpec/IndexedLet:
   Enabled: false
 
@@ -240,9 +238,6 @@ RSpec/NestedGroups:
   Enabled: false
 
 RSpec/PendingWithoutReason:
-  Enabled: false
-
-RSpec/Rails:  # Extracted into rubocop-factory_bot gem
   Enabled: false
 
 RSpec/ScatteredLet:
