@@ -15,7 +15,7 @@ repos:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v16.6.1
+      rev: v16.9.0
       hooks:
         - id: stylelint
           additional_dependencies: [
@@ -32,7 +32,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.64.1
+    rev: v1.66.0
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -45,11 +45,12 @@ repos:
             Vagrantfile
           )$
         additional_dependencies:
-          - rubocop-rails:2.24.1
-          - rubocop-performance:1.21.0
-          - rubocop-factory_bot:2.25.1
-          - rubocop-rspec:2.28.0
-          - rubocop-rspec_rails:2.28.2
+          - rubocop-rails:2.26.1
+          - rubocop-performance:1.22.1
+          - rubocop-factory_bot:2.26.1
+          - rubocop-rspec:3.0.5
+          - rubocop-rspec_rails:2.30.0
+          - rubocop-capybara:2.21.0
 
 exclude: vendor
 

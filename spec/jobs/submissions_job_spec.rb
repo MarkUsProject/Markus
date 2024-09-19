@@ -132,7 +132,7 @@ describe SubmissionsJob do
 
       it 'collects a nil revision' do
         groupings.each do |g|
-          expect(g.reload.current_submission_used.revision_identifier).to be_nil
+          expect(g.reload.current_submission_used.reload.revision_identifier).to be_nil
         end
       end
     end

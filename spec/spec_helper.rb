@@ -33,7 +33,7 @@ require 'time-warp'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 begin
@@ -128,7 +128,7 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir[Rails.root.join('data/test/exam_templates/*')])
+    FileUtils.rm_rf(Rails.root.glob('data/test/exam_templates/*'))
   end
 
   RSpec::Matchers.define :same_time_within_ms do |t1|
