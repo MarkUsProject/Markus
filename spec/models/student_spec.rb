@@ -100,8 +100,8 @@ describe Student do
       it "should not error when given #{item[:type]} grace credits" do
         Student.give_grace_credits(@student_id_list, item[:grace_credits])
 
-        expect(item[:expected]).to eql(@student1.grace_credits)
-        expect(item[:expected]).to eql(@student2.grace_credits)
+        expect(item[:expected]).to eql(@student1.reload.grace_credits)
+        expect(item[:expected]).to eql(@student2.reload.grace_credits)
       end
     end
   end
