@@ -2140,7 +2140,7 @@ describe Assignment do
 
         it 'has correct criteria information' do
           criteria_info = @assignment.summary_json(ta)[:criteriaColumns][0]
-          expect(criteria_info).is_a? Hash
+          expect(criteria_info).to be_a Hash
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
       end
@@ -2205,7 +2205,7 @@ describe Assignment do
 
         it 'has correct criteria information' do
           criteria_info = @assignment.summary_json(instructor)[:criteriaColumns][0]
-          expect(criteria_info).is_a? Hash
+          expect(criteria_info).to be_a Hash
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
 
@@ -2233,7 +2233,7 @@ describe Assignment do
           ]
 
           expect(data).not_to be_empty
-          expect(data[0]).is_a? Hash
+          expect(data[0]).to be_a Hash
           expect(data[0].keys).to match_array expected_keys
         end
 

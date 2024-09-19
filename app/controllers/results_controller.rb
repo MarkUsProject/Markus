@@ -328,7 +328,7 @@ class ResultsController < ApplicationController
       if params[:direction] == '1'
         next_grouping = assigned_prs.where('peer_reviews.id > ?', peer_review_ids.last).first
       else
-        next_grouping = assigned_prs.where('peer_reviews.id < ?', peer_review_ids.first).last
+        next_grouping = assigned_prs.where(peer_reviews: { id: ...peer_review_ids.first }).last
       end
       next_result = Result.find_by(id: next_grouping&.result_id)
     else

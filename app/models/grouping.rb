@@ -890,7 +890,9 @@ class Grouping < ApplicationRecord
     if ascending
       next_result = results.where('groups.group_name > ?', self.group.group_name).first
     else
+      # rubocop:disable Rails/WhereRange
       next_result = results.where('groups.group_name < ?', self.group.group_name).last
+      # rubocop:enable Rails/WhereRange
     end
     next_result&.grouping
   end
@@ -910,11 +912,13 @@ class Grouping < ApplicationRecord
                                       self.current_submission_used.revision_timestamp)).first
 
     else
+      # rubocop:disable Rails/WhereRange
       next_result = results
                     .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
                     .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
                                       self.group.group_name,
                                       self.current_submission_used.revision_timestamp)).last
+      # rubocop:enable Rails/WhereRange
     end
     next_result&.grouping
   end

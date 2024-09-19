@@ -19,7 +19,7 @@ class GroupsController < ApplicationController
       flash_now(:success, I18n.t('flash.actions.create.success',
                                  resource_name: Group.model_name.human))
     rescue StandardError => e
-      flash[:error] = e.message
+      flash_now(:error, e.message)
     ensure
       head :ok
     end
@@ -73,7 +73,7 @@ class GroupsController < ApplicationController
       params[:assignment_id] = @assignment.id
 
       if Grouping.exists?(assessment_id: @assignment.id, group_id: groupexist_id)
-        flash[:error] = I18n.t('groups.group_name_already_in_use')
+        flash_now(:error, I18n.t('groups.group_name_already_in_use'))
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end
