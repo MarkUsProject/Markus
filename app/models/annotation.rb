@@ -72,6 +72,8 @@ class Annotation < ApplicationRecord
 
     return if result.is_a_review? && !result.released_to_students
 
+    return if result.submission.non_pr_results.where('results.released_to_students': true).empty?
+
     errors.add(:base, 'Cannot create/destroy annotation once results are released.')
     throw(:abort)
   end
