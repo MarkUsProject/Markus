@@ -114,4 +114,30 @@ describe Group do
       end
     end
   end
+
+  describe '#has_non_empty_submission?' do
+    context 'when a there is a non-empty submission' do
+      let(:group) { create(:group, groupings: [create(:grouping_with_inviter_and_submission), create(:grouping)]) }
+
+      it 'returns true' do
+        expect(group.has_non_empty_submission?).to be true
+      end
+    end
+
+    context 'when groupings have no submissions' do
+      let(:group) { create(:group, groupings: [create(:grouping)]) }
+
+      it 'returns false' do
+        expect(group.has_non_empty_submission?).to be false
+      end
+    end
+
+    context 'when there are no groupings' do
+      let(:group) { create(:group) }
+
+      it 'returns false' do
+        expect(group.has_non_empty_submission?).to be false
+      end
+    end
+  end
 end
