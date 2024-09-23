@@ -187,17 +187,17 @@ describe 'Check Repo Permissions Function' do
           end
 
           context 'the assessment is timed' do
-            let(:due_date) { 1.minute.from_now }
+            let(:due_date) { 10.hours.from_now }
 
             before do
               grouping.assignment.update! is_timed: true,
                                           due_date: due_date,
-                                          start_time: 3.minutes.ago,
-                                          duration: 1.minute
+                                          start_time: 10.hours.ago,
+                                          duration: 1.hour
             end
 
             context 'the grouping has started the assessment' do
-              before { grouping.update! start_time: 1.minute.ago }
+              before { grouping.update! start_time: 1.hour.ago }
 
               it 'should succeed' do
                 expect(script_success?).to be_truthy
@@ -206,7 +206,7 @@ describe 'Check Repo Permissions Function' do
 
             context 'the grouping has not started the assessment' do
               context 'the due date has passed' do
-                let(:due_date) { 1.second.ago }
+                let(:due_date) { 2.hours.ago }
 
                 it 'should succeed' do
                   expect(script_success?).to be_truthy
