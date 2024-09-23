@@ -58,13 +58,12 @@ class GroupsController < ApplicationController
     @group = @grouping.group
 
     # Checking if a group with this name already exists
-    if (@groups = current_course.groups.where(group_name: params[:new_groupname]).first)
+    if (@existing_group = current_course.groups.where(group_name: params[:new_groupname]).first)
       existing = true
-      groupexist_id = @groups.id
+      groupexist_id = @existing_group.id
     end
 
     if existing
-
       # We link the grouping to the group already existing
 
       # We verify there is no other grouping linked to this group on the
@@ -73,7 +72,9 @@ class GroupsController < ApplicationController
       params[:assignment_id] = @assignment.id
 
       if Grouping.exists?(assessment_id: @assignment.id, group_id: groupexist_id)
-        flash_now(:error, I18n.t('groups.group_name_already_in_use'))
+        flash.now[:error] = I18n.t('groups.group_name_already_in_use')
+      elsif @existing_group.has_non_empty_submission?
+        flash.now[:error] = I18n.t('groups.group_name_already_in_use_diff_assignment')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end

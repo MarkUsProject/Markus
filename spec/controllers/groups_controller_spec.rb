@@ -1,6 +1,7 @@
 describe GroupsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:grouping) { create(:grouping) }
+  let(:group) { grouping.group }
   let(:assignment) { grouping.assignment }
   let(:course) { assignment.course }
 
@@ -135,7 +136,67 @@ describe GroupsController do
       end
     end
 
-    describe '#rename_group'
+    describe '#rename_group' do
+      it 'should rename a group' do
+        # The id param expects grouping id, not group id.
+        expect do
+          post_as instructor, :rename_group, params: {
+            course_id: course.id,
+            assignment_id: assignment.id,
+            id: grouping.id,
+            new_groupname: 'renamed'
+          }
+        end.to change { group.reload.group_name }.from('group1').to('renamed')
+      end
+
+      context 'group renaming and repository association' do
+        # Regression test for https://github.com/MarkUsProject/Markus/issues/7215, where renaming a group in an
+        # assignment would incorrectly associate the group's repository with one from another assignment, resulting in
+        # lost submissions and incorrect repository mappings.
+        let(:assignment2) { create(:assignment, course: course) }
+        let(:grouping_with_submission) { create(:grouping_with_inviter_and_submission, assignment: assignment2) }
+        let(:grouping_without_submission) { create(:grouping, assignment: assignment2) }
+
+        before do
+          grouping_with_submission.save
+          grouping_without_submission.save
+        end
+
+        it 'ensures groups and submissions are correctly set up' do
+          groups = course.groups
+          expect(groups.length).to eq(3)
+          expect(groups[0].group_name).to eq('group1')
+          expect(groups[1].group_name).to eq('group2')
+          expect(groups[2].group_name).to eq('group3')
+          expect(groups[1].has_non_empty_submission?).to be true
+          expect(groups[2].has_non_empty_submission?).to be false
+        end
+
+        it 'flashes an error when renaming a group to an existing group in a different assignment' do
+          post_as instructor, :rename_group, params: {
+            course_id: course.id,
+            assignment_id: assignment.id,
+            id: grouping.id,
+            new_groupname: 'group2'
+          }
+
+          expect(flash[:error]).to eq I18n.t('groups.group_name_already_in_use_diff_assignment')
+        end
+
+        it 'successfully remaps a group without repository conflict when target group has no submission' do
+          expect do
+            post_as instructor, :rename_group, params: {
+              course_id: course.id,
+              assignment_id: assignment.id,
+              id: grouping.id,
+              new_groupname: 'group3'
+            }
+          end.to change { grouping.reload.group_id }.from(group.id).to(grouping_without_submission.group.id)
+
+          expect(flash[:error]).to be_nil
+        end
+      end
+    end
 
     describe '#valid_grouping' do
       let(:unapproved_grouping) { create(:grouping_with_inviter, instructor_approved: false) }

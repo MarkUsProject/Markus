@@ -13,7 +13,7 @@
 ### 🐛 Bug fixes
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
 - Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
-
+- Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7215)
 ### 🔧 Internal changes
 
 - Fix test coverage for ExamTemplate.create_with_file method (#7213)
