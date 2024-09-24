@@ -138,6 +138,13 @@ class ManualCollectionForm extends React.Component {
     revision_identifier: "", //set initial value so that the input (in render) remains controlled
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      retainExistingGrading: true,
+    };
+  }
+
   render() {
     const action = Routes.manually_collect_and_begin_grading_course_assignment_submissions_path(
       this.props.course_id,
@@ -168,11 +175,27 @@ class ManualCollectionForm extends React.Component {
               {I18n.t("submissions.collect.apply_late_penalty")}
             </label>
           </p>
+          <div className="inline-labels" style={{marginBottom: "1em"}}>
+            <input
+              type="checkbox"
+              name="retain_existing_grading"
+              checked={this.state.retainExistingGrading}
+              onChange={e => {
+                this.setState({retainExistingGrading: e.target.checked});
+              }}
+            />
+            <label>{I18n.t("submissions.collect.retain_existing_grading")}</label>
+          </div>
           <button
             type="submit"
             name="commit"
             onClick={event => {
-              if (!confirm(I18n.t("submissions.collect.overwrite_warning"))) {
+              if (
+                (!this.state.retainExistingGrading &&
+                  !confirm(I18n.t("submissions.collect.full_overwrite_warning"))) ||
+                (this.state.retainExistingGrading &&
+                  !confirm(I18n.t("submissions.collect.partial_overwrite_warning")))
+              ) {
                 event.preventDefault();
               }
             }}
