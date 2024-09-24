@@ -13,6 +13,7 @@
 ### 🐛 Bug fixes
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
 - Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
+- Allow annotations to be added to results with released peer reviews (#7222)
 
 ### 🔧 Internal changes
 

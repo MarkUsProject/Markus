@@ -62,7 +62,7 @@ class Annotation < ApplicationRecord
 
   # check if the submission file is associated with a remark result or a released result
   def check_if_released
-    annotation_results = result.submission.results
+    annotation_results = result.submission.non_pr_results
 
     return if is_remark && annotation_results.where.not(remark_request_submitted_at: nil)
                                              .where('results.released_to_students': false)
