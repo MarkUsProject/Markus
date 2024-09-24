@@ -62,7 +62,7 @@ class Annotation < ApplicationRecord
 
   # check if the submission file is associated with a remark result or a released result
   def check_if_released
-    annotation_results = result.submission.results
+    annotation_results = result.submission.non_pr_results
 
     return if is_remark && annotation_results.where.not(remark_request_submitted_at: nil)
                                              .where('results.released_to_students': false)
@@ -71,8 +71,6 @@ class Annotation < ApplicationRecord
               annotation_results.where.not(remark_request_submitted_at: nil).empty?
 
     return if result.is_a_review? && !result.released_to_students
-
-    return if result.submission.non_pr_results.where('results.released_to_students': true).empty?
 
     errors.add(:base, 'Cannot create/destroy annotation once results are released.')
     throw(:abort)
