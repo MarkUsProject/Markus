@@ -12,6 +12,7 @@ class CollectSubmissionsModal extends React.Component {
       override: this.props.override,
       collect_time: this.props.isScannedExam ? "collect_current" : "collect_due_date",
       apply_late_penalty: !this.props.isScannedExam,
+      retain_existing_grading: true,
     };
   }
 
@@ -25,12 +26,17 @@ class CollectSubmissionsModal extends React.Component {
       this.state.override,
       this.state.collect_time === "collect_current",
       // Always apply late penalty when collecting based on due date
-      this.state.apply_late_penalty || this.state.collect_time === "collect_due_date"
+      this.state.apply_late_penalty || this.state.collect_time === "collect_due_date",
+      this.state.retain_existing_grading
     );
   };
 
   handleOverrideChange = event => {
     this.setState({override: event.target.checked});
+  };
+
+  handleRetainExistingGradingChange = event => {
+    this.setState({retain_existing_grading: event.target.checked});
   };
 
   handleCollectTimeChange = event => {
@@ -98,13 +104,35 @@ class CollectSubmissionsModal extends React.Component {
                 <label>
                   <input type="checkbox" name="override" onChange={this.handleOverrideChange} />
                   &nbsp;
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: I18n.t("submissions.collect.override_existing_html"),
-                    }}
-                  />
+                  <span>{I18n.t("submissions.collect.override_existing")}</span>
                 </label>
               </p>
+              {this.state.override && (
+                <div style={{marginLeft: "15px"}}>
+                  <p>
+                    <label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={this.state.retain_existing_grading}
+                        name="retain_existing_grading"
+                        onChange={this.handleRetainExistingGradingChange}
+                      />
+                    </label>
+                    &nbsp;
+                    {this.state.retain_existing_grading ? (
+                      <span>{I18n.t("submissions.collect.retain_existing_grading")}</span>
+                    ) : (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: I18n.t(
+                            "submissions.collect.retain_existing_grading_warning_html"
+                          ),
+                        }}
+                      />
+                    )}
+                  </p>
+                </div>
+              )}
               {this.state.collect_time === "collect_current" && !this.props.isScannedExam && (
                 <p>
                   <label>

@@ -170,7 +170,11 @@ class SubmissionsController < ApplicationController
                          else
                            params[:apply_late_penalty]
                          end
-    retain_existing_grading = params[:retain_existing_grading]
+    retain_existing_grading = if params[:retain_existing_grading].nil?
+                                false
+                              else
+                                params[:retain_existing_grading]
+                              end
 
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
@@ -199,6 +203,7 @@ class SubmissionsController < ApplicationController
     end
     collect_current = params[:collect_current] == 'true'
     apply_late_penalty = params[:apply_late_penalty] == 'true'
+    retain_existing_grading = params[:retain_existing_grading] == 'true'
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     collectable = []
@@ -226,7 +231,8 @@ class SubmissionsController < ApplicationController
                                                  collection_dates: collection_dates.transform_keys(&:to_s),
                                                  collect_current: collect_current,
                                                  apply_late_penalty: apply_late_penalty,
-                                                 notify_socket: true)
+                                                 notify_socket: true,
+                                                 retain_existing_grading: retain_existing_grading)
       CollectSubmissionsChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
     end
     if some_before_due
