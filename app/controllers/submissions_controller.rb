@@ -172,9 +172,12 @@ class SubmissionsController < ApplicationController
                          else
                            params[:apply_late_penalty]
                          end
+    retain_existing_grading = params[:retain_existing_grading]
+
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
-                               revision_identifier: @revision_identifier)
+                               revision_identifier: @revision_identifier,
+                               retain_existing_grading: retain_existing_grading)
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_course_result_path(course_id: current_course.id, id: submission.get_latest_result.id)

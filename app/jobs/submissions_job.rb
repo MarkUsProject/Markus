@@ -5,6 +5,39 @@ class SubmissionsJob < ApplicationJob
     Rails.logger.error msg
   end
 
+  def copy_old_grading_data(new_submission, grouping)
+    # at this point, it will only have one result
+    new_result = new_submission.current_result
+
+    # get the last submission that wasn't the one we just created
+    old_submission = grouping.submissions.where.not(id: new_submission.id)
+                             .order(created_at: :desc)
+                             .first
+
+    old_result = old_submission.non_pr_results
+                               .where(remark_request_submitted_at: nil)
+                               .last
+
+    collections = [
+      { old: old_result.annotations, new: new_result.annotations },
+      { old: old_result.marks, new: new_result.marks },
+      { old: old_result.extra_marks, new: new_result.extra_marks }
+    ]
+
+    collections.each do |collection|
+      # get rid of the existing empty records so we can replace them
+      collection[:new].all.destroy_all
+
+      collection[:old].each do |item|
+        item_dup = item.dup
+        item_dup.result_id = new_result.id
+        item_dup.save
+
+        add_warning_messages(item_dup.errors.full_messages) if item_dup.errors.present?
+      end
+    end
+  end
+
   def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
 
@@ -24,6 +57,11 @@ class SubmissionsJob < ApplicationJob
         new_submission = Submission.create_by_timestamp(grouping, time)
       else
         new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
+      end
+
+      # here is where we would copy over old grading data
+      if options[:retain_existing_grading]
+        copy_old_grading_data(new_submission, grouping)
       end
 
       if assignment.submission_rule.is_a? GracePeriodSubmissionRule
