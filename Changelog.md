@@ -23,6 +23,7 @@
 - Move Exception message in student model to a localization file (#7218)
 - Add test cases for the student model to cover Group or Grouping save method failure (#7218)
 - Create tests for overtime messages of the submission rule classes (#7216)
+- Fix flaky `check_repo_permissions` test (#7223)
 
 ## [v2.5.1]
 
