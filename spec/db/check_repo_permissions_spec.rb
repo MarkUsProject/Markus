@@ -215,6 +215,10 @@ describe 'Check Repo Permissions Function' do
 
               context 'the due date has not passed' do
                 it 'should fail' do
+                  expect(grouping.assignment.reload.is_timed).to be_truthy
+                  expect(grouping.assignment.reload.due_date).to be > Time.current
+                  expect(grouping.reload.start_time).to be_nil
+
                   expect(script_success?).to be_falsy
                 end
               end
