@@ -23,7 +23,7 @@ class AnnotationCategory < ApplicationRecord
   # Note that there is no need to validate that courses match through courses_should_match
   # because the flexible_criterion_id must be associated to the same assignment.
   validates :flexible_criterion_id,
-            inclusion: { in: :assignment_criteria}
+            inclusion: { in: :assignment_criteria }
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
