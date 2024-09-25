@@ -20,6 +20,12 @@ en:
         theme: Color Theme
         user_name: User Name
         user_type: User Type
+    errors:
+      models:
+        user:
+          attributes:
+            user_name:
+              format: user_name must be alphanumeric, hyphen, or underscore
     models:
       admin_user:
         one: Admin User

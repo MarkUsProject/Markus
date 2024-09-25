@@ -1,7 +1,6 @@
 class Section < ApplicationRecord
   validates :name, presence: true, allow_blank: false,
-                   format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
-                             message: 'user_name must be alphanumeric, hyphen, whitespace, or underscore' }
+                   format: { with: /\A[a-zA-Z0-9\-_ ]+\z/ }
   validates :name, uniqueness: { scope: :course_id }
   has_many :students
   has_many :assessment_section_properties, class_name: 'AssessmentSectionProperties'

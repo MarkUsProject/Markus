@@ -4,6 +4,12 @@ en:
     attributes:
       assessment:
         max_mark: Out Of
+    errors:
+      models:
+        assessment:
+          attributes:
+            short_identifier:
+              format: short_identifier must only contain alphanumeric, hyphen, or underscore
     models:
       assessment:
         one: Assessment

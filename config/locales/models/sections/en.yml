@@ -4,6 +4,12 @@ en:
     attributes:
       section:
         name: Name
+    errors:
+      models:
+        section:
+          attributes:
+            name:
+              format: user_name must be alphanumeric, hyphen, whitespace, or underscore
     models:
       section:
         one: Section
