@@ -9,11 +9,11 @@ en:
       models:
         group:
           attributes:
-            repo_name:
-              taken: Repository %{value} already exists.
-              format: must only contain alphanumeric, hyphen, a blank space, or underscore
             group_name:
               format: must only contain alphanumeric, hyphen, a blank space, or underscore
+            repo_name:
+              format: must only contain alphanumeric, hyphen, a blank space, or underscore
+              taken: Repository %{value} already exists.
     models:
       group:
         one: Group
