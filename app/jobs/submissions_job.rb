@@ -18,22 +18,46 @@ class SubmissionsJob < ApplicationJob
                                .where(remark_request_submitted_at: nil)
                                .last
 
-    collections = [
+    result_data = [
       { old: old_result.annotations, new: new_result.annotations },
       { old: old_result.marks, new: new_result.marks },
       { old: old_result.extra_marks, new: new_result.extra_marks }
     ]
 
-    collections.each do |collection|
+    # copy over data from old result
+    result_data.each do |result_set|
       # get rid of the existing empty records so we can replace them
-      collection[:new].all.destroy_all
+      result_set[:new].destroy_all
 
-      collection[:old].each do |item|
+      result_set[:old].each do |item|
         item_dup = item.dup
-        item_dup.result_id = new_result.id
-        item_dup.save
+        item_dup.update(result_id: new_result.id)
 
         add_warning_messages(item_dup.errors.full_messages) if item_dup.errors.present?
+      end
+    end
+
+    # copy over old test data, which are on the submission instead of the result
+    old_submission.test_runs.each do |test_run|
+      test_run_dup = test_run.dup
+      test_run_dup.submission_id = new_submission.id
+      test_run_dup.save
+
+      # don't continue if there are errors at this point
+      return add_warning_messages(test_run_dup.errors.full_messages) if test_run_dup.errors.present?
+
+      test_run.test_group_results.each do |test_group_result|
+        test_group_result_dup = test_group_result.dup
+        test_group_result_dup.update(test_run_id: test_run_dup.id)
+
+        return add_warning_messages(test_group_result_dup.errors.full_messages) if test_group_result_dup.errors.present?
+
+        test_group_result.test_results.each do |test_result|
+          test_result_dup = test_result.dup
+          test_run_dup.update(test_group_result_id: test_group_result_dup.id)
+
+          add_warning_messages(test_result_dup.errors.full_messages) if test_result_dup.errors.present?
+        end
       end
     end
   end
@@ -59,10 +83,7 @@ class SubmissionsJob < ApplicationJob
         new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
       end
 
-      # here is where we would copy over old grading data
-      if options[:retain_existing_grading]
-        copy_old_grading_data(new_submission, grouping)
-      end
+      copy_old_grading_data(new_submission, grouping) if options[:retain_existing_grading]
 
       if assignment.submission_rule.is_a? GracePeriodSubmissionRule
         # Return any grace credits previously deducted for this grouping.
