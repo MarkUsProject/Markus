@@ -53,6 +53,32 @@ describe Annotation do
         expect { create(:text_annotation) }.not_to raise_error
       end
     end
+
+    context 'with a peer review' do
+      let!(:assignment) { create(:assignment_with_peer_review_and_groupings_results) }
+      let(:selected_reviewer_group_ids) { assignment.pr_assignment.groupings }
+      let(:selected_reviewee_group_ids) { assignment.groupings }
+
+      before do
+        PeerReview.create_peer_review_between(selected_reviewer_group_ids[0],
+                                              selected_reviewee_group_ids[1])
+        PeerReview.create_peer_review_between(selected_reviewer_group_ids[1],
+                                              selected_reviewee_group_ids[2])
+        PeerReview.create_peer_review_between(selected_reviewer_group_ids[2],
+                                              selected_reviewee_group_ids[0])
+        assignment.peer_reviews.each do |peer_review|
+          peer_review.result.update!(marking_state: 'complete', released_to_students: true)
+        end
+      end
+
+      context 'with a released peer review result and unreleased original result' do
+        let(:unreleased_result) { assignment.groupings.first.current_result }
+
+        it 'should allow an annotation to be created' do
+          expect { create(:text_annotation, result: unreleased_result) }.not_to raise_error
+        end
+      end
+    end
   end
 
   context 'destroying annotations' do
