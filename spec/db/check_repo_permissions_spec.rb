@@ -218,7 +218,29 @@ describe 'Check Repo Permissions Function' do
                   expect(grouping.assignment.reload.is_timed).to be_truthy
                   expect(grouping.assignment.reload.due_date).to be > Time.current
                   expect(grouping.reload.start_time).to be_nil
-
+                  results = Membership.connection.select_all("
+SELECT roles.id
+FROM memberships
+  JOIN roles ON roles.id=memberships.role_id
+  JOIN groupings ON memberships.grouping_id=groupings.id
+  JOIN groups ON groupings.group_id=groups.id
+  JOIN assignment_properties ON assignment_properties.assessment_id=groupings.assessment_id
+  JOIN assessments ON groupings.assessment_id=assessments.id
+  JOIN courses ON assessments.course_id=courses.id
+  LEFT OUTER JOIN assessment_section_properties ON assessment_section_properties.assessment_id=assessments.id
+WHERE memberships.type='StudentMembership'
+AND memberships.membership_status IN ('inviter','accepted')
+AND assignment_properties.vcs_submit=true
+AND roles.id='#{role.id}'
+AND courses.is_hidden=false
+AND groups.repo_name='#{grouping.group.repo_name}'
+AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=false)
+         OR assessment_section_properties.is_hidden=false)
+AND (assignment_properties.is_timed=false
+         OR groupings.start_time IS NOT NULL
+         OR (groupings.start_time IS NULL AND assessments.due_date<NOW()))
+").to_h
+                  expect(results).to be_empty
                   expect(script_success?).to be_falsy
                 end
               end
