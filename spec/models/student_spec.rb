@@ -308,6 +308,14 @@ describe Student do
     end
 
     context 'with grace credits' do
+      before do
+        # setting up an assignment to use grace credits on
+        @assignment = create(:assignment)
+        @grouping = create(:grouping, assignment: @assignment)
+        @membership = create(:student_membership, role: @student, grouping: @grouping,
+                                                  membership_status: StudentMembership::STATUSES[:accepted])
+      end
+
       it 'return remaining normally' do
         expect(@student.remaining_grace_credits).to eq 5
       end
@@ -318,6 +326,16 @@ describe Student do
         create(:grace_period_deduction, membership: membership, deduction: 10)
         create(:grace_period_deduction, membership: membership, deduction: 20)
         expect(@student.remaining_grace_credits).to eq(-25)
+      end
+
+      it 'returns the correct value of used credits per assessment' do
+        create(:grace_period_deduction, membership: @membership, deduction: 2)
+        expect(@student.grace_credits_used_for(@assignment)).to eq(2)
+      end
+
+      it 'updates remaining grace credits after deductions' do
+        create(:grace_period_deduction, membership: @membership, deduction: 2)
+        expect(@student.remaining_grace_credits).to eq(3)
       end
     end
 
