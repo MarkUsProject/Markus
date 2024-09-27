@@ -1,5 +1,22 @@
 # Changelog
 
+## [v2.5.2]
+
+### ✨ New features and improvements
+
+- Improve textviewer rendering speed (#7211)
+- Add periodic roster syncing via LTI (#7178)
+- Allow instructors to assign graders by section (#7179)
+
+### 🐛 Bug fixes
+
+- Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
+- Allow annotations to be added to results with released peer reviews (#7222)
+
+### 🔧 Internal changes
+
+- Manually specify chromedriver port number in Github actions (#7209)
+
 ## [v2.5.1]
 
 ### 🐛 Bug fixes

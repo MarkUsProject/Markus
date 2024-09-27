@@ -71,8 +71,8 @@ class GradersController < ApplicationController
   # These actions act on all currently selected graders & groups
   def global_actions
     @assignment = Assignment.find(params[:assignment_id])
-    grader_ids = params[:graders]
-    if grader_ids.blank?
+    grader_ids = params[:graders] || []
+    if grader_ids.blank? && params[:global_actions] != 'assign_sections'
       grader_ids = current_course.tas.joins(:user).where('users.user_name': params[:grader_user_names]).ids
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
@@ -106,11 +106,21 @@ class GradersController < ApplicationController
 
     case params[:current_table]
     when 'groups_table'
-      grouping_ids = params[:groupings]
-      if grouping_ids.blank?
-        flash_now(:error, I18n.t('groups.select_a_group'))
-        head :bad_request
-        return
+      if params[:global_actions] == 'assign_sections'
+        assignments = params[:assignments]
+        if assignments.blank?
+          flash_now(:error, I18n.t('graders.select_a_grader'))
+          head :bad_request
+          return
+        end
+        grouping_hash = filter_grouping_by_section(assignments, @assignment)
+      else
+        grouping_ids = params[:groupings]
+        if grouping_ids.blank?
+          flash_now(:error, I18n.t('groups.select_a_group'))
+          head :bad_request
+          return
+        end
       end
 
       case params[:global_actions]
@@ -155,6 +165,33 @@ class GradersController < ApplicationController
           head :bad_request
           flash_now(:error, e.message)
           return
+        end
+      when 'assign_sections'
+        found_empty_submission = false
+        filtered_grouping_hash = {}
+
+        grouping_hash.each do |ta_id, group_ids|
+          if params[:skip_empty_submissions] == 'true'
+            filtered_grouping_ids = filter_empty_submissions(group_ids)
+            if filtered_grouping_ids.count != group_ids.count
+              found_empty_submission = true
+            end
+          else
+            filtered_grouping_ids = group_ids
+          end
+          filtered_grouping_hash[ta_id] = filtered_grouping_ids
+        end
+
+        begin
+          if found_empty_submission
+            assign_graders_by_section(filtered_grouping_hash)
+            flash_now(:info, I18n.t('graders.group_submission_no_files'))
+          else
+            assign_graders_by_section(grouping_hash)
+          end
+        rescue StandardError => e
+          head :bad_request
+          flash_now(:error, e.message)
         end
       end
     when 'criteria_table'
@@ -205,6 +242,10 @@ class GradersController < ApplicationController
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
   end
 
+  def assign_graders_by_section(grouping_hash)
+    Grouping.assign_by_section(grouping_hash, @assignment)
+  end
+
   def unassign_graders(grouping_ids, grader_ids)
     grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, role_id: grader_ids).ids
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
@@ -216,6 +257,20 @@ class GradersController < ApplicationController
       submission = Submission.find_by(grouping_id: grouping_id, submission_version_used: true)
       submission && !submission.is_empty
     end
+  end
+
+  def filter_grouping_by_section(section_assignments, assignment)
+    ta_groupings = {}
+
+    section_assignments.each do |section_name, ta_id|
+      grouping_ids = assignment.groupings.joins(:section)
+                               .where(section: { name: section_name })
+                               .ids
+
+      ta_groupings[ta_id] = grouping_ids
+    end
+
+    ta_groupings
   end
 
   def implicit_authorization_target
