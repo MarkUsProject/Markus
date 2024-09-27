@@ -219,7 +219,7 @@ describe 'Check Repo Permissions Function' do
                   expect(grouping.assignment.reload.due_date).to be > Time.current
                   expect(grouping.reload.start_time).to be_nil
                   results = Membership.connection.select_all("
-SELECT roles.id
+SELECT roles.id, assignment_properties.is_timed, groupings.start_time
 FROM memberships
   JOIN roles ON roles.id=memberships.role_id
   JOIN groupings ON memberships.grouping_id=groupings.id
@@ -239,7 +239,7 @@ AND ((assessment_section_properties.is_hidden IS NULL AND assessments.is_hidden=
 AND (assignment_properties.is_timed=false
          OR groupings.start_time IS NOT NULL
          OR (groupings.start_time IS NULL AND assessments.due_date<NOW()))
-").to_h
+")
                   expect(results).to be_empty
                   expect(script_success?).to be_falsy
                 end
