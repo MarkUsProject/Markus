@@ -219,7 +219,7 @@ describe 'Check Repo Permissions Function' do
                   expect(grouping.assignment.reload.due_date).to be > Time.current
                   expect(grouping.reload.start_time).to be_nil
                   results = Membership.connection.select_all("
-SELECT roles.id, assignment_properties.is_timed, groupings.start_time
+SELECT roles.id, assignment_properties.is_timed, groupings.start_time, assessments.due_date, NOW()
 FROM memberships
   JOIN roles ON roles.id=memberships.role_id
   JOIN groupings ON memberships.grouping_id=groupings.id
