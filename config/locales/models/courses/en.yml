@@ -12,7 +12,7 @@ en:
         course:
           attributes:
             name:
-              format: name must only contain alphanumeric, hyphen, or underscore
+              format: '%{attribute} must only contain alphanumeric, hyphen, or underscore characters'
     models:
       course:
         one: Course

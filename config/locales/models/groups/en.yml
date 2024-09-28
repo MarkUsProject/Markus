@@ -10,9 +10,9 @@ en:
         group:
           attributes:
             group_name:
-              format: must only contain alphanumeric, hyphen, a blank space, or underscore
+              format: '%{attribute} must only contain alphanumeric, hyphen, a blank space, or underscore characters'
             repo_name:
-              format: must only contain alphanumeric, hyphen, a blank space, or underscore
+              format: '%{attribute} must only contain alphanumeric, hyphen, a blank space, or underscore characters'
               taken: Repository %{value} already exists.
     models:
       group:

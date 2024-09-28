@@ -9,7 +9,7 @@ en:
         section:
           attributes:
             name:
-              format: user_name must be alphanumeric, hyphen, whitespace, or underscore
+              format: '%{attribute} must be alphanumeric, hyphen, whitespace, or underscore characters'
     models:
       section:
         one: Section

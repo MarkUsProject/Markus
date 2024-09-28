@@ -25,7 +25,7 @@ en:
         user:
           attributes:
             user_name:
-              format: user_name must be alphanumeric, hyphen, or underscore
+              format: '%{attribute} must be alphanumeric, hyphen, or underscore characters'
     models:
       admin_user:
         one: Admin User
