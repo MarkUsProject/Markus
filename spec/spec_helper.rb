@@ -28,8 +28,6 @@ require 'action_policy/rspec'
 require 'action_policy/rspec/dsl'
 require 'capybara/rspec'
 require 'selenium/webdriver'
-# Loads lib repo stuff.
-require 'time-warp'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -158,4 +156,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = nil
   end
+
+  # Turn on Timecop safe mode (requires block syntax for methods)
+  Timecop.safe_mode = true
 end
