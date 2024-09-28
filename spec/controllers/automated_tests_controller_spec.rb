@@ -574,7 +574,7 @@ describe AutomatedTestsController do
         end
 
         it 'should calculate the next token generation time' do
-          travel 14.hours do
+          Timecop.freeze(assignment.token_start_date + 30.hours) do
             get_as student, :student_interface, params: params
             assignment.reload
             token_start_time = assignment.token_start_date

@@ -5,11 +5,12 @@ describe NoLateSubmissionRule do
 
   shared_examples 'valid overtime message' do |submission_time_offset|
     it 'has an overtime message' do
-      pretend_now_is(due_date + submission_time_offset)
-      apply_rule
-      rule_overtime_message = rule.overtime_message(grouping)
-      human_after_collection_message = NoLateSubmissionRule.human_attribute_name(:after_collection_message)
-      expect(rule_overtime_message).to eq(human_after_collection_message)
+      Timecop.freeze(due_date + submission_time_offset) do
+        apply_rule
+        rule_overtime_message = rule.overtime_message(grouping)
+        human_after_collection_message = NoLateSubmissionRule.human_attribute_name(:after_collection_message)
+        expect(rule_overtime_message).to eq(human_after_collection_message)
+      end
     end
   end
 
