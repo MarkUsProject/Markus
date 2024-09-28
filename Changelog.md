@@ -6,26 +6,39 @@
 
 ### ✨ New features and improvements
 
-- Improve textviewer rendering speed (#7211)
-- Add periodic roster syncing via LTI (#7178)
-- Allow instructors to assign graders by section (#7179)
-
 ### 🐛 Bug fixes
+
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
-- Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
-- Allow annotations to be added to results with released peer reviews (#7222)
 
 ### 🔧 Internal changes
 
 - Fix test coverage for ExamTemplate.create_with_file method (#7213)
 - Upgrade Docker environment to use Ruby v3.3 (#7185)
 - Upgrade to Rails v7.2 (#7185)
-- Manually specify chromedriver port number in Github actions (#7209)
 - Move Exception message in student model to a localization file (#7218)
 - Add test cases for the student model to cover Group or Grouping save method failure (#7218)
 - Create tests for overtime messages of the submission rule classes (#7216)
 - Fix flaky `check_repo_permissions` test (#7223)
 - Move model validation error messages to respective localization files (#7229)
+- Replace time-warp gem with newer, maintained timecop gem (#7234)
+
+## [v2.5.2]
+
+### ✨ New features and improvements
+
+- Improve textviewer rendering speed (#7211)
+- Add periodic roster syncing via LTI (#7178)
+- Allow instructors to assign graders by section (#7179)
+
+### 🐛 Bug fixes
+
+- Fix JSON/CSV summary of test results to always be inline with latest test run (#7214)
+- Allow annotations to be added to results with released peer reviews (#7222)
+
+### 🔧 Internal changes
+
+- Manually specify chromedriver port number in Github actions (#7209)
+>>>>>>> e25fe1b0484947dac2830b5a0c25d78cf37555ae
 
 ## [v2.5.1]
 

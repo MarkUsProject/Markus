@@ -12,10 +12,7 @@ describe GracePeriodSubmissionRule do
     end
 
     context 'when the student did not submit any files' do
-      before do
-        pretend_now_is(collection_time) { grouping }
-      end
-
+      let(:grouping_creation_time) { collection_time }
       let(:submission) { create(:version_used_submission, grouping: grouping, is_empty: true) }
       let(:collection_time) { due_date - 5.days }
 
@@ -30,12 +27,13 @@ describe GracePeriodSubmissionRule do
       end
 
       it 'has an overtime message mentioning the number of credits remaining and the number of credits to use' do
-        pretend_now_is(due_date - 1.day)
-        apply_rule
-        rule_overtime_message = rule.overtime_message(grouping)
-        expected_overtime_message = I18n.t 'grace_period_submission_rules.overtime_message_with_credits_left',
-                                           grace_credits_remaining: 1, grace_credits_to_use: 0
-        expect(rule_overtime_message).to eq expected_overtime_message
+        Timecop.freeze(due_date - 1.day) do
+          apply_rule
+          rule_overtime_message = rule.overtime_message(grouping)
+          expected_overtime_message = I18n.t 'grace_period_submission_rules.overtime_message_with_credits_left',
+                                             grace_credits_remaining: 1, grace_credits_to_use: 0
+          expect(rule_overtime_message).to eq expected_overtime_message
+        end
       end
     end
   end
@@ -43,10 +41,7 @@ describe GracePeriodSubmissionRule do
   context 'when the group submitted during the first penalty period' do
     include_context 'submission_rule_during_first'
     context 'when the student did not submit any files' do
-      before do
-        pretend_now_is(collection_time) { grouping }
-      end
-
+      let(:grouping_creation_time) { collection_time }
       let(:submission) { create(:version_used_submission, grouping: grouping, is_empty: true) }
       let(:collection_time) { due_date + 12.hours }
 
@@ -98,7 +93,6 @@ describe GracePeriodSubmissionRule do
       context 'when submitting on time before grace period of previous assignment is over' do
         before do
           # The Student submits their files before the due date
-          pretend_now_is(due_date - 3.days) { grouping }
           submit_file_at_time(assignment, grouping.group, 'test', (due_date - 2.days).to_s, 'TestFile.java',
                               'Some contents for TestFile.java')
 
@@ -116,8 +110,6 @@ describe GracePeriodSubmissionRule do
       context 'when submitting overtime before the grace period of previous assignment is over' do
         before do
           # The Student submits their files before the due date
-          pretend_now_is(due_date - 3.days) { grouping }
-
           submit_file_at_time(assignment, grouping.group, 'test', (due_date + 10.hours).to_s, 'OvertimeFile1.java',
                               'Some overtime contents')
 
@@ -160,11 +152,12 @@ describe GracePeriodSubmissionRule do
       end
 
       it 'has an overtime message mentioning that there are no credits remaining' do
-        pretend_now_is(due_date + 5.days)
-        apply_rule
-        rule_overtime_message = rule.overtime_message(grouping)
-        expected_overtime_message = I18n.t 'grace_period_submission_rules.overtime_message_without_credits_left'
-        expect(rule_overtime_message).to eq expected_overtime_message
+        Timecop.freeze(due_date + 5.days) do
+          apply_rule
+          rule_overtime_message = rule.overtime_message(grouping)
+          expected_overtime_message = I18n.t 'grace_period_submission_rules.overtime_message_without_credits_left'
+          expect(rule_overtime_message).to eq expected_overtime_message
+        end
       end
     end
 

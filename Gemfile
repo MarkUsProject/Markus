@@ -96,7 +96,7 @@ group :test do
   gem 'shoulda-matchers', '~> 6.0'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
-  gem 'time-warp'
+  gem 'timecop'
   gem 'webmock'
 end
 
