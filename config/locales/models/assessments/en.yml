@@ -9,7 +9,7 @@ en:
         assessment:
           attributes:
             short_identifier:
-              format: '%{attribute} must only contain alphanumeric, hyphen, or underscore characters'
+              format: "%{attribute} must only contain alphanumeric, hyphen, or underscore characters"
     models:
       assessment:
         one: Assessment
