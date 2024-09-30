@@ -1,7 +1,14 @@
 shared_context 'submission_rule' do
   let(:due_date) { Time.zone.parse('July 23 2009 5:00PM') }
   let(:assignment) { create(:assignment, due_date: due_date) }
-  let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+  let(:grouping_creation_time) { due_date - 3.days }
+  let!(:grouping) do
+    g = nil
+    Timecop.freeze grouping_creation_time do
+      g = create(:grouping_with_inviter, assignment: assignment)
+    end
+    g
+  end
   let(:rule) { create(rule_type, assignment: assignment) }
   let(:submission) { Submission.create_by_timestamp(grouping, rule.calculate_collection_time) }
   let(:apply_rule) do
@@ -21,7 +28,6 @@ shared_context 'submission_rule_on_time' do
   include_context 'submission_rule'
   before do
     # The Student submits their files before the due date
-    pretend_now_is(due_date - 3.days) { grouping }
     submit_file_at_time(assignment, grouping.group, 'test', (due_date - 2.days).to_s, 'TestFile.java',
                         'Some contents for TestFile.java')
   end
@@ -31,8 +37,6 @@ shared_context 'submission_rule_during_first' do
   # the submission was submitted during the first penalty period
   include_context 'submission_rule'
   before do
-    pretend_now_is(due_date - 3.days) { grouping }
-
     # Now we're past the due date, but before the collection date.
     submit_file_at_time(assignment, grouping.group, 'test', (due_date + 10.hours).to_s, 'OvertimeFile.java',
                         'Some overtime contents')
@@ -47,8 +51,6 @@ shared_context 'submission_rule_during_second' do
   # the submission was submitted during the second penalty period
   include_context 'submission_rule'
   before do
-    pretend_now_is(due_date - 3.days) { grouping }
-
     # Now we're past the due date, but before the collection date, within the first grace period
     submit_file_at_time(assignment, grouping.group, 'test', (due_date + 10.hours).to_s, 'OvertimeFile1.java',
                         'Some overtime contents')
