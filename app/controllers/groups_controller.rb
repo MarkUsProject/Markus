@@ -64,6 +64,7 @@ class GroupsController < ApplicationController
     end
 
     if existing
+
       # We link the grouping to the group already existing
 
       # We verify there is no other grouping linked to this group on the
@@ -72,9 +73,9 @@ class GroupsController < ApplicationController
       params[:assignment_id] = @assignment.id
 
       if Grouping.exists?(assessment_id: @assignment.id, group_id: groupexist_id)
-        flash.now[:error] = I18n.t('groups.group_name_already_in_use')
-      elsif @existing_group.has_non_empty_submission?
-        flash.now[:error] = I18n.t('groups.group_name_already_in_use_diff_assignment')
+        flash_now(:error, I18n.t('groups.group_name_already_in_use'))
+      elsif @grouping.has_submitted_files? || @grouping.has_non_empty_submission?
+        flash_now(:error, I18n.t('groups.group_name_already_in_use_diff_assignment'))
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end

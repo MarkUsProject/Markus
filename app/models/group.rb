@@ -87,11 +87,6 @@ class Group < ApplicationRecord
     Repository.get_class.access(repo_path, &block)
   end
 
-  # Checks if any of the related groupings have a non-empty submission
-  def has_non_empty_submission?
-    groupings.any?(&:has_non_empty_submission?)
-  end
-
   private
 
   # Set repository name after new group is created
