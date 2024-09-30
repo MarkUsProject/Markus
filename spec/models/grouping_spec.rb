@@ -674,7 +674,7 @@ describe Grouping do
         end
       end
 
-      it 'does not have submitted files' do
+      it 'has submitted files' do
         expect(@grouping.has_submitted_files?).to be true
       end
     end
