@@ -20,6 +20,14 @@ describe Course do
     it { is_expected.to allow_value(false).for(:is_hidden) }
     it { is_expected.not_to allow_value(nil).for(:is_hidden) }
     it { is_expected.to validate_numericality_of(:max_file_size).is_greater_than_or_equal_to(0) }
+
+    it 'fail with error message when invalid name format' do
+      course.name = 'Invalid!@'
+      error_key = 'activerecord.errors.models.course.attributes.name.invalid'
+      expected_error = I18n.t(error_key, attribute: 'Name')
+      expect(course).not_to be_valid
+      expect(course.errors[:name]).to include(expected_error)
+    end
   end
 
   context 'callbacks' do
