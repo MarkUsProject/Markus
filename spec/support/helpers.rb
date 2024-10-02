@@ -24,7 +24,7 @@ module Helpers
   end
 
   def submit_file_at_time(assignment, group, txnname, time, filename, text)
-    pretend_now_is(Time.zone.parse(time)) do
+    Timecop.freeze(Time.zone.parse(time)) do
       group.access_repo do |repo|
         txn = repo.get_transaction(txnname)
         txn = add_file_helper(assignment, txn, filename, text)
