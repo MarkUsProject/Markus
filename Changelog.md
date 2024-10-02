@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Ensured submissions that have been release cannot be recollected from the repo browser (#7254)
 
 ### 🔧 Internal changes
 
