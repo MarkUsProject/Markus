@@ -153,6 +153,16 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     assignment = Assignment.find_by(id: params[:assignment_id])
     @grouping = assignment.groupings.find(params[:grouping_id])
+    released = Grouping.joins(current_submission_used: :results)
+                       .where('results.released_to_students': true)
+                       .where(id: @grouping)
+
+    unless released.empty?
+      flash_message(:error, I18n.t('submissions.collect.could_not_collect_released'))
+      return redirect_to repo_browser_course_assignment_submissions_path(current_course, assignment,
+                                                                         grouping_id: @grouping.id)
+    end
+
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = if params[:apply_late_penalty].nil?
                            false
