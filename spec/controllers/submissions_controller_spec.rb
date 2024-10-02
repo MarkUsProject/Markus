@@ -854,13 +854,48 @@ describe SubmissionsController do
       end
 
       describe '#manually_collect_and_begin_grading' do
-        before do
+        it('it should respond with 302') do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
+                            current_revision_identifier: revision_identifier }
+
+          expect(response).to have_http_status :found
+        end
+
+        it 'should not flash any error messages' do
+          expect_any_instance_of(SubmissionsController).not_to receive(:flash_message)
+            .with(:error, anything)
+
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
                             current_revision_identifier: revision_identifier }
         end
 
-        it('should respond with 302') { expect(response).to have_http_status :found }
+        context 'When a grouping\'s submission has already been released' do
+          before do
+            # mark the existing submission as released
+            last_result = @grouping1.current_submission_used.get_latest_result
+            last_result.released_to_students = true
+            last_result.save
+          end
+
+          it('should respond with 302') do
+            post_as grader, :manually_collect_and_begin_grading,
+                    params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
+                              current_revision_identifier: revision_identifier }
+
+            expect(response).to have_http_status :found
+          end
+
+          it('should flash an error message') do
+            expect_any_instance_of(SubmissionsController).to receive(:flash_message)
+              .with(:error, I18n.t('submissions.collect.could_not_collect_released'))
+
+            post_as grader, :manually_collect_and_begin_grading,
+                    params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
+                              current_revision_identifier: revision_identifier }
+          end
+        end
       end
 
       describe '#update submissions' do
