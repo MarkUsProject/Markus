@@ -1,5 +1,6 @@
 <% route = course_assignment_path(@current_course, assignment.id) %>
 <% assignment_text = "#{h(assignment.short_identifier)}: #{h(assignment.description)}" %>
+<% grace_credits_used = @current_role.grace_credits_used_for(assignment) %>
 <tr>
   <td>
     <%= link_to assignment_text, route %>
@@ -7,6 +8,9 @@
   <td>
     <%= render partial: 'assignments/assignment_date',
                locals: { assignment: assignment } %>
+    <% if grace_credits_used > 0 %>
+      <span><%= I18n.t('assignments.grace_credits_used', grace_credits_used: grace_credits_used).html_safe%></span>
+    <% end %>
   </td>
   <% unless upcoming %>
     <td>

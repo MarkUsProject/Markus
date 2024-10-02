@@ -308,14 +308,6 @@ describe Student do
     end
 
     context 'with grace credits' do
-      before do
-        # setting up an assignment to use grace credits on
-        @assignment = create(:assignment)
-        @grouping = create(:grouping, assignment: @assignment)
-        @membership = create(:student_membership, role: @student, grouping: @grouping,
-                                                  membership_status: StudentMembership::STATUSES[:accepted])
-      end
-
       it 'return remaining normally' do
         expect(@student.remaining_grace_credits).to eq 5
       end
@@ -327,16 +319,34 @@ describe Student do
         create(:grace_period_deduction, membership: membership, deduction: 20)
         expect(@student.remaining_grace_credits).to eq(-25)
       end
+    end
+
+    context 'where there is a grace deduction' do
+      before do
+        # setting up an assignment to use grace credits on
+        @assignment = create(:assignment)
+        @grouping = create(:grouping, assignment: @assignment)
+        @student1 = create(:student)
+        @student2 = create(:student)
+        @membership1 = create(:student_membership, role: @student1, grouping: @grouping,
+                                                   membership_status: StudentMembership::STATUSES[:accepted])
+        @membership2 = create(:student_membership, role: @student2, grouping: @grouping,
+                                                   membership_status: StudentMembership::STATUSES[:inviter])
+        create(:grace_period_deduction, membership: @membership1, deduction: 2)
+      end
 
       it 'returns the correct value of used credits per assessment' do
-        create(:grace_period_deduction, membership: @membership, deduction: 2)
-        expect(@student.grace_credits_used_for(@assignment)).to eq(2)
+        expect(@student1.grace_credits_used_for(@assignment)).to eq(2)
       end
 
       it 'updates remaining grace credits after deductions' do
-        create(:grace_period_deduction, membership: @membership, deduction: 2)
-        expect(@student.remaining_grace_credits).to eq(3)
+        expect(@student1.remaining_grace_credits).to eq(3)
       end
+
+      # it 'deducts grace credits from each group member' do  # How to make this testcase..?
+      #   expect(@student1.remaining_grace_credits).to eq(3)
+      #   expect(@student2.remaining_grace_credits).to eq(3)
+      # end
     end
 
     context 'as a noteable' do

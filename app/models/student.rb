@@ -251,11 +251,9 @@ class Student < Role
   end
 
   def grace_credits_used_for(assessment)
-    grouping = accepted_groupings.find_by(assessment_id: assessment.id)  # Find the grouping for this assessment
+    grouping = accepted_grouping_for(assessment.id)
     return 0 if grouping.nil?  # Return 0 if no grouping exists
-    membership = student_memberships.find_by(grouping_id: grouping.id)  # Find the membership ID for this grouping
-    return 0 if membership.nil? # Return 0 if no membership exists
-    grace_period_deductions.where(membership_id: membership.id).sum(:deduction)
+    grouping.grace_period_deduction_single
   end
 
   # Determine what assessments are visible to the role.

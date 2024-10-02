@@ -18,8 +18,4 @@
       (<%= distance_of_time_in_words_to_now(due_date) %>)
     <% end %>
   <% end %>
-  <% grace_credits_used = @current_role.grace_credits_used_for(assignment) %>
-  <% if grace_credits_used > 0 %>
-    <span> - Grace Credits Used: <%= grace_credits_used %></span>
-  <% end %>
 </div>
