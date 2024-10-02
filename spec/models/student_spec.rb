@@ -332,21 +332,21 @@ describe Student do
                                                    membership_status: StudentMembership::STATUSES[:accepted])
         @membership2 = create(:student_membership, role: @student2, grouping: @grouping,
                                                    membership_status: StudentMembership::STATUSES[:inviter])
-        create(:grace_period_deduction, membership: @membership1, deduction: 2)
+        memberships = @grouping.accepted_student_memberships
+        memberships.each do |membership|  # mimics behaviour from grace_period_submission_rule.rb
+          create(:grace_period_deduction, membership: membership, deduction: 2)
+        end
       end
 
       it 'returns the correct value of used credits per assessment' do
         expect(@student1.grace_credits_used_for(@assignment)).to eq(2)
+        expect(@student2.grace_credits_used_for(@assignment)).to eq(2)
       end
 
-      it 'updates remaining grace credits after deductions' do
+      it 'deducts grace credits from each group member' do
         expect(@student1.remaining_grace_credits).to eq(3)
+        expect(@student2.remaining_grace_credits).to eq(3)
       end
-
-      # it 'deducts grace credits from each group member' do  # How to make this testcase..?
-      #   expect(@student1.remaining_grace_credits).to eq(3)
-      #   expect(@student2.remaining_grace_credits).to eq(3)
-      # end
     end
 
     context 'as a noteable' do
