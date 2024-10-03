@@ -6,10 +6,13 @@
 
 ### ✨ New features and improvements
 
+- Add visual indicator on a per-assignment basis for used grace credits (#7226)
+
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
 - Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
+- Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 
 ### 🔧 Internal changes
 
