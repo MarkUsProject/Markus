@@ -122,13 +122,20 @@ class GradeEntryForm < Assessment
                        .group_by { |x| x[0] }
       num_items = self.grade_entry_items.count
     elsif role.ta?
-      grade_data = role.grade_entry_students
-                       .joins(:user)
-                       .joins(:grades)
-                       .joins(:grade_entry_items)
-                       .where(grade_entry_form: self)
-                       .pluck('users.user_name', 'grade_entry_items.position', 'grades.grade')
-                       .group_by { |x| x[0] }
+      grade_data_sql = "SELECT users.user_name, grade_entry_items.position, grades.grade FROM grade_entry_students
+                   INNER JOIN grade_entry_students_tas
+                   ON grade_entry_students.id = grade_entry_students_tas.grade_entry_student_id
+                   INNER JOIN roles ON roles.id = grade_entry_students.role_id
+                   INNER JOIN users ON users.id = roles.user_id
+                   INNER JOIN grades
+                   ON grades.grade_entry_student_id = grade_entry_students.id
+                   INNER JOIN grade_entry_items ON grade_entry_items.id = grades.grade_entry_item_id
+                   WHERE grade_entry_students_tas.ta_id = #{role.id}
+                   AND grade_entry_students.assessment_id = #{self.id}"
+      grade_data = GradeEntryStudent.find_by_sql(grade_data_sql)
+                                    .map { |x| [x.user_name, x.position, x.grade] }
+                                    .group_by { |x| x[0] }
+
       num_items = self.grade_entry_items.count
     end
 

@@ -385,4 +385,43 @@ describe GradeEntryForm do
       end
     end
   end
+
+  describe 'when TA downloads a csv file of the grades' do
+    let(:ta) { create(:ta) }
+    let!(:student1) { create(:student) }
+    let!(:student2) { create(:student) }
+    let!(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
+
+    it 'correctly displays the marks' do
+      grade_entry_student1 = GradeEntryStudent.find_by(role: student1)
+      grade_entry_student2 = GradeEntryStudent.find_by(role: student2)
+
+      GradeEntryStudentTa.create(grade_entry_student: grade_entry_student1, ta: ta)
+      GradeEntryStudentTa.create(grade_entry_student: grade_entry_student2, ta: ta)
+
+      item2 = create(:grade_entry_item, name: 'Test2', position: 2, grade_entry_form: grade_entry_form_with_data)
+
+      grade_entry_student1.grades.create(grade: Random.rand(item2.out_of), grade_entry_item: item2)
+      grade_entry_student1.save
+
+      grade_entry_student2.grades.create(grade: Random.rand(item2.out_of), grade_entry_item: item2)
+      grade_entry_student2.save
+
+      grade_spreadsheet = grade_entry_form_with_data.export_as_csv(ta)
+      results = CSV.parse(grade_spreadsheet, headers: false).drop(2)
+
+      results.each do |x|
+        mark1 = x[6] == '' ? nil : x[6].to_f
+        mark2 = x[7] == '' ? nil : x[7].to_f
+
+        if x[0] == student1.user_name
+          expect(mark1).to eq(grade_entry_student1.grades.first.grade)
+          expect(mark2).to eq(grade_entry_student1.grades.second.grade)
+        else
+          expect(mark1).to eq(grade_entry_student2.grades.first.grade)
+          expect(mark2).to eq(grade_entry_student2.grades.second.grade)
+        end
+      end
+    end
+  end
 end
