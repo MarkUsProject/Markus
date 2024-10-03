@@ -38,6 +38,10 @@ describe Grouping do
       expect(grouping.has_submission?).to be false
     end
 
+    it 'does not have submitted files' do
+      expect(grouping.has_submitted_files?).to be false
+    end
+
     context 'hidden students' do
       let(:hidden) { create(:student, hidden: true) }
 
@@ -668,6 +672,10 @@ describe Grouping do
           missing_files = @grouping.missing_assignment_files
           expect(missing_files.length).to eq(0)
         end
+      end
+
+      it 'has submitted files' do
+        expect(@grouping.has_submitted_files?).to be true
       end
     end
 

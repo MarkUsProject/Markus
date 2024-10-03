@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 
 ### 🔧 Internal changes
 
