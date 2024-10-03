@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Fix Marks Spreadsheet csv bug (#7257)
 
 ### 🔧 Internal changes
 
