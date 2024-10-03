@@ -7,9 +7,6 @@
 ### ✨ New features and improvements
 
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
-- Improve textviewer rendering speed (#7211)
-- Add periodic roster syncing via LTI (#7178)
-- Allow instructors to assign graders by section (#7179)
 
 ### 🐛 Bug fixes
 
