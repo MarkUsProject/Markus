@@ -854,7 +854,7 @@ describe SubmissionsController do
       end
 
       describe '#manually_collect_and_begin_grading' do
-        it('it should respond with 302') do
+        it 'should respond with 302' do
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
                             current_revision_identifier: revision_identifier }
@@ -863,23 +863,21 @@ describe SubmissionsController do
         end
 
         it 'should not flash any error messages' do
-          expect_any_instance_of(SubmissionsController).not_to receive(:flash_message)
-            .with(:error, anything)
-
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
                             current_revision_identifier: revision_identifier }
+
+          expect(flash[:error]).to be_nil
         end
 
         context 'When a grouping\'s submission has already been released' do
           before do
             # mark the existing submission as released
             last_result = @grouping1.current_submission_used.get_latest_result
-            last_result.released_to_students = true
-            last_result.save
+            last_result.update!(released_to_students: true)
           end
 
-          it('should respond with 302') do
+          it 'should respond with 302' do
             post_as grader, :manually_collect_and_begin_grading,
                     params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
                               current_revision_identifier: revision_identifier }
@@ -887,13 +885,12 @@ describe SubmissionsController do
             expect(response).to have_http_status :found
           end
 
-          it('should flash an error message') do
-            expect_any_instance_of(SubmissionsController).to receive(:flash_message)
-              .with(:error, I18n.t('submissions.collect.could_not_collect_released'))
-
+          it 'should flash an error message' do
             post_as grader, :manually_collect_and_begin_grading,
                     params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
                               current_revision_identifier: revision_identifier }
+
+            expect(flash[:error]).to eq(["<p>#{I18n.t('submissions.collect.could_not_collect_released')}</p>"])
           end
         end
       end
