@@ -635,9 +635,10 @@ describe CoursesController do
     end
 
     it 'enqueues a job' do
-      post_as instructor, :sync_roster,
-              params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
-      expect { LtiRosterSyncJob.perform_later }.to have_enqueued_job
+      expect do
+        post_as instructor, :sync_roster,
+                params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
+      end.to have_enqueued_job
     end
 
     it 'creates a schedule' do

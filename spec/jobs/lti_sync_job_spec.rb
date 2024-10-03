@@ -37,7 +37,7 @@ describe LtiSyncJob do
   context 'when running as a background job, with an lti line item' do
     before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
 
-    let(:job_args) { [[lti_deployment.id], assessment] }
+    let(:job_args) { [[lti_deployment.id], assessment, assessment.course] }
 
     include_examples 'background job'
   end

@@ -1,6 +1,6 @@
 describe UpdateRepoPermissionsJob do
   context 'when running as a background job' do
-    let(:job_args) { [] }
+    let(:job_args) { ['MemoryRepository'] }
 
     before { redis.del('repo_permissions') }
 
