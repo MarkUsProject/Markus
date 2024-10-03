@@ -185,6 +185,140 @@ describe SubmissionsJob do
     end
   end
 
+  context 'when collecting submissions with retain_existing_grading set to true' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+
+    before do
+      # explicit storing and freezing here or it reloads this and we can't
+      # compare to the old one
+      @original_submissions = assignment.current_submissions_used.to_a
+      @original_results = assignment.current_results.to_a
+
+      SubmissionsJob.perform_now(assignment.groupings, retain_existing_grading: true)
+
+      @new_submissions = assignment.reload.current_submissions_used
+      @new_results = assignment.reload.current_results
+    end
+
+    it 'creates the correct number of new submissions' do
+      # still the same number of groupings => the same number of submissions
+      expect(@new_submissions.size).to eq(@original_submissions.size)
+      expect(@new_submissions.ids).not_to eq(@original_submissions.map(&:id))
+    end
+
+    it 'creates the correct number of new results' do
+      # still the same number of submissions => the same number of results
+      expect(@new_results.size).to eq(@original_results.size)
+      expect(@new_results.ids).not_to eq(@original_results.map(&:id))
+    end
+
+    context 'for automated tests' do
+      let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+
+      it 'creates the correct number of new test runs for each new submission' do
+        @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+          expect(new_submission.test_runs.size).to eq(old_submission.test_runs.size)
+          expect(new_submission.test_runs.ids).not_to eq(old_submission.test_runs.ids)
+        end
+      end
+
+      it 'creates the correct number of new test group results for each test run in each submission' do
+        @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+          new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
+            expect(new_test_run.test_group_results.size).to eq(old_test_run.test_group_results.size)
+            expect(new_test_run.test_group_results.ids).not_to eq(old_test_run.test_group_results.ids)
+          end
+        end
+      end
+
+      it 'creates the correct number of test results in each test group result for each test run in each submission' do
+        @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+          new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
+            new_test_run.test_group_results.zip(old_test_run.test_group_results).each do |old_tgr, new_tgr|
+              expect(new_tgr.test_results.size).to eq(old_tgr.test_results.size)
+              expect(new_tgr.test_results.ids).not_to eq(old_tgr.test_results.ids)
+            end
+          end
+        end
+      end
+    end
+
+    context 'for each new result that is created' do
+      context 'for remark data' do
+        let(:assignment) { create(:assignment_with_criteria_and_results_with_remark) }
+
+        it 'does not copy over remark information' do
+          expect(@new_results.all? { |result| result.remark_request_submitted_at.nil? }).to be(true)
+        end
+
+        it 'retains the marks from each original submission\'s original result' do
+          @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+            # the last result in each submission is the original one in the old submission
+            expect(new_submission.current_result.marks.map(&:mark)).to eq(old_submission
+              .get_original_result.marks.map(&:mark))
+          end
+        end
+      end
+
+      context 'for marks' do
+        it 'creates the correct number of new marks for each result' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.marks.size).to eq(old_result.marks.size)
+            expect(new_result.marks.ids).not_to eq(old_result.marks.ids)
+          end
+        end
+
+        it 'retains the correct mark values for each result' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.marks.map(&:mark)).to eq(old_result.marks.map(&:mark))
+          end
+        end
+      end
+
+      context 'for annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+
+        it 'creates the correct number of new annotations for each result' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.annotations.size).to eq(old_result.annotations.size)
+            expect(new_result.annotations.ids).not_to eq(old_result.annotations.ids)
+          end
+        end
+
+        it 'retains the mark deductions from deductive annotations' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.marks.map(&:calculate_deduction)).to eq(old_result.marks.map(&:calculate_deduction))
+          end
+        end
+
+        it 'retains the text from each annotation' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.annotations.map { |a| a.annotation_text.content }).to eq(old_result.annotations.map do |a|
+              a.annotation_text.content
+            end)
+          end
+        end
+      end
+
+      context 'for extra marks' do
+        let(:assignment) { create(:assignment_with_criteria_and_results_and_extra_marks) }
+
+        it 'creates the correct number of new extra marks for each result' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.extra_marks.size).to eq(old_result.extra_marks.size)
+            expect(new_result.extra_marks.ids).not_to eq(old_result.extra_marks.ids)
+          end
+        end
+
+        it 'retains the correct mark values for each result' do
+          @new_results.zip(@original_results).each do |new_result, old_result|
+            expect(new_result.extra_marks.map(&:extra_mark)).to eq(old_result.extra_marks.map(&:extra_mark))
+          end
+        end
+      end
+    end
+  end
+
   context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
     let(:instructor) { create(:instructor) }
     let(:instructor2) { create(:instructor) }

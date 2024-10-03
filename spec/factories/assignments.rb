@@ -210,4 +210,12 @@ FactoryBot.define do
       create_list(:test_group, 3, assignment: a)
     end
   end
+
+  factory :assignment_with_criteria_and_results_and_extra_marks, parent: :assignment_with_criteria_and_results do
+    after(:create) do |a|
+      a.groupings.each do |grouping|
+        create(:extra_mark_points, result: grouping.current_result)
+      end
+    end
+  end
 end
