@@ -38,7 +38,6 @@
 ### 🔧 Internal changes
 
 - Manually specify chromedriver port number in Github actions (#7209)
->>>>>>> e25fe1b0484947dac2830b5a0c25d78cf37555ae
 
 ## [v2.5.1]
 
