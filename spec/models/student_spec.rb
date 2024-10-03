@@ -321,6 +321,34 @@ describe Student do
       end
     end
 
+    context 'where there is a grace deduction' do
+      before do
+        # setting up an assignment to use grace credits on
+        @assignment = create(:assignment)
+        @grouping = create(:grouping, assignment: @assignment)
+        @student1 = create(:student)
+        @student2 = create(:student)
+        @membership1 = create(:student_membership, role: @student1, grouping: @grouping,
+                                                   membership_status: StudentMembership::STATUSES[:accepted])
+        @membership2 = create(:student_membership, role: @student2, grouping: @grouping,
+                                                   membership_status: StudentMembership::STATUSES[:inviter])
+        memberships = @grouping.accepted_student_memberships
+        memberships.each do |membership|  # mimics behaviour from grace_period_submission_rule.rb
+          create(:grace_period_deduction, membership: membership, deduction: 2)
+        end
+      end
+
+      it 'returns the correct value of used credits per assessment' do
+        expect(@student1.grace_credits_used_for(@assignment)).to eq(2)
+        expect(@student2.grace_credits_used_for(@assignment)).to eq(2)
+      end
+
+      it 'deducts grace credits from each group member' do
+        expect(@student1.remaining_grace_credits).to eq(3)
+        expect(@student2.remaining_grace_credits).to eq(3)
+      end
+    end
+
     context 'as a noteable' do
       it 'display for note without seeing an exception' do
         expect(@student.display_for_note).not_to be_nil

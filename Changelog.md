@@ -6,6 +6,8 @@
 
 ### ✨ New features and improvements
 
+- Add visual indicator on a per-assignment basis for used grace credits (#7226)
+
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
