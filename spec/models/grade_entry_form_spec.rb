@@ -392,7 +392,7 @@ describe GradeEntryForm do
     let!(:student2) { create(:student) }
     let!(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
 
-    it 'correctly displays the marks' do
+    before do
       grade_entry_student1 = GradeEntryStudent.find_by(role: student1)
       grade_entry_student2 = GradeEntryStudent.find_by(role: student2)
 
@@ -410,18 +410,22 @@ describe GradeEntryForm do
       grade_spreadsheet = grade_entry_form_with_data.export_as_csv(ta)
       results = CSV.parse(grade_spreadsheet, headers: false).drop(2)
 
+      @res_marks = {}
       results.each do |x|
         mark1 = x[6] == '' ? nil : x[6].to_f
         mark2 = x[7] == '' ? nil : x[7].to_f
-
-        if x[0] == student1.user_name
-          expect(mark1).to eq(grade_entry_student1.grades.first.grade)
-          expect(mark2).to eq(grade_entry_student1.grades.second.grade)
-        else
-          expect(mark1).to eq(grade_entry_student2.grades.first.grade)
-          expect(mark2).to eq(grade_entry_student2.grades.second.grade)
-        end
+        @res_marks[x[0]] = [mark1, mark2]
       end
+
+      @student_marks = {}
+      @student_marks[student1.user.user_name] =
+        [grade_entry_student1.grades.first.grade, grade_entry_student1.grades.second.grade]
+      @student_marks[student2.user.user_name] =
+        [grade_entry_student2.grades.first.grade, grade_entry_student2.grades.second.grade]
+    end
+
+    it 'correctly displays the marks' do
+      expect(@res_marks).to eq(@student_marks)
     end
   end
 end
