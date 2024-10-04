@@ -32,6 +32,15 @@ describe AnnotationCategory do
         category.flexible_criterion_id = other_criterion.id
         expect(category).to be_valid
       end
+
+      it 'throws error when flexible_criterion_id not in assignment_criteria' do
+        invalid_criterion_id = assignment.criteria.maximum(:id) + 1
+        category.flexible_criterion_id = invalid_criterion_id
+        expect(category).not_to be_valid
+        error_key = 'activerecord.errors.models.annotation_category.attributes.flexible_criterion_id.inclusion'
+        expected_error = I18n.t(error_key, value: invalid_criterion_id)
+        expect(category.errors[:flexible_criterion_id]).to include(expected_error)
+      end
     end
   end
 

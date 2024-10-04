@@ -8,6 +8,9 @@ en:
     errors:
       models:
         annotation_category:
+          attributes:
+            flexible_criterion_id:
+              inclusion: "%{value} is an invalid criterion for this assignment."
           cannot_update_flex: Cannot update annotation category flexible criterion once results are released
     models:
       annotation_category:

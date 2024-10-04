@@ -25,8 +25,7 @@ class User < ApplicationRecord
   validates :id_number, uniqueness: { allow_nil: true }
   validates :time_zone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
   validates :user_name,
-            format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                      message: 'user_name must be alphanumeric, hyphen, or underscore' },
+            format: { with: /\A[a-zA-Z0-9\-_]+\z/ },
             unless: ->(u) { u.autotest_user? || u.admin_user? }
 
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
