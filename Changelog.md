@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.5.3]
+
+### 🐛 Bug fixes
+
+- Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
+
 ## [v2.5.2]
 
 ### ✨ New features and improvements
