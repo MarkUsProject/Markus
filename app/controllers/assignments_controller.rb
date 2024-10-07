@@ -628,7 +628,7 @@ class AssignmentsController < ApplicationController
   def create_lti_grades
     assessment = record
     lti_deployments = LtiDeployment.where(course: assessment.course, id: params[:lti_deployments])
-    @current_job = LtiSyncJob.perform_later(lti_deployments.to_a, assessment, current_course,
+    @current_job = LtiSyncJob.perform_later(lti_deployments.to_a, assessment,
                                             can_create_users: allowed_to?(:lti_manage?, with: UserPolicy),
                                             can_create_roles: allowed_to?(:manage?, with: RolePolicy))
     session[:job_id] = @current_job.job_id
