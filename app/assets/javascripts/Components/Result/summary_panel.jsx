@@ -299,7 +299,7 @@ export class SummaryPanel extends React.Component {
             {I18n.t("results.marks_chart")}
           </button>
         </p>
-        <aside className="dialog data-chart-container" id={"marks_chart"} style={style}>
+        <aside className="markus-dialog data-chart-container" id={"marks_chart"} style={style}>
           <DataChart
             labels={this.state.labels}
             datasets={this.state.datasets}

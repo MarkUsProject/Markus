@@ -47,7 +47,7 @@ class LtiRosterModal extends React.Component {
     return (
       <div>
         <Modal
-          className="react-modal dialog"
+          className="react-modal markus-dialog"
           isOpen={this.props.isOpen}
           onRequestClose={this.props.onRequestClose}
         >

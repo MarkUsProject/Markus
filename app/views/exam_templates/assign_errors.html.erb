@@ -1,13 +1,3 @@
-<% content_for :head do %>
-  <%= stylesheet_link_tag 'result_main' %>
-  <%= stylesheet_link_tag 'result' %>
-
-  <%= javascript_include_tag 'result', nonce: true %>
-  <%= javascript_tag nonce: true do -%>
-    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
-  <% end -%>
-<% end %>
-
 <%= javascript_tag nonce: true do %>
 <%= render partial: 'exam_templates/assign_errors',
            formats: [:js],
