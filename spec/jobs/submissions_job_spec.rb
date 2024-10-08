@@ -212,31 +212,47 @@ describe SubmissionsJob do
       expect(@new_results.ids).not_to eq(@original_results.map(&:id))
     end
 
-    context 'for automated tests' do
+    context 'for automated tests on each new submission' do
       let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
-      it 'creates the correct number of new test runs for each new submission' do
+      it 'creates the correct number of new test runs' do
         @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
           expect(new_submission.test_runs.size).to eq(old_submission.test_runs.size)
           expect(new_submission.test_runs.ids).not_to eq(old_submission.test_runs.ids)
         end
       end
 
-      it 'creates the correct number of new test group results for each test run in each submission' do
-        @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
-          new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
-            expect(new_test_run.test_group_results.size).to eq(old_test_run.test_group_results.size)
-            expect(new_test_run.test_group_results.ids).not_to eq(old_test_run.test_group_results.ids)
+      context 'for each new test run' do
+        it 'creates the correct number of new test group results' do
+          @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+            new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
+              expect(new_test_run.test_group_results.size).to eq(old_test_run.test_group_results.size)
+              expect(new_test_run.test_group_results.ids).not_to eq(old_test_run.test_group_results.ids)
+            end
           end
         end
-      end
 
-      it 'creates the correct number of test results in each test group result for each test run in each submission' do
-        @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
-          new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
-            new_test_run.test_group_results.zip(old_test_run.test_group_results).each do |old_tgr, new_tgr|
-              expect(new_tgr.test_results.size).to eq(old_tgr.test_results.size)
-              expect(new_tgr.test_results.ids).not_to eq(old_tgr.test_results.ids)
+        context 'for each new test group results' do
+          it 'creates the correct number of new test results' do
+            @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+              new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
+                new_test_run.test_group_results.zip(old_test_run.test_group_results).each do |old_tgr, new_tgr|
+                  expect(new_tgr.test_results.size).to eq(old_tgr.test_results.size)
+                  expect(new_tgr.test_results.ids).not_to eq(old_tgr.test_results.ids)
+                end
+              end
+            end
+          end
+
+          it 'creates the correct number of new feedback files' do
+            # PRANAV TODO: create new assignment with feedback files
+            @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
+              new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
+                new_test_run.test_group_results.zip(old_test_run.test_group_results).each do |old_tgr, new_tgr|
+                  expect(new_tgr.feedback_files.size).to eq(old_tgr.feedback_files.size)
+                  expect(new_tgr.feedback_files.ids).not_to eq(old_tgr.feedback_files.ids)
+                end
+              end
             end
           end
         end
