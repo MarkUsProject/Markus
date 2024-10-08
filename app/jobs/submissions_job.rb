@@ -39,7 +39,19 @@ class SubmissionsJob < ApplicationJob
       end
     end
 
-    # copy over old test data, which are on the submission instead of the result
+    # amend submission file ids for annotations (new submission files are
+    # created for each submission)
+    new_result.reload.annotations.each do |annotation|
+      filename = annotation.submission_file.filename
+      path = annotation.submission_file.path
+
+      new_submission_file_id = new_submission.submission_files.where(filename: filename, path: path).first.id
+
+      annotation.update(submission_file_id: new_submission_file_id)
+      add_warning_messages(annotation.errors.full_messages) if annotation.errors.present?
+    end
+
+    # copy over old automated test data
     old_submission.test_runs.each do |test_run|
       test_run_dup = test_run.dup
       test_run_dup.update(submission_id: new_submission.id)
@@ -58,6 +70,14 @@ class SubmissionsJob < ApplicationJob
           test_result_dup.update(test_group_result_id: test_group_result_dup.id)
 
           add_warning_messages(test_result_dup.errors.full_messages) if test_result_dup.errors.present?
+        end
+
+        # PRANAV TODO: add the same thing for the submission level, but don't copy files twice
+        test_group_result.feedback_files.each do |feedback_file|
+          feedback_file_dup = feedback_file.dup
+          feedback_file_dup.update(test_group_result_id: test_group_result_dup.id)
+
+          add_warning_messages(feedback_file_dup.errors.full_messages) if feedback_file_dup.errors.present?
         end
       end
     end
