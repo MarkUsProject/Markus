@@ -13,6 +13,7 @@
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
 - Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
+- Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
 
 ### 🔧 Internal changes
 
@@ -25,6 +26,7 @@
 - Fix flaky `check_repo_permissions` test (#7223)
 - Move model validation error messages to respective localization files (#7229)
 - Replace time-warp gem with newer, maintained timecop gem (#7234)
+- Update pre-commit-hooks to v5.0 and add checks `check-illegal-windows-names`, `check-json`, and `check-merge-conflict` (#7259)
 - Improve descriptions of the Group and Grouping models (#7262)
 
 ## [v2.5.2]
