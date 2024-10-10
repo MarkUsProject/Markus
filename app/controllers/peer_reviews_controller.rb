@@ -157,7 +157,11 @@ class PeerReviewsController < ApplicationController
         return
       end
     when 'unassign'
-      PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+      reviews_deleted = PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+      unless reviews_deleted
+        flash_now(:error, 'Cannot delete peer review(s) because it has marks or annotations')
+        return
+      end
     else
       head :bad_request
       return
