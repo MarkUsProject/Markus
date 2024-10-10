@@ -1,8 +1,15 @@
 <div class='float-right'>
+
+  <% released = !criterion.results_unreleased? %>
+
+  <% if released %>
+    <span class="button disabled"><%= t('rubric_criteria.level.add') %></span>
+  <% else %>
   <%= link_to t('rubric_criteria.level.add'),
               '#',
               class: 'button',
               id: 'add-criterion-level' %>
+  <% end %>
 
   <%= button_to "#{t(:delete)} #{Criterion.model_name.human}",
                 course_criterion_path(@current_course, criterion),
@@ -11,7 +18,9 @@
                 class: 'delete',
                 form_class: 'display-inline-block',
                 title: t('helpers.submit.delete', model: Criterion.model_name.human),
-                remote: true %>
+                remote: true,
+                disabled: released
+                %>
 </div>
 
 <h2>
@@ -25,18 +34,19 @@
              remote: true do |f| %>
 
   <div class='main_rubric_criteria_edit'>
+                    <!-- TODO -->
     <p id="<%= "criterion_inputs_#{criterion.id}" %>">
       <%= f.label :name, Criterion.human_attribute_name(:name) %>
-      <%= f.text_field :name %>
+      <%= f.text_field :name, readonly: released %>
     </p>
     <p>
       <%= f.label :max_mark, Criterion.human_attribute_name(:max_mark) %>
-      <%= f.number_field :max_mark, value: "#{criterion.max_mark}", step: 0.1 %>
+      <%= f.number_field :max_mark, value: "#{criterion.max_mark}", step: 0.1, readonly: released %>
     </p>
     <p>
       <%= f.label :bonus,
                   Criterion.human_attribute_name(:bonus) %>
-      <%= f.check_box :bonus %>
+      <%= f.check_box :bonus, { disabled: released } %>
     </p>
     <% if criterion.assignment.assignment_files.exists? %>
       <span id="<%= "criterion_inputs_#{criterion.id}" %>">
@@ -51,12 +61,12 @@
     <div class='inline-labels'>
       <%= f.label :ta_visible,
                   Criterion.human_attribute_name(:ta_visible) %>
-      <%= f.check_box :ta_visible %>
+      <%= f.check_box :ta_visible, { disabled: released } %>
       <%= f.label :peer_visible,
                   Criterion.human_attribute_name(:peer_visible) %>
-      <%= f.check_box :peer_visible %>
+      <%= f.check_box :peer_visible, { disabled: released } %>
     </div>
-    <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
+    <p><%= f.submit t(:save), data: { disable_with: t('working') }, disabled: released %></p>
   </div>
 
   <div id='rubric-criteria-levels' class='rubric-criteria-levels'>

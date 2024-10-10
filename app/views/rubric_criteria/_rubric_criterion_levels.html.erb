@@ -3,7 +3,7 @@
                method: :patch, remote: true do |criterion_form| %>
     <%= criterion_form.fields_for :levels, criterion_form.object.levels.order(:mark) do |level_form| %>
       <%= render partial: 'rubric_criteria/rubric_criterion_level',
-                 locals: { level_form: level_form } %>
+                 locals: { level_form: level_form, criterion: criterion } %>
     <% end %>
   <% end %>
 </div>
