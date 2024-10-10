@@ -1,6 +1,8 @@
 require 'set'
 
-# Represents a collection of students working together on an assignment in a group
+# Represents a grouping of students working together on a single assignment. This model manages various aspects of the
+# grouping's work, such as submissions, peer reviews, test runs, and repository management. A Grouping belongs to a
+# group and an assignment and can share a repository with other groupings.
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
