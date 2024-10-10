@@ -69,17 +69,41 @@ class PeerReview < ApplicationRecord
   end
 
   def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    delete_all_reviews = true
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each_key do |reviewer_id|
         reviewee_group = Grouping.find_by(id: reviewee_id)
         reviewer_group = Grouping.find_by(id: reviewer_id)
-        self.delete_peer_review_between(reviewer_group, reviewee_group)
+
+        unless reviewee_group.nil? || reviewer_group.nil?
+          peer_review = reviewer_group.review_for(reviewee_group)
+          unless peer_review.nil?
+            if peer_review.has_marks_or_annotations?
+              delete_all_reviews = false
+              next # Do not delete this peer review
+            else  # Safe to delete this peer review
+              self.delete_peer_review_between(reviewer_group, reviewee_group)
+            end
+          end
+        end
       end
     end
 
-    self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
+    if delete_all_reviews
+      self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
+    end
+    delete_all_reviews # return whether all reviews were deleted
   end
+
+  def has_marks_or_annotations?
+    result = self.result
+    result.marking_state == Result::MARKING_STATES[:complete] ||
+           result.marks.where.not(mark: 0).exists? ||
+           result.annotations.exists?
+  end
+  # delete the print statements, add a popup message explaining why the unassign did not happen.
+  # for presentation: porter has annotation, bennet has completed, martin has nothing.
 
   def self.get_num_collected(reviewer_group)
     Grouping.joins(peer_reviews: :reviewee)
