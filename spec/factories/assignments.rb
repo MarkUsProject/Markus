@@ -218,4 +218,38 @@ FactoryBot.define do
       end
     end
   end
+
+  factory :assignment_with_criteria_and_results_and_feedback_files, parent: :assignment_with_criteria_and_results do
+    after(:create) do |a|
+      a.current_submissions_used.each do |s|
+        create_list(:feedback_file, 3, submission: s)
+      end
+    end
+  end
+
+  factory :assignment_with_criteria_and_test_results_and_feedback_files,
+          parent: :assignment_with_criteria_and_test_results do
+    after(:create) do |a|
+      a.groupings.each do |g|
+        g.test_runs.each do |tr|
+          tr.test_group_results.each do |tgr|
+            create(:feedback_file, test_group_result: tgr)
+          end
+        end
+      end
+    end
+  end
+
+  factory :assignment_with_deductive_annotations_and_submission_files, parent: :assignment_with_deductive_annotations do
+    after(:create) do |a|
+      # actually add files to the repository rather than just mock them, so that if the submission is manipulated (e.g.
+      # if it's recollected) the filenames are preserved
+      a.groupings.each do |grouping|
+        grouping.update(group: create(:group_with_files_submitted,
+                                      submission_files: grouping.current_submission_used.submission_files
+                                                                .map(&:filename),
+                                      assignment: a))
+      end
+    end
+  end
 end
