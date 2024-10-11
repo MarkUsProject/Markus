@@ -45,7 +45,7 @@ export class GraderDistributionModal extends React.Component {
   render() {
     return (
       <Modal
-        className="react-modal dialog"
+        className="react-modal markus-dialog"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
