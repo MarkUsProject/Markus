@@ -14,6 +14,7 @@ class SubmissionsJob < ApplicationJob
                              .order(created_at: :desc)
                              .first
 
+    # no old submissions => this option does nothing
     return if old_submission.nil?
 
     old_result = old_submission.non_pr_results
@@ -26,9 +27,10 @@ class SubmissionsJob < ApplicationJob
       { old: old_result.extra_marks, new: new_result.extra_marks }
     ]
 
-    # copy over data from old result
+    # copy over data from old result to new result
     result_data.each do |result_set|
-      # get rid of the existing empty records so we can replace them
+      # get rid of the existing empty records so we can replace them; some results
+      # have default models created, so this is necessary
       result_set[:new].destroy_all
 
       result_set[:old].each do |record|
@@ -45,10 +47,26 @@ class SubmissionsJob < ApplicationJob
       filename = annotation.submission_file.filename
       path = annotation.submission_file.path
 
-      new_submission_file_id = new_submission.submission_files.where(filename: filename, path: path).first.id
+      new_submission_file = new_submission.submission_files.where(filename: filename, path: path).first
 
-      annotation.update(submission_file_id: new_submission_file_id)
+      # if we can't find a matching file for a file-bound annotation, we assume
+      # the file has been modified or removed in the collected revision and
+      # discard this annotation
+      if new_submission_file.nil?
+        annotation.destroy!
+        next
+      end
+
+      annotation.update(submission_file_id: new_submission_file.id)
       add_warning_messages(annotation.errors.full_messages) if annotation.errors.present?
+    end
+
+    # copy over feedback files associated with the submission
+    old_submission.feedback_files.each do |feedback_file|
+      feedback_file_dup = feedback_file.dup
+      feedback_file_dup.update(submission_id: new_submission.id)
+
+      add_warning_messages(feedback_file_dup.errors.full_messages) if feedback_file_dup.errors.present?
     end
 
     # copy over old automated test data
@@ -72,7 +90,6 @@ class SubmissionsJob < ApplicationJob
           add_warning_messages(test_result_dup.errors.full_messages) if test_result_dup.errors.present?
         end
 
-        # PRANAV TODO: add the same thing for the submission level, but don't copy files twice
         test_group_result.feedback_files.each do |feedback_file|
           feedback_file_dup = feedback_file.dup
           feedback_file_dup.update(test_group_result_id: test_group_result_dup.id)
