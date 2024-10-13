@@ -80,7 +80,11 @@ export class FeedbackFilePanel extends React.Component {
           {feedbackSelector}
           {download_feedback_file}
         </div>
-        <div id="feedback_file_content" key={"feedback-file-view"}>
+        <div
+          id="feedback_file_content"
+          className="text-viewer-container"
+          key={"feedback-file-view"}
+        >
           <FileViewer
             assignment_id={this.props.assignment_id}
             submission_id={this.props.submission_id}
