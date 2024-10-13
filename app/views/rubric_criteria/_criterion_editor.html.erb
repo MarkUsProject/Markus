@@ -34,7 +34,6 @@
              remote: true do |f| %>
 
   <div class='main_rubric_criteria_edit'>
-                    <!-- TODO -->
     <p id="<%= "criterion_inputs_#{criterion.id}" %>">
       <%= f.label :name, Criterion.human_attribute_name(:name) %>
       <%= f.text_field :name, readonly: released %>
