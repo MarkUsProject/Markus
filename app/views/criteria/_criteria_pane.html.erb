@@ -1,4 +1,6 @@
-<div class='listings sortable'>
+<% marks_unreleased = @assignment.released_marks.blank? %>
+
+<div class='listings sorted-list <%= 'sortable' if marks_unreleased %>'>
   <header>
     <span class='left'><%= Criterion.model_name.human %></span>
     <span class='center'>

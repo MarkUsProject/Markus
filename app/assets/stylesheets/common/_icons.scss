@@ -59,3 +59,11 @@ a[role='button'] > .fa-layers {
   height: 20px;
   margin-right: 1em;
 }
+
+.sorted-list:not(.sortable) .fa-grip-vertical {
+  display: none; /* This hides the icon */
+}
+
+// .unsortable .fa-grip-vertical {
+//   display: none;
+// }
