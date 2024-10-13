@@ -663,62 +663,6 @@ kbd {
 }
 
 // Sortable lists
-
-// .sortable {
-//   header {
-//     border-bottom: 1px solid $primary-two;
-//     border-radius: $radius $radius 0 0;
-//     font-weight: 600;
-//     padding: 0.5em;
-//     text-align: left;
-//     text-transform: uppercase;
-//   }
-
-//   .right {
-//     min-height: 33%;
-//     min-width: 16%;
-//   }
-
-//   .left {
-//     float: left;
-//     min-height: 33%;
-//     min-width: 55%;
-//   }
-
-//   .center {
-//     display: inline-block;
-//     min-height: 33%;
-//     min-width: 27%;
-//   }
-
-//   ul {
-//     margin: 0;
-//     padding: 0;
-
-//     li {
-//       border-top: 1px solid $line;
-//       list-style: none;
-//       min-height: 2.5em;
-//       padding: 0.5em;
-//       transition: background-color $time-quick;
-//       position: relative;
-
-//       &:hover {
-//         background-color: $background-support;
-//       }
-
-//       &:last-child {
-//         border-radius: 0 0 $radius $radius;
-//       }
-
-//       &.new {
-//         background: none;
-//       }
-
-//     }
-//   }
-// }
-
 .sorted-list {
   header {
     border-bottom: 1px solid $primary-two;
