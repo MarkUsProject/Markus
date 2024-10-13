@@ -476,12 +476,14 @@ class SubmissionsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:submission_file_id])
+    file_size = file.retrieve_file.size
+    max_size = params[:max_size].blank? ? -1 : params[:max_size].to_i
     if file.is_supported_image?
-      render json: { type: 'image' }
+      render json: { type: 'image', size: file_size }
     elsif file.is_pdf?
-      render json: { type: 'pdf' }
+      render json: { type: 'pdf', size: file_size }
     elsif file.is_pynb?
-      render json: { type: 'jupyter-notebook' }
+      render json: { type: 'jupyter-notebook', size: file_size }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -502,7 +504,12 @@ class SubmissionsController < ApplicationController
             file_type = 'binary'
           end
         end
-        render json: { content: file_contents.to_json, type: file_type }
+        # Omit content if it exceeds the maximum size requests by the client
+        render json: {
+          content: file_size <= max_size || max_size == -1 ? file_contents.to_json : '',
+          type: file_type,
+          size: file_size
+        }
       end
     end
   end
