@@ -702,7 +702,7 @@ kbd {
 //       padding: 0.5em;
 //       transition: background-color $time-quick;
 //       position: relative;
-    
+
 //       &:hover {
 //         background-color: $background-support;
 //       }
@@ -718,7 +718,6 @@ kbd {
 //     }
 //   }
 // }
-
 
 .sorted-list {
   header {
@@ -772,8 +771,6 @@ kbd {
     }
   }
 }
-
-
 
 .separate-listing {
   margin-top: 20px;
@@ -1375,12 +1372,10 @@ nav {
   display: flex;
   gap: 1em;
 
-
   .rubric-criteria-levels {
     border-left: 1px solid $line;
     border-right: 1px solid $line;
     border-top: 1px solid $line;
-    
 
     .level {
       padding: 0.5em;
