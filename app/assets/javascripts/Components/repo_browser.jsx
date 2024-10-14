@@ -87,6 +87,7 @@ class RepoBrowser extends React.Component {
           late_penalty={this.props.late_penalty}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
+          collected_revision_id={this.props.collected_revision_id}
         />
       );
     }
@@ -175,17 +176,19 @@ class ManualCollectionForm extends React.Component {
               {I18n.t("submissions.collect.apply_late_penalty")}
             </label>
           </p>
-          <div className="inline-labels" style={{marginBottom: "1em"}}>
-            <input
-              type="checkbox"
-              name="retain_existing_grading"
-              checked={this.state.retainExistingGrading}
-              onChange={e => {
-                this.setState({retainExistingGrading: e.target.checked});
-              }}
-            />
-            <label>{I18n.t("submissions.collect.retain_existing_grading")}</label>
-          </div>
+          {this.props.collected_revision_id && (
+            <div className="inline-labels" style={{marginBottom: "1em"}}>
+              <input
+                type="checkbox"
+                name="retain_existing_grading"
+                checked={this.state.retainExistingGrading}
+                onChange={e => {
+                  this.setState({retainExistingGrading: e.target.checked});
+                }}
+              />
+              <label>{I18n.t("submissions.collect.retain_existing_grading")}</label>
+            </div>
+          )}
           <button
             type="submit"
             name="commit"
