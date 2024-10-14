@@ -27,7 +27,7 @@ class CollectSubmissionsModal extends React.Component {
       this.state.collect_time === "collect_current",
       // Always apply late penalty when collecting based on due date
       this.state.apply_late_penalty || this.state.collect_time === "collect_due_date",
-      this.state.retain_existing_grading
+      this.state.override && this.state.retain_existing_grading
     );
   };
 
@@ -102,7 +102,12 @@ class CollectSubmissionsModal extends React.Component {
               <legend>{I18n.t("submissions.collect.collection_options")}</legend>
               <p>
                 <label>
-                  <input type="checkbox" name="override" onChange={this.handleOverrideChange} />
+                  <input
+                    type="checkbox"
+                    defaultChecked={this.state.override}
+                    name="override"
+                    onChange={this.handleOverrideChange}
+                  />
                   &nbsp;
                   <span>{I18n.t("submissions.collect.override_existing")}</span>
                 </label>
