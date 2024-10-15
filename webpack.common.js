@@ -9,7 +9,6 @@ module.exports = {
     light_theme: "./app/javascript/light_theme.js",
     markus_notebook: "./app/javascript/markus_notebook.js",
     "pdf.worker": "pdfjs-dist/build/pdf.worker.mjs",
-    result: "./app/javascript/result.js",
   },
   module: {
     rules: [

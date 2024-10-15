@@ -27,6 +27,9 @@
 - Move model validation error messages to respective localization files (#7229)
 - Replace time-warp gem with newer, maintained timecop gem (#7234)
 - Update pre-commit-hooks to v5.0 and add checks `check-illegal-windows-names`, `check-json`, and `check-merge-conflict` (#7259)
+- Merge result.js and result_main.css build files into application.js/application.css (#7260)
+- Simplify pdf.js configuration (#7260)
+- Improve descriptions of the Group and Grouping models (#7262)
 
 ## [v2.5.2]
 

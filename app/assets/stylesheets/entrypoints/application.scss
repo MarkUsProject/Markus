@@ -4,6 +4,11 @@
 @use 'common/pdfjs_custom';
 @use 'common/core';
 
+// Stylesheets used in grading views
+@use 'grader';
+@use 'context_menu';
+@use 'common/codeviewer';
+
 @use 'flatpickr/dist/flatpickr.min';
 @use 'react-table/react-table';
 @use 'react-tabs/style/react-tabs';

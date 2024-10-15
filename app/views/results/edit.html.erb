@@ -1,11 +1,6 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'result_main' %>
-  <%= stylesheet_link_tag 'result' %>
-  <%= javascript_include_tag 'result', nonce: true %>
   <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= javascript_tag nonce: true do %>
-    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
-
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
         {
@@ -38,10 +33,10 @@
 <% end %>
 
 <!-- Dialogs -->
-<aside class='dialog no-display' id='notes_dialog'></aside>
+<aside class='markus-dialog no-display' id='notes_dialog'></aside>
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 
-<aside class='dialog no-display' id='help_dialog'>
+<aside class='markus-dialog no-display' id='help_dialog'>
   <h2><%=t('results.keybinding.keyboard_help')%></h2>
   <table class="shortcuts-table">
     <tr>
@@ -100,4 +95,4 @@
 <div id='annotation_holder'></div>
 
 <!-- Modal element -->
-<aside class='dialog' id='annotation_dialog'></aside>
+<aside class='markus-dialog' id='annotation_dialog'></aside>
