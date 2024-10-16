@@ -106,37 +106,40 @@ class CollectSubmissionsModal extends React.Component {
                     type="checkbox"
                     defaultChecked={this.state.override}
                     name="override"
+                    data-testid="chk_recollect_existing_submissions"
                     onChange={this.handleOverrideChange}
                   />
                   &nbsp;
-                  <span>{I18n.t("submissions.collect.override_existing")}</span>
+                  <span data-testid="lbl_recollect_existing_submissions">
+                    {I18n.t("submissions.collect.override_existing")}
+                  </span>
                 </label>
               </p>
               {this.state.override && (
-                <div style={{marginLeft: "15px"}}>
-                  <p>
-                    <label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.state.retain_existing_grading}
-                        name="retain_existing_grading"
-                        onChange={this.handleRetainExistingGradingChange}
-                      />
-                    </label>
-                    &nbsp;
-                    {this.state.retain_existing_grading ? (
-                      <span>{I18n.t("submissions.collect.retain_existing_grading")}</span>
-                    ) : (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: I18n.t(
-                            "submissions.collect.retain_existing_grading_warning_html"
-                          ),
-                        }}
-                      />
-                    )}
-                  </p>
-                </div>
+                <p style={{marginLeft: "15px"}}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      defaultChecked={this.state.retain_existing_grading}
+                      name="retain_existing_grading"
+                      data-testid="chk_retain_existing_grading"
+                      onChange={this.handleRetainExistingGradingChange}
+                    />
+                  </label>
+                  &nbsp;
+                  {this.state.retain_existing_grading ? (
+                    <span data-testid="lbl_retain_existing_grading">
+                      {I18n.t("submissions.collect.retain_existing_grading")}
+                    </span>
+                  ) : (
+                    <span
+                      data-testid="lbl_retain_existing_grading_warning"
+                      dangerouslySetInnerHTML={{
+                        __html: I18n.t("submissions.collect.retain_existing_grading_warning_html"),
+                      }}
+                    />
+                  )}
+                </p>
               )}
               {this.state.collect_time === "collect_current" && !this.props.isScannedExam && (
                 <p>
@@ -154,7 +157,11 @@ class CollectSubmissionsModal extends React.Component {
               )}
             </fieldset>
             <section className={"modal-container dialog-actions"}>
-              <input type="submit" value={I18n.t("submissions.collect.submit")} />
+              <input
+                type="submit"
+                data-testid="btn_collect_submissions"
+                value={I18n.t("submissions.collect.submit")}
+              />
             </section>
           </div>
         </form>
