@@ -5,7 +5,6 @@ import Modal from "react-modal";
 
 describe("CollectSubmissionsModal", () => {
   let props;
-  let component;
 
   beforeEach(() => {
     props = {
@@ -17,7 +16,7 @@ describe("CollectSubmissionsModal", () => {
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-    component = render(<CollectSubmissionsModal {...props} />);
+    render(<CollectSubmissionsModal {...props} />);
   });
 
   it("should display the option to recollect old submissions unchecked by default", () => {

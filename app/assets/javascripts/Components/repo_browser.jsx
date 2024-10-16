@@ -181,12 +181,15 @@ class ManualCollectionForm extends React.Component {
               <input
                 type="checkbox"
                 name="retain_existing_grading"
+                data-testid="chk_retain_existing_grading"
                 checked={this.state.retainExistingGrading}
                 onChange={e => {
                   this.setState({retainExistingGrading: e.target.checked});
                 }}
               />
-              <label>{I18n.t("submissions.collect.retain_existing_grading")}</label>
+              <label data-testid="lbl_retain_existing_grading">
+                {I18n.t("submissions.collect.retain_existing_grading")}
+              </label>
             </div>
           )}
           <button
@@ -215,3 +218,5 @@ class ManualCollectionForm extends React.Component {
 export function makeRepoBrowser(elem, props) {
   render(<RepoBrowser {...props} />, elem);
 }
+
+export {ManualCollectionForm};
