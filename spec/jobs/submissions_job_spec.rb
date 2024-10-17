@@ -330,6 +330,16 @@ describe SubmissionsJob do
             end)
           end
         end
+
+        context 'when no submission files in the original submission are present in the new submission' do
+          let(:assignment) { create(:assignment_with_deductive_annotations) }
+
+          it 'does not retain any annotations' do
+            @new_results.map do |new_result|
+              expect(new_result.annotations.empty?).to be(true)
+            end
+          end
+        end
       end
 
       context 'for extra marks' do
