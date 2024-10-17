@@ -663,8 +663,7 @@ kbd {
 }
 
 // Sortable lists
-
-.sortable {
+.sorted-list {
   header {
     border-bottom: 1px solid $primary-two;
     border-radius: $radius $radius 0 0;
@@ -1319,10 +1318,13 @@ nav {
 
   .rubric-criteria-levels {
     border-left: 1px solid $line;
+    border-right: 1px solid $line;
+    border-top: 1px solid $line;
 
     .level {
-      border-top: 1px solid $line;
       padding: 0.5em;
+      border-bottom: 0.25px solid $line;
+      padding-right: 0.75em;
     }
   }
 }

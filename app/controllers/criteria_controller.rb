@@ -50,7 +50,7 @@ class CriteriaController < ApplicationController
     @criterion = record
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
-      flash_now(:error, t('criteria.errors.released_marks'))
+      flash_now(:notice, t('criteria.errors.released_marks'))
     end
   end
 
