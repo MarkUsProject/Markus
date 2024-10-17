@@ -1,4 +1,4 @@
-<% marks_unreleased = @assignment.released_marks.blank? %>
+<% marks_unreleased = flash[:notice].nil? %>
 
 <div class='listings sorted-list <%= 'sortable' if marks_unreleased %>'>
   <header>

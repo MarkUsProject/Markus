@@ -52,14 +52,14 @@ a[role='button'] > .fa-layers {
   color: $primary-one;
 }
 
+.sorted-list:not(.sortable) .fa-grip-vertical {
+  display: none;
+}
+
 .sortable .fa-grip-vertical {
   color: $disabled-text;
   cursor: grab;
   float: left;
   height: 20px;
   margin-right: 1em;
-}
-
-.sorted-list:not(.sortable) .fa-grip-vertical {
-  display: none;
 }
