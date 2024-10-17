@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
+- Change default disabled text area colour to ligher grey on light mode (#7269)
 
 ### 🐛 Bug fixes
 
