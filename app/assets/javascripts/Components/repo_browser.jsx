@@ -157,7 +157,22 @@ class ManualCollectionForm extends React.Component {
         <legend>
           <span>{I18n.t("submissions.collect.manual_collection")}</span>
         </legend>
-        <form method="POST" action={action}>
+        <form
+          method="POST"
+          action={action}
+          data-testid="form_manual_collection"
+          onSubmit={event => {
+            if (
+              this.props.collected_revision_id &&
+              ((!this.state.retainExistingGrading &&
+                !confirm(I18n.t("submissions.collect.full_overwrite_warning"))) ||
+                (this.state.retainExistingGrading &&
+                  !confirm(I18n.t("submissions.collect.partial_overwrite_warning"))))
+            ) {
+              event.preventDefault();
+            }
+          }}
+        >
           <input
             type="hidden"
             name="current_revision_identifier"
@@ -176,36 +191,26 @@ class ManualCollectionForm extends React.Component {
               {I18n.t("submissions.collect.apply_late_penalty")}
             </label>
           </p>
-          {this.props.collected_revision_id && (
-            <div className="inline-labels" style={{marginBottom: "1em"}}>
-              <input
-                type="checkbox"
-                name="retain_existing_grading"
-                data-testid="chk_retain_existing_grading"
-                checked={this.state.retainExistingGrading}
-                onChange={e => {
-                  this.setState({retainExistingGrading: e.target.checked});
-                }}
-              />
-              <label data-testid="lbl_retain_existing_grading">
-                {I18n.t("submissions.collect.retain_existing_grading")}
-              </label>
-            </div>
-          )}
-          <button
-            type="submit"
-            name="commit"
-            onClick={event => {
-              if (
-                (!this.state.retainExistingGrading &&
-                  !confirm(I18n.t("submissions.collect.full_overwrite_warning"))) ||
-                (this.state.retainExistingGrading &&
-                  !confirm(I18n.t("submissions.collect.partial_overwrite_warning")))
-              ) {
-                event.preventDefault();
-              }
-            }}
-          >
+          <p className="inline-labels">
+            <input
+              type="checkbox"
+              name="retain_existing_grading"
+              data-testid="chk_retain_existing_grading"
+              checked={this.state.retainExistingGrading}
+              hidden={!this.props.collected_revision_id}
+              disabled={!this.props.collected_revision_id} // prevent from sending info on submit
+              onChange={e => {
+                this.setState({retainExistingGrading: e.target.checked});
+              }}
+            />
+            <label
+              data-testid="lbl_retain_existing_grading"
+              hidden={!this.props.collected_revision_id}
+            >
+              {I18n.t("submissions.collect.retain_existing_grading")}
+            </label>
+          </p>
+          <button type="submit" name="commit">
             <FontAwesomeIcon icon="fa-solid fa-file-import" />
             {I18n.t("submissions.collect.this_revision")}
           </button>

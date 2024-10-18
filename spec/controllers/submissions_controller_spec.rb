@@ -862,7 +862,7 @@ describe SubmissionsController do
           expect(response).to have_http_status :found
         end
 
-        it 'should respond with 302 with additional parameters' do
+        it 'should respond with 302 when additional parameters are present' do
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
                             current_revision_identifier: revision_identifier,

@@ -191,25 +191,25 @@ describe SubmissionsJob do
     before do
       # explicit storing and freezing here or it may implicitly reload this and
       # we can't compare to the old one
-      @original_submissions = assignment.reload.current_submissions_used.to_a
-      @original_results = assignment.current_results.to_a
+      @original_submissions = assignment.reload.current_submissions_used.order('submissions.grouping_id').to_a
+      @original_results = assignment.current_results.order('submissions.grouping_id').to_a
 
       SubmissionsJob.perform_now(assignment.groupings, retain_existing_grading: true)
 
-      @new_submissions = assignment.reload.current_submissions_used
-      @new_results = assignment.reload.current_results
+      @new_submissions = assignment.reload.current_submissions_used.order('submissions.grouping_id')
+      @new_results = assignment.reload.current_results.order('submissions.grouping_id')
     end
 
     it 'creates the correct number of new submissions' do
       # still the same number of groupings => the same number of submissions
       expect(@new_submissions.size).to eq(@original_submissions.size)
-      expect(@new_submissions.ids).not_to eq(@original_submissions.map(&:id))
+      expect(@new_submissions.ids.sort).not_to eq(@original_submissions.map(&:id).sort)
     end
 
     it 'creates the correct number of new results' do
       # still the same number of submissions => the same number of results
       expect(@new_results.size).to eq(@original_results.size)
-      expect(@new_results.ids).not_to eq(@original_results.map(&:id))
+      expect(@new_results.ids.sort).not_to eq(@original_results.map(&:id).sort)
     end
 
     context 'for feedback files on each new submission' do
@@ -218,13 +218,16 @@ describe SubmissionsJob do
       it 'creates the correct number of new feedback files on each submission' do
         @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
           expect(new_submission.feedback_files.size).to eq(old_submission.feedback_files.size)
-          expect(new_submission.feedback_files.ids).not_to eq(old_submission.feedback_files.ids)
+          expect(new_submission.feedback_files.ids.sort).not_to eq(old_submission.feedback_files.ids.sort)
         end
       end
 
       it 'retains the file name on each new feedback file' do
         @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
-          expect(new_submission.feedback_files.map(&:filename)).to eq(old_submission.feedback_files.map(&:filename))
+          # cannot compare by order here because there is no common field between the two, so
+          # instead we check the set of filenames is equal
+          expect(new_submission.feedback_files.map(&:filename).sort).to eq(old_submission
+                                                                           .feedback_files.map(&:filename).sort)
         end
       end
     end
@@ -235,7 +238,7 @@ describe SubmissionsJob do
       it 'creates the correct number of new test runs' do
         @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
           expect(new_submission.test_runs.size).to eq(old_submission.test_runs.size)
-          expect(new_submission.test_runs.ids).not_to eq(old_submission.test_runs.ids)
+          expect(new_submission.test_runs.ids.sort).not_to eq(old_submission.test_runs.ids.sort)
         end
       end
 
@@ -244,7 +247,7 @@ describe SubmissionsJob do
           @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
             new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
               expect(new_test_run.test_group_results.size).to eq(old_test_run.test_group_results.size)
-              expect(new_test_run.test_group_results.ids).not_to eq(old_test_run.test_group_results.ids)
+              expect(new_test_run.test_group_results.ids.sort).not_to eq(old_test_run.test_group_results.ids.sort)
             end
           end
         end
@@ -255,7 +258,7 @@ describe SubmissionsJob do
               new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
                 new_test_run.test_group_results.zip(old_test_run.test_group_results).each do |old_tgr, new_tgr|
                   expect(new_tgr.test_results.size).to eq(old_tgr.test_results.size)
-                  expect(new_tgr.test_results.ids).not_to eq(old_tgr.test_results.ids)
+                  expect(new_tgr.test_results.ids.sort).not_to eq(old_tgr.test_results.ids.sort)
                 end
               end
             end
@@ -266,7 +269,7 @@ describe SubmissionsJob do
               new_submission.test_runs.zip(old_submission.test_runs).each do |old_test_run, new_test_run|
                 new_test_run.test_group_results.zip(old_test_run.test_group_results).each do |old_tgr, new_tgr|
                   expect(new_tgr.feedback_files.size).to eq(old_tgr.feedback_files.size)
-                  expect(new_tgr.feedback_files.ids).not_to eq(old_tgr.feedback_files.ids)
+                  expect(new_tgr.feedback_files.ids.sort).not_to eq(old_tgr.feedback_files.ids.sort)
                 end
               end
             end
@@ -286,8 +289,8 @@ describe SubmissionsJob do
         it 'retains the marks from each original submission\'s original result' do
           @new_submissions.zip(@original_submissions).each do |new_submission, old_submission|
             # the last result in each submission is the original one in the old submission
-            expect(new_submission.current_result.marks.map(&:mark)).to eq(old_submission
-              .get_original_result.marks.map(&:mark))
+            expect(new_submission.current_result.marks.order(:criterion_id).map(&:mark)).to eq(old_submission
+              .get_original_result.marks.order(:criterion_id).map(&:mark))
           end
         end
       end
@@ -296,13 +299,14 @@ describe SubmissionsJob do
         it 'creates the correct number of new marks for each result' do
           @new_results.zip(@original_results).each do |new_result, old_result|
             expect(new_result.marks.size).to eq(old_result.marks.size)
-            expect(new_result.marks.ids).not_to eq(old_result.marks.ids)
+            expect(new_result.marks.ids.sort).not_to eq(old_result.marks.ids.sort)
           end
         end
 
         it 'retains the correct mark values for each result' do
           @new_results.zip(@original_results).each do |new_result, old_result|
-            expect(new_result.marks.map(&:mark)).to eq(old_result.marks.map(&:mark))
+            expect(new_result.marks.order(:criterion_id).map(&:mark)).to eq(old_result
+              .marks.order(:criterion_id).map(&:mark))
           end
         end
       end
@@ -313,19 +317,22 @@ describe SubmissionsJob do
         it 'creates the correct number of new annotations for each result' do
           @new_results.reload.zip(@original_results).each do |new_result, old_result|
             expect(new_result.annotations.size).to eq(old_result.annotations.size)
-            expect(new_result.annotations.ids).not_to eq(old_result.annotations.ids)
+            expect(new_result.annotations.ids.sort).not_to eq(old_result.annotations.ids.sort)
           end
         end
 
         it 'retains the mark deductions from deductive annotations' do
           @new_results.zip(@original_results).each do |new_result, old_result|
-            expect(new_result.marks.map(&:calculate_deduction)).to eq(old_result.marks.map(&:calculate_deduction))
+            expect(new_result.marks.order(:criterion_id).map(&:calculate_deduction)).to eq(old_result
+              .marks.order(:criterion_id).map(&:calculate_deduction))
           end
         end
 
         it 'retains the text from each annotation' do
           @new_results.zip(@original_results).each do |new_result, old_result|
-            expect(new_result.annotations.map { |a| a.annotation_text.content }).to eq(old_result.annotations.map do |a|
+            expect(new_result.annotations.order(:annotation_text_id).map do |a|
+              a.annotation_text.content
+            end).to eq(old_result.annotations.order(:annotation_text_id).map do |a|
               a.annotation_text.content
             end)
           end
@@ -348,13 +355,14 @@ describe SubmissionsJob do
         it 'creates the correct number of new extra marks for each result' do
           @new_results.zip(@original_results).each do |new_result, old_result|
             expect(new_result.extra_marks.size).to eq(old_result.extra_marks.size)
-            expect(new_result.extra_marks.ids).not_to eq(old_result.extra_marks.ids)
+            expect(new_result.extra_marks.ids.sort).not_to eq(old_result.extra_marks.ids.sort)
           end
         end
 
         it 'retains the correct mark values for each result' do
           @new_results.zip(@original_results).each do |new_result, old_result|
-            expect(new_result.extra_marks.map(&:extra_mark)).to eq(old_result.extra_marks.map(&:extra_mark))
+            # no common field so compare by full array
+            expect(new_result.extra_marks.map(&:extra_mark).sort).to eq(old_result.extra_marks.map(&:extra_mark).sort)
           end
         end
       end
