@@ -1,4 +1,3 @@
-import * as React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import CollectSubmissionsModal from "../Modals/collect_submissions_modal";
 import Modal from "react-modal";

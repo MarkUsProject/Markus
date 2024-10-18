@@ -1,6 +1,17 @@
-import * as React from "react";
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import {ManualCollectionForm} from "../repo_browser";
+
+// workaround needed for using i18n in jest tests, see
+// https://github.com/fnando/i18n/issues/26#issuecomment-1235751777
+jest.mock("i18n-js", () => {
+  return jest.requireActual("i18n-js/dist/require/index");
+});
+
+jest.mock("@fortawesome/react-fontawesome", () => ({
+  FontAwesomeIcon: () => {
+    return null;
+  },
+}));
 
 describe("RepoBrowser's ManualCollectionForm", () => {
   let props, component;
@@ -15,7 +26,6 @@ describe("RepoBrowser's ManualCollectionForm", () => {
       collected_revision_id: "test",
     };
 
-    // Set the app element for React Modal
     component = render(<ManualCollectionForm {...props} />);
   });
 
@@ -23,8 +33,8 @@ describe("RepoBrowser's ManualCollectionForm", () => {
     const lblRecollectExistingSubmissions = screen.getByTestId("lbl_retain_existing_grading");
     const chkRecollectExistingSubmissions = screen.getByTestId("chk_retain_existing_grading");
 
-    expect(lblRecollectExistingSubmissions).toBeInTheDocument();
-    expect(chkRecollectExistingSubmissions).toBeInTheDocument();
+    expect(lblRecollectExistingSubmissions).toBeVisible();
+    expect(chkRecollectExistingSubmissions).toBeVisible();
   });
 
   it("does not show the option to retain existing grading when there is a not collected revision present", () => {
@@ -34,7 +44,29 @@ describe("RepoBrowser's ManualCollectionForm", () => {
     const lblRecollectExistingSubmissions = screen.queryByTestId("lbl_retain_existing_grading");
     const chkRecollectExistingSubmissions = screen.queryByTestId("chk_retain_existing_grading");
 
-    expect(lblRecollectExistingSubmissions).not.toBeInTheDocument();
-    expect(chkRecollectExistingSubmissions).not.toBeInTheDocument();
+    expect(lblRecollectExistingSubmissions).not.toBeVisible();
+    expect(chkRecollectExistingSubmissions).not.toBeVisible();
+  });
+
+  it("should confirm with a full overwrite warning when retain existing grading option is checked", () => {
+    const confirmSpy = jest.spyOn(window, "confirm").mockImplementation(() => false);
+    const manualCollectionForm = component.getByTestId("form_manual_collection");
+
+    fireEvent.submit(manualCollectionForm);
+
+    expect(confirmSpy).toHaveBeenCalledWith(
+      I18n.t("submissions.collect.partial_overwrite_warning")
+    );
+  });
+
+  it("should confirm with a full overwrite warning when retain existing grading option is not checked", () => {
+    const confirmSpy = jest.spyOn(window, "confirm").mockImplementation(() => false);
+    const chkRecollectExistingSubmissions = screen.queryByTestId("chk_retain_existing_grading");
+    const manualCollectionForm = component.getByTestId("form_manual_collection");
+
+    fireEvent.click(chkRecollectExistingSubmissions);
+    fireEvent.submit(manualCollectionForm);
+
+    expect(confirmSpy).toHaveBeenCalledWith(I18n.t("submissions.collect.full_overwrite_warning"));
   });
 });
