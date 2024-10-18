@@ -87,6 +87,7 @@ class RepoBrowser extends React.Component {
           late_penalty={this.props.late_penalty}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
+          collected_revision_id={this.props.collected_revision_id}
         />
       );
     }
@@ -138,6 +139,13 @@ class ManualCollectionForm extends React.Component {
     revision_identifier: "", //set initial value so that the input (in render) remains controlled
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      retainExistingGrading: true,
+    };
+  }
+
   render() {
     const action = Routes.manually_collect_and_begin_grading_course_assignment_submissions_path(
       this.props.course_id,
@@ -168,11 +176,32 @@ class ManualCollectionForm extends React.Component {
               {I18n.t("submissions.collect.apply_late_penalty")}
             </label>
           </p>
+          {this.props.collected_revision_id && (
+            <div className="inline-labels" style={{marginBottom: "1em"}}>
+              <input
+                type="checkbox"
+                name="retain_existing_grading"
+                data-testid="chk_retain_existing_grading"
+                checked={this.state.retainExistingGrading}
+                onChange={e => {
+                  this.setState({retainExistingGrading: e.target.checked});
+                }}
+              />
+              <label data-testid="lbl_retain_existing_grading">
+                {I18n.t("submissions.collect.retain_existing_grading")}
+              </label>
+            </div>
+          )}
           <button
             type="submit"
             name="commit"
             onClick={event => {
-              if (!confirm(I18n.t("submissions.collect.overwrite_warning"))) {
+              if (
+                (!this.state.retainExistingGrading &&
+                  !confirm(I18n.t("submissions.collect.full_overwrite_warning"))) ||
+                (this.state.retainExistingGrading &&
+                  !confirm(I18n.t("submissions.collect.partial_overwrite_warning")))
+              ) {
                 event.preventDefault();
               }
             }}
@@ -189,3 +218,5 @@ class ManualCollectionForm extends React.Component {
 export function makeRepoBrowser(elem, props) {
   render(<RepoBrowser {...props} />, elem);
 }
+
+export {ManualCollectionForm};
