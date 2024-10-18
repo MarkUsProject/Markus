@@ -5,6 +5,101 @@ class SubmissionsJob < ApplicationJob
     Rails.logger.error msg
   end
 
+  def copy_old_grading_data(new_submission, grouping)
+    # at this point, it will only have one result
+    new_result = new_submission.current_result
+
+    # get the last submission that wasn't the one we just created
+    old_submission = grouping.submissions.where.not(id: new_submission.id)
+                             .order(created_at: :desc)
+                             .first
+
+    # no old submissions => this option does nothing
+    return if old_submission.nil?
+
+    old_result = old_submission.non_pr_results
+                               .where(remark_request_submitted_at: nil)
+                               .last
+
+    result_data = [
+      { old: old_result.annotations, new: new_result.annotations },
+      { old: old_result.marks, new: new_result.marks },
+      { old: old_result.extra_marks, new: new_result.extra_marks }
+    ]
+
+    # copy over data from old result to new result
+    result_data.each do |result_set|
+      # get rid of the existing empty records so we can replace them; some results
+      # have default models created, so this is necessary
+      result_set[:new].destroy_all
+
+      result_set[:old].each do |record|
+        record_dup = record.dup
+        record_dup.update(result_id: new_result.id)
+
+        add_warning_messages(record_dup.errors.full_messages) if record_dup.errors.present?
+      end
+    end
+
+    # amend submission file ids for annotations (new submission files are
+    # created for each submission)
+    new_result.reload.annotations.each do |annotation|
+      filename = annotation.submission_file.filename
+      path = annotation.submission_file.path
+
+      new_submission_file = new_submission.submission_files.where(filename: filename, path: path).first
+
+      # if we can't find a matching file for a file-bound annotation, we assume
+      # the file has been modified or removed in the collected revision and
+      # discard this annotation
+      if new_submission_file.nil?
+        annotation.destroy!
+        next
+      end
+
+      annotation.update(submission_file_id: new_submission_file.id)
+      add_warning_messages(annotation.errors.full_messages) if annotation.errors.present?
+    end
+
+    # copy over feedback files associated with the submission
+    old_submission.feedback_files.each do |feedback_file|
+      feedback_file_dup = feedback_file.dup
+      feedback_file_dup.update(submission_id: new_submission.id)
+
+      add_warning_messages(feedback_file_dup.errors.full_messages) if feedback_file_dup.errors.present?
+    end
+
+    # copy over old automated test data
+    old_submission.test_runs.each do |test_run|
+      test_run_dup = test_run.dup
+      test_run_dup.update(submission_id: new_submission.id)
+
+      # don't continue if there are errors at this point
+      return add_warning_messages(test_run_dup.errors.full_messages) if test_run_dup.errors.present?
+
+      test_run.test_group_results.each do |test_group_result|
+        test_group_result_dup = test_group_result.dup
+        test_group_result_dup.update(test_run_id: test_run_dup.id)
+
+        return add_warning_messages(test_group_result_dup.errors.full_messages) if test_group_result_dup.errors.present?
+
+        test_group_result.test_results.each do |test_result|
+          test_result_dup = test_result.dup
+          test_result_dup.update(test_group_result_id: test_group_result_dup.id)
+
+          add_warning_messages(test_result_dup.errors.full_messages) if test_result_dup.errors.present?
+        end
+
+        test_group_result.feedback_files.each do |feedback_file|
+          feedback_file_dup = feedback_file.dup
+          feedback_file_dup.update(test_group_result_id: test_group_result_dup.id)
+
+          add_warning_messages(feedback_file_dup.errors.full_messages) if feedback_file_dup.errors.present?
+        end
+      end
+    end
+  end
+
   def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
 
@@ -24,6 +119,10 @@ class SubmissionsJob < ApplicationJob
         new_submission = Submission.create_by_timestamp(grouping, time)
       else
         new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
+      end
+
+      if options[:retain_existing_grading]
+        copy_old_grading_data(new_submission, grouping)
       end
 
       if assignment.submission_rule.is_a? GracePeriodSubmissionRule

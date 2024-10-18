@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
+- Add an option to retain old grading data when recollecting graded submissions (#7256)
 
 ### 🐛 Bug fixes
 
