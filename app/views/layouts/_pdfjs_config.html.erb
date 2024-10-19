@@ -1,0 +1,3 @@
+<%= javascript_tag nonce: true do %>
+  pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_path('pdf.worker.js') %>';
+<% end %>

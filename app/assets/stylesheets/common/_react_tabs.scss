@@ -1,7 +1,11 @@
 @import 'constants';
 
-.react-tabs__tab--disabled {
+.react-tabs__tab.react-tabs__tab--disabled {
   display: none;
+}
+
+.react-tabs__tab:focus::after {
+  display: none; // Hide default react-tabs style
 }
 
 .react-tabs {
@@ -26,12 +30,12 @@
   }
 }
 
-.react-tabs__tab--selected {
+.react-tabs__tab.react-tabs__tab--selected {
   background-color: $background-support;
   color: $sharp-line;
 }
 
-.react-tabs__tab-panel--selected {
+.react-tabs__tab-panel.react-tabs__tab-panel--selected {
   display: flex;
   flex-direction: column;
 }

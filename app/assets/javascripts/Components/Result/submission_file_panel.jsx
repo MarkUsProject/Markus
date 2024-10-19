@@ -180,7 +180,7 @@ export class SubmissionFilePanel extends React.Component {
             />
           )}
         </div>
-        <div key="codeviewer" id="codeviewer">
+        <div key="codeviewer" className="text-viewer-container" id="codeviewer">
           <FileViewer
             ref={this.submissionFileViewer}
             handleFileTypeUpdate={this.handleFileTypeUpdate}

@@ -191,7 +191,7 @@ class CreateModifyAnnotationPanel extends React.Component {
 
     return (
       <Modal
-        className="react-modal dialog"
+        className="react-modal markus-dialog"
         isOpen={this.props.show}
         onAfterOpen={this.onModalOpen}
         onRequestClose={this.props.onRequestClose}

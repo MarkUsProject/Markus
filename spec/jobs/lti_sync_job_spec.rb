@@ -29,7 +29,7 @@ describe LtiSyncJob do
   end
 
   context 'when running as a background job' do
-    let(:job_args) { [[lti_deployment.id], assessment, course] }
+    let(:job_args) { [[lti_deployment.id], assessment] }
 
     include_examples 'background job'
   end
@@ -37,13 +37,13 @@ describe LtiSyncJob do
   context 'when running as a background job, with an lti line item' do
     before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
 
-    let(:job_args) { [[lti_deployment.id], assessment, assessment.course] }
+    let(:job_args) { [[lti_deployment.id], assessment] }
 
     include_examples 'background job'
   end
 
   context 'with no lti deployments' do
-    let(:job_args) { [[], assessment, course] }
+    let(:job_args) { [[], assessment] }
 
     it 'should raise an error' do
       expect { LtiSyncJob.perform_now(*job_args) }.to raise_error(RuntimeError)
