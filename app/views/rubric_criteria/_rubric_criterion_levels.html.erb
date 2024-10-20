@@ -1,4 +1,3 @@
-<% marks_released = flash[:notice].present? %>
 <div id="rubric_form">
   <%= form_for criterion, url: course_criterion_path(@current_course, criterion),
                method: :patch, remote: true do |criterion_form| %>

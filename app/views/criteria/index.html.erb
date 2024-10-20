@@ -9,7 +9,7 @@
     @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
     @assignment.short_identifier) %>
 
-<% marks_released = flash[:notice].present? %>
+<% marks_released = @assignment.released_marks.blank? %>
 
 <% @heading_buttons = [
   { link_text: t('criteria.new.button'),
@@ -31,7 +31,7 @@
 
 <div class='pane-wrapper'>
   <div id='criteria_pane' class="criteria-pane-wrapper">
-    <%= render partial: 'criteria_pane' %>
+    <%= render partial: 'criteria_pane', locals: { marks_released: @criterion.results_unreleased? } %>
   </div>
 
   <div class='pane'>

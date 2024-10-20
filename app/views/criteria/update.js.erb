@@ -15,5 +15,5 @@ document.getElementById('criteria_total_max_mark').innerHTML = '<%= @criterion.a
 <% if @criterion.is_a? RubricCriterion %>
   document.getElementById('rubric-criteria-levels').innerHTML =
     '<%= escape_javascript(render partial: "rubric_criteria/rubric_criterion_levels",
-                                  locals: { criterion: @criterion }) %>';
+                                  locals: { criterion: @criterion, marks_released: @criterion.results_unreleased? }) %>';
 <% end %>

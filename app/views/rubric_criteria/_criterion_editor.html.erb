@@ -1,11 +1,9 @@
 <div class='float-right'>
 
-  <% marks_released = flash[:notice].present? %>
-
   <% if marks_released %>
     <span class="button disabled"><%= t('rubric_criteria.level.add') %></span>
   <% else %>
-  <%= link_to t('rubric_criteria.level.add'),
+    <%= link_to t('rubric_criteria.level.add'),
               '#',
               class: 'button',
               id: 'add-criterion-level' %>
@@ -19,8 +17,7 @@
                 form_class: 'display-inline-block',
                 title: t('helpers.submit.delete', model: Criterion.model_name.human),
                 remote: true,
-                disabled: marks_released
-                %>
+                disabled: marks_released %>
 </div>
 
 <h2>
@@ -70,7 +67,7 @@
 
   <div id='rubric-criteria-levels' class='rubric-criteria-levels'>
     <%= render partial: 'rubric_criteria/rubric_criterion_levels',
-               locals: { criterion: criterion } %>
+               locals: { criterion: criterion, marks_released: marks_released } %>
   </div>
 
 <% end %>
