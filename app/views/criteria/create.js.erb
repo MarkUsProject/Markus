@@ -3,7 +3,7 @@ $('#criteria_pane_list').append("<%= escape_javascript(render partial: 'criteria
 
 document.getElementById('editing_pane_menu').innerHTML =
   "<%= escape_javascript(render partial: "#{@criterion.class.to_s.tableize}/criterion_editor",
-                                locals: { criterion: @criterion }) %>";
+                                locals: { criterion: @criterion, marks_released: !@criterion.results_unreleased? }) %>";
 
 document.getElementById('criteria_total_max_mark').innerHTML = "<%= @criterion.assignment.max_mark %>";
 

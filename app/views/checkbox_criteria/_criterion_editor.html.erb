@@ -6,7 +6,8 @@
                 class: 'delete',
                 form_class: 'display-inline-block',
                 title: t('helpers.submit.delete', model: Criterion.model_name.human),
-                remote: true %>
+                remote: true,
+                disabled: marks_released %>
 </div>
 
 <h2>
@@ -25,12 +26,12 @@
 
   <div class='inline-labels'>
     <%= f.label :name, Criterion.human_attribute_name(:name) %>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, readonly: marks_released %>
     <%= f.label :max_mark, Criterion.human_attribute_name(:max_mark) %>
-    <%= f.number_field :max_mark, step: 0.1 %>
+    <%= f.number_field :max_mark, step: 0.1, readonly: marks_released %>
     <%= f.label :bonus,
                 Criterion.human_attribute_name(:bonus) %>
-    <%= f.check_box :bonus %>
+    <%= f.check_box :bonus, { disabled: marks_released } %>
     <% if criterion.assignment.assignment_files.exists? %>
       <% selected_files = criterion.criteria_assignment_files_joins.map { |join| join.assignment_file } %>
       <%= f.label :assignment_files, AssignmentFile.model_name.human %>
@@ -40,7 +41,7 @@
     <% end %>
     <%= f.label :description, Criterion.human_attribute_name(:description) %>
     <div>
-      <%= f.text_area :description, rows: 6, cols: 50 %>
+      <%= f.text_area :description, rows: 6, cols: 50, readonly: marks_released %>
       <p><%= t('criteria.description_hint') %></p>
     </div>
   </div>
@@ -48,12 +49,12 @@
   <div class='inline-labels'>
     <%= f.label :ta_visible,
                 Criterion.human_attribute_name(:ta_visible) %>
-    <%= f.check_box :ta_visible %>
+    <%= f.check_box :ta_visible, { disabled: marks_released } %>
     <%= f.label :peer_visible,
                 Criterion.human_attribute_name(:peer_visible) %>
-    <%= f.check_box :peer_visible %>
+    <%= f.check_box :peer_visible, { disabled: marks_released } %>
   </div>
-  <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
+  <p><%= f.submit t(:save), data: { disable_with: t('working') }, disabled: marks_released %></p>
 <% end %>
 
 <% unless criterion.description.blank? %>

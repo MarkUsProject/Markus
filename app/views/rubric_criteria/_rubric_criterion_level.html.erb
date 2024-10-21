@@ -7,18 +7,18 @@
       <%= I18n.t("rubric_criteria.level.level_index", index: level_form.index.to_s) %>
     </span>
     <span class="float-right destroy_checkbox">
-      <%= level_form.check_box :_destroy %>
+      <%= level_form.check_box :_destroy, { disabled: marks_released } %>
       <%= level_form.label :_destroy, I18n.t("rubric_criteria.level.delete.checkbox", index: level_form.index.to_s) %>
     </span>
   </h4>
   <div class="inline-labels">
     <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
-    <%= level_form.text_field :name, required: true %>
+    <%= level_form.text_field :name, required: true, readonly: marks_released %>
     <%= level_form.label :mark, class: 'required' %>
-    <%= level_form.number_field :mark, step: 0.01, required: true %>
+    <%= level_form.number_field :mark, step: 0.01, required: true, readonly: marks_released %>
     <%= level_form.label :description, Level.human_attribute_name(:description),
                          class: 'description' %>
-    <%= level_form.text_area :description, cols: 50, rows: 5 %>
+    <%= level_form.text_area :description, cols: 50, rows: 5, readonly: marks_released %>
   </div>
 </div>
 <!--<br>-->
