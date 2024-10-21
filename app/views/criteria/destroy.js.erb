@@ -1,5 +1,5 @@
 document.getElementById('criteria_pane').innerHTML =
-  "<%= escape_javascript(render partial: 'criteria/criteria_pane', locals: { marks_released: @criterion.results_unreleased? }) %>";
+  "<%= escape_javascript(render partial: 'criteria/criteria_pane', locals: { marks_released: !@criterion.results_unreleased? }) %>";
 
 document.getElementById('editing_pane_menu').innerHTML =
   "<%= escape_javascript(render partial: 'criteria/manager_help') %>";
