@@ -83,7 +83,8 @@ class PeerReview < ApplicationRecord
           unless peer_review.nil?
             if peer_review.has_marks_or_annotations?
               delete_all_reviews = false
-              undeleted_reviews.append(reviewer_group.get_all_students_in_group)
+              undeleted_reviews.append(reviewer_group.get_all_students_in_group +
+                                         ' (assigned to review ' + reviewee_group.get_all_students_in_group + ')')
               next # Do not delete this peer review
             else  # Safe to delete this peer review
               deleted_count += 1

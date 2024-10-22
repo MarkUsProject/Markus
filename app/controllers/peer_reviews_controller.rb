@@ -162,9 +162,13 @@ class PeerReviewsController < ApplicationController
       if !reviews_deleted && deleted_count == 0
         flash_now(:error, t('peer_reviews.errors.cannot_unassign_any_reviewers'))
         return
-      elsif !reviews_deleted
+      elsif !reviews_deleted && undeleted_reviews.length <= 5
         flash_now(:error, t('peer_reviews.errors.cannot_unassign_all_reviewers',
                             deleted_count: deleted_count.to_s, undeleted_reviews: undeleted_reviews.join(', ')))
+      elsif !reviews_deleted && undeleted_reviews.length > 5  # Truncate the list of undeleted reviews to 5
+        flash_now(:error, t('peer_reviews.errors.cannot_unassign_all_reviewers_many',
+                            deleted_count: deleted_count.to_s, undeleted_reviews: undeleted_reviews.first(5).join(', '),
+                            undeleted_count: undeleted_reviews.length, truncated_count: undeleted_reviews.length - 5))
       elsif deleted_count > 0
         flash_now(:success, t('peer_reviews.unassigned_reviewers_successfully', deleted_count: deleted_count.to_s))
       end

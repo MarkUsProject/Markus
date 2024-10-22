@@ -263,6 +263,27 @@ describe PeerReviewsController do
           expect(PeerReview.review_exists_between?(@reviewer, @reviewee)).to be false
         end
       end
+
+      context 'selected reviewer has existing peer review data' do
+        before do
+          @reviewer = Grouping.find_by(id: @selected_reviewer_group_ids[0])
+          @reviewee = Grouping.find_by(id: @selected_reviewee_group_ids[1])
+          allow_any_instance_of(PeerReview).to receive(:has_marks_or_annotations?).and_return(true)
+          selected_group = {}
+          selected_group[@reviewer.id] = true
+          selected = {}
+          selected[@reviewee.id] = selected_group
+          post_as role, :assign_groups,
+                  params: { actionString: 'unassign',
+                            selectedReviewerInRevieweeGroups: selected,
+                            assignment_id: @pr_id,
+                            course_id: course.id }
+        end
+      end
+
+      it 'does not delete the peer review' do
+        expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews
+      end
     end
   end
 
