@@ -24,7 +24,7 @@ en:
     review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
     reviewers_reviews: 'This reviewer''s reviews: '
     reviews_made_on_submission: 'Reviews for your submission: '
-    unassigned_reviewers_successfully: Successfully unassigned %{deleted_count} peer reviewers.
+    unassigned_reviewers_successfully: Successfully unassigned %{deleted_count} peer reviewer(s).
     view_ta_result: View TA Grading
     your_results: Peer reviews of your submission
     your_results_none: No reviews are available.
