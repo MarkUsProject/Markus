@@ -6,6 +6,7 @@
 
 ### ✨ New features and improvements
 
+- Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 
