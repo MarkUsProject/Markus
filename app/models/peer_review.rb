@@ -72,6 +72,19 @@ class PeerReview < ApplicationRecord
     delete_all_reviews = true
     deleted_count = 0
     undeleted_reviews = []
+
+    # When an entire row is selected for unassignment
+    [selected_reviewee_group_ids].each do |reviewee_id| # process each reviewee when a whole row is selected
+      peer_reviews = PeerReview.joins(result: :submission)  # query all peer reviews in a selected row
+                               .where(submissions: { grouping_id: reviewee_id })
+
+      peer_reviews.each do |peer_review|
+        reviewer_id = peer_review.reviewer.id
+        reviewers_to_remove_from_reviewees_map[reviewee_id] ||= {} # initialize the hash as empty if it doesn't exist
+        reviewers_to_remove_from_reviewees_map[reviewee_id][reviewer_id.to_s] = 'true' # mark the reviewer to be removed
+      end
+    end
+
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each_key do |reviewer_id|
