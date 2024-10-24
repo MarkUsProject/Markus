@@ -279,10 +279,70 @@ describe PeerReviewsController do
                             assignment_id: @pr_id,
                             course_id: course.id }
         end
-      end
 
-      it 'does not delete the peer review' do
-        expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews
+        context 'when no reviews are deleted' do
+          before do
+            allow(PeerReview).to receive(:unassign).and_return([false, 0, []])
+          end
+
+          it 'flashes the correct message' do
+            expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
+              'peer_reviews.errors.cannot_unassign_any_reviewers'
+            )]
+          end
+        end
+
+        context 'when some reviews are deleted, and 5 or less are not deleted' do
+          before do
+            allow(PeerReview).to receive(:unassign).and_return([false, 1, ['group1 (assigned to review group2)']])
+            post_as role, :assign_groups,
+                    params: { actionString: 'unassign',
+                              selectedReviewerInRevieweeGroups: @selected,
+                              assignment_id: @pr_id,
+                              course_id: course.id }
+          end
+
+          it 'flashes the correct message' do
+            expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
+              'peer_reviews.errors.cannot_unassign_all_reviewers',
+              deleted_count: '1',
+              undeleted_reviews: 'group1 (assigned to review group2)'
+            ).squish]
+          end
+        end
+
+        context 'when some reviews are deleted, and more than 5 are not deleted' do
+          before do
+            allow(PeerReview).to receive(:unassign).and_return([false, 1,
+                                                                ['group1 (assigned to review group2)',
+                                                                 'group1 (assigned to review group3)',
+                                                                 'group1 (assigned to review group4)',
+                                                                 'group1 (assigned to review group5)',
+                                                                 'group1 (assigned to review group6)',
+                                                                 'group1 (assigned to review group7)']])
+            post_as role, :assign_groups,
+                    params: { actionString: 'unassign',
+                              selectedReviewerInRevieweeGroups: @selected,
+                              assignment_id: @pr_id,
+                              course_id: course.id }
+          end
+
+          it 'flashes the correct message' do
+            expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
+              'peer_reviews.errors.cannot_unassign_all_reviewers_many',
+              deleted_count: '1',
+              undeleted_reviews: 'group1 (assigned to review group2), group1 (assigned to review group3),
+group1 (assigned to review group4), group1 (assigned to review group5),
+group1 (assigned to review group6)',
+              undeleted_count: 6,
+              truncated_count: 1
+            ).squish]
+          end
+        end
+
+        it 'does not delete the peer review' do
+          expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews
+        end
       end
     end
   end

@@ -88,4 +88,23 @@ describe PeerReview do
       end
     end
   end
+
+  describe '#has_marks_or_annotations?' do
+    let(:assignment) { create(:assignment_with_peer_review) }
+    let(:peer_review_assignment) { assignment.pr_assignment } # Peer review assignment
+    let(:grouping_reviewer) { create(:grouping_with_inviter_and_submission, assignment: peer_review_assignment) }
+    let(:grouping_reviewee) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let(:peer_review) do
+      create(:peer_review, reviewer_id: grouping_reviewer.id, result_id: grouping_reviewee.current_result.id)
+    end
+
+    before do
+      criterion = create(:rubric_criterion, assignment: assignment.pr_assignment)
+      create(:mark, criterion: criterion, result: peer_review.result, mark: 2.5)
+    end
+
+    it 'returns true when there are non-nil marks' do
+      expect(peer_review.has_marks_or_annotations?).to be true
+    end
+  end
 end
