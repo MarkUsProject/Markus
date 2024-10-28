@@ -62,7 +62,10 @@ export class SubmissionFilePanel extends React.Component {
     if (!this.state.student_view && stored_file) {
       let filepath = stored_file.split("/");
       let filename = filepath.pop();
-      selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filename)];
+      const file_id = this.getNamedFileId(this.props.fileData, filepath, filename);
+      const file_arr = this.props.fileData.files.find(arr => arr[1] === file_id);
+      const type = file_arr ? file_arr[2] : null;
+      selectedFile = [stored_file, file_id, type];
     }
     if (!selectedFile[1]) {
       if (
@@ -135,9 +138,9 @@ export class SubmissionFilePanel extends React.Component {
     return null;
   };
 
-  selectFile = (file, id, focusLine, annotationFocus) => {
+  selectFile = (file, id, type, focusLine, annotationFocus) => {
     this.setState({
-      selectedFile: [file, id],
+      selectedFile: [file, id, type],
       focusLine: focusLine,
       annotationFocus: annotationFocus,
       visibleAnnotations: this.props.annotations.filter(a => a.submission_file_id === id),
