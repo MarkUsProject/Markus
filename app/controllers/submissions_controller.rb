@@ -1,3 +1,5 @@
+require 'json'
+
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include RepositoryHelper
@@ -937,6 +939,11 @@ class SubmissionsController < ApplicationController
           '--template', 'markus-html-template'
         ]
       end
+      file_contents = JSON.parse(file_contents)
+      if file_contents['metadata'].key?('widgets')
+        file_contents['metadata'].delete('widgets')
+      end
+      file_contents = JSON.generate(file_contents)
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
 

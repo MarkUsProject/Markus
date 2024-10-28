@@ -1665,6 +1665,19 @@ describe SubmissionsController do
         it_behaves_like 'notebook content'
       end
 
+      context 'a jupyter-notebook file with widgets',
+              skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+        render_views
+        let(:filename) { 'example_widgets.ipynb' }
+
+        it 'renders without widgets' do
+          subject
+          expect(response.body).not_to include("KeyError: 'state'")
+        end
+
+        it_behaves_like 'notebook content'
+      end
+
       context 'an rmarkdown file' do
         let(:filename) { 'example.Rmd' }
 
