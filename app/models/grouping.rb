@@ -1,6 +1,8 @@
 require 'set'
 
-# Represents a collection of students working together on an assignment in a group
+# Represents a grouping of students working together on a single assignment. This model manages various aspects of the
+# grouping's work, such as submissions, peer reviews, test runs, and repository management. A Grouping belongs to a
+# group and an assignment and can share a repository with other groupings.
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
@@ -752,6 +754,19 @@ class Grouping < ApplicationRecord
       )
     end
     results.where.not('groupings.id': self.id).order('RANDOM()').first&.grouping
+  end
+
+  # Checks if a grouping uploaded any files
+  def has_submitted_files?
+    access_repo do |repo|
+      revision = repo.get_revision_by_timestamp(Time.current)
+
+      files = revision.tree_at_path(assignment.repository_folder, with_attrs: false).select do |_, obj|
+        obj.is_a?(Repository::RevisionFile) && Repository.get_class.internal_file_names.exclude?(obj.name)
+      end
+
+      return files.length > 0
+    end
   end
 
   private

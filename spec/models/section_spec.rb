@@ -17,6 +17,15 @@ describe Section do
     it { is_expected.to allow_value('-22125-k1lj42_').for(:name) }
 
     it { is_expected.to belong_to(:course) }
+
+    it 'fails with error message when invalid name format' do
+      subject.name = 'Invalid!@'
+      error_key = 'activerecord.errors.models.section.attributes.name.invalid'
+      expected_error = I18n.t(error_key, attribute: 'Name')
+
+      expect(subject).not_to be_valid
+      expect(subject.errors[:name]).to include(expected_error)
+    end
   end
 
   describe '.has_students?' do

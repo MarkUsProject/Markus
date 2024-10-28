@@ -26,9 +26,7 @@ class Assessment < ApplicationRecord
   validate :short_identifier_unchanged, on: :update
   validates :description, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
-  validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                                         message: 'short_identifier must only contain alphanumeric, hyphen, or ' \
-                                                  'underscore' }
+  validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/ }
 
   def self.type
     %w[Assignment GradeEntryForm]

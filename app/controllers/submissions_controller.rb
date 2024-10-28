@@ -1,3 +1,5 @@
+require 'json'
+
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include RepositoryHelper
@@ -153,6 +155,17 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     assignment = Assignment.find_by(id: params[:assignment_id])
     @grouping = assignment.groupings.find(params[:grouping_id])
+
+    unless @grouping.current_submission_used.nil?
+      released = @grouping.current_submission_used.results.exists?(released_to_students: true)
+
+      if released
+        flash_message(:error, I18n.t('submissions.collect.could_not_collect_released'))
+        return redirect_to repo_browser_course_assignment_submissions_path(current_course, assignment,
+                                                                           grouping_id: @grouping.id)
+      end
+    end
+
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = if params[:apply_late_penalty].nil?
                            false
@@ -937,6 +950,11 @@ class SubmissionsController < ApplicationController
           '--template', 'markus-html-template'
         ]
       end
+      file_contents = JSON.parse(file_contents)
+      if file_contents['metadata'].key?('widgets')
+        file_contents['metadata'].delete('widgets')
+      end
+      file_contents = JSON.generate(file_contents)
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
 

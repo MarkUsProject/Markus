@@ -854,13 +854,45 @@ describe SubmissionsController do
       end
 
       describe '#manually_collect_and_begin_grading' do
-        before do
+        it 'should respond with 302' do
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
                             current_revision_identifier: revision_identifier }
+
+          expect(response).to have_http_status :found
         end
 
-        it('should respond with 302') { expect(response).to have_http_status :found }
+        it 'should not flash any error messages' do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
+                            current_revision_identifier: revision_identifier }
+
+          expect(flash[:error]).to be_nil
+        end
+
+        context 'When a grouping\'s submission has already been released' do
+          before do
+            # mark the existing submission as released
+            last_result = @grouping1.current_submission_used.get_latest_result
+            last_result.update!(released_to_students: true)
+          end
+
+          it 'should respond with 302' do
+            post_as grader, :manually_collect_and_begin_grading,
+                    params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
+                              current_revision_identifier: revision_identifier }
+
+            expect(response).to have_http_status :found
+          end
+
+          it 'should flash an error message' do
+            post_as grader, :manually_collect_and_begin_grading,
+                    params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
+                              current_revision_identifier: revision_identifier }
+
+            expect(flash[:error]).to eq(["<p>#{I18n.t('submissions.collect.could_not_collect_released')}</p>"])
+          end
+        end
       end
 
       describe '#update submissions' do
@@ -1661,6 +1693,19 @@ describe SubmissionsController do
       context 'a jupyter-notebook file',
               skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
         let(:filename) { 'example.ipynb' }
+
+        it_behaves_like 'notebook content'
+      end
+
+      context 'a jupyter-notebook file with widgets',
+              skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+        render_views
+        let(:filename) { 'example_widgets.ipynb' }
+
+        it 'renders without widgets' do
+          subject
+          expect(response.body).not_to include("KeyError: 'state'")
+        end
 
         it_behaves_like 'notebook content'
       end

@@ -250,6 +250,12 @@ class Student < Role
     end
   end
 
+  def grace_credits_used_for(assessment)
+    grouping = accepted_grouping_for(assessment.id)
+    return 0 if grouping.nil?  # Return 0 if no grouping exists
+    grouping.grace_period_deduction_single
+  end
+
   # Determine what assessments are visible to the role.
   # By default, returns all assessments visible to the role for the current course.
   # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,

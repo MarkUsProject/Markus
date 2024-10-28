@@ -16,6 +16,15 @@ describe User do
   it { is_expected.to have_many(:roles) }
   it { is_expected.to have_many(:lti_users) }
 
+  it 'fails with error message when invalid name format' do
+    user = create(:end_user)
+    user.user_name = 'Invalid!@'
+    error_key = 'activerecord.errors.models.user.attributes.user_name.invalid'
+    expected_error = I18n.t(error_key, attribute: 'User Name')
+    expect(user).not_to be_valid
+    expect(user.errors[:user_name]).to include(expected_error)
+  end
+
   describe 'AutotestUser' do
     subject { create(:autotest_user) }
 

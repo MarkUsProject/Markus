@@ -9,16 +9,18 @@
     @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
     @assignment.short_identifier) %>
 
+<% marks_released = @assignment.released_marks.present? %>
+
 <% @heading_buttons = [
   { link_text: t('criteria.new.button'),
     link_path: new_course_assignment_criterion_path(@current_course, @assignment),
-    html_options: { id: 'add-new-criterion', 'data-remote': 'true' } },
+    html_options: { id: 'add-new-criterion', 'data-remote': 'true', class: (marks_released ? 'inactive' : '')  } },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },
   { link_text: t('upload'),
     link_path: '#',
-    html_options: { id: 'uploadModal' } }
+    html_options: { id: 'uploadModal', class: (marks_released ? 'inactive' : '') } }
 ] %>
 
 <div class='wrapper'>
@@ -29,7 +31,7 @@
 
 <div class='pane-wrapper'>
   <div id='criteria_pane' class="criteria-pane-wrapper">
-    <%= render partial: 'criteria_pane' %>
+    <%= render partial: 'criteria_pane', locals: { marks_released: marks_released } %>
   </div>
 
   <div class='pane'>

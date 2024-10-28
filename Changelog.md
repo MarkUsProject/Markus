@@ -6,9 +6,18 @@
 
 ### ✨ New features and improvements
 
+- Add visual indicator on a per-assignment basis for used grace credits (#7226)
+- Change default disabled text area colour to ligher grey on light mode (#7269)
+
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
+- Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
+- Disable editable fields in assignment criterion when criterion is released (#7264)
+- Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
+- Fix incorrect inclusion of course parameter in LtiSyncJob (#7258)
+- Fix Google Colab Jupyter Notebooks rendering by excluding widgets (#7271)
 
 ### 🔧 Internal changes
 
@@ -19,7 +28,12 @@
 - Add test cases for the student model to cover Group or Grouping save method failure (#7218)
 - Create tests for overtime messages of the submission rule classes (#7216)
 - Fix flaky `check_repo_permissions` test (#7223)
+- Move model validation error messages to respective localization files (#7229)
 - Replace time-warp gem with newer, maintained timecop gem (#7234)
+- Update pre-commit-hooks to v5.0 and add checks `check-illegal-windows-names`, `check-json`, and `check-merge-conflict` (#7259)
+- Merge result.js and result_main.css build files into application.js/application.css (#7260)
+- Simplify pdf.js configuration (#7260)
+- Improve descriptions of the Group and Grouping models (#7262)
 
 ## [v2.5.2]
 
