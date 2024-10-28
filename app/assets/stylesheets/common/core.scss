@@ -497,9 +497,9 @@ option.uncollected {
 
 .flash-content {
   display: inline-block;
+  max-width: calc(100% - 3em);
   padding-left: 5pt;
   vertical-align: middle;
-  max-width: calc(100% - 3em);
 }
 
 // Empty space, used in criteria page

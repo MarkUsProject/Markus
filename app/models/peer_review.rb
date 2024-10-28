@@ -9,6 +9,7 @@ class PeerReview < ApplicationRecord
   validate :no_students_should_be_reviewer_and_reviewee
   has_one :course, through: :result
   validate :assignments_should_match
+  before_destroy :check_marks_or_annotations
 
   def no_students_should_be_reviewer_and_reviewee
     if result && reviewer
@@ -73,18 +74,6 @@ class PeerReview < ApplicationRecord
     deleted_count = 0
     undeleted_reviews = []
 
-    # When an entire row is selected for unassignment
-    [selected_reviewee_group_ids].each do |reviewee_id| # process each reviewee when a whole row is selected
-      peer_reviews = PeerReview.joins(result: :submission)  # query all peer reviews in a selected row
-                               .where(submissions: { grouping_id: reviewee_id })
-
-      peer_reviews.each do |peer_review|
-        reviewer_id = peer_review.reviewer.id
-        reviewers_to_remove_from_reviewees_map[reviewee_id] ||= {} # initialize the hash as empty if it doesn't exist
-        reviewers_to_remove_from_reviewees_map[reviewee_id][reviewer_id.to_s] = 'true' # mark the reviewer to be removed
-      end
-    end
-
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each_key do |reviewer_id|
@@ -94,14 +83,13 @@ class PeerReview < ApplicationRecord
         unless reviewee_group.nil? || reviewer_group.nil?
           peer_review = reviewer_group.review_for(reviewee_group)
           unless peer_review.nil?
-            if peer_review.has_marks_or_annotations?
-              delete_all_reviews = false
-              undeleted_reviews.append(reviewer_group.get_all_students_in_group +
-                                         ' (assigned to review ' + reviewee_group.get_all_students_in_group + ')')
-              next # Do not delete this peer review
-            else  # Safe to delete this peer review
+            if self.delete_peer_review_between(reviewer_group, reviewee_group)
               deleted_count += 1
-              self.delete_peer_review_between(reviewer_group, reviewee_group)
+            else
+              delete_all_reviews = false
+              undeleted_reviews.append(I18n.t('activerecord.models.peer_review.reviewer_assigned_to_reviewee',
+                                              reviewer_group_name: reviewer_group.get_group_name,
+                                              reviewee_group_name: reviewee_group.get_group_name))
             end
           end
         end
@@ -114,15 +102,16 @@ class PeerReview < ApplicationRecord
     [delete_all_reviews, deleted_count, undeleted_reviews]
   end
 
+  def check_marks_or_annotations
+    if self.has_marks_or_annotations?
+      throw(:abort)
+    end
+  end
+
   def has_marks_or_annotations?
     result = self.result
-    marks_not_nil = false
-    result.marks.each do |mark|
-      unless mark.mark.nil?
-        marks_not_nil = true
-        break
-      end
-    end
+    marks_not_nil = result
+                    .marks.where.not(mark: 0).exists?
     result.marking_state == Result::MARKING_STATES[:complete] || marks_not_nil || result.annotations.exists?
   end
 

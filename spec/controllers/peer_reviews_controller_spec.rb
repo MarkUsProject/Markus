@@ -269,10 +269,7 @@ describe PeerReviewsController do
           @reviewer = Grouping.find_by(id: @selected_reviewer_group_ids[0])
           @reviewee = Grouping.find_by(id: @selected_reviewee_group_ids[1])
           allow_any_instance_of(PeerReview).to receive(:has_marks_or_annotations?).and_return(true)
-          selected_group = {}
-          selected_group[@reviewer.id] = true
-          selected = {}
-          selected[@reviewee.id] = selected_group
+          selected = { @reviewee.id => { @reviewer.id => true } }
           post_as role, :assign_groups,
                   params: { actionString: 'unassign',
                             selectedReviewerInRevieweeGroups: selected,
@@ -329,14 +326,11 @@ describe PeerReviewsController do
 
           it 'flashes the correct message' do
             expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
-              'peer_reviews.errors.cannot_unassign_all_reviewers_many',
+              'peer_reviews.errors.cannot_unassign_all_reviewers',
               deleted_count: '1',
               undeleted_reviews: 'group1 (assigned to review group2), group1 (assigned to review group3),
-group1 (assigned to review group4), group1 (assigned to review group5),
-group1 (assigned to review group6)',
-              undeleted_count: 6,
-              truncated_count: 1
-            ).squish]
+group1 (assigned to review group4), group1 (assigned to review group5), group1 (assigned to review group6)'
+            ).squish + ' ' + I18n.t('additional_not_shown')]
           end
         end
 
