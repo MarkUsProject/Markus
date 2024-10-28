@@ -95,6 +95,7 @@ class Result extends React.Component {
         }
       })
       .then(res => {
+        console.log(res.submission_files);
         if (res.submission_files) {
           res.submission_files = this.processSubmissionFiles(res.submission_files);
         }
@@ -164,13 +165,13 @@ class Result extends React.Component {
   /* Processing result data */
   processSubmissionFiles = data => {
     let fileData = {files: [], directories: {}, name: "", path: []};
-    data.forEach(({id, filename, path, type, size}) => {
+    data.forEach(({id, filename, path, type}) => {
       // Use .slice(1) to remove the Assignment repository name.
       let segments = path.split("/").concat(filename).slice(1);
       let currHash = fileData;
       segments.forEach((segment, i) => {
         if (i === segments.length - 1) {
-          currHash.files.push([segment, id, type, size]);
+          currHash.files.push([segment, id, type]);
         } else if (currHash.directories.hasOwnProperty(segment)) {
           currHash = currHash.directories[segment];
         } else {
