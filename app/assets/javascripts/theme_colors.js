@@ -33,7 +33,7 @@ export const themes = {
     background_support: "#e8f4f2",
     comments_color: "var(--severe_success)",
     disabled_text: "#b5b5b5",
-    disabled_area: "#bcbcbc",
+    disabled_area: "#eaeaea",
     gridline: "#46464640",
     key_words_color: "var(--primary_one)",
     light_alert: "#ffe9ac",
