@@ -117,7 +117,7 @@ export class SubmissionFilePanel extends React.Component {
         }
       }
     }
-    return null;
+    return [];
   };
 
   getFirstFile = fileData => {
