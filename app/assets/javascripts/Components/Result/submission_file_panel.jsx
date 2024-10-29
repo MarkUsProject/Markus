@@ -10,7 +10,7 @@ export class SubmissionFilePanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFile: null,
+      selectedFile: [],
       focusLine: null,
       annotationFocus: undefined,
       selectedFileType: null,
@@ -190,6 +190,7 @@ export class SubmissionFilePanel extends React.Component {
             mime_type={submission_file_mime_type}
             result_id={this.props.result_id}
             selectedFile={submission_file_id}
+            selectedFileType={this.state.selectedFile ? this.state.selectedFile[2] : null}
             annotations={this.state.visibleAnnotations}
             focusLine={this.state.focusLine}
             annotationFocus={this.state.annotationFocus}
