@@ -112,57 +112,36 @@ export class FileViewer extends React.Component {
     });
 
     this.setState({loading: true, url: null}, () => {
-      if (!this.props.selectedFileURL) {
-        fetch(
-          Routes.get_file_course_submission_path(this.props.course_id, this.props.submission_id, {
-            submission_file_id: submission_file_id,
-            force_text: force_text,
-          }),
-          {credentials: "include"}
-        )
-          .then(res => res.json())
-          .then(body => {
-            if (body.type === "image" || body.type === "pdf" || this.isNotebook(body.type)) {
-              this.setState({type: body.type}, () => {
-                this.setFileUrl(submission_file_id);
-              });
-            } else {
-              const content = JSON.parse(body.content).replace(/\r?\n/gm, "\n");
-              this.setState({
-                content: content,
-                type: body.type,
-                loading: false,
-              });
-            }
-          });
+      if (
+        this.props.selectedFileType === "image" ||
+        this.props.selectedFileType === "pdf" ||
+        this.isNotebook(this.props.selectedFileType)
+      ) {
+        this.setState({type: this.props.selectedFileType}, () => {
+          this.setFileUrl();
+        });
       } else {
-        if (
-          this.props.selectedFileType === "image" ||
-          this.props.selectedFileType === "pdf" ||
-          this.isNotebook(this.props.selectedFileType)
-        ) {
-          this.setState({type: this.props.selectedFileType}, () => {
-            this.setFileUrl();
-          });
-        } else {
-          const requestData = {preview: true, force_text: force_text};
-          const url = this.props.selectedFileURL;
-          const queryString = new URLSearchParams(requestData);
-          const requestUrl = `${url}&${queryString}`;
-          fetch(requestUrl)
-            .then(response => {
-              if (response.ok) {
-                return response.text();
-              }
+        const delimiter = this.props.selectedFileURL.includes("?") ? "&" : "?";
+        fetch(
+          this.props.selectedFileURL +
+            delimiter +
+            new URLSearchParams({
+              preview: true,
+              force_text: force_text,
             })
-            .then(res => {
-              this.setState({
-                content: res.replace(/\r?\n/gm, "\n"),
-                type: this.props.selectedFileType,
-                loading: false,
-              });
+        )
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            }
+          })
+          .then(res => {
+            this.setState({
+              content: res.replace(/\r?\n/gm, "\n"),
+              type: this.props.selectedFileType,
+              loading: false,
             });
-        }
+          });
       }
     });
   };
