@@ -60,12 +60,10 @@ export class SubmissionFilePanel extends React.Component {
     let selectedFile = [];
     const stored_file = localStorage.getItem("file");
     if (!this.state.student_view && stored_file) {
-      let filepath = stored_file.split("/");
-      let filename = filepath.pop();
-      const file_id = this.getNamedFileId(this.props.fileData, filepath, filename);
-      const file_arr = this.props.fileData.files.find(arr => arr[1] === file_id);
-      const type = file_arr ? file_arr[2] : null;
-      selectedFile = [stored_file, file_id, type];
+      const filepath = stored_file.split("/");
+      const filename = filepath.pop();
+      const [_, id, type] = this.getNamedFile(this.props.fileData, filepath, filename);
+      selectedFile = [stored_file, id, type];
     }
     if (!selectedFile[1]) {
       if (
@@ -106,16 +104,16 @@ export class SubmissionFilePanel extends React.Component {
     }
   };
 
-  getNamedFileId = (fileData, path, filename) => {
+  getNamedFile = (fileData, path, filename) => {
     if (!!path.length) {
       let dir = path.shift();
       if (fileData.directories.hasOwnProperty(dir)) {
-        return this.getNamedFileId(fileData.directories[dir], path, filename);
+        return this.getNamedFile(fileData.directories[dir], path, filename);
       }
     } else {
       for (let file_data of fileData.files) {
         if (file_data[0] === filename) {
-          return file_data[1];
+          return file_data;
         }
       }
     }
@@ -248,13 +246,13 @@ export class FileSelector extends React.Component {
       <ul className="nested-folder" style={{display: displayStyle}}>
         {dirs}
         {hash["files"].map(f => {
-          const [name, id] = f;
+          const [name, id, type] = f;
           const fullPath = hash.path.concat([name]).join("/");
           return (
             <li
               className="file_item"
               key={fullPath}
-              onClick={e => this.selectFile(e, fullPath, id)}
+              onClick={e => this.selectFile(e, fullPath, id, type)}
             >
               <a key={`${fullPath}-a`}>{f[0]}</a>
             </li>
@@ -264,9 +262,9 @@ export class FileSelector extends React.Component {
     );
   };
 
-  selectFile = (e, fullPath, id) => {
+  selectFile = (e, fullPath, id, type) => {
     e.stopPropagation();
-    this.props.onSelectFile(fullPath, id);
+    this.props.onSelectFile(fullPath, id, type);
     this.setState({expanded: null});
   };
 
