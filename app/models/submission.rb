@@ -255,6 +255,70 @@ class Submission < ApplicationRecord
     remark.save
   end
 
+  def copy_grading_data(old_submission)
+    # copy submission-wide data to this submission
+    old_submission.feedback_files.each do |feedback_file|
+      feedback_file_dup = feedback_file.dup
+      feedback_file_dup.update!(submission_id: self.id)
+    end
+
+    old_submission.test_runs.each do |test_run|
+      test_run_dup = test_run.dup
+      test_run_dup.update!(submission_id: self.id)
+
+      test_run.test_group_results.each do |test_group_result|
+        test_group_result_dup = test_group_result.dup
+        test_group_result_dup.update!(test_run_id: test_run_dup.id)
+
+        test_group_result.test_results.each do |test_result|
+          test_result_dup = test_result.dup
+          test_result_dup.update!(test_group_result_id: test_group_result_dup.id)
+        end
+
+        test_group_result.feedback_files.each do |feedback_file|
+          feedback_file_dup = feedback_file.dup
+          feedback_file_dup.update!(test_group_result_id: test_group_result_dup.id)
+        end
+      end
+    end
+
+    # copy latest result data from old submission to latest result
+    old_result = old_submission.non_pr_results
+                               .where(remark_request_submitted_at: nil)
+                               .last
+    new_result = self.current_result # there's only one of these
+
+    # get rid of default marks
+    new_result.marks.destroy_all
+
+    old_result.marks.each do |mark|
+      mark_dup = mark.dup
+      mark_dup.update!(result_id: new_result.id)
+    end
+
+    old_result.annotations.each do |annotation|
+      # annotations are associated with files; if a file for an annotation doesn't exist
+      # we just skip adding this annotation to the new new result
+      annotation_filename = annotation.submission_file.filename
+      annotation_path = annotation.submission_file.path
+      new_submission_file = self.submission_files.where(filename: annotation_filename, path: annotation_path).first
+
+      next if new_submission_file.nil?
+
+      annotation_dup = annotation.dup
+      annotation_dup.update!(result_id: new_result.id, submission_file_id: new_submission_file.id)
+    end
+
+    # NOTE: We are only copying point-based extra marks (which were manually
+    # added to the old result). Percentage-based extra marks are added at the
+    # instructor's discretion on newly-collected submissions, and therefore would
+    # be submission-specific.
+    old_result.extra_marks.where(unit: 'points').find_each do |extra_mark|
+      extra_mark_dup = extra_mark.dup
+      extra_mark_dup.update!(result_id: new_result.id)
+    end
+  end
+
   private
 
   def create_result
