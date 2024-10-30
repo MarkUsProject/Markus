@@ -478,7 +478,11 @@ class SubmissionsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:submission_file_id])
-    file_size = file.retrieve_file.size
+    file_size = begin
+      file.retrieve_file.size
+    rescue StandardError
+      0
+    end
     max_size = params[:max_size].blank? ? -1 : params[:max_size].to_i
     if file.is_supported_image?
       render json: { type: 'image', size: file_size }
