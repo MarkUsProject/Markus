@@ -11,9 +11,9 @@ export class SubmissionFilePanel extends React.Component {
     super(props);
     this.state = {
       selectedFile: [],
+      selectedFileType: null,
       focusLine: null,
       annotationFocus: undefined,
-      selectedFileType: null,
       visibleAnnotations: [],
     };
     this.submissionFileViewer = React.createRef();
@@ -151,6 +151,19 @@ export class SubmissionFilePanel extends React.Component {
     this.modalDownload.open();
   };
 
+  getFileDownloadURL = file_id => {
+    return Routes.download_file_course_assignment_submission_path(
+      this.props.course_id,
+      this.props.assignment_id,
+      this.props.submission_id,
+      {
+        select_file_id: file_id,
+        show_in_browser: true,
+        from_codeviewer: true,
+      }
+    );
+  };
+
   render() {
     let submission_file_id, submission_file_mime_type;
     if (this.state.selectedFile === null) {
@@ -168,6 +181,8 @@ export class SubmissionFilePanel extends React.Component {
             onSelectFile={this.selectFile}
             selectedFile={this.state.selectedFile}
             course_id={this.props.course_id}
+            submission_id={this.props.submission_id}
+            assignment_id={this.props.assignment_id}
           />
           {this.props.canDownload && (
             <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
@@ -190,6 +205,7 @@ export class SubmissionFilePanel extends React.Component {
             mime_type={submission_file_mime_type}
             result_id={this.props.result_id}
             selectedFile={submission_file_id}
+            selectedFileURL={this.getFileDownloadURL(submission_file_id)}
             selectedFileType={this.state.selectedFile ? this.state.selectedFile[2] : null}
             annotations={this.state.visibleAnnotations}
             focusLine={this.state.focusLine}

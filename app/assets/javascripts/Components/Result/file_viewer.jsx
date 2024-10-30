@@ -112,13 +112,15 @@ export class FileViewer extends React.Component {
     });
 
     this.setState({loading: true, url: null}, () => {
+      this.setFileUrl(submission_file_id);
+
       if (
         this.props.selectedFileType === "image" ||
         this.props.selectedFileType === "pdf" ||
         this.isNotebook(this.props.selectedFileType)
       ) {
         this.setState({type: this.props.selectedFileType}, () => {
-          this.setFileUrl();
+          this.setFileUrl(submission_file_id);
         });
       } else {
         const delimiter = this.props.selectedFileURL.includes("?") ? "&" : "?";
