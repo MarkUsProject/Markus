@@ -5,7 +5,7 @@ import {FileViewer} from "../Result/file_viewer";
 describe("FileViewer", () => {
   afterEach(cleanup);
 
-  it("should not render oversized files", () => {
+  it("should not render oversized files", async () => {
     // mocks `/get_file` request
     global.fetch = () =>
       Promise.resolve({
@@ -22,10 +22,8 @@ describe("FileViewer", () => {
     render(<FileViewer {...props} />);
 
     // waits for the fetch promise to resolve
-    waitFor(() =>
-      expect(
-        screen.getByText("This file is too large to display. Download it instead.")
-      ).toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getByText(I18n.t("oversize_submission_file"))).toBeInTheDocument()
     );
   });
 });
