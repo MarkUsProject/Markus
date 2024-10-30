@@ -181,8 +181,6 @@ export class SubmissionFilePanel extends React.Component {
             onSelectFile={this.selectFile}
             selectedFile={this.state.selectedFile}
             course_id={this.props.course_id}
-            submission_id={this.props.submission_id}
-            assignment_id={this.props.assignment_id}
           />
           {this.props.canDownload && (
             <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
