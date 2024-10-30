@@ -1847,13 +1847,14 @@ describe SubmissionsController do
           assignment.update!(url_submit: true)
         end
 
-        it 'should return the file type' do
+        it 'should return the file type and non-zero size' do
           submission_file = submission.submission_files.find_by(filename: file7.original_filename)
           get_as instructor, :get_file, params: { course_id: course.id,
                                                   id: submission.id,
                                                   submission_file_id: submission_file.id,
                                                   format: :json }
           expect(response.parsed_body['type']).to eq 'markusurl'
+          expect(response.parsed_body['size']).to be > 0
         end
       end
 
@@ -1874,37 +1875,40 @@ describe SubmissionsController do
     describe 'when the file is an image' do
       let(:files) { [file4] }
 
-      it 'should return the file type' do
+      it 'should return the file type and size' do
         submission_file = submission.submission_files.find_by(filename: file4.original_filename)
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('image')
+        expect(response.parsed_body['size']).to be > 0
       end
     end
 
     describe 'when the file is a pdf' do
       let(:files) { [file5] }
 
-      it 'should return the file type' do
+      it 'should return the file type and size' do
         submission_file = submission.submission_files.find_by(filename: file5.original_filename)
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('pdf')
+        expect(response.parsed_body['size']).to be > 0
       end
     end
 
     describe 'when the file is missing' do
       let(:files) { [file1] }
 
-      it 'should return an unknown file type' do
+      it 'should return an unknown file type and zero size' do
         submission_file = submission.submission_files.find_by(filename: file1.original_filename)
         allow_any_instance_of(MemoryRevision).to receive(:files_at_path).and_return({})
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('unknown')
+        expect(response.parsed_body['size']).to be 0
       end
     end
   end
