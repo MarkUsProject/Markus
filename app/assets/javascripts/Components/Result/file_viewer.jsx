@@ -132,14 +132,10 @@ export class FileViewer extends React.Component {
               force_text: force_text,
             })
         )
-          .then(response => {
-            if (response.ok) {
-              return response.text();
-            }
-          })
-          .then(res => {
+          .then(response => (response.ok ? response.text() : Promise.reject()))
+          .then(text => {
             this.setState({
-              content: res.replace(/\r?\n/gm, "\n"),
+              content: text.replace(/\r?\n/gm, "\n"),
               type: this.props.selectedFileType,
               loading: false,
             });
