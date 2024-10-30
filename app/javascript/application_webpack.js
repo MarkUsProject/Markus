@@ -59,6 +59,16 @@ window.flatpickr = flatpickr;
 // prism
 window.Prism = window.Prism || {};
 window.Prism.manual = true;
+import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+
+// pdf.js
+import * as pdfjs from "pdfjs-dist";
+import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer.mjs";
+
+window.pdfjs = pdfjs;
+window.pdfjsViewer = pdfjsViewer;
+
+import "pdfjs-dist/web/pdf_viewer.css";
 
 window.Routes = require("./routes");
 
@@ -153,3 +163,5 @@ import {makeSubmitViewTokenModal} from "javascripts/Components/Modals/submit_vie
 window.makeSubmitViewTokenModal = makeSubmitViewTokenModal;
 import {makeLtiSettings} from "javascripts/Components/lti_settings";
 window.makeLtiSettings = makeLtiSettings;
+import {makeResult} from "javascripts/Components/Result/result";
+window.makeResult = makeResult;

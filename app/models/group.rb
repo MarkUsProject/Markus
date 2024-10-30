@@ -1,4 +1,4 @@
-# Maintains group information for a given user on a specific assignment
+# Represents groupings of students working on one or more assignments, within a shared repository.
 class Group < ApplicationRecord
   after_create :set_repo_name, :check_repo_uniqueness, :build_repository
 
