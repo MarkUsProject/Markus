@@ -16,12 +16,12 @@ export class FileViewer extends React.Component {
     super(props);
 
     this.max_sizes = {
-      any: 5e6,
-      image: 5e6,
-      pdf: 5e6,
-      text: 1e6,
-      binary: 1e6,
-      "jupyter-notebook": 5e6,
+      any: 15e6,
+      image: 15e6,
+      pdf: 15e5,
+      text: 5e6,
+      binary: 5e6,
+      "jupyter-notebook": 15e6,
     };
 
     this.state = {
