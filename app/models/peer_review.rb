@@ -69,6 +69,7 @@ class PeerReview < ApplicationRecord
   end
 
   def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    # when an entire row is selected to be unassigned, the necessary checks are being bypassed.
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each_key do |reviewer_id|
