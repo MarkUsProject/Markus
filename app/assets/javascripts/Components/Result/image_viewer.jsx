@@ -7,6 +7,7 @@ export class ImageViewer extends React.PureComponent {
     this.state = {
       rotation: window.start_image_rotation || 0,
       zoom: window.start_image_zoom || 1,
+      url: this.props.url,
     };
   }
 
@@ -17,6 +18,11 @@ export class ImageViewer extends React.PureComponent {
   }
 
   componentDidMount() {
+    // Since HEIC and HEIF files can't be displayed, they must first be converted to JPEG.
+    if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
+      this.getJPEGFromHEIC().then(JPEGObjectURL => this.setState({url: JPEGObjectURL}));
+    }
+
     document.getElementById("image_preview").onload = () => {
       this.display_annotations();
       this.adjustPictureSize();
@@ -28,6 +34,14 @@ export class ImageViewer extends React.PureComponent {
     window.start_image_zoom = this.state.zoom;
     window.start_image_rotation = this.state.rotation;
   }
+
+  // Returns a promise containing an object URL for a JPEG image converted from the HEIC/HEIF format.
+  getJPEGFromHEIC = () => {
+    return fetch(this.props.url)
+      .then(res => res.blob())
+      .then(blob => heic2any({blob, toType: "image/jpeg"}))
+      .then(conversionResult => URL.createObjectURL(conversionResult));
+  };
 
   display_annotations = () => {
     if (this.props.resultView && this.props.url) {

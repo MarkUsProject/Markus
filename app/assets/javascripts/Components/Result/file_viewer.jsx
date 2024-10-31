@@ -78,19 +78,6 @@ export class FileViewer extends React.Component {
         }
       );
     }
-    if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
-      fetch(url)
-        .then(res => res.blob())
-        .then(blob => heic2any({blob, toType: "image/jpeg"}))
-        .then(conversionResult => {
-          this.setState({
-            url: URL.createObjectURL(conversionResult),
-            loading: false,
-          });
-        });
-    } else {
-      this.setState({url: url, loading: false});
-    }
   };
 
   /*
@@ -157,7 +144,7 @@ export class FileViewer extends React.Component {
     if (this.state.loading) {
       return I18n.t("working");
     } else if (this.state.type === "image") {
-      return <ImageViewer url={this.state.url} {...commonProps} />;
+      return <ImageViewer url={this.state.url} mime_type={this.props.mime_type} {...commonProps} />;
     } else if (this.state.type === "pdf") {
       return (
         <PDFViewer
