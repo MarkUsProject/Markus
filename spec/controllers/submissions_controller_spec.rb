@@ -1770,6 +1770,8 @@ describe SubmissionsController do
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
     let(:file7) { fixture_file_upload('sample.markusurl') }
+    let(:file8) { fixture_file_upload('35_bytes.txt') }
+
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1909,6 +1911,38 @@ describe SubmissionsController do
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('unknown')
         expect(response.parsed_body['size']).to be 0
+      end
+    end
+
+    describe 'when the maximum content size query parameter is passed' do
+      let(:files) { [file8] }
+      let!(:submission_file) { submission.submission_files.find_by(filename: file8.original_filename) }
+
+      it 'should return the file content if it does not exceed the maximum' do
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id,
+                                                max_content_size: 36 }
+        expect(response.parsed_body['size']).to be 35
+        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
+      end
+
+      it 'should return the file content if it is the same size as the maximum' do
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id,
+                                                max_content_size: 35 }
+        expect(response.parsed_body['size']).to be 35
+        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
+      end
+
+      it 'should not return the file content if it exceeds the maximum' do
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id,
+                                                max_content_size: 34 }
+        expect(response.parsed_body['size']).to be 35
+        expect(response.parsed_body['content']).to eql ''
       end
     end
   end
