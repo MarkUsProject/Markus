@@ -256,6 +256,8 @@ class Submission < ApplicationRecord
   end
 
   def copy_grading_data(old_submission)
+    return if old_submission.blank?
+
     # copy submission-wide data to this submission
     old_submission.feedback_files.each do |feedback_file|
       feedback_file_dup = feedback_file.dup

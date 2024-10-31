@@ -51,7 +51,7 @@ FactoryBot.define do
       a.groupings.each do |grouping|
         a.test_groups.each do |test_group|
           5.times do
-            test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
+            test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_submission_used.id)
             test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
             create(:test_result, test_group_result: test_group_result)
           end
@@ -123,6 +123,19 @@ FactoryBot.define do
         create(:text_annotation,
                annotation_text: a.annotation_categories.first.annotation_texts.first,
                result: result)
+      end
+    end
+  end
+
+  factory :assignment_with_deductive_annotations_and_submission_files, parent: :assignment_with_deductive_annotations do
+    after(:create) do |a|
+      a.groupings.each do |grouping|
+        grouping.current_result.annotations.each do |annotation|
+          # make physical submission files for each one
+          annotation.submission_file = create(:submission_file_with_repo,
+                                              filename: annotation.submission_file.filename,
+                                              submission: grouping.current_submission_used)
+        end
       end
     end
   end
@@ -236,19 +249,6 @@ FactoryBot.define do
             create(:feedback_file, test_group_result: tgr)
           end
         end
-      end
-    end
-  end
-
-  factory :assignment_with_deductive_annotations_and_submission_files, parent: :assignment_with_deductive_annotations do
-    after(:create) do |a|
-      # actually add files to the repository rather than just mock them, so that if the submission is manipulated (e.g.
-      # if it's recollected) the filenames are preserved
-      a.groupings.each do |grouping|
-        grouping.update(group: create(:group_with_files_submitted,
-                                      submission_files: grouping.current_submission_used.submission_files
-                                                                .map(&:filename),
-                                      assignment: a))
       end
     end
   end
