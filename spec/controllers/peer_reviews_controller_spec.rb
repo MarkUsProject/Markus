@@ -287,10 +287,15 @@ describe PeerReviewsController do
               'peer_reviews.errors.cannot_unassign_any_reviewers'
             )]
           end
+
+          it 'does not delete the peer review' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews
+          end
         end
 
         context 'when some reviews are deleted, and 5 or less are not deleted' do
           before do
+            @assignment_with_pr.peer_reviews.first.delete  # mock that one peer review was deleted
             allow(PeerReview).to receive(:unassign).and_return([false, 1, ['group1 (assigned to review group2)']])
             post_as role, :assign_groups,
                     params: { actionString: 'unassign',
@@ -306,10 +311,15 @@ describe PeerReviewsController do
               undeleted_reviews: 'group1 (assigned to review group2)'
             ).squish]
           end
+
+          it 'deletes one peer review but keeps others' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
+          end
         end
 
         context 'when some reviews are deleted, and more than 5 are not deleted' do
           before do
+            @assignment_with_pr.peer_reviews.first.delete  # mock that one peer review was deleted
             allow(PeerReview).to receive(:unassign).and_return([false, 1,
                                                                 ['group1 (assigned to review group2)',
                                                                  'group1 (assigned to review group3)',
@@ -332,10 +342,10 @@ describe PeerReviewsController do
 group1 (assigned to review group4), group1 (assigned to review group5), group1 (assigned to review group6)'
             ).squish + ' ' + I18n.t('additional_not_shown')]
           end
-        end
 
-        it 'does not delete the peer review' do
-          expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews
+          it 'deletes one peer review but keeps others' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
+          end
         end
       end
     end
