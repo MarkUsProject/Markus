@@ -62,12 +62,11 @@ export class FileViewer extends React.Component {
     return type === "jupyter-notebook";
   }
 
-  setFileUrl = submission_file_id => {
-    let url;
+  getFileUrl = submission_file_id => {
     if (!!this.props.selectedFileURL) {
-      url = this.props.selectedFileURL;
+      return this.props.selectedFileURL;
     } else {
-      url = Routes.download_file_course_assignment_submission_path(
+      return Routes.download_file_course_assignment_submission_path(
         this.props.course_id,
         this.props.assignment_id,
         this.props.submission_id,
@@ -98,17 +97,13 @@ export class FileViewer extends React.Component {
       this.remove();
     });
 
-    this.setState({loading: true, url: null}, () => {
-      this.setFileUrl(submission_file_id);
-
+    this.setState({loading: true, url: this.getFileUrl(submission_file_id)}, () => {
       if (
         this.props.selectedFileType === "image" ||
         this.props.selectedFileType === "pdf" ||
         this.isNotebook(this.props.selectedFileType)
       ) {
-        this.setState({type: this.props.selectedFileType}, () => {
-          this.setFileUrl(submission_file_id);
-        });
+        this.setState({type: this.props.selectedFileType});
       } else {
         const delimiter = this.props.selectedFileURL.includes("?") ? "&" : "?";
         fetch(
