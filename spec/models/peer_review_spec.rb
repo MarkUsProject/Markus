@@ -98,13 +98,76 @@ describe PeerReview do
       create(:peer_review, reviewer_id: grouping_reviewer.id, result_id: grouping_reviewee.current_result.id)
     end
 
-    before do
-      criterion = create(:rubric_criterion, assignment: assignment.pr_assignment)
-      create(:mark, criterion: criterion, result: peer_review.result, mark: 2.5)
+    context 'when there are non-zero marks' do
+      before do
+        criterion = create(:rubric_criterion, assignment: assignment.pr_assignment)
+        create(:mark, criterion: criterion, result: peer_review.result, mark: 2.5)
+      end
+
+      it 'returns true when there are non-nil marks' do
+        expect(peer_review.has_marks_or_annotations?).to be true
+      end
     end
 
-    it 'returns true when there are non-nil marks' do
-      expect(peer_review.has_marks_or_annotations?).to be true
+    context 'when there are annotations' do
+      before do
+        create(:text_annotation, result: peer_review.result)
+      end
+
+      it 'returns true when there are annotations' do
+        expect(peer_review.has_marks_or_annotations?).to be true
+      end
+    end
+
+    context 'when the assignment is set to complete' do
+      before do
+        peer_review.result.update(marking_state: Result::MARKING_STATES[:complete])
+      end
+
+      it 'returns true when the assignment is set to complete' do
+        expect(peer_review.has_marks_or_annotations?).to be true
+      end
+    end
+
+    context 'when there are no marks or annotations' do
+      it 'returns false when there are no marks or annotations' do
+        expect(peer_review.has_marks_or_annotations?).to be false
+      end
+    end
+  end
+
+  describe '#check_marks_or_annotations' do
+    let(:assignment) { create(:assignment_with_peer_review) }
+    let(:peer_review_assignment) { assignment.pr_assignment } # Peer review assignment
+    let(:grouping_reviewer) { create(:grouping_with_inviter_and_submission, assignment: peer_review_assignment) }
+    let(:grouping_reviewee) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let(:peer_review) do
+      create(:peer_review, reviewer_id: grouping_reviewer.id, result_id: grouping_reviewee.current_result.id)
+    end
+
+    context 'when there are non-nil marks' do
+      before do
+        criterion = create(:rubric_criterion, assignment: assignment.pr_assignment)
+        create(:mark, criterion: criterion, result: peer_review.result, mark: 2.5)
+      end
+
+      it 'aborts the callback if there are non-nil marks' do
+        expect { peer_review.check_marks_or_annotations }.to throw_symbol(:abort)
+      end
+
+      it 'prevents the deletion of the peer review' do
+        expect { peer_review.destroy }.not_to(change { PeerReview.count })
+      end
+    end
+
+    context 'when there are no marks or annotations' do
+      it 'does not abort the callback if there are no marks or annotations' do
+        expect { peer_review.check_marks_or_annotations }.not_to throw_symbol(:abort)
+      end
+
+      it 'allows the peer review to be deleted' do
+        expect { peer_review.destroy }.to change { PeerReview.count }.by(-1)
+      end
     end
   end
 end
