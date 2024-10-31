@@ -63,7 +63,6 @@ en:
   or: Or
   other_info: Other Info
   oversize_feedback_file: 'Error: feedback file was %{file_size} larger than the maximum file size of %{max_file_size} MB'
-  oversize_submission_file: This file is too large to display. Download it instead.
   please_wait: Please wait…
   preview: Preview
   refresh: Refresh

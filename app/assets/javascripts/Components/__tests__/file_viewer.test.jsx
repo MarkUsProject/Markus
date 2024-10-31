@@ -23,7 +23,7 @@ describe("FileViewer", () => {
 
     // waits for the fetch promise to resolve
     await waitFor(() =>
-      expect(screen.getByText(I18n.t("oversize_submission_file"))).toBeInTheDocument()
+      expect(screen.getByText(I18n.t("submissions.oversize_submission_file"))).toBeInTheDocument()
     );
   });
 });
