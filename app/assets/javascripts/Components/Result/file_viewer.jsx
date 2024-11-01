@@ -34,7 +34,6 @@ export class FileViewer extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       content: "",
       type: "",
