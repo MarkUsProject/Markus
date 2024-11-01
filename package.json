@@ -36,7 +36,7 @@
     "react-modal": "^3.16.1",
     "react-table": "^6.11.5",
     "react-tabs": "^4.3.0",
-    "tslib": "^2.7.0",
+    "tslib": "^2.8.1",
     "ui-contextmenu": "^1.18.1"
   },
   "devDependencies": {
