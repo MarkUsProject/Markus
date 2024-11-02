@@ -8,6 +8,7 @@
 
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
+- Implement a limit on the file size rendered by the submission viewer (#7273)
 
 ### 🐛 Bug fixes
 

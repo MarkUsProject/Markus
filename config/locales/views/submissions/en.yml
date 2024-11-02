@@ -59,6 +59,7 @@ en:
       Are you sure you want to proceed?
     no_files_available: No files available
     no_url_name: The URL %{url} has not been given a name
+    oversize_submission_file: This file is too large to display. Please download it to view.
     past_collection_time: Any changes you make to your submitted files will be recorded, but not graded.
     refresh_all_tokens: Refresh All Release Tokens
     refresh_token_confirmation: |-
