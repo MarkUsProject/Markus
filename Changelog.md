@@ -16,9 +16,6 @@
 - Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 - Disable editable fields in assignment criterion when criterion is released (#7264)
-- Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
-- Fix incorrect inclusion of course parameter in LtiSyncJob (#7258)
-- Fix Google Colab Jupyter Notebooks rendering by excluding widgets (#7271)
 
 ### 🔧 Internal changes
 
@@ -35,6 +32,14 @@
 - Merge result.js and result_main.css build files into application.js/application.css (#7260)
 - Simplify pdf.js configuration (#7260)
 - Improve descriptions of the Group and Grouping models (#7262)
+
+## [v2.5.3]
+
+### 🐛 Bug fixes
+
+- Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
+- Fix incorrect inclusion of course parameter in LtiSyncJob (#7258)
+- Fix Google Colab Jupyter Notebooks rendering by excluding widgets (#7271)
 
 ## [v2.5.2]
 
