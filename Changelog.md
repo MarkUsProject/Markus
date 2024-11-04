@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.5.3]
+
+### 🐛 Bug fixes
+
+- Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
+- Fix incorrect inclusion of course parameter in LtiSyncJob (#7258)
+- Fix Google Colab Jupyter Notebooks rendering by excluding widgets (#7271)
+
 ## [v2.5.2]
 
 ### ✨ New features and improvements

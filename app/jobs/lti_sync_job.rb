@@ -9,12 +9,12 @@ class LtiSyncJob < ApplicationJob
     I18n.t('lti.grade_sync_complete')
   end
 
-  def perform(lti_deployments, assessment, course, can_create_users: false, can_create_roles: false)
+  def perform(lti_deployments, assessment, can_create_users: false, can_create_roles: false)
     if lti_deployments.empty?
       raise I18n.t('lti.no_platform')
     end
     lti_deployments.each do |deployment|
-      roster_error = roster_sync(deployment, course,
+      roster_error = roster_sync(deployment,
                                  [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]],
                                  can_create_users: can_create_users, can_create_roles: can_create_roles)
       if roster_error
