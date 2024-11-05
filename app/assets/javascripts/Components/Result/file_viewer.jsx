@@ -8,6 +8,26 @@ import {NotebookViewer} from "./notebook_viewer";
 import {BinaryViewer} from "./binary_viewer";
 import {URLViewer} from "./url_viewer";
 
+// 1_000_000 = 1MB
+const MAX_FILE_SIZES = {
+  _default: 100_000,
+  image: 50_000_000,
+  pdf: 50_000_000,
+  "jupyter-notebook": 50_000_000,
+  text: 100_000,
+  binary: 100_000,
+};
+
+// Checks if the file's size exceeds the maximum file size for a file of that type.
+// If the maximum size is not defined for a given type, it checks against the `_default` size.
+const isFileTooLarge = (file_size, file_type) => {
+  if (file_type in MAX_FILE_SIZES) {
+    return file_size > MAX_FILE_SIZES[file_type];
+  } else {
+    return file_size > MAX_FILE_SIZES._default;
+  }
+};
+
 export class FileViewer extends React.Component {
   // this.props.result_id is used as a flag for the component to
   // know whether it is displaying within the result view.
@@ -18,6 +38,7 @@ export class FileViewer extends React.Component {
       content: "",
       type: "",
       url: "",
+      size: 0,
       loading: true,
     };
   }
@@ -101,7 +122,7 @@ export class FileViewer extends React.Component {
       (!this.props.result_id && this.props.selectedFile === null) ||
       submission_file_id === null
     ) {
-      this.setState({loading: false, type: ""});
+      this.setState({loading: false, size: 0, type: ""});
       return;
     }
     force_text = !!force_text;
@@ -111,17 +132,25 @@ export class FileViewer extends React.Component {
       this.remove();
     });
 
-    this.setState({loading: true, url: null}, () => {
+    this.setState({loading: true, size: 0, url: null}, () => {
       if (!this.props.selectedFileURL) {
         fetch(
           Routes.get_file_course_submission_path(this.props.course_id, this.props.submission_id, {
             submission_file_id: submission_file_id,
             force_text: force_text,
+            max_content_size: MAX_FILE_SIZES.text,
           }),
           {credentials: "include"}
         )
           .then(res => res.json())
           .then(body => {
+            this.setState({size: body.size, type: body.type});
+
+            if (isFileTooLarge(body.size, body.type)) {
+              this.setState({loading: false});
+              return;
+            }
+
             if (body.type === "image" || body.type === "pdf" || this.isNotebook(body.type)) {
               this.setState({type: body.type}, () => {
                 this.setFileUrl(submission_file_id);
@@ -190,6 +219,8 @@ export class FileViewer extends React.Component {
     }
     if (this.state.loading) {
       return I18n.t("working");
+    } else if (isFileTooLarge(this.state.size, this.state.type)) {
+      return I18n.t("submissions.oversize_submission_file");
     } else if (this.state.type === "image") {
       return <ImageViewer url={this.state.url} {...commonProps} />;
     } else if (this.state.type === "pdf") {
