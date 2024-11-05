@@ -8,24 +8,56 @@ export class TextViewer extends React.PureComponent {
     this.state = {
       copy_success: false,
       font_size: 1,
+      content: null,
     };
     this.highlight_root = null;
     this.annotation_manager = null;
     this.raw_content = React.createRef();
   }
 
+  getContentFromProps(props, state) {
+    if (props.url) {
+      return state.content;
+    } else {
+      return props.content;
+    }
+  }
+
+  // Retrieves content used by the component.
+  getContent() {
+    return this.getContentFromProps(this.props, this.state);
+  }
+
   componentDidMount() {
     this.highlight_root = this.raw_content.current.parentNode;
-    if (this.props.content) {
+
+    // Fetch content from a URL if it is passed as a prop. The URL should point to plaintext data.
+    if (this.props.url) {
+      this.fetchContent(this.props.url).then(content => this.setState({content: content}));
+    }
+
+    if (this.getContent()) {
       this.ready_annotations();
     }
   }
 
+  fetchContent(url) {
+    return fetch(url)
+      .then(response => response.text())
+      .then(content => content.replace(/\r?\n/gm, "\n"))
+      .catch(error => console.error(error));
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.content &&
-      (this.props.content !== prevProps.content || this.props.annotations !== prevProps.annotations)
-    ) {
+    if (this.props.url && this.props.url !== prevProps.url) {
+      // The URL has updated, so the content needs to be fetched using the new URL.
+      this.fetchContent(this.props.url).then(content => this.setState({content: content}));
+    }
+
+    const content = this.getContentFromProps(this.props, this.state);
+    const prevContent = this.getContentFromProps(prevProps, prevState);
+
+    if (content && (content !== prevContent || this.props.annotations !== prevProps.annotations)) {
       this.ready_annotations();
       this.setState({copy_success: false});
     } else if (this.props.focusLine !== prevProps.focusLine) {
@@ -143,9 +175,17 @@ export class TextViewer extends React.PureComponent {
   };
 
   copyToClipboard = () => {
-    navigator.clipboard.writeText(this.props.content).then(() => {
-      this.setState({copy_success: true});
-    });
+    const content = this.getContent();
+
+    // Prevents from copying `null` or `undefined` to the clipboard. An empty string is ok to copy.
+    if (content || content === "") {
+      navigator.clipboard.writeText(content).then(() => {
+        this.setState({copy_success: true});
+      });
+    } else {
+      console.warn(`Tried to copy content with value ${content} to the clipboard.`);
+      this.setState({copy_success: false});
+    }
   };
 
   render() {
@@ -169,7 +209,7 @@ export class TextViewer extends React.PureComponent {
         </div>
         <pre name={preElementName} className={`line-numbers`}>
           <code ref={this.raw_content} className={`language-${this.props.type}`}>
-            {this.props.content}
+            {this.getContent()}
           </code>
         </pre>
       </React.Fragment>
