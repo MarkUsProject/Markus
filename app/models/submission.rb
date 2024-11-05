@@ -284,40 +284,20 @@ class Submission < ApplicationRecord
       end
     end
 
-    # copy latest result data from old submission to latest result
-    old_result = old_submission.non_pr_results
-                               .where(remark_request_submitted_at: nil)
-                               .last
-    new_result = self.current_result # there's only one of these
+    self.get_original_result.copy_grading_data(old_submission.get_original_result)
 
-    # get rid of default marks
-    new_result.marks.destroy_all
+    # whether it's been submitted or not, remark request is going to be copied
+    if old_submission.remark_request.present?
+      self.remark_request = old_submission.remark_request
+      self.remark_request_timestamp = old_submission.remark_request_timestamp
+      self.save!
 
-    old_result.marks.each do |mark|
-      mark_dup = mark.dup
-      mark_dup.update!(result_id: new_result.id)
-    end
+      self.create_result # additional result for remark data
 
-    old_result.annotations.each do |annotation|
-      # annotations are associated with files; if a file for an annotation doesn't exist
-      # we just skip adding this annotation to the new new result
-      annotation_filename = annotation.submission_file.filename
-      annotation_path = annotation.submission_file.path
-      new_submission_file = self.submission_files.where(filename: annotation_filename, path: annotation_path).first
-
-      next if new_submission_file.nil?
-
-      annotation_dup = annotation.dup
-      annotation_dup.update!(result_id: new_result.id, submission_file_id: new_submission_file.id)
-    end
-
-    # NOTE: We are only copying point-based extra marks (which were manually
-    # added to the old result). Percentage-based extra marks are added at the
-    # instructor's discretion on newly-collected submissions, and therefore would
-    # be submission-specific.
-    old_result.extra_marks.where(unit: 'points').find_each do |extra_mark|
-      extra_mark_dup = extra_mark.dup
-      extra_mark_dup.update!(result_id: new_result.id)
+      # if there's already a remark result created as well
+      if old_submission.has_remark?
+        self.remark_result.copy_grading_data(old_submission.remark_result)
+      end
     end
   end
 

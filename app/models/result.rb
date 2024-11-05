@@ -135,6 +135,44 @@ class Result < ApplicationRecord
     extra_marks_hash
   end
 
+  def copy_grading_data(old_result)
+    return if old_result.blank?
+
+    self.marks.destroy_all
+
+    self.overall_comment = old_result.overall_comment
+    self.remark_request_submitted_at = old_result.remark_request_submitted_at
+    self.save!
+
+    old_result.marks.each do |mark|
+      mark_dup = mark.dup
+      mark_dup.update!(result_id: self.id)
+    end
+
+    old_result.annotations.each do |annotation|
+      # annotations are associated with files; if a file for an annotation doesn't exist
+      # we just skip adding this annotation to the  new result
+      annotation_filename = annotation.submission_file.filename
+      annotation_path = annotation.submission_file.path
+      new_submission_file = self.submission.submission_files.where(filename: annotation_filename,
+                                                                   path: annotation_path).first
+
+      next if new_submission_file.nil?
+
+      annotation_dup = annotation.dup
+      annotation_dup.update!(result_id: self.id, submission_file_id: new_submission_file.id)
+    end
+
+    # NOTE: We are only copying point-based extra marks (which were manually
+    # added to the old result). Percentage-based extra marks are added at the
+    # instructor's discretion on newly-collected submissions, and therefore would
+    # be submission-specific.
+    old_result.extra_marks.where(unit: 'points').find_each do |extra_mark|
+      extra_mark_dup = extra_mark.dup
+      extra_mark_dup.update!(result_id: self.id)
+    end
+  end
+
   # un-releases the result
   def unrelease_results
     self.released_to_students = false
