@@ -127,17 +127,17 @@ class CollectSubmissionsModal extends React.Component {
                     />
                   </label>
                   &nbsp;
-                  {this.state.retain_existing_grading ? (
-                    <span data-testid="lbl_retain_existing_grading">
-                      {I18n.t("submissions.collect.retain_existing_grading")}
-                    </span>
-                  ) : (
-                    <span
-                      data-testid="lbl_retain_existing_grading_warning"
-                      dangerouslySetInnerHTML={{
-                        __html: I18n.t("submissions.collect.retain_existing_grading_warning_html"),
-                      }}
-                    />
+                  <span data-testid="lbl_retain_existing_grading">
+                    {I18n.t("submissions.collect.retain_existing_grading")}
+                  </span>
+                  {!this.state.retain_existing_grading && (
+                    <div
+                      data-testid="div_grading_data_will_be_lost"
+                      className="warning"
+                      style={{marginTop: "4px"}}
+                    >
+                      {I18n.t("submissions.collect.grading_data_will_be_lost")}
+                    </div>
                   )}
                 </p>
               )}

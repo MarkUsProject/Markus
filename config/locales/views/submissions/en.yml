@@ -17,13 +17,13 @@ en:
       could_not_collect_some_due: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings.
       could_not_collect_some_released: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released.
       full_overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
+      grading_data_will_be_lost: 'Warning: without selecting this option, all old grading data for the collected submissions will be lost'
       manual_collection: Manual Collection
       override_existing: Recollect previously collected submissions?
       partial_overwrite_warning: Original marks, annotations, feedback files, and test results will be retained upon collecting this revision, but all remark data from previous collections/grading will still be lost for this group on this assignment. Are you sure you want to do this?
       progress: "%{count}/%{size} submissions collected"
       results_loss_warning: This action identifies the version of files to grade for each selected group. Instructors and TAs can begin grading after files are collected.
       retain_existing_grading: Retain existing grading data (marks, annotations, feedback files, and test results)
-      retain_existing_grading_warning_html: 'Retain existing grading data <strong>(Warning: without selecting this option, all old grading data for the collected submissions will be lost)</strong>'
       scanned_exam_latest_warning: For scanned exams, the latest submitted file version for each selected group is used regardless of the due date.
       status:
         in_progress: "{{progress}}/{{total}} submissions collected."

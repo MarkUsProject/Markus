@@ -1,12 +1,6 @@
 import {render, screen, fireEvent} from "@testing-library/react";
 import {ManualCollectionForm} from "../repo_browser";
 
-// workaround needed for using i18n in jest tests, see
-// https://github.com/fnando/i18n/issues/26#issuecomment-1235751777
-jest.mock("i18n-js", () => {
-  return jest.requireActual("i18n-js/dist/require/index");
-});
-
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
     return null;

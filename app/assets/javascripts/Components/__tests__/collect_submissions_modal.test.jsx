@@ -50,14 +50,12 @@ describe("CollectSubmissionsModal", () => {
 
       fireEvent.click(chkRetainExistingGrading);
 
-      const lblRetainExistingGradingWarning = screen.getByTestId(
-        "lbl_retain_existing_grading_warning"
-      );
+      const divGradingDataWillBeLost = screen.getByTestId("div_grading_data_will_be_lost");
       const lblRetainExistingGrading = screen.queryByTestId("lbl_retain_existing_grading");
 
       expect(chkRetainExistingGrading.checked).toBe(false);
-      expect(lblRetainExistingGradingWarning).toBeInTheDocument();
-      expect(lblRetainExistingGrading).not.toBeInTheDocument();
+      expect(divGradingDataWillBeLost).toBeInTheDocument();
+      expect(lblRetainExistingGrading).toBeInTheDocument();
     });
 
     it("should call onSubmit with the correct parameters when the form is submitted", async () => {

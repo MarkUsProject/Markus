@@ -28,7 +28,11 @@ class SubmissionsJob < ApplicationJob
       end
 
       if options[:retain_existing_grading]
-        new_submission.copy_grading_data(original_submission)
+        begin
+          new_submission.copy_grading_data(original_submission)
+        rescue ActiveRecord::RecordInvalid => e
+          add_warning_messages("#{grouping.group.group_name}: #{e}")
+        end
       end
 
       if assignment.submission_rule.is_a? GracePeriodSubmissionRule
