@@ -157,16 +157,16 @@ class PeerReviewsController < ApplicationController
         return
       end
     when 'unassign'
-      reviews_deleted, deleted_count, undeleted_reviews = PeerReview.unassign(selected_reviewee_group_ids,
-                                                                              reviewers_to_remove_from_reviewees_map)
-      if !reviews_deleted && deleted_count == 0
+      deleted_count, undeleted_reviews = PeerReview.unassign(selected_reviewee_group_ids,
+                                                             reviewers_to_remove_from_reviewees_map)
+      if !undeleted_reviews.empty? && deleted_count == 0
         flash_now(:error, t('peer_reviews.errors.cannot_unassign_any_reviewers'))
         return
-      elsif !reviews_deleted
+      elsif !undeleted_reviews.empty?
         message = t('peer_reviews.errors.cannot_unassign_all_reviewers',
                     deleted_count: deleted_count.to_s, undeleted_reviews: undeleted_reviews.first(5).join(', '))
         if undeleted_reviews.length > 5
-          message += " #{t('additional_not_shown')}"
+          message += " #{t('additional_not_shown', count: undeleted_reviews.length - 5)}"
         end
         flash_now(:error, message)
       elsif deleted_count > 0

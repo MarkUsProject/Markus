@@ -70,7 +70,6 @@ class PeerReview < ApplicationRecord
   end
 
   def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
-    delete_all_reviews = true
     deleted_count = 0
     undeleted_reviews = []
 
@@ -86,7 +85,6 @@ class PeerReview < ApplicationRecord
             if self.delete_peer_review_between(reviewer_group, reviewee_group)
               deleted_count += 1
             else
-              delete_all_reviews = false
               undeleted_reviews.append(I18n.t('activerecord.models.peer_review.reviewer_assigned_to_reviewee',
                                               reviewer_group_name: reviewer_group.get_group_name,
                                               reviewee_group_name: reviewee_group.get_group_name))
@@ -96,10 +94,10 @@ class PeerReview < ApplicationRecord
       end
     end
 
-    if delete_all_reviews
+    if undeleted_reviews.empty?
       self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
     end
-    [delete_all_reviews, deleted_count, undeleted_reviews]
+    [deleted_count, undeleted_reviews]
   end
 
   def check_marks_or_annotations
@@ -111,7 +109,7 @@ class PeerReview < ApplicationRecord
   def has_marks_or_annotations?
     result = self.result
     marks_not_nil = result
-                    .marks.where.not(mark: 0).exists?
+                    .marks.where.not(mark: nil).exists?
     result.marking_state == Result::MARKING_STATES[:complete] || marks_not_nil || result.annotations.exists?
   end
 

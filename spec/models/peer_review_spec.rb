@@ -104,7 +104,7 @@ describe PeerReview do
         create(:mark, criterion: criterion, result: peer_review.result, mark: 2.5)
       end
 
-      it 'returns true when there are non-nil marks' do
+      it 'returns true' do
         expect(peer_review.has_marks_or_annotations?).to be true
       end
     end
@@ -114,7 +114,7 @@ describe PeerReview do
         create(:text_annotation, result: peer_review.result)
       end
 
-      it 'returns true when there are annotations' do
+      it 'returns true' do
         expect(peer_review.has_marks_or_annotations?).to be true
       end
     end
@@ -124,13 +124,13 @@ describe PeerReview do
         peer_review.result.update(marking_state: Result::MARKING_STATES[:complete])
       end
 
-      it 'returns true when the assignment is set to complete' do
+      it 'returns true' do
         expect(peer_review.has_marks_or_annotations?).to be true
       end
     end
 
     context 'when there are no marks or annotations' do
-      it 'returns false when there are no marks or annotations' do
+      it 'returns false' do
         expect(peer_review.has_marks_or_annotations?).to be false
       end
     end
@@ -151,7 +151,7 @@ describe PeerReview do
         create(:mark, criterion: criterion, result: peer_review.result, mark: 2.5)
       end
 
-      it 'aborts the callback if there are non-nil marks' do
+      it 'aborts the callback' do
         expect { peer_review.check_marks_or_annotations }.to throw_symbol(:abort)
       end
 
@@ -161,7 +161,7 @@ describe PeerReview do
     end
 
     context 'when there are no marks or annotations' do
-      it 'does not abort the callback if there are no marks or annotations' do
+      it 'does not abort the callback' do
         expect { peer_review.check_marks_or_annotations }.not_to throw_symbol(:abort)
       end
 

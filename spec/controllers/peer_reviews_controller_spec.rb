@@ -279,7 +279,7 @@ describe PeerReviewsController do
 
         context 'when no reviews are deleted' do
           before do
-            allow(PeerReview).to receive(:unassign).and_return([false, 0, []])
+            allow(PeerReview).to receive(:unassign).and_return([0, []])
           end
 
           it 'flashes the correct message' do
@@ -296,7 +296,7 @@ describe PeerReviewsController do
         context 'when some reviews are deleted, and 5 or less are not deleted' do
           before do
             @assignment_with_pr.peer_reviews.first.delete  # mock that one peer review was deleted
-            allow(PeerReview).to receive(:unassign).and_return([false, 1, ['group1 (assigned to review group2)']])
+            allow(PeerReview).to receive(:unassign).and_return([1, ['group1 (assigned to review group2)']])
             post_as role, :assign_groups,
                     params: { actionString: 'unassign',
                               selectedReviewerInRevieweeGroups: @selected,
@@ -320,7 +320,7 @@ describe PeerReviewsController do
         context 'when some reviews are deleted, and more than 5 are not deleted' do
           before do
             @assignment_with_pr.peer_reviews.first.delete  # mock that one peer review was deleted
-            allow(PeerReview).to receive(:unassign).and_return([false, 1,
+            allow(PeerReview).to receive(:unassign).and_return([1,
                                                                 ['group1 (assigned to review group2)',
                                                                  'group1 (assigned to review group3)',
                                                                  'group1 (assigned to review group4)',
@@ -340,7 +340,7 @@ describe PeerReviewsController do
               deleted_count: '1',
               undeleted_reviews: 'group1 (assigned to review group2), group1 (assigned to review group3),
 group1 (assigned to review group4), group1 (assigned to review group5), group1 (assigned to review group6)'
-            ).squish + ' ' + I18n.t('additional_not_shown')]
+            ).squish + ' ' + I18n.t('additional_not_shown', count: 1)]
           end
 
           it 'deletes one peer review but keeps others' do
