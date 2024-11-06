@@ -1,5 +1,5 @@
-@import "constants";
-@import "filter_modal_dropdown";
+@import 'constants';
+@import 'filter_modal_dropdown';
 
 .dropdown.single-select-dropdown {
   @include filter-modal-dropdown;
