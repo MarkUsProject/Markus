@@ -381,7 +381,7 @@ GEM
       redis (>= 3.3)
       resque (>= 1.27)
       rufus-scheduler (~> 3.2, != 3.3)
-    rexml (3.3.8)
+    rexml (3.3.9)
     rmagick (6.0.1)
       observer (~> 0.1)
       pkg-config (~> 1.4)
