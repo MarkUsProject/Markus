@@ -140,9 +140,8 @@ class Result < ApplicationRecord
 
     self.marks.destroy_all
 
-    self.overall_comment = old_result.overall_comment
-    self.remark_request_submitted_at = old_result.remark_request_submitted_at
-    self.save!
+    self.update(overall_comment: old_result.overall_comment,
+                remark_request_submitted_at: old_result.remark_request_submitted_at)
 
     old_result.marks.each do |mark|
       mark_dup = mark.dup

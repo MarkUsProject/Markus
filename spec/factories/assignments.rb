@@ -97,6 +97,7 @@ FactoryBot.define do
           mark.update(mark: mark.criterion.max_mark - 1)
         end
         result.update!(marking_state: Result::MARKING_STATES[:complete], created_at: 1.minute.ago)
+        grouping.current_submission_used.remark_request_timestamp = 1.minute.ago
         if i.zero?
           grouping.current_submission_used.make_remark_result
           remark_result = grouping.current_submission_used.current_result

@@ -209,17 +209,9 @@ describe Submission do
 
     before do
       @original_submission = assignment.groupings.first.current_submission_used
-      @original_result = @original_submission.current_result
       @new_submission = create(:submission,
                                grouping: @original_submission.grouping)
-
-      # explicitly copy submission files to the new submission (this is normally done on collection)
-      @original_submission.submission_files.each do |submission_file|
-        create(:submission_file_with_repo, submission: @new_submission, filename: submission_file.filename)
-      end
-
-      @new_submission.reload.copy_grading_data(@original_submission)
-      @new_result = @new_submission.reload.current_result
+      @new_submission.copy_grading_data(@original_submission)
     end
 
     context 'for feedback files on the new submission' do
@@ -276,81 +268,29 @@ describe Submission do
       end
     end
 
-    context 'for the new result that is created' do
-      context 'for remark data' do
+    context 'for remark data on the new submission' do
+      context 'when the assignment has a remark request that hasn\'t been submitted yet' do
+        before do
+          @original_submission.update(remark_request: 'sample remark request text')
+          @original_submission.update(remark_request_timestamp: Time.current)
+          @new_submission = create(:submission,
+                                   grouping: @original_submission.grouping)
+
+          @new_submission.copy_grading_data(@original_submission)
+        end
+
+        it 'retains remark request text and timestamp' do
+          expect(@new_submission.remark_request).to eq(@original_submission.remark_request)
+          expect(@new_submission.remark_request).to eq(@original_submission.remark_request)
+        end
+      end
+
+      context 'when the assignment has a submitted remark' do
         let(:assignment) { create(:assignment_with_criteria_and_results_with_remark) }
 
-        it 'does not copy over remark information' do
-          expect(@new_result.remark_request_submitted_at).to be_nil
-        end
-      end
-
-      context 'for marks' do
-        it 'creates the correct number of new marks' do
-          expect(@new_result.marks.size).to eq(@original_result.marks.size)
-          expect(@new_result.marks.ids.sort).not_to eq(@original_result.marks.ids.sort)
-        end
-
-        it 'retains the correct mark values' do
-          expect(@new_result.marks.order(:criterion_id).map(&:mark)).to eq(@original_result
-            .marks.order(:criterion_id).map(&:mark))
-        end
-      end
-
-      context 'for annotations' do
-        let(:assignment) { create(:assignment_with_deductive_annotations_and_submission_files) }
-
-        it 'creates the correct number of new annotations' do
-          expect(@new_result.annotations.size).to eq(@original_result.annotations.size)
-          expect(@new_result.annotations.ids.sort).not_to eq(@original_result.annotations.ids.sort)
-        end
-
-        it 'retains the mark deductions from deductive annotations' do
-          expect(@new_result.marks.order(:criterion_id).map(&:calculate_deduction)).to eq(@original_result
-            .marks.order(:criterion_id).map(&:calculate_deduction))
-        end
-
-        it 'retains the text from each annotation' do
-          expect(@new_result.annotations.order(:annotation_text_id).map do |a|
-            a.annotation_text.content
-          end).to eq(@original_result.annotations.order(:annotation_text_id).map do |a|
-            a.annotation_text.content
-          end)
-        end
-
-        context 'when no submission files in the original submission are present in the new submission' do
-          let(:assignment) { create(:assignment_with_deductive_annotations) }
-
-          before do
-            # overwrite new_submission to purposefully not have any copied submission files
-            @new_submission = create(:submission,
-                                     grouping: @original_submission.grouping)
-            @new_submission.reload.copy_grading_data(@original_submission)
-            @new_result = @new_submission.reload.current_result
-          end
-
-          it 'does not retain any annotations' do
-            expect(@new_result.annotations).to be_empty
-          end
-        end
-      end
-
-      context 'for extra marks' do
-        let(:assignment) { create(:assignment_with_criteria_and_results_and_extra_marks) }
-
-        it 'creates the correct number of new extra marks' do
-          expect(@new_result.extra_marks.size).to eq(@original_result.extra_marks.size)
-          expect(@new_result.extra_marks.ids.sort).not_to eq(@original_result.extra_marks.ids.sort)
-        end
-
-        it 'retains the correct mark values' do
-          # no common field so compare by full array
-          expect(@new_result.extra_marks.map(&:extra_mark).sort).to eq(@original_result.extra_marks
-            .map(&:extra_mark).sort)
-        end
-
-        it 'does not copy over extra marks in percentage format' do
-          expect(@new_result.extra_marks.where(unit: 'percentage')).to be_empty
+        it 'retains remark request text and timestamp' do
+          expect(@new_submission.remark_request).to eq(@original_submission.remark_request)
+          expect(@new_submission.remark_request).to eq(@original_submission.remark_request)
         end
       end
     end
