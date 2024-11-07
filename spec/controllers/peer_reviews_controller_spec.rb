@@ -274,7 +274,7 @@ describe PeerReviewsController do
         before do
           @assignment_with_pr.peer_reviews.each do |review|
             result = review.result
-            result.update!(marking_state: Result::MARKING_STATES[:complete])
+            result.update(marking_state: Result::MARKING_STATES[:complete])
           end
 
           @reviewers_to_remove_from_reviewees_map = {}
