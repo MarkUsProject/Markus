@@ -29,6 +29,8 @@ export class FileViewer extends React.Component {
       resultView: !!this.props.result_id,
       course_id: this.props.course_id,
       key: `${this.props.selectedFileType}-viewer`,
+      setLoadingCallback: this.setLoading,
+      setErrorMessageCallback: this.setErrorMessage,
     };
 
     if (this.state.errorMessage) {
