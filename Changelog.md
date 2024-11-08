@@ -16,6 +16,7 @@
 - Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 - Disable editable fields in assignment criterion when criterion is released (#7264)
+- Fixed Download One Time Annotation 'Not Found' error #7300
 
 ### 🔧 Internal changes
 
