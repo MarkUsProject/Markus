@@ -359,6 +359,9 @@ Style/RedundantSelfAssignmentBranch:
 Style/ReturnNil:
   Enabled: true
 
+Style/SafeNavigationChainLength:
+  Enabled: false
+
 Style/SelectByRegexp:
   Enabled: true
 
