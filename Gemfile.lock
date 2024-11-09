@@ -105,7 +105,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (6.2.2)
       racc
-    browser (5.3.1)
+    browser (6.0.0)
     builder (3.3.0)
     bullet (7.2.0)
       activesupport (>= 3.0.0)
@@ -337,7 +337,7 @@ GEM
     rails-i18n (7.0.3)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 8)
-    rails_performance (1.2.2)
+    rails_performance (1.2.3)
       browser
       railties
       redis
