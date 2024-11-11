@@ -2,7 +2,7 @@
 en:
   actions: Actions
   add: Add
-  additional_not_shown: "Additional %{count} not shown."
+  additional_not_shown: Additional %{count} not shown.
   all: All
   apply: Apply
   cancel: Cancel
