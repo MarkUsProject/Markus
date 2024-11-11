@@ -33,6 +33,7 @@
 - Merge result.js and result_main.css build files into application.js/application.css (#7260)
 - Simplify pdf.js configuration (#7260)
 - Improve descriptions of the Group and Grouping models (#7262)
+- Disable Rubocop Style/SafeNavigationChainLength check (#7301)
 
 ## [v2.5.3]
 
