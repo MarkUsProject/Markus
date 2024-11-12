@@ -247,6 +247,10 @@ class Grouping < ApplicationRecord
     "#{group.group_name}: #{user_names}"
   end
 
+  def get_group_name
+    group.group_name
+  end
+
   def display_for_note
     "#{assignment.short_identifier}: #{group_name_with_student_user_names}"
   end
