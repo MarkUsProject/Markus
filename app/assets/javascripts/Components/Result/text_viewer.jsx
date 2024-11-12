@@ -51,7 +51,10 @@ export class TextViewer extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (this.props.url && this.props.url !== prevProps.url) {
       // The URL has updated, so the content needs to be fetched using the new URL.
-      this.fetchContent(this.props.url).then(content => this.setState({content: content}));
+      this.props.setLoadingCallback(true);
+      this.fetchContent(this.props.url).then(content =>
+        this.setState({content: content}, () => this.props.setLoadingCallback(false))
+      );
     }
 
     const content = this.getContentFromProps(this.props, this.state);

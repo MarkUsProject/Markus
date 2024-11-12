@@ -13,9 +13,9 @@ export class FileViewer extends React.Component {
     errorMessage: null,
   };
 
-  setLoading(loading) {
+  setLoading = loading => {
     this.setState({loading: loading});
-  }
+  };
 
   setErrorMessage(errorMessage) {
     this.setState({errorMessage: errorMessage});
