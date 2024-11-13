@@ -49,7 +49,7 @@ describe("RepoBrowser's ManualCollectionForm", () => {
     fireEvent.submit(manualCollectionForm);
 
     expect(confirmSpy).toHaveBeenCalledWith(
-      I18n.t("submissions.collect.partial_overwrite_warning")
+      I18n.t("submissions.collect.confirm_recollect_retain_data")
     );
   });
 

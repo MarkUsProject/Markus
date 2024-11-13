@@ -286,18 +286,16 @@ class Submission < ApplicationRecord
 
     self.get_original_result.copy_grading_data(old_submission.get_original_result)
 
-    # whether it's been submitted or not, remark request is going to be copied
-    if old_submission.remark_request.present?
-      self.remark_request = old_submission.remark_request
-      self.remark_request_timestamp = old_submission.remark_request_timestamp
-      self.save!
+    # copy over any unsubmitted or submitted remark request
+    self.update(remark_request: old_submission.remark_request,
+                remark_request_timestamp: old_submission.remark_request_timestamp)
 
-      self.create_result # additional result for remark data
-
-      # if there's already a remark result created as well
-      if old_submission.has_remark?
-        self.remark_result.copy_grading_data(old_submission.remark_result)
-      end
+    # if there's already a remark result created as well, we need to copy that
+    # too
+    old_remark_result = old_submission.remark_result
+    if old_remark_result.present?
+      self.create_result
+      self.remark_result.copy_grading_data(old_remark_result)
     end
   end
 

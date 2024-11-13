@@ -117,19 +117,20 @@ class CollectSubmissionsModal extends React.Component {
               </p>
               {this.state.override && (
                 <p style={{marginLeft: "15px"}}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      defaultChecked={this.state.retain_existing_grading}
-                      name="retain_existing_grading"
-                      data-testid="chk_retain_existing_grading"
-                      onChange={this.handleRetainExistingGradingChange}
-                    />
-                  </label>
-                  &nbsp;
-                  <span data-testid="lbl_retain_existing_grading">
+                  <input
+                    type="checkbox"
+                    defaultChecked={this.state.retain_existing_grading}
+                    name="retain_existing_grading"
+                    id="retain_existing_grading"
+                    data-testid="chk_retain_existing_grading"
+                    onChange={this.handleRetainExistingGradingChange}
+                  />
+                  <label
+                    htmlFor="retain_existing_grading"
+                    data-testid="lbl_retain_existing_grading"
+                  >
                     {I18n.t("submissions.collect.retain_existing_grading")}
-                  </span>
+                  </label>
                   {!this.state.retain_existing_grading && (
                     <div
                       data-testid="div_grading_data_will_be_lost"

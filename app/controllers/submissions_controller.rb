@@ -167,8 +167,16 @@ class SubmissionsController < ApplicationController
     end
 
     @revision_identifier = params[:current_revision_identifier]
-    apply_late_penalty = params[:apply_late_penalty] == 'true'
-    retain_existing_grading = params[:retain_existing_grading] == 'true'
+    apply_late_penalty = if params[:apply_late_penalty].nil?
+                           false
+                         else
+                           params[:apply_late_penalty]
+                         end
+    retain_existing_grading = if params[:retain_existing_grading].nil?
+                                false
+                              else
+                                params[:retain_existing_grading]
+                              end
 
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,

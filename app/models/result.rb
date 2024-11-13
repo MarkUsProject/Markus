@@ -150,11 +150,11 @@ class Result < ApplicationRecord
 
     old_result.annotations.each do |annotation|
       # annotations are associated with files; if a file for an annotation doesn't exist
-      # we just skip adding this annotation to the  new result
+      # we just skip adding this annotation to the new result
       annotation_filename = annotation.submission_file.filename
       annotation_path = annotation.submission_file.path
-      new_submission_file = self.submission.submission_files.where(filename: annotation_filename,
-                                                                   path: annotation_path).first
+      new_submission_file = self.submission.submission_files.find_by(filename: annotation_filename,
+                                                                     path: annotation_path)
 
       next if new_submission_file.nil?
 

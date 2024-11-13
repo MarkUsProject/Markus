@@ -167,7 +167,7 @@ class ManualCollectionForm extends React.Component {
               ((!this.state.retainExistingGrading &&
                 !confirm(I18n.t("submissions.collect.full_overwrite_warning"))) ||
                 (this.state.retainExistingGrading &&
-                  !confirm(I18n.t("submissions.collect.partial_overwrite_warning"))))
+                  !confirm(I18n.t("submissions.collect.confirm_recollect_retain_data"))))
             ) {
               event.preventDefault();
             }
@@ -195,6 +195,7 @@ class ManualCollectionForm extends React.Component {
             <input
               type="checkbox"
               name="retain_existing_grading"
+              id="retain_existing_grading"
               data-testid="chk_retain_existing_grading"
               checked={this.state.retainExistingGrading}
               hidden={!this.props.collected_revision_id}
@@ -205,6 +206,7 @@ class ManualCollectionForm extends React.Component {
             />
             <label
               data-testid="lbl_retain_existing_grading"
+              htmlFor="retain_existing_grading"
               hidden={!this.props.collected_revision_id}
             >
               {I18n.t("submissions.collect.retain_existing_grading")}
