@@ -13,40 +13,52 @@ class SubmissionsJob < ApplicationJob
 
     progress.total = groupings.size
     groupings.each do |grouping|
-      original_submission = grouping.current_submission_used
-      m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
-                   grouping.id.to_s)
-      if options[:revision_identifier].nil?
-        time = if assignment.scanned_exam? || options[:collect_current]
-                 Time.current
-               else
-                 options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
-               end
-        new_submission = Submission.create_by_timestamp(grouping, time)
-      else
-        new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
-      end
+      transaction_failed = false
+      new_submission = nil
 
-      if options[:retain_existing_grading]
-        begin
-          new_submission.copy_grading_data(original_submission)
-        rescue ActiveRecord::RecordInvalid => e
-          add_warning_messages("#{grouping.group.group_name}: #{e}")
+      ActiveRecord::Base.transaction do
+        original_submission = grouping.current_submission_used
+        m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
+                     grouping.id.to_s)
+        if options[:revision_identifier].nil?
+          time = if assignment.scanned_exam? || options[:collect_current]
+                   Time.current
+                 else
+                   options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
+                 end
+          new_submission = Submission.create_by_timestamp(grouping, time)
+        else
+          new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
+        end
+
+        if options[:retain_existing_grading]
+          begin
+            new_submission.copy_grading_data(original_submission)
+          rescue ActiveRecord::RecordInvalid => e
+            # in this case, rather than triggering rollback automatically, we
+            # need to populate the warning messages and then do it
+            add_warning_messages("#{grouping.group.group_name}: #{e}")
+            transaction_failed = true
+            raise ActiveRecord::Rollback
+          end
         end
       end
 
-      if assignment.submission_rule.is_a? GracePeriodSubmissionRule
-        # Return any grace credits previously deducted for this grouping.
-        assignment.submission_rule.remove_deductions(grouping)
+      unless transaction_failed
+        if assignment.submission_rule.is_a? GracePeriodSubmissionRule
+          # Return any grace credits previously deducted for this grouping.
+          assignment.submission_rule.remove_deductions(grouping)
+        end
+
+        if apply_late_penalty
+          assignment.submission_rule.apply_submission_rule(new_submission)
+        end
+
+        grouping.is_collected = true
+        grouping.save
+        add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
       end
 
-      if apply_late_penalty
-        assignment.submission_rule.apply_submission_rule(new_submission)
-      end
-
-      grouping.is_collected = true
-      grouping.save
-      add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
       progress.increment
       unless options[:notify_socket].nil? || options[:enqueuing_user].nil?
         CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], status.to_h)
@@ -62,7 +74,7 @@ class SubmissionsJob < ApplicationJob
           message = { status: :completed }
         else
           message = { status: :completed, warning_message:
-            status[:warning_message] }
+                      status[:warning_message] }
         end
       else
         message = status.to_h

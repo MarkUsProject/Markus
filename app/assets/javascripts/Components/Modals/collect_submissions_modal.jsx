@@ -125,6 +125,7 @@ class CollectSubmissionsModal extends React.Component {
                     data-testid="chk_retain_existing_grading"
                     onChange={this.handleRetainExistingGradingChange}
                   />
+                  &nbsp;
                   <label
                     htmlFor="retain_existing_grading"
                     data-testid="lbl_retain_existing_grading"

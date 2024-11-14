@@ -187,13 +187,25 @@ describe SubmissionsJob do
 
   context 'when collecting submissions with retain_existing_grading set to true' do
     let(:submission_date) { Time.current.to_s }
+    let(:groupings) { create_list(:grouping_with_inviter_and_submission, 3, assignment: assignment) }
 
     it 'calls the Submission#copy_grading_data method' do
-      submission = instance_spy(Submission)
-      allow(Submission).to receive(:new).and_return(submission)
-      expect(submission).to receive(:copy_grading_data).exactly(groupings.size).times
+      receive_count = 0
+      allow_any_instance_of(Submission).to receive(:copy_grading_data) { receive_count += 1 }
 
       SubmissionsJob.perform_now(groupings, retain_existing_grading: true)
+
+      expect(receive_count).to eq(groupings.size)
+    end
+
+    it 'does not make a new submission on any grouping when there is an error' do
+      allow_any_instance_of(Submission).to receive(:copy_grading_data).and_raise(ActiveRecord::RecordInvalid)
+      old_submissions = groupings.map { |g| g.current_submission_used.id }.sort
+
+      SubmissionsJob.perform_now(groupings, retain_existing_grading: true)
+
+      # no groupings should have new submissions
+      expect(groupings.map { |g| g.reload.current_submission_used.id }.sort).to eq(old_submissions)
     end
   end
 
