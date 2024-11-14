@@ -17,4 +17,3 @@
 // We create a copy of the vendored assets in the cookies_eu gem due to limitation of cssbundling-rails.
 // See https://github.com/rails/cssbundling-rails/issues/81.
 @use 'cookies_eu';
-@use 'jquery-ui';

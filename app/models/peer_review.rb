@@ -9,6 +9,7 @@ class PeerReview < ApplicationRecord
   validate :no_students_should_be_reviewer_and_reviewee
   has_one :course, through: :result
   validate :assignments_should_match
+  before_destroy :check_marks_or_annotations
 
   def no_students_should_be_reviewer_and_reviewee
     if result && reviewer
@@ -69,17 +70,47 @@ class PeerReview < ApplicationRecord
   end
 
   def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
-    # when an entire row is selected to be unassigned, the necessary checks are being bypassed.
+    deleted_count = 0
+    undeleted_reviews = []
+
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each_key do |reviewer_id|
         reviewee_group = Grouping.find_by(id: reviewee_id)
         reviewer_group = Grouping.find_by(id: reviewer_id)
-        self.delete_peer_review_between(reviewer_group, reviewee_group)
+
+        unless reviewee_group.nil? || reviewer_group.nil?
+          peer_review = reviewer_group.review_for(reviewee_group)
+          unless peer_review.nil?
+            if self.delete_peer_review_between(reviewer_group, reviewee_group)
+              deleted_count += 1
+            else
+              undeleted_reviews.append(I18n.t('activerecord.models.peer_review.reviewer_assigned_to_reviewee',
+                                              reviewer_group_name: reviewer_group.get_group_name,
+                                              reviewee_group_name: reviewee_group.get_group_name))
+            end
+          end
+        end
       end
     end
 
-    self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
+    if undeleted_reviews.empty?
+      self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
+    end
+    [deleted_count, undeleted_reviews]
+  end
+
+  def check_marks_or_annotations
+    if self.has_marks_or_annotations?
+      throw(:abort)
+    end
+  end
+
+  def has_marks_or_annotations?
+    result = self.result
+    marks_not_nil = result
+                    .marks.where.not(mark: nil).exists?
+    result.marking_state == Result::MARKING_STATES[:complete] || marks_not_nil || result.annotations.exists?
   end
 
   def self.get_num_collected(reviewer_group)
