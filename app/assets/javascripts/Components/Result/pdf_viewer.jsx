@@ -1,9 +1,14 @@
 import React from "react";
+import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
 
 export class PDFViewer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.pdfContainer = React.createRef();
+    this.state = {
+      zoom: "page-width",
+      rotationInDegrees: 0,
+    };
   }
 
   componentDidMount() {
@@ -18,6 +23,8 @@ export class PDFViewer extends React.PureComponent {
     if (this.props.resultView) {
       this.eventBus.on("pagesinit", this.ready_annotations);
       this.eventBus.on("pagesloaded", this.refresh_annotations);
+    } else {
+      this.eventBus.on("pagesloaded", this.update_pdf_view);
     }
 
     if (this.props.url) {
@@ -31,6 +38,8 @@ export class PDFViewer extends React.PureComponent {
     } else {
       if (this.props.resultView) {
         this.refresh_annotations();
+      } else {
+        this.update_pdf_view();
       }
     }
   }
@@ -44,7 +53,6 @@ export class PDFViewer extends React.PureComponent {
   ready_annotations = () => {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    this.pdfViewer.currentScaleValue = "page-width";
     window.annotation_manager = new PdfAnnotationManager(!this.props.released_to_students);
     window.annotation_manager.resetAngle();
     this.annotation_manager = window.annotation_manager;
@@ -61,13 +69,25 @@ export class PDFViewer extends React.PureComponent {
     window.pdfViewer = undefined;
   }
 
+  update_pdf_view = () => {
+    this.pdfViewer.currentScaleValue = this.state.zoom;
+    this.pdfViewer.pagesRotation = this.state.rotationInDegrees;
+  };
+
   refresh_annotations = () => {
     $(".annotation_holder").remove();
-    this.pdfViewer.currentScaleValue = "page-width";
+    this.update_pdf_view();
     this.props.annotations.forEach(this.display_annotation);
     if (!!this.props.annotationFocus) {
       document.getElementById("annotation_holder_" + this.props.annotationFocus).scrollIntoView();
     }
+  };
+
+  rotate = () => {
+    annotation_manager.rotateClockwise90();
+    this.setState(({rotationInDegrees}) => ({
+      rotationInDegrees: (rotationInDegrees + 90) % 360,
+    }));
   };
 
   display_annotation = annotation => {
@@ -101,31 +121,64 @@ export class PDFViewer extends React.PureComponent {
     );
   };
 
-  rotate = () => {
-    annotation_manager.rotateClockwise90();
-    this.pdfViewer.rotatePages(90);
+  getZoomValuesToDisplayName = () => {
+    const zoomLevels = Array.from({length: 20}, (_, i) => ((i + 1) * 0.1).toFixed(1));
+
+    const valueToDisplayName = zoomLevels.reduce(
+      (acc, value) => {
+        acc[value] = `${(value * 100).toFixed(0)} %`;
+        return acc;
+      },
+      {"page-width": "Fit to page width"}
+    );
+
+    return valueToDisplayName;
   };
 
   render() {
     const cursor = this.props.released_to_students ? "default" : "crosshair";
     const userSelect = this.props.released_to_students ? "default" : "none";
+    const zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
+
     return (
-      <div className="pdfContainerParent">
-        <div
-          id="pdfContainer"
-          className="pdfContainer"
-          style={{cursor, userSelect}}
-          ref={this.pdfContainer}
-        >
-          <div id="viewer" className="pdfViewer" />
-          <div
-            key="sel_box"
-            id="sel_box"
-            className="annotation-holder-active"
-            style={{display: "none"}}
-          />
+      <React.Fragment>
+        <div className="toolbar">
+          <div className="toolbar-actions">
+            {I18n.t("results.current_rotation", {rotation: this.state.rotationInDegrees})}
+            <button onClick={this.rotate} className={"inline-button"}>
+              {I18n.t("results.rotate_image")}
+            </button>
+            <span style={{marginLeft: "7px"}}>{I18n.t("results.zoom")}</span>
+            <SingleSelectDropDown
+              valueToDisplayName={zoomValuesToDisplayName}
+              options={Object.keys(zoomValuesToDisplayName)}
+              selected={this.state.zoom}
+              dropdownStyle={{minWidth: "auto", marginLeft: "5px", width: "150px"}}
+              selectionStyle={{minWidth: "auto", width: "100px", marginRight: "0px"}}
+              hideXMark={true}
+              onSelect={selection => {
+                this.setState({zoom: selection});
+              }}
+            />
+          </div>
         </div>
-      </div>
+        <div className="pdfContainerParent">
+          <div
+            id="pdfContainer"
+            className="pdfContainer"
+            style={{cursor, userSelect, overflow: "auto"}}
+            ref={this.pdfContainer}
+          >
+            <div id="viewer" className="pdfViewer" />
+            <div
+              key="sel_box"
+              id="sel_box"
+              className="annotation-holder-active"
+              style={{display: "none"}}
+            />
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 }

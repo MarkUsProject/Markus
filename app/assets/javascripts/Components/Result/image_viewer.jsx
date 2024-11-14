@@ -188,10 +188,10 @@ export class ImageViewer extends React.PureComponent {
             level: Math.floor(this.state.zoom * 100),
           })}
           <button onClick={this.zoomIn} className={"inline-button"}>
-            {I18n.t("results.zoom_in_image")}+
+            {I18n.t("results.zoom_in")}+
           </button>
           <button onClick={this.zoomOut} className={"inline-button"}>
-            {I18n.t("results.zoom_out_image")}-
+            {I18n.t("results.zoom_out")}-
           </button>
         </p>
         <div id="image_container" key={"image_container"}>
