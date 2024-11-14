@@ -157,6 +157,23 @@ class PeerReviewsController < ApplicationController
         return
       end
     when 'unassign'
+      unless selected_reviewee_group_ids.empty? # if a row was selected
+        selected_reviewee_group_ids.each do |reviewee_id| # row selected reviewee
+          selected_reviewer_group_ids.each do |reviewer_id| # selected reviewers on left side
+            peer_reviews = PeerReview.joins(result: :submission).where(submissions: { grouping_id: reviewee_id })
+            peer_reviews.each do |peer_review| # all peer reviews associated with the reviewee
+              if peer_review.get_reviewer_id.to_s == reviewer_id.to_s
+                # if the selected reviewer is the reviewer of the peer review
+                # in other words, if the reviewer is assigned to the reviewee's row
+                reviewers_to_remove_from_reviewees_map[reviewee_id] ||= {}
+                reviewers_to_remove_from_reviewees_map[reviewee_id][reviewer_id] = true # mark for unassignment
+              end
+            end
+          end
+        end
+        selected_reviewee_group_ids = [] # prevent whole row from being deleted
+        # now the rest of unassign follows as expected
+      end
       deleted_count, undeleted_reviews = PeerReview.unassign(selected_reviewee_group_ids,
                                                              reviewers_to_remove_from_reviewees_map)
       if !undeleted_reviews.empty? && deleted_count == 0
