@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import heic2any from "heic2any";
 
 export class ImageViewer extends React.PureComponent {
   constructor(props) {
