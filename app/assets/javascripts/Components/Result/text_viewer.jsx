@@ -13,6 +13,8 @@ export class TextViewer extends React.PureComponent {
     this.highlight_root = null;
     this.annotation_manager = null;
     this.raw_content = React.createRef();
+    this.mountedRef = React.createRef();
+    this.abortController = null;
   }
 
   getContentFromProps(props, state) {
@@ -28,12 +30,25 @@ export class TextViewer extends React.PureComponent {
     return this.getContentFromProps(this.props, this.state);
   }
 
+  componentWillUnmount() {
+    if (this.abortController) {
+      this.abortController.abort();
+    }
+    this.mountedRef.current = false;
+  }
+
   componentDidMount() {
+    this.mountedRef.current = true;
     this.highlight_root = this.raw_content.current.parentNode;
 
     // Fetch content from a URL if it is passed as a prop. The URL should point to plaintext data.
     if (this.props.url) {
-      this.fetchContent(this.props.url).then(content => this.setState({content: content}));
+      this.fetchContent(this.props.url).then(content => {
+        // Check if the component is mounted before updating the state to prevent memory leaks.
+        if (this.mountedRef.current) {
+          this.setState({content: content});
+        }
+      });
     }
 
     if (this.getContent()) {
@@ -42,7 +57,15 @@ export class TextViewer extends React.PureComponent {
   }
 
   fetchContent(url) {
-    return fetch(url)
+    if (this.abortController) {
+      // Stops ongoing fetch requests. It's ok to call .abort() after the fetch has already completed,
+      // fetch simply ignores it.
+      this.abortController.abort();
+    }
+    // Reinitialize the controller, because the signal can't be reused after the request has been aborted.
+    this.abortController = new AbortController();
+
+    return fetch(url, {signal: this.abortController.signal})
       .then(response => response.text())
       .then(content => content.replace(/\r?\n/gm, "\n"))
       .catch(error => console.error(error));
@@ -52,9 +75,11 @@ export class TextViewer extends React.PureComponent {
     if (this.props.url && this.props.url !== prevProps.url) {
       // The URL has updated, so the content needs to be fetched using the new URL.
       this.props.setLoadingCallback(true);
-      this.fetchContent(this.props.url).then(content =>
-        this.setState({content: content}, () => this.props.setLoadingCallback(false))
-      );
+      this.fetchContent(this.props.url).then(content => {
+        if (this.mountedRef.current) {
+          this.setState({content: content}, () => this.props.setLoadingCallback(false));
+        }
+      });
     }
 
     const content = this.getContentFromProps(this.props, this.state);
@@ -183,7 +208,9 @@ export class TextViewer extends React.PureComponent {
     // Prevents from copying `null` or `undefined` to the clipboard. An empty string is ok to copy.
     if (content || content === "") {
       navigator.clipboard.writeText(content).then(() => {
-        this.setState({copy_success: true});
+        if (this.mountedRef.current) {
+          this.setState({copy_success: true});
+        }
       });
     } else {
       console.warn(`Tried to copy content with value ${content} to the clipboard.`);

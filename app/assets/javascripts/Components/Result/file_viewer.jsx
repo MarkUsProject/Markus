@@ -13,15 +13,23 @@ export class FileViewer extends React.Component {
     errorMessage: null,
   };
 
+  mountedRef = React.createRef();
+
   setLoading = loading => {
-    this.setState({loading: loading});
+    if (this.mountedRef.current) {
+      this.setState({loading: loading});
+    }
   };
 
-  setErrorMessage(errorMessage) {
-    this.setState({errorMessage: errorMessage});
+  componentDidMount() {
+    this.mountedRef.current = true;
   }
 
-  render() {
+  componentWillUnmount() {
+    this.mountedRef.current = false;
+  }
+
+  getViewer() {
     const commonProps = {
       submission_file_id: this.props.selectedFile,
       annotations: this.props.annotations ? this.props.annotations : [],
@@ -31,14 +39,9 @@ export class FileViewer extends React.Component {
       key: `${this.props.selectedFileType}-viewer`,
       url: this.props.selectedFileURL,
       setLoadingCallback: this.setLoading,
-      setErrorMessageCallback: this.setErrorMessage,
     };
 
-    if (this.state.errorMessage) {
-      return <p>{this.state.errorMessage}</p>;
-    } else if (this.state.loading) {
-      return I18n.t("working");
-    } else if (this.props.selectedFileType === "image") {
+    if (this.props.selectedFileType === "image") {
       return <ImageViewer mime_type={this.props.mime_type} {...commonProps} />;
     } else if (this.props.selectedFileType === "pdf") {
       return <PDFViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
@@ -65,5 +68,16 @@ export class FileViewer extends React.Component {
     } else {
       return "";
     }
+  }
+
+  render() {
+    const viewer = this.getViewer();
+
+    return (
+      <React.Fragment>
+        <div style={{display: this.state.loading ? "none" : "block"}}>{viewer}</div>
+        {this.state.loading && <p>{I18n.t("working")}</p>}
+      </React.Fragment>
+    );
   }
 }
