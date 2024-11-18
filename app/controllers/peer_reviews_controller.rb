@@ -112,8 +112,8 @@ class PeerReviewsController < ApplicationController
 
   def assign_groups
     @assignment = Assignment.find(params[:assignment_id])
-    selected_reviewer_group_ids = params[:selectedReviewerGroupIds] || []
-    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds] || []
+    selected_reviewer_group_ids = Array(params[:selectedReviewerGroupIds]) || []
+    selected_reviewee_group_ids = Array(params[:selectedRevieweeGroupIds]) || []
     reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups] || {}
     action_string = params[:actionString]
     num_groups_for_reviewers = params[:numGroupsToAssign].to_i

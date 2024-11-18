@@ -228,9 +228,12 @@ describe PeerReviewsController do
 
       context 'all reviewers for selected reviewees' do
         before do
+          reviewers_to_remove_from_reviewees_map = {}
+          reviewers_to_remove_from_reviewees_map[@selected_reviewee_group_ids[0]] =
+            @selected_reviewer_group_ids.index_with { true }
           post_as role, :assign_groups,
                   params: { actionString: 'unassign',
-                            selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
+                            selectedReviewerInRevieweeGroups: reviewers_to_remove_from_reviewees_map,
                             assignment_id: @pr_id,
                             course_id: course.id }
         end
@@ -280,7 +283,7 @@ describe PeerReviewsController do
               @selected_reviewer_group_ids.add(@selected_reviewee_group_ids.first)
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
-                                selectedRevieweGroupIds: @selected_reviewee_group_ids,
+                                selectedRevieweeGroupIds: @selected_reviewee_group_ids,
                                 selectedReviewerGroupIds: @selected_reviewer_group_ids,
                                 selectedReviewerInRevieweeGroups: @reviewers_to_remove_from_reviewees_map,
                                 assignment_id: @pr_id,
@@ -337,6 +340,37 @@ describe PeerReviewsController do
           end
         end
 
+        context 'when row(s) of reviewee(s) who cannot be unassigned are selected' do
+          before do
+            @reviewers_to_remove_from_reviewees_map = {} # no individual checkboxes are selected
+          end
+
+          context 'when all applicable reviewers are selected' do
+            before do
+              @selected_reviewee_group_ids.each do |reviewee_id|
+                @selected_reviewer_group_ids.push(reviewee_id)
+              end
+              post_as role, :assign_groups,
+                      params: { actionString: 'unassign',
+                                selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                                selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                                selectedReviewerInRevieweeGroups: @reviewers_to_remove_from_reviewees_map,
+                                assignment_id: @pr_id,
+                                course_id: course.id }
+            end
+
+            it 'flashes the correct message' do
+              expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
+                'peer_reviews.errors.cannot_unassign_any_reviewers'
+              )]
+            end
+
+            it 'does not delete any peer reviews' do
+              expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews
+            end
+          end
+        end
+
         context 'when some reviewers are unassigned, but more than 5 are not' do
           before do
             @assignment_with_pr.peer_reviews.first.result.update(marking_state: Result::MARKING_STATES[:incomplete])
@@ -362,6 +396,44 @@ describe PeerReviewsController do
 
           it 'deletes the correct number of peer reviews' do
             expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
+          end
+        end
+
+        context 'when some rows of reviewees are selected and some reviewers are unassigned' do
+          before do
+            @assignment_with_pr.peer_reviews.first.result.update(marking_state: Result::MARKING_STATES[:incomplete])
+            @reviewers_to_remove_from_reviewees_map = {}
+          end
+
+          context 'when all applicable reviewers are selected' do
+            before do
+              @selected_reviewee_group_ids.each do |reviewee_id|
+                @selected_reviewer_group_ids.push(reviewee_id)
+              end
+              post_as role, :assign_groups,
+                      params: { actionString: 'unassign',
+                                selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                                selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                                selectedReviewerInRevieweeGroups: @reviewers_to_remove_from_reviewees_map,
+                                assignment_id: @pr_id,
+                                course_id: course.id }
+            end
+
+            it 'flashes the correct message' do
+              undeleted_reviews = @assignment_with_pr.peer_reviews.map do |review|
+                I18n.t('activerecord.models.peer_review.reviewer_assigned_to_reviewee',
+                       reviewer_group_name: review.reviewer.group.group_name,
+                       reviewee_group_name: review.result.grouping.group.group_name)
+              end
+
+              flashed_error = flash[:error].map { |f| extract_text f }[0]
+              expect(flashed_error).to include('Successfully unassigned 1 peer reviewer(s)')
+              expect(flashed_error).to include(I18n.t('additional_not_shown', count: undeleted_reviews.length - 6))
+            end
+
+            it 'deletes the correct number of peer reviews' do
+              expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
+            end
           end
         end
 
@@ -391,6 +463,42 @@ describe PeerReviewsController do
 
           it 'deletes the correct number of peer reviews' do
             expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 6
+          end
+        end
+
+        context 'when some rows of reviewees and some individual reviewers are selected' do
+          before do
+            (1..2).each do |i| # mark 2nd and 3rd peer reviews as unassign-able
+              @assignment_with_pr.peer_reviews[i].result.update(marking_state: Result::MARKING_STATES[:incomplete])
+            end
+            @reviewers_to_remove_from_reviewees_map = {}
+            @selected_reviewee_group_ids.last(2).each do |reviewee_id| # individually select 2nd and 3rd reviewers
+              @reviewers_to_remove_from_reviewees_map[reviewee_id] = @selected_reviewer_group_ids.index_with { true }
+            end
+            @selected_reviewer_group_ids.push(@selected_reviewee_group_ids.first) # select the 1st reviewee row
+
+            post_as role, :assign_groups,
+                    params: { actionString: 'unassign',
+                              selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                              selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                              selectedReviewerInRevieweeGroups: @reviewers_to_remove_from_reviewees_map,
+                              assignment_id: @pr_id,
+                              course_id: course.id }
+          end
+
+          it 'flashes the correct message' do
+            @assignment_with_pr.peer_reviews.map do |review|
+              I18n.t('activerecord.models.peer_review.reviewer_assigned_to_reviewee',
+                     reviewer_group_name: review.reviewer.group.group_name,
+                     reviewee_group_name: review.result.grouping.group.group_name)
+            end
+
+            flashed_error = flash[:error].map { |f| extract_text f }[0]
+            expect(flashed_error).to include('Successfully unassigned 2 peer reviewer(s)')
+          end
+
+          it 'deletes the correct number of peer reviews' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 2
           end
         end
       end
