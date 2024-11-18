@@ -69,7 +69,7 @@ class PeerReview < ApplicationRecord
     end
   end
 
-  def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+  def self.unassign(_selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
     deleted_count = 0
     undeleted_reviews = []
 
@@ -92,10 +92,6 @@ class PeerReview < ApplicationRecord
           end
         end
       end
-    end
-
-    if undeleted_reviews.empty?
-      self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
     end
     [deleted_count, undeleted_reviews]
   end
