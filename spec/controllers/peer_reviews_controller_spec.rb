@@ -268,6 +268,36 @@ describe PeerReviewsController do
         it 'removes selected reviewer as reviewer for selected reviewee' do
           expect(PeerReview.review_exists_between?(@reviewer, @reviewee)).to be false
         end
+
+        context 'when row(s) of reviewee(s) are selected' do
+          before do
+            @reviewers_to_remove_from_reviewees_map = {} # no individual checkboxes are selected
+          end
+
+          context 'when an applicable reviewer is selected' do
+            before do
+              # select the first reviewer from the assigned reviewees
+              @selected_reviewer_group_ids.add(@selected_reviewee_group_ids.first)
+              post_as role, :assign_groups,
+                      params: { actionString: 'unassign',
+                                selectedRevieweGroupIds: @selected_reviewee_group_ids,
+                                selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                                selectedReviewerInRevieweeGroups: @reviewers_to_remove_from_reviewees_map,
+                                assignment_id: @pr_id,
+                                course_id: course.id }
+            end
+          end
+
+          it 'deletes the correct number of peer reviews' do
+            expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
+          end
+
+          it 'flashes the correct message' do
+            expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t(
+              'peer_reviews.unassigned_reviewers_successfully', deleted_count: 1.to_s
+            )]
+          end
+        end
       end
 
       context 'selected reviews have marks or annotations' do
