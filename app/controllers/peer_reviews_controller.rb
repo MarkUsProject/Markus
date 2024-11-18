@@ -171,11 +171,9 @@ class PeerReviewsController < ApplicationController
             end
           end
         end
-        selected_reviewee_group_ids = [] # prevent whole row from being deleted
         # now the rest of unassign follows as expected
       end
-      deleted_count, undeleted_reviews = PeerReview.unassign(selected_reviewee_group_ids,
-                                                             reviewers_to_remove_from_reviewees_map)
+      deleted_count, undeleted_reviews = PeerReview.unassign(reviewers_to_remove_from_reviewees_map)
       if !undeleted_reviews.empty? && deleted_count == 0
         flash_now(:error, t('peer_reviews.errors.cannot_unassign_any_reviewers'))
         return
