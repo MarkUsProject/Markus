@@ -89,7 +89,7 @@ describe PeerReview do
     end
   end
 
-  describe '#has_marks_or_annotations?' do
+  describe 'has_marks_or_annotations?' do
     let(:assignment) { create(:assignment_with_peer_review) }
     let(:peer_review_assignment) { assignment.pr_assignment } # Peer review assignment
     let(:grouping_reviewer) { create(:grouping_with_inviter_and_submission, assignment: peer_review_assignment) }
@@ -136,7 +136,7 @@ describe PeerReview do
     end
   end
 
-  describe '#check_marks_or_annotations' do
+  describe 'check_marks_or_annotations' do
     let(:assignment) { create(:assignment_with_peer_review) }
     let(:peer_review_assignment) { assignment.pr_assignment } # Peer review assignment
     let(:grouping_reviewer) { create(:grouping_with_inviter_and_submission, assignment: peer_review_assignment) }
