@@ -277,10 +277,11 @@ describe PeerReviewsController do
             @reviewers_to_remove_from_reviewees_map = {} # no individual checkboxes are selected
           end
 
-          context 'when an applicable reviewer is selected' do
+          context 'when applicable reviewers are selected' do
             before do
-              # select the first reviewer from the assigned reviewees
-              @selected_reviewer_group_ids.add(@selected_reviewee_group_ids.first)
+              @selected_reviewee_group_ids.each do |reviewee_id|
+                @selected_reviewer_group_ids.push(reviewee_id)
+              end
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -289,16 +290,16 @@ describe PeerReviewsController do
                                 assignment_id: @pr_id,
                                 course_id: course.id }
             end
-          end
 
-          it 'deletes the correct number of peer reviews' do
-            expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
-          end
+            it 'deletes the correct number of peer reviews' do
+              expect(@assignment_with_pr.peer_reviews.count).to eq 0
+            end
 
-          it 'flashes the correct message' do
-            expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t(
-              'peer_reviews.unassigned_reviewers_successfully', deleted_count: 1.to_s
-            )]
+            it 'flashes the correct message' do
+              expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t(
+                'peer_reviews.unassigned_reviewers_successfully', deleted_count: 8.to_s
+              )]
+            end
           end
         end
       end
