@@ -53,11 +53,6 @@ class PeerReview < ApplicationRecord
     end
   end
 
-  # Deletes all peer reviewers for the reviewee groupings
-  def self.delete_all_peer_reviews_for(reviewee_id)
-    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).destroy_all
-  end
-
   def self.assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
