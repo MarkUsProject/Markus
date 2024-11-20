@@ -41,3 +41,7 @@ en:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."
       update:
         error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
+      destroy:
+        error: "Error deleting TA (%{user_name}): %{message}"
+        success: "Succesfully deleted TA (%{user_name}) from course."
+        restricted: "Cannot delete TA (%{user_name}): %{message}"

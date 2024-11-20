@@ -1,6 +1,9 @@
 import {mount} from "enzyme";
 
 import {TATable} from "../ta_table";
+import fetchMock from "jest-fetch-mock";
+import {fireEvent, waitFor, screen} from "@testing-library/react";
+import $ from "jquery";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -97,6 +100,58 @@ describe("For the TATable's display of TAs", () => {
 
     it("No rows found is shown", () => {
       expect(wrapper.find({children: "No rows found"})).toBeTruthy();
+    });
+  });
+
+  describe("When the Delete Button is pressed", () => {
+    let mock_course_id = 1;
+    let mock_ta_id = 42;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      jest.spyOn(global, "fetch").mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          data: [
+            {
+              id: mock_ta_id,
+              user_name: "testtest",
+              first_name: "Test",
+              last_name: "Test",
+              email: "test@test.com",
+              hidden: false,
+            },
+          ],
+          counts: {all: 1, active: 1, inactive: 0},
+        }),
+      });
+
+      wrapper = mount(<TATable course_id={mock_course_id} />);
+
+      jest.spyOn($, "ajax").mockImplementation(({url, method}) => {
+        if (url === Routes.course_ta_path(mock_course_id, mock_ta_id) && method === "DELETE") {
+          return Promise.resolve({success: true});
+        }
+      });
+    });
+
+    it("calls the correct endpoint when removeTA is triggered", async () => {
+      wrapper.update();
+
+      wrapper
+        .find("a")
+        .filterWhere(node => node.text() === I18n.t("delete"))
+        .simulate("click");
+
+      await waitFor(() => {
+        expect($.ajax).toHaveBeenCalledTimes(1);
+        expect($.ajax).toHaveBeenCalledWith(
+          expect.objectContaining({
+            url: Routes.course_ta_path(mock_course_id, mock_ta_id),
+            method: "DELETE",
+          })
+        );
+      });
     });
   });
 });

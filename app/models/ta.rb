@@ -1,15 +1,22 @@
 # TA user for a given course.
 class Ta < Role
   has_one :grader_permission, dependent: :destroy, foreign_key: :role_id, inverse_of: :ta
+
   before_create :create_grader_permission
   validates :grader_permission, presence: { unless: -> { self.new_record? } }
   validate :associated_user_is_an_end_user
   accepts_nested_attributes_for :grader_permission
-  has_many :criterion_ta_associations, dependent: :delete_all
+
+  has_many :annotation_texts, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
+  has_many :annotations, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
+
+  has_many :criterion_ta_associations, dependent: :delete_all, inverse_of: :ta
   has_many :criteria, through: :criterion_ta_associations
 
-  has_many :grade_entry_student_tas, dependent: :delete_all
-  has_many :grade_entry_students, through: :grade_entry_student_tas, dependent: :delete_all
+  has_many :grade_entry_student_tas, dependent: :delete_all, inverse_of: :ta
+  has_many :grade_entry_students, through: :grade_entry_student_tas, inverse_of: :ta
+
+  has_many :notes, dependent: :restrict_with_exception, inverse_of: :role, foreign_key: :creator_id
 
   BLANK_MARK = ''.freeze
 

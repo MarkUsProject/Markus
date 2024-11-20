@@ -36,6 +36,8 @@ en:
     help:
       manage_graders: Create graders.
     new: Add a Grader
+    # errors:
+    #   Successfully deleted TA (#{@role.user_name}) from course.
   users:
     account_settings: Account Settings
     api_key:
@@ -44,3 +46,4 @@ en:
       unavailable: Unavailable
     not_found: 'No user can be found with the user name: %{user_names}'
     verify_settings_update: Your settings have been updated!
+    deleted: (deleted)

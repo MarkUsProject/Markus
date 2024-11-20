@@ -1458,3 +1458,21 @@ canvas {
 .jcrop-centered {
   display: inline-block;
 }
+
+// For Actions row
+.actions-container {
+  display: flex;
+  justify-content: flex-start; /* Keeps the first span on the left */
+  position: relative; /* This makes absolute positioning relative to this container */
+  width: 100%; /* Or a specific width for your container */
+}
+
+.left-action {
+  flex: 0 0 auto; /* Prevents the left span from growing */
+}
+
+.center-action {
+  position: absolute;
+  left: 50%; /* Moves the element to the middle */
+  transform: translateX(-50%); /* Centers the element horizontally */
+}

@@ -51,9 +51,7 @@ class Annotation < ApplicationRecord
       criterion_id: annotation_text.annotation_category&.flexible_criterion&.id
     }
 
-    if include_creator
-      data[:creator] = creator.display_name
-    end
+    data[:creator] = include_creator && creator ? creator.display_name : I18n.t('users.deleted')
 
     data
   end

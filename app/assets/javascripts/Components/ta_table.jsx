@@ -36,6 +36,13 @@ class TATable extends React.Component {
       });
   }
 
+  removeTA = ta_id => {
+    $.ajax({
+      url: Routes.course_ta_path(this.props.course_id, ta_id),
+      method: "DELETE",
+    }).then(this.fetchData);
+  };
+
   render() {
     const {data} = this.state;
     return (
@@ -89,12 +96,18 @@ class TATable extends React.Component {
             Header: I18n.t("actions"),
             accessor: "id",
             Cell: data => (
-              <span>
-                <a href={Routes.edit_course_ta_path(this.props.course_id, data.value)}>
-                  {I18n.t("edit")}
-                </a>
-                &nbsp;
-              </span>
+              <div className="actions-container">
+                <span className="left-action">
+                  <a href={Routes.edit_course_ta_path(this.props.course_id, data.value)}>
+                    {I18n.t("edit")}
+                  </a>
+                </span>
+                <span className="center-action">
+                  <a href="#" onClick={() => this.removeTA(data.value)}>
+                    {I18n.t("delete")}
+                  </a>
+                </span>
+              </div>
             ),
             filterable: false,
             sortable: false,

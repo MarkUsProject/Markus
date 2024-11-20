@@ -45,3 +45,4 @@ en:
       user:
         one: User
         other: Users
+        deleted: (deleted)
