@@ -1462,17 +1462,17 @@ canvas {
 // For Actions row
 .actions-container {
   display: flex;
-  justify-content: flex-start; /* Keeps the first span on the left */
-  position: relative; /* This makes absolute positioning relative to this container */
-  width: 100%; /* Or a specific width for your container */
+  justify-content: flex-start;
+  position: relative; 
+  width: 100%; 
 }
 
 .left-action {
-  flex: 0 0 auto; /* Prevents the left span from growing */
+  flex: 0 0 auto;
 }
 
 .center-action {
   position: absolute;
-  left: 50%; /* Moves the element to the middle */
-  transform: translateX(-50%); /* Centers the element horizontally */
+  left: 50%;
+  transform: translateX(-50%);
 }

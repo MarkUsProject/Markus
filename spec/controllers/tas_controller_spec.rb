@@ -311,20 +311,15 @@ describe TasController do
 
       before do
         sign_in instructor
-        # Stub the @role.destroy method to return false, simulating a failure
         create(:note, role: ta)
         delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
       end
 
       it 'does not delete the TA and shows an error message' do
-        # Simulate the action
-        # expect(Rails.logger).to have_received(:debug).with("unsuccessful deletion").once
-        # Expect a flash error message
         expect(Ta.count).to eq(1)
         expect(flash.now[:success]).to be_nil
         expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.restricted', user_name: ta.user_name,
                                                                                       message: ''))
-        # Check the logger output (if you're capturing logs in your tests)
       end
     end
 
@@ -333,36 +328,20 @@ describe TasController do
       let(:instructor) { create(:instructor) }
 
       let!(:annotation) { create(:text_annotation, creator: ta) }
-      # let!(:criterion_ta_association) { create(:criterion_ta_association, ta: ta) }
+
 
       let(:student) { create(:student) }
-      # let!(:grade_entry_form) { create(:grade_entry_form) }
-      # let!(:grade_entry_student) { create(:grade_entry_student, role: student, grade_entry_form: grade_entry_form) }
-      # let!(:grade_entry_student_ta) do
-      #   create(:grade_entry_student_ta, ta: ta, grade_entry_student: student.grade_entry_students.first)
-      # end
-      # let!(:grader_permission) { create(:grader_permission, ta: ta) }
 
       before do
-        # allow(controller).to receive(:current_role).and_return(double(instructor?: true))
-        # allow(controller).to receive(:record).and_return(ta)
         create(:criterion_ta_association, ta: ta)
         create(:grade_entry_form)
         create(:grade_entry_student_ta, ta: ta, grade_entry_student: student.grade_entry_students.first)
-        # create(:grader_permission, ta: ta)
 
         sign_in instructor
-        # expect(Ta.count).to eq(1)
-        # expect(GraderPermission.where(role_id: ta.id).count).to eq(1)
-        # expect(annotation.creator_id).to eq(ta.id)
-        # expect(CriterionTaAssociation.where(ta_id: ta.id).count).to eq(1)
-        # expect(GradeEntryStudentTa.where(ta_id: ta.id).count).to eq(1)
         delete :destroy, params: { course_id: course.id, id: ta.id }
       end
 
       it 'deletes TA and flashes success' do
-        # ta = create(:ta, course: course)
-        # expect(Rails.logger).to have_received(:debug).with("successful deletion").once
         expect(Ta.count).to eq(0)
         expect(flash.now[:success].first).to include(I18n.t('flash.tas.destroy.success', user_name: ta.user_name))
       end

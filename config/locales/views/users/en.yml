@@ -36,8 +36,6 @@ en:
     help:
       manage_graders: Create graders.
     new: Add a Grader
-    # errors:
-    #   Successfully deleted TA (#{@role.user_name}) from course.
   users:
     account_settings: Account Settings
     api_key:

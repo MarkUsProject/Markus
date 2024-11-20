@@ -47,7 +47,6 @@ class TasController < ApplicationController
     @role = record
     begin
       @role.destroy!
-      # flash_now(:success, "Successfully deleted TA (#{@role.user_name}) from course.")
       flash_now(:success, I18n.t('flash.tas.destroy.success', user_name: @role.user_name))
     rescue ActiveRecord::DeleteRestrictionError => e
       flash_message(:error, I18n.t('flash.tas.destroy.restricted', user_name: @role.user_name, message: e.message))
