@@ -14,7 +14,7 @@ class Ta < Role
   has_many :criteria, through: :criterion_ta_associations
 
   has_many :grade_entry_student_tas, dependent: :delete_all, inverse_of: :ta
-  has_many :grade_entry_students, through: :grade_entry_student_tas, inverse_of: :ta
+  has_many :grade_entry_students, through: :grade_entry_student_tas
 
   has_many :notes, dependent: :restrict_with_exception, inverse_of: :role, foreign_key: :creator_id
 
