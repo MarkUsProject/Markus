@@ -43,6 +43,6 @@ en:
         one: Grader
         other: Graders
       user:
+        deleted: "(deleted)"
         one: User
         other: Users
-        deleted: (deleted)

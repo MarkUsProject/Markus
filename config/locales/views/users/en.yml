@@ -42,6 +42,6 @@ en:
       help_html: The API key is used for authentication for the MarkUs API. See <a href="https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/RESTful-API.md">MarkUs Wiki</a> for information on using the API.
       reset: Reset API key
       unavailable: Unavailable
+    deleted: "(deleted)"
     not_found: 'No user can be found with the user name: %{user_names}'
     verify_settings_update: Your settings have been updated!
-    deleted: (deleted)
