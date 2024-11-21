@@ -329,7 +329,6 @@ describe TasController do
 
       let!(:annotation) { create(:text_annotation, creator: ta) }
 
-
       let(:student) { create(:student) }
 
       before do
