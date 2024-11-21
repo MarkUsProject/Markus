@@ -35,6 +35,7 @@
 - Simplify pdf.js configuration (#7260)
 - Improve descriptions of the Group and Grouping models (#7262)
 - Disable Rubocop Style/SafeNavigationChainLength check (#7301)
+- Ignore faker translations in i18n-js compilation (#7305)
 
 ## [v2.5.3]
 
