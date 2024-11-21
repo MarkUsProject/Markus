@@ -7,7 +7,9 @@ shared_examples 'gets annotation data' do
   end
   context 'when include_creator is false' do
     it 'gets all data' do
-      expect(Set.new(annotation.get_data(include_creator: false).keys)).to eq keys
+      data = annotation.get_data(include_creator: false)
+      expect(Set.new(data.keys)).to eq(keys + [:creator])
+      expect(data[:creator]).to eq(I18n.t('users.deleted'))
     end
   end
 
