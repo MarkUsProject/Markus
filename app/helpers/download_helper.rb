@@ -1,6 +1,6 @@
 # Helpers for handling downloading data files for various models.
 module DownloadHelper
-  MIME_TYPE_CONVERSION = { 'application/javascript': 'text/plain' }.stringify_keys.freeze
+  MIME_TYPE_CONVERSION = { 'text/javascript': 'text/plain' }.stringify_keys.freeze
 
   # Wrapper around +send_file+ which converts the +type+ optional argument according
   # to the +MIME_TYPE_CONVERSION+ hash.
