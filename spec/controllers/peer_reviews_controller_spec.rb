@@ -279,9 +279,9 @@ describe PeerReviewsController do
 
           context 'when applicable reviewers are selected' do
             before do
-              @selected_reviewee_group_ids.each do |reviewee_id|
-                @selected_reviewer_group_ids.push(reviewee_id)
-              end
+              @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
+                                                       .where(groupings: { id: @selected_reviewee_group_ids })
+                                                       .pick(:reviewer_id)
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -348,9 +348,9 @@ describe PeerReviewsController do
 
           context 'when all applicable reviewers are selected' do
             before do
-              @selected_reviewee_group_ids.each do |reviewee_id|
-                @selected_reviewer_group_ids.push(reviewee_id)
-              end
+              @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
+                                                       .where(groupings: { id: @selected_reviewee_group_ids })
+                                                       .pick(:reviewer_id)
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -408,9 +408,9 @@ describe PeerReviewsController do
 
           context 'when all applicable reviewers are selected' do
             before do
-              @selected_reviewee_group_ids.each do |reviewee_id|
-                @selected_reviewer_group_ids.push(reviewee_id)
-              end
+              @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
+                                                       .where(groupings: { id: @selected_reviewee_group_ids })
+                                                       .pick(:reviewer_id)
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -476,7 +476,9 @@ describe PeerReviewsController do
             @selected_reviewee_group_ids.last(2).each do |reviewee_id| # individually select 2nd and 3rd reviewers
               @reviewers_to_remove_from_reviewees_map[reviewee_id] = @selected_reviewer_group_ids.index_with { true }
             end
-            @selected_reviewer_group_ids.push(@selected_reviewee_group_ids.first) # select the 1st reviewee row
+            @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
+                                                     .where(groupings: { id: @selected_reviewee_group_ids })
+                                                     .pick(:reviewer_id).first # select the 1st reviewee row
 
             post_as role, :assign_groups,
                     params: { actionString: 'unassign',
