@@ -4,8 +4,6 @@ export class BinaryViewer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {content: null};
-    this.controller = new AbortController();
-    this.signal = this.controller.signal;
     this.abortController = null;
   }
 
@@ -46,7 +44,7 @@ export class BinaryViewer extends React.PureComponent {
 
   componentWillUnmount() {
     if (this.abortController) {
-      this.controller.abort();
+      this.abortController.abort();
     }
   }
 
