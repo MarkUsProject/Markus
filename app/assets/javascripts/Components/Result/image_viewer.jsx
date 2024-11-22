@@ -7,27 +7,26 @@ export class ImageViewer extends React.PureComponent {
     this.state = {
       rotation: window.start_image_rotation || 0,
       zoom: window.start_image_zoom || 1,
-      url: this.props.url,
+      url: null,
     };
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.display_annotations();
-    this.adjustPictureSize();
-    this.rotateImage();
-  }
-
-  componentDidMount() {
-    // Since HEIC and HEIF files can't be displayed, they must first be converted to JPEG.
-    if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
-      this.getJPEGFromHEIC().then(JPEGObjectURL => this.setState({url: JPEGObjectURL}));
-    }
-
-    document.getElementById("image_preview").onload = () => {
+    this.setImageURL().then(() => {
       this.display_annotations();
       this.adjustPictureSize();
       this.rotateImage();
-    };
+    });
+  }
+
+  componentDidMount() {
+    this.setImageURL().then(() => {
+      document.getElementById("image_preview").onload = () => {
+        this.display_annotations();
+        this.adjustPictureSize();
+        this.rotateImage();
+      };
+    });
   }
 
   componentWillUnmount() {
@@ -35,12 +34,18 @@ export class ImageViewer extends React.PureComponent {
     window.start_image_rotation = this.state.rotation;
   }
 
-  // Returns a promise containing an object URL for a JPEG image converted from the HEIC/HEIF format.
-  getJPEGFromHEIC = () => {
-    return fetch(this.props.url)
-      .then(res => res.blob())
-      .then(blob => heic2any({blob, toType: "image/jpeg"}))
-      .then(conversionResult => URL.createObjectURL(conversionResult));
+  setImageURL = () => {
+    // Since HEIC and HEIF files can't be displayed, they must first be converted to JPEG.
+    if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
+      // Returns a promise containing an object URL for a JPEG image converted from the HEIC/HEIF format.
+      return fetch(this.props.url)
+        .then(res => res.blob())
+        .then(blob => heic2any({blob, toType: "image/jpeg"}))
+        .then(conversionResult => URL.createObjectURL(conversionResult))
+        .then(JPEGObjectURL => this.setState({url: JPEGObjectURL}));
+    } else {
+      return new Promise(() => this.setState({url: this.props.url}));
+    }
   };
 
   display_annotations = () => {
@@ -217,7 +222,7 @@ export class ImageViewer extends React.PureComponent {
           />
           <img
             id="image_preview"
-            src={this.props.url}
+            src={this.state.url}
             data-zoom={this.state.zoom}
             className={this.props.released_to_students ? "" : "enable-annotations"}
             onLoad={this.display_annotations}
