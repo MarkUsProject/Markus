@@ -95,7 +95,6 @@ class Result extends React.Component {
         }
       })
       .then(res => {
-        console.log(res.submission_files);
         if (res.submission_files) {
           res.submission_files = this.processSubmissionFiles(res.submission_files);
         }
