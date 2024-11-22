@@ -63,7 +63,14 @@ export class TextViewer extends React.PureComponent {
     this.abortController = new AbortController();
 
     return fetch(url, {signal: this.abortController.signal})
-      .then(response => response.text())
+      .then(response => {
+        if (response.status === 413) {
+          this.props.setErrorMessageCallback("too large");
+          throw new Error("too large");
+        } else {
+          return response.text();
+        }
+      })
       .then(content => content.replace(/\r?\n/gm, "\n"));
   }
 

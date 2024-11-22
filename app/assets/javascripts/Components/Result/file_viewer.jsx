@@ -21,12 +21,27 @@ export class FileViewer extends React.Component {
     }
   };
 
+  setErrorMessage = message => {
+    if (this.mountedRef.current) {
+      this.setState({errorMessage: message});
+    }
+  };
+
   componentDidMount() {
     this.mountedRef.current = true;
   }
 
   componentWillUnmount() {
     this.mountedRef.current = false;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props !== prevProps) {
+      this.setState({
+        loading: false,
+        errorMessage: null,
+      });
+    }
   }
 
   getViewer() {
@@ -39,6 +54,7 @@ export class FileViewer extends React.Component {
       key: `${this.props.selectedFileType}-viewer`,
       url: this.props.selectedFileURL,
       setLoadingCallback: this.setLoading,
+      setErrorMessageCallback: this.setErrorMessage,
     };
 
     if (this.props.selectedFileType === "image") {
@@ -75,8 +91,11 @@ export class FileViewer extends React.Component {
 
     return (
       <React.Fragment>
-        <div style={{display: this.state.loading ? "none" : "block"}}>{viewer}</div>
-        {this.state.loading && <p>{I18n.t("working")}</p>}
+        <div style={{display: this.state.loading || this.state.errorMessage ? "none" : "block"}}>
+          {viewer}
+        </div>
+        {this.state.errorMessage && <p>{this.state.errorMessage}</p>}
+        {this.state.loading && !this.state.errorMessage && <p>{I18n.t("working")}</p>}
       </React.Fragment>
     );
   }
