@@ -144,7 +144,7 @@ export class PDFViewer extends React.PureComponent {
     const zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
 
     return (
-      <div>
+      <React.Fragment>
         <div className="toolbar">
           <div className="toolbar-actions">
             {I18n.t("results.current_rotation", {rotation: this.state.rotationInDegrees})}
@@ -169,7 +169,7 @@ export class PDFViewer extends React.PureComponent {
           <div
             id="pdfContainer"
             className="pdfContainer"
-            style={{cursor, userSelect, overflow: "auto"}}
+            style={{cursor, userSelect}}
             ref={this.pdfContainer}
           >
             <div id="viewer" className="pdfViewer" />
@@ -181,7 +181,7 @@ export class PDFViewer extends React.PureComponent {
             />
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

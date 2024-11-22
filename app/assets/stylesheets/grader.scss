@@ -26,15 +26,7 @@
 
 /* Panes content (for controlling the heights) */
 
-#codeviewer {
-  display: flex;
-  flex-basis: 600px;
-  flex-direction: column;
-  flex-grow: 1;
-  width: 100%;
-  overflow: hidden;
-}
-
+#codeviewer,
 #testviewer,
 #mark_viewer,
 #summary_viewer,
