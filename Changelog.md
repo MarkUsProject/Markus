@@ -6,6 +6,7 @@
 
 ### ✨ New features and improvements
 
+- Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 - Implement a limit on the file size rendered by the submission viewer (#7273)
@@ -16,6 +17,7 @@
 - Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 - Disable editable fields in assignment criterion when criterion is released (#7264)
+- Fixed Download One Time Annotation 'Not Found' error (#7302)
 
 ### 🔧 Internal changes
 
@@ -32,6 +34,8 @@
 - Merge result.js and result_main.css build files into application.js/application.css (#7260)
 - Simplify pdf.js configuration (#7260)
 - Improve descriptions of the Group and Grouping models (#7262)
+- Disable Rubocop Style/SafeNavigationChainLength check (#7301)
+- Ignore faker translations in i18n-js compilation (#7305)
 
 ## [v2.5.3]
 
