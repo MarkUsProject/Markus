@@ -8,11 +8,11 @@ import mime from "mime/lite";
 
 // 1_000_000 = 1MB
 const MAX_CONTENT_SIZES = {
-  _default: 1,
+  _default: 100_000,
   image: 50_000_000,
   pdf: 50_000_000,
   "jupyter-notebook": 50_000_000,
-  text: 1,
+  text: 100_000,
   binary: 100_000,
 };
 
