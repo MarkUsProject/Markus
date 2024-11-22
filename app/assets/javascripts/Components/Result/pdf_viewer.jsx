@@ -84,7 +84,10 @@ export class PDFViewer extends React.PureComponent {
   };
 
   rotate = () => {
-    annotation_manager.rotateClockwise90();
+    if (this.props.resultView) {
+      annotation_manager.rotateClockwise90();
+    }
+
     this.setState(({rotationInDegrees}) => ({
       rotationInDegrees: (rotationInDegrees + 90) % 360,
     }));
@@ -129,7 +132,7 @@ export class PDFViewer extends React.PureComponent {
         acc[value] = `${(value * 100).toFixed(0)} %`;
         return acc;
       },
-      {"page-width": "Fit to page width"}
+      {"page-width": I18n.t("results.fit_to_page_width")}
     );
 
     return valueToDisplayName;
@@ -141,7 +144,7 @@ export class PDFViewer extends React.PureComponent {
     const zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
 
     return (
-      <React.Fragment>
+      <div>
         <div className="toolbar">
           <div className="toolbar-actions">
             {I18n.t("results.current_rotation", {rotation: this.state.rotationInDegrees})}
@@ -178,7 +181,7 @@ export class PDFViewer extends React.PureComponent {
             />
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
