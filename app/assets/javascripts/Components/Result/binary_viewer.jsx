@@ -6,19 +6,15 @@ export class BinaryViewer extends React.PureComponent {
     this.state = {content: null};
     this.controller = new AbortController();
     this.signal = this.controller.signal;
-    this.mountedRef = React.createRef();
     this.abortController = null;
   }
 
   componentDidMount() {
-    this.mountedRef.current = true;
     // Notify the parent component that the file content is loading.
     this.props.setLoadingCallback(true);
 
     this.fetchContent(this.props.url).then(content => {
-      if (this.mountedRef.current) {
-        this.setState({content: content}, () => this.props.setLoadingCallback(false));
-      }
+      this.setState({content: content}, () => this.props.setLoadingCallback(false));
     });
   }
 
@@ -28,9 +24,7 @@ export class BinaryViewer extends React.PureComponent {
     if (this.props.url && this.props.url !== prevProps.url) {
       // The URL has updated, so the content needs to be fetched using the new URL.
       this.fetchContent(this.props.url).then(content => {
-        if (this.mountedRef.current) {
-          this.setState({content: content}, () => this.props.setLoadingCallback(false));
-        }
+        this.setState({content: content}, () => this.props.setLoadingCallback(false));
       });
     }
   }
@@ -54,7 +48,6 @@ export class BinaryViewer extends React.PureComponent {
     if (this.abortController) {
       this.controller.abort();
     }
-    this.mountedRef.current = false;
   }
 
   render() {

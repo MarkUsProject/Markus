@@ -13,7 +13,6 @@ export class TextViewer extends React.PureComponent {
     this.highlight_root = null;
     this.annotation_manager = null;
     this.raw_content = React.createRef();
-    this.mountedRef = React.createRef();
     this.abortController = null;
   }
 
@@ -34,21 +33,16 @@ export class TextViewer extends React.PureComponent {
     if (this.abortController) {
       this.abortController.abort();
     }
-    this.mountedRef.current = false;
   }
 
   componentDidMount() {
-    this.mountedRef.current = true;
     this.highlight_root = this.raw_content.current.parentNode;
 
     // Fetch content from a URL if it is passed as a prop. The URL should point to plaintext data.
     if (this.props.url) {
-      this.fetchContent(this.props.url).then(content => {
-        // Check if the component is mounted before updating the state to prevent memory leaks.
-        if (this.mountedRef.current) {
-          this.setState({content: content});
-        }
-      });
+      this.fetchContent(this.props.url)
+        .then(content => this.setState({content: content}))
+        .catch(error => console.error(error));
     }
 
     if (this.getContent()) {
@@ -67,19 +61,18 @@ export class TextViewer extends React.PureComponent {
 
     return fetch(url, {signal: this.abortController.signal})
       .then(response => response.text())
-      .then(content => content.replace(/\r?\n/gm, "\n"))
-      .catch(error => console.error(error));
+      .then(content => content.replace(/\r?\n/gm, "\n"));
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.url && this.props.url !== prevProps.url) {
       // The URL has updated, so the content needs to be fetched using the new URL.
       this.props.setLoadingCallback(true);
-      this.fetchContent(this.props.url).then(content => {
-        if (this.mountedRef.current) {
-          this.setState({content: content}, () => this.props.setLoadingCallback(false));
-        }
-      });
+      this.fetchContent(this.props.url)
+        .then(content =>
+          this.setState({content: content}, () => this.props.setLoadingCallback(false))
+        )
+        .catch(error => console.error(error));
     }
 
     const content = this.getContentFromProps(this.props, this.state);
@@ -208,9 +201,7 @@ export class TextViewer extends React.PureComponent {
     // Prevents from copying `null` or `undefined` to the clipboard. An empty string is ok to copy.
     if (content || content === "") {
       navigator.clipboard.writeText(content).then(() => {
-        if (this.mountedRef.current) {
-          this.setState({copy_success: true});
-        }
+        this.setState({copy_success: true});
       });
     } else {
       console.warn(`Tried to copy content with value ${content} to the clipboard.`);
