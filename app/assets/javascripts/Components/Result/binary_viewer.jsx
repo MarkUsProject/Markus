@@ -47,7 +47,15 @@ export class BinaryViewer extends React.PureComponent {
     this.abortController = new AbortController();
 
     return fetch(url, {signal: this.abortController.signal})
-      .then(response => response.text())
+      .then(response => {
+        if (response.status === 413) {
+          const errorMessage = I18n.t("submissions.oversize_submission_file");
+          this.props.setErrorMessageCallback(errorMessage);
+          throw new Error(errorMessage);
+        } else {
+          return response.text();
+        }
+      })
       .then(content => content.replace(/\r?\n/gm, "\n"));
   }
 

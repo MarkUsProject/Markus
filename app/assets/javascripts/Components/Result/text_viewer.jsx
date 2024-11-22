@@ -65,8 +65,9 @@ export class TextViewer extends React.PureComponent {
     return fetch(url, {signal: this.abortController.signal})
       .then(response => {
         if (response.status === 413) {
-          this.props.setErrorMessageCallback("too large");
-          throw new Error("too large");
+          const errorMessage = I18n.t("submissions.oversize_submission_file");
+          this.props.setErrorMessageCallback(errorMessage);
+          throw new Error(errorMessage);
         } else {
           return response.text();
         }
