@@ -279,9 +279,9 @@ describe PeerReviewsController do
 
           context 'when applicable reviewers are selected' do
             before do
-              @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
-                                                       .where(groupings: { id: @selected_reviewee_group_ids })
-                                                       .pick(:reviewer_id)
+              reviewer_ids = PeerReview.joins(:reviewee).where(groupings: { id: @selected_reviewee_group_ids })
+                                       .pluck(:reviewer_id)
+              @selected_reviewer_group_ids = reviewer_ids
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -350,7 +350,7 @@ describe PeerReviewsController do
             before do
               @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
                                                        .where(groupings: { id: @selected_reviewee_group_ids })
-                                                       .pick(:reviewer_id)
+                                                       .pluck(:reviewer_id)
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -410,7 +410,7 @@ describe PeerReviewsController do
             before do
               @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
                                                        .where(groupings: { id: @selected_reviewee_group_ids })
-                                                       .pick(:reviewer_id)
+                                                       .pluck(:reviewer_id)
               post_as role, :assign_groups,
                       params: { actionString: 'unassign',
                                 selectedRevieweeGroupIds: @selected_reviewee_group_ids,
@@ -478,7 +478,7 @@ describe PeerReviewsController do
             end
             @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
                                                      .where(groupings: { id: @selected_reviewee_group_ids })
-                                                     .pick(:reviewer_id).first # select the 1st reviewee row
+                                                     .pick(:reviewer_id) # select the 1st reviewee row
 
             post_as role, :assign_groups,
                     params: { actionString: 'unassign',
