@@ -537,6 +537,13 @@ class SubmissionsController < ApplicationController
       head :internal_server_error
       return
     end
+
+    max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
+    if file_contents.size > max_content_size && max_content_size != -1
+      head :payload_too_large
+      return
+    end
+
     filename = file.filename
     # Display the file in the page if it is an image/pdf, and download button
     # was not explicitly pressed

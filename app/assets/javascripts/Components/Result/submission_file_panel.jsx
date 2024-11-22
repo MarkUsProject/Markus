@@ -6,6 +6,16 @@ import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
 import mime from "mime/lite";
 
+// 1_000_000 = 1MB
+const MAX_CONTENT_SIZES = {
+  _default: 1,
+  image: 50_000_000,
+  pdf: 50_000_000,
+  "jupyter-notebook": 50_000_000,
+  text: 1,
+  binary: 100_000,
+};
+
 export class SubmissionFilePanel extends React.Component {
   constructor(props) {
     super(props);
@@ -151,6 +161,16 @@ export class SubmissionFilePanel extends React.Component {
     this.modalDownload.open();
   };
 
+  getMaxContentSize = () => {
+    const file_type = this.state.selectedFile ? this.state.selectedFile[2] : null;
+
+    if (file_type in MAX_CONTENT_SIZES) {
+      return MAX_CONTENT_SIZES[file_type];
+    } else {
+      return MAX_CONTENT_SIZES._default;
+    }
+  };
+
   getFileDownloadURL = file_id => {
     return Routes.download_file_course_assignment_submission_path(
       this.props.course_id,
@@ -160,6 +180,8 @@ export class SubmissionFilePanel extends React.Component {
         select_file_id: file_id,
         show_in_browser: true,
         from_codeviewer: true,
+        preview: true,
+        max_content_size: this.getMaxContentSize(),
       }
     );
   };
