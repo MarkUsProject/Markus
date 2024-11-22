@@ -42,7 +42,10 @@ export class TextViewer extends React.PureComponent {
     if (this.props.url) {
       this.fetchContent(this.props.url)
         .then(content => this.setState({content: content}))
-        .catch(error => console.error(error));
+        .catch(error => {
+          if (error instanceof DOMException) return;
+          console.error(error);
+        });
     }
 
     if (this.getContent()) {
@@ -72,7 +75,10 @@ export class TextViewer extends React.PureComponent {
         .then(content =>
           this.setState({content: content}, () => this.props.setLoadingCallback(false))
         )
-        .catch(error => console.error(error));
+        .catch(error => {
+          if (error instanceof DOMException) return;
+          console.error(error);
+        });
     }
 
     const content = this.getContentFromProps(this.props, this.state);

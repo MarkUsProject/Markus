@@ -11,9 +11,14 @@ export class BinaryViewer extends React.PureComponent {
     // Notify the parent component that the file content is loading.
     this.props.setLoadingCallback(true);
 
-    this.fetchContent(this.props.url).then(content => {
-      this.setState({content: content}, () => this.props.setLoadingCallback(false));
-    });
+    this.fetchContent(this.props.url)
+      .then(content =>
+        this.setState({content: content}, () => this.props.setLoadingCallback(false))
+      )
+      .catch(error => {
+        if (error instanceof DOMException) return;
+        console.error(error);
+      });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -21,9 +26,14 @@ export class BinaryViewer extends React.PureComponent {
 
     if (this.props.url && this.props.url !== prevProps.url) {
       // The URL has updated, so the content needs to be fetched using the new URL.
-      this.fetchContent(this.props.url).then(content => {
-        this.setState({content: content}, () => this.props.setLoadingCallback(false));
-      });
+      this.fetchContent(this.props.url)
+        .then(content =>
+          this.setState({content: content}, () => this.props.setLoadingCallback(false))
+        )
+        .catch(error => {
+          if (error instanceof DOMException) return;
+          console.error(error);
+        });
     }
   }
 
@@ -38,8 +48,7 @@ export class BinaryViewer extends React.PureComponent {
 
     return fetch(url, {signal: this.abortController.signal})
       .then(response => response.text())
-      .then(content => content.replace(/\r?\n/gm, "\n"))
-      .catch(error => console.error(error));
+      .then(content => content.replace(/\r?\n/gm, "\n"));
   }
 
   componentWillUnmount() {
