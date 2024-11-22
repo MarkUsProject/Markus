@@ -462,7 +462,7 @@ describe PeerReviewsController do
 
         context 'when some rows of reviewees and some individual reviewers are selected' do
           before do
-            (1..2).each do |i| # mark 2nd and 3rd peer reviews as unassign-able
+            [0, 2].each do |i| # mark 1st and 3rd peer reviews as unassign-able
               @assignment_with_pr.peer_reviews[i].result.update(marking_state: Result::MARKING_STATES[:incomplete])
             end
             @reviewers_to_remove_from_reviewees_map = {}
@@ -471,7 +471,7 @@ describe PeerReviewsController do
             end
             @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
                                                      .where(groupings: { id: @selected_reviewee_group_ids })
-                                                     .pick(:reviewer_id) # select the 1st reviewee row
+                                                     .pluck(:reviewer_id)[0] # select the 1st reviewee row
 
             post_as role, :assign_groups,
                     params: { actionString: 'unassign',
@@ -484,8 +484,8 @@ describe PeerReviewsController do
 
           it 'flashes the correct message' do
             flashed_error = flash[:error].map { |f| extract_text f }[0]
-            expect(flashed_error).to include('Successfully unassigned 2 peer reviewer(s), but could not unassign the
-                                              following due to existing marks or annotations: ')
+            expect(flashed_error).to include('Successfully unassigned 2 peer reviewer(s), but could not unassign the ' \
+                                             'following due to existing marks or annotations: ')
           end
 
           it 'deletes the correct number of peer reviews' do
