@@ -384,6 +384,11 @@ describe PeerReviewsController do
           end
 
           it 'flashes the correct message' do
+            undeleted_reviews = @assignment_with_pr.peer_reviews.map do |review|
+              I18n.t('activerecord.models.peer_review.cannot_unassign_all_reviewers',
+                     reviewer_group_name: review.reviewer.group.group_name,
+                     reviewee_group_name: review.result.grouping.group.group_name)
+            end
             flashed_error = flash[:error].map { |f| extract_text f }[0]
             expect(flashed_error).to include('Successfully unassigned 1 peer reviewer(s)')
             expect(flashed_error).to include(I18n.t('additional_not_shown', count: undeleted_reviews.length - 6))
