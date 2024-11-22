@@ -484,7 +484,8 @@ describe PeerReviewsController do
 
           it 'flashes the correct message' do
             flashed_error = flash[:error].map { |f| extract_text f }[0]
-            expect(flashed_error).to include('Successfully unassigned 2 peer reviewer(s)')
+            expect(flashed_error).to include('Successfully unassigned 2 peer reviewer(s), but could not unassign the
+                                              following due to existing marks or annotations: ')
           end
 
           it 'deletes the correct number of peer reviews' do
