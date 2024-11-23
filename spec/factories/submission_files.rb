@@ -16,4 +16,26 @@ FactoryBot.define do
       filename { "#{Faker::Lorem.word}.ipynb" }
     end
   end
+
+  factory :submission_file_with_repo, parent: :submission_file do
+    after(:create) do |sf|
+      sf.submission.grouping.group.access_repo do |repo|
+        txn = repo.get_transaction('test')
+        txn.add(sf.path, sf.filename, '')
+        repo.commit(txn)
+      end
+    end
+
+    factory :image_submission_file_with_repo do
+      filename { "#{Faker::Lorem.word}.jpg" }
+    end
+
+    factory :pdf_submission_file_with_repo do
+      filename { "#{Faker::Lorem.word}.pdf" }
+    end
+
+    factory :notebook_submission_file_with_repo do
+      filename { "#{Faker::Lorem.word}.ipynb" }
+    end
+  end
 end

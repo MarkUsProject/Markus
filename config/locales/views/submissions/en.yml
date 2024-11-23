@@ -13,14 +13,17 @@ en:
       collect_due_date: Collect most recent files submitted before the due date, including any late period.
       collection_options: Collection options
       collection_time: Collection time
+      confirm_recollect_retain_data: This submission will be recollected while preserving all marks, annotations, feedback files, and test results. Are you sure you want to proceed?
       could_not_collect_released: Could not collect submission because it has already been released.
       could_not_collect_some_due: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings.
       could_not_collect_some_released: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released.
+      full_overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
+      grading_data_will_be_lost: 'Warning: without selecting this option, all old grading data for the collected submissions will be lost'
       manual_collection: Manual Collection
-      override_existing_html: 'Recollect previously collected submissions? <strong>Warning: any previous grading work will be lost.</strong>'
-      overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
+      override_existing: Recollect previously collected submissions?
       progress: "%{count}/%{size} submissions collected"
       results_loss_warning: This action identifies the version of files to grade for each selected group. Instructors and TAs can begin grading after files are collected.
+      retain_existing_grading: Retain existing grading data (marks, annotations, feedback files, and test results)
       scanned_exam_latest_warning: For scanned exams, the latest submitted file version for each selected group is used regardless of the due date.
       status:
         in_progress: "{{progress}}/{{total}} submissions collected."
@@ -49,7 +52,7 @@ en:
     help:
       browse:
         instructors: 'Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press "Release Marks".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Repository List downloads a text file that maps group name to repository path. Repository Checkout File downloads a text file where each line is a repository checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students.'
-        tas: 'Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven''t been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks.'
+        tas: Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them.
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
     invalid_url: "%{item} is not a valid HTTP/HTTPS URL"
