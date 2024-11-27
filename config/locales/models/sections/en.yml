@@ -4,6 +4,12 @@ en:
     attributes:
       section:
         name: Name
+    errors:
+      models:
+        section:
+          attributes:
+            name:
+              invalid: "%{attribute} must be alphanumeric, hyphen, whitespace, or underscore characters"
     models:
       section:
         one: Section

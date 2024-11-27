@@ -4,7 +4,7 @@ describe AutotestResultsJob do
   let(:test_runs) { create_list(:test_run, 3, grouping: grouping, status: :in_progress) }
 
   context 'when running as a background job' do
-    let(:job_args) { [assignment.id] }
+    let(:job_args) { [] }
     let(:job) { AutotestResultsJob.perform_later(*job_args) }
 
     context 'when there is no job currently in progress' do

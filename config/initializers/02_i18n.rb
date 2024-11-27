@@ -6,4 +6,4 @@ I18n.available_locales = Settings.i18n.available_locales
 I18n.default_locale = Settings.i18n.default_locale
 
 # Set load path
-I18n.load_path += Dir[Rails.root.join('config/locales/**/*.{rb,yml}')]
+I18n.load_path += Rails.root.glob('config/locales/**/*.{rb,yml}')

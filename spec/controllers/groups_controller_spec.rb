@@ -1,6 +1,7 @@
 describe GroupsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:grouping) { create(:grouping) }
+  let(:group) { grouping.group }
   let(:assignment) { grouping.assignment }
   let(:course) { assignment.course }
 
@@ -45,7 +46,7 @@ describe GroupsController do
           end
 
           it 'assigns the error message to flash[:error]' do
-            expect(flash[:error]).to eq("Group #{group_name} already exists")
+            expect(flash[:error][0]).to include("Group #{group_name} already exists")
           end
         end
       end
@@ -135,7 +136,74 @@ describe GroupsController do
       end
     end
 
-    describe '#rename_group'
+    describe '#rename_group' do
+      # rubocop:disable RSpec/LetSetup
+      let!(:another_assignment) { create(:assignment) }
+      let!(:placeholder_group) do
+        create(:group, assignments: [another_assignment], group_name: 'placeholder_group')
+      end
+      # rubocop:enable RSpec/LetSetup
+
+      context 'default grouping' do
+        it 'should rename a group' do
+          # The id param expects grouping id, not group id.
+          expect do
+            post_as instructor, :rename_group, params: {
+              course_id: course.id,
+              assignment_id: assignment.id,
+              id: grouping.id,
+              new_groupname: 'renamed'
+            }
+          end.to change { group.reload.group_name }.from('group1').to('renamed')
+        end
+      end
+
+      context 'grouping with submitted files' do
+        let!(:another_grouping) { create(:grouping, assignment: assignment) }
+
+        before do
+          @file = create(:assignment_file, assignment: assignment)
+          another_grouping.group.access_repo do |repo|
+            txn = repo.get_transaction('markus')
+            assignment_folder = File.join(assignment.repository_folder, File::SEPARATOR)
+            begin
+              txn.add(File.join(assignment_folder, 'Shapes.java'), 'shapes content', 'text/plain')
+              repo.commit(txn)
+            end
+          end
+        end
+
+        it 'flashes an error' do
+          post_as instructor, :rename_group, params: {
+            course_id: course.id,
+            assignment_id: assignment.id,
+            id: another_grouping.id,
+            new_groupname: 'placeholder_group'
+          }
+
+          expect(flash[:error].map do |f|
+            extract_text f
+          end).to eq [I18n.t('groups.group_name_already_in_use_diff_assignment')]
+        end
+      end
+
+      context 'grouping with a submission but no files' do
+        let!(:another_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+
+        it 'flashes an error' do
+          post_as instructor, :rename_group, params: {
+            course_id: course.id,
+            assignment_id: assignment.id,
+            id: another_grouping.id,
+            new_groupname: 'placeholder_group'
+          }
+
+          expect(flash[:error].map do |f|
+            extract_text f
+          end).to eq [I18n.t('groups.group_name_already_in_use_diff_assignment')]
+        end
+      end
+    end
 
     describe '#valid_grouping' do
       let(:unapproved_grouping) { create(:grouping_with_inviter, instructor_approved: false) }

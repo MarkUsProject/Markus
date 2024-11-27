@@ -70,25 +70,18 @@ describe Assignment do
       end
 
       it 'sets default token_start_date to current time if not provided' do
-        travel_to Time.zone.local(2024, 8, 6, 22, 0, 0) do
+        Timecop.freeze Time.zone.local(2024, 8, 6, 22, 0, 0) do
           assignment = build(:assignment_for_student_tests)
           expect(assignment.token_start_date).to eq(Time.current)
         end
       end
 
       it 'sets token_start_date to the provided date' do
-        travel_to Time.zone.local(2024, 12, 25, 10, 0, 0) do
-          provided_date = Time.current
-          assignment = build(:assignment_for_student_tests, token_start_date: provided_date)
-          expect(assignment.token_start_date).to eq(provided_date)
-        end
-      end
-
-      it 'does not overwrite token_start_date if already set' do
-        initial_date = Time.zone.local(2024, 5, 20, 15, 0, 0)
-        travel_to initial_date do
-          assignment = build(:assignment_for_student_tests, token_start_date: initial_date)
-          expect(assignment.token_start_date).to eq(initial_date)
+        Timecop.freeze Time.zone.local(2024, 12, 25, 10, 0, 0) do
+          provided_date = 1.day.from_now
+          assignment = build(:assignment_for_student_tests,
+                             assignment_properties_attributes: { token_start_date: provided_date })
+          expect(assignment.reload.token_start_date).to eq(provided_date)
         end
       end
     end
@@ -2140,7 +2133,7 @@ describe Assignment do
 
         it 'has correct criteria information' do
           criteria_info = @assignment.summary_json(ta)[:criteriaColumns][0]
-          expect(criteria_info).is_a? Hash
+          expect(criteria_info).to be_a Hash
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
       end
@@ -2205,7 +2198,7 @@ describe Assignment do
 
         it 'has correct criteria information' do
           criteria_info = @assignment.summary_json(instructor)[:criteriaColumns][0]
-          expect(criteria_info).is_a? Hash
+          expect(criteria_info).to be_a Hash
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
 
@@ -2233,7 +2226,7 @@ describe Assignment do
           ]
 
           expect(data).not_to be_empty
-          expect(data[0]).is_a? Hash
+          expect(data[0]).to be_a Hash
           expect(data[0].keys).to match_array expected_keys
         end
 

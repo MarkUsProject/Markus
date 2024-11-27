@@ -1,9 +1,44 @@
 # Changelog
 
-## [v2.5.3]
+## [v2.6.0]
+
+### ✨ New features and improvements
+
+- Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
+- Add visual indicator on a per-assignment basis for used grace credits (#7226)
+- Change default disabled text area colour to ligher grey on light mode (#7269)
+- Implement a limit on the file size rendered by the submission viewer (#7273)
+- Add an option to retain old grading data when recollecting graded submissions (#7256)
 
 ### 🐛 Bug fixes
 
+- Fix incorrect calculation of token penalties when submissions are on time (#7216)
+- Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
+- Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
+- Disable editable fields in assignment criterion when criterion is released (#7264)
+- Fixed Download One Time Annotation 'Not Found' error (#7302)
+
+### 🔧 Internal changes
+
+- Fix test coverage for ExamTemplate.create_with_file method (#7213)
+- Upgrade Docker environment to use Ruby v3.3 (#7185)
+- Upgrade to Rails v7.2 (#7185)
+- Move Exception message in student model to a localization file (#7218)
+- Add test cases for the student model to cover Group or Grouping save method failure (#7218)
+- Create tests for overtime messages of the submission rule classes (#7216)
+- Fix flaky `check_repo_permissions` test (#7223)
+- Move model validation error messages to respective localization files (#7229)
+- Replace time-warp gem with newer, maintained timecop gem (#7234)
+- Update pre-commit-hooks to v5.0 and add checks `check-illegal-windows-names`, `check-json`, and `check-merge-conflict` (#7259)
+- Merge result.js and result_main.css build files into application.js/application.css (#7260)
+- Simplify pdf.js configuration (#7260)
+- Improve descriptions of the Group and Grouping models (#7262)
+- Disable Rubocop Style/SafeNavigationChainLength check (#7301)
+- Ignore faker translations in i18n-js compilation (#7305)
+
+## [v2.5.3]
+
+### 🐛 Bug fixes
 - Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
 - Fix incorrect inclusion of course parameter in LtiSyncJob (#7258)
 - Fix Google Colab Jupyter Notebooks rendering by excluding widgets (#7271)

@@ -624,6 +624,24 @@ describe AnnotationCategoriesController do
         expect(data.first['submission_id']).to eq(assignment.groupings.first.current_result.submission_id)
         expect(data.first['id']).to eq(text2.id)
       end
+
+      describe 'Download One Time Annotations' do
+        let(:course2) { create(:course) }
+        let(:assignment2) { create(:assignment, course: course2) }
+
+        it 'should respond with 200' do
+          get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id },
+                                                   format: 'csv'
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'should respond with 404' do
+          get_as role, :uncategorized_annotations,
+                 params: { course_id: course2.id, assignment_id: assignment2.id, id: annotation_category.id },
+                 format: 'csv'
+          expect(response).to have_http_status(:not_found)
+        end
+      end
     end
 
     describe '#destroy_annotation_text' do
