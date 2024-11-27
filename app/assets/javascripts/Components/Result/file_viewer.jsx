@@ -64,13 +64,7 @@ export class FileViewer extends React.Component {
     } else if (this.props.selectedFileType === "jupyter-notebook") {
       return <NotebookViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (this.props.selectedFileType === "binary") {
-      return (
-        <BinaryViewer
-          content={this.state.content}
-          getAnyway={() => this.set_submission_file(this.props.selectedFile, true)}
-          {...commonProps}
-        />
-      );
+      return <BinaryViewer content={this.state.content} {...commonProps} />;
     } else if (this.props.selectedFileType === "markusurl") {
       return <URLViewer externalUrl={this.state.content} {...commonProps} />;
     } else if (this.props.selectedFileType !== "") {

@@ -3,14 +3,17 @@ import React from "react";
 export class BinaryViewer extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {content: null};
+    this.state = {
+      content: null,
+      getAnyway: false,
+    };
     this.abortController = null;
   }
 
   componentDidMount() {
     // Notify the parent component that the file content is loading.
     this.props.setLoadingCallback(true);
-
+    // The URL has updated, so the content needs to be fetched using the new URL.
     this.fetchContent(this.props.url)
       .then(content =>
         this.setState({content: content}, () => this.props.setLoadingCallback(false))
@@ -22,10 +25,9 @@ export class BinaryViewer extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.props.setLoadingCallback(true);
-
     if (this.props.url && this.props.url !== prevProps.url) {
-      // The URL has updated, so the content needs to be fetched using the new URL.
+      this.setState({getAnyway: false});
+      this.props.setLoadingCallback(true);
       this.fetchContent(this.props.url)
         .then(content =>
           this.setState({content: content}, () => this.props.setLoadingCallback(false))
@@ -68,8 +70,10 @@ export class BinaryViewer extends React.PureComponent {
   render() {
     return (
       <div>
-        <p>{this.props.content}</p>
-        <a onClick={this.props.getAnyway}>{I18n.t("submissions.get_anyway")}</a>
+        {!this.state.getAnyway && (
+          <a onClick={() => this.setState({getAnyway: true})}>{I18n.t("submissions.get_anyway")}</a>
+        )}
+        {this.state.getAnyway && <p>{this.state.content}</p>}
       </div>
     );
   }
