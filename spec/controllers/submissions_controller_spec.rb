@@ -1787,7 +1787,7 @@ describe SubmissionsController do
       end
     end
 
-    context 'the contents of the file does not match the file extension of a jupyter-notebook' do
+    context 'where the file content does not match a jupyter-notebook file extension' do
       render_views
       let(:filename) { 'file_extension_mismatch.ipynb' }
 
