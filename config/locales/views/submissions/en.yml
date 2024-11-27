@@ -3,7 +3,6 @@ en:
   submissions:
     api_submission_disabled: The instructor has disabled submission via the API
     cannot_display: Cannot display this file. Please download it to view.
-    file_extension_mismatch: The contents of the file do not match the file extension.
     clear_all_token_expiry_confirmation: |-
       The release token expiry date for all students will cleared.
 
@@ -42,6 +41,7 @@ en:
       no_submission: "%{group_name} has no submissions"
       not_complete: 'Cannot release result for %{group_name}: the marking is not complete.'
       not_complete_unrelease: 'Cannot unrelease result for %{group_name}: the marking is not complete.'
+    file_extension_mismatch: The contents of the file do not match the file extension.
     get_anyway: Try to render this file anyway?
     grace_credits_used: Grace Credits Used
     grading_can_begin: Grading can begin
