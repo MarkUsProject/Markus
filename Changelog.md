@@ -29,6 +29,7 @@
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 - Disable editable fields in assignment criterion when criterion is released (#7264)
 - Fixed Download One Time Annotation 'Not Found' error (#7302)
+- Fixed Jupyter Notebook file extension mismatch (#7308)
 
 ### 🔧 Internal changes
 
