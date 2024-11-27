@@ -971,13 +971,17 @@ class SubmissionsController < ApplicationController
           '--template', 'markus-html-template'
         ]
       end
-      file_contents = JSON.parse(file_contents)
-      if file_contents['metadata'].key?('widgets')
-        file_contents['metadata'].delete('widgets')
+      if !SubmissionFile.is_binary?(file_contents)
+        file_contents = JSON.parse(file_contents)
+        if file_contents['metadata'].key?('widgets')
+          file_contents['metadata'].delete('widgets')
+        end
+        file_contents = JSON.generate(file_contents)
+        _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
+        return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
+      else
+        return "#{I18n.t('submissions.file_extension_mismatch')}<br/>"
       end
-      file_contents = JSON.generate(file_contents)
-      _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
-      return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
 
       # add unique ids to all elements in the DOM
       html = Nokogiri::HTML.parse(File.read(cache_file))

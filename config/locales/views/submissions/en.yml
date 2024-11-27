@@ -3,6 +3,7 @@ en:
   submissions:
     api_submission_disabled: The instructor has disabled submission via the API
     cannot_display: Cannot display this file. Please download it to view.
+    file_extension_mismatch: The contents of the file do not match the file extension.
     clear_all_token_expiry_confirmation: |-
       The release token expiry date for all students will cleared.
 

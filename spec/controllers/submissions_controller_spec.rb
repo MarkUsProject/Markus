@@ -1786,6 +1786,21 @@ describe SubmissionsController do
         expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
       end
     end
+
+    context 'the contents of the file does not match the file extension of a jupyter-notebook' do
+      render_views
+      let(:filename) { 'file_extension_mismatch.ipynb' }
+
+      it 'should display file extension mismatch message' do
+        get_as instructor, :notebook_content, params: { course_id: course.id,
+                                                        assignment_id: assignment.id,
+                                                        file_name: filename,
+                                                        preview: true,
+                                                        grouping_id: grouping.id,
+                                                        revision_identifier: submission.revision_identifier }
+        expect(response.body).to include(I18n.t('submissions.file_extension_mismatch'))
+      end
+    end
   end
 
   describe '#get_file' do
