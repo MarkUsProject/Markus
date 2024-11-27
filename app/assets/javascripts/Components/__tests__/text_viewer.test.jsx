@@ -1,11 +1,15 @@
 import React from "react";
-import {render, screen, cleanup} from "@testing-library/react";
+import {render, screen, cleanup, waitFor} from "@testing-library/react";
 import {TextViewer} from "../Result/text_viewer";
+import fetchMock from "jest-fetch-mock";
 
 describe("TextViewer", () => {
   let props;
 
-  afterEach(cleanup);
+  afterEach(() => {
+    fetchMock.resetMocks();
+    cleanup();
+  });
 
   it("should render its text content when the content ends with a new line", () => {
     props = {
@@ -31,5 +35,22 @@ describe("TextViewer", () => {
     render(<TextViewer {...props} />);
 
     expect(screen.getByText("def f(n: int) -> int:")).toBeInTheDocument();
+  });
+
+  it("should fetch content when a URL is passed", async () => {
+    props = {
+      url: "/",
+      annotations: [],
+      focusLine: null,
+      submission_file_id: 1,
+    };
+
+    fetchMock.mockOnce("File content");
+
+    render(<TextViewer {...props} />);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(screen.getByText("File content")).toBeInTheDocument();
+    });
   });
 });
