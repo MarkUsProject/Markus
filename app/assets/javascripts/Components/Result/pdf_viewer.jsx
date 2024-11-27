@@ -7,7 +7,7 @@ export class PDFViewer extends React.PureComponent {
     this.pdfContainer = React.createRef();
     this.state = {
       zoom: "page-width",
-      rotationInDegrees: 0,
+      rotation: 0, // NOTE: this is in degrees
     };
   }
 
@@ -71,7 +71,7 @@ export class PDFViewer extends React.PureComponent {
 
   update_pdf_view = () => {
     this.pdfViewer.currentScaleValue = this.state.zoom;
-    this.pdfViewer.pagesRotation = this.state.rotationInDegrees;
+    this.pdfViewer.pagesRotation = this.state.rotation;
   };
 
   refresh_annotations = () => {
@@ -88,8 +88,8 @@ export class PDFViewer extends React.PureComponent {
       annotation_manager.rotateClockwise90();
     }
 
-    this.setState(({rotationInDegrees}) => ({
-      rotationInDegrees: (rotationInDegrees + 90) % 360,
+    this.setState(({rotation}) => ({
+      rotation: (rotation + 90) % 360,
     }));
   };
 
@@ -125,7 +125,10 @@ export class PDFViewer extends React.PureComponent {
   };
 
   getZoomValuesToDisplayName = () => {
-    const zoomLevels = Array.from({length: 20}, (_, i) => ((i + 1) * 0.1).toFixed(1));
+    // 25-200 in increments of 25
+    const zoomLevels = Array.from({length: (200 - 25) / 25 + 1}, (_, i) =>
+      ((i * 25 + 25) / 100).toFixed(2)
+    );
 
     const valueToDisplayName = zoomLevels.reduce(
       (acc, value) => {
@@ -147,7 +150,7 @@ export class PDFViewer extends React.PureComponent {
       <React.Fragment>
         <div className="toolbar">
           <div className="toolbar-actions">
-            {I18n.t("results.current_rotation", {rotation: this.state.rotationInDegrees})}
+            {I18n.t("results.current_rotation", {rotation: this.state.rotation})}
             <button onClick={this.rotate} className={"inline-button"}>
               {I18n.t("results.rotate_image")}
             </button>
@@ -156,8 +159,13 @@ export class PDFViewer extends React.PureComponent {
               valueToDisplayName={zoomValuesToDisplayName}
               options={Object.keys(zoomValuesToDisplayName)}
               selected={this.state.zoom}
-              dropdownStyle={{minWidth: "auto", marginLeft: "5px", width: "150px"}}
-              selectionStyle={{minWidth: "auto", width: "100px", marginRight: "0px"}}
+              dropdownStyle={{
+                minWidth: "auto",
+                width: "fit-content",
+                marginLeft: "5px",
+                verticalAlign: "middle",
+              }}
+              selectionStyle={{width: "90px", marginRight: "0px"}}
               hideXMark={true}
               onSelect={selection => {
                 this.setState({zoom: selection});

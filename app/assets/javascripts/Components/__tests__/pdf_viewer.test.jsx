@@ -75,34 +75,34 @@ describe("PDFViewer", () => {
       const option100 = screen.getByText("100 %");
       fireEvent.click(option100);
 
-      expect(mockPdfViewer.currentScaleValue).toBe("1.0");
+      expect(mockPdfViewer.currentScaleValue).toBe("1.00");
     });
 
-    it("updates zoom to 90% (0.9) when the option is selected from dropdown", () => {
+    it("updates zoom to 75% (0.75) when the option is selected from dropdown", () => {
       const dropdown = screen.getByTestId("dropdown");
       fireEvent.click(dropdown);
 
-      const option110 = screen.getByText("90 %");
+      const option110 = screen.getByText("75 %");
       fireEvent.click(option110);
 
-      expect(mockPdfViewer.currentScaleValue).toBe("0.9");
+      expect(mockPdfViewer.currentScaleValue).toBe("0.75");
     });
 
-    it("updates zoom to 120% (1.2) when the option is selected from dropdown", () => {
+    it("updates zoom to 125% (1.25) when the option is selected from dropdown", () => {
       const dropdown = screen.getByTestId("dropdown");
       fireEvent.click(dropdown);
 
-      const option120 = screen.getByText("120 %");
+      const option120 = screen.getByText("125 %");
       fireEvent.click(option120);
 
-      expect(mockPdfViewer.currentScaleValue).toBe("1.2");
+      expect(mockPdfViewer.currentScaleValue).toBe("1.25");
     });
 
     it("resets zoom to 'page-width' when the option is selected after selecting another zoom", () => {
       // set some arbitrary zoom first
       const dropdown = screen.getByTestId("dropdown");
       fireEvent.click(dropdown);
-      const option120 = screen.getByText("120 %");
+      const option120 = screen.getByText("125 %");
       fireEvent.click(option120);
 
       // now put it back to page width
