@@ -465,13 +465,16 @@ describe PeerReviewsController do
             [0, 2].each do |i| # mark 1st and 3rd peer reviews as unassign-able
               @assignment_with_pr.peer_reviews[i].result.update(marking_state: Result::MARKING_STATES[:incomplete])
             end
-            @reviewers_to_remove_from_reviewees_map = {}
             @selected_reviewee_group_ids.last(2).each do |reviewee_id| # individually select 2nd and 3rd reviewers
               @reviewers_to_remove_from_reviewees_map[reviewee_id] = @selected_reviewer_group_ids.index_with { true }
             end
             @selected_reviewer_group_ids = PeerReview.joins(:reviewee)
                                                      .where(groupings: { id: @selected_reviewee_group_ids })
                                                      .pluck(:reviewer_id)[0] # select the 1st reviewee row
+            row_reviewee = @selected_reviewee_group_ids[0]
+            row_reviewer = @selected_reviewer_group_ids
+            @reviewers_to_remove_from_reviewees_map[row_reviewee][row_reviewer] = false
+            # ensure row is not individually checked
 
             post_as role, :assign_groups,
                     params: { actionString: 'unassign',

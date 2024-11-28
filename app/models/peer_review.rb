@@ -132,6 +132,10 @@ class PeerReview < ApplicationRecord
     self.reviewer.id
   end
 
+  def get_reviewee_id
+    self.result.grouping.id
+  end
+
   def self.from_csv(assignment, data)
     reviewer_map = assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
     reviewee_map = assignment.parent_assignment.groupings.includes(:group).index_by { |g| g.group.group_name }
