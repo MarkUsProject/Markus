@@ -51,7 +51,7 @@ FactoryBot.define do
       a.groupings.each do |grouping|
         a.test_groups.each do |test_group|
           5.times do
-            test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
+            test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_submission_used.id)
             test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
             create(:test_result, test_group_result: test_group_result)
           end
@@ -97,6 +97,7 @@ FactoryBot.define do
           mark.update(mark: mark.criterion.max_mark - 1)
         end
         result.update!(marking_state: Result::MARKING_STATES[:complete], created_at: 1.minute.ago)
+        grouping.current_submission_used.remark_request_timestamp = 1.minute.ago
         if i.zero?
           grouping.current_submission_used.make_remark_result
           remark_result = grouping.current_submission_used.current_result
@@ -123,6 +124,19 @@ FactoryBot.define do
         create(:text_annotation,
                annotation_text: a.annotation_categories.first.annotation_texts.first,
                result: result)
+      end
+    end
+  end
+
+  factory :assignment_with_deductive_annotations_and_submission_files, parent: :assignment_with_deductive_annotations do
+    after(:create) do |a|
+      a.groupings.each do |grouping|
+        grouping.current_result.annotations.each do |annotation|
+          # make physical submission files for each one
+          annotation.submission_file = create(:submission_file_with_repo,
+                                              filename: annotation.submission_file.filename,
+                                              submission: grouping.current_submission_used)
+        end
       end
     end
   end
@@ -208,6 +222,35 @@ FactoryBot.define do
   factory :assignment_with_test_groups_not_instructor_runnable, parent: :assignment do
     after(:create) do |a|
       create_list(:test_group, 3, assignment: a)
+    end
+  end
+
+  factory :assignment_with_criteria_and_results_and_extra_marks, parent: :assignment_with_criteria_and_results do
+    after(:create) do |a|
+      a.groupings.each do |grouping|
+        create(:extra_mark_points, result: grouping.current_result)
+      end
+    end
+  end
+
+  factory :assignment_with_criteria_and_results_and_feedback_files, parent: :assignment_with_criteria_and_results do
+    after(:create) do |a|
+      a.current_submissions_used.each do |s|
+        create_list(:feedback_file, 3, submission: s)
+      end
+    end
+  end
+
+  factory :assignment_with_criteria_and_test_results_and_feedback_files,
+          parent: :assignment_with_criteria_and_test_results do
+    after(:create) do |a|
+      a.groupings.each do |g|
+        g.test_runs.each do |tr|
+          tr.test_group_results.each do |tgr|
+            create(:feedback_file, test_group_result: tgr)
+          end
+        end
+      end
     end
   end
 end
