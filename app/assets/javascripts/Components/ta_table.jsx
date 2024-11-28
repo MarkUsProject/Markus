@@ -21,7 +21,6 @@ class TATable extends React.Component {
   }
 
   fetchData() {
-    console.log("fetch");
     fetch(Routes.course_tas_path(this.props.course_id), {
       headers: {
         Accept: "application/json",

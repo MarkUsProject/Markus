@@ -1458,21 +1458,3 @@ canvas {
 .jcrop-centered {
   display: inline-block;
 }
-
-// For Actions row
-.actions-container {
-  display: flex;
-  justify-content: flex-start;
-  position: relative;
-  width: 100%;
-}
-
-.left-action {
-  flex: 0 0 auto;
-}
-
-.center-action {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
