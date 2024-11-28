@@ -15,6 +15,7 @@
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 - Implement a limit on the file size rendered by the submission viewer (#7273)
 - Add an option to retain old grading data when recollecting graded submissions (#7256)
+- Added zoom and rotate functionality to PDF viewer (#7306)
 
 ### 🐛 Bug fixes
 
