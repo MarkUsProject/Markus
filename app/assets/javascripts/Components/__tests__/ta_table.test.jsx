@@ -126,13 +126,11 @@ describe("For the TATable's display of TAs", () => {
         }),
       });
 
-      wrapper = mount(<TATable course_id={mock_course_id} />);
-
-      jest.spyOn($, "ajax").mockImplementation(({url, method}) => {
-        if (url === Routes.course_ta_path(mock_course_id, mock_ta_id) && method === "DELETE") {
-          return Promise.resolve({success: true});
-        }
+      document.querySelector = jest.fn().mockReturnValue({
+        content: "mocked-csrf-token",
       });
+
+      wrapper = mount(<TATable course_id={mock_course_id} />);
     });
 
     it("calls the correct endpoint when removeTA is triggered", async () => {
@@ -144,11 +142,14 @@ describe("For the TATable's display of TAs", () => {
         .simulate("click");
 
       await waitFor(() => {
-        expect($.ajax).toHaveBeenCalledTimes(1);
-        expect($.ajax).toHaveBeenCalledWith(
+        expect(fetch).toHaveBeenCalledWith(
+          Routes.course_ta_path(mock_course_id, mock_ta_id),
           expect.objectContaining({
-            url: Routes.course_ta_path(mock_course_id, mock_ta_id),
             method: "DELETE",
+            headers: expect.objectContaining({
+              "Content-Type": "application/json",
+              "X-CSRF-Token": expect.any(String),
+            }),
           })
         );
       });

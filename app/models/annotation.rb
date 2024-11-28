@@ -50,8 +50,9 @@ class Annotation < ApplicationRecord
       criterion_name: annotation_text.annotation_category&.flexible_criterion&.name,
       criterion_id: annotation_text.annotation_category&.flexible_criterion&.id
     }
-
-    data[:creator] = include_creator && creator ? creator.display_name : I18n.t('users.deleted')
+    if include_creator
+      data[:creator] = creator.present? ? creator.display_name : I18n.t('deleted_placeholder')
+    end
 
     data
   end

@@ -293,15 +293,15 @@ describe TasController do
       let(:ta) { create(:ta, course: course) }
 
       before do
-        sign_in instructor
         allow_any_instance_of(Role).to receive(:destroy).and_return(false)
         delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
       end
 
-      it 'does not delete the TA and shows an error message' do
+      it 'does not delete the TA, shows an error message, and gets a bad request response' do
         expect(Ta.count).to eq(1)
         expect(flash.now[:success]).to be_nil
         expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.error', user_name: ta.user_name, message: ''))
+        expect(response).to have_http_status(:bad_request)
       end
     end
 
@@ -310,16 +310,16 @@ describe TasController do
       let(:ta) { create(:ta, course: course) }
 
       before do
-        sign_in instructor
         create(:note, role: ta)
         delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
       end
 
-      it 'does not delete the TA and shows an error message' do
+      it 'does not delete the TA, shows an error message and gets a conflict response' do
         expect(Ta.count).to eq(1)
         expect(flash.now[:success]).to be_nil
         expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.restricted', user_name: ta.user_name,
                                                                                       message: ''))
+        expect(response).to have_http_status(:conflict)
       end
     end
 
@@ -336,17 +336,17 @@ describe TasController do
         create(:grade_entry_form)
         create(:grade_entry_student_ta, ta: ta, grade_entry_student: student.grade_entry_students.first)
 
-        sign_in instructor
-        delete :destroy, params: { course_id: course.id, id: ta.id }
+        delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
       end
 
-      it 'deletes TA and flashes success' do
-        expect(Ta.count).to eq(0)
+      it 'deletes TA, flashes success, and gets an ok response' do
+        expect(Ta.exists?).to be(false)
         expect(flash.now[:success].first).to include(I18n.t('flash.tas.destroy.success', user_name: ta.user_name))
+        expect(response).to have_http_status(:ok)
       end
 
       it 'deletes associated grader permisison' do
-        expect(GraderPermission.where(role_id: ta.id).count).to eq(0)
+        expect(GraderPermission.exists?(role_id: ta.id)).to be(false)
       end
 
       it 'nullifies creator id in associated annotation' do
@@ -356,11 +356,11 @@ describe TasController do
       end
 
       it 'deletes associated criterion ta association' do
-        expect(CriterionTaAssociation.where(ta_id: ta.id).count).to eq(0)
+        expect(CriterionTaAssociation.exists?(ta_id: ta.id)).to be(false)
       end
 
       it 'deletes associated grade entry student ta' do
-        expect(GradeEntryStudentTa.where(ta_id: ta.id).count).to eq(0)
+        expect(GradeEntryStudentTa.exists?(ta_id: ta.id)).to be(false)
       end
     end
   end

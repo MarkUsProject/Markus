@@ -21,6 +21,7 @@ class TATable extends React.Component {
   }
 
   fetchData() {
+    console.log("fetch");
     fetch(Routes.course_tas_path(this.props.course_id), {
       headers: {
         Accept: "application/json",
@@ -37,10 +38,21 @@ class TATable extends React.Component {
   }
 
   removeTA = ta_id => {
-    $.ajax({
-      url: Routes.course_ta_path(this.props.course_id, ta_id),
+    fetch(Routes.course_ta_path(this.props.course_id, ta_id), {
       method: "DELETE",
-    }).then(this.fetchData);
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          this.fetchData();
+        }
+      })
+      .catch(error => {
+        console.error("Error deleting TA:", error);
+      });
   };
 
   render() {
@@ -96,18 +108,19 @@ class TATable extends React.Component {
             Header: I18n.t("actions"),
             accessor: "id",
             Cell: data => (
-              <div className="actions-container">
-                <span className="left-action">
+              <>
+                <span>
                   <a href={Routes.edit_course_ta_path(this.props.course_id, data.value)}>
                     {I18n.t("edit")}
                   </a>
                 </span>
-                <span className="center-action">
+                &nbsp;|&nbsp;
+                <span>
                   <a href="#" onClick={() => this.removeTA(data.value)}>
                     {I18n.t("delete")}
                   </a>
                 </span>
-              </div>
+              </>
             ),
             filterable: false,
             sortable: false,

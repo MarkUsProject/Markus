@@ -1,7 +1,6 @@
 # TA user for a given course.
 class Ta < Role
   has_one :grader_permission, dependent: :destroy, foreign_key: :role_id, inverse_of: :ta
-
   before_create :create_grader_permission
   validates :grader_permission, presence: { unless: -> { self.new_record? } }
   validate :associated_user_is_an_end_user
