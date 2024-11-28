@@ -87,6 +87,7 @@ class RepoBrowser extends React.Component {
           late_penalty={this.props.late_penalty}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
+          collected_revision_id={this.props.collected_revision_id}
         />
       );
     }
@@ -138,6 +139,13 @@ class ManualCollectionForm extends React.Component {
     revision_identifier: "", //set initial value so that the input (in render) remains controlled
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      retainExistingGrading: true,
+    };
+  }
+
   render() {
     const action = Routes.manually_collect_and_begin_grading_course_assignment_submissions_path(
       this.props.course_id,
@@ -149,7 +157,22 @@ class ManualCollectionForm extends React.Component {
         <legend>
           <span>{I18n.t("submissions.collect.manual_collection")}</span>
         </legend>
-        <form method="POST" action={action}>
+        <form
+          method="POST"
+          action={action}
+          data-testid="form_manual_collection"
+          onSubmit={event => {
+            if (
+              this.props.collected_revision_id &&
+              ((!this.state.retainExistingGrading &&
+                !confirm(I18n.t("submissions.collect.full_overwrite_warning"))) ||
+                (this.state.retainExistingGrading &&
+                  !confirm(I18n.t("submissions.collect.confirm_recollect_retain_data"))))
+            ) {
+              event.preventDefault();
+            }
+          }}
+        >
           <input
             type="hidden"
             name="current_revision_identifier"
@@ -168,15 +191,28 @@ class ManualCollectionForm extends React.Component {
               {I18n.t("submissions.collect.apply_late_penalty")}
             </label>
           </p>
-          <button
-            type="submit"
-            name="commit"
-            onClick={event => {
-              if (!confirm(I18n.t("submissions.collect.overwrite_warning"))) {
-                event.preventDefault();
-              }
-            }}
-          >
+          <p className="inline-labels">
+            <input
+              type="checkbox"
+              name="retain_existing_grading"
+              id="retain_existing_grading"
+              data-testid="chk_retain_existing_grading"
+              checked={this.state.retainExistingGrading}
+              hidden={!this.props.collected_revision_id}
+              disabled={!this.props.collected_revision_id} // prevent from sending info on submit
+              onChange={e => {
+                this.setState({retainExistingGrading: e.target.checked});
+              }}
+            />
+            <label
+              data-testid="lbl_retain_existing_grading"
+              htmlFor="retain_existing_grading"
+              hidden={!this.props.collected_revision_id}
+            >
+              {I18n.t("submissions.collect.retain_existing_grading")}
+            </label>
+          </p>
+          <button type="submit" name="commit">
             <FontAwesomeIcon icon="fa-solid fa-file-import" />
             {I18n.t("submissions.collect.this_revision")}
           </button>
@@ -189,3 +225,5 @@ class ManualCollectionForm extends React.Component {
 export function makeRepoBrowser(elem, props) {
   render(<RepoBrowser {...props} />, elem);
 }
+
+export {ManualCollectionForm};

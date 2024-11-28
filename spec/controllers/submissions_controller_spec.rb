@@ -862,6 +862,16 @@ describe SubmissionsController do
           expect(response).to have_http_status :found
         end
 
+        it 'should respond with 302 when additional parameters are present' do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
+                            current_revision_identifier: revision_identifier,
+                            apply_late_penalty: true,
+                            retain_existing_grading: true }
+
+          expect(response).to have_http_status :found
+        end
+
         it 'should not flash any error messages' do
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
@@ -1086,12 +1096,30 @@ describe SubmissionsController do
             notify_socket: true,
             collection_dates: hash_including,
             collect_current: false,
-            apply_late_penalty: false
+            apply_late_penalty: false,
+            retain_existing_grading: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
                                                                groupings: [@grouping.id, uncollected_grouping.id],
                                                                override: true }
+        end
+
+        it 'should retain existing grading data on all groupings when override and retain_existing_grading are true' do
+          enqueuing_user = @instructor.user
+          expect(SubmissionsJob).to receive(:perform_later).with(
+            array_including(@grouping, uncollected_grouping),
+            enqueuing_user: enqueuing_user,
+            notify_socket: true,
+            collection_dates: hash_including,
+            collect_current: false,
+            apply_late_penalty: false,
+            retain_existing_grading: true
+          )
+          post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                               assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id, uncollected_grouping.id],
+                                                               override: true, retain_existing_grading: true }
         end
 
         it 'should collect the uncollected grouping only when override is false' do
@@ -1102,7 +1130,8 @@ describe SubmissionsController do
             notify_socket: true,
             collection_dates: hash_including,
             collect_current: false,
-            apply_late_penalty: false
+            apply_late_penalty: false,
+            retain_existing_grading: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
