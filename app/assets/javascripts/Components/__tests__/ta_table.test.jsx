@@ -1,9 +1,7 @@
 import {mount} from "enzyme";
 
 import {TATable} from "../ta_table";
-import fetchMock from "jest-fetch-mock";
-import {fireEvent, waitFor, screen} from "@testing-library/react";
-import $ from "jquery";
+import {waitFor} from "@testing-library/react";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -86,7 +84,6 @@ describe("For the TATable's display of TAs", () => {
   describe("when no TAs are fetched", () => {
     beforeAll(() => {
       tas_sample = [];
-      // Mocking the response returned by fetch, used in TATable fetchData
       fetch.mockReset();
       fetch.mockResolvedValueOnce({
         ok: true,
