@@ -13,7 +13,6 @@
 - Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
 - Add an option to retain old grading data when recollecting graded submissions (#7256)
 
-
 ### 🐛 Bug fixes
 
 - Fix incorrect calculation of token penalties when submissions are on time (#7216)
