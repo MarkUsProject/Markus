@@ -6,6 +6,8 @@
 
 ### ✨ New features and improvements
 
+- Added zoom and rotate functionality to PDF viewer (#7306)
+
 ### 🐛 Bug fixes
 
 ### 🔧 Internal changes
