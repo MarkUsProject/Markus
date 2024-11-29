@@ -10,6 +10,8 @@
 
 ### 🐛 Bug fixes
 
+- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+
 ### 🔧 Internal changes
 
 ## [v2.6.0]
