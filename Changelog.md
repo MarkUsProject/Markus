@@ -31,7 +31,6 @@
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 - Disable editable fields in assignment criterion when criterion is released (#7264)
 - Fixed Download One Time Annotation 'Not Found' error (#7302)
-- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
 
 ### 🔧 Internal changes
 
