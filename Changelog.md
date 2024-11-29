@@ -11,6 +11,8 @@
 ### 🐛 Bug fixes
 
 - Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+- Fixed bug in grading context menu for editing/deleting annotations (#7309)
+- Fixed bug in grading annotations table when deleting annotations (#7309)
 
 ### 🔧 Internal changes
 

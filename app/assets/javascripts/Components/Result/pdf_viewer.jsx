@@ -70,8 +70,13 @@ export class PDFViewer extends React.PureComponent {
   }
 
   update_pdf_view = () => {
-    this.pdfViewer.currentScaleValue = this.state.zoom;
-    this.pdfViewer.pagesRotation = this.state.rotation;
+    if (
+      !!document.getElementById("pdfContainer") &&
+      !!document.getElementById("pdfContainer").offsetParent
+    ) {
+      this.pdfViewer.currentScaleValue = this.state.zoom;
+      this.pdfViewer.pagesRotation = this.state.rotation;
+    }
   };
 
   refresh_annotations = () => {

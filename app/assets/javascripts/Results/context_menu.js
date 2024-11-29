@@ -106,7 +106,7 @@ var annotation_context_menu = {
         }
         return "";
       } else {
-        return clicked_element.attr("id").replace("annotation_holder_", "");
+        return clicked_element.id.replace("annotation_holder_", "");
       }
     }
 
