@@ -41,7 +41,6 @@ en:
       no_submission: "%{group_name} has no submissions"
       not_complete: 'Cannot release result for %{group_name}: the marking is not complete.'
       not_complete_unrelease: 'Cannot unrelease result for %{group_name}: the marking is not complete.'
-    file_extension_mismatch: The contents of the file do not match the file extension.
     get_anyway: Try to render this file anyway?
     grace_credits_used: Grace Credits Used
     grading_can_begin: Grading can begin
@@ -56,6 +55,7 @@ en:
         tas: Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them.
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
+    invalid_jupyter_notebook_content: 'Invalid Jupyter Notebook content: %{error_message}'
     invalid_url: "%{item} is not a valid HTTP/HTTPS URL"
     marking_incomplete_warning: |-
       Note: This will only download the submissions that have been collected.
