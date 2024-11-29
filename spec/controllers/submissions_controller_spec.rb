@@ -854,13 +854,55 @@ describe SubmissionsController do
       end
 
       describe '#manually_collect_and_begin_grading' do
-        before do
+        it 'should respond with 302' do
           post_as grader, :manually_collect_and_begin_grading,
                   params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
                             current_revision_identifier: revision_identifier }
+
+          expect(response).to have_http_status :found
         end
 
-        it('should respond with 302') { expect(response).to have_http_status :found }
+        it 'should respond with 302 when additional parameters are present' do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
+                            current_revision_identifier: revision_identifier,
+                            apply_late_penalty: true,
+                            retain_existing_grading: true }
+
+          expect(response).to have_http_status :found
+        end
+
+        it 'should not flash any error messages' do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping.id,
+                            current_revision_identifier: revision_identifier }
+
+          expect(flash[:error]).to be_nil
+        end
+
+        context 'When a grouping\'s submission has already been released' do
+          before do
+            # mark the existing submission as released
+            last_result = @grouping1.current_submission_used.get_latest_result
+            last_result.update!(released_to_students: true)
+          end
+
+          it 'should respond with 302' do
+            post_as grader, :manually_collect_and_begin_grading,
+                    params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
+                              current_revision_identifier: revision_identifier }
+
+            expect(response).to have_http_status :found
+          end
+
+          it 'should flash an error message' do
+            post_as grader, :manually_collect_and_begin_grading,
+                    params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
+                              current_revision_identifier: revision_identifier }
+
+            expect(flash[:error]).to eq(["<p>#{I18n.t('submissions.collect.could_not_collect_released')}</p>"])
+          end
+        end
       end
 
       describe '#update submissions' do
@@ -1054,12 +1096,30 @@ describe SubmissionsController do
             notify_socket: true,
             collection_dates: hash_including,
             collect_current: false,
-            apply_late_penalty: false
+            apply_late_penalty: false,
+            retain_existing_grading: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
                                                                groupings: [@grouping.id, uncollected_grouping.id],
                                                                override: true }
+        end
+
+        it 'should retain existing grading data on all groupings when override and retain_existing_grading are true' do
+          enqueuing_user = @instructor.user
+          expect(SubmissionsJob).to receive(:perform_later).with(
+            array_including(@grouping, uncollected_grouping),
+            enqueuing_user: enqueuing_user,
+            notify_socket: true,
+            collection_dates: hash_including,
+            collect_current: false,
+            apply_late_penalty: false,
+            retain_existing_grading: true
+          )
+          post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                               assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id, uncollected_grouping.id],
+                                                               override: true, retain_existing_grading: true }
         end
 
         it 'should collect the uncollected grouping only when override is false' do
@@ -1070,7 +1130,8 @@ describe SubmissionsController do
             notify_socket: true,
             collection_dates: hash_including,
             collect_current: false,
-            apply_late_penalty: false
+            apply_late_penalty: false,
+            retain_existing_grading: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
@@ -1738,6 +1799,8 @@ describe SubmissionsController do
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let(:file6) { fixture_file_upload('example.Rmd') }
     let(:file7) { fixture_file_upload('sample.markusurl') }
+    let(:file8) { fixture_file_upload('35_bytes.txt') }
+
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1815,13 +1878,14 @@ describe SubmissionsController do
           assignment.update!(url_submit: true)
         end
 
-        it 'should return the file type' do
+        it 'should return the file type and non-zero size' do
           submission_file = submission.submission_files.find_by(filename: file7.original_filename)
           get_as instructor, :get_file, params: { course_id: course.id,
                                                   id: submission.id,
                                                   submission_file_id: submission_file.id,
                                                   format: :json }
           expect(response.parsed_body['type']).to eq 'markusurl'
+          expect(response.parsed_body['size']).to be > 0
         end
       end
 
@@ -1842,37 +1906,72 @@ describe SubmissionsController do
     describe 'when the file is an image' do
       let(:files) { [file4] }
 
-      it 'should return the file type' do
+      it 'should return the file type and size' do
         submission_file = submission.submission_files.find_by(filename: file4.original_filename)
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('image')
+        expect(response.parsed_body['size']).to be > 0
       end
     end
 
     describe 'when the file is a pdf' do
       let(:files) { [file5] }
 
-      it 'should return the file type' do
+      it 'should return the file type and size' do
         submission_file = submission.submission_files.find_by(filename: file5.original_filename)
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('pdf')
+        expect(response.parsed_body['size']).to be > 0
       end
     end
 
     describe 'when the file is missing' do
       let(:files) { [file1] }
 
-      it 'should return an unknown file type' do
+      it 'should return an unknown file type and zero size' do
         submission_file = submission.submission_files.find_by(filename: file1.original_filename)
         allow_any_instance_of(MemoryRevision).to receive(:files_at_path).and_return({})
         get_as instructor, :get_file, params: { course_id: course.id,
                                                 id: submission.id,
                                                 submission_file_id: submission_file.id }
         expect(response.parsed_body['type']).to eq('unknown')
+        expect(response.parsed_body['size']).to be 0
+      end
+    end
+
+    describe 'when the maximum content size query parameter is passed' do
+      let(:files) { [file8] }
+      let!(:submission_file) { submission.submission_files.find_by(filename: file8.original_filename) }
+
+      it 'should return the file content if it does not exceed the maximum' do
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id,
+                                                max_content_size: 36 }
+        expect(response.parsed_body['size']).to be 35
+        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
+      end
+
+      it 'should return the file content if it is the same size as the maximum' do
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id,
+                                                max_content_size: 35 }
+        expect(response.parsed_body['size']).to be 35
+        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
+      end
+
+      it 'should not return the file content if it exceeds the maximum' do
+        get_as instructor, :get_file, params: { course_id: course.id,
+                                                id: submission.id,
+                                                submission_file_id: submission_file.id,
+                                                max_content_size: 34 }
+        expect(response.parsed_body['size']).to be 35
+        expect(response.parsed_body['content']).to eql ''
       end
     end
   end

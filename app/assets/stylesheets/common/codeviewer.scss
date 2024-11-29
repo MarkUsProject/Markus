@@ -1,15 +1,14 @@
 @import 'mixins';
 @import 'constants';
 
-/* codeviewer */
-#codeviewer {
+.text-viewer-container {
   .toolbar {
     background: $primary-two;
     margin: 0 0 10px;
     padding: 2px;
   }
 
-  .tools {
+  .toolbar-actions {
     background-color: $background-main;
     font: 0.825em $fonts;
     padding: 5px 0;

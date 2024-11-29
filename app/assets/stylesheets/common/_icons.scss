@@ -52,6 +52,10 @@ a[role='button'] > .fa-layers {
   color: $primary-one;
 }
 
+.sorted-list:not(.sortable) .fa-grip-vertical {
+  display: none;
+}
+
 .sortable .fa-grip-vertical {
   color: $disabled-text;
   cursor: grab;

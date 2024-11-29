@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.1.3'
+gem 'rails', '~> 7.2.2'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -40,7 +40,7 @@ gem 'i18n-js'
 gem 'rails-i18n', '~> 7.0.0'
 
 # Redis
-gem 'redis', '~> 4.8.1'
+gem 'redis', '~> 5.3.0'
 
 # Exam template requirements
 gem 'combine_pdf'
@@ -50,6 +50,7 @@ gem 'rmagick', '~> 6.0.1'
 gem 'rtesseract'
 
 # Ruby miscellany
+gem 'csv'
 gem 'json'
 gem 'mini_mime'
 gem 'redcarpet'
@@ -90,11 +91,12 @@ group :test do
   gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'rails-controller-testing'
-  gem 'shoulda'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
+  gem 'shoulda-context', '~> 3.0.0.rc1'
+  gem 'shoulda-matchers', '~> 6.0'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
-  gem 'time-warp'
+  gem 'timecop'
   gem 'webmock'
 end
 
@@ -105,7 +107,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'rspec-rails', '~> 6.1.3'
+  gem 'rspec-rails', '~> 7.0.1'
   gem 'selenium-webdriver'
 end
 

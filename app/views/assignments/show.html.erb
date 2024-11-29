@@ -223,7 +223,7 @@
 
 <% # HTML for the invite dialog
    if !@grouping.nil? && @grouping.inviter == @current_role && @assignment.student_form_groups %>
-  <aside class='dialog' id='invite_dialog'>
+  <aside class='markus-dialog' id='invite_dialog'>
     <%= form_tag(invite_member_course_assignment_groups_path(course_id: @current_course.id, assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { id: 'invite-student-form' }) do %>
       <h2><%= t('groups.members.invite') %></h2>

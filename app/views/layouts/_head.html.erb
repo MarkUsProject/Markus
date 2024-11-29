@@ -5,6 +5,7 @@
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
 <%= stylesheet_link_tag 'application' %>
+<%= stylesheet_link_tag 'application_webpack' %>
 <% if @current_user&.theme == 'dark' %>
   <%= stylesheet_link_tag 'dark_theme' %>
   <%= favicon_link_tag 'favicon_dark.svg' %>

@@ -38,6 +38,10 @@ describe Grouping do
       expect(grouping.has_submission?).to be false
     end
 
+    it 'does not have submitted files' do
+      expect(grouping.has_submitted_files?).to be false
+    end
+
     context 'hidden students' do
       let(:hidden) { create(:student, hidden: true) }
 
@@ -669,6 +673,10 @@ describe Grouping do
           expect(missing_files.length).to eq(0)
         end
       end
+
+      it 'has submitted files' do
+        expect(@grouping.has_submitted_files?).to be true
+      end
     end
 
     describe '#has_submission?' do
@@ -1099,130 +1107,121 @@ describe Grouping do
   end
 
   describe '#submitted_after_collection_date?' do
-    context 'with an assignment' do
+    let(:due_date) { 3.days.ago }
+    let(:assignment) { create(:assignment, due_date: due_date) }
+    let(:group) { create(:group, course: assignment.course) }
+    let!(:grouping) do
+      g = nil
+      Timecop.freeze(due_date - 3.days) do
+        g = create(:grouping, assignment: assignment, group: group)
+      end
+      g
+    end
+
+    teardown do
+      destroy_repos
+    end
+
+    context 'without sections before due date' do
+      it 'returns false' do
+        submit_file_at_time(assignment, group, 'test', (due_date - 2.days).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be false
+      end
+    end
+
+    context 'with sections before due date' do
       before do
-        @assignment = create(:assignment, due_date: Time.zone.parse('July 22 2009 5:00PM'))
-        @group = create(:group, course: @assignment.course)
-        pretend_now_is(Time.zone.parse('July 21 2009 5:00PM')) do
-          @grouping = create(:grouping, assignment: @assignment, group: @group)
-        end
+        assignment.update(section_due_dates_type: true)
+        @section = create(:section, course: assignment.course)
+        create(:inviter_student_membership,
+               role: create(:student, section: @section),
+               grouping: grouping,
+               membership_status: StudentMembership::STATUSES[:inviter])
       end
 
-      teardown do
-        destroy_repos
+      it 'returns false when before section due date' do
+        AssessmentSectionProperties.create(
+          section: @section,
+          assessment: assignment,
+          due_date: due_date + 2.days
+        )
+        submit_file_at_time(assignment, group, 'test', (due_date - 2.days).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be false
       end
 
-      context 'without sections before due date' do
-        it 'returns false' do
-          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be false
-        end
+      it 'returns false when after section due date' do
+        AssessmentSectionProperties.create(
+          section: @section,
+          assessment: assignment,
+          due_date: due_date - 2.days
+        )
+        submit_file_at_time(assignment, group, 'test', (due_date - 1.day).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.reload.submitted_after_collection_date?).to be true
+      end
+    end
+
+    context 'without sections after due date' do
+      it 'returns true after due date' do
+        submit_file_at_time(assignment, group, 'test', (due_date + 1.day).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be true
+      end
+    end
+
+    context 'with sections after due date' do
+      before do
+        assignment.update(section_due_dates_type: true)
+        @section = create(:section)
+        create(:inviter_student_membership,
+               role: create(:student, section: @section),
+               grouping: grouping,
+               membership_status: StudentMembership::STATUSES[:inviter])
       end
 
-      context 'with sections before due date' do
-        before do
-          @assignment.section_due_dates_type = true
-          @assignment.save
-          @section = create(:section, course: @assignment.course)
-          create(:inviter_student_membership,
-                 role: create(:student, section: @section),
-                 grouping: @grouping,
-                 membership_status: StudentMembership::STATUSES[:inviter])
-        end
-
-        it 'returns false when before section due date' do
-          AssessmentSectionProperties.create(
-            section: @section,
-            assessment: @assignment,
-            due_date: Time.zone.parse('July 24 2009 5:00PM')
-          )
-          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be false
-        end
-
-        it 'returns false when after section duedate' do
-          AssessmentSectionProperties.create(
-            section: @section,
-            assessment: @assignment,
-            due_date: Time.zone.parse('July 18 2009 5:00PM')
-          )
-          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.reload.submitted_after_collection_date?).to be true
-        end
+      it 'returns false when before section due_date' do
+        AssessmentSectionProperties.create(
+          section: @section,
+          assessment: assignment,
+          due_date: due_date + 1.day
+        )
+        submit_file_at_time(assignment, group, 'test', (due_date + 5.hours).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.reload.submitted_after_collection_date?).to be false
       end
 
-      context 'without sections after due date' do
-        before do
-          @assignment = create(:assignment, due_date: Time.zone.parse('July 22 2009 5:00PM'))
-          @group = create(:group, course: @assignment.course)
-          pretend_now_is(Time.zone.parse('July 28 2009 5:00PM')) do
-            @grouping = create(:grouping, assignment: @assignment, group: @group)
-          end
-        end
+      it 'returns true when after section due_date' do
+        AssessmentSectionProperties.create(
+          section: @section,
+          assessment: assignment,
+          due_date: due_date + 1.day
+        )
+        submit_file_at_time(assignment, group, 'test', (due_date + 2.days).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be true
+      end
+    end
 
-        it 'returns true after due date' do
-          submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be true
-        end
+    context 'with late penalty' do
+      before do
+        assignment.update(submission_rule: PenaltyPeriodSubmissionRule.create(
+          periods_attributes: [{
+            hours: 1,
+            deduction: 10,
+            interval: 1
+          }]
+        ))
       end
 
-      context 'with sections after due date' do
-        before do
-          @assignment.section_due_dates_type = true
-          @assignment.save
-          @section = create(:section)
-          create(:inviter_student_membership,
-                 role: create(:student, section: @section),
-                 grouping: @grouping,
-                 membership_status: StudentMembership::STATUSES[:inviter])
-        end
-
-        it 'returns false when before section due_date' do
-          AssessmentSectionProperties.create(
-            section: @section,
-            assessment: @assignment,
-            due_date: Time.zone.parse('July 30 2009 5:00PM')
-          )
-          submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.reload.submitted_after_collection_date?).to be false
-        end
-
-        it 'returns true when after section due_date' do
-          AssessmentSectionProperties.create(
-            section: @section,
-            assessment: @assignment,
-            due_date: Time.zone.parse('July 20 2009 5:00PM')
-          )
-          submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be true
-        end
+      it 'returns false when before due date' do
+        submit_file_at_time(assignment, group, 'test', (due_date - 30.minutes).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be false
       end
 
-      context 'with late penalty' do
-        before do
-          @assignment.update(submission_rule: PenaltyPeriodSubmissionRule.create(
-            periods_attributes: [{
-              hours: 1,
-              deduction: 10,
-              interval: 1
-            }]
-          ))
-        end
+      it 'returns false when after due date but before penalty period' do
+        submit_file_at_time(assignment, group, 'test', (due_date + 30.minutes).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be false
+      end
 
-        it 'returns false when before due date' do
-          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be false
-        end
-
-        it 'returns false when after due date but before penalty period' do
-          submit_file_at_time(@assignment, @group, 'test', 'July 22 2009 5:30PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be false
-        end
-
-        it 'returns true when after penalty period' do
-          submit_file_at_time(@assignment, @group, 'test', 'July 22 2009 6:30PM', 'my_file', 'Hello, World!')
-          expect(@grouping.submitted_after_collection_date?).to be true
-        end
+      it 'returns true when after penalty period' do
+        submit_file_at_time(assignment, group, 'test', (due_date + 90.minutes).to_s, 'my_file', 'Hello, World!')
+        expect(grouping.submitted_after_collection_date?).to be true
       end
     end
   end

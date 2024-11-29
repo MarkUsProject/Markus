@@ -22,6 +22,22 @@ describe Group do
       expect(subject).not_to allow_value('A!a.sa').for(:repo_name).on(:update)
     end
 
+    it 'fail with error message when invalid group name format' do
+      subject.group_name = 'Invalid!@'
+      error_key = 'activerecord.errors.models.group.attributes.group_name.invalid'
+      expected_error = I18n.t(error_key, attribute: 'Group name')
+      expect(subject).not_to be_valid
+      expect(subject.errors[:group_name]).to include(expected_error)
+    end
+
+    it 'fail with error message when invalid repo name format' do
+      subject.repo_name = 'Invalid!@'
+      error_key = 'activerecord.errors.models.group.attributes.repo_name.invalid'
+      expected_error = I18n.t(error_key, attribute: 'Repo name')
+      expect(subject).not_to be_valid(:update)
+      expect(subject.errors[:repo_name]).to include(expected_error)
+    end
+
     context 'fails when group_name is one of the reserved locations' do
       Repository.get_class.reserved_locations.each do |loc|
         it loc.to_s do

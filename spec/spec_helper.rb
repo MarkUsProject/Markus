@@ -28,12 +28,10 @@ require 'action_policy/rspec'
 require 'action_policy/rspec/dsl'
 require 'capybara/rspec'
 require 'selenium/webdriver'
-# Loads lib repo stuff.
-require 'time-warp'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 begin
@@ -128,7 +126,7 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir[Rails.root.join('data/test/exam_templates/*')])
+    FileUtils.rm_rf(Rails.root.glob('data/test/exam_templates/*'))
   end
 
   RSpec::Matchers.define :same_time_within_ms do |t1|
@@ -158,4 +156,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = nil
   end
+
+  # Turn on Timecop safe mode (requires block syntax for methods)
+  Timecop.safe_mode = true
 end

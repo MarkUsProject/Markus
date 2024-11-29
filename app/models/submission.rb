@@ -255,6 +255,50 @@ class Submission < ApplicationRecord
     remark.save
   end
 
+  def copy_grading_data(old_submission)
+    return if old_submission.blank?
+
+    # copy submission-wide data to this submission
+    old_submission.feedback_files.each do |feedback_file|
+      feedback_file_dup = feedback_file.dup
+      feedback_file_dup.update!(submission_id: self.id)
+    end
+
+    old_submission.test_runs.each do |test_run|
+      test_run_dup = test_run.dup
+      test_run_dup.update!(submission_id: self.id)
+
+      test_run.test_group_results.each do |test_group_result|
+        test_group_result_dup = test_group_result.dup
+        test_group_result_dup.update!(test_run_id: test_run_dup.id)
+
+        test_group_result.test_results.each do |test_result|
+          test_result_dup = test_result.dup
+          test_result_dup.update!(test_group_result_id: test_group_result_dup.id)
+        end
+
+        test_group_result.feedback_files.each do |feedback_file|
+          feedback_file_dup = feedback_file.dup
+          feedback_file_dup.update!(test_group_result_id: test_group_result_dup.id)
+        end
+      end
+    end
+
+    self.get_original_result.copy_grading_data(old_submission.get_original_result)
+
+    # copy over any unsubmitted or submitted remark request
+    self.update(remark_request: old_submission.remark_request,
+                remark_request_timestamp: old_submission.remark_request_timestamp)
+
+    # if there's already a remark result created as well, we need to copy that
+    # too
+    old_remark_result = old_submission.remark_result
+    if old_remark_result.present?
+      self.create_result
+      self.remark_result.copy_grading_data(old_remark_result)
+    end
+  end
+
   private
 
   def create_result

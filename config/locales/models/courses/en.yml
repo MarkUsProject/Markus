@@ -7,6 +7,12 @@ en:
         is_hidden: Course Visibility
         max_file_size: Maximum File Size (bytes)
         name: Name
+    errors:
+      models:
+        course:
+          attributes:
+            name:
+              invalid: "%{attribute} must only contain alphanumeric, hyphen, or underscore characters"
     models:
       course:
         one: Course

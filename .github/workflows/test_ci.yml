@@ -49,7 +49,7 @@ jobs:
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ruby-3.0
+          ruby-version: ruby-3.3
           bundler-cache: true
       - name: Set up node and cache packages
         uses: actions/setup-node@v4

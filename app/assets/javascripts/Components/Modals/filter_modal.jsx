@@ -199,7 +199,7 @@ export class FilterModal extends React.Component {
     }
     return (
       <Modal
-        className="react-modal dialog filter-modal"
+        className="react-modal markus-dialog filter-modal"
         isOpen={this.props.isOpen}
         onRequestClose={() => {
           this.props.onRequestClose();

@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
       target: dev
-    image: markus-dev:1.1.0
+    image: markus-dev:1.2.0
     tmpfs:
       - /tmp
     stdin_open: true
@@ -23,7 +23,7 @@ services:
 
   rails: &rails
     <<: *app
-    image: markus-dev-rails:1.1.0
+    image: markus-dev-rails:1.2.0
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
     command: bundle exec rails server -b 0.0.0.0
     environment:
@@ -58,7 +58,7 @@ services:
 
   ssh:
     <<: *rails
-    image: markus-dev-ssh:1.1.0
+    image: markus-dev-ssh:1.2.0
     volumes:
       - log:/home/markus/log
       - repos:/home/markus/csc108
@@ -76,7 +76,7 @@ services:
 
   resque: &resque
     <<: *rails
-    image: markus-dev-resque:1.1.0
+    image: markus-dev-resque:1.2.0
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
@@ -85,7 +85,7 @@ services:
 
   resque-scheduler:
     <<: *resque
-    image: markus-dev-resque-scheduler:1.1.0
+    image: markus-dev-resque-scheduler:1.2.0
     command: bundle exec rails resque:scheduler
 
   postgres:
@@ -109,7 +109,7 @@ services:
 
   webpack:
     <<: *app
-    image: markus-dev-webpack:1.1.0
+    image: markus-dev-webpack:1.2.0
     entrypoint: .dockerfiles/entrypoint-dev-webpack.sh
     command: npm run build-dev
     volumes:

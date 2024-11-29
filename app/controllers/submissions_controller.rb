@@ -155,15 +155,33 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     assignment = Assignment.find_by(id: params[:assignment_id])
     @grouping = assignment.groupings.find(params[:grouping_id])
+
+    unless @grouping.current_submission_used.nil?
+      released = @grouping.current_submission_used.results.exists?(released_to_students: true)
+
+      if released
+        flash_message(:error, I18n.t('submissions.collect.could_not_collect_released'))
+        return redirect_to repo_browser_course_assignment_submissions_path(current_course, assignment,
+                                                                           grouping_id: @grouping.id)
+      end
+    end
+
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = if params[:apply_late_penalty].nil?
                            false
                          else
                            params[:apply_late_penalty]
                          end
+    retain_existing_grading = if params[:retain_existing_grading].nil?
+                                false
+                              else
+                                params[:retain_existing_grading]
+                              end
+
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
-                               revision_identifier: @revision_identifier)
+                               revision_identifier: @revision_identifier,
+                               retain_existing_grading: retain_existing_grading)
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_course_result_path(course_id: current_course.id, id: submission.get_latest_result.id)
@@ -187,6 +205,7 @@ class SubmissionsController < ApplicationController
     end
     collect_current = params[:collect_current] == 'true'
     apply_late_penalty = params[:apply_late_penalty] == 'true'
+    retain_existing_grading = params[:retain_existing_grading] == 'true'
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     collectable = []
@@ -214,7 +233,8 @@ class SubmissionsController < ApplicationController
                                                  collection_dates: collection_dates.transform_keys(&:to_s),
                                                  collect_current: collect_current,
                                                  apply_late_penalty: apply_late_penalty,
-                                                 notify_socket: true)
+                                                 notify_socket: true,
+                                                 retain_existing_grading: retain_existing_grading)
       CollectSubmissionsChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
     end
     if some_before_due
@@ -467,12 +487,17 @@ class SubmissionsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:submission_file_id])
+    file_size = begin
+      file.retrieve_file.size
+    rescue StandardError
+      0
+    end
     if file.is_supported_image?
-      render json: { type: 'image' }
+      render json: { type: 'image', size: file_size }
     elsif file.is_pdf?
-      render json: { type: 'pdf' }
+      render json: { type: 'pdf', size: file_size }
     elsif file.is_pynb?
-      render json: { type: 'jupyter-notebook' }
+      render json: { type: 'jupyter-notebook', size: file_size }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -493,7 +518,14 @@ class SubmissionsController < ApplicationController
             file_type = 'binary'
           end
         end
-        render json: { content: file_contents.to_json, type: file_type }
+
+        max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
+        # Omit content if it exceeds the maximum size requests by the client
+        render json: {
+          content: file_size <= max_content_size || max_content_size == -1 ? file_contents.to_json : '',
+          type: file_type,
+          size: file_size
+        }
       end
     end
   end

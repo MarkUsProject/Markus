@@ -11,7 +11,7 @@ describe DownloadSubmissionsJob do
   let(:groupings_without_files) { create_list(:grouping, 3) }
 
   context 'when running as a background job' do
-    let(:job_args) { [groupings.map(&:id), 'zip_path.zip', assignment.id] }
+    let(:job_args) { [groupings.map(&:id), 'zip_path.zip', assignment.id, assignment.course_id] }
 
     include_examples 'background job'
   end
