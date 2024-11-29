@@ -55,7 +55,7 @@ en:
         tas: Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them.
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
-    invalid_jupyter_notebook_content: 'Invalid Jupyter Notebook content'
+    invalid_jupyter_notebook_content: Invalid Jupyter Notebook content
     invalid_url: "%{item} is not a valid HTTP/HTTPS URL"
     marking_incomplete_warning: |-
       Note: This will only download the submissions that have been collected.
