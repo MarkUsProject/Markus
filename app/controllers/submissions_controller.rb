@@ -974,7 +974,7 @@ class SubmissionsController < ApplicationController
       begin
         file_contents = JSON.parse(file_contents)
       rescue JSON::ParserError => e
-        return I18n.t('submissions.invalid_jupyter_notebook_content', error_message: e)
+        return "#{I18n.t('submissions.invalid_jupyter_notebook_content')}: #{e}"
       end
       if file_contents['metadata'].key?('widgets')
         file_contents['metadata'].delete('widgets')
