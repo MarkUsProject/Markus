@@ -1786,6 +1786,21 @@ describe SubmissionsController do
         expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
       end
     end
+
+    context 'where there is an invalid Jupyter notebook content' do
+      render_views
+      let(:filename) { 'pdf_with_ipynb_extension.ipynb' }
+
+      it 'should display an invalid Jupyter notebook content error message' do
+        get_as instructor, :notebook_content, params: { course_id: course.id,
+                                                        assignment_id: assignment.id,
+                                                        file_name: filename,
+                                                        preview: true,
+                                                        grouping_id: grouping.id,
+                                                        revision_identifier: submission.revision_identifier }
+        expect(response.body).to include(I18n.t('submissions.invalid_jupyter_notebook_content'))
+      end
+    end
   end
 
   describe '#get_file' do

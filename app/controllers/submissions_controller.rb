@@ -971,7 +971,11 @@ class SubmissionsController < ApplicationController
           '--template', 'markus-html-template'
         ]
       end
-      file_contents = JSON.parse(file_contents)
+      begin
+        file_contents = JSON.parse(file_contents)
+      rescue JSON::ParserError => e
+        return "#{I18n.t('submissions.invalid_jupyter_notebook_content')}: #{e}"
+      end
       if file_contents['metadata'].key?('widgets')
         file_contents['metadata'].delete('widgets')
       end

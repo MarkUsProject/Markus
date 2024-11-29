@@ -7,6 +7,12 @@
 - Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
 - Added zoom and rotate functionality to PDF viewer (#7306)
 
+### 🐛 Bug fixes
+
+- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+
+### 🔧 Internal changes
+
 ## [v2.6.0]
 
 ### ✨ New features and improvements
