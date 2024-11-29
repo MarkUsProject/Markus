@@ -6,12 +6,19 @@
 
 ### ✨ New features and improvements
 
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.6.0]
+
+### ✨ New features and improvements
+
 - Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 - Implement a limit on the file size rendered by the submission viewer (#7273)
 - Add an option to retain old grading data when recollecting graded submissions (#7256)
-- Added zoom and rotate functionality to PDF viewer (#7306)
 
 ### 🐛 Bug fixes
 
