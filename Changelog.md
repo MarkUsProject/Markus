@@ -6,12 +6,25 @@
 
 ### ✨ New features and improvements
 
+- Added zoom and rotate functionality to PDF viewer (#7306)
+
+### 🐛 Bug fixes
+
+- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+- Fixed bug in grading context menu for editing/deleting annotations (#7309)
+- Fixed bug in grading annotations table when deleting annotations (#7309)
+
+### 🔧 Internal changes
+
+## [v2.6.0]
+
+### ✨ New features and improvements
+
 - Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 - Implement a limit on the file size rendered by the submission viewer (#7273)
 - Add an option to retain old grading data when recollecting graded submissions (#7256)
-- Added zoom and rotate functionality to PDF viewer (#7306)
 
 ### 🐛 Bug fixes
 
