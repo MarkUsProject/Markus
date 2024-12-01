@@ -129,11 +129,11 @@ describe("For the TATable's display of TAs", () => {
     });
 
     it("calls the correct endpoint when removeTA is triggered", async () => {
-    render(<TATable course_id={mock_course_id} />);
+      render(<TATable course_id={mock_course_id} />);
 
-    await screen.findByText("testtest");
+      await screen.findByText("testtest");
 
-    fireEvent.click(screen.getByText(I18n.t("delete")));
+      fireEvent.click(screen.getByText(I18n.t("delete")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(
