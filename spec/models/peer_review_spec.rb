@@ -170,32 +170,4 @@ describe PeerReview do
       end
     end
   end
-
-  describe '#get_reviewer_id' do
-    let(:assignment) { create(:assignment_with_peer_review) }
-    let(:peer_review_assignment) { assignment.pr_assignment } # Peer review assignment
-    let(:grouping_reviewer) { create(:grouping_with_inviter_and_submission, assignment: peer_review_assignment) }
-    let(:grouping_reviewee) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
-    let(:peer_review) do
-      create(:peer_review, reviewer_id: grouping_reviewer.id, result_id: grouping_reviewee.current_result.id)
-    end
-
-    it 'returns the reviewer id' do
-      expect(peer_review.get_reviewer_id).to eq grouping_reviewer.id
-    end
-  end
-
-  describe '#get_reviewee_id' do
-    let(:assignment) { create(:assignment_with_peer_review) }
-    let(:peer_review_assignment) { assignment.pr_assignment } # Peer review assignment
-    let(:grouping_reviewer) { create(:grouping_with_inviter_and_submission, assignment: peer_review_assignment) }
-    let(:grouping_reviewee) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
-    let(:peer_review) do
-      create(:peer_review, reviewer_id: grouping_reviewer.id, result_id: grouping_reviewee.current_result.id)
-    end
-
-    it 'returns the reviewee id' do
-      expect(peer_review.get_reviewee_id).to eq grouping_reviewee.id
-    end
-  end
 end
