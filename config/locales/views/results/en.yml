@@ -39,6 +39,7 @@ en:
         ascending: Ascending
         descending: Descending
       text_box_placeholder: Search text
+    fit_to_page_width: Fit to page width
     fullscreen_enter: Fullscreen
     fullscreen_exit: Leave fullscreen
     keybinding:
@@ -91,5 +92,6 @@ en:
     view_group_repo: View group repository
     view_token_submit: Please enter the unique token provided by your instructor to view the results for this assignment.
     your_mark: Your Mark
+    zoom: 'Zoom:'
     zoom_in_image: Zoom in
     zoom_out_image: Zoom out
