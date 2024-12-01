@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 - Added zoom and rotate functionality to PDF viewer (#7306)
+- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
 
 ### 🐛 Bug fixes
 
@@ -24,7 +25,6 @@
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 - Implement a limit on the file size rendered by the submission viewer (#7273)
-- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
 - Add an option to retain old grading data when recollecting graded submissions (#7256)
 
 ### 🐛 Bug fixes

@@ -1,7 +1,6 @@
 import {mount} from "enzyme";
-
 import {TATable} from "../ta_table";
-import {waitFor} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -84,6 +83,7 @@ describe("For the TATable's display of TAs", () => {
   describe("when no TAs are fetched", () => {
     beforeAll(() => {
       tas_sample = [];
+      // Mocking the response returned by fetch, used in TATable fetchData
       fetch.mockReset();
       fetch.mockResolvedValueOnce({
         ok: true,
@@ -100,7 +100,7 @@ describe("For the TATable's display of TAs", () => {
     });
   });
 
-  describe("When the Delete Button is pressed", () => {
+  describe("When the delete Button is pressed", () => {
     let mock_course_id = 1;
     let mock_ta_id = 42;
 
@@ -126,17 +126,14 @@ describe("For the TATable's display of TAs", () => {
       document.querySelector = jest.fn().mockReturnValue({
         content: "mocked-csrf-token",
       });
-
-      wrapper = mount(<TATable course_id={mock_course_id} />);
     });
 
     it("calls the correct endpoint when removeTA is triggered", async () => {
-      wrapper.update();
+    render(<TATable course_id={mock_course_id} />);
 
-      wrapper
-        .find("a")
-        .filterWhere(node => node.text() === I18n.t("delete"))
-        .simulate("click");
+    await screen.findByText("testtest");
+
+    fireEvent.click(screen.getByText(I18n.t("delete")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(
