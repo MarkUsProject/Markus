@@ -41,7 +41,11 @@ module FileHelper
                   '.sh' => 'sh',
                   '.cmake' => 'cmake',
                   '.make' => 'makefile',
-                  '.markusurl' => 'markusurl' }.freeze
+                  '.markusurl' => 'markusurl',
+                  '.bin' => 'binary',
+                  '.dat' => 'binary',
+                  '.exe' => 'binary',
+                  '' => 'binary' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
                         '.js' => %w[/* */],
