@@ -1,7 +1,7 @@
-@import 'markus';
-@import 'constants';
-@import 'navigation';
-@import '../../../../node_modules/@fortawesome/fontawesome-svg-core/styles';
+@import "markus";
+@import "constants";
+@import "navigation";
+@import "../../../../node_modules/@fortawesome/fontawesome-svg-core/styles";
 
 #about_dialog {
   max-height: 75%;
@@ -34,8 +34,8 @@
 }
 
 #role_switch_dialog {
-  input[type='text'],
-  input[type='password'] {
+  input[type="text"],
+  input[type="password"] {
     margin-top: 1em;
     padding: 0.5em 0.75em;
     width: 100%;
@@ -58,7 +58,7 @@ textarea {
   width: auto;
 }
 
-input[type='radio'] {
+input[type="radio"] {
   max-width: 30px;
   min-width: 30px;
 }
@@ -70,7 +70,7 @@ input[type='radio'] {
 label.required::after,
 th.required::after {
   color: $severe-error;
-  content: '*';
+  content: "*";
 }
 
 .hidden {
@@ -125,7 +125,7 @@ th.required::after {
     font-weight: normal;
 
     &::before {
-      content: '|';
+      content: "|";
     }
   }
 
@@ -462,7 +462,7 @@ th.required::after {
   overflow: auto;
 }
 
-div.rendered-react-keyed-file-browser div.action-bar input[type='search'] {
+div.rendered-react-keyed-file-browser div.action-bar input[type="search"] {
   width: 100%;
 }
 
