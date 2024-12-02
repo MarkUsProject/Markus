@@ -1,4 +1,4 @@
-@import 'common/core';
+@import "common/core";
 
 /* Peer Review Styles */
 
@@ -150,7 +150,7 @@
   padding-right: 10px;
   text-align: right;
 
-  input[type='text'] {
+  input[type="text"] {
     font-weight: bold;
     padding-right: 0.5em;
     text-align: right;
@@ -175,7 +175,7 @@
     padding-right: 0.5em;
   }
 
-  input[type='radio'] {
+  input[type="radio"] {
     max-width: 20px;
     min-width: 20px;
   }
