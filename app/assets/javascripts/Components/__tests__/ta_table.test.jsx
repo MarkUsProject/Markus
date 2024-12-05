@@ -1,6 +1,5 @@
-import {mount} from "enzyme";
 import {TATable} from "../ta_table";
-import {render, screen, fireEvent, waitFor} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor, within} from "@testing-library/react";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -14,17 +13,19 @@ global.fetch = jest.fn(() =>
 );
 
 describe("For the TATable's display of TAs", () => {
-  let wrapper, tas_sample;
+  let tas_sample;
 
   describe("when some TAs are fetched", () => {
-    const tas_in_one_row = (wrapper, ta) => {
-      // Find the row
-      const row = wrapper.find({children: ta.user_name}).parent();
-      // Expect the row to contain these information
-      expect(row.children({children: ta.first_name})).toBeTruthy();
-      expect(row.children({children: ta.last_name})).toBeTruthy();
+    const tas_in_one_row = ta => {
+      const row = screen.getByText(ta.user_name).closest("div[role='row']");
+      expect(row).toBeInTheDocument();
+
+      expect(within(row).queryByText(ta.first_name)).toBeInTheDocument();
+
+      expect(within(row).queryByText(ta.last_name)).toBeInTheDocument();
+
       if (ta.email) {
-        expect(row.children({children: ta.email})).toBeTruthy();
+        expect(within(row).queryByText(ta.email)).toBeInTheDocument();
       }
     };
 
@@ -72,11 +73,15 @@ describe("For the TATable's display of TAs", () => {
           counts: {all: 4, active: 3, inactive: 1},
         }),
       });
-      wrapper = mount(<TATable course_id={1} />);
+
+      render(<TATable course_id={1} />);
     });
 
-    it("each TA is displayed as a row of the table", () => {
-      tas_sample.forEach(ta => tas_in_one_row(wrapper, ta));
+    it("each TA is displayed as a row of the table", async () => {
+      await screen.findByRole("grid");
+      console.log(screen.debug());
+
+      tas_sample.forEach(ta => tas_in_one_row(ta));
     });
   });
 
@@ -92,11 +97,11 @@ describe("For the TATable's display of TAs", () => {
           counts: {all: 0, active: 0, inactive: 0},
         }),
       });
-      wrapper = mount(<TATable course_id={1} />);
+      render(<TATable course_id={1} />);
     });
 
     it("No rows found is shown", () => {
-      expect(wrapper.find({children: "No rows found"})).toBeTruthy();
+      expect(screen.getByText("No rows found")).toBeInTheDocument();
     });
   });
 
