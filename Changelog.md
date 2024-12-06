@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.6.1]
+
+### ✨ New features and improvements
+
+- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
+
 ## [v2.6.0]
 
 ### ✨ New features and improvements
