@@ -14,8 +14,6 @@
 - Fixed bug in grading annotations table when deleting annotations (#7314)
 - Ensure correct LTI version of lti_user_id is used on launch (#7335)
 
-### 🔧 Internal changes
-
 ## [v2.6.0]
 
 ### ✨ New features and improvements
