@@ -142,9 +142,7 @@ shared_examples 'lti deployment controller' do
               course_id: 1,
               user_id: 1
             },
-            LtiDeployment::LTI_CLAIMS[:user_launch_data] => {
-              user_id: 'lti_user_id'
-            } }
+            LtiDeployment::LTI_CLAIMS[:user_id] => 'some_user_id' }
         end
         let(:pub_jwk) { JWT::JWK.new(OpenSSL::PKey::RSA.new(1024)) }
         let(:lti_jwt) { JWT.encode(payload, pub_jwk.keypair, 'RS256', { kid: pub_jwk.kid }) }

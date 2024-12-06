@@ -15,7 +15,7 @@ class LtiDeployment < ApplicationRecord
                  names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
                  ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
                  deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id',
-                 user_launch_data: 'https://purl.imsglobal.org/spec/lti/claim/lti1p1' }.freeze
+                 user_id: 'sub' }.freeze
   LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner',
                 test_user: 'http://purl.imsglobal.org/vocab/lti/system/person#TestUser',
                 ta: 'http://purl.imsglobal.org/vocab/lis/v2/membership/Instructor#TeachingAssistant',

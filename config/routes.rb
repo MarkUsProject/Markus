@@ -471,7 +471,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tas, only: [:create, :new, :index, :edit, :update] do
+    resources :tas, only: [:create, :new, :index, :edit, :update, :destroy] do
       collection do
         get 'download'
         post 'upload'
