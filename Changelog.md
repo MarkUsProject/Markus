@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 - Added zoom and rotate functionality to PDF viewer (#7306)
+- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
 
 ### 🐛 Bug fixes
 
