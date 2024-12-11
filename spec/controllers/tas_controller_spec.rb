@@ -270,4 +270,98 @@ describe TasController do
       end
     end
   end
+
+  describe '#destroy' do
+    context 'when not an instructor' do
+      let(:instructor) { create(:instructor) }
+      let(:ta) { create(:ta, course: course) }
+      let(:student_role) { create(:student) }
+
+      before do
+        delete_as student_role, :destroy, params: { course_id: course.id, id: ta.id }
+      end
+
+      it 'does not delete TA and gets 403 response' do
+        expect(Ta.count).to eq(1)
+        expect(flash.now[:success]).to be_nil
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'when current_role is an instructor but destroy fails' do
+      let(:instructor) { create(:instructor) }
+      let(:ta) { create(:ta, course: course) }
+
+      before do
+        allow_any_instance_of(Role).to receive(:destroy).and_return(false)
+        delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
+      end
+
+      it 'does not delete the TA, shows an error message, and gets a bad request response' do
+        expect(Ta.count).to eq(1)
+        expect(flash.now[:success]).to be_nil
+        expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.error', user_name: ta.user_name, message: ''))
+        expect(response).to have_http_status(:bad_request)
+      end
+    end
+
+    context 'when TA has a note' do
+      let(:instructor) { create(:instructor) }
+      let(:ta) { create(:ta, course: course) }
+
+      before do
+        create(:note, role: ta)
+        delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
+      end
+
+      it 'does not delete the TA, shows an error message and gets a conflict response' do
+        expect(Ta.count).to eq(1)
+        expect(flash.now[:success]).to be_nil
+        expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.restricted', user_name: ta.user_name,
+                                                                                      message: ''))
+        expect(response).to have_http_status(:conflict)
+      end
+    end
+
+    context 'succeeds for TA deletion' do
+      let!(:ta) { create(:ta, course: course) }
+      let(:instructor) { create(:instructor) }
+
+      let!(:annotation) { create(:text_annotation, creator: ta) }
+
+      let(:student) { create(:student) }
+
+      before do
+        create(:criterion_ta_association, ta: ta)
+        create(:grade_entry_form)
+        create(:grade_entry_student_ta, ta: ta, grade_entry_student: student.grade_entry_students.first)
+
+        delete_as instructor, :destroy, params: { course_id: course.id, id: ta.id }
+      end
+
+      it 'deletes TA, flashes success, and gets an ok response' do
+        expect(Ta.exists?).to be(false)
+        expect(flash.now[:success].first).to include(I18n.t('flash.tas.destroy.success', user_name: ta.user_name))
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'deletes associated grader permisison' do
+        expect(GraderPermission.exists?(role_id: ta.id)).to be(false)
+      end
+
+      it 'nullifies creator id in associated annotation' do
+        annotation.reload
+        expect(annotation.creator_id).to be_nil
+        expect(Annotation.exists?(annotation.id)).to be(true)
+      end
+
+      it 'deletes associated criterion ta association' do
+        expect(CriterionTaAssociation.exists?(ta_id: ta.id)).to be(false)
+      end
+
+      it 'deletes associated grade entry student ta' do
+        expect(GradeEntryStudentTa.exists?(ta_id: ta.id)).to be(false)
+      end
+    end
+  end
 end
