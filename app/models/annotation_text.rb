@@ -30,7 +30,7 @@ class AnnotationText < ApplicationRecord
   validate :courses_should_match
 
   def should_have_deduction?
-    !self&.annotation_category&.flexible_criterion_id.nil?
+    !self.annotation_category&.flexible_criterion_id.nil?
   end
 
   def escape_content
