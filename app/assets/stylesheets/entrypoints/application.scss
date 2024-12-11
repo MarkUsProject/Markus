@@ -1,19 +1,19 @@
 // Entry point for your Sass build
-@use "clickable";
-@use "fonts";
-@use "common/pdfjs_custom";
-@use "common/core";
+@use 'clickable';
+@use 'fonts';
+@use 'common/pdfjs_custom';
+@use 'common/core';
 
 // Stylesheets used in grading views
-@use "grader";
-@use "context_menu";
-@use "common/codeviewer";
+@use 'grader';
+@use 'context_menu';
+@use 'common/codeviewer';
 
-@use "flatpickr/dist/flatpickr.min";
-@use "react-table/react-table";
-@use "react-tabs/style/react-tabs";
-@use "react-keyed-file-browser/dist/react-keyed-file-browser";
+@use 'flatpickr/dist/flatpickr.min';
+@use 'react-table/react-table';
+@use 'react-tabs/style/react-tabs';
+@use 'react-keyed-file-browser/dist/react-keyed-file-browser';
 
 // We create a copy of the vendored assets in the cookies_eu gem due to limitation of cssbundling-rails.
 // See https://github.com/rails/cssbundling-rails/issues/81.
-@use "cookies_eu";
+@use 'cookies_eu';
