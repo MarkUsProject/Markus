@@ -37,7 +37,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 7.0.0'
+gem 'rails-i18n', '~> 7.0.10'
 
 # Redis
 gem 'redis', '~> 5.3.0'
