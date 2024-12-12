@@ -2,7 +2,7 @@ import React from "react";
 import {render} from "react-dom";
 import PropTypes from "prop-types";
 
-import safe_marked from "../../safe_marked";
+import safe_marked from "../../common/safe_marked";
 
 export class MarksPanel extends React.Component {
   static defaultProps = {

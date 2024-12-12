@@ -4,8 +4,8 @@ import ReactTable from "react-table";
 import mime from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
 import {FileViewer} from "./Result/file_viewer";
-import consumer from "../../../javascript/channels/consumer";
-import {renderFlashMessages} from "../flash";
+import consumer from "../channels/consumer";
+import {renderFlashMessages} from "../common/flash";
 
 export class TestRunTable extends React.Component {
   constructor(props) {

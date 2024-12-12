@@ -12,6 +12,8 @@
 
 ### 🔧 Internal changes
 
+- Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
+
 ## [v2.6.1]
 
 ### ✨ New features and improvements

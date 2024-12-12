@@ -5,7 +5,7 @@ import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
 import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
 import {FileViewer} from "./Result/file_viewer";
 import mime from "mime/lite";
-import {flashMessage} from "../flash";
+import {flashMessage} from "../common/flash";
 
 class SubmissionFileManager extends React.Component {
   constructor(props) {
