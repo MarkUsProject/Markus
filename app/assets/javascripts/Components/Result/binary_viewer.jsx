@@ -19,6 +19,7 @@ export class BinaryViewer extends React.PureComponent {
         this.setState({content: content}, () => this.props.setLoadingCallback(false))
       )
       .catch(error => {
+        this.props.setLoadingCallback(false);
         if (error instanceof DOMException) return;
         console.error(error);
       });
@@ -33,6 +34,7 @@ export class BinaryViewer extends React.PureComponent {
           this.setState({content: content}, () => this.props.setLoadingCallback(false))
         )
         .catch(error => {
+          this.props.setLoadingCallback(false);
           if (error instanceof DOMException) return;
           console.error(error);
         });
