@@ -102,7 +102,7 @@ class LtiDeploymentsController < ApplicationController
           lti_data[:line_items] = grades_endpoints['lineitems']
         end
       end
-      lti_data[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:user_launch_data]]['user_id']
+      lti_data[:lti_user_id] = lti_params[LtiDeployment::LTI_CLAIMS[:user_id]]
       unless logged_in?
         lti_data[:lti_redirect] = request.url
         cookies.encrypted.permanent[:lti_data] =

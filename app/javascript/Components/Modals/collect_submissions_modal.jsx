@@ -12,6 +12,7 @@ class CollectSubmissionsModal extends React.Component {
       override: this.props.override,
       collect_time: this.props.isScannedExam ? "collect_current" : "collect_due_date",
       apply_late_penalty: !this.props.isScannedExam,
+      retain_existing_grading: true,
     };
   }
 
@@ -25,12 +26,17 @@ class CollectSubmissionsModal extends React.Component {
       this.state.override,
       this.state.collect_time === "collect_current",
       // Always apply late penalty when collecting based on due date
-      this.state.apply_late_penalty || this.state.collect_time === "collect_due_date"
+      this.state.apply_late_penalty || this.state.collect_time === "collect_due_date",
+      this.state.override && this.state.retain_existing_grading
     );
   };
 
   handleOverrideChange = event => {
     this.setState({override: event.target.checked});
+  };
+
+  handleRetainExistingGradingChange = event => {
+    this.setState({retain_existing_grading: event.target.checked});
   };
 
   handleCollectTimeChange = event => {
@@ -96,15 +102,47 @@ class CollectSubmissionsModal extends React.Component {
               <legend>{I18n.t("submissions.collect.collection_options")}</legend>
               <p>
                 <label>
-                  <input type="checkbox" name="override" onChange={this.handleOverrideChange} />
-                  &nbsp;
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: I18n.t("submissions.collect.override_existing_html"),
-                    }}
+                  <input
+                    type="checkbox"
+                    defaultChecked={this.state.override}
+                    name="override"
+                    data-testid="chk_recollect_existing_submissions"
+                    onChange={this.handleOverrideChange}
                   />
+                  &nbsp;
+                  <span data-testid="lbl_recollect_existing_submissions">
+                    {I18n.t("submissions.collect.override_existing")}
+                  </span>
                 </label>
               </p>
+              {this.state.override && (
+                <p style={{marginLeft: "15px"}}>
+                  <input
+                    type="checkbox"
+                    defaultChecked={this.state.retain_existing_grading}
+                    name="retain_existing_grading"
+                    id="retain_existing_grading"
+                    data-testid="chk_retain_existing_grading"
+                    onChange={this.handleRetainExistingGradingChange}
+                  />
+                  &nbsp;
+                  <label
+                    htmlFor="retain_existing_grading"
+                    data-testid="lbl_retain_existing_grading"
+                  >
+                    {I18n.t("submissions.collect.retain_existing_grading")}
+                  </label>
+                  {!this.state.retain_existing_grading && (
+                    <div
+                      data-testid="div_grading_data_will_be_lost"
+                      className="warning"
+                      style={{marginTop: "4px"}}
+                    >
+                      {I18n.t("submissions.collect.grading_data_will_be_lost")}
+                    </div>
+                  )}
+                </p>
+              )}
               {this.state.collect_time === "collect_current" && !this.props.isScannedExam && (
                 <p>
                   <label>
@@ -121,7 +159,11 @@ class CollectSubmissionsModal extends React.Component {
               )}
             </fieldset>
             <section className={"modal-container dialog-actions"}>
-              <input type="submit" value={I18n.t("submissions.collect.submit")} />
+              <input
+                type="submit"
+                data-testid="btn_collect_submissions"
+                value={I18n.t("submissions.collect.submit")}
+              />
             </section>
           </div>
         </form>

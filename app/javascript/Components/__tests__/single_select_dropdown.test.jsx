@@ -1,6 +1,6 @@
 import * as React from "react";
 import {render, screen, fireEvent} from "@testing-library/react";
-import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown.jsx";
+import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown.jsx";
 
 describe("SingleSelectDropdown", () => {
   let props;

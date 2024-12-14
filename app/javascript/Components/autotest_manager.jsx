@@ -9,7 +9,7 @@ import labelPlugin from "flatpickr/dist/plugins/labelPlugin/labelPlugin";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
-import {flashMessage} from "../flash";
+import {flashMessage} from "../common/flash";
 
 const ajvOptionsOverrides = {discriminator: true};
 const validator = customizeValidator({ajvOptionsOverrides});

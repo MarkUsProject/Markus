@@ -24,7 +24,7 @@ $breakpoints: (
       @content;
     }
   } @else {
-    @media ("#{$name}") {
+    @media ('#{$name}') {
       @content;
     }
   }

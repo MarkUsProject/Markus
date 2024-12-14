@@ -11,8 +11,8 @@ import {
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
-import consumer from "../../../../app/javascript/channels/consumer";
-import {renderFlashMessages} from "../flash";
+import consumer from "../channels/consumer";
+import {renderFlashMessages} from "../common/flash";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
@@ -283,7 +283,7 @@ class RawSubmissionTable extends React.Component {
   };
 
   // Submission table actions
-  collectSubmissions = (override, collect_current, apply_late_penalty) => {
+  collectSubmissions = (override, collect_current, apply_late_penalty, retain_existing_grading) => {
     this.setState({showCollectSubmissionsModal: false});
     $.post({
       url: Routes.collect_submissions_course_assignment_submissions_path(
@@ -295,6 +295,7 @@ class RawSubmissionTable extends React.Component {
         override: override,
         collect_current: collect_current,
         apply_late_penalty: apply_late_penalty,
+        retain_existing_grading: retain_existing_grading,
       },
     });
   };
