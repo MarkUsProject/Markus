@@ -40,9 +40,13 @@ export class TextViewer extends React.PureComponent {
 
     // Fetch content from a URL if it is passed as a prop. The URL should point to plaintext data.
     if (this.props.url) {
+      this.props.setLoadingCallback(true);
       this.fetchContent(this.props.url)
-        .then(content => this.setState({content: content}))
+        .then(content =>
+          this.setState({content: content}, () => this.props.setLoadingCallback(false))
+        )
         .catch(error => {
+          this.props.setLoadingCallback(false);
           if (error instanceof DOMException) return;
           console.error(error);
         });
@@ -87,6 +91,7 @@ export class TextViewer extends React.PureComponent {
           })
         )
         .catch(error => {
+          this.props.setLoadingCallback(false);
           if (error instanceof DOMException) return;
           console.error(error);
         });
