@@ -81,14 +81,21 @@ export class TextViewer extends React.PureComponent {
       this.props.setLoadingCallback(true);
       this.fetchContent(this.props.url)
         .then(content =>
-          this.setState({content: content}, () => this.props.setLoadingCallback(false))
+          this.setState({content: content}, () => {
+            this.props.setLoadingCallback(false);
+            this.postInitContent(prevProps, prevState);
+          })
         )
         .catch(error => {
           if (error instanceof DOMException) return;
           console.error(error);
         });
+    } else {
+      this.postInitContent(prevProps, prevState);
     }
+  }
 
+  postInitContent(prevProps, prevState) {
     const content = this.getContentFromProps(this.props, this.state);
     const prevContent = this.getContentFromProps(prevProps, prevState);
 
