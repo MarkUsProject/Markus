@@ -11,8 +11,8 @@ import {
 } from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 import ReleaseUrlsModal from "./Modals/release_urls_modal";
-import consumer from "../../../../app/javascript/channels/consumer";
-import {renderFlashMessages} from "../flash";
+import consumer from "../channels/consumer";
+import {renderFlashMessages} from "../common/flash";
 
 class RawSubmissionTable extends React.Component {
   constructor() {

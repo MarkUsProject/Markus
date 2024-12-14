@@ -1,5 +1,5 @@
 import React from "react";
-import {SingleSelectDropDown} from "../DropDownMenu/SingleSelectDropDown";
+import {SingleSelectDropDown} from "./DropDown/SingleSelectDropDown";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class CriteriaFilter extends React.Component {

@@ -1,5 +1,5 @@
 import React from "react";
-import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
+import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
 
 export class PDFViewer extends React.PureComponent {
   constructor(props) {

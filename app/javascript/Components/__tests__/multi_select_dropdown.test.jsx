@@ -4,7 +4,7 @@
 
 import * as React from "react";
 import {render, screen, fireEvent, within} from "@testing-library/react";
-import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
+import {MultiSelectDropdown} from "../DropDown/MultiSelectDropDown";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
