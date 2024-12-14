@@ -25,9 +25,11 @@ import "javascripts/jquery.easyModal";
 import safe_marked from "./common/safe_marked";
 window.safe_marked = safe_marked;
 
-// moment (date/times manipulation)
-import moment from "moment";
-window.moment = moment;
+// dayjs (date/times manipulation)
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+window.dayjs = dayjs;
 
 // mousetrap (keybindings)
 import "mousetrap";

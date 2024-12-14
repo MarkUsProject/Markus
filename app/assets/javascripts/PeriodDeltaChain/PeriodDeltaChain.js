@@ -17,11 +17,11 @@ PeriodDeltaChain.prototype.refresh = function () {
     var from_time_node = this.querySelector(".PeriodDeltaChain_FromTime");
     var to_time_node = this.querySelector(".PeriodDeltaChain_ToTime");
     var hours_value = this.querySelector(".PeriodDeltaChain_Hours").value;
-    var from_time = moment(current_time, me.date_format);
-    var to_time = moment(current_time, me.date_format);
+    var from_time = dayjs(current_time, me.date_format);
+    var to_time = from_time.add(hours_value, "hours");
 
     $(from_time_node).html(from_time.format(format));
-    $(to_time_node).html(to_time.add("hours", hours_value).format(format));
+    $(to_time_node).html(to_time.format(format));
 
     current_time = to_time;
   });
