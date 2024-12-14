@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
-import {MultiSelectDropdown} from "../../DropDownMenu/MultiSelectDropDown";
-import {SingleSelectDropDown} from "../../DropDownMenu/SingleSelectDropDown";
+import {MultiSelectDropdown} from "../DropDown/MultiSelectDropDown";
+import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
 import {CriteriaFilter} from "../criteria_filter";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 

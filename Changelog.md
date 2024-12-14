@@ -6,9 +6,37 @@
 
 ### ✨ New features and improvements
 
+### 🐛 Bug fixes
+
+- Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+
+### 🔧 Internal changes
+
+- Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
+
+## [v2.6.1]
+
+### ✨ New features and improvements
+
+- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
+- Added zoom and rotate functionality to PDF viewer (#7306)
+
+### 🐛 Bug fixes
+
+- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+- Fixed bug in grading context menu for editing/deleting annotations (#7314)
+- Fixed bug in grading annotations table when deleting annotations (#7314)
+- Ensure correct LTI version of lti_user_id is used on launch (#7335)
+
+## [v2.6.0]
+
+### ✨ New features and improvements
+
+- Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
 - Implement a limit on the file size rendered by the submission viewer (#7273)
+- Add an option to retain old grading data when recollecting graded submissions (#7256)
 
 ### 🐛 Bug fixes
 
@@ -16,6 +44,7 @@
 - Ensured submissions that have been released cannot be recollected from the repo browser (#7254)
 - Fix bug where renaming a group to an existing group in a different assignment resulted in incorrect repository mapping (#7224)
 - Disable editable fields in assignment criterion when criterion is released (#7264)
+- Fixed Download One Time Annotation 'Not Found' error (#7302)
 
 ### 🔧 Internal changes
 
@@ -32,6 +61,8 @@
 - Merge result.js and result_main.css build files into application.js/application.css (#7260)
 - Simplify pdf.js configuration (#7260)
 - Improve descriptions of the Group and Grouping models (#7262)
+- Disable Rubocop Style/SafeNavigationChainLength check (#7301)
+- Ignore faker translations in i18n-js compilation (#7305)
 
 ## [v2.5.3]
 

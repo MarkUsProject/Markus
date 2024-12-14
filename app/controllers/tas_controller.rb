@@ -43,6 +43,22 @@ class TasController < ApplicationController
     respond_with @role, location: course_tas_path(current_course)
   end
 
+  def destroy
+    @role = record
+    begin
+      @role.destroy!
+    rescue ActiveRecord::DeleteRestrictionError => e
+      flash_message(:error, I18n.t('flash.tas.destroy.restricted', user_name: @role.user_name, message: e.message))
+      head :conflict
+    rescue ActiveRecord::RecordNotDestroyed => e
+      flash_message(:error, I18n.t('flash.tas.destroy.error', user_name: @role.user_name, message: e.message))
+      head :bad_request
+    else
+      flash_now(:success, I18n.t('flash.tas.destroy.success', user_name: @role.user_name))
+      head :ok
+    end
+  end
+
   def download
     keys = [:user_name, :last_name, :first_name, :email]
     tas = current_course.tas.joins(:user).pluck_to_hash(*keys)

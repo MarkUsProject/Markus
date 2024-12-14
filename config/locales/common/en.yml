@@ -2,6 +2,7 @@
 en:
   actions: Actions
   add: Add
+  additional_not_shown: Additional %{count} not shown.
   all: All
   apply: Apply
   cancel: Cancel
@@ -10,6 +11,7 @@ en:
   continue: Continue
   copy: Copy
   delete: Delete
+  deleted_placeholder: "(deleted)"
   edit: Edit
   encoding: Encoding
   errors:

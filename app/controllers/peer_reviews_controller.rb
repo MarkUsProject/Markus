@@ -157,7 +157,29 @@ class PeerReviewsController < ApplicationController
         return
       end
     when 'unassign'
-      PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+      peer_reviews_filtered = PeerReview.joins(:reviewer, :reviewee)
+                                        .where(reviewer: { id: selected_reviewer_group_ids },
+                                               reviewee: { id: selected_reviewee_group_ids })
+                                        .pluck(['reviewer.id', 'reviewee.id'])
+      peer_reviews_filtered.each do |reviewer_id, reviewiee_id|
+        reviewers_to_remove_from_reviewees_map[reviewiee_id] ||= {} # Initialize if does not exist
+        reviewers_to_remove_from_reviewees_map[reviewiee_id][reviewer_id] = true
+      end
+
+      deleted_count, undeleted_reviews = PeerReview.unassign(reviewers_to_remove_from_reviewees_map)
+      if !undeleted_reviews.empty? && deleted_count == 0
+        flash_now(:error, t('peer_reviews.errors.cannot_unassign_any_reviewers'))
+        return
+      elsif !undeleted_reviews.empty?
+        message = t('peer_reviews.errors.cannot_unassign_all_reviewers',
+                    deleted_count: deleted_count.to_s, undeleted_reviews: undeleted_reviews.first(5).join(', '))
+        if undeleted_reviews.length > 5
+          message += " #{t('additional_not_shown', count: undeleted_reviews.length - 5)}"
+        end
+        flash_now(:error, message)
+      elsif deleted_count > 0
+        flash_now(:success, t('peer_reviews.unassigned_reviewers_successfully', deleted_count: deleted_count.to_s))
+      end
     else
       head :bad_request
       return

@@ -4,7 +4,7 @@ import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {flashMessage} from "../flash";
+import {flashMessage} from "../common/flash";
 
 function blurOnEnter(event) {
   if (event.key === "Enter") {

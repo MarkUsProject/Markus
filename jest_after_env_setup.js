@@ -21,3 +21,26 @@ configure({adapter: new Adapter()});
 
 // Jest fetch mock
 require("jest-fetch-mock").enableMocks();
+
+// Define HTMLElement.prototype.offsetParent
+// Code from https://github.com/jsdom/jsdom/issues/1261#issuecomment-1765404346
+Object.defineProperty(HTMLElement.prototype, "offsetParent", {
+  get() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    for (let element = this; element; element = element.parentNode) {
+      if (element.style?.display?.toLowerCase() === "none") {
+        return null;
+      }
+    }
+
+    if (this.stye?.position?.toLowerCase() === "fixed") {
+      return null;
+    }
+
+    if (this.tagName.toLowerCase() in ["html", "body"]) {
+      return null;
+    }
+
+    return this.parentNode;
+  },
+});

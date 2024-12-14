@@ -23,6 +23,10 @@ class TaPolicy < RolePolicy
     role.instructor?
   end
 
+  def destroy?
+    role.instructor?
+  end
+
   def upload?
     role.instructor?
   end
