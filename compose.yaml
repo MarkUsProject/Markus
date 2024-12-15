@@ -54,25 +54,25 @@ services:
       - resque
       - resque-scheduler
       - webpack
-#      - ssh
+      - ssh
 
-#  ssh:
-#    <<: *rails
-#    image: markus-dev-ssh:1.2.0
-#    volumes:
-#      - log:/home/markus/log
-#      - repos:/home/markus/csc108
-#      - .dockerfiles/:/app/.dockerfiles
-#      - ./lib/repo:/app/lib/repo
-#    environment:
-#      - TZ=America/Toronto
-#    command: /usr/sbin/sshd -D -e
-#    user: root
-#    extra_hosts: []
-#    ports:
-#      - '2222:22'
-#    entrypoint: .dockerfiles/entrypoint-dev-ssh.sh
-#    depends_on: []
+  ssh:
+    <<: *rails
+    image: markus-dev-ssh:1.2.0
+    volumes:
+      - log:/home/markus/log
+      - repos:/home/markus/csc108
+      - .dockerfiles/:/app/.dockerfiles
+      - ./lib/repo:/app/lib/repo
+    environment:
+      - TZ=America/Toronto
+    command: /usr/sbin/sshd -D -e
+    user: root
+    extra_hosts: []
+    ports:
+      - '2222:22'
+    entrypoint: .dockerfiles/entrypoint-dev-ssh.sh
+    depends_on: []
 
   resque: &resque
     <<: *rails
