@@ -25,11 +25,14 @@ import "javascripts/jquery.easyModal";
 import safe_marked from "./common/safe_marked";
 window.safe_marked = safe_marked;
 
-// dayjs (date/times manipulation)
+// dayjs (date/times manipulation) and PeriodDeltaChain
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-window.dayjs = dayjs;
+dayjs.locale(I18N_LOCALE);
+
+import PeriodDeltaChain from "./common/PeriodDeltaChain";
+window.PeriodDeltaChain = PeriodDeltaChain;
 
 // mousetrap (keybindings)
 import "mousetrap";
@@ -43,6 +46,7 @@ window.Rails = Rails;
 import {I18n} from "i18n-js";
 import translations from "translations.json";
 window.I18n = new I18n(translations);
+window.I18n.locale = I18N_LOCALE;
 
 // JCrop
 import Jcrop from "jcrop";
