@@ -2167,6 +2167,47 @@ describe SubmissionsController do
         end
       end
 
+      context 'with max content size parameter' do
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        max_content_size: SAMPLE_FILE_CONTENT.size }
+        end
+
+        it { expect(response).to have_http_status(:success) }
+
+        test_no_flash
+        it 'should have the correct content type' do
+          expect(response.header['Content-Type']).to eq 'text/plain'
+        end
+
+        it 'should show the file content in the response body' do
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
+        end
+      end
+
+      context 'with max content size parameter less than the content size' do
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        max_content_size: SAMPLE_FILE_CONTENT.size - 1 }
+        end
+
+        it { expect(response).to have_http_status(:payload_too_large) }
+
+        it 'should have an empty response body' do
+          expect(response.body).to be_empty
+        end
+      end
+
       context 'and with a file error' do
         before do
           allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_raise SAMPLE_ERROR_MESSAGE
