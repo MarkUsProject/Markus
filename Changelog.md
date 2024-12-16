@@ -5,7 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-
+- Refactor `FileViewer`, `TextViewer`, `BinaryViewer` and `ImageViewer` components (#7270)
 ### 🐛 Bug fixes
 
 - Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
