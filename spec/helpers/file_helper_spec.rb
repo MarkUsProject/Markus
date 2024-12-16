@@ -117,8 +117,8 @@ describe FileHelper do
   end
 
   context 'A no extension Submission file' do
-    it 'return a unknown file extension' do
-      expect(FileHelper.get_file_type('filename')).to eq('unknown')
+    it 'return a binary file extension' do
+      expect(FileHelper.get_file_type('filename')).to eq('binary')
     end
 
     it 'return generic comment' do
