@@ -1,7 +1,5 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'Groups/index', nonce: true %>
-  <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date', nonce: true %>
 
   <%= javascript_tag nonce: true do %>
     <% parts = @assignment.duration_parts

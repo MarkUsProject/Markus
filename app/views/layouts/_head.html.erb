@@ -16,6 +16,7 @@
 <%= javascript_tag("const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;", nonce: true) if protect_against_forgery?%>
 <%= javascript_tag nonce: true do %>
   const MARKUS_VERSION = '<%= Rails.configuration.markus_version %>';
+  const I18N_LOCALE = '<%= I18n.locale %>';
 <% end %>
 <%= javascript_tag nonce: true do %>
   <%= render partial: 'layouts/mathjax_config', formats: :js %>
