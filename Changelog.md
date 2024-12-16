@@ -13,6 +13,7 @@
 ### 🔧 Internal changes
 
 - Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
+- Replace moment.js dependency with much smaller dayjs (#7346)
 
 ## [v2.6.1]
 
