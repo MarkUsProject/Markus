@@ -1313,11 +1313,21 @@ describe ResultsController do
       end
 
       it 'has submission file data' do
+        submission_file
         subject
         data = response.parsed_body
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
         file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
-        expect(data['submission_files']).to eq(file_data)
+
+        # checks the correct value of keys that are present in both `file_data` and `data`
+        file_data[0].each do |key, value|
+          data[:submission_files].each do |submission_file_data|
+            expect(submission_file_data).to have_key(key)
+            expect(submission_file_data[key]).to eq value
+          end
+        end
+
+        expect(data[:submission_files]).to all(include(:id, :filename, :path, :type))
       end
 
       it 'has no annotation categories data' do
