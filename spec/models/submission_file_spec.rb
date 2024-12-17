@@ -138,7 +138,7 @@ describe SubmissionFile do
     end
 
     it 'return a unknown file extension' do
-      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('binary')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
 
     it 'return generic comment' do

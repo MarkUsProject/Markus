@@ -43,9 +43,7 @@ module FileHelper
                   '.make' => 'makefile',
                   '.markusurl' => 'markusurl',
                   '.bin' => 'binary',
-                  '.dat' => 'binary',
-                  '.exe' => 'binary',
-                  '' => 'binary' }.freeze
+                  '.dat' => 'binary' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
                         '.js' => %w[/* */],
