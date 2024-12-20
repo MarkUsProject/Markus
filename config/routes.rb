@@ -169,7 +169,6 @@ Rails.application.routes.draw do
     resources :submissions, only: [] do
       member do
         get 'collect_and_begin_grading'
-        get 'get_file'
       end
     end
 
