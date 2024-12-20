@@ -172,6 +172,9 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   getFileDownloadURL = file_id => {
+    if (!file_id) {
+      return null;
+    }
     return Routes.download_file_course_assignment_submission_path(
       this.props.course_id,
       this.props.assignment_id,
