@@ -560,7 +560,7 @@ class SubmissionsController < ApplicationController
     end
 
     max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
-    if file_contents.size > max_content_size && max_content_size != -1
+    if max_content_size != -1 && file_contents.size > max_content_size
       head :payload_too_large
       return
     end

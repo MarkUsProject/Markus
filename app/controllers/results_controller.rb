@@ -80,13 +80,9 @@ class ResultsController < ApplicationController
         data[:can_release] = allowed_to?(:manage_assessments?, current_role)
 
         # Submission files
-        file_data = submission.submission_files.order(:path, :filename).map do |submission_file|
-          {
-            id: submission_file.id,
-            filename: submission_file.filename,
-            path: submission_file.path,
-            type: FileHelper.get_file_type(submission_file.filename)
-          }
+        file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path) do |hash|
+          hash[:type] = FileHelper.get_file_type(hash[:filename])
+          hash
         end
         file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
         data[:submission_files] = file_data
