@@ -12,11 +12,13 @@ export class ImageViewer extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.setImageURL().then(() => {
-      this.display_annotations();
-      this.adjustPictureSize();
-      this.rotateImage();
-    });
+    if (this.props.url && this.props.url !== prevProps.url) {
+      this.setImageURL().then(() => {
+        this.display_annotations();
+        this.adjustPictureSize();
+        this.rotateImage();
+      });
+    }
   }
 
   componentDidMount() {
