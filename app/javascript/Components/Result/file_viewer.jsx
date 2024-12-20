@@ -13,26 +13,26 @@ export class FileViewer extends React.Component {
     errorMessage: null,
   };
 
-  mountedRef = React.createRef();
+  mounted = false;
 
   setLoading = loading => {
-    if (this.mountedRef.current) {
+    if (this.mounted) {
       this.setState({loading: loading});
     }
   };
 
   setErrorMessage = message => {
-    if (this.mountedRef.current) {
+    if (this.mounted) {
       this.setState({errorMessage: message});
     }
   };
 
   componentDidMount() {
-    this.mountedRef.current = true;
+    this.mounted = true;
   }
 
   componentWillUnmount() {
-    this.mountedRef.current = false;
+    this.mounted = false;
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
