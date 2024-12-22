@@ -1451,14 +1451,6 @@ describe AssignmentsController do
         end
       end
 
-      context 'referred from a submission member url' do
-        let(:referer) { submission_member_url.call(course_id: course.id, id: submission.id) }
-
-        it 'should redirect to the fallback url' do
-          expect(subject).to redirect_to(fallback_url.call(course_id: course.id, id: assignment2.id))
-        end
-      end
-
       context 'referred from a submission collection url' do
         let(:referer) { submission_collection_url.call(course_id: course.id, assignment_id: assignment.id) }
 
@@ -1521,7 +1513,6 @@ describe AssignmentsController do
       let(:fallback_url) { ->(params) { edit_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
       let(:result_member_url) { ->(params) { course_result_url(params) } }
-      let(:submission_member_url) { ->(params) { get_file_course_submission_url(params) } }
 
       include_examples 'switch assignment tests'
     end
@@ -1532,7 +1523,6 @@ describe AssignmentsController do
       let(:fallback_url) { ->(params) { summary_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
       let(:result_member_url) { ->(params) { course_result_url(params) } }
-      let(:submission_member_url) { ->(params) { get_file_course_submission_url(params) } }
 
       include_examples 'switch assignment tests'
     end
@@ -1543,7 +1533,6 @@ describe AssignmentsController do
       let(:fallback_url) { ->(params) { course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { file_manager_course_assignment_submissions_url(params) } }
       let(:result_member_url) { ->(params) { course_result_url(params) } }
-      let(:submission_member_url) { ->(params) { get_file_course_submission_url(params) } }
 
       include_examples 'switch assignment tests'
     end

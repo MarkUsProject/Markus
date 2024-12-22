@@ -42,6 +42,3 @@ en:
       missing_file: Could not download %{file_name}.  File may be missing.
       missing_files: 'You still need to submit %{file} required file(s) for this assignment:'
       no_action_detected: No actions were detected in the last submit.  Nothing was changed.
-  submission_file:
-    error:
-      no_access: 'No access to submission file with id #%{submission_file_id}.'

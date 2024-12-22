@@ -1,29 +1,31 @@
 import React from "react";
-import {render, screen, cleanup, waitFor} from "@testing-library/react";
+import {render, screen, cleanup} from "@testing-library/react";
 import {FileViewer} from "../Result/file_viewer";
+import fetchMock from "jest-fetch-mock";
 
 describe("FileViewer", () => {
-  afterEach(cleanup);
+  afterEach(() => {
+    fetchMock.resetMocks();
+    cleanup();
+  });
 
   it("should not render oversized files", async () => {
-    // mocks `/get_file` request
-    global.fetch = () =>
-      Promise.resolve({
-        json: () => Promise.resolve({content: "", type: "", size: 1e32}),
-      });
+    fetchMock.mockOnce({}, {status: 413});
 
     const props = {
       course_id: 0,
       submission_id: 0,
       result_id: 1,
       selectedFile: [],
+      selectedFileType: "text",
+      selectedFileURL: "/",
     };
 
-    render(<FileViewer {...props} />);
+    await render(<FileViewer {...props} />);
 
-    // waits for the fetch promise to resolve
-    await waitFor(() =>
-      expect(screen.getByText(I18n.t("submissions.oversize_submission_file"))).toBeInTheDocument()
-    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(
+      await screen.findByText(I18n.t("submissions.oversize_submission_file"))
+    ).toBeInTheDocument();
   });
 });

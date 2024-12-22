@@ -6,14 +6,24 @@ import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
 import mime from "mime/lite";
 
+// 1_000_000 = 1MB
+const MAX_CONTENT_SIZES = {
+  _default: 100_000,
+  image: 50_000_000,
+  pdf: 50_000_000,
+  "jupyter-notebook": 50_000_000,
+  text: 100_000,
+  binary: 100_000,
+};
+
 export class SubmissionFilePanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFile: null,
+      selectedFile: [],
+      selectedFileType: null,
       focusLine: null,
       annotationFocus: undefined,
-      selectedFileType: null,
       visibleAnnotations: [],
     };
     this.submissionFileViewer = React.createRef();
@@ -60,9 +70,10 @@ export class SubmissionFilePanel extends React.Component {
     let selectedFile = [];
     const stored_file = localStorage.getItem("file");
     if (!this.state.student_view && stored_file) {
-      let filepath = stored_file.split("/");
-      let filename = filepath.pop();
-      selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filename)];
+      const filepath = stored_file.split("/");
+      const filename = filepath.pop();
+      const [_, id, type] = this.getNamedFile(this.props.fileData, filepath, filename);
+      selectedFile = [stored_file, id, type];
     }
     if (!selectedFile[1]) {
       if (
@@ -103,20 +114,20 @@ export class SubmissionFilePanel extends React.Component {
     }
   };
 
-  getNamedFileId = (fileData, path, filename) => {
+  getNamedFile = (fileData, path, filename) => {
     if (!!path.length) {
       let dir = path.shift();
       if (fileData.directories.hasOwnProperty(dir)) {
-        return this.getNamedFileId(fileData.directories[dir], path, filename);
+        return this.getNamedFile(fileData.directories[dir], path, filename);
       }
     } else {
       for (let file_data of fileData.files) {
         if (file_data[0] === filename) {
-          return file_data[1];
+          return file_data;
         }
       }
     }
-    return null;
+    return [];
   };
 
   getFirstFile = fileData => {
@@ -135,9 +146,9 @@ export class SubmissionFilePanel extends React.Component {
     return null;
   };
 
-  selectFile = (file, id, focusLine, annotationFocus) => {
+  selectFile = (file, id, type, focusLine, annotationFocus) => {
     this.setState({
-      selectedFile: [file, id],
+      selectedFile: [file, id, type],
       focusLine: focusLine,
       annotationFocus: annotationFocus,
       visibleAnnotations: this.props.annotations.filter(a => a.submission_file_id === id),
@@ -148,6 +159,34 @@ export class SubmissionFilePanel extends React.Component {
   // Download the currently-selected file.
   downloadFile = () => {
     this.modalDownload.open();
+  };
+
+  getMaxContentSize = () => {
+    const file_type = this.state.selectedFile ? this.state.selectedFile[2] : null;
+
+    if (file_type in MAX_CONTENT_SIZES) {
+      return MAX_CONTENT_SIZES[file_type];
+    } else {
+      return MAX_CONTENT_SIZES._default;
+    }
+  };
+
+  getFileDownloadURL = file_id => {
+    if (!file_id) {
+      return null;
+    }
+    return Routes.download_file_course_assignment_submission_path(
+      this.props.course_id,
+      this.props.assignment_id,
+      this.props.submission_id,
+      {
+        select_file_id: file_id,
+        show_in_browser: true,
+        from_codeviewer: true,
+        preview: true,
+        max_content_size: this.getMaxContentSize(),
+      }
+    );
   };
 
   render() {
@@ -189,6 +228,8 @@ export class SubmissionFilePanel extends React.Component {
             mime_type={submission_file_mime_type}
             result_id={this.props.result_id}
             selectedFile={submission_file_id}
+            selectedFileURL={this.getFileDownloadURL(submission_file_id)}
+            selectedFileType={this.state.selectedFile ? this.state.selectedFile[2] : null}
             annotations={this.state.visibleAnnotations}
             focusLine={this.state.focusLine}
             annotationFocus={this.state.annotationFocus}
@@ -245,13 +286,13 @@ export class FileSelector extends React.Component {
       <ul className="nested-folder" style={{display: displayStyle}}>
         {dirs}
         {hash["files"].map(f => {
-          const [name, id] = f;
+          const [name, id, type] = f;
           const fullPath = hash.path.concat([name]).join("/");
           return (
             <li
               className="file_item"
               key={fullPath}
-              onClick={e => this.selectFile(e, fullPath, id)}
+              onClick={e => this.selectFile(e, fullPath, id, type)}
             >
               <a key={`${fullPath}-a`}>{f[0]}</a>
             </li>
@@ -261,9 +302,9 @@ export class FileSelector extends React.Component {
     );
   };
 
-  selectFile = (e, fullPath, id) => {
+  selectFile = (e, fullPath, id, type) => {
     e.stopPropagation();
-    this.props.onSelectFile(fullPath, id);
+    this.props.onSelectFile(fullPath, id, type);
     this.setState({expanded: null});
   };
 

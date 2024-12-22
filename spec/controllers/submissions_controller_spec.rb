@@ -1803,194 +1803,6 @@ describe SubmissionsController do
     end
   end
 
-  describe '#get_file' do
-    let(:assignment) { create(:assignment) }
-    let(:instructor) { create(:instructor) }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
-    let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip', true) }
-    let(:file3) { fixture_file_upload('example.ipynb') }
-    let(:file4) { fixture_file_upload('page_white_text.png') }
-    let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
-    let(:file6) { fixture_file_upload('example.Rmd') }
-    let(:file7) { fixture_file_upload('sample.markusurl') }
-    let(:file8) { fixture_file_upload('35_bytes.txt') }
-
-    let!(:submission) do
-      files.map do |file|
-        submit_file(assignment, grouping, file.original_filename, file.read)
-      end.last
-    end
-
-    describe 'when the file is not a binary file' do
-      let(:files) { [file1] }
-
-      it 'should download the file' do
-        submission_file = submission.submission_files.find_by(filename: file1.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['content']).to eq(ActiveSupport::JSON.encode(File.read(file1)))
-      end
-    end
-
-    describe 'When the file is a jupyter notebook file' do
-      let(:files) { [file3] }
-
-      it 'should return the file type' do
-        submission_file = submission.submission_files.find_by(filename: file3.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq 'jupyter-notebook'
-      end
-    end
-
-    describe 'When the file is an rmarkdown notebook file' do
-      let(:files) { [file6] }
-
-      it 'should return the file type' do
-        submission_file = submission.submission_files.find_by(filename: file6.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq 'markdown'
-      end
-    end
-
-    describe 'When the file is a binary file' do
-      let(:files) { [file2] }
-
-      it 'should download a warning instead of the file content' do
-        submission_file = submission.submission_files.find_by(filename: file2.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
-        expect(response.parsed_body['content']).to eq(expected)
-      end
-
-      describe 'when force_text is true' do
-        it 'should download the file content' do
-          submission_file = submission.submission_files.find_by(filename: file2.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  force_text: true,
-                                                  submission_file_id: submission_file.id }
-          file2.seek(0)
-          actual = JSON.parse(response.parsed_body['content'])
-          expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-          expect(actual).to eq(expected)
-        end
-      end
-    end
-
-    describe 'When the file is a url file' do
-      context 'with a valid url file format' do
-        let(:files) { [file7] }
-
-        before do
-          assignment.update!(url_submit: true)
-        end
-
-        it 'should return the file type and non-zero size' do
-          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id,
-                                                  format: :json }
-          expect(response.parsed_body['type']).to eq 'markusurl'
-          expect(response.parsed_body['size']).to be > 0
-        end
-      end
-
-      context 'with urls disabled' do
-        let(:files) { [file7] }
-
-        it 'should return an unknown type' do
-          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id,
-                                                  format: :json }
-          expect(response.parsed_body['type']).to eq 'unknown'
-        end
-      end
-    end
-
-    describe 'when the file is an image' do
-      let(:files) { [file4] }
-
-      it 'should return the file type and size' do
-        submission_file = submission.submission_files.find_by(filename: file4.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq('image')
-        expect(response.parsed_body['size']).to be > 0
-      end
-    end
-
-    describe 'when the file is a pdf' do
-      let(:files) { [file5] }
-
-      it 'should return the file type and size' do
-        submission_file = submission.submission_files.find_by(filename: file5.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq('pdf')
-        expect(response.parsed_body['size']).to be > 0
-      end
-    end
-
-    describe 'when the file is missing' do
-      let(:files) { [file1] }
-
-      it 'should return an unknown file type and zero size' do
-        submission_file = submission.submission_files.find_by(filename: file1.original_filename)
-        allow_any_instance_of(MemoryRevision).to receive(:files_at_path).and_return({})
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq('unknown')
-        expect(response.parsed_body['size']).to be 0
-      end
-    end
-
-    describe 'when the maximum content size query parameter is passed' do
-      let(:files) { [file8] }
-      let!(:submission_file) { submission.submission_files.find_by(filename: file8.original_filename) }
-
-      it 'should return the file content if it does not exceed the maximum' do
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id,
-                                                max_content_size: 36 }
-        expect(response.parsed_body['size']).to be 35
-        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
-      end
-
-      it 'should return the file content if it is the same size as the maximum' do
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id,
-                                                max_content_size: 35 }
-        expect(response.parsed_body['size']).to be 35
-        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
-      end
-
-      it 'should not return the file content if it exceeds the maximum' do
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id,
-                                                max_content_size: 34 }
-        expect(response.parsed_body['size']).to be 35
-        expect(response.parsed_body['content']).to eql ''
-      end
-    end
-  end
-
   describe '#download_summary' do
     subject { get_as role, 'download_summary', params: { course_id: course.id, assignment_id: assignment.id } }
 
@@ -2164,6 +1976,47 @@ describe SubmissionsController do
 
         it 'should show the file content in the response body' do
           expect(response.body).to eq SAMPLE_FILE_CONTENT
+        end
+      end
+
+      context 'with max content size parameter' do
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        max_content_size: SAMPLE_FILE_CONTENT.size }
+        end
+
+        it { expect(response).to have_http_status(:success) }
+
+        test_no_flash
+        it 'should have the correct content type' do
+          expect(response.header['Content-Type']).to eq 'text/plain'
+        end
+
+        it 'should show the file content in the response body' do
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
+        end
+      end
+
+      context 'with max content size parameter less than the content size' do
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        max_content_size: SAMPLE_FILE_CONTENT.size - 1 }
+        end
+
+        it { expect(response).to have_http_status(:payload_too_large) }
+
+        it 'should have an empty response body' do
+          expect(response.body).to be_empty
         end
       end
 

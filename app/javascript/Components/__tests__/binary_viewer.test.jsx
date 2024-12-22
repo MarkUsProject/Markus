@@ -1,14 +1,14 @@
 import React from "react";
-import {render, screen, cleanup, waitFor} from "@testing-library/react";
-import {TextViewer} from "../Result/text_viewer";
-import fetchMock from "jest-fetch-mock";
+import {render, screen, cleanup, waitFor, fireEvent} from "@testing-library/react";
 import {BinaryViewer} from "../Result/binary_viewer";
+import fetchMock from "jest-fetch-mock";
 
-describe("TextViewer", () => {
+describe("BinaryViewer", () => {
   const successfulFetchResp = "File content";
   const loadingCallback = jest.fn();
   const errorCallback = jest.fn();
   const props = {
+    url: "/",
     annotations: [],
     focusLine: null,
     submission_file_id: 1,
@@ -22,33 +22,26 @@ describe("TextViewer", () => {
     cleanup();
   });
 
-  it("should render its text content when the content ends with a new line", () => {
-    render(<TextViewer {...props} content={"def f(n: int) -> int:\n    return n + 1\n"} />);
-
-    expect(screen.getByText("def f(n: int) -> int:")).toBeInTheDocument();
-  });
-
-  it("should render its text content when the content doesn't end with a new line", () => {
-    render(<TextViewer {...props} content={"def f(n: int) -> int:"} />);
-
-    expect(screen.getByText("def f(n: int) -> int:")).toBeInTheDocument();
-  });
-
-  it("should fetch content when a URL is passed", async () => {
+  it("should fetch content when a URL is passed but not show it until requested by the user", async () => {
     fetchMock.mockOnce(successfulFetchResp);
 
-    render(<TextViewer {...props} url={"/"} />);
+    render(<BinaryViewer {...props} />);
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(screen.getByText(successfulFetchResp)).toBeInTheDocument();
     });
+
+    expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
+    expect(screen.getByText(I18n.t("submissions.get_anyway"))).toBeInTheDocument();
+    fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
+    expect(screen.getByText(successfulFetchResp)).toBeInTheDocument();
+    expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
   });
 
   it("should call loading callbacks before and after loading", async () => {
     fetchMock.mockOnce(successfulFetchResp);
 
-    render(<TextViewer {...props} url={"/"} />);
+    render(<BinaryViewer {...props} />);
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -64,7 +57,7 @@ describe("TextViewer", () => {
   it("should call an error callback when the requested file content is too large", async () => {
     fetchMock.mockOnce({}, {status: 413});
 
-    render(<TextViewer {...props} url={"/"} />);
+    render(<BinaryViewer {...props} />);
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -83,7 +76,7 @@ describe("TextViewer", () => {
     const fetchError = new Error("fetch error");
     fetchMock.mockRejectOnce(fetchError);
 
-    render(<TextViewer {...props} url={"/"} />);
+    render(<BinaryViewer {...props} />);
 
     const mockedConsoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
@@ -95,28 +88,41 @@ describe("TextViewer", () => {
 
   it("should not perform a fetch request if the URL hasn't changed", async () => {
     fetchMock.mockOnce(successfulFetchResp);
-    const {rerender} = await render(<TextViewer {...props} url={"/"} />);
-    await rerender(<TextViewer {...props} url={"/"} />);
+    const {rerender} = await render(<BinaryViewer {...props} />);
+    await rerender(<BinaryViewer {...props} submission_file_id={props.submission_file_id + 1} />);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("should render on the same component that doesn't remount on prop update", async () => {
     fetchMock.mockOnce(successfulFetchResp);
 
-    const {rerender} = await render(<TextViewer {...props} url={"/"} />);
-    await screen.findByText(successfulFetchResp);
+    const {rerender} = await render(<BinaryViewer {...props} />);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
+    expect(screen.getByText(I18n.t("submissions.get_anyway"))).toBeInTheDocument();
+
+    await fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
+    await screen.findByText(successfulFetchResp);
+
     expect(screen.getByText(successfulFetchResp)).toBeInTheDocument();
+    expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
 
     // Prepare a different fetch response to test component rerender
     fetchMock.mockOnce(successfulFetchResp.repeat(2));
 
-    await rerender(<TextViewer {...props} url={"/double"} />);
-    await screen.findByText(successfulFetchResp.repeat(2));
+    await rerender(<BinaryViewer {...props} url={"/double"} />);
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
+    expect(screen.queryByText(successfulFetchResp.repeat(2))).not.toBeInTheDocument();
+    expect(screen.getByText(I18n.t("submissions.get_anyway"))).toBeInTheDocument();
+
+    await fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
+    await screen.findByText(successfulFetchResp);
+
     expect(screen.getByText(successfulFetchResp.repeat(2))).toBeInTheDocument();
+    expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
+    expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
   });
 });

@@ -472,64 +472,6 @@ class SubmissionsController < ApplicationController
     head :bad_request
   end
 
-  def get_file
-    submission = record
-    grouping = submission.grouping
-    assignment = grouping.assignment
-
-    if !current_role.is_a_reviewer?(assignment.pr_assignment) && current_role.student? &&
-      current_role.accepted_grouping_for(assignment.id).id != grouping.id
-      flash_message(:error,
-                    t('submission_file.error.no_access',
-                      submission_file_id: params[:submission_file_id]))
-      redirect_back(fallback_location: root_path)
-      return
-    end
-
-    file = SubmissionFile.find(params[:submission_file_id])
-    file_size = begin
-      file.retrieve_file.size
-    rescue StandardError
-      0
-    end
-    if file.is_supported_image?
-      render json: { type: 'image', size: file_size }
-    elsif file.is_pdf?
-      render json: { type: 'pdf', size: file_size }
-    elsif file.is_pynb?
-      render json: { type: 'jupyter-notebook', size: file_size }
-    else
-      grouping.access_repo do |repo|
-        revision = repo.get_revision(submission.revision_identifier)
-        raw_file = revision.files_at_path(file.path)[file.filename]
-        file_type = FileHelper.get_file_type(file.filename)
-        if raw_file.nil?
-          file_contents = I18n.t('student.submission.missing_file', file_name: file.filename)
-          file_type = 'unknown'
-        else
-          file_contents = repo.download_as_string(raw_file)
-          file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-
-          file_type = 'unknown' unless file_type != 'markusurl' || assignment.url_submit
-
-          if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
-            # If the file appears to be binary, display a warning
-            file_contents = I18n.t('submissions.cannot_display')
-            file_type = 'binary'
-          end
-        end
-
-        max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
-        # Omit content if it exceeds the maximum size requests by the client
-        render json: {
-          content: file_size <= max_content_size || max_content_size == -1 ? file_contents.to_json : '',
-          type: file_type,
-          size: file_size
-        }
-      end
-    end
-  end
-
   def download_file
     if params[:download_zip_button]
       download_file_zip
@@ -558,6 +500,13 @@ class SubmissionsController < ApplicationController
       head :internal_server_error
       return
     end
+
+    max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
+    if max_content_size != -1 && file_contents.size > max_content_size
+      head :payload_too_large
+      return
+    end
+
     filename = file.filename
     # Display the file in the page if it is an image/pdf, and download button
     # was not explicitly pressed
