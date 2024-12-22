@@ -82,12 +82,13 @@ export class FileViewer extends React.Component {
 
   render() {
     const viewer = this.getViewer();
-
+    const outerDivStyle = {
+      display: this.state.loading || this.state.errorMessage ? "none" : "block",
+      height: "100%",
+    };
     return (
       <React.Fragment>
-        <div style={{display: this.state.loading || this.state.errorMessage ? "none" : "block"}}>
-          {viewer}
-        </div>
+        <div style={outerDivStyle}>{viewer}</div>
         {this.state.errorMessage && <p>{this.state.errorMessage}</p>}
         {this.state.loading && !this.state.errorMessage && <p>{I18n.t("working")}</p>}
       </React.Fragment>
