@@ -18,6 +18,10 @@ export class ImageViewer extends React.PureComponent {
         this.adjustPictureSize();
         this.rotateImage();
       });
+    } else {
+      this.display_annotations();
+      this.adjustPictureSize();
+      this.rotateImage();
     }
   }
 
