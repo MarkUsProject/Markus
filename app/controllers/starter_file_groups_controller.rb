@@ -2,6 +2,8 @@
 class StarterFileGroupsController < ApplicationController
   before_action { authorize! }
 
+  skip_forgery_protection only: [:download_file]  # Allow Javascript files to be downloaded
+
   respond_to :js
 
   def create

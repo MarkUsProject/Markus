@@ -5,6 +5,8 @@ class GroupsController < ApplicationController
   before_action { authorize! }
   layout 'assignment_content'
 
+  skip_forgery_protection only: [:download]  # Allow Javascript files to be downloaded
+
   content_security_policy only: [:assign_scans] do |p|
     p.img_src :self, :blob
   end
