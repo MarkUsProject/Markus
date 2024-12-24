@@ -1,4 +1,6 @@
 describe CriteriaController do
+  include UploadHelper
+
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:instructor) { create(:instructor) }
   let(:course) { instructor.course }
@@ -1110,19 +1112,18 @@ describe CriteriaController do
       end
 
       context 'When some criteria have been previously uploaded and and instructor performs a download' do
-        it 'responds with appropriate status' do
-          post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
-                                                 upload_file: uploaded_file }
+        before do
+          Criterion.upload_criteria_from_yaml(assignment, parse_yaml_content(test_upload_download_file.read))
+        end
 
-          get :download, params: { course_id: course.id, assignment_id: assignment.id }
+        it 'responds with appropriate status' do
+          get_as instructor, :download, params: { course_id: course.id, assignment_id: assignment.id }
 
           expect(response).to have_http_status(:ok)
         end
 
         it 'sends the correct information' do
-          post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
-                                                 upload_file: test_upload_download_file }
-          get :download, params: { course_id: course.id, assignment_id: assignment.id }
+          get_as instructor, :download, params: { course_id: course.id, assignment_id: assignment.id }
 
           expect(YAML.safe_load(response.body, permitted_classes: [Symbol], symbolize_names: true))
             .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
