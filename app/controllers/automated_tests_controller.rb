@@ -3,8 +3,6 @@ class AutomatedTestsController < ApplicationController
 
   before_action { authorize! }
 
-  skip_forgery_protection only: [:download_file]  # Allow Javascript files to be downloaded
-
   content_security_policy only: :manage do |p|
     # required because @rjsf/core uses ajv which calls
     # eval (javascript) and creates an image as a blob.

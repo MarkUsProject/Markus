@@ -19,7 +19,6 @@ class SubmissionsController < ApplicationController
   end
 
   content_security_policy_report_only only: :notebook_content
-  skip_forgery_protection only: [:download, :download_file]  # Allow Javascript files to be downloaded
 
   def index
     respond_to do |format|
