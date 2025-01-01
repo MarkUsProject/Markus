@@ -75,11 +75,13 @@ class CriteriaController < ApplicationController
       return
     end
     if @criterion.is_a? RubricCriterion
+      original_max_mark = @criterion.max_mark # need this to caclulate possible level scale
       # update everything except levels and assignments
       properly_updated = @criterion.update(rubric_criterion_params.except(:levels_attributes, :assignment_files))
-      # update levels
+      # update levels with a scale factor if necessary
       if rubric_criterion_params[:levels_attributes]
-        properly_updated &&= @criterion.update_levels(rubric_criterion_params[:levels_attributes])
+        properly_updated &&= @criterion.update_levels(rubric_criterion_params[:levels_attributes],
+                                                      @criterion.reload.max_mark / original_max_mark)
       end
       unless rubric_criterion_params[:assignment_files].nil?
         assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].reject(&:empty?))
