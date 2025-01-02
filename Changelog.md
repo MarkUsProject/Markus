@@ -15,6 +15,7 @@
 - Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
 - Replace moment.js dependency with much smaller dayjs (#7346)
 - Refactor `FileViewer`, `TextViewer`, `BinaryViewer` and `ImageViewer` components (#7270)
+- Pin `mistune` Python dependency to preserve compatibility with `nbconvert` (#7371)
 
 ## [v2.6.1]
 
