@@ -1,6 +1,6 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
 nbconvert==7.16.4
-playwright==1.49.0
+playwright==1.49.1
 # Pin mistune to < 3.1 to be compatible with nbconvert
 # Ref: https://github.com/jupyter/nbconvert/issues/2198
 mistune==3.0.2
