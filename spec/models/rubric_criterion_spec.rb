@@ -117,6 +117,59 @@ that two properties A and B have switched values' do
         end
       end
     end
+
+    context 'when a level scaling factor is specified' do
+      let(:levels_attributes) { {} }
+
+      before do
+        (0...5).each do |num|
+          levels_attributes[num.to_s] =
+            { mark: rubric.levels[num].mark, name: rubric.levels[num].name, id: rubric.levels[num].id }
+        end
+
+        # modified cases
+        levels_attributes['3'][:mark] = 3.5
+        levels_attributes['4'][:mark] = 3.6
+
+        # new case
+        levels_attributes['5'] = { mark: 3.7, name: 'Level 6', description: '' }
+      end
+
+      it 'scales unchanged level marks in levels_attributes by the scaling factor' do
+        # order may have changed so we have to find each one manually
+        level_names = ['Level 1', 'Level 2', 'Level 3']
+        old_marks = level_names.map { |name| rubric.levels.find { |level| level.name == name }.mark }
+
+        rubric.update_levels(levels_attributes, 2.0)
+        rubric.reload
+
+        level_names.each_with_index do |name, index|
+          level = rubric.levels.find { |possible_lvl| possible_lvl.name == name }
+          expect(level.mark).to eq(old_marks[index] * 2.0)
+        end
+      end
+
+      it 'does not scale level marks if they have been changed in levels_attributes' do
+        rubric.update_levels(levels_attributes, 2.0)
+        rubric.reload
+
+        # order may have changed
+        level4 = rubric.levels.find { |level| level.name == 'Level 4' }
+        level5 = rubric.levels.find { |level| level.name == 'Level 5' }
+
+        expect(level4.mark).to eq(3.5)
+        expect(level5.mark).to eq(3.6)
+      end
+
+      it 'does not scale marks for any new levels in level_attributes' do
+        rubric.update_levels(levels_attributes, 2.0)
+        rubric.reload
+
+        # order may have changed
+        new_level = rubric.levels.find { |level| level.name == 'Level 6' }
+        expect(new_level.mark).to eq(3.7)
+      end
+    end
   end
 
   context 'A good rubric criterion model' do
@@ -351,27 +404,6 @@ that two properties A and B have switched values' do
           criterion = create(:rubric_criterion)
           expect(criterion.level_with_mark_closest_to(1.77).mark).to eq 2
         end
-      end
-    end
-
-    context 'when scaling max mark' do
-      it 'can scale level marks up' do
-        expect(@criterion.levels[1].mark).to eq(1.0)
-        @criterion.update!(max_mark: 8.0)
-        expect(@criterion.levels[1].mark).to eq(2.0)
-      end
-
-      it 'scale level marks down' do
-        expect(@criterion.levels[1].mark).to eq(1.0)
-        @criterion.update!(max_mark: 2.0)
-        expect(@criterion.levels[1].mark).to eq(0.5)
-      end
-
-      it 'does not scale level marks that have been manually changed' do
-        expect(@criterion.levels[1].mark).to eq(1.0)
-        @criterion.levels[1].mark = 3
-        @criterion.update!(max_mark: 8.0)
-        expect(@criterion.levels[1].mark).to eq(3.0)
       end
     end
 
