@@ -140,6 +140,7 @@ that two properties A and B have switched values' do
         level_names = ['Level 1', 'Level 2', 'Level 3']
         old_marks = level_names.map { |name| rubric.levels.find { |level| level.name == name }.mark }
 
+        rubric.update!(max_mark: 8.0)
         rubric.update_levels(levels_attributes, 2.0)
         rubric.reload
 
@@ -150,6 +151,7 @@ that two properties A and B have switched values' do
       end
 
       it 'does not scale level marks if they have been changed in levels_attributes' do
+        rubric.update!(max_mark: 8.0)
         rubric.update_levels(levels_attributes, 2.0)
         rubric.reload
 
@@ -162,6 +164,7 @@ that two properties A and B have switched values' do
       end
 
       it 'does not scale marks for any new levels in level_attributes' do
+        rubric.update!(max_mark: 8.0)
         rubric.update_levels(levels_attributes, 2.0)
         rubric.reload
 
