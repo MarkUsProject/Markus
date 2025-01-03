@@ -1,5 +1,4 @@
 class RubricCriterion < Criterion
-  before_validation :scale_marks_if_max_mark_changed
   before_save :round_max_mark
 
   validates :levels, presence: true
@@ -7,18 +6,29 @@ class RubricCriterion < Criterion
   DEFAULT_MAX_MARK = 4
   # Checks whether the passed in param's level_attributes have unique name and marks.
   # Skips the uniqueness validation if true.
-  def update_levels(levels_attributes)
+  def update_levels(levels_attributes, scale = 1.0)
     s1, s2 = Set[], Set[]
     should_skip = true
 
-    # Check if there's a dup in marks or names
     levels_attributes.each_value do |val|
-      if s1.include?(val[:mark]) || s2.include?(val[:name])
-        should_skip = false
-        break
+      # Check if there's a dup in marks or names
+      unless should_skip
+        if s1.include?(val[:mark]) || s2.include?(val[:name])
+          should_skip = false
+        end
+        s1.add(val[:mark])
+        s2.add(val[:name])
       end
-      s1.add(val[:mark])
-      s2.add(val[:name])
+
+      # if we're updating an existing mark
+      if val.key?(:id)
+        existing_level = self.levels.find(val[:id])
+
+        # only scale if the existing mark is the same as the incoming mark
+        if val[:mark].to_f.round(2) == existing_level.mark.round(2)
+          val[:mark] = (val[:mark].to_f * scale).round(2).to_s
+        end
+      end
     end
 
     if should_skip
@@ -26,27 +36,12 @@ class RubricCriterion < Criterion
         val[:skip_uniqueness_validation] = true
       end
     end
+
     self.update(levels_attributes: levels_attributes)
   end
 
   def level_with_mark_closest_to(mark)
     self.levels.min_by { |m| (m.mark - mark).abs }
-  end
-
-  def scale_marks_if_max_mark_changed
-    return unless self.changed.include?('max_mark')
-    return if self.changes['max_mark'][0].nil?
-    old_max = self.changes['max_mark'][0]
-    new_max = self.changes['max_mark'][1]
-    scale = new_max / old_max
-    self.levels.each do |level|
-      # don't scale levels that the user has manually changed
-      unless (level.changed.include? 'mark') || level.mark.nil?
-        # use update_attribute to skip validatation in case updating level mark
-        # overlaps another mark temporarily
-        level.update_attribute(:mark, (level.mark * scale).round(2))
-      end
-    end
   end
 
   def set_default_levels
