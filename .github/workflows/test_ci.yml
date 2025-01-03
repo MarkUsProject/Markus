@@ -73,6 +73,13 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}-${{ hashFiles('requirements-qr.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+      - name: Cache playwright's installation of Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('requirements-jupyter.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - name: Install python packages and playwright dependencies
         run: |
           python3.10 -m venv venv
