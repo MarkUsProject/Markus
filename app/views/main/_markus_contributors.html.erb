@@ -1,4 +1,4 @@
-<% contributors_list = read_contributors %>
+<% contributors_list = Rails.configuration.markus_contributors %>
 <% contributors_list.each do |contributor| %>
   <%= contributor + ',' %>
 <% end %>
