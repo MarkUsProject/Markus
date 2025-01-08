@@ -18,6 +18,7 @@
 - Pin `mistune` Python dependency to preserve compatibility with `nbconvert` (#7371)
 - Cache playwright's chromium installation on GitHub Actions (#7372)
 - Fix broken link to the Vagrant installation guide in `README.md` (#7349)
+- Fix `extra_hosts` configuration in `compose.yaml` (#7375)
 
 ## [v2.6.1]
 
