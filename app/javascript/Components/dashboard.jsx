@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {AssignmentChart} from "./assignment_chart";
 import {GradeEntryFormChart} from "./grade_entry_form_chart";
 import {CourseSummaryChart} from "./course_summary_chart";
@@ -8,8 +8,8 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assessment_id: null,
-      assessment_type: null,
+      assessment_id: props.initial_assessment_id || null,
+      assessment_type: props.initial_assessment_type || null,
       display_course_summary: false,
     };
   }
@@ -41,5 +41,8 @@ class Dashboard extends React.Component {
 }
 
 export function makeDashboard(elem, props) {
-  return render(<Dashboard {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<Dashboard {...props} ref={component} />);
+  return component;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
@@ -706,5 +706,8 @@ class GroupsActionBox extends React.Component {
 }
 
 export function makeGroupsManager(elem, props) {
-  return render(<GroupsManager {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<GroupsManager {...props} ref={component} />);
+  return component;
 }

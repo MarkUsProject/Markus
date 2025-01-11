@@ -459,6 +459,7 @@ class SubmissionsController < ApplicationController
           commit_success, commit_msg = commit_transaction(repo, txn)
           flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
           messages << commit_msg
+          head :ok
         else
           head :unprocessable_entity
         end

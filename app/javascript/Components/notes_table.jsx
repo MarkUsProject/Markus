@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 
 class NotesTable extends React.Component {
@@ -117,5 +117,6 @@ class NotesTable extends React.Component {
 }
 
 export function makeNotesTable(elem, props) {
-  render(<NotesTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<NotesTable {...props} />);
 }

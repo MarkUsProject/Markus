@@ -1,7 +1,7 @@
 # create groups job
 class CreateGroupsJob < ApplicationJob
   def self.on_complete_js(_status)
-    '() => {window.groupsManager && window.groupsManager.fetchData()}'
+    '() => {window.groupsManager && window.groupsManager.current.fetchData()}'
   end
 
   def self.show_status(status)

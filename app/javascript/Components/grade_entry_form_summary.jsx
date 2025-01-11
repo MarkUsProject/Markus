@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {GradeEntryFormChart} from "./grade_entry_form_chart";
 import {MarksSpreadsheet} from "./marks_spreadsheet";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
@@ -42,5 +42,6 @@ class GradeEntryFormSummary extends React.Component {
 }
 
 export function makeGradeEntryFormSummary(elem, props) {
-  return render(<GradeEntryFormSummary {...props} />, elem);
+  const root = createRoot(elem);
+  return root.render(<GradeEntryFormSummary {...props} />);
 }
