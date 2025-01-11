@@ -1,4 +1,5 @@
-import {shallow} from "enzyme";
+import {render, screen} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import {GraderDistributionModal} from "../Modals/graders_distribution_modal";
 
@@ -10,13 +11,9 @@ const createExampleForm = () => {
 };
 
 describe("GraderDistributionModal", () => {
-  let wrapper, props;
-  const getWrapper = props => {
-    return shallow(<GraderDistributionModal {...props} />);
-  };
-  const fakeEvent = {preventDefault: jest.fn()};
-  let mockRef;
+  let props;
   const form1 = createExampleForm();
+
   beforeEach(() => {
     props = {
       graders: [
@@ -31,24 +28,32 @@ describe("GraderDistributionModal", () => {
   });
 
   it("should display as many rows as there are graders", () => {
-    wrapper = getWrapper(props);
-
-    expect(wrapper.find(".modal-inline-label").length).toBe(2);
+    render(<GraderDistributionModal {...props} />);
+    for (let grader of props.graders) {
+      expect(screen.getByRole("spinbutton", {name: grader.user_name, hidden: true})).toBeTruthy();
+    }
   });
 
-  it("should close on submit", () => {
-    wrapper = getWrapper(props);
-
-    wrapper.find("form").simulate("submit", fakeEvent);
+  it("should close on submit", async () => {
+    render(<GraderDistributionModal {...props} />);
+    let submit = screen.getByRole("button", {
+      name: I18n.t("graders.actions.randomly_assign_graders"),
+      hidden: true,
+    });
+    await userEvent.click(submit);
 
     expect(props.onSubmit).toHaveBeenCalled();
     expect(props.isOpen).toBeFalsy();
   });
 
-  it("should call setWeighting with value of 1 on build", () => {
-    wrapper = getWrapper(props);
+  it("should call setWeighting with value of 1 on build", async () => {
+    render(<GraderDistributionModal {...props} />);
+    let submit = screen.getByRole("button", {
+      name: I18n.t("graders.actions.randomly_assign_graders"),
+      hidden: true,
+    });
+    await userEvent.click(submit);
 
-    wrapper.find("form").simulate("submit", fakeEvent);
     expect(props.onSubmit).toHaveBeenCalledWith({
       1: "1",
       2: "1",

@@ -199,7 +199,7 @@ export class SubmissionSelector extends React.Component {
     }
 
     return (
-      <div className="submission-selector-container">
+      <div className="submission-selector-container" data-testid="submission-selector-container">
         <div className="submission-selector">
           <button
             className="button previous"
@@ -226,6 +226,7 @@ export class SubmissionSelector extends React.Component {
               low={meterLow}
               high={meterHigh}
               optimum={this.props.num_collected}
+              data-testid="progress-bar"
             >
               {this.props.num_marked}/{this.props.num_collected}
             </meter>

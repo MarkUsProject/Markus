@@ -4,46 +4,35 @@
 
 import {StudentTable} from "../student_table";
 import {render, screen, within} from "@testing-library/react";
-
-import {mount} from "enzyme";
+import userEvent from "@testing-library/user-event";
 
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
-    let wrapper, form;
-    beforeAll(() => {
-      wrapper = mount(<StudentTable selection={["c5anthei"]} course_id={1} />);
-      form = wrapper.find("form").first();
+    beforeAll(async () => {
+      render(<StudentTable selection={["c5anthei"]} course_id={1} />);
     });
 
-    it("sets loading to false", () => {
-      form.simulate("submit", () => {
-        expect(wrapper.instance().wrapped.state.loading).toEqual(false);
-      });
-    });
+    it("sets selection and selectAll to empty list", async () => {
+      const submit = screen.getByRole("button", {name: I18n.t("apply")});
+      await userEvent.click(submit);
 
-    it("sets selection to empty list", () => {
-      form.simulate("submit", () => {
-        expect(wrapper.instance().wrapped.state.selection).toEqual([]);
-      });
-    });
-
-    it("sets selectAll to false", () => {
-      form.simulate("submit", () => {
-        expect(wrapper.instance().wrapped.state.selectAll).toEqual(false);
-      });
+      const selected = screen.queryAllByRole("checkbox", {checked: true, hidden: true});
+      expect(selected).toEqual([]);
     });
   });
 
   describe("each filterable column has a custom filter method", () => {
-    let wrapper, filter_method;
-    beforeAll(() => {
-      wrapper = mount(<StudentTable selection={["c5anthei"]} course_id={1} />);
+    let wrapper = React.createRef();
+    let filter_method;
+
+    beforeEach(() => {
+      render(<StudentTable selection={["c5anthei"]} course_id={1} ref={wrapper} />);
     });
 
     describe("the filter method for the section column", () => {
-      beforeAll(() => {
+      beforeEach(() => {
         filter_method =
-          wrapper.instance().wrapped.checkboxTable.wrappedInstance.props.columns[6].filterMethod;
+          wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[6].filterMethod;
       });
 
       it("returns true when the selected value is all", () => {
@@ -52,7 +41,8 @@ describe("For the StudentTable component's states and props", () => {
 
       it("returns true when the row's section index equals to the selected value", () => {
         // Sets data.sections
-        wrapper.instance().wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
+        debugger;
+        wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
         // Sample row
         const sample_row = {section: 1};
         expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(true);
@@ -60,7 +50,7 @@ describe("For the StudentTable component's states and props", () => {
 
       it("returns false when the row's section index doesn't equal to the selected value", () => {
         // Sets data.sections
-        wrapper.instance().wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
+        wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
         // Sample row
         const sample_row = {section: 2};
         expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(false);
@@ -68,9 +58,9 @@ describe("For the StudentTable component's states and props", () => {
     });
 
     describe("the filter method for the grace credits column", () => {
-      beforeAll(() => {
+      beforeEach(() => {
         filter_method =
-          wrapper.instance().wrapped.checkboxTable.wrappedInstance.props.columns[7].filterMethod;
+          wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[7].filterMethod;
       });
 
       it("returns true when the input equals to the row's remaining grace credits", () => {
@@ -102,9 +92,9 @@ describe("For the StudentTable component's states and props", () => {
     });
 
     describe("the filter method for the active column", () => {
-      beforeAll(() => {
+      beforeEach(() => {
         filter_method =
-          wrapper.instance().wrapped.checkboxTable.wrappedInstance.props.columns[8].filterMethod;
+          wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[8].filterMethod;
       });
 
       it("returns true when the selected value is all", () => {
@@ -184,27 +174,28 @@ global.fetch = jest.fn(() =>
 );
 
 describe("For the StudentTable's display of students", () => {
-  let wrapper, students_sample;
+  let students_sample, sections_sample;
 
   describe("when some students are fetched", () => {
-    const student_in_one_row = (wrapper, student) => {
-      // Find the row
-      const row = wrapper.find({children: student.first_name}).parent();
-      // Expect the row to contain these information
-      expect(row.children({children: student.last_name})).toBeTruthy();
-      expect(row.children({children: student.email})).toBeTruthy();
-      expect(row.children({children: student.id_number})).toBeTruthy();
-      expect(
-        row.children({
-          children: student.section
-            ? wrapper.instance().wrapped.state.data.sections[student.section]
-            : "",
-        })
-      ).toBeTruthy();
-      expect(
-        row.children({children: `${student.remaining_grace_credits} / ${student.grace_credits}`})
-      ).toBeTruthy();
-      expect(row.children({children: !student.hidden ? "Active" : "Inactive"})).toBeTruthy();
+    const student_in_one_row = student => {
+      const rows = screen.getAllByRole("row");
+      for (let row of rows) {
+        const cells = Array.from(row.childNodes).map(c => c.textContent);
+        if (cells[1] === student.user_name) {
+          expect(cells[2]).toEqual(student.first_name);
+          expect(cells[3]).toEqual(student.last_name);
+          if (student.email) {
+            expect(cells[4]).toEqual(student.email);
+          }
+          expect(cells[5]).toEqual(student.id_number);
+          expect(cells[6]).toEqual(sections_sample[student.section] || "");
+          expect(cells[7]).toEqual(`${student.remaining_grace_credits} / ${student.grace_credits}`);
+          expect(cells[8]).toEqual(!student.hidden ? "Active" : "Inactive");
+          return;
+        }
+      }
+      // If the loop ends without finding the student, raise an error
+      throw `Could not find row for ${student.user_name}`;
     };
 
     beforeAll(() => {
@@ -234,21 +225,22 @@ describe("For the StudentTable's display of students", () => {
           remaining_grace_credits: 4,
         },
       ];
+      sections_sample = {1: "LEC0101"};
       // Mocking the response returned by fetch, used in StudentTable fetchData
       fetch.mockReset();
       fetch.mockResolvedValueOnce({
         ok: true,
         json: jest.fn().mockResolvedValueOnce({
           students: students_sample,
-          sections: {1: "LEC0101"},
+          sections: sections_sample,
           counts: {all: 2, active: 2, inactive: 0},
         }),
       });
-      wrapper = mount(<StudentTable selection={[]} course_id={1} />);
+      render(<StudentTable selection={[]} course_id={1} />);
     });
 
     it("each student is displayed as a row of the table", () => {
-      students_sample.forEach(student => student_in_one_row(wrapper, student));
+      students_sample.forEach(student => student_in_one_row(student));
     });
   });
 
@@ -266,11 +258,11 @@ describe("For the StudentTable's display of students", () => {
           counts: {all: 0, active: 0, inactive: 0},
         }),
       });
-      wrapper = mount(<StudentTable selection={[]} course_id={1} />);
+      render(<StudentTable selection={[]} course_id={1} />);
     });
 
     it("No rows found is shown", () => {
-      expect(wrapper.find({children: "No rows found"})).toBeTruthy();
+      expect(screen.queryByText("No rows found")).toBeTruthy();
     });
   });
 });
