@@ -1,9 +1,8 @@
 import FileManager from "../markus_file_manager";
 
-import {mount} from "enzyme";
+import {render, screen} from "@testing-library/react";
 
 describe("For the submissions managed by the FileManager component", () => {
-  let wrapper;
   const files_sample = [
     {
       id: 136680,
@@ -36,7 +35,7 @@ describe("For the submissions managed by the FileManager component", () => {
   ];
 
   beforeEach(() => {
-    wrapper = mount(<FileManager files={files_sample} />);
+    render(<FileManager files={files_sample} />);
   });
 
   // We shouldn't test whether clicking on an <a> element with download enabled will trigger the download, as that is
@@ -47,7 +46,11 @@ describe("For the submissions managed by the FileManager component", () => {
       "and download being the filename",
     () => {
       files_sample.forEach(file => {
-        expect(wrapper.exists("a", {href: file.url, download: file.raw_name})).toEqual(true);
+        const link = screen.getByRole("link", {
+          name: I18n.t("download_the", {item: file.raw_name}),
+        });
+        expect(link).toHaveAttribute("href", file.url);
+        expect(link).toHaveAttribute("download", file.raw_name);
       });
     }
   );

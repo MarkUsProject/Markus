@@ -89,7 +89,7 @@ class SubmissionFileUploadModal extends React.Component {
       );
     } else if (this.props.requiredFiles.length >= 1) {
       fileRenameInput = [
-        <datalist id="fileInput_datalist">
+        <datalist id="fileInput_datalist" key={`datalist-${filesToShow}`}>
           {filesToShow.map(filename => {
             return <option key={filename} value={filename}></option>;
           })}
@@ -103,6 +103,7 @@ class SubmissionFileUploadModal extends React.Component {
           disabled={this.state.newFiles.length !== 1}
           title={I18n.t("submissions.student.one_file_allowed")}
           id={"rename-box"}
+          key={"datalist-textbox"}
         />,
       ];
     } else {
@@ -155,6 +156,7 @@ class SubmissionFileUploadModal extends React.Component {
                 name={"new_files"}
                 multiple={true}
                 onChange={this.handleFileUpload}
+                title={I18n.t("modals.file_upload.file_input_label")}
               />
             </div>
             <label htmlFor={"rename-box"}>
