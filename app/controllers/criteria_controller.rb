@@ -76,11 +76,7 @@ class CriteriaController < ApplicationController
     end
     if @criterion.is_a? RubricCriterion
       # update everything except levels and assignments
-      properly_updated = @criterion.update(rubric_criterion_params.except(:levels_attributes, :assignment_files))
-      # update levels
-      if rubric_criterion_params[:levels_attributes]
-        properly_updated &&= @criterion.update_levels(rubric_criterion_params[:levels_attributes])
-      end
+      properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
         assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].reject(&:empty?))
       end
