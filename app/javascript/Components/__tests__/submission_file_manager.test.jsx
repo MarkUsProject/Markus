@@ -1,9 +1,9 @@
 import {SubmissionFileManager} from "../submission_file_manager";
 
-import {mount} from "enzyme";
+import {getAllByRole, render, screen} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 describe("For the SubmissionFileManager", () => {
-  let wrapper, rows;
   const files_sample = {
     entries: [
       {
@@ -45,48 +45,42 @@ describe("For the SubmissionFileManager", () => {
     // We need to mock "twice" (i.e. two promises) because of how fetch works.
     fetch.resetMocks();
     fetch.mockResponseOnce(JSON.stringify(files_sample));
-    wrapper = mount(<SubmissionFileManager course_id={1} assignment_id={1} />);
 
     // Mock the document to have a section called content so that renderFileViewer can be called.
     // We can do this because we have Jest running in jsdom environment as configured by our jest.config.js.
     // https://jestjs.io/docs/tutorial-jquery the shown code example is JQuery but equally applicable here.
     document.body.innerHTML = `<div id="content"></div>`;
+
+    // Render the component
+    render(<SubmissionFileManager course_id={1} assignment_id={1} />);
   });
 
   describe("For the submissions managed by its FileManager child component", () => {
-    it("clicking on the row of each file opens up the preview for that file", () => {
-      wrapper.update();
-      rows = wrapper.find(".file");
+    it("clicking on the row of each file opens up the preview for that file", async () => {
+      const rows = getAllByRole(screen.getAllByRole("rowgroup")[1], "row"); // The second rowgroup corresponds to the tbody
       expect(rows.length).toEqual(files_sample.entries.length);
 
-      rows.forEach(row => {
-        row.simulate("click");
-        wrapper.update();
+      expect(screen.queryByTestId("file-preview-root")).toBeNull(); // Initially no preview is shown
 
-        // Locate the preview block
-        const file_viewer_comp = wrapper.find("FileViewer");
-        expect(file_viewer_comp).toBeTruthy();
-      });
+      for (let row of rows) {
+        await userEvent.click(row);
+
+        const filePreview = await screen.findByTestId("file-preview-root");
+        expect(filePreview).toBeTruthy();
+      }
     });
 
-    it("the preview opened is called with the correct props", () => {
-      wrapper.update();
-      rows = wrapper.find(".file");
+    it("the preview opened is with the correct contents", async () => {
+      const rows = getAllByRole(screen.getAllByRole("rowgroup")[1], "row"); // The second rowgroup corresponds to the tbody
       expect(rows.length).toEqual(files_sample.entries.length);
 
-      rows.forEach(row => {
-        row.simulate("click");
-        wrapper.update();
+      for (let i = 0; i < rows.length; i++) {
+        fetch.mockResponseOnce(`Body ${i}`);
+        await userEvent.click(rows[i]);
 
-        // Locate the preview block
-        const file_viewer_comp = wrapper.find("FileViewer");
-        const file_displayed = files_sample.entries.find(
-          file => file.url === file_viewer_comp.props().selectedFileURL
-        );
-
-        expect(file_viewer_comp.props().selectedFile).toEqual(file_displayed.relativeKey);
-        expect(file_viewer_comp.props().selectedFileType).toEqual(file_displayed.type);
-      });
+        const filePreview = await screen.findByTestId("file-preview-root");
+        expect(filePreview.textContent).toContain(`Body ${i}`);
+      }
     });
   });
 
@@ -124,7 +118,7 @@ describe("For the SubmissionFileManager", () => {
       });
     });
 
-    it("when 10% of file uploaded, bar is visible and has value of 10.0", () => {
+    it("when 10% of file uploaded, bar is visible and has value of 10.0", async () => {
       // override our mock XMLHttpRequest's send method to send an onprogress
       // event with 10% completion
       mockXHR.send = jest.fn().mockImplementation(() => {
@@ -135,14 +129,18 @@ describe("For the SubmissionFileManager", () => {
         });
       });
 
-      // call handleCreateFiles with mock file
-      wrapper.instance().handleCreateFiles([file], "", false);
+      const submitLink = screen.getByText(I18n.t("submit_the", {item: I18n.t("file")}));
+      await userEvent.click(submitLink);
+      await userEvent.upload(screen.getByTitle(I18n.t("modals.file_upload.file_input_label")), [
+        file,
+      ]);
+      await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
 
-      expect(wrapper.state().uploadModalProgressVisible).toBeTruthy();
-      expect(wrapper.state().uploadModalProgressPercentage).toEqual(10.0);
+      const progressBar = await screen.findByRole("progressbar", {hidden: true});
+      expect(progressBar.value).toEqual(10.0);
     });
 
-    it("when 50% of file uploaded, bar is visible and has value of 50.0", () => {
+    it("when 50% of file uploaded, bar is visible and has value of 50.0", async () => {
       // override our mock XMLHttpRequest's send method to send an onprogress
       // event with 50% completion
       mockXHR.send = jest.fn().mockImplementation(() => {
@@ -153,14 +151,18 @@ describe("For the SubmissionFileManager", () => {
         });
       });
 
-      // call handleCreateFiles with mock file
-      wrapper.instance().handleCreateFiles([file], "", false);
+      const submitLink = screen.getByText(I18n.t("submit_the", {item: I18n.t("file")}));
+      await userEvent.click(submitLink);
+      await userEvent.upload(screen.getByTitle(I18n.t("modals.file_upload.file_input_label")), [
+        file,
+      ]);
+      await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
 
-      expect(wrapper.state().uploadModalProgressVisible).toBeTruthy();
-      expect(wrapper.state().uploadModalProgressPercentage).toEqual(50.0);
+      const progressBar = await screen.findByRole("progressbar", {hidden: true});
+      expect(progressBar.value).toEqual(50.0);
     });
 
-    it("when 100% of file uploaded, bar is visible and has value of 100.0", () => {
+    it("when 100% of file uploaded, bar is visible and has value of 100.0", async () => {
       // override our mock XMLHttpRequest's send method to send an onprogress
       // event with 100% completion
       mockXHR.send = jest.fn().mockImplementation(() => {
@@ -171,14 +173,18 @@ describe("For the SubmissionFileManager", () => {
         });
       });
 
-      // call handleCreateFiles with mock file
-      wrapper.instance().handleCreateFiles([file], "", false);
+      const submitLink = screen.getByText(I18n.t("submit_the", {item: I18n.t("file")}));
+      await userEvent.click(submitLink);
+      await userEvent.upload(screen.getByTitle(I18n.t("modals.file_upload.file_input_label")), [
+        file,
+      ]);
+      await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
 
-      expect(wrapper.state().uploadModalProgressVisible).toBeTruthy();
-      expect(wrapper.state().uploadModalProgressPercentage).toEqual(100.0);
+      const progressBar = await screen.findByRole("progressbar", {hidden: true});
+      expect(progressBar.value).toEqual(100.0);
     });
 
-    it("after a file is uploaded, bar is no longer visible and its value is reset to 0.0", () => {
+    it("after a file is uploaded, bar is no longer visible and its value is reset to 0.0", async () => {
       // override existing mock implementation to allow always() to run
       $.post = jest.fn().mockReturnValue({
         then: jest.fn().mockReturnThis(),
@@ -190,11 +196,14 @@ describe("For the SubmissionFileManager", () => {
         }),
       });
 
-      // call handleCreateFiles with mock file
-      wrapper.instance().handleCreateFiles([file], "", false);
+      const submitLink = screen.getByText(I18n.t("submit_the", {item: I18n.t("file")}));
+      await userEvent.click(submitLink);
+      await userEvent.upload(screen.getByTitle(I18n.t("modals.file_upload.file_input_label")), [
+        file,
+      ]);
+      await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
 
-      expect(wrapper.state().uploadModalProgressVisible).toBeFalsy();
-      expect(wrapper.state().uploadModalProgressPercentage).toEqual(0.0);
+      expect(screen.findByRole("progressbar", {hidden: true})).rejects.toThrow();
     });
   });
 });

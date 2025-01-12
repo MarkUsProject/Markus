@@ -3,7 +3,7 @@
  */
 
 import {AssignmentSummaryTable} from "../assignment_summary_table";
-import {render, screen, fireEvent, cleanup, waitFor} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 
 describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   let groups_sample;
