@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 
 - Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+- Optimized the querying of submissions when assigning graders (#7381)
 
 ### 🔧 Internal changes
 
