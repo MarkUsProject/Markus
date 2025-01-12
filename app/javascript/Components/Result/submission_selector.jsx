@@ -178,19 +178,6 @@ export class SubmissionSelector extends React.Component {
       return "";
     }
 
-    const url = Routes.next_grouping_course_result_path(this.props.course_id, this.props.result_id);
-
-    const progressBarWidth =
-      this.props.num_collected > 0 ? this.props.num_marked / this.props.num_collected : 1;
-    let progressBarColour;
-    if (progressBarWidth > 0.75) {
-      progressBarColour = "green";
-    } else if (progressBarWidth > 0.35) {
-      progressBarColour = "#FBC02D";
-    } else {
-      progressBarColour = "#FE2A2A";
-    }
-
     let meterLow = 0;
     let meterHigh = 1;
     if (this.props.num_collected !== null && this.props.num_collected !== undefined) {

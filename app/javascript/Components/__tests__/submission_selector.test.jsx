@@ -1,4 +1,5 @@
-import {fireEvent, render, screen} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import {SubmissionSelector} from "../Result/submission_selector";
 
@@ -27,6 +28,7 @@ const basicProps = {
   available_tags: [],
   can_release: false,
   course_id: 1,
+  criterionSummaryData: [],
   current_tags: [],
   filterData: INITIAL_FILTER_MODAL_STATE,
   fullscreen: false,
@@ -63,18 +65,18 @@ describe("SubmissionSelector", () => {
     expect(screen.queryByTestId("submission-selector-container")).toBeNull();
   });
 
-  it("should call nextSubmission when the next-button is pressed", () => {
+  it("should call nextSubmission when the next-button is pressed", async () => {
     render(<SubmissionSelector {...props} />);
     const button = screen.getByTitle(I18n.t("results.next_submission"), {exact: false});
-    fireEvent.click(button);
+    await userEvent.click(button);
 
     expect(props.nextSubmission).toHaveBeenCalled();
   });
 
-  it("should call previousSubmission when the next-button is pressed", () => {
+  it("should call previousSubmission when the next-button is pressed", async () => {
     render(<SubmissionSelector {...props} />);
     const button = screen.getByTitle(I18n.t("results.previous_submission"), {exact: false});
-    fireEvent.click(button);
+    await userEvent.click(button);
 
     expect(props.previousSubmission).toHaveBeenCalled();
   });
@@ -84,14 +86,13 @@ describe("SubmissionSelector", () => {
     expect(screen.getByText(props.group_name)).toBeTruthy();
   });
 
-  it.skip("should show filter modal when filter-button is pressed", () => {
+  it("should show filter modal when filter-button is pressed", async () => {
     render(<SubmissionSelector {...props} />);
     const button = screen.getByTitle(I18n.t("results.filter_submissions"));
-    fireEvent.click(button);
+    await userEvent.click(button);
 
-    expect(
-      screen.queryByRole("heading", {name: I18n.t("results.filter_submissions")})
-    ).toBeTruthy();
+    const modal = await screen.findByRole("dialog", {hidden: true});
+    expect(modal.classList.contains("filter-modal")).toBeTruthy();
   });
 
   it("should pass correct values to the progress meter", () => {
@@ -118,19 +119,19 @@ describe("SubmissionSelector", () => {
     expect(screen.getByText(expected_display)).toBeTruthy();
   });
 
-  it("can toggle into fullscreen", () => {
+  it("can toggle into fullscreen", async () => {
     render(<SubmissionSelector {...props} />);
     const button = screen.getByTitle(I18n.t("results.fullscreen_enter"), {exact: false});
-    fireEvent.click(button);
+    await userEvent.click(button);
 
     expect(props.toggleFullscreen).toHaveBeenCalled();
   });
 
-  it("can toggle out of fullscreen", () => {
+  it("can toggle out of fullscreen", async () => {
     props.fullscreen = true;
     render(<SubmissionSelector {...props} />);
     const button = screen.getByTitle(I18n.t("results.fullscreen_exit"), {exact: false});
-    fireEvent.click(button);
+    await userEvent.click(button);
 
     expect(props.toggleFullscreen).toHaveBeenCalled();
   });
@@ -166,13 +167,13 @@ describe("SubmissionSelector", () => {
     expect(element).toBeEnabled();
   });
 
-  it("should call props.setReleasedToStudents when release button is clicked", () => {
+  it("should call props.setReleasedToStudents when release button is clicked", async () => {
     props.marking_state = "complete";
     props.released_to_students = false;
     props.can_release = true;
     render(<SubmissionSelector {...props} />);
     const element = screen.getByRole("button", {name: I18n.t("submissions.release_marks")});
-    fireEvent.click(element);
+    await userEvent.click(element);
 
     expect(props.setReleasedToStudents).toHaveBeenCalled();
   });

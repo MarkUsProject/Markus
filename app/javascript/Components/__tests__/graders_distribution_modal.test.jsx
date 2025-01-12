@@ -13,7 +13,6 @@ const createExampleForm = () => {
 describe("GraderDistributionModal", () => {
   let props;
   const form1 = createExampleForm();
-
   beforeEach(() => {
     props = {
       graders: [

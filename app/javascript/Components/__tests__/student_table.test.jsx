@@ -41,7 +41,6 @@ describe("For the StudentTable component's states and props", () => {
 
       it("returns true when the row's section index equals to the selected value", () => {
         // Sets data.sections
-        debugger;
         wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
         // Sample row
         const sample_row = {section: 1};
@@ -190,7 +189,9 @@ describe("For the StudentTable's display of students", () => {
           expect(cells[5]).toEqual(student.id_number);
           expect(cells[6]).toEqual(sections_sample[student.section] || "");
           expect(cells[7]).toEqual(`${student.remaining_grace_credits} / ${student.grace_credits}`);
-          expect(cells[8]).toEqual(!student.hidden ? "Active" : "Inactive");
+          expect(cells[8]).toEqual(
+            !student.hidden ? I18n.t("roles.active") : I18n.t("roles.inactive")
+          );
           return;
         }
       }

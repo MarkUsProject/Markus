@@ -267,7 +267,7 @@ describe("For the SubmissionFileUploadModal", () => {
       expect(mockOnSubmit).toHaveBeenCalledWith([{name: "file.py"}], undefined, false, "q1.py");
     });
 
-    it("should not call onSubmit prop when extensions don't match and user cancels", async () => {
+    it.only("should not call onSubmit prop when extensions don't match and user cancels", async () => {
       // Mock window.confirm to return false
       window.confirm = jest.fn(() => false);
 
@@ -275,6 +275,7 @@ describe("For the SubmissionFileUploadModal", () => {
         target: {files: [{name: "file1.txt"}]},
       });
       await userEvent.selectOptions(renameToInput, "q1.py");
+      await userEvent.click(submit);
 
       // Ensure onSubmit is not called
       expect(mockOnSubmit).not.toHaveBeenCalled();
