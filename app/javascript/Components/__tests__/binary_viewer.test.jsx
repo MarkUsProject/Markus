@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, cleanup, waitFor, fireEvent} from "@testing-library/react";
+import {render, screen, waitFor, fireEvent} from "@testing-library/react";
 import {BinaryViewer} from "../Result/binary_viewer";
 import fetchMock from "jest-fetch-mock";
 
@@ -19,7 +19,6 @@ describe("BinaryViewer", () => {
   afterEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
-    cleanup();
   });
 
   it("should fetch content when a URL is passed but not show it until requested by the user", async () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, cleanup, waitFor} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import {TextViewer} from "../Result/text_viewer";
 import fetchMock from "jest-fetch-mock";
 import {BinaryViewer} from "../Result/binary_viewer";
@@ -19,7 +19,6 @@ describe("TextViewer", () => {
   afterEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
-    cleanup();
   });
 
   it("should render its text content when the content ends with a new line", () => {

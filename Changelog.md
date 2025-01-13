@@ -20,6 +20,7 @@
 - Fix broken link to the Vagrant installation guide in `README.md` (#7349)
 - Fix `extra_hosts` configuration in `compose.yaml` (#7375)
 - Add unit tests for `marks_graders_controller` (#7382)
+- Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
 
 ## [v2.6.1]
 
