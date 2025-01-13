@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 
 - Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+- Refactor contributors list in About section to read from markus-contributors.txt (#7374)
 
 ### 🔧 Internal changes
 
