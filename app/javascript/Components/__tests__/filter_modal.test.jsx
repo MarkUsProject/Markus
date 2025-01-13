@@ -2,6 +2,7 @@ import * as React from "react";
 import {render, screen, fireEvent, within} from "@testing-library/react";
 import {FilterModal} from "../Modals/filter_modal";
 import Modal from "react-modal";
+import {ResultContext} from "../Result/result_context";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
@@ -52,7 +53,6 @@ describe("FilterModal", () => {
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
         updateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
-        role: role,
         criterionSummaryData: [
           {criterion: "a"},
           {criterion: "b"},
@@ -64,7 +64,22 @@ describe("FilterModal", () => {
 
       // Set the app element for React Modal
       Modal.setAppElement("body");
-      component = render(<FilterModal {...props} />);
+
+      const contextValue = {
+        result_id: 1,
+        submission_id: 1,
+        assignment_id: 1,
+        grouping_id: 1,
+        course_id: 1,
+        role: role,
+        is_reviewer: true,
+      };
+
+      component = render(
+        <ResultContext.Provider value={contextValue}>
+          <FilterModal {...props} />
+        </ResultContext.Provider>
+      );
     });
 
     it("should close on submit", () => {

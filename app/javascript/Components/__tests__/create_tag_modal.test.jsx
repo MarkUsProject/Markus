@@ -3,6 +3,7 @@ import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import CreateTagModal from "../Modals/create_tag_modal";
 import Modal from "react-modal";
 import fetchMock from "jest-fetch-mock";
+import {ResultContext} from "../Result/result_context";
 
 describe("CreateTagModal", () => {
   let props;
@@ -21,14 +22,26 @@ describe("CreateTagModal", () => {
     props = {
       isOpen: true,
       onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
-      grouping_id: 1,
-      course_id: 1,
-      assignment_id: 1,
     };
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-    component = render(<CreateTagModal {...props} />);
+
+    const contextValue = {
+      result_id: 1,
+      submission_id: 1,
+      assignment_id: 1,
+      grouping_id: 1,
+      course_id: 1,
+      role: "Student",
+      is_reviewer: true,
+    };
+
+    component = render(
+      <ResultContext.Provider value={contextValue}>
+        <CreateTagModal {...props} />
+      </ResultContext.Provider>
+    );
 
     // Enable submit
     tagName = "Name";
