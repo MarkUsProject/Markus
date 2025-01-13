@@ -167,7 +167,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select a student</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('groups.select_a_student')}</p>"])
       end
     end
 
@@ -181,7 +181,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select at least one grader to assign.</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
     end
 
@@ -194,7 +194,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select a student</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('groups.select_a_student')}</p>"])
       end
     end
 
@@ -207,7 +207,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select at least one grader to assign.</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
     end
   end
@@ -250,7 +250,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select a student</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('groups.select_a_student')}</p>"])
       end
     end
 
@@ -264,7 +264,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select at least one grader to assign.</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
     end
 
@@ -277,7 +277,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select a student</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('groups.select_a_student')}</p>"])
       end
     end
 
@@ -290,7 +290,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select at least one grader to assign.</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
     end
   end
@@ -333,7 +333,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select a student</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('groups.select_a_student')}</p>"])
       end
     end
 
@@ -347,7 +347,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select at least one grader to assign.</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
     end
 
@@ -360,7 +360,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select a student</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('groups.select_a_student')}</p>"])
       end
     end
 
@@ -373,7 +373,7 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to eq(['<p>Select at least one grader to assign.</p>'])
+        expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
     end
   end
