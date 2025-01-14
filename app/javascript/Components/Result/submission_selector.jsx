@@ -180,17 +180,6 @@ export class SubmissionSelector extends React.Component {
       return "";
     }
 
-    const progressBarWidth =
-      this.props.num_collected > 0 ? this.props.num_marked / this.props.num_collected : 1;
-    let progressBarColour;
-    if (progressBarWidth > 0.75) {
-      progressBarColour = "green";
-    } else if (progressBarWidth > 0.35) {
-      progressBarColour = "#FBC02D";
-    } else {
-      progressBarColour = "#FE2A2A";
-    }
-
     let meterLow = 0;
     let meterHigh = 1;
     if (this.props.num_collected !== null && this.props.num_collected !== undefined) {
@@ -199,7 +188,7 @@ export class SubmissionSelector extends React.Component {
     }
 
     return (
-      <div className="submission-selector-container">
+      <div className="submission-selector-container" data-testid="submission-selector-container">
         <div className="submission-selector">
           <button
             className="button previous"
@@ -220,13 +209,13 @@ export class SubmissionSelector extends React.Component {
           {this.renderFilterButton()}
           <div className="progress">
             <meter
-              data-testid="progress-bar"
               value={this.props.num_marked}
               min={0}
               max={this.props.num_collected}
               low={meterLow}
               high={meterHigh}
               optimum={this.props.num_collected}
+              data-testid="progress-bar"
             >
               {this.props.num_marked}/{this.props.num_collected}
             </meter>
