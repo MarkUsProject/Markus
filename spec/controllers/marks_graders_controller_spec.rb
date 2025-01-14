@@ -270,7 +270,7 @@ describe MarksGradersController do
 
     context 'when students parameter is missing' do
       it 'returns bad request and sets flash error' do
-        post_as instructor, :unassign_single, params: {
+        post_as instructor, :unassign_all, params: {
           course_id: course.id,
           grade_entry_form_id: grade_entry_form.id,
           graders: [1]
@@ -283,7 +283,7 @@ describe MarksGradersController do
 
     context 'when graders parameter is missing' do
       it 'returns bad request and sets flash error' do
-        post_as instructor, :unassign_single, params: {
+        post_as instructor, :unassign_all, params: {
           course_id: course.id,
           grade_entry_form_id: grade_entry_form.id,
           students: [1]
@@ -371,7 +371,6 @@ describe MarksGradersController do
           grade_entry_form_id: grade_entry_form.id,
           student_id: 1
         }
-
         expect(response).to have_http_status(:bad_request)
         expect(flash[:error]).to eq(["<p>#{I18n.t('graders.select_a_grader')}</p>"])
       end
