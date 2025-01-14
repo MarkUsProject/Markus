@@ -31,6 +31,7 @@ export class GraderDistributionModal extends React.Component {
         </label>
         <input
           className={`input-${grader.user_name}`}
+          id={`input-${grader.user_name}`}
           type="number"
           step="0.01"
           min="0"
