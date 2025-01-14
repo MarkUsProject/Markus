@@ -31,8 +31,14 @@ class AutotestManager extends React.Component {
                 "ui:widget": "textarea",
               },
               pip_requirements_file: {
-                "ui:placeholder": I18n.t("automated_tests.requirements_file"),
-                "ui:classNames": "pip_requirements_file",
+                "ui:title": (
+                  <div
+                    className="pip_requirements_file_title"
+                    title={I18n.t("automated_tests.requirements_file_tooltip")}
+                  >
+                    {I18n.t("automated_tests.requirements_file")}
+                  </div>
+                ),
               },
             },
             test_data: {
