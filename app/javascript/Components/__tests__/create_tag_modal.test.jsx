@@ -11,6 +11,16 @@ describe("CreateTagModal", () => {
   let mockToken;
   let tagName;
 
+  const contextValue = {
+    result_id: 1,
+    submission_id: 1,
+    assignment_id: 1,
+    grouping_id: 1,
+    course_id: 1,
+    role: "Student",
+    is_reviewer: true,
+  };
+
   beforeAll(() => {
     mockToken = "mockToken";
     document.querySelector = jest.fn(() => ({
@@ -26,16 +36,6 @@ describe("CreateTagModal", () => {
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-
-    const contextValue = {
-      result_id: 1,
-      submission_id: 1,
-      assignment_id: 1,
-      grouping_id: 1,
-      course_id: 1,
-      role: "Student",
-      is_reviewer: true,
-    };
 
     component = render(
       <ResultContext.Provider value={contextValue}>
@@ -59,7 +59,7 @@ describe("CreateTagModal", () => {
         name: tagName,
         description: "",
       },
-      grouping_id: props.grouping_id,
+      grouping_id: contextValue.grouping_id,
     };
     const options = {
       method: "POST",
@@ -71,7 +71,7 @@ describe("CreateTagModal", () => {
     };
     fetchMock.mockOnce(async req => {
       expect(req.url).toEqual(
-        Routes.course_tags_path(props.course_id, {assignment_id: props.assignment_id})
+        Routes.course_tags_path(contextValue.course_id, {assignment_id: contextValue.assignment_id})
       );
       expect(req.method).toBe(options.method);
       expect(req.headers.get("Content-Type")).toEqual(options.headers["Content-Type"]);
