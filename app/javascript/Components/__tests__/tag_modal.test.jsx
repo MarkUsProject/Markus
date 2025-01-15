@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, waitFor, cleanup} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import TagModal from "../Helpers/tag_modal";
 import Modal from "react-modal";
 
@@ -26,8 +26,6 @@ describe("TagModal", () => {
       rerender(comp);
     };
   });
-
-  afterEach(cleanup);
 
   it("should close on Cancel", () => {
     fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: "Name"}});
@@ -65,8 +63,6 @@ describe("TagModal", () => {
       props.name = "name";
       rerenderComp(<TagModal {...props} />);
     });
-
-    afterEach(cleanup);
 
     it("should be submittable", async () => {
       await waitFor(() => {

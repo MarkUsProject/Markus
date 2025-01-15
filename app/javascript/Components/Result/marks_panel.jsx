@@ -275,6 +275,7 @@ export class FlexibleCriterionInput extends React.Component {
                 a.id
               )
             }
+            href="#"
             className={"red-text"}
           >
             {"-" + a.deduction}
