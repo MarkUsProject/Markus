@@ -1,8 +1,10 @@
 import React from "react";
-import {render} from "react-dom";
 import {TextForm} from "./autosave_text_form";
+import {ResultContext} from "./result_context";
 
 export class RemarkPanel extends React.Component {
+  static contextType = ResultContext;
+
   componentDidMount() {
     if (this.props.released_to_students) {
       const comment = this.props.overallComment;
@@ -23,9 +25,9 @@ export class RemarkPanel extends React.Component {
     data[name] = "true";
     return $.ajax({
       url: Routes.update_remark_request_course_assignment_submission_path(
-        this.props.course_id,
-        this.props.assignment_id,
-        this.props.submission_id
+        this.context.course_id,
+        this.context.assignment_id,
+        this.context.submission_id
       ),
       method: "PATCH",
       data: data,

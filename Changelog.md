@@ -5,10 +5,13 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Fix front-end content shift when an input element is focused (#7384)
 
 ### 🐛 Bug fixes
 
 - Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+- Ensures mark levels on a rubric criterion are properly scaled when its max mark is updated (#7311)
+- Refactor contributors list in About section to read from markus-contributors.txt (#7374)
 
 ### 🔧 Internal changes
 
@@ -19,7 +22,9 @@
 - Cache playwright's chromium installation on GitHub Actions (#7372)
 - Fix broken link to the Vagrant installation guide in `README.md` (#7349)
 - Fix `extra_hosts` configuration in `compose.yaml` (#7375)
+- Add unit tests for `marks_graders_controller` (#7382)
 - Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
+- Refactor the `Result` component and its children to use React context API (#7380)
 
 ## [v2.6.1]
 

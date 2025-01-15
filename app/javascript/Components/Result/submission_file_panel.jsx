@@ -205,7 +205,6 @@ export class SubmissionFilePanel extends React.Component {
             fileData={this.props.fileData}
             onSelectFile={this.selectFile}
             selectedFile={this.state.selectedFile}
-            course_id={this.props.course_id}
           />
           {this.props.canDownload && (
             <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
@@ -215,7 +214,6 @@ export class SubmissionFilePanel extends React.Component {
               categories={this.props.annotation_categories}
               newAnnotation={this.props.newAnnotation}
               addExistingAnnotation={this.props.addExistingAnnotation}
-              course_id={this.props.course_id}
             />
           )}
         </div>

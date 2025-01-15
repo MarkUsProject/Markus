@@ -1,8 +1,11 @@
 import React from "react";
 import {FileViewer} from "./file_viewer";
 import mime from "mime/lite";
+import {ResultContext} from "./result_context";
 
 export class FeedbackFilePanel extends React.Component {
+  static contextType = ResultContext;
+
   constructor(props) {
     super(props);
     if (props.loading) {
@@ -65,7 +68,7 @@ export class FeedbackFilePanel extends React.Component {
       </a>
     );
     if (this.state.selectedFile !== null) {
-      url = Routes.course_feedback_file_path(this.props.course_id, this.state.selectedFile);
+      url = Routes.course_feedback_file_path(this.context.course_id, this.state.selectedFile);
       file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
       download_feedback_file = (
         <a className="button" href={url} download>
@@ -86,8 +89,8 @@ export class FeedbackFilePanel extends React.Component {
           key={"feedback-file-view"}
         >
           <FileViewer
-            assignment_id={this.props.assignment_id}
-            submission_id={this.props.submission_id}
+            assignment_id={this.context.assignment_id}
+            submission_id={this.context.submission_id}
             selectedFile={file_obj.filename}
             selectedFileURL={url}
             mime_type={mime.getType(file_obj.filename)}
