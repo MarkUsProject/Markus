@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {FilterModal} from "../Modals/filter_modal";
+import {ResultContext} from "./result_context";
 
 export class SubmissionSelector extends React.Component {
   constructor(props) {
@@ -10,6 +11,8 @@ export class SubmissionSelector extends React.Component {
       showFilterModal: false,
     };
   }
+
+  static contextType = ResultContext;
 
   renderToggleMarkingStateButton = () => {
     let buttonText, className, disabled, icon;
@@ -102,11 +105,11 @@ export class SubmissionSelector extends React.Component {
   }
 
   renderPrintButton() {
-    if (!this.props.is_reviewer) {
+    if (!this.context.is_reviewer) {
       return (
         <a
           className={"button"}
-          href={Routes.print_course_result_path(this.props.course_id, this.props.result_id)}
+          href={Routes.print_course_result_path(this.context.course_id, this.context.result_id)}
           style={{alignSelf: "flex-end"}}
           title={I18n.t("results.print")}
         >
@@ -122,7 +125,7 @@ export class SubmissionSelector extends React.Component {
   };
 
   renderFilterButton() {
-    if (this.props.role !== "Student") {
+    if (this.context.role !== "Student") {
       return (
         <button
           className="button filter"
@@ -136,7 +139,7 @@ export class SubmissionSelector extends React.Component {
   }
 
   renderRandomIncompleteSubmissionButton() {
-    if (this.props.role !== "Student") {
+    if (this.context.role !== "Student") {
       return (
         <button
           className="button random-incomplete-submission"
@@ -151,7 +154,7 @@ export class SubmissionSelector extends React.Component {
   }
 
   renderFilterModal() {
-    if (this.props.role !== "Student") {
+    if (this.context.role !== "Student") {
       return (
         <div>
           <FilterModal
@@ -165,7 +168,6 @@ export class SubmissionSelector extends React.Component {
             available_tags={this.props.available_tags}
             current_tags={this.props.current_tags}
             loading={this.props.loading}
-            role={this.props.role}
             criterionSummaryData={this.props.criterionSummaryData}
           />
         </div>
@@ -174,7 +176,7 @@ export class SubmissionSelector extends React.Component {
   }
 
   render() {
-    if (this.props.role === "Student" && !this.props.is_reviewer) {
+    if (this.context.role === "Student" && !this.context.is_reviewer) {
       return "";
     }
 
@@ -239,10 +241,8 @@ export class SubmissionSelector extends React.Component {
 SubmissionSelector.propTypes = {
   assignment_max_mark: PropTypes.number,
   can_release: PropTypes.bool,
-  course_id: PropTypes.number.isRequired,
   fullscreen: PropTypes.bool,
   group_name: PropTypes.string,
-  is_reviewer: PropTypes.bool,
   marking_state: PropTypes.string,
   marks: PropTypes.arrayOf(PropTypes.object),
   nextSubmission: PropTypes.func,
@@ -250,8 +250,6 @@ SubmissionSelector.propTypes = {
   num_marked: PropTypes.number,
   previousSubmission: PropTypes.func,
   released_to_students: PropTypes.bool,
-  result_id: PropTypes.number.isRequired,
-  role: PropTypes.string,
   setReleasedToStudents: PropTypes.func,
   toggleFullscreen: PropTypes.func,
   toggleMarkingState: PropTypes.func,

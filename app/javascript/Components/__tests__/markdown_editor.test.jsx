@@ -2,6 +2,8 @@ import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import MarkdownEditor from "../markdown_editor";
+import {ResultContext} from "../Result/result_context";
+import {renderInResultContext} from "./result_context_renderer";
 
 const basicProps = {
   content: "",
@@ -20,7 +22,7 @@ describe("MarkdownEditor", () => {
   });
 
   it("should properly handle the text input change", async () => {
-    render(<MarkdownEditor {...props} />);
+    renderInResultContext(<MarkdownEditor {...props} />);
 
     const inputBox = screen.getByRole("textbox");
     await userEvent.type(inputBox, "Hello world");
@@ -31,7 +33,7 @@ describe("MarkdownEditor", () => {
   it("should show autocomplete if desired", async () => {
     props.show_autocomplete = true;
     props.annotation_text_id = "id";
-    render(<MarkdownEditor {...props} />);
+    renderInResultContext(<MarkdownEditor {...props} />);
 
     const autocompleteList = screen.queryByTestId("markdown-editor-autocomplete-root");
     expect(autocompleteList).toBeTruthy();
@@ -39,7 +41,7 @@ describe("MarkdownEditor", () => {
 
   it("should properly display and pass down props to the preview tab", async () => {
     props.content = "arma virumque cano";
-    render(<MarkdownEditor {...props} />);
+    renderInResultContext(<MarkdownEditor {...props} />);
 
     await userEvent.click(screen.getByRole("tab", {name: "Preview"}));
 

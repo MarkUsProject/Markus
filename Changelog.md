@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Fix front-end content shift when an input element is focused (#7384)
 
 - Placeholder text for Package requirements file for Python autotester settings (#7383)
 
@@ -23,7 +24,9 @@
 - Cache playwright's chromium installation on GitHub Actions (#7372)
 - Fix broken link to the Vagrant installation guide in `README.md` (#7349)
 - Fix `extra_hosts` configuration in `compose.yaml` (#7375)
+- Add unit tests for `marks_graders_controller` (#7382)
 - Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
+- Refactor the `Result` component and its children to use React context API (#7380)
 
 ## [v2.6.1]
 

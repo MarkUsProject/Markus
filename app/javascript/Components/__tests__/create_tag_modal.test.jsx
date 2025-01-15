@@ -3,6 +3,8 @@ import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import CreateTagModal from "../Modals/create_tag_modal";
 import Modal from "react-modal";
 import fetchMock from "jest-fetch-mock";
+import {ResultContext} from "../Result/result_context";
+import {DEFAULT_RESULT_CONTEXT_VALUE, renderInResultContext} from "./result_context_renderer";
 
 describe("CreateTagModal", () => {
   let props;
@@ -21,14 +23,12 @@ describe("CreateTagModal", () => {
     props = {
       isOpen: true,
       onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
-      grouping_id: 1,
-      course_id: 1,
-      assignment_id: 1,
     };
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-    component = render(<CreateTagModal {...props} />);
+
+    component = renderInResultContext(<CreateTagModal {...props} />, {role: "Student"});
 
     // Enable submit
     tagName = "Name";
@@ -46,7 +46,7 @@ describe("CreateTagModal", () => {
         name: tagName,
         description: "",
       },
-      grouping_id: props.grouping_id,
+      grouping_id: DEFAULT_RESULT_CONTEXT_VALUE.grouping_id,
     };
     const options = {
       method: "POST",
@@ -58,7 +58,9 @@ describe("CreateTagModal", () => {
     };
     fetchMock.mockOnce(async req => {
       expect(req.url).toEqual(
-        Routes.course_tags_path(props.course_id, {assignment_id: props.assignment_id})
+        Routes.course_tags_path(DEFAULT_RESULT_CONTEXT_VALUE.course_id, {
+          assignment_id: DEFAULT_RESULT_CONTEXT_VALUE.assignment_id,
+        })
       );
       expect(req.method).toBe(options.method);
       expect(req.headers.get("Content-Type")).toEqual(options.headers["Content-Type"]);
