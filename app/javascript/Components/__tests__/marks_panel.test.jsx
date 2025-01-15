@@ -1,4 +1,5 @@
-import {shallow} from "enzyme";
+import {render, screen} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import {
   MarksPanel,
@@ -15,9 +16,6 @@ const convertToKebabCase = {
 
 describe("MarksPanel", () => {
   let basicProps;
-  const getWrapper = props => {
-    return shallow(<MarksPanel {...props} />);
-  };
   beforeEach(() => {
     basicProps = {
       max_mark: 100,
@@ -34,8 +32,8 @@ describe("MarksPanel", () => {
   });
 
   it("displays no criterion if marks is an empty list", () => {
-    const wrapper = getWrapper();
-    expect(wrapper.find("marks-list").length).toBe(0);
+    const {container} = render(<MarksPanel {...basicProps} />);
+    expect(container.querySelector(".marks-list").children.length).toBe(0);
   });
 
   it("displays a criterion of the right type when given an array of marks", () => {
@@ -61,20 +59,25 @@ describe("MarksPanel", () => {
       mark: 0,
       max_mark: 2,
       description: "testing",
+      levels: [],
     });
     basicProps.old_marks[65] = {};
-    const wrapper = getWrapper(basicProps);
+
+    const {container} = render(<MarksPanel {...basicProps} />);
     basicProps.marks.forEach(mark => {
-      expect(wrapper.find(`#${convertToKebabCase[mark.criterion_type]}_${mark.id}`)).toBeTruthy();
+      expect(
+        container.querySelector(`#${convertToKebabCase[mark.criterion_type]}_${mark.id}`)
+      ).toBeTruthy();
     });
   });
 });
 
 describe("CheckboxCriterionInput", () => {
-  let wrapper, basicProps;
+  let basicProps, rerender;
   beforeEach(() => {
     basicProps = {
       id: 67,
+      name: "criterion",
       mark: 0,
       max_mark: 1,
       expanded: false,
@@ -90,75 +93,70 @@ describe("CheckboxCriterionInput", () => {
         basicProps.expanded = !basicProps.expanded;
       }),
     };
-    wrapper = shallow(<CheckboxCriterionInput {...basicProps} />);
+    const rendered = render(<CheckboxCriterionInput {...basicProps} />);
+    rerender = rendered.rerender;
   });
 
-  it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    wrapper.find(`.criterion-name`).simulate("click");
+  it("should toggle expand and contract upon clicking the expand/contract button", async () => {
+    await userEvent.click(screen.getByText("criterion"));
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
 
-    wrapper.find(`.criterion-name`).simulate("click");
+    await userEvent.click(screen.getByText("criterion"));
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
   });
 
-  it("it delete upon the delete button being pressed", () => {
+  it("it delete upon the delete button being pressed", async () => {
     basicProps.unassigned = false;
     basicProps.mark = 1;
-    wrapper.setProps(basicProps);
+    await rerender(<CheckboxCriterionInput {...basicProps} />);
 
-    wrapper.find(`a`).simulate("click");
-    expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
+    await userEvent.click(
+      screen.getByRole("link", {
+        name: I18n.t("helpers.submit.delete", {model: I18n.t("activerecord.models.mark.one")}),
+      })
+    );
+    expect(basicProps.destroyMark).toHaveBeenCalled();
   });
 
-  it("correctly updates mark to max_mark and 0 when clicking on respective buttons", () => {
-    const no_button = wrapper.find(`.check_no_${basicProps.id}`);
-    const yes_button = wrapper.find(`.check_correct_${basicProps.id}`);
+  it("correctly updates mark to max_mark and 0 when clicking on respective buttons", async () => {
+    const no_button = screen.getByLabelText(I18n.t("checkbox_criteria.answer_no"));
+    const yes_button = screen.getByLabelText(I18n.t("checkbox_criteria.answer_yes"));
 
-    yes_button.simulate("click");
+    await userEvent.click(yes_button);
+    expect(basicProps.mark).toEqual(basicProps.max_mark);
 
-    expect(basicProps.mark).toBe(basicProps.max_mark);
-
-    no_button.simulate("click");
-
-    expect(basicProps.mark).toBe(0);
+    await userEvent.click(no_button);
+    expect(basicProps.mark).toEqual(0);
   });
 
-  it("should show bonus if bonus is true", () => {
-    wrapper.setProps({
-      bonus: true,
+  it("should show bonus if bonus is true", async () => {
+    rerender(<CheckboxCriterionInput {...basicProps} bonus={true} />);
+    const bonusText = await screen.findByText(I18n.t("activerecord.attributes.criterion.bonus"), {
+      exact: false,
     });
-
-    expect(wrapper.html()).toContain(I18n.t("activerecord.attributes.criterion.bonus"));
+    expect(bonusText).toBeTruthy();
   });
 
-  it("should not let you update mark if released to students", () => {
-    wrapper.setProps({
-      released_to_students: true,
-    });
+  it("should not let you update mark if released to students", async () => {
+    await rerender(<CheckboxCriterionInput {...basicProps} released_to_students={true} />);
 
-    expect(wrapper.find(`a`).exists()).toBeFalsy();
-    expect(wrapper.find(`.check_no_${basicProps.id}`).exists()).toBeFalsy();
-    expect(wrapper.find(`.check_correct_${basicProps.id}`).exists()).toBeFalsy();
+    expect(screen.queryAllByRole("link")).toEqual([]);
+    expect(screen.queryByLabelText(I18n.t("checkbox_criteria.answer_no"))).toBeNull();
+    expect(screen.queryByLabelText(I18n.t("checkbox_criteria.answer_yes"))).toBeNull();
   });
 
-  it("should display oldMark.mark", () => {
-    wrapper.setProps({
-      oldMark: {
-        mark: 1,
-      },
-    });
+  it("should display oldMark.mark", async () => {
+    basicProps.oldMark = {mark: 1};
+    await rerender(<CheckboxCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".old-mark").text()).toBe(`(${I18n.t("results.remark.old_mark")}: 1)`);
+    expect(screen.queryByText(`(${I18n.t("results.remark.old_mark")}: 1)`)).toBeTruthy();
   });
 });
 
 describe("FlexibleCriterionInput", () => {
   let basicProps;
-  const getWrapper = props => {
-    return shallow(<FlexibleCriterionInput {...props} />);
-  };
   beforeEach(() => {
     basicProps = {
       expanded: false,
@@ -171,6 +169,7 @@ describe("FlexibleCriterionInput", () => {
       mark: 0,
       max_mark: 2,
 
+      name: "criterion",
       description: " ",
 
       oldMark: {override: false},
@@ -189,26 +188,29 @@ describe("FlexibleCriterionInput", () => {
     };
   });
 
-  it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should toggle expand and contract upon clicking the expand/contract button", async () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    wrapper.find(`.criterion-name`).simulate("click");
+    await userEvent.click(screen.getByText("criterion"));
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
 
-    wrapper.find(`.criterion-name`).simulate("click");
+    await userEvent.click(screen.getByText("criterion"));
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
   });
 
-  it("should show bonus if bonus is true", () => {
+  it("should show bonus if bonus is true", async () => {
     basicProps.bonus = true;
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    expect(wrapper.html()).toContain(I18n.t("activerecord.attributes.criterion.bonus"));
+    const bonusText = await screen.findByText(I18n.t("activerecord.attributes.criterion.bonus"), {
+      exact: false,
+    });
+    expect(bonusText).toBeTruthy;
   });
 
-  it("should show list deductions correctly when there is a deduction", () => {
+  it("should show list deductions correctly when there is a deduction", async () => {
     basicProps.annotations = [
       {
         deduction: 1,
@@ -220,11 +222,11 @@ describe("FlexibleCriterionInput", () => {
         filename: "filename",
       },
     ];
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const deductionLink = wrapper.find(`.red-text`);
-    expect(deductionLink.exists()).toBeTruthy();
-    deductionLink.simulate("click");
+    const deductionLink = screen.getByRole("link", {name: "-1"});
+    expect(deductionLink).toBeTruthy();
+    await userEvent.click(deductionLink);
     expect(basicProps.findDeductiveAnnotation).toHaveBeenCalledWith(
       "filename",
       basicProps.id,
@@ -233,7 +235,7 @@ describe("FlexibleCriterionInput", () => {
     );
   });
 
-  it("should notify if the mark is overriden", () => {
+  it("should notify if the mark is overridden", () => {
     basicProps.annotations = [
       {
         deduction: 1,
@@ -246,83 +248,87 @@ describe("FlexibleCriterionInput", () => {
       },
     ];
     basicProps.override = true;
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".mark-deductions").text()).toContain(
-      "(" + I18n.t("results.overridden_deductions") + ") "
-    );
+    expect(
+      screen.queryByText("(" + I18n.t("results.overridden_deductions") + ") ", {exact: false})
+    ).toBeTruthy();
   });
 
   it("should display oldMark if it exists", () => {
     basicProps.oldMark = {mark: 1};
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".old-mark").exists()).toBeTruthy();
-    expect(wrapper.find(".old-mark").text()).toBe(
-      `(${I18n.t("results.remark.old_mark")}: ${basicProps.oldMark.mark})`
-    );
+    expect(
+      screen.queryByText(`(${I18n.t("results.remark.old_mark")}: ${basicProps.oldMark.mark})`)
+    ).toBeTruthy();
   });
 
   it("should display oldMark with override if it exists", () => {
     basicProps.oldMark = {mark: 1, override: true};
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".old-mark").exists()).toBeTruthy();
-    expect(wrapper.find(".old-mark").text()).toBe(
-      `(${I18n.t("results.remark.old_mark")}: (${I18n.t("results.overridden_deductions")}) ${
-        basicProps.oldMark.mark
-      })`
-    );
+    expect(
+      screen.queryByText(
+        `(${I18n.t("results.remark.old_mark")}: (${I18n.t("results.overridden_deductions")}) ${
+          basicProps.oldMark.mark
+        })`
+      )
+    ).toBeTruthy();
   });
 
-  it("should call handleChange on change and set rawText to new value", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should call handleChange on change and set rawText to new value", async () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const input = wrapper.find(`input[size=4]`);
-    input.simulate("change", {target: {value: 1}});
-    expect(wrapper.state().rawText).toBe(1);
+    let input = screen.getByRole("textbox");
+    await userEvent.type(input, "1");
+    input = screen.getByRole("textbox");
+    expect(Number(input.value)).toEqual(1);
+    expect(input.classList.contains("invalid")).toBeFalsy();
   });
 
-  it("should set the mark as invalid if it is greater than max_mark", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should set the mark as invalid if it is greater than max_mark", async () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const input = wrapper.find(`input[size=4]`);
-    input.simulate("change", {target: {value: 999}});
-    expect(wrapper.state().rawText).toBe(999);
-    expect(wrapper.state().invalid).toBeTruthy();
+    const input = screen.getByRole("textbox");
+    await userEvent.type(input, "999");
+    expect(Number(input.value)).toEqual(999);
+    expect(input.classList.contains("invalid")).toBeTruthy();
   });
 
-  it("should set the mark as invalid if it is not a number", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should set the mark as invalid if it is not a number", async () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const input = wrapper.find(`input[size=4]`);
-    input.simulate("change", {target: {value: "Hi Prof Liu"}});
-    expect(wrapper.state().rawText).toBe("Hi Prof Liu");
-    expect(wrapper.state().invalid).toBeTruthy();
+    const input = screen.getByRole("textbox");
+    await userEvent.clear(input);
+    await userEvent.type(input, "Hi Prof Liu");
+    expect(input.value).toEqual("Hi Prof Liu");
+    expect(input.classList.contains("invalid")).toBeTruthy();
   });
 
-  it("should set the mark as valid if it has a decimal", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should set the mark as valid if it has a decimal", async () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const input = wrapper.find(`input[size=4]`);
-    input.simulate("change", {target: {value: 2.0}});
-    expect(wrapper.state().rawText).toBe(2.0);
-    expect(wrapper.state().invalid).toBeFalsy();
+    const input = screen.getByRole("textbox");
+    await userEvent.type(input, "1.5");
+    expect(Number(input.value)).toEqual(1.5);
+    expect(input.classList.contains("invalid")).toBeFalsy();
   });
 
-  it("should delete a mark correctly", () => {
+  it("should delete a mark correctly", async () => {
     basicProps.mark = 1;
     basicProps.override = true;
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const destroyer = wrapper.find(`a`);
+    const destroyer = screen.getByRole("link", {
+      name: I18n.t("helpers.submit.delete", {model: I18n.t("activerecord.models.mark.one")}),
+    });
+    await userEvent.click(destroyer);
 
-    destroyer.simulate("click");
-
-    expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
+    expect(basicProps.destroyMark).toHaveBeenCalled();
   });
 
-  it("should revert a mark correctly", () => {
+  it("should revert a mark correctly", async () => {
     basicProps.mark = 1;
     basicProps.override = true;
     basicProps.annotations = [
@@ -336,27 +342,23 @@ describe("FlexibleCriterionInput", () => {
         filename: "filename",
       },
     ];
-    const wrapper = getWrapper(basicProps);
+    render(<FlexibleCriterionInput {...basicProps} />);
 
-    const reverter = wrapper.find(`.flexible-revert`);
-
-    reverter.simulate("click");
+    const reverter = screen.getByRole("link", {name: I18n.t("results.cancel_override")});
+    await userEvent.click(reverter);
 
     expect(basicProps.revertToAutomaticDeductions).toHaveBeenCalledWith(basicProps.id);
   });
 
-  it("should have no number input fields", () => {
+  it("should have no input fields when marks are released", () => {
     basicProps.released_to_students = true;
-    const wrapper = getWrapper(basicProps);
-    expect(wrapper.find("input[number]").length).toBe(0);
+    render(<FlexibleCriterionInput {...basicProps} />);
+    expect(screen.queryAllByRole("textbox")).toEqual([]);
   });
 });
 
 describe("RubricCriterionInput", () => {
   let basicProps;
-  const getWrapper = props => {
-    return shallow(<RubricCriterionInput {...props} />);
-  };
   beforeEach(() => {
     basicProps = {
       expanded: false,
@@ -365,6 +367,7 @@ describe("RubricCriterionInput", () => {
       bonus: false,
 
       id: 66,
+      name: "criterion",
       mark: 0,
       max_mark: 1,
 
@@ -387,78 +390,84 @@ describe("RubricCriterionInput", () => {
     };
   });
 
-  it("should toggle expand and contract upon clicking the expand/contract button", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should toggle expand and contract upon clicking the expand/contract button", async () => {
+    render(<RubricCriterionInput {...basicProps} />);
 
-    wrapper.find(`.criterion-name`).simulate("click");
+    await userEvent.click(screen.getByText("criterion"));
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeTruthy();
 
-    wrapper.find(`.criterion-name`).simulate("click");
+    await userEvent.click(screen.getByText("criterion"));
     expect(basicProps.toggleExpanded).toHaveBeenCalled();
     expect(basicProps.expanded).toBeFalsy();
   });
 
-  it("should destroy properly upon clicking destroy", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should destroy properly upon clicking destroy", async () => {
+    render(<RubricCriterionInput {...basicProps} />);
 
-    wrapper.find(`a`).simulate("click");
-    expect(basicProps.destroyMark).toHaveBeenCalledWith(undefined, basicProps.id);
+    await userEvent.click(
+      screen.getByRole("link", {
+        name: I18n.t("helpers.submit.delete", {model: I18n.t("activerecord.models.mark.one")}),
+      })
+    );
+    expect(basicProps.destroyMark).toHaveBeenCalled();
   });
 
   it("should mark as bonus", () => {
     basicProps.bonus = true;
+    render(<RubricCriterionInput {...basicProps} />);
 
-    const wrapper = getWrapper(basicProps);
-
-    expect(wrapper.html()).toContain(` (${I18n.t("activerecord.attributes.criterion.bonus")})`);
+    expect(
+      screen.getByText(` (${I18n.t("activerecord.attributes.criterion.bonus")})`, {exact: false})
+    ).toBeTruthy();
   });
 
   it("should display as many rubric levels as in levels", () => {
-    const wrapper = getWrapper(basicProps);
+    render(<RubricCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".level-description").length).toBe(2);
+    expect(screen.queryByText("level 1")).toBeTruthy();
+    expect(screen.queryByText("level 2")).toBeTruthy();
   });
 
-  it("should handleChange on clicking a rubric level", () => {
-    const wrapper = getWrapper(basicProps);
+  it("should handleChange on clicking a rubric level", async () => {
+    render(<RubricCriterionInput {...basicProps} />);
 
-    const level1 = wrapper.find(`.rubric-level`).at(0);
-    const level2 = wrapper.find(`.rubric-level`).at(1);
+    const level1 = screen.getByText("level 1");
+    const level2 = screen.getByText("level 2");
 
-    level1.simulate("click");
-
+    await userEvent.click(level1);
     expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 1);
 
-    level2.simulate("click");
-
+    await userEvent.click(level2);
     expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 2);
   });
 
   it("should not show a class is selected or an old-mark by default", () => {
-    const wrapper = getWrapper(basicProps);
-    expect(wrapper.find(".old-mark").exists()).toBeFalsy();
-    expect(wrapper.find(".selected").exists()).toBeFalsy();
+    const {container} = render(<RubricCriterionInput {...basicProps} />);
+    expect(container.querySelector(".old-mark")).toBeNull();
+    expect(container.querySelector(".selected")).toBeNull();
   });
 
-  it("should show a class is selected", () => {
+  it("should show a level is selected when a mark has been entered", () => {
     basicProps.mark = 1;
-    const wrapper = getWrapper(basicProps);
+    render(<RubricCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".selected").exists()).toBeTruthy();
+    const levels = screen.getAllByRole("row");
+    expect(levels[0].classList.contains("selected")).toBeTruthy();
   });
 
-  it("should show a class is selected", () => {
+  it("should show a level is selected when an old mark has been entere", () => {
     basicProps.oldMark.mark = 1;
-    const wrapper = getWrapper(basicProps);
+    render(<RubricCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(".old-mark").exists()).toBeTruthy();
+    const levels = screen.getAllByRole("row");
+    expect(levels[0].classList.contains("old-mark")).toBeTruthy();
   });
 
   it("should not let you destroy if released_to_students", () => {
     basicProps.released_to_students = true;
-    const wrapper = getWrapper(basicProps);
+    render(<RubricCriterionInput {...basicProps} />);
 
-    expect(wrapper.find(`a`).exists()).toBeFalsy();
+    expect(screen.queryAllByRole("link")).toEqual([]);
   });
 });

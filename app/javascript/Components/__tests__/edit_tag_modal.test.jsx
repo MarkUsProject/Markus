@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, waitFor, cleanup} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import EditTagModal from "../Modals/edit_tag_modal";
 import Modal from "react-modal";
 import fetchMock from "jest-fetch-mock";
@@ -34,7 +34,6 @@ describe("EditTagModal", () => {
 
   afterEach(() => {
     fetchMock.resetMocks();
-    cleanup();
   });
 
   it("should be called with correct params on successful submit", async () => {

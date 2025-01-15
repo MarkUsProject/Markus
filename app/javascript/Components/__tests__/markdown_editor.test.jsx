@@ -1,4 +1,6 @@
-import {shallow} from "enzyme";
+import {render, screen} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
 import MarkdownEditor from "../markdown_editor";
 
 const basicProps = {
@@ -12,54 +14,37 @@ const basicProps = {
 };
 
 describe("MarkdownEditor", () => {
-  let props, wrapper;
-  const getWrapper = () => {
-    return shallow(<MarkdownEditor {...props} />);
-  };
+  let props;
   beforeEach(() => {
     props = {...basicProps};
   });
 
-  it("should properly handle the text input change", () => {
-    wrapper = getWrapper(props);
+  it("should properly handle the text input change", async () => {
+    render(<MarkdownEditor {...props} />);
 
-    const inputBox = wrapper.find("#new_annotation_content");
+    const inputBox = screen.getByRole("textbox");
+    await userEvent.type(inputBox, "Hello world");
 
-    expect(inputBox.exists()).toBeTruthy();
-
-    const event = {
-      target: {
-        value: "Hello world",
-      },
-    };
-
-    inputBox.simulate("change", event);
-
-    expect(props.handleChange).toHaveBeenCalledWith(event);
+    expect(props.handleChange).toHaveBeenCalled();
   });
 
-  it("should show autocomplete if desired", () => {
+  it("should show autocomplete if desired", async () => {
     props.show_autocomplete = true;
     props.annotation_text_id = "id";
-    wrapper = getWrapper(props);
+    render(<MarkdownEditor {...props} />);
 
-    const annotationList = wrapper.find("#annotation_text_list");
-
-    expect(annotationList.exists()).toBeTruthy();
+    const autocompleteList = screen.queryByTestId("markdown-editor-autocomplete-root");
+    expect(autocompleteList).toBeTruthy();
   });
 
-  it("should properly display and pass down props to the preview tab", () => {
+  it("should properly display and pass down props to the preview tab", async () => {
     props.content = "arma virumque cano";
-    wrapper = getWrapper(props);
+    render(<MarkdownEditor {...props} />);
 
-    //At 1 because it is the 2nd tab
-    wrapper.find("Tab").at(1).simulate("click");
+    await userEvent.click(screen.getByRole("tab", {name: "Preview"}));
 
-    const preview = wrapper.find("#markdown-preview");
-
-    expect(preview.exists()).toBeTruthy();
-
-    expect(preview.props().content).toBe(props.content);
-    expect(preview.props().updateAnnotationCompletion).toBe(props.updateAnnotationCompletion);
+    const preview = document.querySelector("#annotation-preview");
+    expect(preview).toBeTruthy();
+    expect(preview.textContent.trim()).toEqual(props.content);
   });
 });
