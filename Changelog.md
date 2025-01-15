@@ -7,7 +7,7 @@
 ### ✨ New features and improvements
 
 - Fix front-end content shift when an input element is focused (#7384)
-- Placeholder text for Package requirements file for Python autotester settings (#7383)
+- Tooltip text for Package requirements file for Python autotester settings (#7383)
 
 ### 🐛 Bug fixes
 
