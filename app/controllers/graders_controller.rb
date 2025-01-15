@@ -253,10 +253,8 @@ class GradersController < ApplicationController
 
   # Returns array of grouping ids with non empty submissions
   def filter_empty_submissions(grouping_ids)
-    submissions = Submission.where(grouping_id: grouping_ids, submission_version_used: true)
-                            .pluck(:grouping_id, :is_empty)
-    non_empty_grouping_ids = submissions.reject { |_, is_empty| is_empty }.map { |grouping_id, _| grouping_id.to_s }
-    non_empty_grouping_ids & grouping_ids
+    Submission.where(grouping_id: grouping_ids, is_empty: false, submission_version_used: true)
+              .pluck(:grouping_id, :is_empty)
   end
 
   def filter_grouping_by_section(section_assignments, assignment)
