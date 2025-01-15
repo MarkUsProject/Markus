@@ -43,7 +43,7 @@ describe MarksGradersController do
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to(action: 'index',
                                         grade_entry_form_id:
-                                            grade_entry_form_with_data.id)
+                                          grade_entry_form_with_data.id)
 
         # check that the ta was assigned to each student
         @student_user_names.each do |name|
@@ -80,7 +80,7 @@ describe MarksGradersController do
         @student_user_names.each do |name|
           expect(
             GradeEntryStudentTa.joins(grade_entry_student: :user)
-              .exists?(grade_entry_student: { users: { user_name: name } })
+                               .exists?(grade_entry_student: { users: { user_name: name } })
           ).to be true
         end
         expect(ges.tas.count).to eq 0
@@ -139,6 +139,7 @@ describe MarksGradersController do
         student = create(:student)
         grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
         grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
         expect(GradeEntryStudent).to receive(:assign_all_tas).with(
           [grade_entry_student.id.to_s],
           [grade_entry_student_ta.id.to_s],
@@ -221,6 +222,7 @@ describe MarksGradersController do
         student = create(:student)
         grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
         grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
         expect(GradeEntryStudent).to receive(:unassign_tas).with(
           [grade_entry_student.id.to_s],
           [grade_entry_student_ta.id.to_s],
@@ -303,6 +305,13 @@ describe MarksGradersController do
         student = create(:student)
         grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
         grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
+        expect(GradeEntryStudent).to receive(:unassign_tas).with(
+          [grade_entry_student.id.to_s],
+          [grade_entry_student_ta.ta.id],
+          grade_entry_form
+        )
+
         post_as instructor, :unassign_single, params: {
           course_id: course.id,
           grade_entry_form_id: grade_entry_form.id,
@@ -311,11 +320,6 @@ describe MarksGradersController do
         }
 
         expect(response).to have_http_status(:ok)
-        expect(GradeEntryStudent).to receive(:unassign_tas).with(
-          [grade_entry_student.id.to_s],
-          [grade_entry_student_ta.ta.id],
-          grade_entry_form
-        )
       end
     end
 
