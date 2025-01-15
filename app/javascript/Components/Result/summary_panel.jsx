@@ -1,10 +1,12 @@
 import React from "react";
-import {render} from "react-dom";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {DataChart} from "../Helpers/data_chart";
+import {ResultContext} from "./result_context";
 
 export class SummaryPanel extends React.Component {
+  static contextType = ResultContext;
+
   static defaultProps = {
     criterionSummaryData: [],
     extra_marks: [],
@@ -205,7 +207,7 @@ export class SummaryPanel extends React.Component {
   renderExtraMarks = () => {
     // If there are no extra marks and this result is released, display nothing.
     if (
-      this.props.is_reviewer ||
+      this.context.is_reviewer ||
       (this.props.released_to_students && this.props.extra_marks.length === 0)
     ) {
       return "";
@@ -247,7 +249,7 @@ export class SummaryPanel extends React.Component {
   };
 
   renderGraceTokenDeductions = () => {
-    if (this.props.is_reviewer || this.props.graceTokenDeductions.length === 0) {
+    if (this.context.is_reviewer || this.props.graceTokenDeductions.length === 0) {
       return "";
     } else {
       let rows = this.props.graceTokenDeductions.flatMap(d => {

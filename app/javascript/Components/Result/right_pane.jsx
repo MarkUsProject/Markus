@@ -4,10 +4,13 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {MarksPanel} from "./marks_panel";
 import {SummaryPanel} from "./summary_panel";
 import {SubmissionInfoPanel} from "./submission_info_panel";
+import {ResultContext} from "./result_context";
 
 export class RightPane extends React.Component {
+  static contextType = ResultContext;
+
   canShowSubmissionInfoPanel = () => {
-    return this.props.role !== "Student" && !this.props.is_reviewer;
+    return this.context.role !== "Student" && !this.context.is_reviewer;
   };
 
   render() {
@@ -29,7 +32,6 @@ export class RightPane extends React.Component {
             destroyMark={this.props.destroyMark}
             revertToAutomaticDeductions={this.props.revertToAutomaticDeductions}
             findDeductiveAnnotation={this.props.findDeductiveAnnotation}
-            course_id={this.props.course_id}
           />
         </TabPanel>
         <TabPanel>
@@ -38,7 +40,6 @@ export class RightPane extends React.Component {
             marks={this.props.marks}
             released_to_students={this.props.released_to_students}
             remark_submitted={this.props.remark_submitted}
-            is_reviewer={this.props.is_reviewer}
             assignment_max_mark={this.props.assignment_max_mark}
             old_total={this.props.old_total}
             total={this.props.total}
@@ -50,7 +51,6 @@ export class RightPane extends React.Component {
             deleteGraceTokenDeduction={this.props.deleteGraceTokenDeduction}
             createExtraMark={this.props.createExtraMark}
             destroyExtraMark={this.props.destroyExtraMark}
-            course_id={this.props.course_id}
           />
         </TabPanel>
         {this.canShowSubmissionInfoPanel() && (
@@ -66,11 +66,7 @@ export class RightPane extends React.Component {
               addTag={this.props.addTag}
               removeTag={this.props.removeTag}
               newNote={this.props.newNote}
-              role={this.props.role}
-              assignment_id={this.props.assignment_id}
-              grouping_id={this.props.grouping_id}
               members={this.props.members}
-              course_id={this.props.course_id}
             />
           </TabPanel>
         )}
