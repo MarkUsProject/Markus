@@ -164,8 +164,6 @@ export class LeftPane extends React.Component {
         <TabPanel forceRender={!this.disableRemarkPanel()}>
           <div id="remark_request_tab">
             <RemarkPanel
-              result_id={this.context.result_id}
-              assignment_id={this.context.assignment_id}
               assignmentRemarkMessage={this.props.assignment_remark_message}
               updateOverallComment={this.props.update_overall_comment}
               remarkDueDate={this.props.remark_due_date}
@@ -176,8 +174,6 @@ export class LeftPane extends React.Component {
               remarkSubmitted={this.props.remark_submitted}
               overallComment={this.props.remark_overall_comment || ""}
               studentView={this.props.student_view}
-              course_id={this.props.course_id}
-              submission_id={this.context.submission_id}
             />
           </div>
         </TabPanel>
