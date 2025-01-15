@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Fix front-end content shift when an input element is focused (#7384)
 
 ### 🐛 Bug fixes
 
