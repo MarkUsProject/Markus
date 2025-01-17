@@ -47,6 +47,8 @@ class TestRun < ApplicationRecord
             )
             marks_earned += test['marks_earned']
             marks_total += test['marks_total']
+            create_tags(test['tags'])
+            add_overall_comment(test['overall_comment'])
           rescue StandardError => e
             extra_info = test_group_result.extra_info
             test_name = test['name'].nil? ? '' : "#{test['name']} - "
@@ -139,6 +141,21 @@ class TestRun < ApplicationRecord
         result_id: result.id
       )
     end
+  end
+
+  def create_tags(tag_data)
+    tag_data.each do |data|
+      self.grouping.tags.create(
+        name: data['name'],
+        description: data['description'],
+        assessment_id: self.grouping.assessment_id,
+        role_id: self.role_id
+      )
+    end
+  end
+
+  def add_overall_comment(overall_comment_data)
+    self.submission.current_result.update(overall_comment: overall_comment_data)
   end
 
   def unzip_file_data(file_data)
