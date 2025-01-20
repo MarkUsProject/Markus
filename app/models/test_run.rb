@@ -110,10 +110,10 @@ class TestRun < ApplicationRecord
   end
 
   def create_tags(tag_data)
-    tag_data.each do |data|
+    tag_data.each do |tag|
       self.grouping.tags.create(
-        name: data['name'],
-        description: data['description'],
+        name: tag['name'],
+        description: tag['description'],
         assessment_id: self.grouping.assessment_id,
         role_id: self.role_id
       )
