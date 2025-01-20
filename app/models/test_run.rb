@@ -31,6 +31,7 @@ class TestRun < ApplicationRecord
       failure(results['error'])
     else
       self.update!(status: :complete, problems: results['error'])
+      new_overall_comments = []
       results['test_groups'].each do |result|
         test_group_result = create_test_group_result(result)
         marks_total, marks_earned = 0, 0
@@ -48,7 +49,9 @@ class TestRun < ApplicationRecord
             marks_earned += test['marks_earned']
             marks_total += test['marks_total']
             create_tags(test['tags'])
-            add_overall_comment(test['overall_comment'])
+            unless test['overall_comment'].nil?
+              new_overall_comments.append(test['overall_comment'])
+            end
           rescue StandardError => e
             extra_info = test_group_result.extra_info
             test_name = test['name'].nil? ? '' : "#{test['name']} - "
@@ -65,6 +68,9 @@ class TestRun < ApplicationRecord
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
       self.submission&.set_autotest_marks
+      unless new_overall_comments.empty?
+        add_overall_comment(new_overall_comments.join("\n"))
+      end
     end
   end
 
@@ -114,8 +120,20 @@ class TestRun < ApplicationRecord
     end
   end
 
-  def add_overall_comment(overall_comment_data)
-    self.submission.current_result.update(overall_comment: overall_comment_data)
+  def add_overall_comment(new_overall_comment)
+    new_overall_comment.prepend(
+      I18n.t(
+        'results.annotation.feedback_generated_header',
+        time: self.updated_at.strftime('%Y/%m/%d %H:%M')
+      ) + "\n"
+    )
+    if self.submission.current_result.overall_comment.blank?
+      self.submission.current_result.update(overall_comment: new_overall_comment)
+    else
+      self.submission.current_result.update(
+        overall_comment: self.submission.current_result.overall_comment + "\n\n" + new_overall_comment
+      )
+    end
   end
 
   def create_feedback_file(feedback_data, test_group_result)
