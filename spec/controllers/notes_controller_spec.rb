@@ -312,8 +312,7 @@ describe NotesController do
 
     it 'for invalid type' do
       get_as @instructor, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'gibberish' }
-      i18t_string = [I18n.t('notes.new.invalid_selector')].map { |f| extract_text f }
-      expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
+      expect(flash[:error]).to have_message('notes.new.invalid_selector')
       expect(assigns(:assignments)).not_to be_nil
       expect(assigns(:groupings)).not_to be_nil
       expect(assigns(:students)).to be_nil
