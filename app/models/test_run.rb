@@ -103,6 +103,21 @@ class TestRun < ApplicationRecord
     )
   end
 
+  def create_tags(tag_data)
+    tag_data.each do |data|
+      self.grouping.tags.create(
+        name: data['name'],
+        description: data['description'],
+        assessment_id: self.grouping.assessment_id,
+        role_id: self.role_id
+      )
+    end
+  end
+
+  def add_overall_comment(overall_comment_data)
+    self.submission.current_result.update(overall_comment: overall_comment_data)
+  end
+
   def create_feedback_file(feedback_data, test_group_result)
     return if feedback_data.nil? || test_group_result.nil?
 
@@ -141,21 +156,6 @@ class TestRun < ApplicationRecord
         result_id: result.id
       )
     end
-  end
-
-  def create_tags(tag_data)
-    tag_data.each do |data|
-      self.grouping.tags.create(
-        name: data['name'],
-        description: data['description'],
-        assessment_id: self.grouping.assessment_id,
-        role_id: self.role_id
-      )
-    end
-  end
-
-  def add_overall_comment(overall_comment_data)
-    self.submission.current_result.update(overall_comment: overall_comment_data)
   end
 
   def unzip_file_data(file_data)
