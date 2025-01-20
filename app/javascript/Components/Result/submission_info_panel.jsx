@@ -1,6 +1,9 @@
 import React from "react";
+import {ResultContext} from "./result_context";
 
 export class SubmissionInfoPanel extends React.Component {
+  static contextType = ResultContext;
+
   static defaultProps = {
     availableTags: [],
     currentTags: [],
@@ -51,7 +54,7 @@ export class SubmissionInfoPanel extends React.Component {
         <ul className="tag-list">{this.renderTagList()}</ul>
         <h3>{I18n.t("tags.results.available_tags")}</h3>
         <ul className="tag-list">{this.renderAvailableTags()}</ul>
-        {this.props.role === "Instructor" && (
+        {this.context.role === "Instructor" && (
           <p>
             <button className="inline-button" onClick={this.props.handleCreateTagButtonClick}>
               {I18n.t("helpers.submit.create", {
@@ -69,10 +72,10 @@ export class SubmissionInfoPanel extends React.Component {
         <p>
           <a
             href={Routes.repo_browser_course_assignment_submissions_path(
-              this.props.course_id,
-              this.props.assignment_id,
+              this.context.course_id,
+              this.context.assignment_id,
               {
-                grouping_id: this.props.grouping_id,
+                grouping_id: this.context.grouping_id,
               }
             )}
           >

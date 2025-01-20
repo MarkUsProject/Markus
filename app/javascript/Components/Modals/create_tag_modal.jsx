@@ -2,6 +2,7 @@ import React from "react";
 import TagModal from "../Helpers/tag_modal";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
+import {ResultContext} from "../Result/result_context";
 
 export default class CreateTagModal extends React.Component {
   constructor(props) {
@@ -11,6 +12,8 @@ export default class CreateTagModal extends React.Component {
       description: "",
     };
   }
+
+  static contextType = ResultContext;
 
   componentDidMount() {
     Modal.setAppElement("body");
@@ -23,7 +26,7 @@ export default class CreateTagModal extends React.Component {
         name: this.state.name,
         description: this.state.description,
       },
-      grouping_id: this.props.grouping_id,
+      grouping_id: this.context.grouping_id,
     };
     const options = {
       method: "POST",
@@ -34,7 +37,7 @@ export default class CreateTagModal extends React.Component {
       body: JSON.stringify(data),
     };
     fetch(
-      Routes.course_tags_path(this.props.course_id, {assignment_id: this.props.assignment_id}),
+      Routes.course_tags_path(this.context.course_id, {assignment_id: this.context.assignment_id}),
       options
     )
       .catch(error => {
@@ -74,7 +77,4 @@ export default class CreateTagModal extends React.Component {
 CreateTagModal.propType = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  grouping_id: PropTypes.number,
-  course_id: PropTypes.number.isRequired,
-  assignment_id: PropTypes.number.isRequired,
 };
