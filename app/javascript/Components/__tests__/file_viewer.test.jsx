@@ -1,12 +1,11 @@
 import React from "react";
-import {render, screen, cleanup} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import {FileViewer} from "../Result/file_viewer";
 import fetchMock from "jest-fetch-mock";
 
 describe("FileViewer", () => {
   afterEach(() => {
     fetchMock.resetMocks();
-    cleanup();
   });
 
   it("should not render oversized files", async () => {
