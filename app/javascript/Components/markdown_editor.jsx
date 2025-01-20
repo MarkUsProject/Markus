@@ -26,7 +26,10 @@ export default class MarkdownEditor extends React.Component {
             />
           </label>
 
-          <div className={this.props.show_autocomplete ? "" : "hidden"}>
+          <div
+            className={this.props.show_autocomplete ? "" : "hidden"}
+            data-testid="markdown-editor-autocomplete-root"
+          >
             <ul className="tags" key="auto_completion_category">
               <li className="annotation_category">
                 <p id={this.props.auto_completion_text_id}></p>

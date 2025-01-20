@@ -4,8 +4,11 @@ import {MultiSelectDropdown} from "../DropDown/MultiSelectDropDown";
 import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
 import {CriteriaFilter} from "../criteria_filter";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {ResultContext} from "../Result/result_context";
 
 export class FilterModal extends React.Component {
+  static contextType = ResultContext;
+
   onToggleOptionTas = user_name => {
     const newArray = [...this.props.filterData.tas];
     if (newArray.includes(user_name)) {
@@ -47,7 +50,7 @@ export class FilterModal extends React.Component {
   };
 
   renderTasDropdown = () => {
-    if (this.props.role === "Instructor") {
+    if (this.context.role === "Instructor") {
       let tas = this.props.tas.map(option => {
         return {key: option[0], display: option[0] + " - " + option[1]};
       });

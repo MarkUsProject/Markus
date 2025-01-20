@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import safe_marked from "../common/safe_marked";
+
 export default class MarkdownPreview extends React.Component {
   componentDidMount = () => {
     const target_id = "#annotation-preview";

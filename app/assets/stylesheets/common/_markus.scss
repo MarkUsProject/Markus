@@ -186,8 +186,8 @@ textarea {
 
   &:focus {
     background-color: $background-main;
-    border-color: $primary-three;
-    border-width: 3px;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px $primary-three;
   }
 
   &:invalid {
