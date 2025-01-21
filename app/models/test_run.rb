@@ -48,8 +48,10 @@ class TestRun < ApplicationRecord
             )
             marks_earned += test['marks_earned']
             marks_total += test['marks_total']
-            create_tags(test['tags'])
-            unless test['overall_comment'].nil?
+            if test['tags'].present?
+              add_tags(test['tags'])
+            end
+            if test['overall_comment'].present?
               new_overall_comments.append(test['overall_comment'])
             end
           rescue StandardError => e
@@ -68,9 +70,7 @@ class TestRun < ApplicationRecord
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
       self.submission&.set_autotest_marks
-      unless new_overall_comments.empty?
-        add_overall_comment(new_overall_comments.join("\n"))
-      end
+      add_overall_comment(new_overall_comments.join("\n"))
     end
   end
 
@@ -109,19 +109,24 @@ class TestRun < ApplicationRecord
     )
   end
 
-  def create_tags(tag_data)
+  def add_tags(tag_data)
     tag_data.each do |tag|
-      self.grouping.tags.create(
-        name: tag['name'],
-        description: tag['description'],
-        assessment_id: self.grouping.assessment_id,
-        role_id: self.role_id
-      )
+      existing_tag = Tag.find_by(name: tag['name'], assessment_id: self.grouping.assessment_id)
+      if existing_tag.nil?
+        self.grouping.tags.create(
+          name: tag['name'],
+          description: tag['description'],
+          assessment_id: self.grouping.assessment_id,
+          role_id: self.role_id
+        )
+      elsif self.grouping.tags.exclude?(existing_tag)
+        self.grouping.tags << existing_tag
+      end
     end
   end
 
   def add_overall_comment(new_overall_comment)
-    return if self.submission.nil?
+    return if self.submission.nil? || new_overall_comment.blank?
 
     new_overall_comment.prepend(
       I18n.t(
