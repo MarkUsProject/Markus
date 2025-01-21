@@ -3,7 +3,7 @@
     {
       "tester_type": "py",
       "env_data": {
-        "python_version": "3.8",
+        "python_version": "3.13",
         "pip_requirements": "hypothesis pytest-timeout"
       },
       "test_data": [
