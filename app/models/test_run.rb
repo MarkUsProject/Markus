@@ -121,6 +121,8 @@ class TestRun < ApplicationRecord
   end
 
   def add_overall_comment(new_overall_comment)
+    return if self.submission.nil?
+
     new_overall_comment.prepend(
       I18n.t(
         'results.annotation.feedback_generated_header',
