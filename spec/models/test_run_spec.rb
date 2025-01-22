@@ -536,19 +536,19 @@ describe TestRun do
       context 'when the results contain comments and has a submission' do
         let(:test1) do
           { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
-            overall_comment: overall_comment_1 }
+            overall_comment: overall_comment1 }
         end
         let(:test2) do
           { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil,
-            overall_comment: overall_comment_2 }
+            overall_comment: overall_comment2 }
         end
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) { create(:test_run, submission: submission) }
 
         it 'should add comments to the submission\'s overall comments' do
           test_run.update_results!(results)
-          expect(submission.results.first.overall_comment).to include(overall_comment_1)
-          expect(submission.results.first.overall_comment).to include(overall_comment_2)
+          expect(submission.results.first.overall_comment).to include(overall_comment1)
+          expect(submission.results.first.overall_comment).to include(overall_comment2)
         end
       end
     end
