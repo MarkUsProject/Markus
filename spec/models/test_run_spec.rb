@@ -135,6 +135,10 @@ describe TestRun do
     let(:test_group) { create(:test_group, criterion: criterion, assignment: assignment) }
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
+    let(:tag1) { { name: 'tag1', description: 'description' } }
+    let(:tag2) { { name: 'tag2', description: 'description' } }
+    let(:overall_comment1) { 'test comment 1' }
+    let(:overall_comment2) { 'test comment 2' }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
     let(:test2) { { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
     let(:tests) { [test1, test2] }
@@ -513,6 +517,38 @@ describe TestRun do
       context 'when it is associated with a grouping' do
         it 'should not update criteria marks' do
           expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
+        end
+      end
+
+      context 'when the results contain tags' do
+        let(:test1) do
+          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1, tags: [tag1] }
+        end
+        let(:test2) do
+          { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil, tags: [tag2] }
+        end
+
+        it 'should add tags to the grouping' do
+          expect { test_run.update_results!(results) }.to change { grouping.tags.count }.to eq 2
+        end
+      end
+
+      context 'when the results contain comments and has a submission' do
+        let(:test1) do
+          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
+            overall_comment: overall_comment_1 }
+        end
+        let(:test2) do
+          { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil,
+            overall_comment: overall_comment_2 }
+        end
+        let(:submission) { create(:version_used_submission, grouping: grouping) }
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add comments to the submission\'s overall comments' do
+          test_run.update_results!(results)
+          expect(submission.results.first.overall_comment).to include(overall_comment_1)
+          expect(submission.results.first.overall_comment).to include(overall_comment_2)
         end
       end
     end
