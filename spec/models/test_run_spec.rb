@@ -130,13 +130,12 @@ describe TestRun do
   describe '#update_results!' do
     let(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping, assignment: assignment) }
+    let!(:existing_tag) { create(:tag, name: 'existing_tag', assessment: assignment) }
     let(:test_run) { create(:test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1) }
     let(:criterion) { create(:flexible_criterion, max_mark: 2, assignment: assignment) }
     let(:test_group) { create(:test_group, criterion: criterion, assignment: assignment) }
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
-    let(:tag1) { { name: 'tag1', description: 'description' } }
-    let(:tag2) { { name: 'tag2', description: 'description' } }
     let(:overall_comment1) { 'test comment 1' }
     let(:overall_comment2) { 'test comment 2' }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
@@ -520,16 +519,30 @@ describe TestRun do
         end
       end
 
-      context 'when the results contain tags' do
+      context 'when the results contain tags that don\'t exist' do
         let(:test1) do
-          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1, tags: [tag1] }
+          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
+            tags: [{ name: 'new_tag1' }] }
         end
         let(:test2) do
-          { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil, tags: [tag2] }
+          { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'output', time: nil,
+            tags: [{ name: 'new_tag2' }] }
         end
 
-        it 'should add tags to the grouping' do
+        it 'should create new tags and add them to the grouping' do
           expect { test_run.update_results!(results) }.to change { grouping.tags.count }.to eq 2
+        end
+      end
+
+      context 'when the results contain tags that already exist' do
+        let(:test1) do
+          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
+            tags: [{ name: existing_tag.name }] }
+        end
+
+        it 'should add tags to the grouping without creating new ones' do
+          expect { test_run.update_results!(results) }.not_to(change { Tag.count })
+          expect(grouping.tags.count).to eq 1
         end
       end
 
