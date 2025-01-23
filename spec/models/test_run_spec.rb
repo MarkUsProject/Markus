@@ -546,7 +546,7 @@ describe TestRun do
         end
       end
 
-      context 'when the results contain comments and has a submission' do
+      context 'when the results contain comments and has a submission without comments' do
         let(:test1) do
           { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
             overall_comment: overall_comment1 }
@@ -560,8 +560,26 @@ describe TestRun do
 
         it 'should add comments to the submission\'s overall comments' do
           test_run.update_results!(results)
-          expect(submission.results.first.overall_comment).to include(overall_comment1)
-          expect(submission.results.first.overall_comment).to include(overall_comment2)
+          expect(submission.current_result.overall_comment).to include(overall_comment1)
+          expect(submission.current_result.overall_comment).to include(overall_comment2)
+        end
+      end
+
+      context 'when the results contain comments and has a submission with an existing comment' do
+        let(:test1) do
+          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
+            overall_comment: overall_comment1 }
+        end
+        let(:result) do
+          create(:result, marking_state: Result::MARKING_STATES[:complete], overall_comment: 'existing_comment')
+        end
+        let(:submission) { create(:version_used_submission, grouping: grouping, current_result: result) }
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should append the comments without overwriting the existing comments' do
+          test_run.update_results!(results)
+          expect(submission.current_result.overall_comment).to include(overall_comment1)
+          expect(submission.current_result.overall_comment).to include('existing_comment')
         end
       end
     end
