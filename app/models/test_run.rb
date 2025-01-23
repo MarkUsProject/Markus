@@ -110,17 +110,14 @@ class TestRun < ApplicationRecord
   end
 
   def add_tags(tag_data)
-    tag_data.each do |tag|
-      existing_tag = Tag.find_by(name: tag['name'], assessment_id: self.grouping.assessment_id)
-      if existing_tag.nil?
-        self.grouping.tags.create(
-          name: tag['name'],
-          description: tag['description'],
-          assessment_id: self.grouping.assessment_id,
-          role_id: self.role_id
-        )
-      elsif self.grouping.tags.exclude?(existing_tag)
-        self.grouping.tags << existing_tag
+    tag_data.each do |new_tag|
+      tag_to_add = Tag.find_or_create_by(name: new_tag['name'], assessment_id: self.grouping.assessment_id) do |tag|
+        tag.description = tag['description']
+        tag.role_id = self.role_id
+      end
+
+      if self.grouping.tags.exclude?(tag_to_add)
+        self.grouping.tags << tag_to_add
       end
     end
   end
