@@ -761,6 +761,28 @@ describe GradersController do
               expect(@grouping1.tas).to be_empty
             end
           end
+
+          context 'when empty submissions are filtered' do
+            let(:submission) { create(:version_used_submission, grouping: @grouping1, is_empty: false) }
+            let(:submission2) { create(:version_used_submission, grouping: @grouping2, is_empty: true) }
+            # purposefully not creating submission3
+
+            it 'filters out grouping2 and grouping3' do
+              groupings = [@grouping1, @grouping2, @grouping3]
+              post_as @instructor, :global_actions, params: {
+                course_id: course.id,
+                assignment_id: @assignment.id,
+                global_actions: 'assign',
+                groupings: groupings,
+                graders: [@ta1.id],
+                current_table: 'groups_table',
+                skip_empty_submissions: 'true'
+              }
+
+              filtered_grouping_ids = GradersController.new.__send__(:filter_empty_submissions, groupings)
+              expect(filtered_grouping_ids).to contain_exactly(@grouping1.id)
+            end
+          end
         end
       end
 
