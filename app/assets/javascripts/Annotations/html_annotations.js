@@ -1,5 +1,5 @@
 /**
- * Functions for HTML (notebook) annotations
+ * Functions for HTML (notebook, RMarkdown) annotations
  */
 function descendant_of_annotation(node) {
   if (node.nodeType === Node.DOCUMENT_NODE) {
@@ -31,9 +31,9 @@ function check_annotation_overlap(range) {
   );
 }
 
-function get_notebook_annotation_range() {
-  const notebook_iframe = document.getElementById("notebook");
-  const target = notebook_iframe.contentDocument;
+function get_html_annotation_range() {
+  const iframe = document.getElementById("html-content");
+  const target = iframe.contentDocument;
   const selection = target.getSelection();
   if (selection.rangeCount >= 1) {
     const range = selection.getRangeAt(0);
