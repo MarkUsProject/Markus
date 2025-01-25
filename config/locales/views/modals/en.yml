@@ -2,6 +2,7 @@
 en:
   modals:
     file_upload:
+      file_input_label: Upload file(s)
       rename_warning: |
         Changing the file extension may render the file unusable.
         Are you sure you want to proceed?

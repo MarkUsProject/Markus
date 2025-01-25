@@ -7,6 +7,7 @@ import {FeedbackFilePanel} from "./feedback_file_panel";
 import {RemarkPanel} from "./remark_panel";
 import {SubmissionFilePanel} from "./submission_file_panel";
 import {TestRunTable} from "../test_run_table";
+import {ResultContext} from "./result_context";
 
 export class LeftPane extends React.Component {
   constructor(props) {
@@ -17,35 +18,37 @@ export class LeftPane extends React.Component {
     this.submissionFilePanel = React.createRef();
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static contextType = ResultContext;
+
+  getSelectedTabIndex() {
     // Reset selected tab state if props are changed and a tab becomes disabled.
     // Affected tabs are "Test Results" (tabIndex 2), "Feedback Files" (tabIndex 3),
     // and "Remark Request" (tabIndex 4).
     if (
-      (state.tabIndex === 2 && LeftPane.disableTestResultsPanel(props)) ||
-      (state.tabIndex === 3 && LeftPane.disableFeedbackFilesPanel(props)) ||
-      (state.tabIndex === 4 && LeftPane.disableRemarkPanel(props))
+      (this.state.tabIndex === 2 && this.disableTestResultsPanel()) ||
+      (this.state.tabIndex === 3 && this.disableFeedbackFilesPanel()) ||
+      (this.state.tabIndex === 4 && this.disableRemarkPanel())
     ) {
-      return {tabIndex: 0};
+      return 0;
     } else {
-      return null;
+      return this.state.tabIndex;
     }
   }
 
-  static disableTestResultsPanel(props) {
-    return props.is_reviewer || !props.enable_test;
+  disableTestResultsPanel() {
+    return this.context.is_reviewer || !this.props.enable_test;
   }
 
-  static disableFeedbackFilesPanel(props) {
-    return props.is_reviewer || props.feedback_files.length === 0;
+  disableFeedbackFilesPanel() {
+    return this.context.is_reviewer || this.props.feedback_files.length === 0;
   }
 
-  static disableRemarkPanel(props) {
-    if (props.is_reviewer || !props.allow_remarks) {
+  disableRemarkPanel() {
+    if (this.context.is_reviewer || !this.props.allow_remarks) {
       return true;
-    } else if (props.student_view) {
+    } else if (this.props.student_view) {
       return false;
-    } else if (props.remark_submitted) {
+    } else if (this.props.remark_submitted) {
       return false;
     } else {
       return true;
@@ -65,30 +68,35 @@ export class LeftPane extends React.Component {
 
   render() {
     return (
-      <Tabs selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({tabIndex})}>
+      <Tabs
+        selectedIndex={this.getSelectedTabIndex()}
+        onSelect={tabIndex => this.setState({tabIndex})}
+      >
         <TabList>
           <Tab>{I18n.t("activerecord.attributes.submission.submission_files")}</Tab>
           <Tab>{I18n.t("activerecord.models.annotation.other")}</Tab>
-          <Tab disabled={LeftPane.disableTestResultsPanel(this.props)}>
+          <Tab disabled={this.disableTestResultsPanel()}>
             {I18n.t("activerecord.models.test_result.other")}
           </Tab>
-          <Tab disabled={LeftPane.disableFeedbackFilesPanel(this.props)}>
+          <Tab disabled={this.disableFeedbackFilesPanel()}>
             {I18n.t("activerecord.attributes.submission.feedback_files")}
           </Tab>
-          <Tab disabled={LeftPane.disableRemarkPanel(this.props)}>
+          <Tab disabled={this.disableRemarkPanel()}>
             {I18n.t("activerecord.attributes.submission.submitted_remark")}
           </Tab>
         </TabList>
         <TabPanel forceRender={true}>
           <SubmissionFilePanel
             ref={this.submissionFilePanel}
-            result_id={this.props.result_id}
-            submission_id={this.props.submission_id}
-            assignment_id={this.props.assignment_id}
-            grouping_id={this.props.grouping_id}
+            result_id={this.context.result_id}
+            submission_id={this.context.submission_id}
+            assignment_id={this.context.assignment_id}
+            grouping_id={this.context.grouping_id}
             revision_identifier={this.props.revision_identifier}
             show_annotation_manager={!this.props.released_to_students}
-            canDownload={this.props.is_reviewer === undefined ? undefined : !this.props.is_reviewer}
+            canDownload={
+              this.context.is_reviewer === undefined ? undefined : !this.context.is_reviewer
+            }
             fileData={this.props.submission_files}
             annotation_categories={this.props.annotation_categories}
             annotations={this.props.annotations}
@@ -96,15 +104,12 @@ export class LeftPane extends React.Component {
             addExistingAnnotation={this.props.addExistingAnnotation}
             released_to_students={this.props.released_to_students}
             loading={this.props.loading}
-            course_id={this.props.course_id}
+            course_id={this.context.course_id}
           />
         </TabPanel>
         <TabPanel forceRender={true}>
           <div id="annotations_summary">
             <AnnotationPanel
-              result_id={this.props.result_id}
-              submission_id={this.props.submission_id}
-              assignment_id={this.props.assignment_id}
               detailed={this.props.detailed_annotations}
               released_to_students={this.props.released_to_students}
               overallComment={this.props.overall_comment || ""}
@@ -114,11 +119,10 @@ export class LeftPane extends React.Component {
               editAnnotation={this.props.editAnnotation}
               removeAnnotation={this.props.removeAnnotation}
               selectFile={this.selectFile}
-              course_id={this.props.course_id}
             />
           </div>
         </TabPanel>
-        <TabPanel forceRender={!LeftPane.disableTestResultsPanel(this.props)}>
+        <TabPanel forceRender={!this.disableTestResultsPanel()}>
           <div id="testviewer">
             {/* student results page (with instructor tests released) does not need the button */}
             {!this.props.student_view && (
@@ -127,8 +131,8 @@ export class LeftPane extends React.Component {
                   method="post"
                   data-remote="true"
                   action={Routes.run_tests_course_result_path(
-                    this.props.course_id,
-                    this.props.result_id
+                    this.context.course_id,
+                    this.context.result_id
                   )}
                 >
                   <button type="submit" disabled={!this.props.can_run_tests}>
@@ -141,30 +145,25 @@ export class LeftPane extends React.Component {
             )}
 
             <TestRunTable
-              result_id={this.props.result_id}
-              submission_id={this.props.submission_id}
-              assignment_id={this.props.assignment_id}
-              grouping_id={this.props.grouping_id}
+              result_id={this.context.result_id}
+              course_id={this.context.course_id}
+              assignment_id={this.context.assignment_id}
+              grouping_id={this.context.grouping_id}
+              submission_id={this.context.submission_id}
               instructor_run={this.props.instructor_run}
               instructor_view={!this.props.student_view}
-              course_id={this.props.course_id}
             />
           </div>
         </TabPanel>
-        <TabPanel forceRender={!LeftPane.disableFeedbackFilesPanel(this.props)}>
+        <TabPanel forceRender={!this.disableFeedbackFilesPanel()}>
           <FeedbackFilePanel
-            assignment_id={this.props.assignment_id}
             feedbackFiles={this.props.feedback_files}
-            submission_id={this.props.submission_id}
-            course_id={this.props.course_id}
             loading={this.props.loading}
           />
         </TabPanel>
-        <TabPanel forceRender={!LeftPane.disableRemarkPanel(this.props)}>
+        <TabPanel forceRender={!this.disableRemarkPanel()}>
           <div id="remark_request_tab">
             <RemarkPanel
-              result_id={this.props.result_id}
-              assignment_id={this.props.assignment_id}
               assignmentRemarkMessage={this.props.assignment_remark_message}
               updateOverallComment={this.props.update_overall_comment}
               remarkDueDate={this.props.remark_due_date}
@@ -175,8 +174,6 @@ export class LeftPane extends React.Component {
               remarkSubmitted={this.props.remark_submitted}
               overallComment={this.props.remark_overall_comment || ""}
               studentView={this.props.student_view}
-              course_id={this.props.course_id}
-              submission_id={this.props.submission_id}
             />
           </div>
         </TabPanel>

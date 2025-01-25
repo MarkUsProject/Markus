@@ -28,7 +28,7 @@
 // designate $next_criteria as the currently selected criteria
 function activeCriterion($next_criteria) {
   if (!$next_criteria.hasClass("active-criterion")) {
-    $criteria_list = $(".marks-list > li");
+    const $criteria_list = $(".marks-list > li");
     // remove all previous active-criterion (there should only be one)
     $criteria_list.removeClass("active-criterion");
     // scroll the $next_criteria to the top of the criterion bar

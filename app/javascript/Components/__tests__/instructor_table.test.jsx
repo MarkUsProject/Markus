@@ -1,4 +1,4 @@
-import {mount} from "enzyme";
+import {render, screen} from "@testing-library/react";
 
 import {InstructorTable} from "../instructor_table";
 
@@ -14,18 +14,24 @@ global.fetch = jest.fn(() =>
 );
 
 describe("For the InstructorTable's display of instructors", () => {
-  let wrapper, instructors_sample;
+  let instructors_sample;
 
   describe("when some instructors are fetched", () => {
-    const instructors_in_one_row = (wrapper, instructor) => {
-      // Find the row
-      const row = wrapper.find({children: instructor.user_name}).parent();
-      // Expect the row to contain these information
-      expect(row.children({children: instructor.first_name})).toBeTruthy();
-      expect(row.children({children: instructor.last_name})).toBeTruthy();
-      if (instructor.email) {
-        expect(row.children({children: instructor.email})).toBeTruthy();
+    const instructors_in_one_row = instructor => {
+      const rows = screen.getAllByRole("row");
+      for (let row of rows) {
+        const cells = Array.from(row.childNodes).map(c => c.textContent);
+        if (cells[0] === instructor.user_name) {
+          expect(cells[1]).toEqual(instructor.first_name);
+          expect(cells[2]).toEqual(instructor.last_name);
+          if (instructor.email) {
+            expect(cells[3]).toEqual(instructor.email);
+          }
+          return;
+        }
       }
+      // If the loop ends without finding the instructor, raise an error
+      throw `Could not find row for ${instructor.user_name}`;
     };
 
     beforeAll(() => {
@@ -56,11 +62,11 @@ describe("For the InstructorTable's display of instructors", () => {
           counts: {all: 2, active: 1, inactive: 1},
         }),
       });
-      wrapper = mount(<InstructorTable course_id={1} />);
+      render(<InstructorTable course_id={1} />);
     });
 
     it("each instructor is displayed as a row of the table", () => {
-      instructors_sample.forEach(instructor => instructors_in_one_row(wrapper, instructor));
+      instructors_sample.forEach(instructor => instructors_in_one_row(instructor));
     });
   });
 
@@ -76,11 +82,11 @@ describe("For the InstructorTable's display of instructors", () => {
           counts: {all: 0, active: 0, inactive: 0},
         }),
       });
-      wrapper = mount(<InstructorTable course_id={1} />);
+      render(<InstructorTable course_id={1} />);
     });
 
     it("No rows found is shown", () => {
-      expect(wrapper.find({children: "No rows found"})).toBeTruthy();
+      expect(screen.queryByText("No rows found")).toBeTruthy();
     });
   });
 });

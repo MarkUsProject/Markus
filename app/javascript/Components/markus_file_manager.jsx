@@ -102,11 +102,6 @@ class RawFileManager extends RawFileBrowser {
             </li>
           );
         }
-        console.log(
-          selectedItem.keyDerived,
-          this.props.disableActions.rename,
-          this.props.onRenameFile
-        );
         if (
           selectedItem.keyDerived &&
           !this.props.disableActions.rename &&
@@ -329,7 +324,11 @@ class FileManagerFile extends FileRenderers.RawTableFile {
         <React.Fragment>
           {icon}
           <span>{this.getName()}</span>
-          <a href={this.props.url || "#"} download={this.getName()}>
+          <a
+            href={this.props.url || "#"}
+            download={this.getName()}
+            title={I18n.t("download_the", {item: this.getName()})}
+          >
             <FontAwesomeIcon icon="fa-solid fa-download" className="file-download" />
           </a>
         </React.Fragment>

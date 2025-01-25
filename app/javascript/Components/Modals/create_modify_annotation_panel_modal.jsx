@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 
 import MarkdownEditor from "../markdown_editor";
+import {ResultContext} from "../Result/result_context";
 
 class CreateModifyAnnotationPanel extends React.Component {
   constructor(props) {
@@ -15,6 +16,8 @@ class CreateModifyAnnotationPanel extends React.Component {
       change_all: false,
     };
   }
+
+  static contextType = ResultContext;
 
   updateAnnotationCompletion = () => {
     const annotationTextList = document.getElementById("annotation_text_list");
@@ -30,8 +33,8 @@ class CreateModifyAnnotationPanel extends React.Component {
     }
 
     const url = Routes.find_annotation_text_course_assignment_annotation_categories_path(
-      this.props.course_id,
-      this.props.assignment_id,
+      this.context.course_id,
+      this.context.assignment_id,
       {string: value}
     );
 
@@ -93,7 +96,7 @@ class CreateModifyAnnotationPanel extends React.Component {
       }
     });
 
-    if (!this.props.is_reviewer) {
+    if (!this.context.is_reviewer) {
       textArea.keyup(e => {
         if (typing_timer) {
           clearTimeout(typing_timer);
@@ -222,7 +225,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                 name="annotation_text_id"
                 value={this.props.annotation_text_id}
               />
-              {this.props.is_reviewer ? (
+              {this.context.is_reviewer ? (
                 <input
                   type="hidden"
                   id="new_annotation_category"

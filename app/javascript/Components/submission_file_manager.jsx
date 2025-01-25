@@ -265,7 +265,12 @@ class SubmissionFileManager extends React.Component {
         document.getElementById("content").getBoundingClientRect().width - 150 + "px";
       heading = this.state.viewFile;
       content = (
-        <div id="codeviewer" className="text-viewer-container" style={{maxWidth: withinSize}}>
+        <div
+          id="codeviewer"
+          className="text-viewer-container"
+          style={{maxWidth: withinSize}}
+          data-testid="file-preview-root"
+        >
           <FileViewer
             assignment_id={this.props.assignment_id}
             grouping_id={this.props.grouping_id}
