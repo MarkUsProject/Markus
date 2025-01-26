@@ -1062,7 +1062,7 @@ describe CriteriaController do
 
         expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50', 'cr70')
         expect(flash[:error]).to contain_message(I18n.t('criteria.errors.invalid_format'))
-        expect(flash[:error]).to contain_message(I18n.t(' cr40, cr70, cr50'))
+        expect(flash[:error]).to contain_message(' cr40, cr70, cr50')
       end
 
       it 'does not create criteria with an invalid mark' do
@@ -1078,7 +1078,7 @@ describe CriteriaController do
 
         expect(assignment.criteria.where(name: %w[no_levels empty_levels])).to be_empty
         expect(flash[:error]).to contain_message(I18n.t('criteria.errors.invalid_format'))
-        expect(flash[:error]).to contain_message(I18n.t(' no_levels, empty_levels'))
+        expect(flash[:error]).to contain_message(' no_levels, empty_levels')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
