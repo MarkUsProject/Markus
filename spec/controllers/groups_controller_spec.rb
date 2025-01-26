@@ -181,7 +181,7 @@ describe GroupsController do
             new_groupname: 'placeholder_group'
           }
 
-          expect(flash[:error]).to have_message('groups.group_name_already_in_use_diff_assignment')
+          expect(flash[:error]).to have_message(I18n.t('groups.group_name_already_in_use_diff_assignment'))
         end
       end
 
@@ -196,7 +196,7 @@ describe GroupsController do
             new_groupname: 'placeholder_group'
           }
 
-          expect(flash[:error]).to have_message('groups.group_name_already_in_use_diff_assignment')
+          expect(flash[:error]).to have_message(I18n.t('groups.group_name_already_in_use_diff_assignment'))
         end
       end
     end

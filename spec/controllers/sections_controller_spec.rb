@@ -52,21 +52,21 @@ describe SectionsController do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: 'section_01' } }
 
       expect(response).to be_redirect
-      expect(flash[:success]).to have_message('sections.create.success', name: 'section_01')
+      expect(flash[:success]).to have_message(I18n.t('sections.create.success', name: 'section_01'))
       expect(Section.find_by(name: 'section_01')).to be_truthy
     end
 
     it 'not be able to create a section with the same name as a existing one' do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: section.name } }
       expect(response).to have_http_status(:ok)
-      expect(flash[:error]).to have_message('sections.create.error')
+      expect(flash[:error]).to have_message(I18n.t('sections.create.error'))
     end
 
     it 'not be able to create a section with a blank name' do
       post_as @instructor, :create, params: { course_id: course.id, section: { name: '' } }
       expect(Section.find_by(name: '')).to be_nil
       expect(response).to have_http_status(:ok)
-      expect(flash[:error]).to have_message('sections.create.error')
+      expect(flash[:error]).to have_message(I18n.t('sections.create.error'))
     end
 
     it 'on edit section' do
@@ -78,7 +78,7 @@ describe SectionsController do
       put_as @instructor, :update, params: { course_id: course.id, id: section.id, section: { name: 'no section' } }
 
       expect(response).to be_redirect
-      expect(flash[:success]).to have_message('sections.update.success', name: 'no section')
+      expect(flash[:success]).to have_message(I18n.t('sections.update.success', name: 'no section'))
       expect(Section.find_by(name: 'no section')).to be_truthy
     end
 
@@ -90,20 +90,20 @@ describe SectionsController do
     it 'not be able to edit a section name to an existing name' do
       put_as @instructor, :update, params: { course_id: course.id, id: section.id, section: { name: section2.name } }
       expect(response).to have_http_status(:ok)
-      expect(flash[:error]).to have_message('sections.update.error')
+      expect(flash[:error]).to have_message(I18n.t('sections.update.error'))
     end
 
     context 'with an already created section' do
       it 'be able to delete a section' do
         delete_as @instructor, :destroy, params: { course_id: course.id, id: section.id }
-        expect(flash[:success]).to have_message('sections.destroy.success')
+        expect(flash[:success]).to have_message(I18n.t('sections.destroy.success'))
       end
 
       it 'not be able to delete a section with students in it' do
         student = create(:student)
         section.students << student
         delete_as @instructor, :destroy, params: { course_id: course.id, id: section.id }
-        expect(flash[:error]).to have_message('sections.destroy.not_empty')
+        expect(flash[:error]).to have_message(I18n.t('sections.destroy.not_empty'))
         expect(Section.find(section.id)).to be_truthy
       end
     end

@@ -143,7 +143,8 @@ describe NotesController do
                 params: { course_id: course.id, noteable_type: 'Grouping',
                           note: { noteable_id: grouping.id, notes_message: @message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.create.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -156,7 +157,8 @@ describe NotesController do
                 params: { course_id: course.id, noteable_type: 'Student',
                           note: { noteable_id: student.id, notes_message: @message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.create.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -169,7 +171,8 @@ describe NotesController do
                 params: { course_id: course.id, noteable_type: 'Assignment',
                           note: { noteable_id: assignment.id, notes_message: @message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.create.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -245,7 +248,8 @@ describe NotesController do
                   :update,
                   params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
           expect(assigns(:note)).not_to be_nil
-          expect(flash[:success]).to have_message('flash.actions.update.success', resource_name: Note.model_name.human)
+          expect(flash[:success]).to have_message(I18n.t('flash.actions.update.success',
+                                                         resource_name: Note.model_name.human))
           expect(response).to redirect_to(controller: 'notes')
         end
       end
@@ -265,14 +269,15 @@ describe NotesController do
         @note = create(:note, creator_id: @ta.id)
         delete_as @ta, :destroy, params: { course_id: course.id, id: @note.id }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.destroy.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.destroy.success',
+                                                       resource_name: Note.model_name.human))
       end
 
       it 'for a note belonging to someone else (delete as TA)' do
         @note = create(:note)
         delete_as @ta, :destroy, params: { course_id: course.id, id: @note.id }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:error]).to have_message('action_policy.policy.note.modify?')
+        expect(flash[:error]).to have_message(I18n.t('action_policy.policy.note.modify?'))
       end
     end
   end
@@ -312,7 +317,7 @@ describe NotesController do
 
     it 'for invalid type' do
       get_as @instructor, :noteable_object_selector, params: { course_id: course.id, noteable_type: 'gibberish' }
-      expect(flash[:error]).to have_message('notes.new.invalid_selector')
+      expect(flash[:error]).to have_message(I18n.t('notes.new.invalid_selector'))
       expect(assigns(:assignments)).not_to be_nil
       expect(assigns(:groupings)).not_to be_nil
       expect(assigns(:students)).to be_nil
@@ -371,7 +376,8 @@ describe NotesController do
                 params: { course_id: course.id, noteable_type: 'Grouping',
                           note: { noteable_id: grouping.id, notes_message: @message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.create.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -384,7 +390,8 @@ describe NotesController do
                 params: { course_id: course.id, noteable_type: 'Student',
                           note: { noteable_id: student.id, notes_message: @message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.create.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -397,7 +404,8 @@ describe NotesController do
                 params: { course_id: course.id, noteable_type: 'Assignment',
                           note: { noteable_id: assignment.id, notes_message: @message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.create.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -440,7 +448,8 @@ describe NotesController do
         post_as @instructor, :update,
                 params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.update.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.update.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
       end
 
@@ -450,7 +459,8 @@ describe NotesController do
         post_as @instructor, :update,
                 params: { course_id: course.id, id: @note.id, note: { notes_message: @new_message } }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.update.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.update.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
       end
 
@@ -458,7 +468,8 @@ describe NotesController do
         @note = create(:note, creator_id: @instructor.id)
         delete_as @instructor, :destroy, params: { course_id: course.id, id: @note.id }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.destroy.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.destroy.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
       end
 
@@ -466,7 +477,8 @@ describe NotesController do
         @note = create(:note, creator_id: create(:ta).id)
         delete_as @instructor, :destroy, params: { course_id: course.id, id: @note.id }
         expect(assigns(:note)).not_to be_nil
-        expect(flash[:success]).to have_message('flash.actions.destroy.success', resource_name: Note.model_name.human)
+        expect(flash[:success]).to have_message(I18n.t('flash.actions.destroy.success',
+                                                       resource_name: Note.model_name.human))
         expect(response).to redirect_to(controller: 'notes')
       end
 

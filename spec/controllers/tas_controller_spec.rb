@@ -300,7 +300,8 @@ describe TasController do
       it 'does not delete the TA, shows an error message, and gets a bad request response' do
         expect(Ta.count).to eq(1)
         expect(flash.now[:success]).to be_nil
-        expect(flash[:error]).to contain_message('flash.tas.destroy.error', user_name: ta.user_name, message: '')
+        expect(flash[:error]).to contain_message(I18n.t('flash.tas.destroy.error', user_name: ta.user_name,
+                                                                                   message: ''))
         expect(response).to have_http_status(:bad_request)
       end
     end

@@ -702,7 +702,7 @@ describe AnnotationCategoriesController do
 
         expect(response).to have_http_status(:found)
         expect(flash[:error]).to be_nil
-        expect(flash[:success]).to have_message('upload_success', count: 2)
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 2))
         expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
         expect(AnnotationCategory.all.size).to eq(2)
@@ -728,7 +728,7 @@ describe AnnotationCategoriesController do
 
         expect(response).to have_http_status :found
         expect(flash[:error]).to be_nil
-        expect(flash[:success]).to have_message('upload_success', count: 3)
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 3))
         expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
         expect(AnnotationCategory.all.size).to eq 3

@@ -50,7 +50,7 @@ describe ExamTemplatesController do
       before { post_as user, :create, params: params }
 
       it 'flashes an exam template create failure error message' do
-        expect(flash[:error]).to have_message('exam_templates.create.failure')
+        expect(flash[:error]).to have_message(I18n.t('exam_templates.create.failure'))
       end
     end
 
@@ -113,7 +113,7 @@ describe ExamTemplatesController do
         end
 
         it 'displays a flash error message' do
-          expect(flash[:error]).to have_message('exam_templates.update.failure')
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.update.failure'))
         end
 
         it 'responds with 302' do
@@ -160,7 +160,7 @@ describe ExamTemplatesController do
         end
 
         it 'should send appropriate error message' do
-          expect(flash[:error]).to have_message('exam_templates.upload_scans.search_failure')
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.upload_scans.search_failure'))
         end
       end
 
@@ -176,7 +176,7 @@ describe ExamTemplatesController do
         end
 
         it 'should send appropriate error message' do
-          expect(flash[:error]).to have_message('exam_templates.upload_scans.missing')
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.upload_scans.missing'))
         end
       end
 
@@ -193,7 +193,7 @@ describe ExamTemplatesController do
         end
 
         it 'should send appropriate error message' do
-          expect(flash[:error]).to have_message('exam_templates.upload_scans.invalid')
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.upload_scans.invalid'))
         end
       end
     end
