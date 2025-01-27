@@ -46,7 +46,7 @@ describe GroupsController do
           end
 
           it 'assigns the error message to flash[:error]' do
-            expect(flash[:error][0]).to include("Group #{group_name} already exists")
+            expect(flash[:error]).to contain_message("Group #{group_name} already exists")
           end
         end
       end
@@ -181,9 +181,7 @@ describe GroupsController do
             new_groupname: 'placeholder_group'
           }
 
-          expect(flash[:error].map do |f|
-            extract_text f
-          end).to eq [I18n.t('groups.group_name_already_in_use_diff_assignment')]
+          expect(flash[:error]).to have_message(I18n.t('groups.group_name_already_in_use_diff_assignment'))
         end
       end
 
@@ -198,9 +196,7 @@ describe GroupsController do
             new_groupname: 'placeholder_group'
           }
 
-          expect(flash[:error].map do |f|
-            extract_text f
-          end).to eq [I18n.t('groups.group_name_already_in_use_diff_assignment')]
+          expect(flash[:error]).to have_message(I18n.t('groups.group_name_already_in_use_diff_assignment'))
         end
       end
     end

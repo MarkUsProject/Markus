@@ -51,7 +51,7 @@ describe JobMessagesController do
           let(:status_type) { :queued }
 
           it 'should flash a notice message' do
-            expect(flash[:notice]).to include "<p>#{I18n.t('poll_job.queued')}</p>"
+            expect(flash[:notice]).to contain_message(I18n.t('poll_job.queued'))
           end
 
           it 'should not set the session[:job_id] to nil' do
@@ -67,7 +67,7 @@ describe JobMessagesController do
           let(:status_type) { :working }
 
           it 'should flash a notice message' do
-            expect(flash[:notice]).to include "<p>#{ApplicationJob.show_status(status)}</p>"
+            expect(flash[:notice]).to contain_message(ApplicationJob.show_status(status))
           end
 
           it 'should not set the session[:job_id] to nil' do

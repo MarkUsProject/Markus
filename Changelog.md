@@ -26,6 +26,7 @@
 - Add unit tests for `marks_graders_controller` (#7382)
 - Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
 - Refactor the `Result` component and its children to use React context API (#7380)
+- Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
 - Update Python version to 3.13 in seed autotest schemas (#7388)
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 

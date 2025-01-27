@@ -900,7 +900,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
                               current_revision_identifier: revision_identifier }
 
-            expect(flash[:error]).to eq(["<p>#{I18n.t('submissions.collect.could_not_collect_released')}</p>"])
+            expect(flash[:error]).to have_message(I18n.t('submissions.collect.could_not_collect_released'))
           end
         end
       end
@@ -1783,7 +1783,7 @@ describe SubmissionsController do
 
       it 'flashes an error message' do
         subject
-        expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+        expect(flash[:error]).to have_message(I18n.t('errors.invalid_path'))
       end
     end
 
