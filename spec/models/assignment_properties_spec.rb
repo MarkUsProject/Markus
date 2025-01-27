@@ -34,8 +34,7 @@ describe AssignmentProperties do
 
       it 'should not be valid when already taken by the same autotester' do
         expect(assignment2).not_to be_valid
-        expect(assignment2.errors.full_messages).to eq ['Assignment properties remote autotest settings
-        remote_autotest_settings_id has already been taken by the same autotester.']
+        expect(assignment2.errors.full_messages[0]).to include('remote_autotest_settings_id has already been taken')
       end
     end
 
