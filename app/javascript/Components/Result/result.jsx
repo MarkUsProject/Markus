@@ -325,8 +325,8 @@ class Result extends React.Component {
 
   extend_with_selection_data = annotation_data => {
     let box;
-    if (annotation_type === ANNOTATION_TYPES.NOTEBOOK) {
-      const range = get_notebook_annotation_range();
+    if (annotation_type === ANNOTATION_TYPES.HTML) {
+      const range = get_html_annotation_range();
       box = {
         start_node: pathToNode(range.startContainer),
         start_offset: range.startOffset,

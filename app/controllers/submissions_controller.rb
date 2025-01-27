@@ -18,7 +18,7 @@ class SubmissionsController < ApplicationController
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
-  content_security_policy_report_only only: :notebook_content
+  content_security_policy_report_only only: :html_content
 
   def index
     respond_to do |format|
@@ -483,9 +483,9 @@ class SubmissionsController < ApplicationController
     end
 
     if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
-      redirect_to notebook_content_course_assignment_submissions_url(current_course,
-                                                                     record.grouping.assignment,
-                                                                     select_file_id: params[:select_file_id])
+      redirect_to html_content_course_assignment_submissions_url(current_course,
+                                                                 record.grouping.assignment,
+                                                                 select_file_id: params[:select_file_id])
       return
     end
 
@@ -561,7 +561,7 @@ class SubmissionsController < ApplicationController
     nbconvert_enabled = Rails.application.config.nbconvert_enabled
 
     if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
-      redirect_to action: :notebook_content,
+      redirect_to action: :html_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
                   grouping_id: params[:grouping_id],
@@ -641,7 +641,7 @@ class SubmissionsController < ApplicationController
     send_data_download csv_data, filename: "#{assignment.short_identifier}_submissions.csv"
   end
 
-  def notebook_content
+  def html_content
     if params[:select_file_id]
       file = SubmissionFile.find(params[:select_file_id])
       file_contents = file.retrieve_file
@@ -672,15 +672,15 @@ class SubmissionsController < ApplicationController
       filename = params[:file_name]
     end
 
-    @notebook_type = FileHelper.get_file_type(filename)
+    @file_type = FileHelper.get_file_type(filename)
     if path.nil?
-      @notebook_content = ''
+      @html_content = ''
     else
       sanitized_filename = ActiveStorage::Filename.new("#{filename}.#{revision_identifier}").sanitized
       unique_path = File.join(grouping.group.repo_name, path, sanitized_filename)
-      @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+      @html_content = notebook_to_html(file_contents, unique_path, @file_type)
     end
-    render layout: 'notebook'
+    render layout: 'html_content'
   end
 
   ##
