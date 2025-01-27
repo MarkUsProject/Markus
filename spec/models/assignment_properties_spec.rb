@@ -14,10 +14,29 @@ describe AssignmentProperties do
     it { is_expected.to allow_value(false).for(:display_grader_names_to_students) }
     it { is_expected.to have_one(:course) }
 
-    context 'with a subject' do
-      subject { create(:assignment).assignment_properties }
+    context 'with remote_autotest_settings_id' do
+      before do
+        allow_any_instance_of(AutotestSetting).to receive(:register).and_return('someapikey')
+        allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
+        assignment.remote_autotest_settings_id = remote_autotest_settings_id
+        assignment.course.autotest_setting_id = autotest_setting.id
+        assignment.course.save!
+        assignment.save!
 
-      it { is_expected.to validate_uniqueness_of(:remote_autotest_settings_id).allow_nil }
+        assignment2.remote_autotest_settings_id = remote_autotest_settings_id
+        assignment2.course.autotest_setting_id = autotest_setting.id
+      end
+
+      let(:assignment) { create(:assignment) }
+      let(:assignment2) { create(:assignment) }
+      let(:autotest_setting) { create(:autotest_setting) }
+      let(:remote_autotest_settings_id) { 30 }
+
+      it 'should not be valid when already taken by the same autotester' do
+        expect(assignment2).not_to be_valid
+        expect(assignment2.errors.full_messages).to eq ['Assignment properties remote autotest settings
+        remote_autotest_settings_id has already been taken by the same autotester.']
+      end
     end
 
     it 'should not be valid with a negative duration' do
