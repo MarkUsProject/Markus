@@ -1,5 +1,5 @@
 /**
- * Functions for HTML (notebook, RMarkdown) annotations
+ * Functions for HTML (notebook) annotations
  */
 function descendant_of_annotation(node) {
   if (node.nodeType === Node.DOCUMENT_NODE) {
