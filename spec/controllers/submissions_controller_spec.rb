@@ -1590,16 +1590,16 @@ describe SubmissionsController do
         end
 
         let(:redirect_location) do
-          notebook_content_course_assignment_submissions_url(course_id: course.id,
-                                                             assignment_id: assignment.id,
-                                                             file_name: 'example.ipynb',
-                                                             grouping_id: grouping.id)
+          html_content_course_assignment_submissions_url(course_id: course.id,
+                                                         assignment_id: assignment.id,
+                                                         file_name: 'example.ipynb',
+                                                         grouping_id: grouping.id)
         end
 
         context 'and the python dependencies are installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
 
-          it 'should redirect to "notebook_content"' do
+          it 'should redirect to "html_content"' do
             expect(subject).to redirect_to(redirect_location)
           end
         end
@@ -1607,7 +1607,7 @@ describe SubmissionsController do
         context 'and the python dependencies are not installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
 
-          it 'should redirect to "notebook_content"' do
+          it 'should redirect to "html_content"' do
             expect(subject).not_to redirect_to(redirect_location)
           end
         end
@@ -1700,22 +1700,22 @@ describe SubmissionsController do
     end
   end
 
-  describe '#notebook_content' do
+  describe '#html_content' do
     let(:assignment) { create(:assignment) }
     let(:instructor) { create(:instructor) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:notebook_file) { fixture_file_upload(filename) }
-    let(:submission) { submit_file(assignment, grouping, notebook_file.original_filename, notebook_file.read) }
+    let(:file) { fixture_file_upload(filename) }
+    let(:submission) { submit_file(assignment, grouping, file.original_filename, file.read) }
 
-    shared_examples 'notebook types' do
-      shared_examples 'notebook content' do
+    shared_examples 'html content types' do
+      shared_examples 'html content' do
         it 'is successful' do
           subject
           expect(response).to have_http_status(:success)
         end
 
         it 'renders the correct template' do
-          expect(subject).to render_template('notebook')
+          expect(subject).to render_template('html_content')
         end
       end
 
@@ -1723,7 +1723,7 @@ describe SubmissionsController do
               skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
         let(:filename) { 'example.ipynb' }
 
-        it_behaves_like 'notebook content'
+        it_behaves_like 'html content'
       end
 
       context 'a jupyter-notebook file with widgets',
@@ -1736,47 +1736,47 @@ describe SubmissionsController do
           expect(response.body).not_to include("KeyError: 'state'")
         end
 
-        it_behaves_like 'notebook content'
+        it_behaves_like 'html content'
       end
 
       context 'an rmarkdown file' do
         let(:filename) { 'example.Rmd' }
 
-        it_behaves_like 'notebook content'
+        it_behaves_like 'html content'
       end
     end
 
     context 'called with a collected submission' do
       subject do
-        get_as instructor, :notebook_content,
+        get_as instructor, :html_content,
                params: { course_id: course.id, assignment_id: assignment.id, select_file_id: submission_file.id }
       end
 
       let(:submission_file) { create(:submission_file, submission: submission, filename: filename) }
 
-      it_behaves_like 'notebook types'
+      it_behaves_like 'html content types'
     end
 
     context 'called with a revision identifier' do
       subject do
-        get_as instructor, :notebook_content, params: { course_id: course.id,
-                                                        assignment_id: assignment.id,
-                                                        file_name: filename,
-                                                        grouping_id: grouping.id,
-                                                        revision_identifier: submission.revision_identifier }
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier }
       end
 
-      it_behaves_like 'notebook types'
+      it_behaves_like 'html content types'
     end
 
     context 'called with an invalid path' do
       subject do
-        get_as instructor, :notebook_content, params: { course_id: course.id,
-                                                        assignment_id: assignment.id,
-                                                        file_name: filename,
-                                                        grouping_id: grouping.id,
-                                                        revision_identifier: submission.revision_identifier,
-                                                        path: '../..' }
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier,
+                                                    path: '../..' }
       end
 
       let(:filename) { 'example.ipynb' }
@@ -1792,12 +1792,12 @@ describe SubmissionsController do
       let(:filename) { 'pdf_with_ipynb_extension.ipynb' }
 
       it 'should display an invalid Jupyter notebook content error message' do
-        get_as instructor, :notebook_content, params: { course_id: course.id,
-                                                        assignment_id: assignment.id,
-                                                        file_name: filename,
-                                                        preview: true,
-                                                        grouping_id: grouping.id,
-                                                        revision_identifier: submission.revision_identifier }
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    preview: true,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier }
         expect(response.body).to include(I18n.t('submissions.invalid_jupyter_notebook_content'))
       end
     end
@@ -2074,15 +2074,15 @@ describe SubmissionsController do
         context 'file is a jupyter-notebook file' do
           let(:filename) { 'example.ipynb' }
           let(:redirect_location) do
-            notebook_content_course_assignment_submissions_path(course,
-                                                                assignment,
-                                                                select_file_id: submission_file.id)
+            html_content_course_assignment_submissions_path(course,
+                                                            assignment,
+                                                            select_file_id: submission_file.id)
           end
 
           context 'and the python dependencies are installed' do
             before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
 
-            it 'should redirect to "notebook_content"' do
+            it 'should redirect to "html_content"' do
               expect(subject).to(redirect_to(redirect_location))
             end
           end
@@ -2090,7 +2090,7 @@ describe SubmissionsController do
           context 'and the python dependencies are not installed' do
             before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
 
-            it 'should not redirect to "notebook_content"' do
+            it 'should not redirect to "html_content"' do
               expect(subject).not_to(redirect_to(redirect_location))
             end
           end

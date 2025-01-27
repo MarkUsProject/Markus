@@ -58,7 +58,7 @@ describe SubmissionPolicy do
     end
   end
 
-  describe_rule :notebook_content? do
+  describe_rule :html_content? do
     [:student, :ta, :instructor].each do |role_type|
       context "as a #{role_type}" do
         let(:role) { create(role_type) }

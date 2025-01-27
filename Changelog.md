@@ -27,6 +27,7 @@
 - Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
 - Refactor the `Result` component and its children to use React context API (#7380)
 - Update Python version to 3.13 in seed autotest schemas (#7388)
+- Rename jupyter notebook content functions and files to generalize to html content (#7391)
 
 ## [v2.6.1]
 

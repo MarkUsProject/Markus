@@ -1,7 +1,7 @@
 import React from "react";
 import {markupTextInRange} from "../Helpers/range_selector";
 
-export class NotebookViewer extends React.PureComponent {
+export class HTMLViewer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.iframe = React.createRef();
@@ -14,7 +14,7 @@ export class NotebookViewer extends React.PureComponent {
   }
 
   readyAnnotations = () => {
-    annotation_type = ANNOTATION_TYPES.NOTEBOOK;
+    annotation_type = ANNOTATION_TYPES.HTML;
   };
 
   renderAnnotations = () => {
@@ -61,8 +61,8 @@ export class NotebookViewer extends React.PureComponent {
     return (
       <div>
         <iframe
-          className={"notebook"}
-          id={"notebook"}
+          className={"html-content"}
+          id={"html-content"}
           key={this.props.url}
           onLoad={this.renderAnnotations}
           src={this.props.url + "&preview=true"}
