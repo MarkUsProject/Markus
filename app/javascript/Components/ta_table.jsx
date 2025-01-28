@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import PropTypes from "prop-types";
 
 import ReactTable from "react-table";
@@ -137,7 +137,8 @@ TATable.propTypes = {
 };
 
 function makeTATable(elem, props) {
-  render(<TATable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<TATable {...props} />);
 }
 
 export {makeTATable, TATable};

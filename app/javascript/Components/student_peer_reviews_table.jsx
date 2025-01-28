@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import ReactTable from "react-table";
 
@@ -71,5 +71,6 @@ class StudentPeerReviewsTable extends React.Component {
 }
 
 export function makeStudentPeerReviewsTable(elem, props) {
-  render(<StudentPeerReviewsTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<StudentPeerReviewsTable {...props} />);
 }

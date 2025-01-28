@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import CourseCard from "./course_cards";
 
 class CourseList extends React.Component {
@@ -59,5 +59,6 @@ class CourseList extends React.Component {
 }
 
 export function makeCourseList(elem, props) {
-  return render(<CourseList {...props} />, elem);
+  const root = createRoot(elem);
+  return root.render(<CourseList {...props} />);
 }

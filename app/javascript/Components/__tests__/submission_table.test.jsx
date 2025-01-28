@@ -13,7 +13,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
 describe("For the SubmissionTable's display of inactive groups", () => {
   let groups_sample;
-  beforeEach(() => {
+  beforeEach(async () => {
     groups_sample = [
       {
         _id: 1,
@@ -70,16 +70,13 @@ describe("For the SubmissionTable's display of inactive groups", () => {
         defaultFiltered={[{id: "", value: ""}]}
       />
     );
+    await screen.findByText("group_0002");
   });
 
   it("contains the correct amount of inactive groups in the hidden tooltip", () => {
     expect(screen.getByTestId("show_inactive_groups_tooltip").getAttribute("title")).toEqual(
       "1 inactive group"
     );
-  });
-
-  it("initially contains the active group", () => {
-    expect(screen.queryByText("group_0002")).toBeInTheDocument();
   });
 
   it("initially does not contain the inactive group", () => {

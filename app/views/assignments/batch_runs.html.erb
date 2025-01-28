@@ -1,7 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      window.BatchTestRunTable = makeBatchTestRunTable(document.getElementById('batch_test_run_table'), {
+      window.batchTestRunTable = makeBatchTestRunTable(document.getElementById('batch_test_run_table'), {
         course_id: <%= @current_course.id %>,
         assignment_id: <%= @assignment.id %>,
         detailed: <%= @current_role.instructor? || @current_role.ta? ||
