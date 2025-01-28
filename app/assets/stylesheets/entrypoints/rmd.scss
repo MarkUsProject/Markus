@@ -1,0 +1,15 @@
+/* MarkUs custom styling */
+@use 'fonts';
+@import '../common/constants';
+
+.markus-annotation {
+  background-color: $light-alert;
+}
+
+div.markus-annotation {
+  border: 5px solid $sharp-line;
+}
+
+.markus-annotation-content {
+  font-family: $fonts;
+}
