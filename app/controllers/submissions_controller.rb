@@ -18,7 +18,9 @@ class SubmissionsController < ApplicationController
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
-  content_security_policy_report_only only: :notebook_content
+  content_security_policy only: :html_content do |p|
+    p.style_src :self, "'unsafe-inline'"
+  end
 
   def index
     respond_to do |format|
@@ -482,10 +484,11 @@ class SubmissionsController < ApplicationController
       return head :not_found
     end
 
-    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
-      redirect_to notebook_content_course_assignment_submissions_url(current_course,
-                                                                     record.grouping.assignment,
-                                                                     select_file_id: params[:select_file_id])
+    if params[:show_in_browser] == 'true' &&
+      ((file.is_pynb? && Rails.application.config.nbconvert_enabled) || file.is_rmd?)
+      redirect_to html_content_course_assignment_submissions_url(current_course,
+                                                                 record.grouping.assignment,
+                                                                 select_file_id: params[:select_file_id])
       return
     end
 
@@ -559,9 +562,10 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
     nbconvert_enabled = Rails.application.config.nbconvert_enabled
+    file_type = FileHelper.get_file_type(params[:file_name])
 
-    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
-      redirect_to action: :notebook_content,
+    if ((file_type == 'jupyter-notebook' && nbconvert_enabled) || file_type == 'markdown') && preview
+      redirect_to action: :html_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
                   grouping_id: params[:grouping_id],
@@ -641,7 +645,7 @@ class SubmissionsController < ApplicationController
     send_data_download csv_data, filename: "#{assignment.short_identifier}_submissions.csv"
   end
 
-  def notebook_content
+  def html_content
     if params[:select_file_id]
       file = SubmissionFile.find(params[:select_file_id])
       file_contents = file.retrieve_file
@@ -672,15 +676,19 @@ class SubmissionsController < ApplicationController
       filename = params[:file_name]
     end
 
-    @notebook_type = FileHelper.get_file_type(filename)
+    @file_type = FileHelper.get_file_type(filename)
     if path.nil?
-      @notebook_content = ''
+      @html_content = ''
     else
       sanitized_filename = ActiveStorage::Filename.new("#{filename}.#{revision_identifier}").sanitized
       unique_path = File.join(grouping.group.repo_name, path, sanitized_filename)
-      @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+      if @file_type == 'markdown'
+        @html_content = rmd_to_html(file_contents, unique_path)
+      else
+        @html_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+      end
     end
-    render layout: 'notebook'
+    render layout: 'html_content'
   end
 
   ##
@@ -933,6 +941,43 @@ class SubmissionsController < ApplicationController
       return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
 
       # add unique ids to all elements in the DOM
+      html = Nokogiri::HTML.parse(File.read(cache_file))
+      current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
+      html.xpath('//*[not(@id)]').map do |elem|
+        unique_id = elem.path
+        unique_id += '-next' while current_ids.include? unique_id
+        elem.set_attribute(:id, unique_id)
+      end
+      File.write(cache_file, html.to_html)
+    end
+    File.read(cache_file)
+  end
+
+  def rmd_to_html(file_contents, unique_path)
+    cache_file = Pathname.new('tmp/rmd_html_cache') + "#{unique_path}.html"
+    unless File.exist? cache_file
+      FileUtils.mkdir_p(cache_file.dirname)
+      begin
+        temp_rmd_file = Tempfile.new(['temp_rmd_content', '.Rmd'], 'tmp/rmd_html_cache')
+        file_contents.gsub!(/```{r[^\}]*?(echo|eval|include)\s*=\s*(TRUE|FALSE)[^\}]*?}/, '```{r}')
+        temp_rmd_file.write(file_contents)
+        temp_rmd_file.close
+
+        args = [
+          'Rscript', '-e',
+          "library(rmarkdown); library(knitr); knitr::opts_chunk$set(eval = FALSE, echo = TRUE, include = TRUE); \
+          rmarkdown::render('#{temp_rmd_file.path}', output_format = 'html_document', \
+          output_file = '#{Rails.root.join(cache_file)}')"
+        ]
+
+        _stdout, stderr, status = Open3.capture3(*args)
+        return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
+      rescue StandardError => e
+        return "#{I18n.t('submissions.invalid_rmd_content')}: #{e}"
+      ensure
+        temp_rmd_file&.unlink
+      end
+
       html = Nokogiri::HTML.parse(File.read(cache_file))
       current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
       html.xpath('//*[not(@id)]').map do |elem|

@@ -37,6 +37,23 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends w
 # Enable reading of PDF files with imagemagick
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
 
+# Install R system dependencies
+RUN apt-get update -qq && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+    r-base \
+    r-base-dev \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    pandoc \
+    texlive \
+    texlive-fonts-recommended \
+    texlive-latex-extra \
+    libgit2-dev
+# Install R Dependencies for Rmarkdown file to HTML conversion
+RUN R -e "install.packages('knitr', repos='https://cran.rstudio.com/')"
+RUN R -e "install.packages('rmarkdown', repos='https://cran.rstudio.com/')"
+
 ## This ssh setup is so that if git over ssh is enabled later on, by installing the openssh-server package (or similar)
 ## Then everything will just work out of the box
 
