@@ -279,7 +279,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not save the file' do
@@ -294,7 +294,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not create the folder' do
@@ -309,7 +309,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not delete the folder' do
@@ -324,7 +324,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not delete the file' do

@@ -29,7 +29,7 @@ class SubmissionPolicy < ApplicationPolicy
     true
   end
 
-  def notebook_content?
+  def html_content?
     Rails.application.config.nbconvert_enabled && check?(:view_files?)
   end
 

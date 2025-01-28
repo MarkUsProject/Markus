@@ -2277,7 +2277,7 @@ describe AssignmentsController do
       grouping # lazy initialization
       delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(true)
-      expect(flash[:error]).to eq(["<p>#{I18n.t('assignments.assignment_has_groupings')}</p>"])
+      expect(flash[:error]).to have_message(I18n.t('assignments.assignment_has_groupings'))
       expect(flash.to_hash.length).to eq(1)
       expect(flash[:error].length).to eq(1)
       expect(response).to have_http_status(:found)
@@ -2286,8 +2286,8 @@ describe AssignmentsController do
     it 'should successfully DELETE assignment (no groups)' do
       delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(false)
-      expect(flash[:success]).to eq(I18n.t('flash.actions.destroy.success',
-                                           resource_name: assignment.short_identifier))
+      expect(flash[:success]).to have_message(I18n.t('flash.actions.destroy.success',
+                                                     resource_name: assignment.short_identifier))
       expect(flash.to_hash.length).to eq(1)
       expect(response).to have_http_status(:found)
     end
@@ -2318,10 +2318,8 @@ describe AssignmentsController do
 
       delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
 
-      expect(flash[:error][0]).to include(
-        I18n.t('activerecord.errors.models.assignment_deletion',
-               problem_message: 'some error')
-      )
+      expect(flash[:error]).to contain_message(I18n.t('activerecord.errors.models.assignment_deletion',
+                                                      problem_message: 'some error'))
       expect(Assignment.exists?(assignment.id)).to be true
       expect(response).to redirect_to(edit_course_assignment_path(course.id, assignment.id))
     end

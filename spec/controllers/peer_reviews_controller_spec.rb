@@ -263,9 +263,8 @@ describe PeerReviewsController do
         end
 
         it 'flashes the correct message' do
-          expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t(
-            'peer_reviews.unassigned_reviewers_successfully', deleted_count: 1.to_s
-          )]
+          expect(flash[:success]).to have_message(I18n.t('peer_reviews.unassigned_reviewers_successfully',
+                                                         deleted_count: 1.to_s))
         end
 
         it 'removes selected reviewer as reviewer for selected reviewee' do
@@ -296,9 +295,8 @@ describe PeerReviewsController do
             end
 
             it 'flashes the correct message' do
-              expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t(
-                'peer_reviews.unassigned_reviewers_successfully', deleted_count: 8.to_s
-              )]
+              expect(flash[:success]).to have_message(I18n.t('peer_reviews.unassigned_reviewers_successfully',
+                                                             deleted_count: 8.to_s))
             end
           end
         end
@@ -331,9 +329,7 @@ describe PeerReviewsController do
           end
 
           it 'flashes the correct message' do
-            expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
-              'peer_reviews.errors.cannot_unassign_any_reviewers'
-            )]
+            expect(flash[:error]).to have_message(I18n.t('peer_reviews.errors.cannot_unassign_any_reviewers'))
           end
 
           it 'does not delete any peer reviews' do
@@ -361,9 +357,7 @@ describe PeerReviewsController do
             end
 
             it 'flashes the correct message' do
-              expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t(
-                'peer_reviews.errors.cannot_unassign_any_reviewers'
-              )]
+              expect(flash[:error]).to have_message(I18n.t('peer_reviews.errors.cannot_unassign_any_reviewers'))
             end
 
             it 'does not delete any peer reviews' do
@@ -389,9 +383,9 @@ describe PeerReviewsController do
                      reviewer_group_name: review.reviewer.group.group_name,
                      reviewee_group_name: review.result.grouping.group.group_name)
             end
-            flashed_error = flash[:error].map { |f| extract_text f }[0]
-            expect(flashed_error).to include('Successfully unassigned 1 peer reviewer(s)')
-            expect(flashed_error).to include(I18n.t('additional_not_shown', count: undeleted_reviews.length - 6))
+            expect(flash[:error]).to contain_message('Successfully unassigned 1 peer reviewer(s)')
+            expect(flash[:error]).to contain_message(I18n.t('additional_not_shown',
+                                                            count: undeleted_reviews.length - 6))
           end
 
           it 'deletes the correct number of peer reviews' do
@@ -426,9 +420,9 @@ describe PeerReviewsController do
                        reviewee_group_name: review.result.grouping.group.group_name)
               end
 
-              flashed_error = flash[:error].map { |f| extract_text f }[0]
-              expect(flashed_error).to include('Successfully unassigned 1 peer reviewer(s)')
-              expect(flashed_error).to include(I18n.t('additional_not_shown', count: undeleted_reviews.length - 6))
+              expect(flash[:error]).to contain_message('Successfully unassigned 1 peer reviewer(s)')
+              expect(flash[:error]).to contain_message(I18n.t('additional_not_shown',
+                                                              count: undeleted_reviews.length - 6))
             end
 
             it 'deletes the correct number of peer reviews' do
@@ -451,8 +445,7 @@ describe PeerReviewsController do
           end
 
           it 'flashes the correct message' do
-            flashed_error = flash[:error].map { |f| extract_text f }[0]
-            expect(flashed_error).to include('Successfully unassigned 6 peer reviewer(s)')
+            expect(flash[:error]).to contain_message('Successfully unassigned 6 peer reviewer(s)')
           end
 
           it 'deletes the correct number of peer reviews' do
@@ -486,9 +479,10 @@ describe PeerReviewsController do
           end
 
           it 'flashes the correct message' do
-            flashed_error = flash[:error].map { |f| extract_text f }[0]
-            expect(flashed_error).to include('Successfully unassigned 2 peer reviewer(s), but could not unassign the ' \
-                                             'following due to existing marks or annotations: ')
+            expect(flash[:error]).to contain_message(
+              'Successfully unassigned 2 peer reviewer(s), but could not unassign the ' \
+              'following due to existing marks or annotations: '
+            )
           end
 
           it 'deletes the correct number of peer reviews' do
