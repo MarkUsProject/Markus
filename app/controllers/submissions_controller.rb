@@ -977,15 +977,6 @@ class SubmissionsController < ApplicationController
       ensure
         temp_rmd_file&.unlink
       end
-
-      html = Nokogiri::HTML.parse(File.read(cache_file))
-      current_ids = html.xpath('//*[@id]').pluck(:id).to_set # rubocop:disable Rails/PluckId
-      html.xpath('//*[not(@id)]').map do |elem|
-        unique_id = elem.path
-        unique_id += '-next' while current_ids.include? unique_id
-        elem.set_attribute(:id, unique_id)
-      end
-      File.write(cache_file, html.to_html)
     end
     File.read(cache_file)
   end
