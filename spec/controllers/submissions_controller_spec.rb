@@ -1728,7 +1728,7 @@ describe SubmissionsController do
     let(:file) { fixture_file_upload(filename) }
     let(:submission) { submit_file(assignment, grouping, file.original_filename, file.read) }
 
-    shared_examples 'html types' do
+    shared_examples 'html content types' do
       shared_examples 'html content' do
         it 'is successful' do
           subject
@@ -1775,7 +1775,7 @@ describe SubmissionsController do
 
       let(:submission_file) { create(:submission_file, submission: submission, filename: filename) }
 
-      it_behaves_like 'html types'
+      it_behaves_like 'html content types'
     end
 
     context 'called with a revision identifier' do
@@ -1787,7 +1787,7 @@ describe SubmissionsController do
                                                     revision_identifier: submission.revision_identifier }
       end
 
-      it_behaves_like 'html types'
+      it_behaves_like 'html content types'
     end
 
     context 'called with an invalid path for multiple file types' do

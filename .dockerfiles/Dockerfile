@@ -41,15 +41,11 @@ RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/p
 RUN apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     r-base \
-    r-base-dev \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
-    pandoc \
-    texlive \
-    texlive-fonts-recommended \
-    texlive-latex-extra \
-    libgit2-dev
+    pandoc
+
 # Install R Dependencies for Rmarkdown file to HTML conversion
 RUN R -e "install.packages('knitr', repos='https://cran.rstudio.com/')"
 RUN R -e "install.packages('rmarkdown', repos='https://cran.rstudio.com/')"
