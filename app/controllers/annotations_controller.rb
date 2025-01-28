@@ -34,7 +34,7 @@ class AnnotationsController < ApplicationController
         page: params[:page],
         **base_attributes
       )
-    elsif submission_file.is_pynb?
+    elsif submission_file.is_pynb? || submission_file.is_rmd?
       @annotation = result.annotations.create!(
         type: 'HtmlAnnotation',
         start_node: params[:start_node],
@@ -107,7 +107,7 @@ class AnnotationsController < ApplicationController
         page: params[:page],
         **base_attributes
       )
-    elsif submission_file.is_pynb?
+    elsif submission_file.is_pynb? || submission_file.is_rmd?
       @annotation = result.annotations.create!(
         type: 'HtmlAnnotation',
         start_node: params[:start_node],
