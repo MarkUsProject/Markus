@@ -1,6 +1,6 @@
 class UncollectSubmissions < ApplicationJob
   def self.on_complete_js(_status)
-    'window.submissionTable.wrapped.fetchData'
+    'window.submissionTable.current.fetchData'
   end
 
   def self.show_status(_status)

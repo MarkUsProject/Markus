@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import ReactTable from "react-table";
@@ -207,5 +207,6 @@ class ExamScanErrorsTable extends React.Component {
 }
 
 export function makeExamScanLogTable(elem, props) {
-  render(<ExamScanLogTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<ExamScanLogTable {...props} />);
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
@@ -707,7 +707,10 @@ class SubmissionsActionBox extends React.Component {
 }
 
 export function makeSubmissionTable(elem, props) {
-  return render(<SubmissionTable {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<SubmissionTable {...props} ref={component} />);
+  return component;
 }
 
 function generateMessage(status_data) {

@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import ReactTable from "react-table";
 
@@ -160,5 +160,6 @@ class TagTable extends React.Component {
 }
 
 export function makeTagTable(elem, props) {
-  render(<TagTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<TagTable {...props} />);
 }

@@ -1,6 +1,6 @@
 import {SubmissionFileManager} from "../submission_file_manager";
 
-import {getAllByRole, render, screen} from "@testing-library/react";
+import {getAllByRole, waitFor, render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 describe("For the SubmissionFileManager", () => {
@@ -39,7 +39,7 @@ describe("For the SubmissionFileManager", () => {
     required_files: [],
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Unlike FileManager, files are stored in SubmissionFileManager's states, which are set when the component mounts
     // and calls fetchData. As a result, we need to mock that fetch to return our data.
     // We need to mock "twice" (i.e. two promises) because of how fetch works.
@@ -53,6 +53,8 @@ describe("For the SubmissionFileManager", () => {
 
     // Render the component
     render(<SubmissionFileManager course_id={1} assignment_id={1} />);
+    await screen.findByText("HelloWorld.java");
+    await screen.findByText("deferred-process.java");
   });
 
   describe("For the submissions managed by its FileManager child component", () => {
@@ -79,7 +81,7 @@ describe("For the SubmissionFileManager", () => {
         await userEvent.click(rows[i]);
 
         const filePreview = await screen.findByTestId("file-preview-root");
-        expect(filePreview.textContent).toContain(`Body ${i}`);
+        await waitFor(() => expect(filePreview.textContent).toContain(`Body ${i}`));
       }
     });
   });

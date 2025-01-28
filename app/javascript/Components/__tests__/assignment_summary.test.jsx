@@ -71,16 +71,13 @@ describe("For the AssignmentSummaryTable's display of inactive groups", () => {
         lti_deployments={[]}
       />
     );
+    await screen.findByText("group_0002", {exact: false});
   });
 
   it("contains the correct amount of inactive groups in the hidden tooltip", () => {
     expect(screen.getByTestId("show_inactive_groups_tooltip").getAttribute("title")).toEqual(
       "1 inactive group"
     );
-  });
-
-  it("initially contains the active group", () => {
-    expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
   });
 
   it("initially does not contain the inactive group", () => {

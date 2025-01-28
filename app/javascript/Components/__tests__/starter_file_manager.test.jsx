@@ -18,7 +18,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
       files: [
         {
           id: 1,
-          name: "New Starter File Group",
+          name: "My Starter File Group",
           entry_rename: "",
           use_rename: false,
           files: [
@@ -32,8 +32,8 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
         },
       ],
       sections: [
-        {section_id: 1, section_name: "LEC0101", group_id: 1, group_name: "New Starter File Group"},
-        {section_id: 2, section_name: "LEC0201", group_id: 1, group_name: "New Starter File Group"},
+        {section_id: 1, section_name: "LEC0101", group_id: 1, group_name: "My Starter File Group"},
+        {section_id: 2, section_name: "LEC0201", group_id: 1, group_name: "My Starter File Group"},
       ],
       available_after_due: true,
       starterfileType: "sections",
@@ -47,13 +47,14 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
     // so submit button is enabled (the point is to ensure this is possible)
     pageInfo.form_changed = !readOnly;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       fetch.resetMocks();
       fetch.mockResponseOnce(JSON.stringify(pageInfo));
 
       container = render(
         <StarterFileManager course_id={1} assignment_id={1} read_only={readOnly} />
       );
+      await screen.findByRole("link", {name: "My Starter File Group"});
     });
 
     it(`all buttons on the page are ${readOnly ? "disabled" : "enabled"}`, () => {

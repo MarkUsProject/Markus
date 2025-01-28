@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
@@ -225,5 +225,8 @@ class PeerReviewsActionBox extends React.Component {
 }
 
 export function makePeerReviewTable(elem, props) {
-  return render(<PeerReviewTable {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<PeerReviewTable {...props} ref={component} />);
+  return component;
 }

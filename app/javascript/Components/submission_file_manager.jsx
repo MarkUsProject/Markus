@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import FileManager from "./markus_file_manager";
 import SubmissionFileUploadModal from "./Modals/submission_file_upload_modal";
 import SubmitUrlUploadModal from "./Modals/submission_url_submit_modal";
@@ -403,7 +403,8 @@ class SubmissionFileManager extends React.Component {
 }
 
 export function makeSubmissionFileManager(elem, props) {
-  render(<SubmissionFileManager {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<SubmissionFileManager {...props} />);
 }
 
 export {SubmissionFileManager};

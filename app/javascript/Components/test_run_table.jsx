@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import mime from "mime/lite";
 import {dateSort, selectFilter} from "./Helpers/table_helpers";
@@ -404,7 +404,8 @@ class TestGroupFeedbackFileTable extends React.Component {
 }
 
 export function makeTestRunTable(elem, props) {
-  return render(<TestRunTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<TestRunTable {...props} />);
 }
 
 function generateMessage(status_data) {

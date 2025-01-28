@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {Bar} from "react-chartjs-2";
 
 import {Chart, registerables} from "chart.js";
@@ -64,5 +64,6 @@ export class DataChart extends React.Component {
 }
 
 export function makeDataChart(elem, props) {
-  render(<DataChart {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<DataChart {...props} />);
 }

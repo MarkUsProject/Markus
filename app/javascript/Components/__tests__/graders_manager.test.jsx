@@ -13,7 +13,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
 describe("For the GradersManager's display of inactive groups", () => {
   let groups_sample;
-  beforeEach(() => {
+  beforeEach(async () => {
     groups_sample = [
       {
         _id: 15,
@@ -58,6 +58,8 @@ describe("For the GradersManager's display of inactive groups", () => {
       }),
     });
     render(<GradersManager sections={{}} course_id={1} assignment_id={1} />);
+
+    await screen.findByText("group_0014"); // Wait for data to be rendered
   });
 
   it("contains the correct amount of inactive groups in the hidden tooltip", () => {
@@ -66,8 +68,8 @@ describe("For the GradersManager's display of inactive groups", () => {
     );
   });
 
-  it("initially contains the active group", () => {
-    expect(screen.getByText("group_0014")).toBeInTheDocument();
+  it("initially doesn't contain the inactive group", () => {
+    expect(screen.queryByText("group_0015")).not.toBeInTheDocument();
   });
 
   it("contains the inactive group after a single toggle", () => {

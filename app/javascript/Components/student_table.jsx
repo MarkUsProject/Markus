@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import PropTypes from "prop-types";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
@@ -297,6 +297,7 @@ RawStudentTable.propTypes = {
 
 let StudentTable = withSelection(RawStudentTable);
 function makeStudentTable(elem, props) {
-  render(<StudentTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<StudentTable {...props} />);
 }
 export {StudentTable, StudentsActionBox, makeStudentTable};

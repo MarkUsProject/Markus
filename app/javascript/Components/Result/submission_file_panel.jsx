@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 import {AnnotationManager} from "./annotation_manager";
 import {FileViewer} from "./file_viewer";
@@ -100,7 +100,8 @@ export class SubmissionFilePanel extends React.Component {
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
-      ReactDOM.render(
+      const root = ReactDOM.createRoot(document.getElementById("download_dialog_body"));
+      root.render(
         <DownloadSubmissionModal
           fileData={this.props.fileData}
           initialFile={selectedFile}
@@ -109,8 +110,7 @@ export class SubmissionFilePanel extends React.Component {
             this.props.assignment_id,
             this.props.submission_id
           )}
-        />,
-        document.getElementById("download_dialog_body")
+        />
       );
     }
   };

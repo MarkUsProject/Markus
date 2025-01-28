@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
@@ -651,7 +651,8 @@ class StarterFileFileManager extends React.Component {
 }
 
 export function makeStarterFileManager(elem, props) {
-  render(<StarterFileManager {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<StarterFileManager {...props} />);
 }
 
 export {StarterFileManager};

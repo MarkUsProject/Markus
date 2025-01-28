@@ -1,6 +1,6 @@
 import React from "react";
 import ReactTable from "react-table";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import ReactDOM from "react-dom";
 
 class AnnotationUsagePanel extends React.Component {
@@ -118,5 +118,6 @@ class AnnotationUsagePanel extends React.Component {
 }
 
 export function makeAnnotationUsagePanel(elem, props) {
-  return render(<AnnotationUsagePanel {...props} />, elem);
+  const root = createRoot(elem);
+  return root.render(<AnnotationUsagePanel {...props} />);
 }

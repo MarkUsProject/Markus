@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import {selectFilter} from "./Helpers/table_helpers";
 
@@ -101,5 +101,6 @@ class AdminCourseList extends React.Component {
 }
 
 export function makeAdminCourseList(elem, props) {
-  render(<AdminCourseList {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<AdminCourseList {...props} />);
 }

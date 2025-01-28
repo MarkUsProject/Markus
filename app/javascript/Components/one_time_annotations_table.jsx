@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -239,5 +239,6 @@ class AnnotationTextCell extends React.Component {
 }
 
 export function makeOneTimeAnnotationsTable(elem, props) {
-  render(<OneTimeAnnotationsTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<OneTimeAnnotationsTable {...props} />);
 }

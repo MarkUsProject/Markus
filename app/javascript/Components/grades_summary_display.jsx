@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {CourseSummaryTable} from "./course_summaries_table";
 import {DataChart} from "./Helpers/data_chart";
 
@@ -104,5 +104,6 @@ class GradesSummaryDisplay extends React.Component {
 }
 
 export function makeGradesSummaryDisplay(elem, props) {
-  render(<GradesSummaryDisplay {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<GradesSummaryDisplay {...props} />);
 }

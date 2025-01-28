@@ -1,5 +1,4 @@
 import React from "react";
-import {render} from "react-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import MarkdownEditor from "../markdown_editor";

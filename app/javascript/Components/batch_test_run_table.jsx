@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import {dateSort} from "./Helpers/table_helpers";
 
@@ -171,5 +171,8 @@ class BatchTestRunTable extends React.Component {
 }
 
 export function makeBatchTestRunTable(elem, props) {
-  render(<BatchTestRunTable {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<BatchTestRunTable {...props} ref={component} />);
+  return component;
 }

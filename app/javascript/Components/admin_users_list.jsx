@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import {selectFilter} from "./Helpers/table_helpers";
 
@@ -114,5 +114,6 @@ class AdminUsersList extends React.Component {
 }
 
 export function makeAdminUsersList(elem, props) {
-  render(<AdminUsersList {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<AdminUsersList {...props} />);
 }

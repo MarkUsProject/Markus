@@ -1,5 +1,4 @@
 import React from "react";
-import {render} from "react-dom";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";

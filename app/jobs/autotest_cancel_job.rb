@@ -1,7 +1,7 @@
 # Job to cancel autotest tests
 class AutotestCancelJob < AutotestJob
   def self.on_complete_js(_status)
-    'window.BatchTestRunTable.fetchData'
+    'window.batchTestRunTable.current.fetchData'
   end
 
   def self.show_status(_status); end
