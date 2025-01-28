@@ -685,7 +685,7 @@ class SubmissionsController < ApplicationController
       if @file_type == 'markdown'
         @html_content = rmd_to_html(file_contents, unique_path)
       else
-        @html_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+        @html_content = notebook_to_html(file_contents, unique_path, @file_type)
       end
     end
     render layout: 'html_content'
