@@ -1516,7 +1516,7 @@ describe SubmissionsController do
 
         it 'should pass the print parameter to DownloadSubmissionsJob when given' do
           expect(DownloadSubmissionsJob).to receive(:perform_later) do |_gids, _zip_file, _assignment_id, _course_id,
-                                                                        kwargs|
+            kwargs|
             expect(kwargs[:print]).to be true
             DownloadSubmissionsJob.new
           end
@@ -1613,14 +1613,24 @@ describe SubmissionsController do
         end
       end
 
-      describe 'When the file is an rmarkdown file' do
-        it 'should render the contents of the file' do
+      describe 'When the file is a rmarkdown file' do
+        subject do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: file5.original_filename,
+                                                  file_name: 'example.Rmd',
                                                   preview: true,
                                                   grouping_id: grouping.id }
-          expect(response.body).to eq(File.read(file5))
+        end
+
+        let(:redirect_location) do
+          html_content_course_assignment_submissions_url(course_id: course.id,
+                                                         assignment_id: assignment.id,
+                                                         file_name: 'example.Rmd',
+                                                         grouping_id: grouping.id)
+        end
+
+        it 'should redirect to "html_content"' do
+          expect(subject).to redirect_to(redirect_location)
         end
       end
 
@@ -1668,6 +1678,17 @@ describe SubmissionsController do
                                                   preview: false,
                                                   grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file3))
+        end
+      end
+
+      describe 'When the file is a RMarkdown file' do
+        it 'should download the file as is' do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: 'example.Rmd',
+                                                  preview: false,
+                                                  grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file5))
         end
       end
 
@@ -1769,21 +1790,25 @@ describe SubmissionsController do
       it_behaves_like 'html content types'
     end
 
-    context 'called with an invalid path' do
-      subject do
-        get_as instructor, :html_content, params: { course_id: course.id,
-                                                    assignment_id: assignment.id,
-                                                    file_name: filename,
-                                                    grouping_id: grouping.id,
-                                                    revision_identifier: submission.revision_identifier,
-                                                    path: '../..' }
-      end
+    context 'called with an invalid path for multiple file types' do
+      ['example.ipynb', 'example.Rmd'].each do |test_filename|
+        context "when the file is #{test_filename}" do
+          subject do
+            get_as instructor, :html_content, params: { course_id: course.id,
+                                                        assignment_id: assignment.id,
+                                                        file_name: filename,
+                                                        grouping_id: grouping.id,
+                                                        revision_identifier: submission.revision_identifier,
+                                                        path: '../..' }
+          end
 
-      let(:filename) { 'example.ipynb' }
+          let(:filename) { test_filename }
 
-      it 'flashes an error message' do
-        subject
-        expect(flash[:error]).to have_message(I18n.t('errors.invalid_path'))
+          it 'flashes an error message' do
+            subject
+            expect(flash[:error]).to have_message(I18n.t('errors.invalid_path'))
+          end
+        end
       end
     end
 
@@ -1799,6 +1824,21 @@ describe SubmissionsController do
                                                     grouping_id: grouping.id,
                                                     revision_identifier: submission.revision_identifier }
         expect(response.body).to include(I18n.t('submissions.invalid_jupyter_notebook_content'))
+      end
+    end
+
+    context 'where there is an invalid rmarkdown content' do
+      render_views
+      let(:filename) { 'pdf_with_rmd_extension.Rmd' }
+
+      it 'should display a cannot display content error message' do
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    preview: true,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier }
+        expect(response.body).to include(I18n.t('submissions.invalid_rmd_content'))
       end
     end
   end
@@ -2096,13 +2136,16 @@ describe SubmissionsController do
           end
         end
 
-        context 'file is a rmarkdown file' do
+        context 'file is a RMarkdown file' do
           let(:filename) { 'example.Rmd' }
+          let(:redirect_location) do
+            html_content_course_assignment_submissions_path(course,
+                                                            assignment,
+                                                            select_file_id: submission_file.id)
+          end
 
-          it 'should show the file content in the response body' do
-            allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-            subject
-            expect(response.body).to eq SAMPLE_FILE_CONTENT
+          it 'should redirect to "html_content"' do
+            expect(subject).to(redirect_to(redirect_location))
           end
         end
       end

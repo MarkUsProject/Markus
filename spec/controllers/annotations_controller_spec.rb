@@ -4,6 +4,7 @@ describe AnnotationsController do
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
   let(:notebook_submission_file) { create(:notebook_submission_file, submission: submission) }
+  let(:rmd_submission_file) { create(:rmd_submission_file, submission: submission) }
   let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
   let(:image_submission_file) { create(:image_submission_file, submission: submission) }
   let(:submission_file) { create(:submission_file, submission: submission) }
@@ -60,10 +61,22 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully creates an html annotation' do
+      it 'successfully creates an html annotation for jupyter notebook file' do
         post_as user,
                 :add_existing_annotation,
                 params: { annotation_text_id: annotation_text.id, submission_file_id: notebook_submission_file.id,
+                          start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
+                          course_id: course.id },
+                format: :js
+
+        expect(response).to have_http_status(:success)
+        expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully creates an html annotation for rmd file' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
                           start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
                           course_id: course.id },
                 format: :js
@@ -217,11 +230,24 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully creates an html annotation' do
+      it 'successfully creates an html annotation for a jupyter notebook file' do
         post_as user,
                 :create,
                 params: { content: annotation_text.content, category_id: annotation_category.id,
                           submission_file_id: notebook_submission_file.id, start_node: 'a', start_offset: 1,
+                          end_node: 'b', end_offset: 0, result_id: result.id, assignment_id: assignment.id,
+                          course_id: course.id },
+                format: :js
+
+        expect(response).to have_http_status(:success)
+        expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully creates an html annotation for a rmd file' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: rmd_submission_file.id, start_node: 'a', start_offset: 1,
                           end_node: 'b', end_offset: 0, result_id: result.id, assignment_id: assignment.id,
                           course_id: course.id },
                 format: :js
@@ -497,7 +523,7 @@ describe AnnotationsController do
       it 'can destroy a deductive annotation if assigned to the annotation\'s criterion' do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: assignment.criteria
-                                                       .where(type: 'FlexibleCriterion').first, ta: user)
+                                                               .where(type: 'FlexibleCriterion').first, ta: user)
         post_as user,
                 :destroy,
                 params: { id: annotation.id,

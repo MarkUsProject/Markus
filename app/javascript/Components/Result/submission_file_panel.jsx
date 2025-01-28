@@ -12,6 +12,7 @@ const MAX_CONTENT_SIZES = {
   image: 50_000_000,
   pdf: 50_000_000,
   "jupyter-notebook": 50_000_000,
+  markdown: 50_000_000,
   text: 100_000,
   binary: 100_000,
 };
