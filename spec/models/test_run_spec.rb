@@ -137,7 +137,7 @@ describe TestRun do
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
     let(:overall_comment1) { 'test comment 1' }
-    let(:overall_comment2) { 'test comment 2' }
+    let(:existing_comment) { 'existing comment' }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
     let(:test2) { { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
     let(:tests) { [test1, test2] }
@@ -520,66 +520,44 @@ describe TestRun do
       end
 
       context 'when the results contain tags that don\'t exist' do
-        let(:test1) do
-          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
-            tags: [{ name: 'new_tag1' }] }
-        end
-        let(:test2) do
-          { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'output', time: nil,
-            tags: [{ name: 'new_tag2' }] }
-        end
-
         it 'should create new tags and add them to the grouping' do
+          results['test_groups'].first['tags'] =
+            [{ 'name' => 'new_tag1', 'description' => 'd' }, { 'name' => 'new_tag2' }]
           expect { test_run.update_results!(results) }.to change { grouping.tags.count }.to eq 2
         end
       end
 
       context 'when the results contain tags that already exist' do
-        let(:test1) do
-          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
-            tags: [{ name: existing_tag.name }] }
-        end
-
         it 'should add tags to the grouping without creating new ones' do
+          results['test_groups'].first['tags'] = [existing_tag]
           expect { test_run.update_results!(results) }.not_to(change { Tag.count })
           expect(grouping.tags.count).to eq 1
         end
       end
 
       context 'when the results contain comments and has a submission without comments' do
-        let(:test1) do
-          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
-            overall_comment: overall_comment1 }
-        end
-        let(:test2) do
-          { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil,
-            overall_comment: overall_comment2 }
-        end
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) { create(:test_run, submission: submission) }
 
         it 'should add comments to the submission\'s overall comments' do
+          results['test_groups'].first['overall_comment'] = overall_comment1
           test_run.update_results!(results)
           expect(submission.current_result.overall_comment).to include(overall_comment1)
-          expect(submission.current_result.overall_comment).to include(overall_comment2)
         end
       end
 
       context 'when the results contain comments and has a submission with an existing comment' do
-        let(:test1) do
-          { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1,
-            overall_comment: overall_comment1 }
-        end
         let(:result) do
-          create(:result, marking_state: Result::MARKING_STATES[:complete], overall_comment: 'existing_comment')
+          create(:result, marking_state: Result::MARKING_STATES[:complete], overall_comment: existing_comment)
         end
         let(:submission) { create(:version_used_submission, grouping: grouping, current_result: result) }
         let(:test_run) { create(:test_run, submission: submission) }
 
         it 'should append the comments without overwriting the existing comments' do
+          results['test_groups'].first['overall_comment'] = overall_comment1
           test_run.update_results!(results)
           expect(submission.current_result.overall_comment).to include(overall_comment1)
-          expect(submission.current_result.overall_comment).to include('existing_comment')
+          expect(submission.current_result.overall_comment).to include(existing_comment)
         end
       end
     end
