@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import ReactTable from "react-table";
 
@@ -81,5 +81,6 @@ class MarkingSchemeTable extends React.Component {
 }
 
 export function makeMarkingSchemeTable(elem, props) {
-  render(<MarkingSchemeTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<MarkingSchemeTable {...props} />);
 }

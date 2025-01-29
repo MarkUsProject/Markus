@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import RosterSyncModal from "./Modals/roster_sync_modal";
 
 class LtiSettings extends React.Component {
@@ -101,5 +101,6 @@ class LtiSettings extends React.Component {
 }
 
 export function makeLtiSettings(elem, props) {
-  render(<LtiSettings {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<LtiSettings {...props} />);
 }

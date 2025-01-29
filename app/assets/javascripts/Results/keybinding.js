@@ -105,12 +105,12 @@ Mousetrap.bind("enter", function (e) {
 // Press shift+n for new annotation modal to appear
 Mousetrap.bind("shift+n", () => {
   if ($("#annotation_dialog:visible").length == 0) {
-    resultComponent.newAnnotation();
+    resultComponent.current.newAnnotation();
     return false;
   }
 });
 
 // When alt+enter is pressed, toggle fullscreen mode
 Mousetrap.bind("alt+enter", () => {
-  resultComponent.toggleFullscreen();
+  resultComponent.current.toggleFullscreen();
 });

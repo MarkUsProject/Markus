@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
@@ -402,5 +402,6 @@ class GradersActionBox extends React.Component {
 }
 
 export function makePeerReviewsManager(elem, props) {
-  render(<PeerReviewsManager {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<PeerReviewsManager {...props} />);
 }

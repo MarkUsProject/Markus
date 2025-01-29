@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import Modal from "react-modal";
 
 class SubmitViewTokenModal extends React.Component {
@@ -56,5 +56,8 @@ class SubmitViewTokenModal extends React.Component {
 }
 
 export function makeSubmitViewTokenModal(elem, props) {
-  return render(<SubmitViewTokenModal {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<SubmitViewTokenModal {...props} ref={component} />);
+  return component;
 }

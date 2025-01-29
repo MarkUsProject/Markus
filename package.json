@@ -28,14 +28,14 @@
     "pdfjs-dist": "^4.8.69",
     "prismjs": "^1.29.0",
     "prop-types": "^15.8.1",
-    "react": "^16.14.0",
+    "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "^16.14.0",
+    "react-dom": "^18.3.1",
     "react-flatpickr": "^3.10.13",
     "react-keyed-file-browser": "^1.14.0",
     "react-modal": "^3.16.1",
     "react-table": "^6.11.5",
-    "react-tabs": "^4.3.0",
+    "react-tabs": "^6.1.0",
     "tslib": "^2.8.1",
     "ui-contextmenu": "^1.18.1"
   },
@@ -44,8 +44,9 @@
     "@babel/plugin-transform-runtime": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.26.3",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^12.1.5",
+    "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.5.2",
     "babel-jest": "^29.4.3",
     "babel-loader": "^9.2.1",
@@ -73,5 +74,18 @@
     "build-dev:css": "sass ./app/assets/stylesheets/entrypoints:./app/assets/builds/ --watch --load-path=node_modules --load-path=./app/assets/stylesheets --load-path=./vendor/assets/stylesheets",
     "test": "node_modules/.bin/jest --no-cache",
     "test-cov": "node_modules/.bin/jest --no-cache --collect-coverage"
+  },
+  "overrides": {
+    "react-keyed-file-browser": {
+      "react": "^18.3.1",
+      "classnames": "^2.5.1",
+      "date-fns": "^3.3.1",
+      "prop-types": "^15.8.1",
+      "react-dnd-html5-backend": "^16.0.1"
+    },
+    "react-table": {
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1"
+    }
   }
 }
