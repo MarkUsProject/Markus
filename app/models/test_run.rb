@@ -125,7 +125,7 @@ class TestRun < ApplicationRecord
   def add_overall_comment(new_overall_comments)
     return if self.submission.nil? || new_overall_comments.blank?
 
-    # Convert to code blocks
+    # Convert to block quotes
     new_overall_comments.each do |comment|
       comment.prepend('> ')
       comment.gsub!("\n", "\n> ")
