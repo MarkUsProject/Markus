@@ -48,12 +48,6 @@ class TestRun < ApplicationRecord
             )
             marks_earned += test['marks_earned']
             marks_total += test['marks_total']
-            if test['tags'].present?
-              add_tags(test['tags'])
-            end
-            if test['overall_comment'].present?
-              new_overall_comments.append(test['overall_comment'])
-            end
           rescue StandardError => e
             extra_info = test_group_result.extra_info
             test_name = test['name'].nil? ? '' : "#{test['name']} - "
@@ -68,6 +62,12 @@ class TestRun < ApplicationRecord
                                  marks_total: marks_total)
         create_annotations(result['annotations'])
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
+        if result['tags'].present?
+          add_tags(result['tags'])
+        end
+        if result['overall_comment'].present?
+          new_overall_comments.append(result['overall_comment'])
+        end
       end
       self.submission&.set_autotest_marks
       add_overall_comment(new_overall_comments)
