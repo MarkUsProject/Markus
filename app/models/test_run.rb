@@ -31,6 +31,7 @@ class TestRun < ApplicationRecord
       failure(results['error'])
     else
       self.update!(status: :complete, problems: results['error'])
+      new_overall_comments = []
       results['test_groups'].each do |result|
         test_group_result = create_test_group_result(result)
         marks_total, marks_earned = 0, 0
@@ -61,8 +62,15 @@ class TestRun < ApplicationRecord
                                  marks_total: marks_total)
         create_annotations(result['annotations'])
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
+        if result['tags'].present?
+          add_tags(result['tags'])
+        end
+        if result['overall_comment'].present?
+          new_overall_comments.append(result['overall_comment'])
+        end
       end
       self.submission&.set_autotest_marks
+      add_overall_comment(new_overall_comments)
     end
   end
 
@@ -99,6 +107,46 @@ class TestRun < ApplicationRecord
       time: result['time'] || 0,
       error_type: error_type(result)
     )
+  end
+
+  def add_tags(tag_data)
+    tag_data.each do |new_tag|
+      tag_to_add = Tag.find_or_create_by(name: new_tag['name'], assessment_id: self.grouping.assessment_id) do |tag|
+        tag.description = tag['description']
+        tag.role_id = self.role_id
+      end
+
+      if self.grouping.tags.exclude?(tag_to_add)
+        self.grouping.tags << tag_to_add
+      end
+    end
+  end
+
+  def add_overall_comment(new_overall_comments)
+    return if self.submission.nil? || new_overall_comments.blank?
+
+    # Convert to block quotes
+    new_overall_comments.each do |comment|
+      comment.prepend('> ')
+      comment.gsub!("\n", "\n> ")
+    end
+    joined_overall_comments = new_overall_comments.join("\n\n")
+
+    # Add header
+    joined_overall_comments.prepend(
+      I18n.t(
+        'results.annotation.feedback_generated_header',
+        time: I18n.l(self.updated_at)
+      ) + "\n"
+    )
+
+    if self.submission.current_result.overall_comment.blank?
+      self.submission.current_result.update(overall_comment: joined_overall_comments)
+    else
+      self.submission.current_result.update(
+        overall_comment: self.submission.current_result.overall_comment + "\n\n" + joined_overall_comments
+      )
+    end
   end
 
   def create_feedback_file(feedback_data, test_group_result)

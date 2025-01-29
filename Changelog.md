@@ -5,7 +5,9 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+
 - Fix front-end content shift when an input element is focused (#7384)
+- Pass back tags and overall comments from Autotester to MarkUs (#7387)
 
 ### 🐛 Bug fixes
 
