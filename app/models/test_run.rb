@@ -70,7 +70,7 @@ class TestRun < ApplicationRecord
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
       end
       self.submission&.set_autotest_marks
-      add_overall_comment(new_overall_comments.join("\n"))
+      add_overall_comment(new_overall_comments)
     end
   end
 
@@ -122,20 +122,29 @@ class TestRun < ApplicationRecord
     end
   end
 
-  def add_overall_comment(new_overall_comment)
-    return if self.submission.nil? || new_overall_comment.blank?
+  def add_overall_comment(new_overall_comments)
+    return if self.submission.nil? || new_overall_comments.blank?
 
-    new_overall_comment.prepend(
+    # Convert to code blocks
+    new_overall_comments.each do |comment|
+      comment.prepend('> ')
+      comment.gsub!("\n", "\n> ")
+    end
+    joined_overall_comments = new_overall_comments.join("\n\n")
+
+    # Add header
+    joined_overall_comments.prepend(
       I18n.t(
         'results.annotation.feedback_generated_header',
-        time: self.updated_at.strftime('%Y/%m/%d %H:%M')
+        time: I18n.l(self.updated_at)
       ) + "\n"
     )
+
     if self.submission.current_result.overall_comment.blank?
-      self.submission.current_result.update(overall_comment: new_overall_comment)
+      self.submission.current_result.update(overall_comment: joined_overall_comments)
     else
       self.submission.current_result.update(
-        overall_comment: self.submission.current_result.overall_comment + "\n\n" + new_overall_comment
+        overall_comment: self.submission.current_result.overall_comment + "\n\n" + joined_overall_comments
       )
     end
   end
