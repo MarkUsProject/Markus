@@ -30,6 +30,7 @@
 - Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
 - Update Python version to 3.13 in seed autotest schemas (#7388)
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
+- Update to React v18 (#7392)
 
 ## [v2.6.1]
 

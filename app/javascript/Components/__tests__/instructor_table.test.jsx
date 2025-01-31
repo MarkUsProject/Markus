@@ -34,7 +34,7 @@ describe("For the InstructorTable's display of instructors", () => {
       throw `Could not find row for ${instructor.user_name}`;
     };
 
-    beforeAll(() => {
+    beforeAll(async () => {
       instructors_sample = [
         {
           id: 1,
@@ -63,9 +63,10 @@ describe("For the InstructorTable's display of instructors", () => {
         }),
       });
       render(<InstructorTable course_id={1} />);
+      await screen.findByText("reid");
     });
 
-    it("each instructor is displayed as a row of the table", () => {
+    it("each instructor is displayed as a row of the table", async () => {
       instructors_sample.forEach(instructor => instructors_in_one_row(instructor));
     });
   });
@@ -85,8 +86,8 @@ describe("For the InstructorTable's display of instructors", () => {
       render(<InstructorTable course_id={1} />);
     });
 
-    it("No rows found is shown", () => {
-      expect(screen.queryByText("No rows found")).toBeTruthy();
+    it("No rows found is shown", async () => {
+      await screen.findByText("No rows found");
     });
   });
 });

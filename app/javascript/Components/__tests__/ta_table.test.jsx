@@ -29,7 +29,7 @@ describe("For the TATable's display of TAs", () => {
       }
     };
 
-    beforeAll(() => {
+    beforeAll(async () => {
       tas_sample = [
         {
           id: 3,
@@ -75,12 +75,10 @@ describe("For the TATable's display of TAs", () => {
       });
 
       render(<TATable course_id={1} />);
+      await screen.findByText("c6conley");
     });
 
-    it("each TA is displayed as a row of the table", async () => {
-      await screen.findByRole("grid");
-      console.log(screen.debug());
-
+    it("each TA is displayed as a row of the table", () => {
       tas_sample.forEach(ta => tas_in_one_row(ta));
     });
   });
@@ -100,8 +98,8 @@ describe("For the TATable's display of TAs", () => {
       render(<TATable course_id={1} />);
     });
 
-    it("No rows found is shown", () => {
-      expect(screen.getByText("No rows found")).toBeInTheDocument();
+    it("No rows found is shown", async () => {
+      await screen.findByText("No rows found");
     });
   });
 

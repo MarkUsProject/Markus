@@ -2,7 +2,7 @@ $('a[data-id]').removeClass('inactive');
 
 $('a[data-id="<%= @grade_entry_form.short_identifier %>"]').addClass('inactive');
 
-window.dashboard.setState({
+window.dashboard.current.setState({
   assessment_id: <%= @grade_entry_form.id %>,
   assessment_type: 'GradeEntryForm',
   display_course_summary: false
