@@ -12,7 +12,7 @@
     "@rjsf/core": "^5.23.2",
     "@rjsf/validator-ajv8": "^5.23.2",
     "chart.js": "^4.4.6",
-    "core-js": "^3.39.0",
+    "core-js": "^3.40.0",
     "dayjs": "^1.11.13",
     "dompurify": "^3.2.3",
     "flatpickr": "^4.6.13",
