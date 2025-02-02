@@ -629,6 +629,7 @@ class Assignment < Assessment
       criteriaColumns: criteria_columns,
       numAssigned: self.get_num_assigned(user.instructor? ? nil : user.id),
       numMarked: self.get_num_marked(user.instructor? ? nil : user.id),
+      enableTest: self.assignment_properties&.enable_test || false,
       ltiDeployments: lti_deployments }
   end
 
