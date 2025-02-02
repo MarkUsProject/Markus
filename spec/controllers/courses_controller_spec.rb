@@ -367,8 +367,7 @@ describe CoursesController do
       test2 = Assignment.find_by(short_identifier: @test_asn2)
       expect(test2).not_to be_nil
       expect(flash[:error]).to be_nil
-      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
-                                                                       count: 2)].map { |f| extract_text f })
+      expect(flash[:success]).to have_message(I18n.t('upload_success', count: 2))
       expect(response).to redirect_to(course_assignments_path(course))
     end
 

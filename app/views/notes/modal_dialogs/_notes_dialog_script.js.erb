@@ -8,7 +8,7 @@ if ($('#notes_dialog .inline-button.delete').length) {
   $('#notes_dialog .inline-button.delete').parent().on('ajax:success', function() {
     modalNotesGroup.close();
     if (window.resultComponent !== undefined) {
-      window.resultComponent.fetchData();
+      window.resultComponent.current.fetchData();
     }
   });
 }

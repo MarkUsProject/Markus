@@ -31,9 +31,9 @@ function check_annotation_overlap(range) {
   );
 }
 
-function get_notebook_annotation_range() {
-  const notebook_iframe = document.getElementById("notebook");
-  const target = notebook_iframe.contentDocument;
+function get_html_annotation_range() {
+  const iframe = document.getElementById("html-content");
+  const target = iframe.contentDocument;
   const selection = target.getSelection();
   if (selection.rangeCount >= 1) {
     const range = selection.getRangeAt(0);

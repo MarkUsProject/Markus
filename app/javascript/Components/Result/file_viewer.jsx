@@ -3,7 +3,7 @@ import React from "react";
 import {ImageViewer} from "./image_viewer";
 import {TextViewer} from "./text_viewer";
 import {PDFViewer} from "./pdf_viewer";
-import {NotebookViewer} from "./notebook_viewer";
+import {HTMLViewer} from "./html_viewer";
 import {BinaryViewer} from "./binary_viewer";
 import {URLViewer} from "./url_viewer";
 
@@ -62,7 +62,7 @@ export class FileViewer extends React.Component {
     } else if (this.props.selectedFileType === "pdf") {
       return <PDFViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (this.props.selectedFileType === "jupyter-notebook") {
-      return <NotebookViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
+      return <HTMLViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (this.props.selectedFileType === "binary") {
       return <BinaryViewer content={this.state.content} {...commonProps} />;
     } else if (this.props.selectedFileType === "markusurl") {
