@@ -6,6 +6,7 @@
 
 ### ✨ New features and improvements
 - Fix front-end content shift when an input element is focused (#7384)
+- Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
 
 ### 🐛 Bug fixes
 
