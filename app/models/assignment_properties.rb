@@ -129,11 +129,11 @@ class AssignmentProperties < ApplicationRecord
 
   # Ensure remote_autotest_settings_id is unique for a given autotester
   def remote_autotest_settings_id_uniqueness
-    remote_autotest_settings_id_taken = AssignmentProperties.joins(assignment: :course).where(
+    remote_autotest_settings_id_is_taken = AssignmentProperties.joins(assignment: :course).where(
       remote_autotest_settings_id: self.remote_autotest_settings_id,
       course: { autotest_setting_id: self.assignment.course.autotest_setting_id }
     ).where.not(id: self.id).exists?
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.remote_autotest_settings_id.taken')
-    errors.add(:remote_autotest_settings_id, msg) if remote_autotest_settings_id_taken
+    errors.add(:remote_autotest_settings_id, msg) if remote_autotest_settings_id_is_taken
   end
 end
