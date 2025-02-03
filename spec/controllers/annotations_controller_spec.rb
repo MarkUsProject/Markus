@@ -523,7 +523,7 @@ describe AnnotationsController do
       it 'can destroy a deductive annotation if assigned to the annotation\'s criterion' do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: assignment.criteria
-                                                               .where(type: 'FlexibleCriterion').first, ta: user)
+                                                       .where(type: 'FlexibleCriterion').first, ta: user)
         post_as user,
                 :destroy,
                 params: { id: annotation.id,

@@ -1516,7 +1516,7 @@ describe SubmissionsController do
 
         it 'should pass the print parameter to DownloadSubmissionsJob when given' do
           expect(DownloadSubmissionsJob).to receive(:perform_later) do |_gids, _zip_file, _assignment_id, _course_id,
-            kwargs|
+                                                                        kwargs|
             expect(kwargs[:print]).to be true
             DownloadSubmissionsJob.new
           end

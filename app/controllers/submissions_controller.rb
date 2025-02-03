@@ -955,7 +955,7 @@ class SubmissionsController < ApplicationController
   end
 
   def rmd_to_html(file_contents, unique_path)
-    cache_file = Pathname.new('tmp/rmd_html_cache') + "#{unique_path}.html"
+    cache_file = Pathname.new('tmp/rmd_html_cache').join("#{unique_path}.html")
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
       begin

@@ -30,7 +30,7 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def html_content?
-    Rails.application.config.nbconvert_enabled && check?(:view_files?)
+    check?(:view_files?)
   end
 
   def run_tests?
