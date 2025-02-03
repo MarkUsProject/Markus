@@ -57,7 +57,7 @@ class AssignmentProperties < ApplicationRecord
   validates :start_time, presence: { if: :is_timed }
   validate :start_before_due, if: :is_timed
   validate :not_timed_and_scanned
-  validate :remote_autotest_settings_id_check
+  validate :remote_autotest_settings_id_uniqueness, if: :remote_autotest_settings_id
 
   STARTER_FILE_TYPES = %w[simple sections shuffle group].freeze
 
@@ -128,16 +128,12 @@ class AssignmentProperties < ApplicationRecord
   end
 
   # Ensure remote_autotest_settings_id is unique for a given autotester
-  def remote_autotest_settings_id_check
-    unless self.remote_autotest_settings_id.nil?
-      assign_prop = AssignmentProperties.joins(assignment: :course).where(
-        remote_autotest_settings_id: self.remote_autotest_settings_id,
-        course: { autotest_setting_id: self.assignment.course.autotest_setting_id }
-      )
-      if assign_prop.count == 1 && self.id != assign_prop.first.id
-        errors.add(:remote_autotest_settings_id,
-                   'remote_autotest_settings_id has already been taken by the same autotester.')
-      end
-    end
+  def remote_autotest_settings_id_uniqueness
+    remote_autotest_settings_id_taken = AssignmentProperties.joins(assignment: :course).where(
+      remote_autotest_settings_id: self.remote_autotest_settings_id,
+      course: { autotest_setting_id: self.assignment.course.autotest_setting_id }
+    ).where.not(id: self.id).exists?
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.remote_autotest_settings_id.taken')
+    errors.add(:remote_autotest_settings_id, msg) if remote_autotest_settings_id_taken
   end
 end

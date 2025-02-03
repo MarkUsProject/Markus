@@ -34,7 +34,8 @@ describe AssignmentProperties do
 
       it 'should not be valid when already taken by the same autotester' do
         expect(assignment2).not_to be_valid
-        expect(assignment2.errors.full_messages[0]).to include('remote_autotest_settings_id has already been taken')
+        msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.remote_autotest_settings_id.taken')
+        expect(assignment2.errors.full_messages[0]).to include(msg)
       end
     end
 
