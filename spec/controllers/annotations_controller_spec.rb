@@ -73,7 +73,9 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      context 'when rmd_convert_enabled is true', skip: !Rails.application.config.rmd_convert_enabled do
+      context 'when rmd_convert_enabled is true' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
         it 'adds an html annotation to an RMarkdown submission file' do
           post_as user,
                   :add_existing_annotation,
@@ -87,7 +89,9 @@ describe AnnotationsController do
         end
       end
 
-      context 'when rmd_convert_enabled is false', skip: Rails.application.config.rmd_convert_enabled do
+      context 'when rmd_convert_enabled is false' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
         it 'adds a text annotation to an RMarkdown submission file' do
           post_as user,
                   :add_existing_annotation,
@@ -259,7 +263,9 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      context 'when rmd_convert_enabled is true', skip: !Rails.application.config.rmd_convert_enabled do
+      context 'when rmd_convert_enabled is true' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
         it 'adds an html annotation to an RMarkdown submission file' do
           post_as user,
                   :add_existing_annotation,
@@ -273,7 +279,9 @@ describe AnnotationsController do
         end
       end
 
-      context 'when rmd_convert_enabled is false', skip: Rails.application.config.rmd_convert_enabled do
+      context 'when rmd_convert_enabled is false' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
         it 'adds a text annotation to an RMarkdown submission file' do
           post_as user,
                   :add_existing_annotation,
