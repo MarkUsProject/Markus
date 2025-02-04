@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SubmissionFileManager} from "./submission_file_manager";
 
@@ -223,7 +223,8 @@ class ManualCollectionForm extends React.Component {
 }
 
 export function makeRepoBrowser(elem, props) {
-  render(<RepoBrowser {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<RepoBrowser {...props} />);
 }
 
 export {ManualCollectionForm};

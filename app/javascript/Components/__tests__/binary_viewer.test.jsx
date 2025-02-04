@@ -33,7 +33,7 @@ describe("BinaryViewer", () => {
     expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
     expect(screen.getByText(I18n.t("submissions.get_anyway"))).toBeInTheDocument();
     fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
-    expect(screen.getByText(successfulFetchResp)).toBeInTheDocument();
+    await screen.findByText(successfulFetchResp);
     expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
   });
 
@@ -120,7 +120,7 @@ describe("BinaryViewer", () => {
     await fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
     await screen.findByText(successfulFetchResp);
 
-    expect(screen.getByText(successfulFetchResp.repeat(2))).toBeInTheDocument();
+    await screen.findByText(successfulFetchResp.repeat(2));
     expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
     expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
   });

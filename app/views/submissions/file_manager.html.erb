@@ -3,7 +3,7 @@
 
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      window.submissionFileManager = makeSubmissionFileManager(document.getElementById('file_manager'),
+      makeSubmissionFileManager(document.getElementById('file_manager'),
         {
           course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>,

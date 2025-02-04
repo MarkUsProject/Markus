@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import PropTypes from "prop-types";
 
 import ReactTable from "react-table";
@@ -110,7 +110,8 @@ InstructorTable.propTypes = {
 };
 
 function makeInstructorTable(elem, props) {
-  render(<InstructorTable {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<InstructorTable {...props} />);
 }
 
 export {makeInstructorTable, InstructorTable};
