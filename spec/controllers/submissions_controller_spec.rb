@@ -1629,8 +1629,20 @@ describe SubmissionsController do
                                                          grouping_id: grouping.id)
         end
 
-        it 'should redirect to "html_content"' do
-          expect(subject).to redirect_to(redirect_location)
+        context 'and the rmd_convert_enabled flag is true' do
+          before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+          it 'should redirect to "html_content"' do
+            expect(subject).to redirect_to(redirect_location)
+          end
+        end
+
+        context 'and the rmd_convert_enabled flag is false' do
+          before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
+          it 'should not redirect to "html_content"' do
+            expect(subject).not_to redirect_to(redirect_location)
+          end
         end
       end
 
@@ -1760,7 +1772,8 @@ describe SubmissionsController do
         it_behaves_like 'html content'
       end
 
-      context 'an rmarkdown file' do
+      context 'an rmarkdown file',
+              skip: Rails.application.config.rmd_convert_enabled ? false : 'rmd_convert_enabled not set to true' do
         let(:filename) { 'example.Rmd' }
 
         it_behaves_like 'html content'
@@ -2144,8 +2157,20 @@ describe SubmissionsController do
                                                             select_file_id: submission_file.id)
           end
 
-          it 'should redirect to "html_content"' do
-            expect(subject).to(redirect_to(redirect_location))
+          context 'and the rmd_convert_enabled flag is true' do
+            before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+            it 'should redirect to "html_content"' do
+              expect(subject).to redirect_to(redirect_location)
+            end
+          end
+
+          context 'and the rmd_convert_enabled flag is false' do
+            before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
+            it 'should not redirect to "html_content"' do
+              expect(subject).not_to redirect_to(redirect_location)
+            end
           end
         end
       end

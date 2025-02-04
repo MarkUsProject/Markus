@@ -63,7 +63,7 @@ export class FileViewer extends React.Component {
       return <PDFViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (
       this.props.selectedFileType === "jupyter-notebook" ||
-      this.props.selectedFileType === "markdown"
+      (this.props.selectedFileType === "markdown" && this.props.rmd_convert_enabled)
     ) {
       return <HTMLViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (this.props.selectedFileType === "binary") {

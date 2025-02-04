@@ -8,7 +8,8 @@
         assignment_id: <%= @assignment.id %>,
         grouping_id: <%= @grouping.id %>,
         instructor_run: <%= ran_by == 'instructor' %>,
-        instructor_view: <%= !@current_role.student? %>
+        instructor_view: <%= !@current_role.student? %>,
+        rmd_convert_enabled: <%= Rails.application.config.rmd_convert_enabled.to_json %>
       });
     })
   <% end %>

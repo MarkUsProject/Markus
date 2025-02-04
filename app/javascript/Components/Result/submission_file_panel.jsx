@@ -234,6 +234,7 @@ export class SubmissionFilePanel extends React.Component {
             annotationFocus={this.state.annotationFocus}
             released_to_students={this.props.released_to_students}
             course_id={this.props.course_id}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         </div>
       </React.Fragment>

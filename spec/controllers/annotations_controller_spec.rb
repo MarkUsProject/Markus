@@ -73,16 +73,32 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully creates an html annotation for rmd file' do
-        post_as user,
-                :add_existing_annotation,
-                params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
-                          start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
-                          course_id: course.id },
-                format: :js
+      context 'when rmd_convert_enabled is true', skip: !Rails.application.config.rmd_convert_enabled do
+        it 'adds an html annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
 
-        expect(response).to have_http_status(:success)
-        expect(result.annotations.reload.size).to eq 1
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
+      end
+
+      context 'when rmd_convert_enabled is false', skip: Rails.application.config.rmd_convert_enabled do
+        it 'adds a text annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            line_start: 1, line_end: 1, column_start: 1, column_end: 1, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
+
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
       end
 
       it 'successfully creates a PDF annotation' do
@@ -243,17 +259,32 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully creates an html annotation for a rmd file' do
-        post_as user,
-                :create,
-                params: { content: annotation_text.content, category_id: annotation_category.id,
-                          submission_file_id: rmd_submission_file.id, start_node: 'a', start_offset: 1,
-                          end_node: 'b', end_offset: 0, result_id: result.id, assignment_id: assignment.id,
-                          course_id: course.id },
-                format: :js
+      context 'when rmd_convert_enabled is true', skip: !Rails.application.config.rmd_convert_enabled do
+        it 'adds an html annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
 
-        expect(response).to have_http_status(:success)
-        expect(result.annotations.reload.size).to eq 1
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
+      end
+
+      context 'when rmd_convert_enabled is false', skip: Rails.application.config.rmd_convert_enabled do
+        it 'adds a text annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            line_start: 1, line_end: 1, column_start: 1, column_end: 1, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
+
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
       end
 
       it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do

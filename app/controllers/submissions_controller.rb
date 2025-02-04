@@ -485,8 +485,10 @@ class SubmissionsController < ApplicationController
       return head :not_found
     end
 
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
     if params[:show_in_browser] == 'true' &&
-      ((file.is_pynb? && Rails.application.config.nbconvert_enabled) || file.is_rmd?)
+      ((file.is_pynb? && nbconvert_enabled) || (file.is_rmd? && rmd_convert_enabled))
       redirect_to html_content_course_assignment_submissions_url(current_course,
                                                                  record.grouping.assignment,
                                                                  select_file_id: params[:select_file_id])
@@ -563,9 +565,10 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
     nbconvert_enabled = Rails.application.config.nbconvert_enabled
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
     file_type = FileHelper.get_file_type(params[:file_name])
-
-    if ((file_type == 'jupyter-notebook' && nbconvert_enabled) || file_type == 'markdown') && preview
+    if ((file_type == 'jupyter-notebook' && nbconvert_enabled) \
+     || (file_type == 'markdown' && rmd_convert_enabled)) && preview
       redirect_to action: :html_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -959,24 +962,17 @@ class SubmissionsController < ApplicationController
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
       begin
-        temp_rmd_file = Tempfile.new(['temp_rmd_content', '.Rmd'], 'tmp/rmd_html_cache')
-        file_contents.gsub!(/```{r[^\}]*?(echo|eval|include)\s*=\s*(TRUE|FALSE)[^\}]*?}/, '```{r}')
-        temp_rmd_file.write(file_contents)
-        temp_rmd_file.close
-
+        file_contents.gsub!(/```{r[^}]*}/, '```r')
         args = [
-          'Rscript', '-e',
-          "library(rmarkdown); library(knitr); knitr::opts_chunk$set(eval = FALSE, echo = TRUE, include = TRUE); \
-          rmarkdown::render('#{temp_rmd_file.path}', output_format = 'html_document', \
-          output_file = '#{Rails.root.join(cache_file)}')"
+          'pandoc',
+          '-o', Rails.root.join(cache_file).to_s,
+          '--to=html',
+          '--standalone'
         ]
-
-        _stdout, stderr, status = Open3.capture3(*args)
+        _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
         return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
       rescue StandardError => e
         return "#{I18n.t('submissions.invalid_rmd_content')}: #{e}"
-      ensure
-        temp_rmd_file&.unlink
       end
     end
     File.read(cache_file)
