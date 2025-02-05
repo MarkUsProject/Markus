@@ -130,11 +130,14 @@ describe TestRun do
   describe '#update_results!' do
     let(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping, assignment: assignment) }
+    let!(:existing_tag) { create(:tag, name: 'existing_tag', assessment: assignment) }
     let(:test_run) { create(:test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1) }
     let(:criterion) { create(:flexible_criterion, max_mark: 2, assignment: assignment) }
     let(:test_group) { create(:test_group, criterion: criterion, assignment: assignment) }
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
+    let(:overall_comment1) { 'test comment 1' }
+    let(:existing_comment) { 'existing comment' }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
     let(:test2) { { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
     let(:tests) { [test1, test2] }
@@ -513,6 +516,48 @@ describe TestRun do
       context 'when it is associated with a grouping' do
         it 'should not update criteria marks' do
           expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
+        end
+      end
+
+      context 'when the results contain tags that don\'t exist' do
+        it 'should create new tags and add them to the grouping' do
+          results['test_groups'].first['tags'] =
+            [{ 'name' => 'new_tag1', 'description' => 'd' }, { 'name' => 'new_tag2' }]
+          expect { test_run.update_results!(results) }.to change { grouping.tags.count }.to eq 2
+        end
+      end
+
+      context 'when the results contain tags that already exist' do
+        it 'should add tags to the grouping without creating new ones' do
+          results['test_groups'].first['tags'] = [existing_tag]
+          expect { test_run.update_results!(results) }.not_to(change { Tag.count })
+          expect(grouping.tags.count).to eq 1
+        end
+      end
+
+      context 'when the results contain comments and has a submission without comments' do
+        let(:submission) { create(:version_used_submission, grouping: grouping) }
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add comments to the submission\'s overall comments' do
+          results['test_groups'].first['overall_comment'] = overall_comment1
+          test_run.update_results!(results)
+          expect(submission.current_result.overall_comment).to include(overall_comment1)
+        end
+      end
+
+      context 'when the results contain comments and has a submission with an existing comment' do
+        let(:result) do
+          create(:result, marking_state: Result::MARKING_STATES[:complete], overall_comment: existing_comment)
+        end
+        let(:submission) { create(:version_used_submission, grouping: grouping, current_result: result) }
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should append the comments without overwriting the existing comments' do
+          results['test_groups'].first['overall_comment'] = overall_comment1
+          test_run.update_results!(results)
+          expect(submission.current_result.overall_comment).to include(overall_comment1)
+          expect(submission.current_result.overall_comment).to include(existing_comment)
         end
       end
     end

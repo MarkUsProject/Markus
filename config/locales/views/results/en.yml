@@ -4,6 +4,7 @@ en:
     annotation:
       across_all_submission_files: Click on the filename to jump to the annotation.
       common: Common Annotations
+      feedback_generated_header: 'Feedback generated from automated test run on %{time}:'
       include_in_download: Include Annotations
       include_in_download_warning: 'Warning: Annotations on PDFs are not currently downloaded.'
       no_overlap: Annotations cannot overlap.
