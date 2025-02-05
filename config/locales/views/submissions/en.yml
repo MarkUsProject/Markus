@@ -56,6 +56,7 @@ en:
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
     invalid_jupyter_notebook_content: Invalid Jupyter Notebook content
+    invalid_rmd_content: Invalid RMarkdown content
     invalid_url: "%{item} is not a valid HTTP/HTTPS URL"
     marking_incomplete_warning: |-
       Note: This will only download the submissions that have been collected.

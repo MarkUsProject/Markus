@@ -396,6 +396,7 @@ class TestGroupFeedbackFileTable extends React.Component {
             )}
             mime_type={mime.getType(row["filename"])}
             selectedFileType={row.original.type}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         )}
       />

@@ -105,6 +105,7 @@ export class LeftPane extends React.Component {
             released_to_students={this.props.released_to_students}
             loading={this.props.loading}
             course_id={this.context.course_id}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         </TabPanel>
         <TabPanel forceRender={true}>
@@ -152,6 +153,7 @@ export class LeftPane extends React.Component {
               submission_id={this.context.submission_id}
               instructor_run={this.props.instructor_run}
               instructor_view={!this.props.student_view}
+              rmd_convert_enabled={this.props.rmd_convert_enabled}
             />
           </div>
         </TabPanel>
@@ -159,6 +161,7 @@ export class LeftPane extends React.Component {
           <FeedbackFilePanel
             feedbackFiles={this.props.feedback_files}
             loading={this.props.loading}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         </TabPanel>
         <TabPanel forceRender={!this.disableRemarkPanel()}>
