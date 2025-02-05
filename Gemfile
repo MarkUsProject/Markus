@@ -46,7 +46,7 @@ gem 'redis', '~> 5.3.0'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.0.1'
+gem 'rmagick', '~> 6.1.1'
 gem 'rtesseract'
 
 # Ruby miscellany
