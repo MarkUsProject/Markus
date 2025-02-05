@@ -57,9 +57,9 @@ class SubmissionsController < ApplicationController
         end
         # store the displayed revision
         if @revision.nil? && ((params[:revision_identifier] &&
-          params[:revision_identifier] == revision.revision_identifier.to_s) ||
-          (params[:revision_timestamp] &&
-            Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp))
+            params[:revision_identifier] == revision.revision_identifier.to_s) ||
+            (params[:revision_timestamp] &&
+              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp))
           @revision = revision
         end
       end
@@ -962,7 +962,7 @@ class SubmissionsController < ApplicationController
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
       begin
-        file_contents.gsub!(/```{r[^}]*}/, '```r')
+        file_contents.gsub!(/^\s*```{r[^}]*}\s*/m, "```r\n")
         args = [
           'pandoc',
           '-o', Rails.root.join(cache_file).to_s,
