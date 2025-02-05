@@ -15,6 +15,7 @@
         <%= stylesheet_link_tag 'rmd_dark' %>
       <% end %>
     <% end %>
+    <%= javascript_include_tag 'markus_notebook', nonce: true %>
     <%= javascript_include_tag 'require', nonce: true %>
     <%= javascript_tag nonce: true do %>
       // Same as mathjax_config.js except startup.typeset is true
@@ -40,7 +41,6 @@
         }
       };
     <% end %>
-    <%= javascript_include_tag 'markus_notebook', nonce: true %>
   </head>
   <body>
     <%= yield :layout %>
