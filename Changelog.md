@@ -8,12 +8,15 @@
 
 - Fix front-end content shift when an input element is focused (#7384)
 - Tooltip text for Package requirements file for Python autotester settings (#7383)
+- Pass back tags and overall comments from Autotester to MarkUs (#7387)
 
 ### 🐛 Bug fixes
 
 - Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
 - Ensures mark levels on a rubric criterion are properly scaled when its max mark is updated (#7311)
 - Refactor contributors list in About section to read from markus-contributors.txt (#7374)
+- Optimized the querying of submissions when assigning graders (#7381)
+- Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
 
 ### 🔧 Internal changes
 
@@ -27,6 +30,10 @@
 - Add unit tests for `marks_graders_controller` (#7382)
 - Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
 - Refactor the `Result` component and its children to use React context API (#7380)
+- Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
+- Update Python version to 3.13 in seed autotest schemas (#7388)
+- Rename jupyter notebook content functions and files to generalize to html content (#7391)
+- Update to React v18 (#7392)
 
 ## [v2.6.1]
 

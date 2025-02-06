@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <% if @notebook_type == 'jupyter-notebook' %>
+    <% if @file_type == 'jupyter-notebook' %>
       <%= stylesheet_link_tag 'notebook_common' %>
       <% if @current_user&.theme == 'dark' %>
         <%= stylesheet_link_tag 'notebook_dark' %>

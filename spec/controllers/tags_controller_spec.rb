@@ -46,7 +46,7 @@ describe TagsController do
       post_as instructor, :create, params: { tag: { name: '', description: 'tag description' },
                                              assignment_id: assignment.id, course_id: course.id }
       expect(Tag.find_by(name: '', description: 'tag description')).to be_nil
-      expect(flash[:error][0]).to include(I18n.t('flash.actions.create.error', resource_name: Tag.model_name.human))
+      expect(flash[:error]).to have_message(I18n.t('flash.actions.create.error', resource_name: Tag.model_name.human))
     end
 
     it 'associates the new tag with a grouping when passed grouping_id' do
@@ -104,8 +104,7 @@ describe TagsController do
 
       expect(response).to have_http_status(:found)
       expect(flash[:error]).to be_nil
-      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
-                                                                       count: 2)].map { |f| extract_text f })
+      expect(flash[:success]).to have_message(I18n.t('upload_success', count: 2))
       expect(response).to redirect_to course_tags_path(course, assignment_id: assignment.id)
 
       expect(Tag.find_by(name: 'tag').description).to eq('desc')

@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import FileManager from "./markus_file_manager";
 import Form from "@rjsf/core";
 import {TranslatableString} from "@rjsf/utils";
@@ -628,5 +628,8 @@ function MoveUpButton(props) {
 }
 
 export function makeAutotestManager(elem, props) {
-  return render(<AutotestManager {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<AutotestManager {...props} ref={component} />);
+  return component;
 }

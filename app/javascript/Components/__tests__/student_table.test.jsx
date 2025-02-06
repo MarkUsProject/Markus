@@ -199,7 +199,7 @@ describe("For the StudentTable's display of students", () => {
       throw `Could not find row for ${student.user_name}`;
     };
 
-    beforeAll(() => {
+    beforeAll(async () => {
       students_sample = [
         {
           _id: 9,
@@ -238,6 +238,7 @@ describe("For the StudentTable's display of students", () => {
         }),
       });
       render(<StudentTable selection={[]} course_id={1} />);
+      await screen.findByText("c6scriab");
     });
 
     it("each student is displayed as a row of the table", () => {
@@ -262,8 +263,8 @@ describe("For the StudentTable's display of students", () => {
       render(<StudentTable selection={[]} course_id={1} />);
     });
 
-    it("No rows found is shown", () => {
-      expect(screen.queryByText("No rows found")).toBeTruthy();
+    it("No rows found is shown", async () => {
+      await screen.findByText("No rows found");
     });
   });
 });

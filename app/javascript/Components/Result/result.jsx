@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 // TODO: This import seems to be required to automatically include the X-CSRF-TOKEN header on
 //   jQuery AJAX requests in this component, unlike all other pages. Requires further investigation.
@@ -325,8 +325,8 @@ class Result extends React.Component {
 
   extend_with_selection_data = annotation_data => {
     let box;
-    if (annotation_type === ANNOTATION_TYPES.NOTEBOOK) {
-      const range = get_notebook_annotation_range();
+    if (annotation_type === ANNOTATION_TYPES.HTML) {
+      const range = get_html_annotation_range();
       box = {
         start_node: pathToNode(range.startContainer),
         start_offset: range.startOffset,
@@ -1011,5 +1011,8 @@ class Result extends React.Component {
 }
 
 export function makeResult(elem, props) {
-  return render(<Result {...props} />, elem);
+  const root = createRoot(elem);
+  const component = React.createRef();
+  root.render(<Result {...props} ref={component} />);
+  return component;
 }

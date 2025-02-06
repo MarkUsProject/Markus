@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -829,6 +829,7 @@ class GradersActionBox extends React.Component {
 }
 
 export function makeGradersManager(elem, props) {
-  render(<GradersManager {...props} />, elem);
+  const root = createRoot(elem);
+  root.render(<GradersManager {...props} />);
 }
 export {GradersManager};
