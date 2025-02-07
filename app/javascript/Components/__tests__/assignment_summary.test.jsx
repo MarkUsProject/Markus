@@ -125,7 +125,11 @@ describe("For the AssignmentSummaryTable's display of an assignment with automat
 
   it("should render the Download Test Results button", async () => {
     await waitFor(() => {
-      expect(screen.getByText(/download test results/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
+        )
+      ).toBeInTheDocument();
     });
   });
 });
@@ -159,7 +163,11 @@ describe("For the AssignmentSummaryTable's display of an assignment without auto
 
   it("should not render the Download Test Results button", async () => {
     await waitFor(() => {
-      expect(screen.queryByText(/download test results/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
+        )
+      ).not.toBeInTheDocument();
     });
   });
 });
