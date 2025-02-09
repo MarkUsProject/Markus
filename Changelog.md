@@ -9,6 +9,7 @@
 - Fix front-end content shift when an input element is focused (#7384)
 - Tooltip text for Package requirements file for Python autotester settings (#7383)
 - Pass back tags and overall comments from Autotester to MarkUs (#7387)
+- Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
 
 ### 🐛 Bug fixes
 
