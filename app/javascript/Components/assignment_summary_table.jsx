@@ -15,6 +15,7 @@ export class AssignmentSummaryTable extends React.Component {
       loading: true,
       num_assigned: 0,
       num_marked: 0,
+      enable_test: false,
       marking_states: markingStates,
       markingStateFilter: "all",
       showDownloadTestsModal: false,
@@ -90,6 +91,7 @@ export class AssignmentSummaryTable extends React.Component {
           criteriaColumns: res.criteriaColumns,
           num_assigned: res.numAssigned,
           num_marked: res.numMarked,
+          enable_test: res.enableTest,
           loading: false,
           marking_states: markingStates,
           lti_deployments: res.ltiDeployments,
@@ -291,11 +293,13 @@ export class AssignmentSummaryTable extends React.Component {
                   {I18n.t("download")}
                 </button>
               </form>
-              <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
-                {I18n.t("download_the", {
-                  item: I18n.t("activerecord.models.test_result.other"),
-                })}
-              </button>
+              {this.state.enable_test && (
+                <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
+                  {I18n.t("download_the", {
+                    item: I18n.t("activerecord.models.test_result.other"),
+                  })}
+                </button>
+              )}
               {ltiButton}
             </>
           )}
