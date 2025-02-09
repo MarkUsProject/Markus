@@ -28,10 +28,13 @@ class Ta < Role
     @total_results ||= {}
     @total_results[assignment.id] ||= assignment.current_results
                                                 .joins(grouping: :tas)
-                                                .where('roles.id': self.id)
+                                                .where('roles.id': self.id).to_a
     @marked_result_ids ||= {}
     @marked_result_ids[assignment.id] ||= @total_results[assignment.id]
-                                          .where(marking_state: Result::MARKING_STATES[:complete]).ids
+                                          .select do |result|
+      result.marking_state == Result::MARKING_STATES[:complete]
+    end
+                                            .map(&:id)
     [@total_results, @marked_result_ids]
   end
 
@@ -39,7 +42,7 @@ class Ta < Role
   # If TAs are assigned to grade criteria, returns just the subtotal
   # for the criteria the TA was assigned.
   def percentage_grades_array(assignment)
-    result_ids = marked_result_ids_for(assignment)[1][2]
+    result_ids = marked_result_ids_for(assignment)[1][assignment.id]
 
     if assignment.assign_graders_to_criteria
       criterion_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
@@ -70,11 +73,11 @@ class Ta < Role
   end
 
   def get_num_marked_from_cache(assignment)
-    marked_result_ids_for(assignment)[1][2].size
+    marked_result_ids_for(assignment)[1][assignment.id].size
   end
 
   def get_num_assigned_from_cache(assignment)
-    marked_result_ids_for(assignment)[0][2].size
+    marked_result_ids_for(assignment)[0][assignment.id].size
   end
 
   private
