@@ -33,7 +33,7 @@ module FileHelper
                   '.pdf' => 'pdf',
                   '.ipynb' => 'jupyter-notebook',
                   '.r' => 'r',
-                  '.rmd' => 'markdown',
+                  '.rmd' => 'rmarkdown',
                   '.md' => 'markdown',
                   '.sql' => 'sql',
                   '.csv' => 'csv',
