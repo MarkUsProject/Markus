@@ -18,9 +18,7 @@ class SubmissionsController < ApplicationController
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
-  content_security_policy only: :html_content do |p|
-    p.style_src :self, "'unsafe-inline'"
-  end
+  content_security_policy_report_only only: :html_content
 
   def index
     respond_to do |format|
@@ -568,7 +566,7 @@ class SubmissionsController < ApplicationController
     rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
     file_type = FileHelper.get_file_type(params[:file_name])
     if ((file_type == 'jupyter-notebook' && nbconvert_enabled) \
-     || (file_type == 'markdown' && rmd_convert_enabled)) && preview
+     || (file_type == 'rmarkdown' && rmd_convert_enabled)) && preview
       redirect_to action: :html_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -686,7 +684,7 @@ class SubmissionsController < ApplicationController
     else
       sanitized_filename = ActiveStorage::Filename.new("#{filename}.#{revision_identifier}").sanitized
       unique_path = File.join(grouping.group.repo_name, path, sanitized_filename)
-      if @file_type == 'markdown'
+      if @file_type == 'rmarkdown'
         @html_content = rmd_to_html(file_contents, unique_path)
       else
         @html_content = notebook_to_html(file_contents, unique_path, @file_type)

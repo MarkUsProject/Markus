@@ -140,6 +140,7 @@ Config.setup do |config|
       optional(:end_user_csv_order).array(
         included_in?: %w[user_name last_name first_name id_number email]
       )
+      required(:rmd_convert_enabled).filled(:bool)
       required(:repository).hash do
         required(:url).filled(:string)
         optional(:ssh_url).filled(:string)

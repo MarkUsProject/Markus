@@ -63,7 +63,7 @@ export class FileViewer extends React.Component {
       return <PDFViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (
       this.props.selectedFileType === "jupyter-notebook" ||
-      (this.props.selectedFileType === "markdown" && this.props.rmd_convert_enabled)
+      (this.props.selectedFileType === "rmarkdown" && this.props.rmd_convert_enabled)
     ) {
       return <HTMLViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (this.props.selectedFileType === "binary") {
@@ -73,7 +73,9 @@ export class FileViewer extends React.Component {
     } else if (this.props.selectedFileType !== "") {
       return (
         <TextViewer
-          type={this.props.selectedFileType}
+          type={
+            this.props.selectedFileType === "rmarkdown" ? "markdown" : this.props.selectedFileType
+          }
           focusLine={this.props.focusLine}
           {...commonProps}
         />
