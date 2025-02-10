@@ -602,7 +602,7 @@ class Assignment < Assessment
 
       tag_info = tag_data.fetch(g.id, [])
                          .pluck('tags.name')
-      criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
+      criteria = result.nil? ? {} : result.mark_hash.slice(*criteria_shown)
       criteria.transform_values! { |data| data[:mark] }
       extra_mark = extra_marks_hash[result&.id]
       {
@@ -629,6 +629,7 @@ class Assignment < Assessment
       criteriaColumns: criteria_columns,
       numAssigned: self.get_num_assigned(user.instructor? ? nil : user.id),
       numMarked: self.get_num_marked(user.instructor? ? nil : user.id),
+      enableTest: self.enable_test,
       ltiDeployments: lti_deployments }
   end
 
@@ -1249,7 +1250,7 @@ class Assignment < Assessment
 
   def to_xml(options = {})
     attributes_hash = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
-    attributes_hash.select { |key, _| Api::AssignmentsController::DEFAULT_FIELDS.include? key }.to_xml(options)
+    attributes_hash.slice(*Api::AssignmentsController::DEFAULT_FIELDS).to_xml(options)
   end
 
   def to_json(options = {})
