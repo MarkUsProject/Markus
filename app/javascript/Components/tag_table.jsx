@@ -5,6 +5,7 @@ import ReactTable from "react-table";
 
 import CreateTagModal from "./Modals/create_tag_modal";
 import EditTagModal from "./Modals/edit_tag_modal";
+import {ResultContext} from "./Result/result_context";
 
 class TagTable extends React.Component {
   constructor(props) {
@@ -120,6 +121,11 @@ class TagTable extends React.Component {
   };
 
   render() {
+    const contextValue = {
+      course_id: this.props.course_id,
+      assignment_id: this.props.assignment_id,
+    };
+
     return (
       <React.Fragment>
         {!this.state.loading && (
@@ -136,12 +142,14 @@ class TagTable extends React.Component {
           loading={this.state.loading}
         />
         {this.state.isCreateTagModalOpen && (
-          <CreateTagModal
-            assignment_id={this.props.assignment_id}
-            course_id={this.props.course_id}
-            isOpen={this.state.isCreateTagModalOpen}
-            onRequestClose={this.closeCreateTagModal}
-          />
+          <ResultContext.Provider value={contextValue}>
+            <CreateTagModal
+              assignment_id={this.props.assignment_id}
+              course_id={this.props.course_id}
+              isOpen={this.state.isCreateTagModalOpen}
+              onRequestClose={this.closeCreateTagModal}
+            />
+          </ResultContext.Provider>
         )}
         {this.state.isEditTagModalOpen && (
           <EditTagModal
