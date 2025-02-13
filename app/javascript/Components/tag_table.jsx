@@ -144,8 +144,6 @@ class TagTable extends React.Component {
         {this.state.isCreateTagModalOpen && (
           <ResultContext.Provider value={contextValue}>
             <CreateTagModal
-              assignment_id={this.props.assignment_id}
-              course_id={this.props.course_id}
               isOpen={this.state.isCreateTagModalOpen}
               onRequestClose={this.closeCreateTagModal}
             />
