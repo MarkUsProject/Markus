@@ -3,7 +3,7 @@
  */
 
 import {AssignmentSummaryTable} from "../assignment_summary_table";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   let groups_sample;
@@ -93,5 +93,81 @@ describe("For the AssignmentSummaryTable's display of inactive groups", () => {
     fireEvent.click(screen.getByTestId("show_inactive_groups"));
     fireEvent.click(screen.getByTestId("show_inactive_groups"));
     expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
+  });
+});
+
+describe("For the AssignmentSummaryTable's display of an assignment with automated testing", () => {
+  beforeEach(() => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce(
+      Promise.resolve({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
+          data: [],
+          criteriaColumns: [],
+          numAssigned: 0,
+          numMarked: 0,
+          enableTest: true,
+          ltiDeployments: [],
+        }),
+      })
+    );
+
+    render(
+      <AssignmentSummaryTable
+        assignment_id={1}
+        course_id={1}
+        is_instructor={true}
+        lti_deployments={[]}
+      />
+    );
+  });
+
+  it("should render the Download Test Results button", async () => {
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
+        )
+      ).toBeInTheDocument();
+    });
+  });
+});
+
+describe("For the AssignmentSummaryTable's display of an assignment without automated testing", () => {
+  beforeEach(() => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce(
+      Promise.resolve({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({
+          data: [],
+          criteriaColumns: [],
+          numAssigned: 0,
+          numMarked: 0,
+          enableTest: false,
+          ltiDeployments: [],
+        }),
+      })
+    );
+
+    render(
+      <AssignmentSummaryTable
+        assignment_id={1}
+        course_id={1}
+        is_instructor={true}
+        lti_deployments={[]}
+      />
+    );
+  });
+
+  it("should not render the Download Test Results button", async () => {
+    await waitFor(() => {
+      expect(
+        screen.queryByText(
+          I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
+        )
+      ).not.toBeInTheDocument();
+    });
   });
 });

@@ -964,6 +964,7 @@ class Result extends React.Component {
                   updateAnnotation={this.updateAnnotation}
                   removeAnnotation={this.removeAnnotation}
                   destroyAnnotation={this.destroyAnnotation}
+                  rmd_convert_enabled={this.props.rmd_convert_enabled}
                 />
               </div>
               <div id="drag" />

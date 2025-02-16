@@ -5,6 +5,7 @@ class AnnotationsController < ApplicationController
     result = Result.find(params[:result_id])
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
+    rmd_convert = submission_file.is_rmd? && Rails.application.config.rmd_convert_enabled
 
     base_attributes = {
       submission_file_id: submission_file.id,
@@ -34,7 +35,7 @@ class AnnotationsController < ApplicationController
         page: params[:page],
         **base_attributes
       )
-    elsif submission_file.is_pynb?
+    elsif submission_file.is_pynb? || rmd_convert
       @annotation = result.annotations.create!(
         type: 'HtmlAnnotation',
         start_node: params[:start_node],
@@ -60,6 +61,7 @@ class AnnotationsController < ApplicationController
     result = Result.find(params[:result_id])
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
+    rmd_convert = submission_file.is_rmd? && Rails.application.config.rmd_convert_enabled
 
     d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
 
@@ -107,7 +109,7 @@ class AnnotationsController < ApplicationController
         page: params[:page],
         **base_attributes
       )
-    elsif submission_file.is_pynb?
+    elsif submission_file.is_pynb? || rmd_convert
       @annotation = result.annotations.create!(
         type: 'HtmlAnnotation',
         start_node: params[:start_node],

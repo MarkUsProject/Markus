@@ -95,6 +95,7 @@ export class FeedbackFilePanel extends React.Component {
             selectedFileURL={url}
             mime_type={mime.getType(file_obj.filename)}
             selectedFileType={file_obj.type}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         </div>
       </React.Fragment>

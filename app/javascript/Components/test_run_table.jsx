@@ -190,10 +190,10 @@ class TestGroupResultTable extends React.Component {
     let i = 0;
     let groups = new Set();
     data.forEach(row => {
-      if (!groups.has(row["test_groups.name"])) {
+      if (!groups.has(row["test_groups.id"])) {
         expanded[i] = {};
         i++;
-        groups.add(row["test_groups.name"]);
+        groups.add(row["test_groups.id"]);
       }
     });
     return expanded;
@@ -213,10 +213,17 @@ class TestGroupResultTable extends React.Component {
 
   columns = () => [
     {
+      id: "test_group_id",
+      Header: "",
+      accessor: row => row["test_groups.id"],
+      maxWidth: 30,
+    },
+    {
       id: "test_group_name",
       Header: "",
       accessor: row => row["test_groups.name"],
       maxWidth: 30,
+      show: false,
     },
     {
       id: "name",
@@ -337,7 +344,7 @@ class TestGroupResultTable extends React.Component {
           className={this.state.loading ? "auto-overflow" : "auto-overflow display-block"}
           data={this.state.filteredData}
           columns={this.columns()}
-          pivotBy={["test_group_name"]}
+          pivotBy={["test_group_id"]}
           getTdProps={(state, rowInfo) => {
             if (rowInfo) {
               let className = `-wrap test-result-${rowInfo.row["test_status"]}`;
@@ -396,6 +403,7 @@ class TestGroupFeedbackFileTable extends React.Component {
             )}
             mime_type={mime.getType(row["filename"])}
             selectedFileType={row.original.type}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         )}
       />
