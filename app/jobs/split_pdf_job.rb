@@ -3,6 +3,7 @@ class SplitPdfJob < ApplicationJob
     'window.location.reload.bind(window.location)'
   end
 
+  # TODO: to be removed after refactoring
   def self.show_status(status)
     I18n.t('poll_job.split_pdf_job', progress: status[:progress],
                                      total: status[:total],
@@ -13,8 +14,11 @@ class SplitPdfJob < ApplicationJob
     status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil, on_duplicate = nil)
+  def perform(exam_template, enqueuing_user, _path, split_pdf_log, _original_filename = nil, _role = nil,
+              on_duplicate = nil)
     m_logger = MarkusLogger.instance
+    # Broadcast job initialization
+    ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'started', exam_name: exam_template.name })
     begin
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
@@ -85,6 +89,12 @@ class SplitPdfJob < ApplicationJob
           split_page.update(status: status, group: group, exam_page_number: m[:page_num].to_i)
         end
         progress.increment
+
+        # Broadcast job progress
+        ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'in progress',
+                                                            exam_name: exam_template.name,
+                                                            page_number: m[:page_num].to_i,
+                                                            total_pages: m[:total_pages].to_i })
       end
       num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log, on_duplicate)
       num_incomplete = partial_exams.length - num_complete
@@ -96,10 +106,14 @@ class SplitPdfJob < ApplicationJob
       )
 
       m_logger.log('Split pdf process done')
+      # Broadcast job completion
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed', exam_name: exam_template.name })
       split_pdf_log
     rescue StandardError => e
       # Clean tmp folder
       Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
+      # Broadcast job error
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'failed', exam_name: exam_template.name })
       raise e
     end
   end

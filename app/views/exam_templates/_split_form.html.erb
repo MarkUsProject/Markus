@@ -1,3 +1,4 @@
+<div id="course-data" data-course-id="<%= @current_course.id %>"></div>
 <%= form_with url: split_course_assignment_exam_templates_path(@current_course),
               method: :patch,
               authenticity_token: true,
@@ -26,4 +27,6 @@
     <%= f.label :on_duplicate, I18n.t('exam_templates.upload_scans.on_duplicate.error'), value: 'error' %>
   </p>
   <p><%= f.submit t('upload'), id: 'split_exam' %></p>
+
+  <%= javascript_include_tag 'exam_templates_channel.js', nonce: true %>
 <% end %>
