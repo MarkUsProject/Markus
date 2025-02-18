@@ -127,6 +127,7 @@ class RepoBrowser extends React.Component {
           enableSubdirs={this.props.enableSubdirs}
           enableUrlSubmit={this.props.enableUrlSubmit}
           readOnly={this.isReadOnly()}
+          rmd_convert_enabled={this.props.rmd_convert_enabled}
         />
         {manualCollectionForm}
       </div>

@@ -12,6 +12,7 @@ const MAX_CONTENT_SIZES = {
   image: 50_000_000,
   pdf: 50_000_000,
   "jupyter-notebook": 50_000_000,
+  rmarkdown: 50_000_000,
   text: 100_000,
   binary: 100_000,
 };
@@ -233,6 +234,7 @@ export class SubmissionFilePanel extends React.Component {
             annotationFocus={this.state.annotationFocus}
             released_to_students={this.props.released_to_students}
             course_id={this.props.course_id}
+            rmd_convert_enabled={this.props.rmd_convert_enabled}
           />
         </div>
       </React.Fragment>

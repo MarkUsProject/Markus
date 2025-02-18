@@ -15,6 +15,10 @@ FactoryBot.define do
     factory :notebook_submission_file do
       filename { "#{Faker::Lorem.word}.ipynb" }
     end
+
+    factory :rmd_submission_file do
+      filename { "#{Faker::Lorem.word}.Rmd" }
+    end
   end
 
   factory :submission_file_with_repo, parent: :submission_file do
@@ -37,5 +41,9 @@ FactoryBot.define do
     factory :notebook_submission_file_with_repo do
       filename { "#{Faker::Lorem.word}.ipynb" }
     end
+  end
+
+  factory :rmd_submission_file_with_repo do
+    filename { "#{Faker::Lorem.word}.Rmd" }
   end
 end

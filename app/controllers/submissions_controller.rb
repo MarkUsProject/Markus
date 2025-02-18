@@ -483,7 +483,10 @@ class SubmissionsController < ApplicationController
       return head :not_found
     end
 
-    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
+    if params[:show_in_browser] == 'true' &&
+      ((file.is_pynb? && nbconvert_enabled) || (file.is_rmd? && rmd_convert_enabled))
       redirect_to html_content_course_assignment_submissions_url(current_course,
                                                                  record.grouping.assignment,
                                                                  select_file_id: params[:select_file_id])
@@ -560,8 +563,10 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
     nbconvert_enabled = Rails.application.config.nbconvert_enabled
-
-    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
+    file_type = FileHelper.get_file_type(params[:file_name])
+    if ((file_type == 'jupyter-notebook' && nbconvert_enabled) \
+     || (file_type == 'rmarkdown' && rmd_convert_enabled)) && preview
       redirect_to action: :html_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
@@ -679,7 +684,11 @@ class SubmissionsController < ApplicationController
     else
       sanitized_filename = ActiveStorage::Filename.new("#{filename}.#{revision_identifier}").sanitized
       unique_path = File.join(grouping.group.repo_name, path, sanitized_filename)
-      @html_content = notebook_to_html(file_contents, unique_path, @file_type)
+      if @file_type == 'rmarkdown'
+        @html_content = rmd_to_html(file_contents, unique_path)
+      else
+        @html_content = notebook_to_html(file_contents, unique_path, @file_type)
+      end
     end
     render layout: 'html_content'
   end
@@ -942,6 +951,27 @@ class SubmissionsController < ApplicationController
         elem.set_attribute(:id, unique_id)
       end
       File.write(cache_file, html.to_html)
+    end
+    File.read(cache_file)
+  end
+
+  def rmd_to_html(file_contents, unique_path)
+    cache_file = Pathname.new('tmp/rmd_html_cache').join("#{unique_path}.html")
+    unless File.exist? cache_file
+      FileUtils.mkdir_p(cache_file.dirname)
+      begin
+        file_contents.gsub!(/^\s*```{r[^}]*}\s*/m, "```r\n")
+        args = [
+          'pandoc',
+          '-o', Rails.root.join(cache_file).to_s,
+          '--to=html',
+          '--standalone'
+        ]
+        _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
+        return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
+      rescue StandardError => e
+        return "#{I18n.t('submissions.invalid_rmd_content')}: #{e}"
+      end
     end
     File.read(cache_file)
   end
