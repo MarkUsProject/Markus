@@ -20,6 +20,7 @@
 - Refactor contributors list in About section to read from markus-contributors.txt (#7374)
 - Optimized the querying of submissions when assigning graders (#7381)
 - Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
+- Fix tag creation failing in tags table (#7426)
 
 ### 🔧 Internal changes
 
