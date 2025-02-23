@@ -97,9 +97,9 @@ class ExamTemplatesController < ApplicationController
     current_job = GenerateJob.perform_later(exam_template, copies, index)
     session[:job_id] = current_job.job_id
 
-    respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job' }
-    end
+    # respond_to do |format|
+    #   format.js { render 'exam_templates/_poll_generate_job' }
+    # end
   end
 
   def download_generate
