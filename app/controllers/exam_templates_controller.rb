@@ -97,9 +97,9 @@ class ExamTemplatesController < ApplicationController
     current_job = GenerateJob.perform_later(exam_template, copies, index)
     session[:job_id] = current_job.job_id
 
-    respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job' }
-    end
+    # respond_to do |format|
+    #   format.js { render 'exam_templates/_poll_generate_job' }
+    # end
   end
 
   def download_generate
@@ -159,8 +159,9 @@ class ExamTemplatesController < ApplicationController
       head :bad_request
       return
     else
-      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
+      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role, @current_user,
                                             params[:on_duplicate])
+      ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
       session[:job_id] = current_job.job_id
     end
     respond_to do |format|
