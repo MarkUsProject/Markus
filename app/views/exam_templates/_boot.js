@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", () => {
   const courseId = document.getElementById("course-data").dataset.courseId;
   console.log(courseId);
-  ActionCable.createConsumer().subscriptions.create(
+  createConsumer().subscriptions.create(
     {channel: "ExamTemplatesChannel", course_id: courseId},
     {
       received(data) {

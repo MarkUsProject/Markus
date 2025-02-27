@@ -5,8 +5,6 @@
 // the compiled file.
 //
 
-//= require action_cable
-
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
 Element.prototype.addClass = function (className) {

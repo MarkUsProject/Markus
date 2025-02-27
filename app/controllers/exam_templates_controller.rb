@@ -153,20 +153,20 @@ class ExamTemplatesController < ApplicationController
     if split_exam.nil?
       flash_message(:error, t('exam_templates.upload_scans.missing'))
       head :bad_request
-      return
+      nil
     elsif split_exam.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.upload_scans.invalid'))
       head :bad_request
-      return
+      nil
     else
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role, @current_user,
                                             params[:on_duplicate])
       ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
       session[:job_id] = current_job.job_id
     end
-    respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job' }
-    end
+    # respond_to do |format|
+    #   format.js { render 'exam_templates/_poll_generate_job' }
+    # end
   end
 
   def destroy

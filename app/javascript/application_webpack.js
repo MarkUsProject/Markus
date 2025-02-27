@@ -171,3 +171,5 @@ import {makeLtiSettings} from "./Components/lti_settings";
 window.makeLtiSettings = makeLtiSettings;
 import {makeResult} from "./Components/Result/result";
 window.makeResult = makeResult;
+import {createConsumer} from "@rails/actioncable";
+window.createConsumer = createConsumer;
