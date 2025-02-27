@@ -21,7 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     {channel: "ExamTemplatesChannel", course_id: courseId},
     {
       received(data) {
-        console.log("Received data from WebSocket:", data);
+        if (data["status"] != null) {
+          let message_data = generateMessage(data);
+          renderFlashMessages(message_data);
+        }
       },
       connected() {
         console.log("Connected to ExamTemplatesChannel");
@@ -33,6 +36,35 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   console.log("Script loaded");
 });
+
+function generateMessage(status_data) {
+  let message_data = {};
+  switch (status_data["status"]) {
+    case "started":
+      message_data["notice"] = I18n.t("poll_job.queued");
+      break;
+    case "in progress":
+      message_data["notice"] = I18n.t("poll_job.split_pdf_job", {
+        progress: status_data["page_number"],
+        total: status_data["total_pages"],
+        exam_name: status_data["exam_name"],
+      });
+      break;
+    case "completed":
+      message_data["success"] = I18n.t("poll_job.completed");
+      break;
+    case "failed":
+      if (status_data["exception"]) {
+        message_data["error"] = I18n.t("job.status.failed.message", {
+          error: status_data["exception"],
+        });
+      } else {
+        message_data["error"] = I18n.t("job.status.failed.no_message");
+      }
+      break;
+  }
+  return message_data;
+}
 
 /**
  * Initialize an exam template form.

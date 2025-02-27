@@ -173,3 +173,5 @@ import {makeResult} from "./Components/Result/result";
 window.makeResult = makeResult;
 import {createConsumer} from "@rails/actioncable";
 window.createConsumer = createConsumer;
+import {renderFlashMessages} from "./common/flash";
+window.renderFlashMessages = renderFlashMessages;

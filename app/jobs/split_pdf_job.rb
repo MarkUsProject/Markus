@@ -94,7 +94,7 @@ class SplitPdfJob < ApplicationJob
         ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'in progress',
                                                             exam_name: exam_template.name,
                                                             page_number: m[:page_num].to_i,
-                                                            total_pages: m[:total_pages].to_i })
+                                                            total_pages: num_pages.to_i })
       end
       num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log, on_duplicate)
       num_incomplete = partial_exams.length - num_complete
@@ -113,7 +113,11 @@ class SplitPdfJob < ApplicationJob
       # Clean tmp folder
       Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
       # Broadcast job error
-      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'failed', exam_name: exam_template.name })
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, {
+        status: 'failed',
+        exam_name: exam_template.name,
+        exception: e.to_s
+      })
       raise e
     end
   end
