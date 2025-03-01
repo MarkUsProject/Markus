@@ -52,6 +52,7 @@ function generateMessage(status_data) {
       break;
     case "completed":
       message_data["success"] = I18n.t("poll_job.completed");
+      window.location.reload();
       break;
     case "failed":
       if (status_data["exception"]) {
