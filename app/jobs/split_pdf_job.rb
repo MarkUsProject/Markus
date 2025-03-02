@@ -3,23 +3,11 @@ class SplitPdfJob < ApplicationJob
     'window.location.reload.bind(window.location)'
   end
 
-  # TODO: to be removed after refactoring
-  def self.show_status(status)
-    I18n.t('poll_job.split_pdf_job', progress: status[:progress],
-                                     total: status[:total],
-                                     exam_name: status[:exam_name])
-  end
-
-  before_enqueue do |job|
-    status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
-  end
-
   def perform(exam_template, enqueuing_user, _path, split_pdf_log, _original_filename = nil, _role = nil,
               on_duplicate = nil)
     m_logger = MarkusLogger.instance
     # Broadcast job initializatio
     begin
-      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'started', exam_name: exam_template.name })
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
@@ -91,7 +79,8 @@ class SplitPdfJob < ApplicationJob
         progress.increment
 
         # Broadcast job progress
-        ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'in progress',
+        ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'in_progress',
+                                                            job_class: 'SplifPdfJob',
                                                             exam_name: exam_template.name,
                                                             page_number: m[:page_num].to_i,
                                                             total_pages: num_pages.to_i })
@@ -107,7 +96,9 @@ class SplitPdfJob < ApplicationJob
 
       m_logger.log('Split pdf process done')
       # Broadcast job completion
-      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed', exam_name: exam_template.name })
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed',
+                                                          job__class: 'SplitPdfJob',
+                                                          exam_name: exam_template.name })
       split_pdf_log
     rescue StandardError => e
       # Clean tmp folder
@@ -115,8 +106,9 @@ class SplitPdfJob < ApplicationJob
       # Broadcast job error
       ExamTemplatesChannel.broadcast_to(enqueuing_user, {
         status: 'failed',
+        job_class: 'SplifPdfJob',
         exam_name: exam_template.name,
-        exception: e.to_s
+        exception: e.message
       })
       raise e
     end

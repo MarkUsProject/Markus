@@ -94,12 +94,8 @@ class ExamTemplatesController < ApplicationController
     copies = params[:exam_template][:num_copies].to_i
     index = params[:exam_template][:start_index].to_i
     exam_template = record
-    current_job = GenerateJob.perform_later(exam_template, copies, index)
-    session[:job_id] = current_job.job_id
-
-    # respond_to do |format|
-    #   format.js { render 'exam_templates/_poll_generate_job' }
-    # end
+    current_job = GenerateJob.perform_later(@current_user, exam_template, copies, index)
+    ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
   end
 
   def download_generate
@@ -162,11 +158,7 @@ class ExamTemplatesController < ApplicationController
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role, @current_user,
                                             params[:on_duplicate])
       ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
-      session[:job_id] = current_job.job_id
     end
-    # respond_to do |format|
-    #   format.js { render 'exam_templates/_poll_generate_job' }
-    # end
   end
 
   def destroy

@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     {channel: "ExamTemplatesChannel", course_id: courseId},
     {
       received(data) {
+        console.log(data);
         if (data["status"] != null) {
           let message_data = generateMessage(data);
           renderFlashMessages(message_data);
@@ -40,27 +41,54 @@ document.addEventListener("DOMContentLoaded", () => {
 function generateMessage(status_data) {
   let message_data = {};
   switch (status_data["status"]) {
-    case "started":
-      message_data["notice"] = I18n.t("poll_job.queued");
+    case "queued":
+      if (status_data["job_class"] === "SplitPdfJob") {
+        message_data["notice"] = I18n.t("poll_job.queued");
+      } else if (status_data["job_class"] === "GenerateJob") {
+        message_data["notice"] = I18n.t("poll_job.queued");
+      }
       break;
-    case "in progress":
-      message_data["notice"] = I18n.t("poll_job.split_pdf_job", {
-        progress: status_data["page_number"],
-        total: status_data["total_pages"],
-        exam_name: status_data["exam_name"],
-      });
+    case "in_progress":
+      if (status_data["job_class"] === "SplifPdfJob") {
+        message_data["notice"] = I18n.t("poll_job.split_pdf_job", {
+          progress: status_data["page_number"],
+          total: status_data["total_pages"],
+          exam_name: status_data["exam_name"],
+        });
+      } else if (status_data["job_class"] === "GenerateJob") {
+        message_data["notice"] = I18n.t("poll_job.generate_job", {
+          progress: status_data["page_number"],
+          total: status_data["total_pages"],
+          exam_name: status_data["exam_name"],
+        });
+      }
       break;
     case "completed":
-      message_data["success"] = I18n.t("poll_job.completed");
-      window.location.reload();
+      if (status_data["job_class"] === "SplifPdfJob") {
+        message_data["success"] = I18n.t("poll_job.completed");
+        window.location.reload();
+      } else if (status_data["job_class"] === "GenerateJob") {
+        message_data["success"] = I18n.t("poll_job.completed");
+        window.location.reload();
+      }
       break;
     case "failed":
-      if (status_data["exception"]) {
-        message_data["error"] = I18n.t("job.status.failed.message", {
-          error: status_data["exception"],
-        });
-      } else {
-        message_data["error"] = I18n.t("job.status.failed.no_message");
+      if (status_data["job_class"] === "SplifPdfJob") {
+        if (status_data["exception"]) {
+          message_data["error"] = I18n.t("job.status.failed.message", {
+            error: status_data["exception"],
+          });
+        } else {
+          message_data["error"] = I18n.t("job.status.failed.no_message");
+        }
+      } else if (status_data["job_class"] === "GenerateJob") {
+        if (status_data["exception"]) {
+          message_data["error"] = I18n.t("job.status.failed.message", {
+            error: status_data["exception"],
+          });
+        } else {
+          message_data["error"] = I18n.t("job.status.failed.no_message");
+        }
       }
       break;
   }
