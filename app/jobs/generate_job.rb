@@ -14,7 +14,6 @@ class GenerateJob < ApplicationJob
   def perform(enqueuing_user, exam_template, num_copies, start)
     m_logger = MarkusLogger.instance
     progress.total = num_copies
-
     begin
       template_pdf = CombinePDF.load exam_template.file_path
       generated_pdf = CombinePDF.new

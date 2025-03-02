@@ -6,7 +6,6 @@ class SplitPdfJob < ApplicationJob
   def perform(exam_template, enqueuing_user, _path, split_pdf_log, _original_filename = nil, _role = nil,
               on_duplicate = nil)
     m_logger = MarkusLogger.instance
-    # Broadcast job initializatio
     begin
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
@@ -80,7 +79,7 @@ class SplitPdfJob < ApplicationJob
 
         # Broadcast job progress
         ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'in_progress',
-                                                            job_class: 'SplifPdfJob',
+                                                            job_class: 'SplitPdfJob',
                                                             exam_name: exam_template.name,
                                                             page_number: m[:page_num].to_i,
                                                             total_pages: num_pages.to_i })
@@ -97,7 +96,7 @@ class SplitPdfJob < ApplicationJob
       m_logger.log('Split pdf process done')
       # Broadcast job completion
       ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed',
-                                                          job__class: 'SplitPdfJob',
+                                                          job_class: 'SplitPdfJob',
                                                           exam_name: exam_template.name })
       split_pdf_log
     rescue StandardError => e

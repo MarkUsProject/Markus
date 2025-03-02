@@ -16,23 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   const courseId = document.getElementById("course-data").dataset.courseId;
-  console.log(courseId);
   createConsumer().subscriptions.create(
     {channel: "ExamTemplatesChannel", course_id: courseId},
     {
       received(data) {
-        console.log(data);
         if (data["status"] != null) {
           let message_data = generateMessage(data);
           renderFlashMessages(message_data);
         }
       },
-      connected() {
-        console.log("Connected to ExamTemplatesChannel");
-      },
-      disconnected() {
-        console.log("Disconnected from ExamTemplatesChannel");
-      },
+      connected() {},
+      disconnected() {},
     }
   );
   console.log("Script loaded");
@@ -49,7 +43,7 @@ function generateMessage(status_data) {
       }
       break;
     case "in_progress":
-      if (status_data["job_class"] === "SplifPdfJob") {
+      if (status_data["job_class"] === "SplitPdfJob") {
         message_data["notice"] = I18n.t("poll_job.split_pdf_job", {
           progress: status_data["page_number"],
           total: status_data["total_pages"],
@@ -64,7 +58,7 @@ function generateMessage(status_data) {
       }
       break;
     case "completed":
-      if (status_data["job_class"] === "SplifPdfJob") {
+      if (status_data["job_class"] === "SplitPdfJob") {
         message_data["success"] = I18n.t("poll_job.completed");
         window.location.reload();
       } else if (status_data["job_class"] === "GenerateJob") {
