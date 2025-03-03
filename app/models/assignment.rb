@@ -817,6 +817,21 @@ class Assignment < Assessment
              .count(&:is_valid?)
   end
 
+  def cache_ta_results
+    return @cache_ta_results if defined? @cache_ta_results
+    data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
+    grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
+    @cache_ta_results = grouped_data.each_with_object({}) do |(ta_id, results), hash|
+      total_results = results.map { |_, result_id, _| result_id }
+      marked_result_ids = results.select { |_, _, marking_state| marking_state == Result::MARKING_STATES[:complete] }
+                                 .map { |_, result_id, _| result_id }
+      hash[ta_id] = {
+        total_results: total_results,
+        marked_result_ids: marked_result_ids
+      }
+    end
+  end
+
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
       self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).count
