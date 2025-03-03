@@ -20,6 +20,8 @@
 - Refactor contributors list in About section to read from markus-contributors.txt (#7374)
 - Optimized the querying of submissions when assigning graders (#7381)
 - Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
+- Fix tag creation failing in tags table (#7426)
+- Ensure tag names are unique within an assignment (#7430)
 
 ### 🔧 Internal changes
 
@@ -37,7 +39,7 @@
 - Update Python version to 3.13 in seed autotest schemas (#7388)
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
-- Fix inefficient TA querying in dashboard graphs (#7420)
+- Remove unused Javascript files (#7442)
 
 ## [v2.6.1]
 
