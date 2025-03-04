@@ -19,6 +19,9 @@ class AutotestRunJob < AutotestJob
     end
   rescue StandardError => e
     status.catch_exception(e)
+    if status[:exception][:message] == 'Setting up test environment. Please try again later.'
+      status[:status] = 'setting_up_environment'
+    end
     unless user.nil?
       TestRunsChannel.broadcast_to(user, { **status.to_h, job_class: 'AutotestRunJob' })
     end
