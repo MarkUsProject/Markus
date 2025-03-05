@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
       disconnected() {},
     }
   );
-  console.log("Script loaded");
 });
 
 function generateMessage(status_data) {
