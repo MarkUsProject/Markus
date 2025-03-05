@@ -438,7 +438,7 @@ function generateMessage(status_data) {
     case "queued":
       message_data["notice"] = I18n.t("job.status.queued");
       break;
-    case "setting_up_environment":
+    case "service_unavailable":
       message_data["notice"] = status_data["exception"]["message"];
       break;
     default:
