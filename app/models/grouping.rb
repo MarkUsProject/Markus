@@ -890,7 +890,7 @@ class Grouping < ApplicationRecord
   # this value is not specified (or nil), the results are ordered in ascending order.
   def order_and_get_next_grouping(results, filter_data, reversed)
     asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
-    ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
+    ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) || false
     case filter_data['orderBy']
     when 'submission_date'
       next_grouping_ordered_submission_date(results, ascending)
