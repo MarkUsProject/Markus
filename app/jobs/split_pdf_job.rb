@@ -81,8 +81,8 @@ class SplitPdfJob < ApplicationJob
         ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'in_progress',
                                                             job_class: 'SplitPdfJob',
                                                             exam_name: exam_template.name,
-                                                            page_number: m[:page_num].to_i,
-                                                            total_pages: num_pages.to_i })
+                                                            page_number: progress.progress,
+                                                            total_pages: progress.total })
       end
       num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log, on_duplicate)
       num_incomplete = partial_exams.length - num_complete
