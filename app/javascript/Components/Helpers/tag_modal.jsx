@@ -44,6 +44,7 @@ export default class TagModal extends React.Component {
                 data-testid="tag_description_input"
                 value={this.props.description}
                 onChange={this.props.handleDescriptionChange}
+                rows={3}
               />
             </div>
             <div className={"modal-container"}>
