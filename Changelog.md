@@ -40,6 +40,7 @@
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
 - Remove unused Javascript files (#7442)
+- Refactor scanned test generation and test splitting from polling to websockets (#7428)
 
 ## [v2.6.1]
 
