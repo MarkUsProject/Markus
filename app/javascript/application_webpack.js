@@ -175,3 +175,5 @@ import {createConsumer} from "@rails/actioncable";
 window.createConsumer = createConsumer;
 import {renderFlashMessages} from "./common/flash";
 window.renderFlashMessages = renderFlashMessages;
+import {download_generate_course_exam_template_path} from "./routes.js";
+window.download_generate_course_exam_template_path = download_generate_course_exam_template_path;

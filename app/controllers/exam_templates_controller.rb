@@ -94,8 +94,8 @@ class ExamTemplatesController < ApplicationController
     copies = params[:exam_template][:num_copies].to_i
     index = params[:exam_template][:start_index].to_i
     exam_template = record
-    current_job = GenerateJob.perform_later(@current_user, exam_template, copies, index)
-    ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
+    current_job = GenerateJob.perform_later(exam_template, copies, index, @current_user)
+    ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h) if @current_user
   end
 
   def download_generate
@@ -155,9 +155,9 @@ class ExamTemplatesController < ApplicationController
       head :bad_request
       nil
     else
-      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role, @current_user,
-                                            params[:on_duplicate])
-      ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h)
+      current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
+                                            params[:on_duplicate], @current_user)
+      ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h) if @current_user
     end
   end
 
