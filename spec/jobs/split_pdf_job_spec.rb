@@ -169,7 +169,7 @@ describe SplitPdfJob do
       it 'marks duplicated pages as errors' do
         FileUtils.cp "db/data/scanned_exams/#{filename}",
                      File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
-        SplitPdfJob.perform_now(exam_template, user, '', split_pdf_log2, filename, instructor, 'error')
+        SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'error', user)
 
         expect(split_pdf_log2.split_pages.where('status LIKE ?', '%already exists').size).to eq 6
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
@@ -181,7 +181,7 @@ describe SplitPdfJob do
       it 'overwrites existing pages' do
         FileUtils.cp "db/data/scanned_exams/#{filename}",
                      File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
-        SplitPdfJob.perform_now(exam_template, user, '', split_pdf_log2, filename, instructor, 'overwrite')
+        SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'overwrite', user)
 
         expect(split_pdf_log2.split_pages.where('status LIKE ?', '%Overwritten%').size).to eq 6
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
@@ -193,7 +193,7 @@ describe SplitPdfJob do
       it 'ignores duplicated pages' do
         FileUtils.cp "db/data/scanned_exams/#{filename}",
                      File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
-        SplitPdfJob.perform_now(exam_template, user, '', split_pdf_log2, filename, instructor, 'ignore')
+        SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'ignore', user)
 
         expect(split_pdf_log2.split_pages.where(status: 'Duplicate page ignored').size).to eq 6
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
@@ -280,7 +280,7 @@ describe SplitPdfJob do
       )
       FileUtils.cp "db/data/scanned_exams/#{filename}",
                    File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log1.id}.pdf")
-      SplitPdfJob.perform_now(exam_template, user, '', split_pdf_log1, filename, instructor)
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log1, filename, instructor, user)
 
       filename = 'midterm_scan_104_odds.pdf'
       split_pdf_log2 = exam_template.split_pdf_logs.create(
@@ -293,7 +293,7 @@ describe SplitPdfJob do
       )
       FileUtils.cp "db/data/scanned_exams/#{filename}",
                    File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
-      SplitPdfJob.perform_now(exam_template, user, '', split_pdf_log2, filename, instructor)
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, user)
     end
 
     it 'creates a complete COVER.pdf' do
