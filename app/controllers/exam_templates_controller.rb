@@ -158,6 +158,7 @@ class ExamTemplatesController < ApplicationController
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
                                             params[:on_duplicate], @current_user)
       ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h) if @current_user
+      head :ok
     end
   end
 

@@ -140,8 +140,8 @@ describe ExamTemplatesController do
                                            pdf_to_split: pdf }
         end
 
-        it 'should respond without content' do
-          expect(response).to have_http_status :no_content
+        it 'should respond with 200' do
+          expect(response).to have_http_status :ok
         end
 
         it 'should send no error message' do
