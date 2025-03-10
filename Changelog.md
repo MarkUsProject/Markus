@@ -22,6 +22,7 @@
 - Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
 - Fix tag creation failing in tags table (#7426)
 - Ensure tag names are unique within an assignment (#7430)
+- Update flash style to "notice" for "setting up test env" message (#7445)
 
 ### 🔧 Internal changes
 
@@ -39,8 +40,9 @@
 - Update Python version to 3.13 in seed autotest schemas (#7388)
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
-- Remove unused Javascript files (#7442)
 - Refactor scanned test generation and test splitting from polling to websockets (#7428)
+- Move Docker dependency updates into separate service (#7451)
+- Fixed flaky test due to daylight savings time issue (#7452)
 
 ## [v2.6.1]
 
