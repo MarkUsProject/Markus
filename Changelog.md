@@ -41,6 +41,7 @@
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
 - Remove unused Javascript files (#7442)
+- Fixed flaky test due to daylight savings time issue (#7452)
 
 ## [v2.6.1]
 
