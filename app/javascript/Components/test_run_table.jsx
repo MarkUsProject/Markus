@@ -438,6 +438,9 @@ function generateMessage(status_data) {
     case "queued":
       message_data["notice"] = I18n.t("job.status.queued");
       break;
+    case "service_unavailable":
+      message_data["notice"] = status_data["exception"]["message"];
+      break;
     default:
       message_data["notice"] = I18n.t("automated_tests.autotest_run_job.status.in_progress");
   }

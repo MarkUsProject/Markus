@@ -294,5 +294,22 @@ describe AutotestRunJob do
         expect { subject }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
       end
     end
+
+    context 'test environment is still being set up' do
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { remote_autotest_settings_id: 10 }) }
+
+      it 'should broadcast a message to the user' do
+        uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.remote_autotest_settings_id}/test")
+        req = Net::HTTP::Put.new(uri)
+        msg = 'Setting up test environment. Please try again later.'
+        stub_request(:put, req.uri).to_return(status: 503,
+                                              body: { 'message' => msg }.to_json)
+        expect { subject }
+          .to have_broadcasted_to(role.user).from_channel(TestRunsChannel)
+                                            .with(a_hash_including(status: 'service_unavailable',
+                                                                   exception: a_hash_including(message: msg),
+                                                                   job_class: 'AutotestRunJob'))
+      end
+    end
   end
 end

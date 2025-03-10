@@ -17,6 +17,12 @@ class AutotestRunJob < AutotestJob
     unless user.nil?
       TestRunsChannel.broadcast_to(user, { status: 'completed', job_class: 'AutotestRunJob' })
     end
+  rescue ServiceUnavailableException => e
+    status.catch_exception(e)
+    status[:status] = 'service_unavailable'
+    unless user.nil?
+      TestRunsChannel.broadcast_to(user, { **status.to_h, job_class: 'AutotestRunJob' })
+    end
   rescue StandardError => e
     status.catch_exception(e)
     unless user.nil?
