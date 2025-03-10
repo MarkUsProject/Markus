@@ -72,4 +72,4 @@ en:
     timeout: Timeout (s)
     title: Automated Testing
     use_assignment_due_date: Leave blank to use assignment due date
-    setting_up_env: 'Setting up test environment. Please try again later.'
+    setting_up_env: Setting up test environment. Please try again later.
