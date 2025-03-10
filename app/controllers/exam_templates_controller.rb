@@ -149,11 +149,9 @@ class ExamTemplatesController < ApplicationController
     if split_exam.nil?
       flash_message(:error, t('exam_templates.upload_scans.missing'))
       head :bad_request
-      nil
     elsif split_exam.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.upload_scans.invalid'))
       head :bad_request
-      nil
     else
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
                                             params[:on_duplicate], @current_user)
