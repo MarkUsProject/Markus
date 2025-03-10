@@ -301,13 +301,14 @@ describe AutotestRunJob do
       it 'should broadcast a message to the user' do
         uri = URI("#{assignment.course.autotest_setting.url}/settings/#{assignment.remote_autotest_settings_id}/test")
         req = Net::HTTP::Put.new(uri)
+        msg = 'Setting up test environment. Please try again later.'
         stub_request(:put, req.uri).to_return(status: 503,
-                                              body: { 'message' => I18n.t('automated_tests.setting_up_env') }.to_json)
+                                              body: { 'message' => msg }.to_json)
         expect { subject }
           .to have_broadcasted_to(role.user).from_channel(TestRunsChannel)
                                             .with(a_hash_including(status: 'service_unavailable',
                                                                    exception: a_hash_including(
-                                                                     message: I18n.t('automated_tests.setting_up_env')
+                                                                     message: msg
                                                                    ),
                                                                    job_class: 'AutotestRunJob'))
       end
