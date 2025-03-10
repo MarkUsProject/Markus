@@ -40,6 +40,7 @@
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
 - Remove unused Javascript files (#7442)
+- Move Docker dependency updates into separate service (#7451)
 
 ## [v2.6.1]
 
