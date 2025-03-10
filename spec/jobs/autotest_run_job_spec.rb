@@ -307,9 +307,7 @@ describe AutotestRunJob do
         expect { subject }
           .to have_broadcasted_to(role.user).from_channel(TestRunsChannel)
                                             .with(a_hash_including(status: 'service_unavailable',
-                                                                   exception: a_hash_including(
-                                                                     message: msg
-                                                                   ),
+                                                                   exception: a_hash_including(message: msg),
                                                                    job_class: 'AutotestRunJob'))
       end
     end
