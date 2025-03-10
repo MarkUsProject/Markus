@@ -22,6 +22,7 @@
 - Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
 - Fix tag creation failing in tags table (#7426)
 - Ensure tag names are unique within an assignment (#7430)
+- Update flash style to "notice" for "setting up test env" message (#7445)
 
 ### 🔧 Internal changes
 
