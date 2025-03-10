@@ -6,6 +6,5 @@ class AutotestJob < ApplicationJob
     block.call
   rescue LimitExceededException
     self.class.set(wait: 1.minute).perform_later(*job.arguments)
-  rescue ServiceUnavailableException # rubocop:disable Lint/SuppressedException
   end
 end

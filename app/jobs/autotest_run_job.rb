@@ -23,7 +23,6 @@ class AutotestRunJob < AutotestJob
     unless user.nil?
       TestRunsChannel.broadcast_to(user, { **status.to_h, job_class: 'AutotestRunJob' })
     end
-    raise e
   rescue StandardError => e
     status.catch_exception(e)
     unless user.nil?
