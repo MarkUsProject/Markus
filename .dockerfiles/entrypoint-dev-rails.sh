@@ -5,22 +5,6 @@ if [ -z "${LD_PRELOAD+x}" ] && [ -f /usr/lib/*/libjemalloc.so.2 ]; then
   export LD_PRELOAD="$(echo /usr/lib/*/libjemalloc.so.2)"
 fi
 
-# install bundle gems if not up to date with the Gemfile.lock file
-bundle check 2>/dev/null || bundle install
-
-# install node packages
-npm list &> /dev/null || npm ci
-
-# install python packages
-[ -f ./venv/bin/python3 ] || python3 -m venv ./venv
-./venv/bin/python3 -m pip install --upgrade pip > /dev/null
-./venv/bin/python3 -m pip install -r requirements-jupyter.txt
-./venv/bin/python3 -m pip install -r requirements-scanner.txt
-./venv/bin/python3 -m pip install -r requirements-qr.txt
-
-# install chromium (for nbconvert webpdf conversion)
-./venv/bin/python3 -m playwright install chromium
-
 # setup the database (checks for db existence first)
 until pg_isready -q; do
   echo "waiting for database to start up"
