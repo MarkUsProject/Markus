@@ -793,7 +793,10 @@ class Assignment < Assessment
     assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
-  def get_num_assigned(ta_id = nil)
+  def get_num_assigned(ta_id = nil, bulk: false)
+    if bulk
+      return @cache_ta_results[ta_id][:total_results].size
+    end
     if ta_id.nil?
       groupings.size
     else
@@ -817,22 +820,48 @@ class Assignment < Assessment
              .count(&:is_valid?)
   end
 
+  def marked_result_ids_for(ta_id)
+    cache_ta_results
+    total_results = @cache_ta_results[ta_id][:total_results]
+    marked_result_ids = @cache_ta_results[ta_id][:marked_result_ids]
+    [total_results, marked_result_ids]
+  end
+
   def cache_ta_results
     return @cache_ta_results if defined? @cache_ta_results
     data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
     grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
     @cache_ta_results = grouped_data.each_with_object({}) do |(ta_id, results), hash|
       total_results = results.map { |_, result_id, _| result_id }
-      marked_result_ids = results.select { |_, _, marking_state| marking_state == Result::MARKING_STATES[:complete] }
-                                 .map { |_, result_id, _| result_id }
+      if self.assign_graders_to_criteria
+        assigned_criteria = self.criteria.select do |criterion|
+          criterion.criterion_ta_associations.any? { |assoc| assoc.ta_id == ta_id }
+        end
+        criteria_count = assigned_criteria.size
+        marked_result_ids = total_results.select do |result_id|
+          result = self.current_results.find { |r| r.id == result_id }
+          marks_for_ta = result.marks.select do |mark|
+            mark.ta_id == ta_id &&
+              assigned_criteria.any? { |criterion| criterion.id == mark.criterion_id } &&
+              !mark.mark.nil?
+          end
+          marks_for_ta.size == criteria_count
+        end
+      else
+        marked_result_ids = results.select { |_, _, marking_state| marking_state == Result::MARKING_STATES[:complete] }
+                                   .map { |_, result_id, _| result_id }
+      end
       hash[ta_id] = {
-        total_results: total_results,
+        total_results: results,
         marked_result_ids: marked_result_ids
       }
     end
   end
 
-  def get_num_marked(ta_id = nil)
+  def get_num_marked(ta_id = nil, bulk: false)
+    if bulk
+      return @cache_ta_results[ta_id][:marked_result_ids].size
+    end
     if ta_id.nil?
       self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).count
     elsif is_criteria_mark?(ta_id)

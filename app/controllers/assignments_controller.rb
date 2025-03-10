@@ -376,8 +376,8 @@ class AssignmentsController < ApplicationController
     ta_datasets = assignment.tas.map do |ta|
       grade_distribution_arr = ta.grade_distribution_array(assignment, intervals)
       num_marked_label = t('submissions.how_many_marked',
-                           num_marked: ta.get_num_marked_from_cache(assignment),
-                           num_assigned: ta.get_num_assigned_from_cache(assignment))
+                           num_marked: assignment.get_num_marked(ta.id, true),
+                           num_assigned: assignment.get_num_assigned(ta.id, true))
       { label: "#{ta.display_name} (#{num_marked_label})",
         data: grade_distribution_arr }
     end

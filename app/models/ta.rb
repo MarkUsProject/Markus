@@ -42,7 +42,8 @@ class Ta < Role
   # If TAs are assigned to grade criteria, returns just the subtotal
   # for the criteria the TA was assigned.
   def percentage_grades_array(assignment)
-    result_ids = marked_result_ids_for(assignment)[1][assignment.id]
+    result_ids = assignment.marked_result_ids_for(self.id)
+    # result_ids = marked_result_ids_for(assignment)
 
     if assignment.assign_graders_to_criteria
       criterion_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
@@ -70,14 +71,6 @@ class Ta < Role
     distribution[-1] = distribution.last + data.count { |x| x > 100 }
 
     distribution
-  end
-
-  def get_num_marked_from_cache(assignment)
-    marked_result_ids_for(assignment)[1][assignment.id].size
-  end
-
-  def get_num_assigned_from_cache(assignment)
-    marked_result_ids_for(assignment)[0][assignment.id].size
   end
 
   private
