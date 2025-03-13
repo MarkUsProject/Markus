@@ -15,8 +15,7 @@ class GenerateJob < ApplicationJob
           alignment = page_num.even? ? :right : :left
           render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false)
           draw_text(qrcode_content,
-                    at: [alignment == :left ? 140 : bounds.width - 140 - qrcode_content.length * 6,
-                         bounds.height - 30])
+                    at: [alignment == :left ? 140 : bounds.width - 140 - qrcode_content.length * 6, bounds.height - 30])
         end
       end
       combine_pdf_qr = CombinePDF.parse(pdf.render)
