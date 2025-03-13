@@ -74,11 +74,11 @@ function handleJobCompletion(status_data) {
   if (status_data["job_class"] === "SplitPdfJob") {
     window.location.reload();
   } else if (status_data["job_class"] === "GenerateJob") {
-    const path = download_generate_course_exam_template_path(
+    window.location = Routes.download_generate_course_exam_template_path(
       status_data["course_id"],
-      status_data["exam_id"]
+      status_data["exam_id"],
+      {file_name: status_data["file_name"]}
     );
-    window.location = `${path}?file_name=${status_data["file_name"]}`
   }
 }
 
