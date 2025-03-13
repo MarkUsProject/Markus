@@ -40,14 +40,14 @@ function generateMessage(status_data) {
       message_data["notice"] = I18n.t("poll_job.queued");
       break;
     case "in_progress":
+      let job_translation_key;
       if (status_data["job_class"] === "SplitPdfJob") {
-        message_data["notice"] = I18n.t("poll_job.split_pdf_job", {
-          progress: status_data["page_number"],
-          total: status_data["total_pages"],
-          exam_name: status_data["exam_name"],
-        });
+        job_translation_key = "poll_job.split_pdf_job"
       } else if (status_data["job_class"] === "GenerateJob") {
-        message_data["notice"] = I18n.t("poll_job.generate_job", {
+        job_translation_key = "poll_job.generate_job"
+      }
+      if (job_translation_key) {
+        message_data["notice"] = I18n.t(job_translation_key, {
           progress: status_data["page_number"],
           total: status_data["total_pages"],
           exam_name: status_data["exam_name"],
