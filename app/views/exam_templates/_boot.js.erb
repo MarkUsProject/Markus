@@ -14,6 +14,74 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  createConsumer().subscriptions.create(
+    {channel: "ExamTemplatesChannel", course_id: <%= @current_course.id %>},
+    {
+      received(data) {
+        if (data["status"] !== null) {
+          const message_data = generateMessage(data);
+          renderFlashMessages(message_data);
+          if (data["status"] === "completed") {
+            handleJobCompletion(data);
+          }
+        }
+      },
+      connected() {},
+      disconnected() {},
+    }
+  );
+});
+
+function generateMessage(status_data) {
+  let message_data = {};
+  switch (status_data["status"]) {
+    case "queued":
+      message_data["notice"] = I18n.t("poll_job.queued");
+      break;
+    case "in_progress":
+      let job_translation_key;
+      if (status_data["job_class"] === "SplitPdfJob") {
+        job_translation_key = "poll_job.split_pdf_job"
+      } else if (status_data["job_class"] === "GenerateJob") {
+        job_translation_key = "poll_job.generate_job"
+      }
+      if (job_translation_key) {
+        message_data["notice"] = I18n.t(job_translation_key, {
+          progress: status_data["page_number"],
+          total: status_data["total_pages"],
+          exam_name: status_data["exam_name"],
+        });
+      }
+      break;
+    case "completed":
+      message_data["success"] = I18n.t("poll_job.completed");
+      break;
+    case "failed":
+      if (status_data["exception"]) {
+        message_data["error"] = I18n.t("job.status.failed.message", {
+          error: status_data["exception"],
+        });
+      } else {
+        message_data["error"] = I18n.t("job.status.failed.no_message");
+      }
+      break;
+  }
+  return message_data;
+}
+
+function handleJobCompletion(status_data) {
+  if (status_data["job_class"] === "SplitPdfJob") {
+    window.location.reload();
+  } else if (status_data["job_class"] === "GenerateJob") {
+    window.location = Routes.download_generate_course_exam_template_path(
+      status_data["course_id"],
+      status_data["exam_id"],
+      {file_name: status_data["file_name"]}
+    );
+  }
+}
+
 /**
  * Initialize an exam template form.
  * @param id Exam template id
