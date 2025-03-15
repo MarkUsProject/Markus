@@ -40,21 +40,15 @@ function generateMessage(status_data) {
       message_data["notice"] = I18n.t("poll_job.queued");
       break;
     case "in_progress":
-      let progress = status_data["page_number"];
-      let total = status_data["total_pages"];
-      let exam_name = status_data["exam_name"];
+      let statusdetails = {
+        progress: status_data["page_number"],
+        total: status_data["total_pages"],
+        exam_name: status_data["exam_name"]
+      };
       if (status_data["job_class"] === "SplitPdfJob") {
-        message_data["notice"] = I18n.t("poll_job.split_pdf_job", {
-          progress: progress,
-          total: total,
-          exam_name: exam_name,
-        });
+        message_data["notice"] = I18n.t("poll_job.split_pdf_job", statusdetails);
       } else if (status_data["job_class"] === "GenerateJob") {
-        message_data["notice"] = I18n.t("poll_job.generate_job", {
-          progress: progress,
-          total: total,
-          exam_name: exam_name,
-        });
+        message_data["notice"] = I18n.t("poll_job.generate_job", statusdetails);
       }
       break;
     case "completed":
