@@ -578,7 +578,7 @@ describe AutomatedTestsController do
             get_as student, :student_interface, params: params
             assignment.reload
             token_start_time = assignment.token_start_date
-            expected_next_token_generation_time = token_start_time + 2.days
+            expected_next_token_generation_time = token_start_time + 48.hours
             formatted_expected_time = I18n.l(expected_next_token_generation_time)
             expect(assigns(:next_token_generation_time)).to eq(formatted_expected_time)
           end

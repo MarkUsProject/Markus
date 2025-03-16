@@ -94,12 +94,8 @@ class ExamTemplatesController < ApplicationController
     copies = params[:exam_template][:num_copies].to_i
     index = params[:exam_template][:start_index].to_i
     exam_template = record
-    current_job = GenerateJob.perform_later(exam_template, copies, index)
-    session[:job_id] = current_job.job_id
-
-    respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job' }
-    end
+    current_job = GenerateJob.perform_later(exam_template, copies, index, @current_user)
+    ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h) if @current_user
   end
 
   def download_generate
@@ -153,18 +149,14 @@ class ExamTemplatesController < ApplicationController
     if split_exam.nil?
       flash_message(:error, t('exam_templates.upload_scans.missing'))
       head :bad_request
-      return
     elsif split_exam.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.upload_scans.invalid'))
       head :bad_request
-      return
     else
       current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role,
-                                            params[:on_duplicate])
-      session[:job_id] = current_job.job_id
-    end
-    respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job' }
+                                            params[:on_duplicate], @current_user)
+      ExamTemplatesChannel.broadcast_to(@current_user, ActiveJob::Status.get(current_job).to_h) if @current_user
+      head :ok
     end
   end
 

@@ -125,6 +125,7 @@ module AutomatedTestsHelper
 
     class LimitExceededException < StandardError; end
     class UnauthorizedException < StandardError; end
+    class ServiceUnavailableException < StandardError; end
 
     # Register this MarkUs instance with the autotester by sending a unique user name and credentials that
     # the autotester can use to make get requests to MarkUs' API
@@ -287,6 +288,7 @@ module AutomatedTestsHelper
       unless res.is_a?(Net::HTTPSuccess)
         raise LimitExceededException if res.code == '429'
         raise UnauthorizedException if res.code == '401'
+        raise ServiceUnavailableException, JSON.parse(res.body)['message'] if res.code == '503'
         begin
           raise JSON.parse(res.body)['message']
         rescue JSON::ParserError
