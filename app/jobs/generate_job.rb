@@ -1,29 +1,5 @@
 class GenerateJob < ApplicationJob
-  def self.on_complete_js(status)
-    path = Rails.application.routes.url_helpers.download_generate_course_exam_template_path(
-      course_id: status[:course_id],
-      id: status[:exam_id]
-    )
-    "(data) => {
-      if (!data.error_message) {
-        window.location = '#{path}?file_name=#{status[:file_name]}'
-      }
-    }"
-  end
-
-  def self.show_status(status)
-    I18n.t('poll_job.generate_job', progress: status[:progress], total: status[:total], exam_name: status[:exam_name])
-  end
-
-  before_enqueue do |job|
-    exam_template, num_copies, start = job.arguments
-    status.update(exam_name: exam_template.name,
-                  file_name: exam_template.generated_copies_file_name(num_copies, start),
-                  exam_id: exam_template.id,
-                  course_id: exam_template.course.id)
-  end
-
-  def perform(exam_template, num_copies, start)
+  def perform(exam_template, num_copies, start, enqueuing_user = nil)
     m_logger = MarkusLogger.instance
     progress.total = num_copies
     template_pdf = CombinePDF.load exam_template.file_path
@@ -47,10 +23,38 @@ class GenerateJob < ApplicationJob
         generated_pdf << (qr_page << template_page)
       end
       progress.increment
+      if enqueuing_user
+        ExamTemplatesChannel.broadcast_to(enqueuing_user, {
+          status: 'in_progress',
+          job_class: 'GenerateJob',
+          exam_name: exam_template.name,
+          page_number: progress.progress,
+          total_pages: progress.total
+        })
+      end
     end
 
     FileUtils.mkdir_p(exam_template.tmp_path)
     generated_pdf.save File.join(exam_template.tmp_path, exam_template.generated_copies_file_name(num_copies, start))
     m_logger.log('Generate pdf copies process done')
+    if enqueuing_user
+      ExamTemplatesChannel.broadcast_to(enqueuing_user,
+                                        { status: 'completed',
+                                          job_class: 'GenerateJob',
+                                          course_id: exam_template.course.id,
+                                          exam_id: exam_template.id,
+                                          file_name: exam_template.generated_copies_file_name(num_copies,
+                                                                                              start) })
+    end
+  rescue StandardError => e
+    if enqueuing_user
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, {
+        status: 'failed',
+        job_class: 'GenerateJob',
+        exam_name: exam_template.name,
+        exception: e.message
+      })
+    end
+    raise e
   end
 end
