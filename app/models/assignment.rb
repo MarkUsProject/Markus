@@ -822,9 +822,7 @@ class Assignment < Assessment
 
   def marked_result_ids_for(ta_id)
     cache_ta_results
-    total_results = @cache_ta_results[ta_id][:total_results]
-    marked_result_ids = @cache_ta_results[ta_id][:marked_result_ids]
-    [total_results, marked_result_ids]
+    @cache_ta_results[ta_id][:marked_result_ids]
   end
 
   def cache_ta_results

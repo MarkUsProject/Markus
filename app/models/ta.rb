@@ -43,7 +43,6 @@ class Ta < Role
   # for the criteria the TA was assigned.
   def percentage_grades_array(assignment)
     result_ids = assignment.marked_result_ids_for(self.id)
-    # result_ids = marked_result_ids_for(assignment)
 
     if assignment.assign_graders_to_criteria
       criterion_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
