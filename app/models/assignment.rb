@@ -839,9 +839,7 @@ class Assignment < Assessment
         marked_result_ids = total_results.select do |result_id|
           result = self.current_results.find { |r| r.id == result_id }
           marks_for_ta = result.marks.select do |mark|
-            mark.ta_id == ta_id &&
-              assigned_criteria.any? { |criterion| criterion.id == mark.criterion_id } &&
-              !mark.mark.nil?
+            assigned_criteria.any? { |criterion| criterion.id == mark.criterion_id } && !mark.mark.nil?
           end
           marks_for_ta.size == criteria_count
         end
