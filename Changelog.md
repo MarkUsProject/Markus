@@ -44,6 +44,7 @@
 - Refactor scanned test generation and test splitting from polling to websockets (#7428)
 - Move Docker dependency updates into separate service (#7451)
 - Fixed flaky test due to daylight savings time issue (#7452)
+- Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
 
 ## [v2.6.1]
 
