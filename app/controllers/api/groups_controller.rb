@@ -11,7 +11,7 @@ module Api
     def create
       assignment = Assignment.find(params[:assignment_id])
       begin
-        group = assignment.add_group_api(params[:new_group_name])
+        group = assignment.add_group_api(params[:new_group_name], params[:members])
         respond_to do |format|
           format.xml do
             render xml: group.to_xml(root: 'group', skip_types: 'true')
