@@ -2579,6 +2579,60 @@ describe Assignment do
     end
   end
 
+  describe '#get_num_marked with bulk: true' do
+    let(:instructor) { create(:instructor) }
+    let(:ta) { create(:ta) }
+    let(:ta2) { create(:ta) }
+
+    let(:assignment) { create(:assignment, assign_graders_to_criteria: false) }
+
+    let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: false) }
+
+    before do
+      create(:complete_result, submission: grouping1.submissions.first)
+      create(:incomplete_result, submission: grouping2.submissions.first)
+      create(:complete_result, submission: grouping3.submissions.first)
+      create(:incomplete_result, submission: grouping4.submissions.first)
+
+      create(:ta_membership, role: ta, grouping: grouping1)
+      create(:ta_membership, role: ta, grouping: grouping2)
+    end
+
+    it 'returns 1 marked result for the TA' do
+      assignment.cache_ta_results
+      expect(assignment.get_num_marked(ta.id, bulk: true)).to eq(1)
+    end
+
+    it 'returns 0 if no assigned results are complete' do
+      grouping1.submissions.first.current_result.update!(marking_state: Result::MARKING_STATES[:incomplete])
+      assignment.cache_ta_results
+      expect(assignment.get_num_marked(ta.id, bulk: true)).to eq(0)
+    end
+
+    context 'When the assignment has graders assigned to criteria' do
+      let(:assignment2) do
+        create(:assignment_with_criteria_and_results_with_remark,
+               assignment_properties_attributes: { assign_graders_to_criteria: true })
+      end
+
+      let(:new_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment2) }
+      let(:new_result) { create(:incomplete_result, submission: new_grouping.current_submission_used) }
+
+      before do
+        create(:ta_membership, role: ta2, grouping: assignment2.groupings.first)
+        create(:ta_membership, role: ta2, grouping: new_grouping)
+      end
+
+      it 'counts complete results when the grader is not assigned any criteria' do
+        assignment.cache_ta_results
+        expect(assignment2.get_num_marked(ta2.id, bulk: true)).to eq(1)
+      end
+    end
+  end
+
   describe '#completed_result_marks' do
     let(:assignment) { create(:assignment) }
     let!(:criteria) { create_list(:rubric_criterion, 2, assignment: assignment, max_mark: 4) }
