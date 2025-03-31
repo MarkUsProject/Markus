@@ -827,26 +827,21 @@ class Assignment < Assessment
 
   def cache_ta_results
     return @cache_ta_results if defined? @cache_ta_results
-    # for all current results, grouped by their associated TA
+
     data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
-    # Group the data by TA ID, so each TA ID maps to a list of associated result records
+    # Group results by TA ID
     grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
-    # Build a hash from result ID to result object for quick lookup
+
     results_by_id = current_results.includes(:marks).index_by(&:id)
-    # Initialize the cache, building a hash where each key is a TA ID and each value contains:
-    # 1. total_results: all result records assigned to the TA
-    # 2. marked_result_ids: only those results considered "marked" by the TA
     @cache_ta_results = grouped_data.each_with_object({}) do |(ta_id, results), hash|
-      # Extract just the result IDs (ignore marking_state for now)
       total_results = results.map { |_, result_id, _| result_id }
-      # If the assignment uses "mark by criterion", we need to check that all criteria assigned
-      # to this TA are marked for each result
+
       if self.assign_graders_to_criteria
         # Get the list of criteria IDs assigned to this TA
         assigned_criteria_ids = self.criteria.flat_map do |criterion|
           criterion.criterion_ta_associations.select { |assoc| assoc.ta_id == ta_id }.map { criterion.id }
         end
-        # Count how many criteria the TA is responsible for
+
         criteria_count = assigned_criteria_ids.size
         if criteria_count == 0
           # If the TA has no assigned criteria, fallback to using marking_state to determine marked results
@@ -856,12 +851,11 @@ class Assignment < Assessment
           end
           marked_result_ids = complete_results.map { |_, result_id, _| result_id }
         else
-          # Otherwise, for each result, ensure that all assigned criteria have been marked
+          # Count results where all assigned criteria have been marked
           marked_result_ids = total_results.select do |result_id|
             result = results_by_id[result_id]
-            next false unless result # skip if result wasn't preloaded
+            next false unless result
 
-            # Select the marks on this result that belong to the TA’s assigned criteria and are not nil
             marks_for_ta = result.marks.select do |mark|
               assigned_criteria_ids.include?(mark.criterion_id) && !mark.mark.nil?
             end
@@ -870,7 +864,7 @@ class Assignment < Assessment
           end
         end
       else
-        # If grading is not assigned per criterion, use marking state to check if result is complete
+        # Grading not by criterion: count only completed results
         marked_result_ids = results.select { |_, _, marking_state| marking_state == Result::MARKING_STATES[:complete] }
                                    .map { |_, result_id, _| result_id }
       end

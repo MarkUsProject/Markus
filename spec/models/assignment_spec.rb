@@ -2630,6 +2630,54 @@ describe Assignment do
         assignment.cache_ta_results
         expect(assignment2.get_num_marked(ta2.id, bulk: true)).to eq(1)
       end
+
+      context 'When the grader is assigned to mark a criterion' do
+        before { create(:criterion_ta_association, ta: ta, criterion: assignment2.criteria.first) }
+
+        it 'counts results where the assigned criteria have marks' do
+          @criterion1 = create(:rubric_criterion, assignment: assignment2)
+          @criterion2 = create(:rubric_criterion, assignment: assignment2)
+          create(:criterion_ta_association, criterion: @criterion1, ta: ta2)
+          create(:criterion_ta_association, criterion: @criterion2, ta: ta2)
+          assignment2.reload
+
+          mark1 = Mark.find_or_initialize_by(result: new_result, criterion: @criterion1)
+          mark1.mark = 1.0
+          mark1.save!
+
+          mark2 = Mark.find_or_initialize_by(result: new_result, criterion: @criterion2)
+          mark2.mark = 1.0
+          mark2.save!
+
+          default_result = assignment2.groupings.first.current_result  # the result created by new_grouping
+          mark3 = Mark.find_or_initialize_by(result: default_result, criterion: @criterion1)
+          mark3.mark = 1.0
+          mark3.save!
+
+          mark4 = Mark.find_or_initialize_by(result: default_result, criterion: @criterion2)
+          mark4.mark = 1.0
+          mark4.save!
+
+          new_result.reload
+
+          assignment2.cache_ta_results
+          expect(assignment2.get_num_marked(ta2.id, bulk: true)).to eq(2)
+        end
+
+        it 'does not count results where the assigned criteria do not have marks' do
+          assignment2.cache_ta_results
+          expect(assignment2.get_num_marked(ta2.id, bulk: true)).to eq(1)
+        end
+
+        context 'Where there is a remark request' do
+          before { create(:remark_result, submission: assignment2.groupings.first.current_submission_used) }
+
+          it 'counts the remark result and not the original result' do
+            assignment2.cache_ta_results
+            expect(assignment2.get_num_marked(ta2.id, bulk: true)).to eq(0)
+          end
+        end
+      end
     end
   end
 
