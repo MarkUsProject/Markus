@@ -33,7 +33,7 @@
     "react-dom": "^18.3.1",
     "react-flatpickr": "^3.10.13",
     "react-keyed-file-browser": "^1.14.0",
-    "react-modal": "^3.16.1",
+    "react-modal": "^3.16.3",
     "react-table": "^6.11.5",
     "react-tabs": "^6.1.0",
     "tslib": "^2.8.1",
