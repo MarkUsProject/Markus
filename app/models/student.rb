@@ -30,7 +30,7 @@ class Student < Role
            through: :memberships,
            source: :grouping
 
-  has_many :student_memberships, foreign_key: 'role_id', inverse_of: :role
+  has_many :student_memberships, dependent: :restrict_with_exception, foreign_key: 'role_id', inverse_of: :role
 
   has_many :grace_period_deductions, through: :memberships
 
