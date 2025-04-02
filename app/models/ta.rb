@@ -6,6 +6,8 @@ class Ta < Role
   validate :associated_user_is_an_end_user
   accepts_nested_attributes_for :grader_permission
 
+  has_many :ta_memberships, dependent: :delete_all, foreign_key: 'role_id', inverse_of: :role
+
   has_many :annotation_texts, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
   has_many :annotations, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
 
