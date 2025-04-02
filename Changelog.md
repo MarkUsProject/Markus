@@ -18,6 +18,7 @@
 - Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
 - Allow creating image annotations from a test run's outputs (#7486)
 - Added an API that collects a single submission (#7494)
+- Enable deletion of a student from a course (#7480)
 
 ### 🐛 Bug fixes
 
