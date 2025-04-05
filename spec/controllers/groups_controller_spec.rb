@@ -760,6 +760,13 @@ describe GroupsController do
            'value' => "#{students[0].first_name} #{students[0].last_name}" }]
       end
 
+      let(:expected_inactive) do
+        [{ 'id' => students[3].id,
+           'id_number' => students[3].id_number,
+           'user_name' => students[3].user_name,
+           'value' => "#{students[3].first_name} #{students[3].last_name} (inactive)" }]
+      end
+
       it 'returns matches for user_name' do
         post_as instructor, :get_names, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
@@ -808,6 +815,17 @@ describe GroupsController do
                                                   format: :json }
 
         expect(response.parsed_body).to match_array expected
+      end
+
+      it 'returns matches for inactive students' do
+        post_as instructor, :get_names, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  assignment: assignment.id,
+                                                  term: 'fhe',
+                                                  format: :json,
+                                                  display_inactive: true }
+
+        expect(response.parsed_body).to match_array expected_inactive
       end
 
       context 'when users are already in groups' do
