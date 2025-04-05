@@ -45,6 +45,7 @@
 - Move Docker dependency updates into separate service (#7451)
 - Fixed flaky test due to daylight savings time issue (#7452)
 - Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
+- Updated to react-flatpickr v4.0.0 (#7478)
 
 ## [v2.6.1]
 

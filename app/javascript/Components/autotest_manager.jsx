@@ -380,7 +380,9 @@ class AutotestManager extends React.Component {
               altFormat: I18n.t("time.format_string.flatpickr"),
               dateFormat: "Z",
               disabled: !this.state.enable_test || !this.state.enable_student_tests,
+              enableTime: true,
               plugins: [labelPlugin()], // Ensure id is applied to visible input
+              showMonths: 2,
             }}
           />
           <label className="inline_label" htmlFor="token_end_date">
