@@ -12,6 +12,8 @@
 - Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
 - Group test results by Test Groups id (#7422)
 - Display HTML previews of RMarkdown files (#7394)
+- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
+- Modified add_group_api to use username as group name for individual assignments (#7481)
 
 ### 🐛 Bug fixes
 
