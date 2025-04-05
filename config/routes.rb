@@ -454,7 +454,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :students, only: [:create, :new, :index, :edit, :update] do
+    resources :students, only: [:create, :new, :index, :edit, :update, :destroy] do
       collection do
         patch 'bulk_modify'
         get 'manage'

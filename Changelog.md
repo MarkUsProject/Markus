@@ -12,6 +12,7 @@
 - Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
 - Group test results by Test Groups id (#7422)
 - Display HTML previews of RMarkdown files (#7394)
+- Enable deletion of a student from a course (#7480)
 
 ### 🐛 Bug fixes
 

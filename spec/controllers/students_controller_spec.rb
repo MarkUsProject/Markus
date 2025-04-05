@@ -168,6 +168,52 @@ describe StudentsController do
         let(:role) { instructor }
       end
     end
+
+    describe '#destroy' do
+      context 'when destroy fails' do
+        before do
+          allow_any_instance_of(Role).to receive(:destroy).and_return(false)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'does not delete the student, shows an error message, and gets a bad request response' do
+          expect(Student.count).to eq(1)
+          expect(flash.now[:success]).to be_nil
+          expect(flash[:error]).to contain_message(I18n.t('flash.students.destroy.error', user_name: student.user_name,
+                                                                                          message: ''))
+          expect(response).to have_http_status(:bad_request)
+        end
+      end
+
+      context 'when student has a membership' do
+        before do
+          grouping = create(:grouping_with_inviter, inviter: student)
+          create(:membership, role: student, grouping: grouping)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'does not delete the student, shows an error message and gets a conflict response' do
+          expect(Student.count).to eq(1)
+          expect(flash.now[:success]).to be_nil
+          expect(flash[:error]).to contain_message(I18n.t('flash.students.destroy.restricted',
+                                                          user_name: student.user_name, message: ''))
+          expect(response).to have_http_status(:conflict)
+        end
+      end
+
+      context 'succeeds for student deletion' do
+        before do
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'deletes student, flashes success, and gets an ok response' do
+          expect(Student.exists?).to be(false)
+          expect(flash.now[:success]).to contain_message(I18n.t('flash.students.destroy.success',
+                                                                user_name: student.user_name))
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
   end
 
   describe 'role is a student' do
