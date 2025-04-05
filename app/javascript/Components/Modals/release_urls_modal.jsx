@@ -76,6 +76,8 @@ class ReleaseUrlsModal extends React.Component {
               altInput: true,
               altFormat: I18n.t("time.format_string.flatpickr"),
               dateFormat: "Z",
+              enableTime: true,
+              showMonths: 2,
             }}
           />
           <a
