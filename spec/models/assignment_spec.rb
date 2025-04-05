@@ -437,7 +437,7 @@ describe Assignment do
       it 'raises an error' do
         expect do
           assignment.add_group_api(existing_group.group_name)
-        end.to raise_error(RuntimeError, "Group '#{existing_group.group_name}' already exists")
+        end.to raise_error(RuntimeError, "Group #{existing_group.group_name} already exists")
       end
     end
 
