@@ -13,6 +13,7 @@ en:
       page_number: Page Number
       upside_down: Page Upside Down?
     assign_scans:
+      display_inactive: Display inactive students
       done: All groups have been successfully assigned students
       help: Assign students to scanned exam groups based on printed student names.
       no_cover_page: This submission does not have a cover page.
@@ -20,7 +21,6 @@ en:
       skip_group: Skip group
       student_not_found: Student with name %{name} does not exist.
       title: Assign Scans
-      display_inactive: Display inactive students
     back_to_exam_templates_page: Back to Exam Templates page
     create:
       add_division: Add Template Division
