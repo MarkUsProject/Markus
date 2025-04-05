@@ -373,9 +373,9 @@ GEM
     rdoc (6.13.1)
       psych (>= 4.0.0)
     redcarpet (3.6.0)
-    redis (5.3.0)
+    redis (5.4.0)
       redis-client (>= 0.22.0)
-    redis-client (0.23.0)
+    redis-client (0.24.0)
       connection_pool
     redis-namespace (1.11.0)
       redis (>= 4)
@@ -549,7 +549,7 @@ DEPENDENCIES
   rails-i18n (~> 7.0.10)
   rails_performance
   redcarpet
-  redis (~> 5.3.0)
+  redis (~> 5.4.0)
   responders
   resque
   resque-scheduler
