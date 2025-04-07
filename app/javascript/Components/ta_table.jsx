@@ -50,7 +50,7 @@ class TATable extends React.Component {
         }
       })
       .catch(error => {
-        console.error("Error deleting TA:", error);
+        console.error("Error removing TA:", error);
       });
   };
 

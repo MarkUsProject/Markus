@@ -36,8 +36,8 @@ en:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."
       destroy:
         error: 'Error removing student (%{user_name}): %{message}'
-        restricted: 'Cannot delete Student (%{user_name}): %{message}'
-        success: Succesfully deleted Student (%{user_name}) from course.
+        restricted: 'Cannot remove Student (%{user_name}): %{message}'
+        success: Succesfully removed Student (%{user_name}) from course.
       update:
         error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
     tas:
@@ -45,7 +45,7 @@ en:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."
       destroy:
         error: 'Error removing TA (%{user_name}): %{message}'
-        restricted: 'Cannot delete TA (%{user_name}): %{message}'
-        success: Succesfully deleted TA (%{user_name}) from course.
+        restricted: 'Cannot remove TA (%{user_name}): %{message}'
+        success: Succesfully removed TA (%{user_name}) from course.
       update:
         error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
