@@ -160,7 +160,7 @@ class ExamTemplate < ApplicationRecord
         assignment_folder = self.assignment.repository_folder
         txn = repo.get_transaction(self.course.instructors.first.user_name)
         self.template_divisions.each do |template_division|
-          next unless template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
+          next unless page_num.to_i.between?(template_division.start, template_division.end)
 
           submission_file = CombinePDF.new
           (template_division.start..template_division.end).each do |i|
