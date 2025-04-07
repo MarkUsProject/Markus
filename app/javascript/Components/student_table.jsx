@@ -76,7 +76,7 @@ class RawStudentTable extends React.Component {
         }
       })
       .catch(error => {
-        console.error("Error deleting student:", error);
+        console.error("Error removing student:", error);
       });
   };
 
@@ -205,7 +205,7 @@ class RawStudentTable extends React.Component {
                   &nbsp;|&nbsp;
                   <span>
                     <a href="#" onClick={() => this.removeStudent(data.value)}>
-                      {I18n.t("delete")}
+                      {I18n.t("remove")}
                     </a>
                   </span>
                 </>

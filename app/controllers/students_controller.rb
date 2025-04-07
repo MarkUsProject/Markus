@@ -147,7 +147,7 @@ class StudentsController < ApplicationController
       head :bad_request
     else
       flash_now(:success, I18n.t('flash.students.destroy.success', user_name: @role.user_name))
-      head :ok
+      head :no_content
     end
   end
 

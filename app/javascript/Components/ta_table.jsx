@@ -116,7 +116,7 @@ class TATable extends React.Component {
                 &nbsp;|&nbsp;
                 <span>
                   <a href="#" onClick={() => this.removeTA(data.value)}>
-                    {I18n.t("delete")}
+                    {I18n.t("remove")}
                   </a>
                 </span>
               </>

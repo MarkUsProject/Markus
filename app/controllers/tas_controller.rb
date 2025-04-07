@@ -55,7 +55,7 @@ class TasController < ApplicationController
       head :bad_request
     else
       flash_now(:success, I18n.t('flash.tas.destroy.success', user_name: @role.user_name))
-      head :ok
+      head :no_content
     end
   end
 
