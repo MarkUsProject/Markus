@@ -13,6 +13,8 @@
 - Group test results by Test Groups id (#7422)
 - Display HTML previews of RMarkdown files (#7394)
 - Allow instructors to assign scans to inactive students (#7482)
+- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
+- Modified add_group_api to use username as group name for individual assignments (#7481)
 
 ### 🐛 Bug fixes
 
@@ -46,6 +48,8 @@
 - Move Docker dependency updates into separate service (#7451)
 - Fixed flaky test due to daylight savings time issue (#7452)
 - Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
+- Updated to react-flatpickr v4.0.0 (#7478)
+- Remove `mistune` Python explicit dependency (#7483)
 
 ## [v2.6.1]
 
