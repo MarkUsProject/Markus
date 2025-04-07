@@ -103,7 +103,7 @@ describe("For the TATable's display of TAs", () => {
     });
   });
 
-  describe("When the delete button is pressed", () => {
+  describe("When the remove button is pressed", () => {
     let mock_course_id = 1;
     let mock_ta_id = 42;
 
@@ -136,7 +136,7 @@ describe("For the TATable's display of TAs", () => {
 
       await screen.findByText("testtest");
 
-      fireEvent.click(screen.getByText(I18n.t("delete")));
+      fireEvent.click(screen.getByText(I18n.t("remove")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(

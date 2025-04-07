@@ -268,7 +268,7 @@ describe("For the StudentTable's display of students", () => {
     });
   });
 
-  describe("When the delete button is pressed", () => {
+  describe("When the remove button is pressed", () => {
     let mock_course_id = 1;
     let mock_student_id = 42;
 
@@ -302,7 +302,7 @@ describe("For the StudentTable's display of students", () => {
 
       await screen.findByText("testtest");
 
-      fireEvent.click(screen.getByText(I18n.t("delete")));
+      fireEvent.click(screen.getByText(I18n.t("remove")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(
