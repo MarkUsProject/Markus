@@ -165,17 +165,17 @@ class GroupsController < ApplicationController
   end
 
   def get_names
-    display_inactive = params[:display_inactive] == 'true' ? '' : 'AND roles.hidden = false'
     names = current_course.students
                           .joins(:user)
                           .where("(lower(first_name) like ? OR
                                    lower(last_name) like ? OR
                                    lower(user_name) like ? OR
-                                   id_number like ?) #{display_inactive} AND roles.id NOT IN (?)",
+                                   id_number like ?) AND roles.hidden IN (?) AND roles.id NOT IN (?)",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term])}%",
+                                 params[:display_inactive] == 'true' ? [true, false] : [false],
                                  Membership.select(:role_id)
                                            .joins(:grouping)
                                            .where(groupings: { assessment_id: params[:assignment_id] }))
