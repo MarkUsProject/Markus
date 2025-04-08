@@ -6,7 +6,8 @@
           $.getJSON("get_names",
             {
               assignment_id: <%= @assignment.id %>,
-              term: $("#names").val()
+              term: $("#names").val(),
+              display_inactive: $("#display_inactive").is(':checked')
             },
             response);
         },
@@ -122,8 +123,11 @@
         <input id="grouping_id" name="g_id" value="" type="hidden">
 
         <p>
-          <label for="skip"><%= t('exam_templates.assign_scans.skip_group') %></label>
           <input type="checkbox" name="skip" id="skip" value="1">
+          <label for="skip"><%= t('exam_templates.assign_scans.skip_group') %></label>
+          &nbsp;&nbsp;
+          <input type="checkbox" name="display_inactive" id="display_inactive">
+          <label for="display_inactive"><%= t('exam_templates.assign_scans.display_inactive') %></label>
         </p>
         <p>
           <button type="submit"><%= t('save') %></button>
