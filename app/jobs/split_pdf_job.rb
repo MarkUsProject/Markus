@@ -198,7 +198,7 @@ class SplitPdfJob < ApplicationJob
         exam_template.template_divisions.each do |division|
           new_pdf = CombinePDF.new
           destination_pages.each do |page_num, page|
-            if division.start <= page_num && page_num <= division.end
+            if page_num.between?(division.start, division.end)
               new_pdf << page
             end
           end
@@ -219,7 +219,7 @@ class SplitPdfJob < ApplicationJob
         # Pages that don't belong to any division
         extra_pages = destination_pages.reject do |page_num, _|
           exam_template.template_divisions.any? do |division|
-            division.start <= page_num && page_num <= division.end
+            page_num.between?(division.start, division.end)
           end
         end
         extra_pages.sort_by! { |page_num, _| page_num }
