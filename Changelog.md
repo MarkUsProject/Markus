@@ -26,6 +26,8 @@
 - Fix tag creation failing in tags table (#7426)
 - Ensure tag names are unique within an assignment (#7430)
 - Update flash style to "notice" for "setting up test env" message (#7445)
+- Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
+- Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
 
 ### 🔧 Internal changes
 

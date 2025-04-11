@@ -26,13 +26,7 @@ export class ImageViewer extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.setImageURL().then(() => {
-      document.getElementById("image_preview").onload = () => {
-        this.display_annotations();
-        this.adjustPictureSize();
-        this.rotateImage();
-      };
-    });
+    this.setImageURL();
   }
 
   componentWillUnmount() {
@@ -231,7 +225,11 @@ export class ImageViewer extends React.PureComponent {
             src={this.state.url}
             data-zoom={this.state.zoom}
             className={this.props.released_to_students ? "" : "enable-annotations"}
-            onLoad={this.display_annotations}
+            onLoad={() => {
+              this.display_annotations();
+              this.adjustPictureSize();
+              this.rotateImage();
+            }}
             alt={I18n.t("results.cant_display_image")}
           />
         </div>
