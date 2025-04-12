@@ -37,7 +37,7 @@ export class RemarkPanel extends React.Component {
   render() {
     let remarkCommentElement;
     if (this.props.released_to_students) {
-      remarkCommentElement = <div id="overall_remark_comment" />;
+      remarkCommentElement = <div id="overall_remark_comment" className="preview" />;
     } else {
       remarkCommentElement = (
         <TextForm
@@ -94,16 +94,16 @@ export class RemarkPanel extends React.Component {
 
     return (
       <div id="remark_request">
-        <h3>{I18n.t("activerecord.attributes.assignment.remark_message")}</h3>
+        <h2>{I18n.t("activerecord.attributes.assignment.remark_message")}</h2>
         <p>{this.props.assignmentRemarkMessage}</p>
         <p>{remarkDueDate}</p>
         {this.props.studentView && extraInstructions}
-        <h3>{I18n.t("activerecord.attributes.submission.submitted_remark")}</h3>
+        <h2>{I18n.t("activerecord.attributes.submission.submitted_remark")}</h2>
         {remarkRequestElement}
         {(!this.props.studentView || this.props.remarkSubmitted) && (
-          <h3>{I18n.t("activerecord.attributes.result.overall_comment")}</h3>
+          <h2>{I18n.t("activerecord.attributes.result.overall_comment")}</h2>
         )}
-        {remarkCommentElement}
+        <div>{remarkCommentElement}</div>
       </div>
     );
   }

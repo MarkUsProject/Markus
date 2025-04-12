@@ -16,7 +16,12 @@ class AnnotationTextDisplayer {
     this.display_node = document.createElement("div");
     this.display_node.className = "annotation_text_display";
 
-    document.body.appendChild(this.display_node);
+    const section = document.getElementById("content");
+    if (!!section) {
+      section.appendChild(this.display_node);
+    } else {
+      document.body.appendChild(this.display_node);
+    }
     this.hide();
   }
 
