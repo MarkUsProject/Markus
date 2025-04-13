@@ -15,6 +15,7 @@
 - Allow instructors to assign scans to inactive students (#7482)
 - Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
 - Modified add_group_api to use username as group name for individual assignments (#7481)
+- Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
 
 ### 🐛 Bug fixes
 
@@ -28,6 +29,8 @@
 - Update flash style to "notice" for "setting up test env" message (#7445)
 - Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
 - Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
+- Ensured annotations appear in results view when in fullscreen mode (#7487)
+- Fixed bug in `ImageViewer` where annotations did not always appear on initial image load (#7487)
 
 ### 🔧 Internal changes
 

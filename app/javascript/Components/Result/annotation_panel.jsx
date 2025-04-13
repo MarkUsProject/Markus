@@ -33,7 +33,9 @@ export class AnnotationPanel extends React.Component {
   render() {
     let overallCommentElement;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
-      overallCommentElement = <div id="overall_comment_text" key="overall_comment_text" />;
+      overallCommentElement = (
+        <div id="overall_comment_text" className="preview" key="overall_comment_text" />
+      );
     } else {
       overallCommentElement = (
         <TextForm
@@ -44,9 +46,9 @@ export class AnnotationPanel extends React.Component {
     }
     return (
       <React.Fragment>
-        <h3 key="h3-overall-comment">{I18n.t("activerecord.attributes.result.overall_comment")}</h3>
-        {overallCommentElement}
-        <h3 key="h3-annotations">{I18n.t("activerecord.models.annotation.other")}</h3>
+        <h2 key="h3-overall-comment">{I18n.t("activerecord.attributes.result.overall_comment")}</h2>
+        <div>{overallCommentElement}</div>
+        <h2 key="h3-annotations">{I18n.t("activerecord.models.annotation.other")}</h2>
         <p key="annotations-desription">
           {I18n.t("results.annotation.across_all_submission_files")}
         </p>

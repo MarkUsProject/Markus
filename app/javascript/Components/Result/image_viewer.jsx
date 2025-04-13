@@ -14,14 +14,14 @@ export class ImageViewer extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (this.props.url && this.props.url !== prevProps.url) {
       this.setImageURL().then(() => {
-        this.display_annotations();
         this.adjustPictureSize();
         this.rotateImage();
+        this.display_annotations();
       });
     } else {
-      this.display_annotations();
       this.adjustPictureSize();
       this.rotateImage();
+      this.display_annotations();
     }
   }
 
@@ -226,9 +226,9 @@ export class ImageViewer extends React.PureComponent {
             data-zoom={this.state.zoom}
             className={this.props.released_to_students ? "" : "enable-annotations"}
             onLoad={() => {
-              this.display_annotations();
               this.adjustPictureSize();
               this.rotateImage();
+              this.display_annotations();
             }}
             alt={I18n.t("results.cant_display_image")}
           />
