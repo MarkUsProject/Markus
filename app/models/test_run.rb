@@ -173,35 +173,24 @@ class TestRun < ApplicationRecord
         last_editor_id: self.role.id
       )
       result = self.submission.current_result
-      if data['type'] == 'ImageAnnotation'
-        ImageAnnotation.create(
-          x1: data['x1'],
-          x2: data['x2'],
-          y1: data['y1'],
-          y2: data['y2'],
-          annotation_text_id: annotation_text.id,
-          submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
-          creator_id: self.role.id,
-          creator_type: self.role.type,
-          is_remark: !result.remark_request_submitted_at.nil?,
-          annotation_number: count + i,
-          result_id: result.id
-        )
-      else
-        TextAnnotation.create(
-          line_start: data['line_start'],
-          line_end: data['line_end'],
-          column_start: data['column_start'],
-          column_end: data['column_end'],
-          annotation_text_id: annotation_text.id,
-          submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
-          creator_id: self.role.id,
-          creator_type: self.role.type,
-          is_remark: !result.remark_request_submitted_at.nil?,
-          annotation_number: count + i,
-          result_id: result.id
-        )
-      end
+      Annotation.create(
+        line_start: data['line_start'],
+        line_end: data['line_end'],
+        column_start: data['column_start'],
+        column_end: data['column_end'],
+        x1: data['x1'],
+        x2: data['x2'],
+        y1: data['y1'],
+        y2: data['y2'],
+        annotation_text_id: annotation_text.id,
+        submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
+        creator_id: self.role.id,
+        creator_type: self.role.type,
+        is_remark: !result.remark_request_submitted_at.nil?,
+        annotation_number: count + i,
+        type: data['type'].nil? ? 'TextAnnotation' : data['type'],
+        result_id: result.id
+      )
     end
   end
 
