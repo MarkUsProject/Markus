@@ -138,6 +138,8 @@ describe TestRun do
     let(:text_file_content) { 'test123' }
     let(:overall_comment1) { 'test comment 1' }
     let(:existing_comment) { 'existing comment' }
+    let(:submission_file_text) { create(:submission_file, filename: 'test_compressed.txt', path: '/') }
+    let(:submission_file_image) { create(:submission_file, filename: 'test_compressed.png', path: '/') }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
     let(:test2) { { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
     let(:tests) { [test1, test2] }
@@ -558,6 +560,38 @@ describe TestRun do
           test_run.update_results!(results)
           expect(submission.current_result.overall_comment).to include(overall_comment1)
           expect(submission.current_result.overall_comment).to include(existing_comment)
+        end
+      end
+
+      context 'when the test run has a submission and the results contain an image annotation' do
+        let(:submission) do
+          create(:version_used_submission, grouping: grouping, submission_files: [submission_file_image])
+        end
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add the image annotation to the submission' do
+          results['test_groups'].first['annotations'] =
+            [{ 'content' => 'test annotation', 'type' => 'ImageAnnotation', 'filename' => 'test_compressed.png',
+               'x1' => 0, 'y1' => 20, 'x2' => 0, 'y2' => 20 }]
+          expect { test_run.update_results!(results) }.to change {
+            submission.annotations.where(type: 'ImageAnnotation').count
+          }.to eq 1
+        end
+      end
+
+      context 'when the test run has a submission and the results contain an annotation without a type' do
+        let(:submission) do
+          create(:version_used_submission, grouping: grouping, submission_files: [submission_file_text])
+        end
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add the annotation to the submission as a text annotation' do
+          results['test_groups'].first['annotations'] =
+            [{ 'content' => 'test annotation', 'filename' => 'test_compressed.txt', 'line_start' => 1, 'line_end' => 2,
+               'column_start' => 0, 'column_end' => 4 }]
+          expect { test_run.update_results!(results) }.to change {
+            submission.annotations.where(type: 'TextAnnotation').count
+          }.to eq 1
         end
       end
     end
