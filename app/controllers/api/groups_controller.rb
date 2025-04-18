@@ -369,6 +369,35 @@ module Api
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
     end
 
+    def collect_and_begin_grading
+      @grouping = Grouping.find_by(group_id: params[:id], assignment: params[:assignment_id])
+      unless @grouping.current_submission_used.nil?
+        released = @grouping.current_submission_used.results.exists?(released_to_students: true)
+        if released
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          return
+        end
+      end
+      apply_late_penalty = if params[:apply_late_penalty].nil? || params[:apply_late_penalty] == false
+                             false
+                           else
+                             params[:apply_late_penalty]
+                           end
+      retain_existing_grading = if params[:retain_existing_grading].nil? || params[:retain_existing_grading] == false
+                                  false
+                                else
+                                  params[:retain_existing_grading]
+                                end
+      SubmissionsJob.perform_now([@grouping],
+                                 collect_current: params[:collect_current],
+                                 apply_late_penalty: apply_late_penalty,
+                                 retain_existing_grading: retain_existing_grading)
+
+      render 'shared/http_status', locals: { code: '201', message:
+        HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
+    end
+
     private
 
     def assignment
