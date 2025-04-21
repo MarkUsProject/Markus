@@ -5,7 +5,7 @@ describe TestGroup do
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   # For booleans, should validate_presence_of does
   # not work: see the Rails API documentation for should validate_presence_of

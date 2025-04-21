@@ -64,7 +64,7 @@ describe PeerReviewsController do
     end
 
     describe '#upload' do
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @pr_id, model: PeerReview } }
       end
       ['.csv', '', '.pdf'].each do |extension|
@@ -496,13 +496,13 @@ describe PeerReviewsController do
   describe 'When role is an authenticated instructor' do
     let(:role) { create(:instructor) }
 
-    include_examples 'An authorized instructor or grader'
+    it_behaves_like 'An authorized instructor or grader'
   end
 
   describe 'When role is grader and allowed to manage reviewers' do
     let(:role) { create(:ta, manage_assessments: true) }
 
-    include_examples 'An authorized instructor or grader'
+    it_behaves_like 'An authorized instructor or grader'
   end
 
   describe 'When the role is grader and not allowed to manage reviewers' do

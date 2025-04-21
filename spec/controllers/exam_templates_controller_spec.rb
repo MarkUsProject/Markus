@@ -341,14 +341,14 @@ describe ExamTemplatesController do
   describe 'When the user is instructor' do
     let(:user) { create(:instructor) }
 
-    include_examples 'An authorized instructor or grader managing exam templates'
+    it_behaves_like 'An authorized instructor or grader managing exam templates'
   end
 
   describe 'When the user is grader' do
     context 'When grader is allowed to manage exam template' do
       let(:user) { create(:ta, manage_assessments: true) }
 
-      include_examples 'An authorized instructor or grader managing exam templates'
+      it_behaves_like 'An authorized instructor or grader managing exam templates'
     end
 
     context 'When grader is not allowed to manage exam template' do

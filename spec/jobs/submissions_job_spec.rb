@@ -5,7 +5,7 @@ describe SubmissionsJob do
   context 'when running as a background job' do
     let(:job_args) { [groupings] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   context 'when creating a submission by timestamp' do

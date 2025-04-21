@@ -12,19 +12,19 @@ describe Admin::MainAdminController do
     context 'Instructor' do
       let(:user) { create(:instructor) }
 
-      include_examples 'user with unauthorized access'
+      it_behaves_like 'user with unauthorized access'
     end
 
     context 'TA' do
       let(:user) { create(:ta) }
 
-      include_examples 'user with unauthorized access'
+      it_behaves_like 'user with unauthorized access'
     end
 
     context 'Student' do
       let(:user) { create(:student) }
 
-      include_examples 'user with unauthorized access'
+      it_behaves_like 'user with unauthorized access'
     end
 
     context 'Admin' do
