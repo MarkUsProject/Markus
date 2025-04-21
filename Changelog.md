@@ -55,6 +55,7 @@
 - Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
 - Updated to react-flatpickr v4.0.0 (#7478)
 - Remove `mistune` Python explicit dependency (#7483)
+- Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
 
 ## [v2.6.1]
 
