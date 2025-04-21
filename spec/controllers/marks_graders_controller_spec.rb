@@ -5,7 +5,7 @@ describe MarksGradersController do
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
 
   describe '#upload' do
-    include_examples 'a controller supporting upload' do
+    it_behaves_like 'a controller supporting upload' do
       let(:params) { { course_id: course.id, grade_entry_form_id: grade_entry_form.id, model: GradeEntryStudentTa } }
     end
 

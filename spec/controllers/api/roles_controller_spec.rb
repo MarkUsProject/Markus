@@ -334,7 +334,7 @@ describe Api::RolesController do
       end
 
       context 'GET index' do
-        include_examples 'get all users'
+        it_behaves_like 'get all users'
 
         context 'for a different course' do
           it 'should return a 403 error' do
@@ -362,7 +362,7 @@ describe Api::RolesController do
       end
 
       context 'GET show' do
-        include_examples 'finding a user'
+        it_behaves_like 'finding a user'
 
         context 'for a different course' do
           let(:student) { create(:student, course: create(:course)) }
@@ -468,7 +468,7 @@ describe Api::RolesController do
       end
 
       context 'PUT update' do
-        include_examples 'updating'
+        it_behaves_like 'updating'
 
         context 'for a different course' do
           let(:student) { create(:student, course: create(:course)) }
@@ -503,7 +503,7 @@ describe Api::RolesController do
       end
 
       context 'GET index' do
-        include_examples 'get all users'
+        it_behaves_like 'get all users'
 
         it 'xml response returns info about all users' do
           students
@@ -522,7 +522,7 @@ describe Api::RolesController do
       end
 
       context 'GET show' do
-        include_examples 'finding a user'
+        it_behaves_like 'finding a user'
 
         context 'an admin' do
           it 'xml response is successful' do
@@ -622,7 +622,7 @@ describe Api::RolesController do
       end
 
       context 'PUT update' do
-        include_examples 'updating'
+        it_behaves_like 'updating'
 
         context 'updating an admin' do
           let(:admin) { create(:admin_role, hidden: false, course: course) }

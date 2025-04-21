@@ -58,19 +58,19 @@ describe Admin::CoursesController do
     context 'Instructor' do
       let(:user) { create(:instructor, course: course) }
 
-      include_examples 'cannot access admin routes'
+      it_behaves_like 'cannot access admin routes'
     end
 
     context 'TA' do
       let(:user) { create(:ta, course: course) }
 
-      include_examples 'cannot access admin routes'
+      it_behaves_like 'cannot access admin routes'
     end
 
     context 'Student' do
       let(:user) { create(:student, course: course) }
 
-      include_examples 'cannot access admin routes'
+      it_behaves_like 'cannot access admin routes'
     end
   end
 

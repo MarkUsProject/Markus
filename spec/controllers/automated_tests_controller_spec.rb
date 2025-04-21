@@ -16,7 +16,7 @@ describe AutomatedTestsController do
   end
 
   shared_examples 'An authorized instructor and grader managing automated testing' do
-    include_examples 'An unauthorized role accessing student interface'
+    it_behaves_like 'An unauthorized role accessing student interface'
     context 'PUT update' do
       before { put_as role, :update, params: params }
       # TODO: write tests
@@ -673,27 +673,27 @@ describe AutomatedTestsController do
     end
 
     context 'when student trying to manage automated testing' do
-      include_examples 'An unauthorized role managing automated testing'
+      it_behaves_like 'An unauthorized role managing automated testing'
     end
   end
 
   describe 'an authenticated instructor' do
     let(:role) { create(:instructor) }
 
-    include_examples 'An authorized instructor and grader managing automated testing'
+    it_behaves_like 'An authorized instructor and grader managing automated testing'
   end
 
   context 'when the grader is allowed to manage automated testing' do
     let(:role) { create(:ta, manage_assessments: true) }
 
-    include_examples 'An authorized instructor and grader managing automated testing'
+    it_behaves_like 'An authorized instructor and grader managing automated testing'
   end
 
   context 'when the grader is not allowed to manage automated testing' do
     # By default all the permissions are set to false for a grader
     let(:role) { create(:ta) }
 
-    include_examples 'An unauthorized role managing automated testing'
-    include_examples 'An unauthorized role accessing student interface'
+    it_behaves_like 'An unauthorized role managing automated testing'
+    it_behaves_like 'An unauthorized role accessing student interface'
   end
 end

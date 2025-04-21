@@ -43,7 +43,7 @@ describe SplitPdfJob do
       [exam_template, '', split_pdf_log, 'midterm_scan_100.pdf', instructor]
     end
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   it 'correctly splits a PDF with one valid test paper with pages out of order' do
