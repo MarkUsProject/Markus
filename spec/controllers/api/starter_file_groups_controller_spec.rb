@@ -25,7 +25,7 @@ describe Api::StarterFileGroupsController do
       { assignment_id: assignment.id, name: 'b', entry_rename: 'b', use_rename: true, course_id: course.id }
     end
 
-    include_examples 'unauthenticated request'
+    it_behaves_like 'unauthenticated request'
 
     it 'should create a new starter file group' do
       subject
@@ -72,7 +72,7 @@ describe Api::StarterFileGroupsController do
           { course_id: course.id, id: starter_file_group.id, name: 'b', entry_rename: 'b', use_rename: true }
         end
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         it 'should update the name' do
           subject
           expect(starter_file_group.reload.name).to eq 'b'
@@ -131,7 +131,7 @@ describe Api::StarterFileGroupsController do
           expect { starter_file_group.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
       end
 
       context 'for a different assignment' do
@@ -162,7 +162,7 @@ describe Api::StarterFileGroupsController do
   describe '#index' do
     subject { get :index, params: { assignment_id: assignment.id, course_id: course.id } }
 
-    include_examples 'unauthenticated request'
+    it_behaves_like 'unauthenticated request'
     context 'when there are starter file groups for this assignment' do
       let(:data) do
         assignment.starter_file_groups
@@ -299,7 +299,7 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         it 'should respond with a success code' do
           subject
           expect(response).to have_http_status(:created)
@@ -315,7 +315,7 @@ describe Api::StarterFileGroupsController do
           expect(starter_file_group.starter_file_entries.pluck(:path)).to include 'a'
         end
 
-        include_examples 'updates starter_file_changed'
+        it_behaves_like 'updates starter_file_changed'
       end
 
       context 'for a different assignment' do
@@ -368,7 +368,7 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         it 'should add a folder to the group' do
           subject
           expect(starter_file_group.files_and_dirs).to include 'a'
@@ -379,7 +379,7 @@ describe Api::StarterFileGroupsController do
           expect(starter_file_group.starter_file_entries.pluck(:path)).to include 'a'
         end
 
-        include_examples 'updates starter_file_changed'
+        it_behaves_like 'updates starter_file_changed'
       end
 
       context 'for a different assignment' do
@@ -431,7 +431,7 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         it 'should remove a file from the group' do
           subject
           expect(starter_file_group.files_and_dirs).not_to include 'q2.txt'
@@ -442,7 +442,7 @@ describe Api::StarterFileGroupsController do
           expect(starter_file_group.starter_file_entries.pluck(:path)).not_to include 'q2.txt'
         end
 
-        include_examples 'updates starter_file_changed'
+        it_behaves_like 'updates starter_file_changed'
       end
 
       context 'for a different assignment' do
@@ -496,7 +496,7 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         it 'should remove a folder and all its descendants from the group' do
           subject
           expect(starter_file_group.files_and_dirs).not_to include 'q1'
@@ -508,7 +508,7 @@ describe Api::StarterFileGroupsController do
           expect(starter_file_group.starter_file_entries.pluck(:path)).not_to include 'q1'
         end
 
-        include_examples 'updates starter_file_changed'
+        it_behaves_like 'updates starter_file_changed'
       end
 
       context 'for a different assignment' do
@@ -560,7 +560,7 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         context 'expecting xml' do
           it 'should contain the correct data' do
             subject
@@ -609,7 +609,7 @@ describe Api::StarterFileGroupsController do
       context 'for this assignment' do
         let(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
 
-        include_examples 'unauthenticated request'
+        it_behaves_like 'unauthenticated request'
         it 'should send a zip file containing the correct content' do
           expect(controller).to receive(:send_file) do |file_path|
             Zip::File.open(Rails.root + file_path) do |zipfile|

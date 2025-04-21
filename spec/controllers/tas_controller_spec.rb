@@ -3,7 +3,7 @@ describe TasController do
   let(:course) { instructor.course }
 
   describe '#upload' do
-    include_examples 'a controller supporting upload', formats: [:csv], background: true do
+    it_behaves_like 'a controller supporting upload', formats: [:csv], background: true do
       let(:params) { { course_id: course.id } }
     end
 

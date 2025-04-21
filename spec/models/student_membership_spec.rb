@@ -81,7 +81,7 @@ describe StudentMembership do
     it { is_expected.not_to allow_value('blah').for :membership_status }
     it { is_expected.to have_one(:course) }
 
-    include_examples 'course associations'
+    it_behaves_like 'course associations'
     it 'should belong to a student' do
       expect(create(:student_membership, role: create(:student))).to be_valid
     end
@@ -144,8 +144,8 @@ describe StudentMembership do
     end
 
     update_hash = { create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true }
-    include_examples 'vcs_submit=true', :inviter_student_membership, update_hash
-    include_examples 'vcs_submit=false', :inviter_student_membership
+    it_behaves_like 'vcs_submit=true', :inviter_student_membership, update_hash
+    it_behaves_like 'vcs_submit=false', :inviter_student_membership
   end
 
   context 'when is accepted' do
@@ -156,8 +156,8 @@ describe StudentMembership do
     end
 
     update_hash = { create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true }
-    include_examples 'vcs_submit=true', :accepted_student_membership, update_hash
-    include_examples 'vcs_submit=false', :accepted_student_membership
+    it_behaves_like 'vcs_submit=true', :accepted_student_membership, update_hash
+    it_behaves_like 'vcs_submit=false', :accepted_student_membership
   end
 
   context 'when is pending' do
@@ -168,8 +168,8 @@ describe StudentMembership do
     end
 
     update_hash = { create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false }
-    include_examples 'vcs_submit=true', :student_membership, update_hash
-    include_examples 'vcs_submit=false', :student_membership
+    it_behaves_like 'vcs_submit=true', :student_membership, update_hash
+    it_behaves_like 'vcs_submit=false', :student_membership
   end
 
   context 'when is rejected' do
@@ -180,7 +180,7 @@ describe StudentMembership do
     end
 
     update_hash = { create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false }
-    include_examples 'vcs_submit=true', :rejected_student_membership, update_hash
-    include_examples 'vcs_submit=false', :rejected_student_membership
+    it_behaves_like 'vcs_submit=true', :rejected_student_membership, update_hash
+    it_behaves_like 'vcs_submit=false', :rejected_student_membership
   end
 end

@@ -5,5 +5,5 @@ describe Tag do
 
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 end

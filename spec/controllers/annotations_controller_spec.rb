@@ -444,7 +444,7 @@ describe AnnotationsController do
   describe 'an authenticated instructor' do
     let!(:user) { create(:instructor) }
 
-    include_examples 'an authenticated instructor or TA'
+    it_behaves_like 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -507,7 +507,7 @@ describe AnnotationsController do
   describe 'an authenticated TA' do
     let!(:user) { create(:ta) }
 
-    include_examples 'an authenticated instructor or TA'
+    it_behaves_like 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }

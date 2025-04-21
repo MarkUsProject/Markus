@@ -318,20 +318,20 @@ describe CoursesController do
         context 'TA' do
           let(:user) { create(:ta, manage_assessments: true, run_tests: true, manage_submissions: true) }
 
-          include_examples 'cannot update course'
+          it_behaves_like 'cannot update course'
         end
 
         context 'Student' do
           let(:user) { create(:student) }
 
-          include_examples 'cannot update course'
+          it_behaves_like 'cannot update course'
         end
       end
     end
   end
 
   describe '#upload_assignments' do
-    include_examples 'a controller supporting upload', route_name: :upload_assignments do
+    it_behaves_like 'a controller supporting upload', route_name: :upload_assignments do
       let(:params) { { id: course.id } }
     end
 

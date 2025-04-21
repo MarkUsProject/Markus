@@ -176,7 +176,7 @@ describe Result do
 
   describe '#get_total_mark' do
     include_context 'get subtotal context'
-    include_examples 'get subtotal only', :get_total_mark
+    it_behaves_like 'get subtotal only', :get_total_mark
     context 'extra marks exist' do
       it 'should return the subtotal plus the extra mark' do
         create(:extra_mark, result: result, extra_mark: 10)
@@ -186,7 +186,7 @@ describe Result do
   end
 
   describe '.get_total_marks' do
-    include_examples 'get subtotals only', :get_total_marks
+    it_behaves_like 'get subtotals only', :get_total_marks
     context 'there are some extra marks' do
       it 'should return a hash containing the subtotal plus the extra mark for each result' do
         ids = Result.ids
@@ -200,7 +200,7 @@ describe Result do
 
   describe '#get_subtotal' do
     include_context 'get subtotal context'
-    include_examples 'get subtotal only', :get_subtotal
+    it_behaves_like 'get subtotal only', :get_subtotal
     context 'extra marks exist' do
       it 'should return the subtotal' do
         create(:extra_mark, result: result)
@@ -210,7 +210,7 @@ describe Result do
   end
 
   describe '.get_subtotals' do
-    include_examples 'get subtotals only', :get_subtotals
+    it_behaves_like 'get subtotals only', :get_subtotals
     context 'there are some extra marks' do
       it 'should return a hash containing the subtotal for each result' do
         ids = Result.ids

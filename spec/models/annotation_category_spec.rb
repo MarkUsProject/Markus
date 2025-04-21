@@ -319,7 +319,7 @@ describe AnnotationCategory do
     context 'criteria are assigned to graders' do
       before { assignment.assignment_properties.update!(assign_graders_to_criteria: true) }
 
-      include_examples 'visible category for instructor and student'
+      it_behaves_like 'visible category for instructor and student'
       context 'a grader user' do
         let(:user) { create(:ta) }
 
@@ -342,7 +342,7 @@ describe AnnotationCategory do
     end
 
     context 'criteria are not assigned to graders' do
-      include_examples 'visible category for instructor and student'
+      it_behaves_like 'visible category for instructor and student'
       context 'a grader user' do
         let(:user) { create(:ta) }
 

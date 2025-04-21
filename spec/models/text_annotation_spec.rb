@@ -24,7 +24,7 @@ describe TextAnnotation do
     it { is_expected.not_to allow_value(-1).for(:column_start) }
     it { is_expected.not_to allow_value(-1).for(:column_end) }
 
-    include_examples 'course associations'
+    it_behaves_like 'course associations'
 
     describe '#get_data' do
       let(:annotation) { create(:text_annotation) }

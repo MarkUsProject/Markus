@@ -2459,13 +2459,13 @@ describe Assignment do
       end
 
       context 'when all criteria are pre-created' do
-        include_examples 'check csv content'
+        it_behaves_like 'check csv content'
       end
 
       context 'when criteria are created after marking' do
         before { create(:flexible_criterion, assignment: assignment) }
 
-        include_examples 'check csv content'
+        it_behaves_like 'check csv content'
       end
     end
   end

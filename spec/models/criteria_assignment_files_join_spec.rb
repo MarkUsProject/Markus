@@ -7,5 +7,5 @@ describe CriteriaAssignmentFilesJoin do
   it { is_expected.to accept_nested_attributes_for(:assignment_file) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 end

@@ -5,5 +5,5 @@ describe MarkingWeight do
   it { is_expected.to belong_to(:assessment) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 end
