@@ -24,7 +24,7 @@ describe NoLateSubmissionRule do
       expect(assignment.due_date).to eq(rule.calculate_grouping_collection_time(grouping))
     end
 
-    include_examples 'valid overtime message', -5.days
+    it_behaves_like 'valid overtime message', -5.days
   end
 
   context 'when the group submitted late' do
@@ -37,6 +37,6 @@ describe NoLateSubmissionRule do
       expect { apply_rule }.not_to(change { submission.get_latest_result.extra_marks.count })
     end
 
-    include_examples 'valid overtime message', 5.days
+    it_behaves_like 'valid overtime message', 5.days
   end
 end

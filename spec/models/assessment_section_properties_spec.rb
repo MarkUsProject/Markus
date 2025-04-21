@@ -6,7 +6,7 @@ describe AssessmentSectionProperties do
     it { is_expected.to belong_to(:assessment) }
     it { is_expected.to have_one(:course) }
 
-    include_examples 'course associations'
+    it_behaves_like 'course associations'
   end
 
   describe '.due_date_for(section, assignment)' do

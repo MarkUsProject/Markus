@@ -207,7 +207,7 @@ describe MainController do
         sign_in student
       end
 
-      include_examples 'student tests'
+      it_behaves_like 'student tests'
     end
 
     context 'after logging in with remote user auth' do
@@ -217,7 +217,7 @@ describe MainController do
         sign_in student
       end
 
-      include_examples 'student tests'
+      it_behaves_like 'student tests'
     end
   end
 
@@ -233,7 +233,7 @@ describe MainController do
         sign_in ta
       end
 
-      include_examples 'ta tests'
+      it_behaves_like 'ta tests'
     end
 
     context 'after logging in with remote user auth' do
@@ -243,7 +243,7 @@ describe MainController do
         sign_in ta
       end
 
-      include_examples 'ta tests'
+      it_behaves_like 'ta tests'
     end
   end
 
@@ -259,7 +259,7 @@ describe MainController do
         sign_in admin_user
       end
 
-      include_examples 'admin tests'
+      it_behaves_like 'admin tests'
     end
 
     context 'after logging in with remote user auth' do
@@ -269,7 +269,7 @@ describe MainController do
         sign_in admin_user
       end
 
-      include_examples 'admin tests'
+      it_behaves_like 'admin tests'
     end
   end
 

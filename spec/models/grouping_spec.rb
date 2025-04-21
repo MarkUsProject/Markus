@@ -10,7 +10,7 @@ describe Grouping do
     it { is_expected.to have_one(:extension).dependent(:destroy) }
     it { is_expected.to have_one(:course) }
 
-    include_examples 'course associations'
+    it_behaves_like 'course associations'
     it 'should ensure that tags belong to the same course' do
       subject.tags << create(:tag, assessment: create(:assignment))
       expect(subject).not_to be_valid
@@ -1782,7 +1782,7 @@ describe Grouping do
         expect(grouping2.get_random_incomplete(role).id).to eq(grouping1.id)
       end
 
-      include_examples 'role is an instructor or ta'
+      it_behaves_like 'role is an instructor or ta'
     end
 
     context 'when role is an instructor' do
@@ -1793,7 +1793,7 @@ describe Grouping do
         expect(grouping2.get_random_incomplete(role).id).to eq(grouping3.id)
       end
 
-      include_examples 'role is an instructor or ta'
+      it_behaves_like 'role is an instructor or ta'
     end
   end
 end

@@ -59,7 +59,7 @@ describe CriteriaController do
   describe 'Using Checkbox Criterion' do
     let(:criterion) { :checkbox_criterion }
 
-    include_examples 'callbacks'
+    it_behaves_like 'callbacks'
   end
 
   describe 'Using Flexible Criteria' do
@@ -77,7 +77,7 @@ describe CriteriaController do
              name: 'Flexible Criterion 2')
     end
 
-    include_examples 'callbacks'
+    it_behaves_like 'callbacks'
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       describe '#index' do
@@ -443,7 +443,7 @@ describe CriteriaController do
              name: 'Rubric Criterion 2')
     end
 
-    include_examples 'callbacks'
+    it_behaves_like 'callbacks'
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       describe '#index' do
@@ -1126,7 +1126,7 @@ describe CriteriaController do
   end
 
   describe '#upload' do
-    include_examples 'a controller supporting upload', formats: [:yml] do
+    it_behaves_like 'a controller supporting upload', formats: [:yml] do
       let(:params) { { course_id: course.id, assignment_id: assignment.id } }
     end
   end

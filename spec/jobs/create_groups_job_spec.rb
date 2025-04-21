@@ -44,7 +44,7 @@ describe CreateGroupsJob do
   context 'when running as a background job' do
     let(:job_args) { [assignment, [['group1', 'group_0001', student1.user_name, student2.user_name]]] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   context 'when creating one group from scratch' do
@@ -54,7 +54,7 @@ describe CreateGroupsJob do
           @data = [['group1', student1.user_name, student2.user_name]]
         end
 
-        include_examples 'create objects', 0, 0, 0
+        it_behaves_like 'create objects', 0, 0, 0
       end
 
       context 'and there is one student specified for the group' do
@@ -64,7 +64,7 @@ describe CreateGroupsJob do
           @data = [[student1.user_name, student1.user_name]]
         end
 
-        include_examples 'create objects', 1, 1, 1
+        it_behaves_like 'create objects', 1, 1, 1
 
         it 'creates an individual repository for the student' do
           CreateGroupsJob.perform_now(assignment, @data)
@@ -80,7 +80,7 @@ describe CreateGroupsJob do
         @data = [['group1', student1.user_name, student2.user_name]]
       end
 
-      include_examples 'create objects', 1, 1, 2
+      it_behaves_like 'create objects', 1, 1, 2
     end
   end
 
@@ -90,7 +90,7 @@ describe CreateGroupsJob do
                ['group2', student2.user_name]]
     end
 
-    include_examples 'create objects', 2, 2, 2
+    it_behaves_like 'create objects', 2, 2, 2
   end
 
   context 'when creating one good and one bad group' do
@@ -100,7 +100,7 @@ describe CreateGroupsJob do
                  ['group1', student2.user_name]]
       end
 
-      include_examples 'create objects', 1, 1, 1
+      it_behaves_like 'create objects', 1, 1, 1
     end
 
     context 'when the bad one is not first' do
@@ -109,7 +109,7 @@ describe CreateGroupsJob do
                  ['group2', student2.user_name + 'bad_padding']]
       end
 
-      include_examples 'create objects', 1, 1, 1
+      it_behaves_like 'create objects', 1, 1, 1
     end
   end
 

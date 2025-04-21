@@ -6,7 +6,7 @@ describe AutotestSpecsJob do
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, assignment, {}] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   context 'when running as a foreground job' do
@@ -68,8 +68,8 @@ describe AutotestSpecsJob do
           subject
         end
 
-        include_examples 'autotest specs job'
-        include_examples 'autotest jobs'
+        it_behaves_like 'autotest specs job'
+        it_behaves_like 'autotest jobs'
       end
 
       context 'tests are not set up for an assignment' do
@@ -82,7 +82,7 @@ describe AutotestSpecsJob do
           subject
         end
 
-        include_examples 'autotest specs job'
+        it_behaves_like 'autotest specs job'
       end
     end
   end
