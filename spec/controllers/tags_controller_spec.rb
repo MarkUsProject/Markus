@@ -86,7 +86,7 @@ describe TagsController do
   end
 
   describe '#upload' do
-    include_examples 'a controller supporting upload' do
+    it_behaves_like 'a controller supporting upload' do
       let(:params) { { course_id: course.id } }
     end
 
@@ -195,13 +195,13 @@ describe TagsController do
       context 'only for an assignment' do
         let(:params) { { course_id: course.id, assignment_id: assignment.id } }
 
-        include_examples 'upload csv'
+        it_behaves_like 'upload csv'
       end
 
       context 'for all assignments' do
         let(:params) { { course_id: course.id } }
 
-        include_examples 'upload csv'
+        it_behaves_like 'upload csv'
       end
     end
 
@@ -276,13 +276,13 @@ describe TagsController do
       context 'only for an assignment' do
         let(:params) { { course_id: course.id, assignment_id: assignment.id } }
 
-        include_examples 'upload yml'
+        it_behaves_like 'upload yml'
       end
 
       context 'for all assignments' do
         let(:params) { { course_id: course.id } }
 
-        include_examples 'upload yml'
+        it_behaves_like 'upload yml'
       end
     end
   end

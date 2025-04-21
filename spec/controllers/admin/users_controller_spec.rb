@@ -76,19 +76,19 @@ describe Admin::UsersController do
     context 'Instructor' do
       let(:user) { create(:instructor) }
 
-      include_examples 'cannot access user admin routes'
+      it_behaves_like 'cannot access user admin routes'
     end
 
     context 'TA' do
       let(:user) { create(:ta) }
 
-      include_examples 'cannot access user admin routes'
+      it_behaves_like 'cannot access user admin routes'
     end
 
     context 'Student' do
       let(:user) { create(:student) }
 
-      include_examples 'cannot access user admin routes'
+      it_behaves_like 'cannot access user admin routes'
     end
   end
 
@@ -311,7 +311,7 @@ describe Admin::UsersController do
     end
 
     describe '#upload' do
-      include_examples 'a controller supporting upload', formats: [:csv], background: true, uploader: :admin_user do
+      it_behaves_like 'a controller supporting upload', formats: [:csv], background: true, uploader: :admin_user do
         let(:params) { {} }
       end
 

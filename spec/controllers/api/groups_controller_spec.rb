@@ -186,7 +186,7 @@ describe Api::GroupsController do
                                                     'role_id')).to eq(grouping.student_memberships.first.role_id.to_s)
           end
 
-          include_examples 'for a different course'
+          it_behaves_like 'for a different course'
         end
 
         context 'with multiple assignments' do
@@ -199,7 +199,7 @@ describe Api::GroupsController do
             expect(Hash.from_xml(response.body).dig('groups', 'group').length).to eq(5)
           end
 
-          include_examples 'for a different course'
+          it_behaves_like 'for a different course'
         end
       end
 
@@ -226,7 +226,7 @@ describe Api::GroupsController do
                        .first['members'].first['role_id']).to eq(grouping.student_memberships.first.role_id)
           end
 
-          include_examples 'for a different course'
+          it_behaves_like 'for a different course'
         end
 
         context 'with multiple groupings' do
@@ -241,7 +241,7 @@ describe Api::GroupsController do
               expect(response.parsed_body.length).to eq(5)
             end
 
-            include_examples 'for a different course'
+            it_behaves_like 'for a different course'
           end
 
           it 'should return only filtered content' do
@@ -290,7 +290,7 @@ describe Api::GroupsController do
                                                     'role_id')).to eq(grouping.student_memberships.first.role_id.to_s)
           end
 
-          include_examples 'for a different course'
+          it_behaves_like 'for a different course'
         end
       end
 
@@ -317,7 +317,7 @@ describe Api::GroupsController do
                        .first['members'].first['role_id']).to eq(grouping.student_memberships.first.role_id)
           end
 
-          include_examples 'for a different course'
+          it_behaves_like 'for a different course'
         end
       end
 
@@ -340,7 +340,7 @@ describe Api::GroupsController do
                                        members: [student.user_name] }
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 200' do
           expect(response).to have_http_status(:ok)
         end
@@ -363,7 +363,7 @@ describe Api::GroupsController do
                                        members: [student.user_name] }
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 200' do
           expect(response).to have_http_status(:ok)
         end
@@ -386,7 +386,7 @@ describe Api::GroupsController do
                                        members: [student.user_name] }
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 422' do
           expect(response).to have_http_status(:unprocessable_entity)
         end
@@ -406,7 +406,7 @@ describe Api::GroupsController do
                                        members: students.map(&:user_name) }
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 200' do
           expect(response).to have_http_status(:ok)
         end
@@ -441,7 +441,7 @@ describe Api::GroupsController do
           expect(result.get_total_mark).to eq(4)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
 
       context 'when a grouping does have a mark already' do
@@ -466,7 +466,7 @@ describe Api::GroupsController do
           expect(result.get_total_mark).to eq(4)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
 
       context 'when a result is complete' do
@@ -492,7 +492,7 @@ describe Api::GroupsController do
           expect(result.get_total_mark).to eq(10)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
     end
 
@@ -512,7 +512,7 @@ describe Api::GroupsController do
           grouping.reload
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should add new extra mark' do
           result = submission.get_latest_result
           added_extra_mark = result.extra_marks.last
@@ -537,7 +537,7 @@ describe Api::GroupsController do
           grouping.reload
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 500' do
           expect(response).to have_http_status(:internal_server_error)
         end
@@ -672,7 +672,7 @@ describe Api::GroupsController do
           get :group_ids_by_name, params: { assignment_id: grouping.assignment.id, course_id: course.id }
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 200' do
           expect(response).to have_http_status(:ok)
         end
@@ -688,7 +688,7 @@ describe Api::GroupsController do
           get :group_ids_by_name, params: { assignment_id: grouping.assignment.id, course_id: course.id }
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
         it 'should respond with 200' do
           expect(response).to have_http_status(:ok)
         end
@@ -721,7 +721,7 @@ describe Api::GroupsController do
           expect(submission.current_result.marking_state).to eq(Result::MARKING_STATES[:complete])
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
 
       context 'should un-complete a result' do
@@ -742,7 +742,7 @@ describe Api::GroupsController do
           expect(submission.current_result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
     end
 
@@ -758,7 +758,7 @@ describe Api::GroupsController do
         get :annotations, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
       end
 
-      include_examples 'for a different course'
+      it_behaves_like 'for a different course'
       it 'should get annotations for the given group' do
         skip 'fails on travis only'
         content = Hash.from_xml(response.body)

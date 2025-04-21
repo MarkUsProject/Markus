@@ -13,5 +13,5 @@ describe CanvasController do
     end
   end
 
-  include_examples 'lti deployment controller'
+  it_behaves_like 'lti deployment controller'
 end
