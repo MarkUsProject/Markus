@@ -571,11 +571,14 @@ describe TestRun do
 
         it 'should add the image annotation to the submission' do
           results['test_groups'].first['annotations'] =
-            [{ 'content' => 'test annotation', 'type' => 'ImageAnnotation', 'filename' => 'test_compressed.png',
-               'x1' => 0, 'y1' => 20, 'x2' => 0, 'y2' => 20 }]
+            [{ 'content' => 'test image annotation', 'type' => 'ImageAnnotation', 'filename' => 'test_compressed.png',
+               'x1' => 0, 'y1' => 20, 'x2' => 10, 'y2' => 30 }]
           expect { test_run.update_results!(results) }.to change {
             submission.annotations.where(type: 'ImageAnnotation').count
           }.to eq 1
+          expect(ImageAnnotation.first).to have_attributes(x1: 0, y1: 20, x2: 10, y2: 30)
+          expect(ImageAnnotation.first.annotation_text.content).to eq('test image annotation')
+          expect(ImageAnnotation.first.submission_file.filename).to eq('test_compressed.png')
         end
       end
 
@@ -587,11 +590,14 @@ describe TestRun do
 
         it 'should add the annotation to the submission as a text annotation' do
           results['test_groups'].first['annotations'] =
-            [{ 'content' => 'test annotation', 'filename' => 'test_compressed.txt', 'line_start' => 1, 'line_end' => 2,
-               'column_start' => 0, 'column_end' => 4 }]
+            [{ 'content' => 'test text annotation', 'filename' => 'test_compressed.txt', 'line_start' => 1,
+               'line_end' => 2, 'column_start' => 0, 'column_end' => 4 }]
           expect { test_run.update_results!(results) }.to change {
             submission.annotations.where(type: 'TextAnnotation').count
           }.to eq 1
+          expect(TextAnnotation.first).to have_attributes(line_start: 1, line_end: 2, column_start: 0, column_end: 4)
+          expect(TextAnnotation.first.annotation_text.content).to eq('test text annotation')
+          expect(TextAnnotation.first.submission_file.filename).to eq('test_compressed.txt')
         end
       end
     end

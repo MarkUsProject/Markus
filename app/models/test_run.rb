@@ -192,7 +192,7 @@ class TestRun < ApplicationRecord
         creator_type: self.role.type,
         is_remark: !result.remark_request_submitted_at.nil?,
         annotation_number: count + i,
-        type: data['type'].nil? ? 'TextAnnotation' : data['type'],
+        type: data['type'] || 'TextAnnotation',
         result_id: result.id
       )
     end
