@@ -463,7 +463,7 @@ describe GroupsController do
         end
       end
 
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @assignment.id } }
       end
 
@@ -1248,7 +1248,7 @@ describe GroupsController do
           grouping
         end
 
-        include_examples 'download starter files properly'
+        it_behaves_like 'download starter files properly'
       end
 
       context 'when the grouping was created before any starter file groups' do
@@ -1257,7 +1257,7 @@ describe GroupsController do
           starter_file_group
         end
 
-        include_examples 'download starter files properly'
+        it_behaves_like 'download starter files properly'
       end
 
       context 'when the assignment is hidden' do
@@ -1280,7 +1280,7 @@ describe GroupsController do
             grouping.update!(start_time: 1.minute.ago)
           end
 
-          include_examples 'download starter files properly'
+          it_behaves_like 'download starter files properly'
         end
 
         context 'when the deadline has already passed' do
@@ -1290,7 +1290,7 @@ describe GroupsController do
             assignment.update!(due_date: 1.minute.ago)
           end
 
-          include_examples 'download starter files properly'
+          it_behaves_like 'download starter files properly'
         end
 
         context 'the grouping has not started yet' do
@@ -1359,7 +1359,7 @@ describe GroupsController do
         end
 
         context 'when the repo is empty' do
-          include_examples 'write starter files to repo'
+          it_behaves_like 'write starter files to repo'
         end
 
         context 'when some files already exist in the repo' do
@@ -1372,7 +1372,7 @@ describe GroupsController do
             end
           end
 
-          include_examples 'write starter files to repo'
+          it_behaves_like 'write starter files to repo'
         end
       end
 
@@ -1382,7 +1382,7 @@ describe GroupsController do
           grouping
         end
 
-        include_examples 'populate starter files properly'
+        it_behaves_like 'populate starter files properly'
       end
 
       context 'when the grouping was created before any starter file groups' do
@@ -1391,7 +1391,7 @@ describe GroupsController do
           starter_file_group
         end
 
-        include_examples 'populate starter files properly'
+        it_behaves_like 'populate starter files properly'
       end
 
       context 'when the assignment is hidden' do
@@ -1425,7 +1425,7 @@ describe GroupsController do
             grouping.update!(start_time: 1.minute.ago)
           end
 
-          include_examples 'populate starter files properly'
+          it_behaves_like 'populate starter files properly'
         end
 
         context 'when the deadline has already passed' do
@@ -1436,7 +1436,7 @@ describe GroupsController do
             assignment.update!(due_date: 1.minute.ago)
           end
 
-          include_examples 'populate starter files properly'
+          it_behaves_like 'populate starter files properly'
         end
 
         context 'the grouping has not started yet' do

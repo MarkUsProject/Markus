@@ -10,7 +10,7 @@ describe AutotestResultsJob do
     context 'when there is no job currently in progress' do
       before { redis.del('autotest_results') }
 
-      include_examples 'background job'
+      it_behaves_like 'background job'
       it 'sets the redis key' do
         job
         expect(redis.get('autotest_results')).not_to be_nil
@@ -77,7 +77,7 @@ describe AutotestResultsJob do
           subject
         end
 
-        include_examples 'autotest jobs'
+        it_behaves_like 'autotest jobs'
       end
 
       context 'when getting the statuses of the tests' do
@@ -222,36 +222,36 @@ describe AutotestResultsJob do
         context 'when at least one of the statuses is "started"' do
           let(:status_return) { { 1 => 'finished', 2 => 'started', 3 => 'finished' } }
 
-          include_examples 'rescheduling a job'
-          include_examples 'web sockets test in progress'
+          it_behaves_like 'rescheduling a job'
+          it_behaves_like 'web sockets test in progress'
         end
 
         context 'when at least one of the statuses is "queued"' do
           let(:status_return) { { 1 => 'finished', 2 => 'queued', 3 => 'finished' } }
 
-          include_examples 'rescheduling a job'
-          include_examples 'web sockets test in progress'
+          it_behaves_like 'rescheduling a job'
+          it_behaves_like 'web sockets test in progress'
         end
 
         context 'when at least one of the statuses is "deferred"' do
           let(:status_return) { { 1 => 'finished', 2 => 'deferred', 3 => 'finished' } }
 
-          include_examples 'rescheduling a job'
-          include_examples 'web sockets test in progress'
+          it_behaves_like 'rescheduling a job'
+          it_behaves_like 'web sockets test in progress'
         end
 
         context 'when at least one of the statuses is "finished"' do
           let(:status_return) { { 1 => 'started', 2 => 'finished', 3 => 'started' } }
 
-          include_examples 'getting results'
-          include_examples 'web socket table update'
+          it_behaves_like 'getting results'
+          it_behaves_like 'web socket table update'
         end
 
         context 'when at least one of the statuses is "failed"' do
           let(:status_return) { { 1 => 'started', 2 => 'failed', 3 => 'started' } }
 
-          include_examples 'getting results'
-          include_examples 'web socket table update'
+          it_behaves_like 'getting results'
+          it_behaves_like 'web socket table update'
         end
 
         context 'when at least one of the statuses is something else' do
@@ -264,7 +264,7 @@ describe AutotestResultsJob do
             subject
           end
 
-          include_examples 'web socket table update'
+          it_behaves_like 'web socket table update'
         end
 
         context 'when there is a test run with the same autotest_test_id in a different course' do

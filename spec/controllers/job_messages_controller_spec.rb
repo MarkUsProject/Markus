@@ -99,12 +99,12 @@ describe JobMessagesController do
   describe 'When user is an authenticated instructor' do
     let(:user) { create(:instructor) }
 
-    include_examples 'authenticated instructor or TA'
+    it_behaves_like 'authenticated instructor or TA'
   end
 
   describe 'When the user is an authenticated TA' do
     let(:user) { create(:ta) }
 
-    include_examples 'authenticated instructor or TA'
+    it_behaves_like 'authenticated instructor or TA'
   end
 end

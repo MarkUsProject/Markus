@@ -105,17 +105,17 @@ describe Repository::AbstractRepository do
         end
       end
 
-      include_examples 'default tests'
+      it_behaves_like 'default tests'
       context 'when assignment properties are set with nil is_hidden value' do
         before { [assessment_section_property3, assessment_section_property4] }
 
-        include_examples 'default tests'
+        it_behaves_like 'default tests'
       end
 
       context 'when assignment properties are set with true is_hidden value' do
         before { [assessment_section_property] }
 
-        include_examples 'default tests'
+        it_behaves_like 'default tests'
       end
 
       context 'when assignment properties are set with false is_hidden value' do
@@ -147,17 +147,17 @@ describe Repository::AbstractRepository do
         end
       end
 
-      include_examples 'default tests'
+      it_behaves_like 'default tests'
       context 'when assignment properties are set with nil is_hidden value' do
         before { [assessment_section_property3, assessment_section_property4] }
 
-        include_examples 'default tests'
+        it_behaves_like 'default tests'
       end
 
       context 'when assignment properties are set with true is_hidden value' do
         before { [assessment_section_property2] }
 
-        include_examples 'default tests'
+        it_behaves_like 'default tests'
       end
 
       context 'when assignment properties are set with false is_hidden value' do

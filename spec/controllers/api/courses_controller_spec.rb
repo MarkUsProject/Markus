@@ -167,7 +167,7 @@ describe Api::CoursesController do
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
     end
 
-    include_examples 'Get #index', :instructor
+    it_behaves_like 'Get #index', :instructor
 
     it 'should fail to authenticate a POST create request' do
       get :create
@@ -193,7 +193,7 @@ describe Api::CoursesController do
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
     end
 
-    include_examples 'Get #index', :student
+    it_behaves_like 'Get #index', :student
   end
 
   context 'An authenticated TA request' do
@@ -204,7 +204,7 @@ describe Api::CoursesController do
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{user.api_key.strip}"
     end
 
-    include_examples 'Get #index', :ta
+    it_behaves_like 'Get #index', :ta
   end
 
   context 'an admin user' do

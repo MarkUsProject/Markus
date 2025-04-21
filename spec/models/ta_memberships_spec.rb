@@ -3,7 +3,7 @@ describe TaMembership do
 
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
   it 'should belong to a ta' do
     expect(create(:ta_membership, role: create(:ta))).to be_valid
   end
