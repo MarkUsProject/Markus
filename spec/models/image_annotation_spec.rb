@@ -11,7 +11,7 @@ describe ImageAnnotation do
   it { is_expected.to validate_numericality_of(:y2) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   describe '#get_data' do
     let(:annotation) { create(:image_annotation) }

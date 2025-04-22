@@ -34,7 +34,7 @@ describe TestRunsChannel do
     end
 
     context 'when the student can run tests' do
-      include_examples 'can subscribe'
+      it_behaves_like 'can subscribe'
     end
   end
 
@@ -56,7 +56,7 @@ describe TestRunsChannel do
     end
 
     context 'when the ta can run tests' do
-      include_examples 'can subscribe'
+      it_behaves_like 'can subscribe'
     end
   end
 
@@ -80,7 +80,7 @@ describe TestRunsChannel do
     end
 
     context 'when the instructor can run tests' do
-      include_examples 'can subscribe'
+      it_behaves_like 'can subscribe'
     end
   end
 

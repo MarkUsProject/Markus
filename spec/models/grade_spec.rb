@@ -9,7 +9,7 @@ describe Grade do
   it { is_expected.to belong_to(:grade_entry_student) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   context 'when it is not a bonus grade' do
     subject do

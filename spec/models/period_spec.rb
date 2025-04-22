@@ -15,7 +15,7 @@ describe Period do
     it { is_expected.to validate_numericality_of(:deduction).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:interval).is_greater_than(0) }
 
-    include_examples 'has a course'
+    it_behaves_like 'has a course'
   end
 
   context 'A penalty period' do
@@ -26,7 +26,7 @@ describe Period do
     it { is_expected.to validate_numericality_of(:deduction).is_greater_than_or_equal_to(0) }
     it { is_expected.not_to validate_numericality_of(:interval) }
 
-    include_examples 'has a course'
+    it_behaves_like 'has a course'
   end
 
   context 'A grace penalty period' do
@@ -37,7 +37,7 @@ describe Period do
     it { is_expected.not_to validate_numericality_of(:deduction) }
     it { is_expected.not_to validate_numericality_of(:interval) }
 
-    include_examples 'has a course'
+    it_behaves_like 'has a course'
   end
 
   context 'A no late penalty period' do
@@ -48,7 +48,7 @@ describe Period do
     it { is_expected.not_to validate_numericality_of(:deduction) }
     it { is_expected.not_to validate_numericality_of(:interval) }
 
-    include_examples 'has a course'
+    it_behaves_like 'has a course'
   end
 
   context 'Multiple penalty decay periods' do

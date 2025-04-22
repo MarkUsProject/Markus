@@ -4,7 +4,7 @@ describe UpdateRepoPermissionsJob do
 
     before { redis.del('repo_permissions') }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   describe '#perform' do

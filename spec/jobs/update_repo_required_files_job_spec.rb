@@ -5,7 +5,7 @@ describe UpdateRepoRequiredFilesJob do
   context 'when running as a background job' do
     let(:job_args) { [assignment.id] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   context 'updating required files' do

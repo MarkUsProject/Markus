@@ -72,7 +72,7 @@ describe Api::SubmissionFilesController do
           expect(success).to be_truthy
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
 
       context 'when adding a file which is already exist' do
@@ -94,7 +94,7 @@ describe Api::SubmissionFilesController do
           expect(content).to eq(file_contents)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
     end
 
@@ -119,7 +119,7 @@ describe Api::SubmissionFilesController do
         expect(success).to be_truthy
       end
 
-      include_examples 'for a different course'
+      it_behaves_like 'for a different course'
       context 'when the folder is already exist' do
         before do
           post :create_folders, params: { assignment_id: assignment.id,
@@ -158,7 +158,7 @@ describe Api::SubmissionFilesController do
           expect(response).to have_http_status(:ok)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
 
       describe 'when the file does not exist' do
@@ -173,7 +173,7 @@ describe Api::SubmissionFilesController do
           expect(response).to have_http_status(:internal_server_error)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
     end
 
@@ -199,7 +199,7 @@ describe Api::SubmissionFilesController do
           expect(response).to have_http_status(:ok)
         end
 
-        include_examples 'for a different course'
+        it_behaves_like 'for a different course'
       end
 
       describe 'when the folder does not exist' do
@@ -223,7 +223,7 @@ describe Api::SubmissionFilesController do
         get :index, params: { assignment_id: aid, group_id: gid, filename: file_name, course_id: course.id }
       end
 
-      include_examples 'for a different course'
+      it_behaves_like 'for a different course'
       context 'when no specific file is selected' do
         it 'should be successful' do
           expect(response).to have_http_status(:ok)
