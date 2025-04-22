@@ -991,5 +991,60 @@ describe Api::GroupsController do
         end
       end
     end
+
+    context 'POST collect_submission' do
+      before do
+        @group = create(:group)
+        @assignment = create(:assignment, course: @group.course)
+        @grouping = create(:grouping,
+                           group: @group,
+                           assignment: @assignment)
+        @membership = create(:student_membership,
+                             membership_status: 'inviter',
+                             grouping: @grouping)
+        @student = @membership.role
+
+        @grouping1 = create(:grouping,
+                            assignment: @assignment)
+        @grouping1.group.access_repo do |repo|
+          txn = repo.get_transaction('test')
+          path = File.join(@assignment.repository_folder, 'file1_name')
+          txn.add(path, 'file1 content', '')
+          repo.commit(txn)
+
+          # Generate submission
+          submission = Submission.generate_new_submission(Grouping.last,
+                                                          repo.get_latest_revision)
+          result = submission.get_latest_result
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+          submission.save
+        end
+
+        # mark the existing submission as released
+        last_result = @grouping1.current_submission_used.get_latest_result
+        last_result.update!(released_to_students: true)
+      end
+
+      it 'should respond with 201 when additional parameters are present' do
+        post :collect_submission,
+             params: { course_id: course.id, assignment_id: @assignment.id, id: @group.id,
+                       collect_current: true,
+                       apply_late_penalty: true,
+                       retain_existing_grading: true }
+        expect(response).to have_http_status :created
+      end
+
+      context 'When a grouping\'s submission has already been released' do
+        it 'should respond with 422' do
+          post :collect_submission,
+               params: { course_id: course.id, assignment_id: @grouping1.assignment.id, id: @grouping1.group.id,
+                         collect_current: true,
+                         apply_late_penalty: true,
+                         retain_existing_grading: true }
+          expect(response).to have_http_status :unprocessable_entity
+        end
+      end
+    end
   end
 end

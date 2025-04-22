@@ -40,6 +40,7 @@ Rails.application.routes.draw do
           member do
             put 'add_tag'
             put 'remove_tag'
+            post 'collect_submission'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
