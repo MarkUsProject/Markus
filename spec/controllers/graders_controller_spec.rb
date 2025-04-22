@@ -49,7 +49,7 @@ describe GradersController do
     end
 
     context 'doing a POST on :upload (assigning to groups)' do
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @assignment.id, model: TaMembership, groupings: true } }
       end
 
@@ -186,7 +186,7 @@ describe GradersController do
     end
 
     context 'doing a POST on :upload (assigning to criteria)' do
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @assignment.id, model: TaMembership, criteria: true } }
       end
 

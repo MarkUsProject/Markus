@@ -69,7 +69,7 @@ describe TestRun do
     end
   end
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   describe '#cancel' do
     before { test_run.cancel }

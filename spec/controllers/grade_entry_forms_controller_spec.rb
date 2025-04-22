@@ -44,7 +44,7 @@ describe GradeEntryFormsController do
       )
     end
 
-    include_examples 'a controller supporting upload' do
+    it_behaves_like 'a controller supporting upload' do
       let(:params) { { course_id: course.id, id: grade_entry_form.id, model: Grade } }
     end
 
@@ -504,8 +504,8 @@ describe GradeEntryFormsController do
   describe 'When the user is instructor' do
     let(:user) { create(:instructor) }
 
-    include_examples '#update_grade_entry_students'
-    include_examples '#manage grade entry forms'
+    it_behaves_like '#update_grade_entry_students'
+    it_behaves_like '#manage grade entry forms'
     context 'GET student interface' do
       before { get_as user, :student_interface, params: { course_id: course.id, id: grade_entry_form.id } }
 
@@ -520,7 +520,7 @@ describe GradeEntryFormsController do
     describe 'When the grader is allowed to release and unrelease the grades' do
       let(:user) { create(:ta, manage_assessments: true) }
 
-      include_examples '#update_grade_entry_students'
+      it_behaves_like '#update_grade_entry_students'
     end
 
     describe 'When the grader is not allowed to release and unrelease the grades' do
@@ -541,7 +541,7 @@ describe GradeEntryFormsController do
     describe 'When the grader is allowed to create, edit and update grade entry forms' do
       let(:user) { create(:ta, manage_assessments: true) }
 
-      include_examples '#manage grade entry forms'
+      it_behaves_like '#manage grade entry forms'
     end
 
     describe 'When the grader is not allowed to create, edit and update grade entry forms' do
@@ -725,7 +725,7 @@ describe GradeEntryFormsController do
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { edit_course_grade_entry_form_path(params) } }
 
-      include_examples 'switch assignment tests'
+      it_behaves_like 'switch assignment tests'
     end
 
     context 'a grader' do
@@ -733,7 +733,7 @@ describe GradeEntryFormsController do
       let(:non_grade_entry_form_url) { ->(params) { course_grade_entry_form_marks_graders_url(params) } }
       let(:fallback_url) { ->(params) { grades_course_grade_entry_form_path(params) } }
 
-      include_examples 'switch assignment tests'
+      it_behaves_like 'switch assignment tests'
     end
 
     context 'a student' do
@@ -741,7 +741,7 @@ describe GradeEntryFormsController do
       let(:non_grade_entry_form_url) { nil }
       let(:fallback_url) { ->(params) { student_interface_course_grade_entry_form_url(params) } }
 
-      include_examples 'switch assignment tests'
+      it_behaves_like 'switch assignment tests'
     end
   end
 

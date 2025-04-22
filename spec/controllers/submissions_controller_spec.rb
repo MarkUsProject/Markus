@@ -806,7 +806,7 @@ describe SubmissionsController do
       let(:role) { create(:ta) }
       let(:grouping) { @grouping1 }
 
-      include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
+      it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
     end
 
     it 'should be able to access the repository browser.' do
@@ -1025,7 +1025,7 @@ describe SubmissionsController do
         let(:role) { create(:ta) }
         let(:grouping) { @grouping }
 
-        include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
+        it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
       end
 
       context 'when at least one submission can be collected' do
@@ -2177,7 +2177,7 @@ describe SubmissionsController do
     end
 
     shared_examples 'shared ta and instructor tests' do
-      include_examples 'download files'
+      it_behaves_like 'download files'
       context 'accessing download_zip' do
         before do
           grouping.group.access_repo do |repo|
@@ -2289,7 +2289,7 @@ describe SubmissionsController do
     context 'An Instructor' do
       before { sign_in instructor }
 
-      include_examples 'shared ta and instructor tests'
+      it_behaves_like 'shared ta and instructor tests'
     end
 
     context 'A TA' do
@@ -2329,13 +2329,13 @@ describe SubmissionsController do
       context 'that has been assigned to grade the group\'s result' do
         before { create(:ta_membership, role: ta, grouping: grouping) }
 
-        include_examples 'shared ta and instructor tests'
+        it_behaves_like 'shared ta and instructor tests'
       end
 
       context 'that can manage submissions' do
         let(:ta) { create(:ta, manage_submissions: true) }
 
-        include_examples 'shared ta and instructor tests'
+        it_behaves_like 'shared ta and instructor tests'
       end
     end
 
@@ -2368,11 +2368,11 @@ describe SubmissionsController do
           context 'from_codeviewer is true' do
             let(:from_codeviewer) { true }
 
-            include_examples 'download files'
+            it_behaves_like 'download files'
           end
 
           context 'from_codeviewer is nil' do
-            include_examples 'without permission'
+            it_behaves_like 'without permission'
           end
         end
 
@@ -2384,7 +2384,7 @@ describe SubmissionsController do
               let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
               let(:grouping) { incomplete_result.grouping }
 
-              include_examples 'download files'
+              it_behaves_like 'download files'
             end
 
             context 'and the selected file is associated with a different submission' do
@@ -2404,12 +2404,12 @@ describe SubmissionsController do
           context 'role is not an accepted member of the results grouping' do
             let(:student) { create(:student) }
 
-            include_examples 'without permission'
+            it_behaves_like 'without permission'
           end
         end
       end
 
-      include_examples 'download files'
+      it_behaves_like 'download files'
     end
   end
 

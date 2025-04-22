@@ -5,7 +5,7 @@ describe UploadRolesJob do
     let(:file) { fixture_file_upload 'students/students.csv' }
     let(:job_args) { [Student, course, File.read(file), nil] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   describe '#perform' do
@@ -58,13 +58,13 @@ describe UploadRolesJob do
     context 'uploading TAs' do
       let(:role_type) { Ta }
 
-      include_examples 'uploading roles'
+      it_behaves_like 'uploading roles'
     end
 
     context 'uploading Students' do
       let(:role_type) { Student }
 
-      include_examples 'uploading roles'
+      it_behaves_like 'uploading roles'
       context 'should add students to sections' do
         subject { UploadRolesJob.perform_now(role_type, course, data, nil) }
 

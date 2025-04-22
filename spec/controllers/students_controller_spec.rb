@@ -42,7 +42,7 @@ describe StudentsController do
     end
 
     describe '#upload' do
-      include_examples 'a controller supporting upload', formats: [:csv], background: true do
+      it_behaves_like 'a controller supporting upload', formats: [:csv], background: true do
         let(:params) { { course_id: course.id } }
       end
 
@@ -205,7 +205,7 @@ describe StudentsController do
       let(:setting) { 'receives_results_emails' }
       let(:other_setting) { 'receives_invite_emails' }
 
-      include_examples 'changing particular mailer settings'
+      it_behaves_like 'changing particular mailer settings'
     end
 
     describe 'group invite notifications' do
@@ -213,7 +213,7 @@ describe StudentsController do
       let(:setting) { 'receives_invite_emails' }
       let(:other_setting) { 'receives_results_emails' }
 
-      include_examples 'changing particular mailer settings'
+      it_behaves_like 'changing particular mailer settings'
     end
   end
 end
