@@ -84,8 +84,6 @@ describe AutotestResultsJob do
         before { allow_any_instance_of(AutotestResultsJob).to receive(:statuses).and_return(status_return) }
 
         shared_examples 'rescheduling a job' do
-          before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
-
           it 'should schedule another job in a minute' do
             expect(AutotestResultsJob).to receive(:set).with(wait: 5.seconds).once.and_call_original
             expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once
@@ -222,6 +220,8 @@ describe AutotestResultsJob do
         context 'when at least one of the statuses is "started"' do
           let(:status_return) { { 1 => 'finished', 2 => 'started', 3 => 'finished' } }
 
+          before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
+
           it_behaves_like 'rescheduling a job'
           it_behaves_like 'web sockets test in progress'
         end
@@ -229,12 +229,16 @@ describe AutotestResultsJob do
         context 'when at least one of the statuses is "queued"' do
           let(:status_return) { { 1 => 'finished', 2 => 'queued', 3 => 'finished' } }
 
+          before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
+
           it_behaves_like 'rescheduling a job'
           it_behaves_like 'web sockets test in progress'
         end
 
         context 'when at least one of the statuses is "deferred"' do
           let(:status_return) { { 1 => 'finished', 2 => 'deferred', 3 => 'finished' } }
+
+          before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
 
           it_behaves_like 'rescheduling a job'
           it_behaves_like 'web sockets test in progress'

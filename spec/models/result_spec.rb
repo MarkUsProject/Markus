@@ -1,4 +1,6 @@
 describe Result do
+  let!(:assignment) { create(:assignment_with_criteria_and_results) }
+
   describe 'callbacks and validations' do
     let(:result) { assignment.current_results.first }
     let(:assignment) { create(:assignment_with_criteria_and_results) }
@@ -114,8 +116,6 @@ describe Result do
   end
 
   shared_examples 'get subtotals only' do |method_name|
-    let!(:assignment) { create(:assignment_with_criteria_and_results) }
-
     context 'there are no extra marks' do
       it 'should return a hash containing the subtotal for each result' do
         ids = Result.ids
