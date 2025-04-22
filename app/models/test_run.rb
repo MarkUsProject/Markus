@@ -173,17 +173,26 @@ class TestRun < ApplicationRecord
         last_editor_id: self.role.id
       )
       result = self.submission.current_result
-      TextAnnotation.create(
+      Annotation.create(
         line_start: data['line_start'],
         line_end: data['line_end'],
         column_start: data['column_start'],
         column_end: data['column_end'],
+        x1: data['x1'],
+        x2: data['x2'],
+        y1: data['y1'],
+        y2: data['y2'],
+        start_node: data['start_node'],
+        start_offset: data['start_offset'],
+        end_node: data['end_node'],
+        end_offset: data['end_offset'],
         annotation_text_id: annotation_text.id,
         submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
         creator_id: self.role.id,
         creator_type: self.role.type,
         is_remark: !result.remark_request_submitted_at.nil?,
         annotation_number: count + i,
+        type: data['type'] || 'TextAnnotation',
         result_id: result.id
       )
     end
