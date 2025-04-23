@@ -58,6 +58,7 @@
 - Updated to react-flatpickr v4.0.0 (#7478)
 - Remove `mistune` Python explicit dependency (#7483)
 - Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
+- Added explicit permissions to GitHub Actions workflow configuration (#7495)
 
 ## [v2.6.1]
 
