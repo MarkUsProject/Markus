@@ -17,6 +17,7 @@
 - Modified add_group_api to use username as group name for individual assignments (#7481)
 - Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
 - Allow creating image annotations from a test run's outputs (#7486)
+- Added an API that collects a single submission (#7494)
 
 ### 🐛 Bug fixes
 
