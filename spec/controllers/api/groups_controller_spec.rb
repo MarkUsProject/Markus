@@ -993,6 +993,10 @@ describe Api::GroupsController do
     end
 
     context 'POST collect_submission' do
+      let(:revision_identifier) do
+        @grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+      end
+
       before do
         @group = create(:group)
         @assignment = create(:assignment, course: @group.course)
@@ -1026,10 +1030,19 @@ describe Api::GroupsController do
         last_result.update!(released_to_students: true)
       end
 
-      it 'should respond with 201 when additional parameters are present' do
+      it 'should respond with 201' do
         post :collect_submission,
              params: { course_id: course.id, assignment_id: @assignment.id, id: @group.id,
                        collect_current: true,
+                       apply_late_penalty: true,
+                       retain_existing_grading: true }
+        expect(response).to have_http_status :created
+      end
+
+      it 'should respond with 201 when revision_identifier parameter is provided' do
+        post :collect_submission,
+             params: { course_id: course.id, assignment_id: @assignment.id, id: @group.id,
+                       revision_identifier: revision_identifier,
                        apply_late_penalty: true,
                        retain_existing_grading: true }
         expect(response).to have_http_status :created

@@ -379,17 +379,20 @@ module Api
           return
         end
       end
-      apply_late_penalty = if params[:apply_late_penalty].nil? || params[:apply_late_penalty] == false
+
+      @revision_identifier = params[:revision_identifier]
+      apply_late_penalty = if params[:apply_late_penalty].nil?
                              false
                            else
                              params[:apply_late_penalty]
                            end
-      retain_existing_grading = if params[:retain_existing_grading].nil? || params[:retain_existing_grading] == false
+      retain_existing_grading = if params[:retain_existing_grading].nil?
                                   false
                                 else
                                   params[:retain_existing_grading]
                                 end
       SubmissionsJob.perform_now([@grouping],
+                                 revision_identifier: @revision_identifier,
                                  collect_current: params[:collect_current],
                                  apply_late_penalty: apply_late_penalty,
                                  retain_existing_grading: retain_existing_grading)
