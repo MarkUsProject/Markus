@@ -219,6 +219,31 @@ describe StudentsController do
         end
       end
 
+      context 'when student has a grade_entry_student that has an associated grade with a nil grade' do
+        before do
+          create(:grade_entry_form)
+          create(:grade, grade_entry_student: student.grade_entry_students.first, grade: nil)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'removes the student' do
+          expect(Student.count).to eq(0)
+        end
+
+        it 'flashes a success message' do
+          expect(flash.now[:success]).to contain_message(I18n.t('flash.students.destroy.success',
+                                                                user_name: student.user_name, message: ''))
+        end
+
+        it 'does not flash an error message' do
+          expect(flash[:error]).to be_nil
+        end
+
+        it 'gets a no content response' do
+          expect(response).to have_http_status(:no_content)
+        end
+      end
+
       context 'when student has a grade_entry_student that has an associated grade with a non-nil grade' do
         before do
           create(:grade_entry_form)
