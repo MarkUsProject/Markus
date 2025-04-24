@@ -195,6 +195,24 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
+  autoMatch = () => {
+    if (this.groupsTable.state.selection.length === 0) {
+      alert(I18n.t("groups.select_a_group"));
+      return;
+    }
+
+    $.post({
+      url: Routes.match_students_course_assignment_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        groupings: this.groupsTable.state.selection,
+        exam_template: 4,
+      },
+    });
+  };
+
   validate = grouping_id => {
     if (!confirm(I18n.t("groups.validate_confirm"))) {
       return;
@@ -256,12 +274,14 @@ class GroupsManager extends React.Component {
       <div>
         <GroupsActionBox
           assign={this.assign}
+          autoMatch={this.autoMatch}
           can_create_all_groups={this.props.can_create_all_groups}
           createAllGroups={this.createAllGroups}
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
           hiddenStudentsCount={this.state.loading ? null : this.state.hidden_students_count}
           hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
+          scanned_exam={this.props.scanned_exam}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.updateShowHidden}
         />
@@ -684,6 +704,12 @@ class GroupsActionBox extends React.Component {
           <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("groups.add_to_group")}
         </button>
+        {this.props.scanned_exam ? (
+          <button className="" onClick={this.props.autoMatch}>
+            <FontAwesomeIcon icon="fa-solid fa-file-import" />
+            {I18n.t("groups.auto_match")}
+          </button>
+        ) : undefined}
         {this.props.can_create_all_groups ? (
           <button className="" onClick={this.props.createAllGroups}>
             <FontAwesomeIcon icon="fa-solid fa-people-group" />

@@ -56,6 +56,8 @@
     <% if @assignment.scanned_exam %>
         <span class='menu_bar'></span>
         <%= link_to t('exam_templates.assign_scans.title'), :assign_scans_course_assignment_groups %>
+        <span class='menu_bar'></span>
+        <%= link_to t('exam_templates.auto_match.title'), '#', id: 'autoMatchModal' %>
     <% end %>
 <% end %>
 
@@ -65,6 +67,7 @@
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 <%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'auto_match_modal', layout: 'layouts/modal_dialog'  %>
 <%= render partial: 'assignment_group_use_modal', layout: 'layouts/modal_dialog'  %>
 <%= render partial: 'create_group_modal', layout: 'layouts/modal_dialog'  %>
 <%= render partial: 'rename_group_modal', layout: 'layouts/modal_dialog'  %>

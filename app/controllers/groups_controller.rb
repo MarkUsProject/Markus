@@ -587,6 +587,15 @@ class GroupsController < ApplicationController
     redirect_to course_assignment_path(current_course, assignment)
   end
 
+  def match_students
+    grouping_ids = params[:groupings]
+    exam_template_id = params[:exam_template]
+    groupings = Grouping.find(grouping_ids)
+    exam_template = ExamTemplate.find(exam_template_id)
+
+    MatchStudentJob.perform_later(groupings, exam_template)
+  end
+
   private
 
   # These methods are called through global actions.

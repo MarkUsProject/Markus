@@ -2,38 +2,45 @@ class MatchStudentJob < ApplicationJob
   def perform(groupings, exam_template)
     return unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
     groupings.each do |grouping|
-      begin
-        # convert PDF to an image
-        imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do |options|
-          options.quality = 100
-          options.density = '300'
+      # get cover page
+      grouping.access_repo do |repo|
+        assignment_folder = exam_template.assignment.repository_folder
+        revision = repo.get_latest_revision
+        cover_pdf_path = File.join(assignment_folder, 'COVER.pdf')
+        cover_pdf = revision.files_at_path(cover_pdf_path)
+
+        begin
+          # convert PDF to an image
+          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do |options|
+            options.quality = 100
+            options.density = '300'
+          end
+        rescue StandardError
+          return
         end
-      rescue StandardError
-        return
-      end
 
-      img = imglist.first
-      # Snip out the middle of PDF that contains the student information
-      student_info = img.crop exam_template.crop_x * img.columns, exam_template.crop_y * img.rows,
-                              exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
-      student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
-      student_info.write(student_info_file)
-      img.destroy!
-      student_info.destroy!
+        img = imglist.first
+        # Snip out the middle of PDF that contains the student information
+        student_info = img.crop exam_template.crop_x * img.columns, exam_template.crop_y * img.rows,
+                                exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
+        student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
+        student_info.write(student_info_file)
+        img.destroy!
+        student_info.destroy!
 
-      python_exe = Rails.application.config.python
-      char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
-      stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', student_info_file, char_type)
-      parsed = stdout.strip.split("\n")
+        python_exe = Rails.application.config.python
+        char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
+        stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', student_info_file, char_type)
+        parsed = stdout.strip.split("\n")
 
-      next unless status.success? && parsed.length == 1
+        next unless status.success? && parsed.length == 1
 
-      student = match_student(parsed[0], exam_template)
-
-      unless student.nil?
-        StudentMembership.find_or_create_by(role: student,
-                                            grouping: grouping,
-                                            membership_status: StudentMembership::STATUSES[:inviter])
+        student = match_student(parsed[0], exam_template)
+        unless student.nil?
+          StudentMembership.find_or_create_by(role: student,
+                                              grouping: grouping,
+                                              membership_status: StudentMembership::STATUSES[:inviter])
+        end
       end
     end
   end
