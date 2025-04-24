@@ -498,7 +498,7 @@ describe AssignmentsController do
 
         it 'responds with the correct keys' do
           expect(response.parsed_body.keys.to_set).to eq Set[
-            'data', 'criteriaColumns', 'numAssigned', 'numMarked', 'ltiDeployments'
+            'data', 'criteriaColumns', 'numAssigned', 'numMarked', 'enableTest', 'ltiDeployments'
           ]
         end
       end
@@ -518,14 +518,14 @@ describe AssignmentsController do
       let(:role) { create(:instructor) }
       let(:assignment) { create(:assignment) }
 
-      include_examples 'An authorized role viewing assignment summary'
+      it_behaves_like 'An authorized role viewing assignment summary'
     end
 
     describe 'When the role is grader' do
       let(:role) { create(:ta) }
       let(:assignment) { create(:assignment) }
 
-      include_examples 'An authorized role viewing assignment summary'
+      it_behaves_like 'An authorized role viewing assignment summary'
     end
   end
 
@@ -823,9 +823,9 @@ describe AssignmentsController do
     let(:role) { create(:instructor) }
     let(:course) { role.course }
 
-    include_examples 'An authorized role updating the assignment'
-    include_examples 'An authorized role managing assignments'
-    include_examples 'An authorized role managing tests'
+    it_behaves_like 'An authorized role updating the assignment'
+    it_behaves_like 'An authorized role managing assignments'
+    it_behaves_like 'An authorized role managing tests'
   end
 
   describe 'When the role is grader' do
@@ -834,8 +834,8 @@ describe AssignmentsController do
     context 'When the grader is allowed to manage assignments' do
       let(:role) { create(:ta, manage_assessments: true) }
 
-      include_examples 'An authorized role updating the assignment'
-      include_examples 'An authorized role managing assignments'
+      it_behaves_like 'An authorized role updating the assignment'
+      it_behaves_like 'An authorized role managing assignments'
     end
 
     context 'When the grader is not allowed to manage assignments' do
@@ -870,7 +870,7 @@ describe AssignmentsController do
     context 'When the grader is allowed to run tests' do
       let(:role) { create(:ta, manage_assessments: true) }
 
-      include_examples 'An authorized role managing tests'
+      it_behaves_like 'An authorized role managing tests'
     end
 
     context 'When the grader is not allowed to run tests' do
@@ -963,13 +963,13 @@ describe AssignmentsController do
     context 'an instructor' do
       let(:role) { create(:instructor) }
 
-      include_examples 'a user with permission to view the starter file page'
+      it_behaves_like 'a user with permission to view the starter file page'
     end
 
     context 'a grader' do
       let(:role) { create(:ta) }
 
-      include_examples 'a user with permission to view the starter file page'
+      it_behaves_like 'a user with permission to view the starter file page'
     end
 
     context 'a student' do
@@ -1046,13 +1046,13 @@ describe AssignmentsController do
     context 'an instructor' do
       let(:role) { create(:instructor) }
 
-      include_examples 'a user with permission to view starter files'
+      it_behaves_like 'a user with permission to view starter files'
     end
 
     context 'a grader' do
       let(:role) { create(:ta) }
 
-      include_examples 'a user with permission to view starter files'
+      it_behaves_like 'a user with permission to view starter files'
     end
 
     context 'a student' do
@@ -1244,13 +1244,13 @@ describe AssignmentsController do
     context 'an instructor' do
       let(:role) { create(:instructor) }
 
-      include_examples 'a user with permission to download starter file mappings'
+      it_behaves_like 'a user with permission to download starter file mappings'
     end
 
     context 'a grader' do
       let(:role) { create(:ta) }
 
-      include_examples 'a user with permission to download starter file mappings'
+      it_behaves_like 'a user with permission to download starter file mappings'
     end
 
     context 'a student' do
@@ -1451,14 +1451,6 @@ describe AssignmentsController do
         end
       end
 
-      context 'referred from a submission member url' do
-        let(:referer) { submission_member_url.call(course_id: course.id, id: submission.id) }
-
-        it 'should redirect to the fallback url' do
-          expect(subject).to redirect_to(fallback_url.call(course_id: course.id, id: assignment2.id))
-        end
-      end
-
       context 'referred from a submission collection url' do
         let(:referer) { submission_collection_url.call(course_id: course.id, assignment_id: assignment.id) }
 
@@ -1521,9 +1513,8 @@ describe AssignmentsController do
       let(:fallback_url) { ->(params) { edit_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
       let(:result_member_url) { ->(params) { course_result_url(params) } }
-      let(:submission_member_url) { ->(params) { get_file_course_submission_url(params) } }
 
-      include_examples 'switch assignment tests'
+      it_behaves_like 'switch assignment tests'
     end
 
     context 'a grader' do
@@ -1532,9 +1523,8 @@ describe AssignmentsController do
       let(:fallback_url) { ->(params) { summary_course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { browse_course_assignment_submissions_url(params) } }
       let(:result_member_url) { ->(params) { course_result_url(params) } }
-      let(:submission_member_url) { ->(params) { get_file_course_submission_url(params) } }
 
-      include_examples 'switch assignment tests'
+      it_behaves_like 'switch assignment tests'
     end
 
     context 'a student' do
@@ -1543,9 +1533,8 @@ describe AssignmentsController do
       let(:fallback_url) { ->(params) { course_assignment_url(params) } }
       let(:submission_collection_url) { ->(params) { file_manager_course_assignment_submissions_url(params) } }
       let(:result_member_url) { ->(params) { course_result_url(params) } }
-      let(:submission_member_url) { ->(params) { get_file_course_submission_url(params) } }
 
-      include_examples 'switch assignment tests'
+      it_behaves_like 'switch assignment tests'
     end
   end
 
@@ -1588,13 +1577,13 @@ describe AssignmentsController do
     context 'a grader' do
       let(:role) { create(:ta) }
 
-      include_examples 'download sample starter files'
+      it_behaves_like 'download sample starter files'
     end
 
     context 'an instructor' do
       let(:role) { create(:instructor) }
 
-      include_examples 'download sample starter files'
+      it_behaves_like 'download sample starter files'
     end
   end
 
@@ -1793,14 +1782,14 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create(:ta, manage_assessments: true) }
 
-        include_examples 'download sample config files'
+        it_behaves_like 'download sample config files'
       end
     end
 
     context 'an instructor' do
       let(:user) { create(:instructor) }
 
-      include_examples 'download sample config files'
+      it_behaves_like 'download sample config files'
     end
   end
 
@@ -1998,14 +1987,14 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create(:ta, manage_assessments: true) }
 
-        include_examples 'check valid assignment config files'
+        it_behaves_like 'check valid assignment config files'
       end
     end
 
     context 'an instructor' do
       let(:user) { create(:instructor) }
 
-      include_examples 'check valid assignment config files'
+      it_behaves_like 'check valid assignment config files'
     end
   end
 
@@ -2133,7 +2122,7 @@ describe AssignmentsController do
         FileUtils.rm_rf(assignment.autotest_files_dir)
       end
 
-      include_examples 'assignment content is copied over'
+      it_behaves_like 'assignment content is copied over'
 
       it 'copies over submission rules' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
@@ -2239,7 +2228,7 @@ describe AssignmentsController do
         expect(uploaded_peer_assignment.is_peer_review?).to be(true)
       end
 
-      include_examples 'assignment content is copied over'
+      it_behaves_like 'assignment content is copied over'
     end
   end
 
@@ -2288,7 +2277,7 @@ describe AssignmentsController do
       grouping # lazy initialization
       delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(true)
-      expect(flash[:error]).to eq(["<p>#{I18n.t('assignments.assignment_has_groupings')}</p>"])
+      expect(flash[:error]).to have_message(I18n.t('assignments.assignment_has_groupings'))
       expect(flash.to_hash.length).to eq(1)
       expect(flash[:error].length).to eq(1)
       expect(response).to have_http_status(:found)
@@ -2297,8 +2286,8 @@ describe AssignmentsController do
     it 'should successfully DELETE assignment (no groups)' do
       delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
       expect(Assignment.exists?(assignment.id)).to be(false)
-      expect(flash[:success]).to eq(I18n.t('flash.actions.destroy.success',
-                                           resource_name: assignment.short_identifier))
+      expect(flash[:success]).to have_message(I18n.t('flash.actions.destroy.success',
+                                                     resource_name: assignment.short_identifier))
       expect(flash.to_hash.length).to eq(1)
       expect(response).to have_http_status(:found)
     end
@@ -2320,7 +2309,7 @@ describe AssignmentsController do
         [:checkbox_criterion, :rubric_criterion, :test_group, :annotation_category, :assignment_file,
          :exam_template_midterm, :starter_file_group]
       selected_associations.each do |entity|
-        include_examples 'handling associated entity upon destroy', entity
+        it_behaves_like 'handling associated entity upon destroy', entity
       end
     end
 
@@ -2329,10 +2318,8 @@ describe AssignmentsController do
 
       delete_as instructor, :destroy, params: { course_id: course.id, id: assignment.id }
 
-      expect(flash[:error][0]).to include(
-        I18n.t('activerecord.errors.models.assignment_deletion',
-               problem_message: 'some error')
-      )
+      expect(flash[:error]).to contain_message(I18n.t('activerecord.errors.models.assignment_deletion',
+                                                      problem_message: 'some error'))
       expect(Assignment.exists?(assignment.id)).to be true
       expect(response).to redirect_to(edit_course_assignment_path(course.id, assignment.id))
     end

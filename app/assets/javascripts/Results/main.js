@@ -11,12 +11,10 @@
 //= require Annotations/text_annotation_manager
 //= require Annotations/image_annotation_manager
 //= require Annotations/pdf_annotation_manager
-//= require Annotations/notebook_annotations
+//= require Annotations/html_annotations
 
 // Page-specific Javascript
 //= require Grader/marking
-//= require Grader/mouse_selections
 //= require panes
 //= require Results/context_menu
 //= require Results/keybinding
-//= require Tags/text_updater

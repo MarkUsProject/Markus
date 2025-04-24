@@ -53,11 +53,6 @@ class PeerReview < ApplicationRecord
     end
   end
 
-  # Deletes all peer reviewers for the reviewee groupings
-  def self.delete_all_peer_reviews_for(reviewee_id)
-    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).destroy_all
-  end
-
   def self.assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
@@ -69,7 +64,7 @@ class PeerReview < ApplicationRecord
     end
   end
 
-  def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+  def self.unassign(reviewers_to_remove_from_reviewees_map)
     deleted_count = 0
     undeleted_reviews = []
 
@@ -92,10 +87,6 @@ class PeerReview < ApplicationRecord
           end
         end
       end
-    end
-
-    if undeleted_reviews.empty?
-      self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
     end
     [deleted_count, undeleted_reviews]
   end

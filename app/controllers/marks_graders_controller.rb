@@ -149,13 +149,13 @@ class MarksGradersController < ApplicationController
   def unassign_single
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
 
-    if params[:student_id].nil?
+    if params[:student_id].blank?
       flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
 
-    if params[:grader_user_name].nil?
+    if params[:grader_user_name].blank?
       flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return

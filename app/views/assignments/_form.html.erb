@@ -1,7 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'create_assignment',
-                             'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date', nonce: true %>
+  <%= javascript_include_tag 'create_assignment', nonce: true %>
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],

@@ -64,7 +64,7 @@ describe Course do
           end
         end
 
-        include_examples 'when not using git repos'
+        it_behaves_like 'when not using git repos'
       end
 
       context 'after save to max_file_size' do
@@ -82,7 +82,7 @@ describe Course do
           end
         end
 
-        include_examples 'when not using git repos'
+        it_behaves_like 'when not using git repos'
       end
 
       context 'after save to something else' do
@@ -98,7 +98,7 @@ describe Course do
           end
         end
 
-        include_examples 'when not using git repos'
+        it_behaves_like 'when not using git repos'
       end
     end
 

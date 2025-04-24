@@ -16,7 +16,8 @@
           collection_date: '<%= l(@grouping.collection_date) %>',
           due_date: '<%= l(@grouping.due_date) %>',
           is_timed: <%= @grouping.assignment.is_timed %>,
-          start_time: '<%= @grouping.start_time.nil? ? '' : l(@grouping.start_time) %>'
+          start_time: '<%= @grouping.start_time.nil? ? '' : l(@grouping.start_time) %>',
+          rmd_convert_enabled: <%= Rails.application.config.rmd_convert_enabled %>
         });
     });
   <% end %>

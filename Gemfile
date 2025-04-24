@@ -37,16 +37,16 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 7.0.0'
+gem 'rails-i18n', '~> 7.0.10'
 
 # Redis
-gem 'redis', '~> 5.3.0'
+gem 'redis', '~> 5.4.0'
 
 # Exam template requirements
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.0.1'
+gem 'rmagick', '~> 6.1.1'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -107,7 +107,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'rspec-rails', '~> 7.0.1'
+  gem 'rspec-rails', '~> 7.1.1'
   gem 'selenium-webdriver'
 end
 

@@ -5,7 +5,7 @@ describe SectionStarterFileGroup do
   it { is_expected.to belong_to(:starter_file_group) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   context 'more validations' do
     let(:section) { create(:section) }

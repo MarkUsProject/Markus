@@ -50,7 +50,7 @@ RSpec.describe NotificationMailer do
       expect(mail.body.to_s).to include(submission.assignment.short_identifier.to_s)
     end
 
-    include_examples 'an email'
+    it_behaves_like 'an email'
   end
 
   describe 'release_spreadsheet_email' do
@@ -75,7 +75,7 @@ RSpec.describe NotificationMailer do
       expect(mail.body.to_s).to include(grade_entry_form.short_identifier.to_s)
     end
 
-    include_examples 'an email'
+    it_behaves_like 'an email'
   end
 
   describe 'grouping_invite_email' do
@@ -99,6 +99,6 @@ RSpec.describe NotificationMailer do
       expect(mail.body.to_s).to include(h(display_name))
     end
 
-    include_examples 'an email'
+    it_behaves_like 'an email'
   end
 end

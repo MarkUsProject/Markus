@@ -626,7 +626,7 @@ class Grouping < ApplicationRecord
     # doesn't trigger this conversion.
     fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'test_runs.status',
               'roles.type', 'users.user_name',
-              'test_groups.name', 'test_groups.position', 'test_groups.display_output',
+              'test_groups.id', 'test_groups.name', 'test_groups.position', 'test_groups.display_output',
               'test_group_results.time',
               'test_results.name', 'test_results.status as test_results_status', 'test_results.marks_earned',
               'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_results.position']
@@ -890,7 +890,7 @@ class Grouping < ApplicationRecord
   # this value is not specified (or nil), the results are ordered in ascending order.
   def order_and_get_next_grouping(results, filter_data, reversed)
     asc_temp = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
-    ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) ? true : false
+    ascending = (asc_temp == 'ASC' && !reversed) || (asc_temp == 'DESC' && reversed) || false
     case filter_data['orderBy']
     when 'submission_date'
       next_grouping_ordered_submission_date(results, ascending)

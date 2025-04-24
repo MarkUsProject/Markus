@@ -39,9 +39,9 @@
                        .marks
                        .find_by(criterion: @annotation.annotation_text&.annotation_category&.flexible_criterion) %>
   <% if deduction.nil? || deduction == 0 || mark.override %>
-    resultComponent.addAnnotation(annotation_details);
+    resultComponent.current.addAnnotation(annotation_details);
   <% else %>
-    resultComponent.addAnnotation(
+    resultComponent.current.addAnnotation(
       annotation_details,
       <%= @annotation.annotation_text.annotation_category.flexible_criterion_id %>,
       <%= mark.mark %>,

@@ -1,14 +1,15 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      window.testRunTable = makeTestRunTable(document.getElementById('test_run_table'), {
+      makeTestRunTable(document.getElementById('test_run_table'), {
         course_id: <%= @current_course.id %>,
         result_id: <%= @result&.id || 'null' %>,
         submission_id: <%= @result&.submission_id || 'null' %>,
         assignment_id: <%= @assignment.id %>,
         grouping_id: <%= @grouping.id %>,
         instructor_run: <%= ran_by == 'instructor' %>,
-        instructor_view: <%= !@current_role.student? %>
+        instructor_view: <%= !@current_role.student? %>,
+        rmd_convert_enabled: <%= Rails.application.config.rmd_convert_enabled %>
       });
     })
   <% end %>

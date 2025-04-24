@@ -69,7 +69,7 @@ describe TestRun do
     end
   end
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   describe '#cancel' do
     before { test_run.cancel }
@@ -130,11 +130,16 @@ describe TestRun do
   describe '#update_results!' do
     let(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping, assignment: assignment) }
+    let!(:existing_tag) { create(:tag, name: 'existing_tag', assessment: assignment) }
     let(:test_run) { create(:test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1) }
     let(:criterion) { create(:flexible_criterion, max_mark: 2, assignment: assignment) }
     let(:test_group) { create(:test_group, criterion: criterion, assignment: assignment) }
     let(:png_file_content) { fixture_file_upload('page_white_text.png').read }
     let(:text_file_content) { 'test123' }
+    let(:overall_comment1) { 'test comment 1' }
+    let(:existing_comment) { 'existing comment' }
+    let(:submission_file_text) { create(:submission_file, filename: 'test_compressed.txt', path: '/') }
+    let(:submission_file_image) { create(:submission_file, filename: 'test_compressed.png', path: '/') }
     let(:test1) { { name: :test1, status: :pass, marks_earned: 1, marks_total: 1, output: 'output', time: 1 } }
     let(:test2) { { name: :test2, status: :fail, marks_earned: 0, marks_total: 1, output: 'failure', time: nil } }
     let(:tests) { [test1, test2] }
@@ -513,6 +518,86 @@ describe TestRun do
       context 'when it is associated with a grouping' do
         it 'should not update criteria marks' do
           expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
+        end
+      end
+
+      context 'when the results contain tags that don\'t exist' do
+        it 'should create new tags and add them to the grouping' do
+          results['test_groups'].first['tags'] =
+            [{ 'name' => 'new_tag1', 'description' => 'd' }, { 'name' => 'new_tag2' }]
+          expect { test_run.update_results!(results) }.to change { grouping.tags.count }.to eq 2
+        end
+      end
+
+      context 'when the results contain tags that already exist' do
+        it 'should add tags to the grouping without creating new ones' do
+          results['test_groups'].first['tags'] = [existing_tag]
+          expect { test_run.update_results!(results) }.not_to(change { Tag.count })
+          expect(grouping.tags.count).to eq 1
+        end
+      end
+
+      context 'when the results contain comments and has a submission without comments' do
+        let(:submission) { create(:version_used_submission, grouping: grouping) }
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add comments to the submission\'s overall comments' do
+          results['test_groups'].first['overall_comment'] = overall_comment1
+          test_run.update_results!(results)
+          expect(submission.current_result.overall_comment).to include(overall_comment1)
+        end
+      end
+
+      context 'when the results contain comments and has a submission with an existing comment' do
+        let(:result) do
+          create(:result, marking_state: Result::MARKING_STATES[:complete], overall_comment: existing_comment)
+        end
+        let(:submission) { create(:version_used_submission, grouping: grouping, current_result: result) }
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should append the comments without overwriting the existing comments' do
+          results['test_groups'].first['overall_comment'] = overall_comment1
+          test_run.update_results!(results)
+          expect(submission.current_result.overall_comment).to include(overall_comment1)
+          expect(submission.current_result.overall_comment).to include(existing_comment)
+        end
+      end
+
+      context 'when the test run has a submission and the results contain an image annotation' do
+        let(:submission) do
+          create(:version_used_submission, grouping: grouping, submission_files: [submission_file_image])
+        end
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add the image annotation to the submission' do
+          results['test_groups'].first['annotations'] =
+            [{ 'content' => 'test image annotation', 'type' => 'ImageAnnotation', 'filename' => 'test_compressed.png',
+               'x1' => 0, 'y1' => 20, 'x2' => 10, 'y2' => 30 }]
+          expect { test_run.update_results!(results) }.to change {
+            submission.annotations.where(type: 'ImageAnnotation').count
+          }.to eq 1
+          expect(ImageAnnotation.first).to have_attributes(x1: 0, y1: 20, x2: 10, y2: 30)
+          expect(ImageAnnotation.first.annotation_text.content).to eq('test image annotation')
+          expect(ImageAnnotation.first.submission_file.filename).to eq('test_compressed.png')
+        end
+      end
+
+      context 'when the test run has a submission and the results contain an annotation without a type' do
+        let(:submission) do
+          create(:version_used_submission, grouping: grouping, submission_files: [submission_file_text])
+        end
+        let(:test_run) { create(:test_run, submission: submission) }
+
+        it 'should add the annotation to the submission as a text annotation' do
+          results['test_groups'].first['annotations'] =
+            [{ 'content' => 'test text annotation', 'filename' => 'test_compressed.txt', 'line_start' => 1,
+               'line_end' => 2, 'column_start' => 0, 'column_end' => 4 }]
+          expect { test_run.update_results!(results) }.to change {
+            submission.annotations.where(type: 'TextAnnotation').count
+          }.to eq 1
+          expect(TextAnnotation.first).to have_attributes(line_start: 1, line_end: 2, column_start: 0, column_end: 4)
+          expect(TextAnnotation.first.annotation_text.content).to eq('test text annotation')
+          expect(TextAnnotation.first.submission_file.filename).to eq('test_compressed.txt')
         end
       end
     end

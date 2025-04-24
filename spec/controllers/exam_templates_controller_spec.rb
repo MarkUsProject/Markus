@@ -50,7 +50,7 @@ describe ExamTemplatesController do
       before { post_as user, :create, params: params }
 
       it 'flashes an exam template create failure error message' do
-        expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t('exam_templates.create.failure')]
+        expect(flash[:error]).to have_message(I18n.t('exam_templates.create.failure'))
       end
     end
 
@@ -113,7 +113,7 @@ describe ExamTemplatesController do
         end
 
         it 'displays a flash error message' do
-          expect(flash[:error].map { |f| extract_text f }).to eq [I18n.t('exam_templates.update.failure')]
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.update.failure'))
         end
 
         it 'responds with 302' do
@@ -160,8 +160,7 @@ describe ExamTemplatesController do
         end
 
         it 'should send appropriate error message' do
-          expect(flash[:error].map { |f| extract_text f })
-            .to eq([I18n.t('exam_templates.upload_scans.search_failure')].map { |f| extract_text f })
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.upload_scans.search_failure'))
         end
       end
 
@@ -177,8 +176,7 @@ describe ExamTemplatesController do
         end
 
         it 'should send appropriate error message' do
-          expect(flash[:error].map { |f| extract_text f })
-            .to eq([I18n.t('exam_templates.upload_scans.missing')].map { |f| extract_text f })
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.upload_scans.missing'))
         end
       end
 
@@ -195,8 +193,7 @@ describe ExamTemplatesController do
         end
 
         it 'should send appropriate error message' do
-          expect(flash[:error].map { |f| extract_text f })
-            .to eq([I18n.t('exam_templates.upload_scans.invalid')].map { |f| extract_text f })
+          expect(flash[:error]).to have_message(I18n.t('exam_templates.upload_scans.invalid'))
         end
       end
     end
@@ -344,14 +341,14 @@ describe ExamTemplatesController do
   describe 'When the user is instructor' do
     let(:user) { create(:instructor) }
 
-    include_examples 'An authorized instructor or grader managing exam templates'
+    it_behaves_like 'An authorized instructor or grader managing exam templates'
   end
 
   describe 'When the user is grader' do
     context 'When grader is allowed to manage exam template' do
       let(:user) { create(:ta, manage_assessments: true) }
 
-      include_examples 'An authorized instructor or grader managing exam templates'
+      it_behaves_like 'An authorized instructor or grader managing exam templates'
     end
 
     context 'When grader is not allowed to manage exam template' do

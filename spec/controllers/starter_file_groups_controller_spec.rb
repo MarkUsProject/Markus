@@ -234,7 +234,7 @@ describe StarterFileGroupsController do
         let(:new_folders) { %w[../../hello] }
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not create the folder' do
@@ -270,7 +270,7 @@ describe StarterFileGroupsController do
         let(:delete_files) { %w[../../../../../LICENSE] }
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not delete the file' do
@@ -310,7 +310,7 @@ describe StarterFileGroupsController do
         let(:delete_folders) { %w[../../../../../doc] }
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not delete the folder' do
@@ -333,7 +333,7 @@ describe StarterFileGroupsController do
 
       it 'should flash an error message' do
         subject
-        expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+        expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
       end
     end
   end

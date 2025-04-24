@@ -31,6 +31,7 @@ class TestRun < ApplicationRecord
       failure(results['error'])
     else
       self.update!(status: :complete, problems: results['error'])
+      new_overall_comments = []
       results['test_groups'].each do |result|
         test_group_result = create_test_group_result(result)
         marks_total, marks_earned = 0, 0
@@ -61,8 +62,15 @@ class TestRun < ApplicationRecord
                                  marks_total: marks_total)
         create_annotations(result['annotations'])
         result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
+        if result['tags'].present?
+          add_tags(result['tags'])
+        end
+        if result['overall_comment'].present?
+          new_overall_comments.append(result['overall_comment'])
+        end
       end
       self.submission&.set_autotest_marks
+      add_overall_comment(new_overall_comments)
     end
   end
 
@@ -101,6 +109,46 @@ class TestRun < ApplicationRecord
     )
   end
 
+  def add_tags(tag_data)
+    tag_data.each do |new_tag|
+      tag_to_add = Tag.find_or_create_by(name: new_tag['name'], assessment_id: self.grouping.assessment_id) do |tag|
+        tag.description = tag['description']
+        tag.role_id = self.role_id
+      end
+
+      if self.grouping.tags.exclude?(tag_to_add)
+        self.grouping.tags << tag_to_add
+      end
+    end
+  end
+
+  def add_overall_comment(new_overall_comments)
+    return if self.submission.nil? || new_overall_comments.blank?
+
+    # Convert to block quotes
+    new_overall_comments.each do |comment|
+      comment.prepend('> ')
+      comment.gsub!("\n", "\n> ")
+    end
+    joined_overall_comments = new_overall_comments.join("\n\n")
+
+    # Add header
+    joined_overall_comments.prepend(
+      I18n.t(
+        'results.annotation.feedback_generated_header',
+        time: I18n.l(self.updated_at)
+      ) + "\n"
+    )
+
+    if self.submission.current_result.overall_comment.blank?
+      self.submission.current_result.update(overall_comment: joined_overall_comments)
+    else
+      self.submission.current_result.update(
+        overall_comment: self.submission.current_result.overall_comment + "\n\n" + joined_overall_comments
+      )
+    end
+  end
+
   def create_feedback_file(feedback_data, test_group_result)
     return if feedback_data.nil? || test_group_result.nil?
 
@@ -125,17 +173,26 @@ class TestRun < ApplicationRecord
         last_editor_id: self.role.id
       )
       result = self.submission.current_result
-      TextAnnotation.create(
+      Annotation.create(
         line_start: data['line_start'],
         line_end: data['line_end'],
         column_start: data['column_start'],
         column_end: data['column_end'],
+        x1: data['x1'],
+        x2: data['x2'],
+        y1: data['y1'],
+        y2: data['y2'],
+        start_node: data['start_node'],
+        start_offset: data['start_offset'],
+        end_node: data['end_node'],
+        end_offset: data['end_offset'],
         annotation_text_id: annotation_text.id,
         submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
         creator_id: self.role.id,
         creator_type: self.role.type,
         is_remark: !result.remark_request_submitted_at.nil?,
         annotation_number: count + i,
+        type: data['type'] || 'TextAnnotation',
         result_id: result.id
       )
     end

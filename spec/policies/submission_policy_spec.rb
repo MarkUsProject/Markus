@@ -58,21 +58,6 @@ describe SubmissionPolicy do
     end
   end
 
-  describe_rule :notebook_content? do
-    [:student, :ta, :instructor].each do |role_type|
-      context "as a #{role_type}" do
-        let(:role) { create(role_type) }
-
-        succeed 'scanner dependencies are installed' do
-          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
-        end
-        failed 'scanner dependencies are not installed' do
-          before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
-        end
-      end
-    end
-  end
-
   describe_rule :download_file? do
     succeed 'role is an instructor' do
       let(:role) { create(:instructor) }

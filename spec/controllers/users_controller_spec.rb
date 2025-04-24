@@ -49,12 +49,12 @@ describe UsersController do
   end
 
   describe 'User is an instructor in at least one course' do
-    include_examples 'settings'
+    it_behaves_like 'settings'
   end
 
   describe 'User is not an instructor in at least one course' do
     let(:role) { create(:ta) }
 
-    include_examples 'settings'
+    it_behaves_like 'settings'
   end
 end

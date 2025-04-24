@@ -177,7 +177,10 @@ module.exports = {
   transform: {"\\.[jt]sx?$": "babel-jest"},
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  transformIgnorePatterns: ["/node_modules/(?!i18n-js|mime)", "\\.pnp\\.[^\\/]+$"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!i18n-js|mime|react-dnd-html5-backend)",
+    "\\.pnp\\.[^\\/]+$",
+  ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

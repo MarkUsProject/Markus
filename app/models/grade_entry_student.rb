@@ -24,6 +24,8 @@ class GradeEntryStudent < ApplicationRecord
 
   validate :courses_should_match
 
+  before_destroy -> { throw(:abort) if self.grades.where.not(grade: nil).exists? }, prepend: true
+
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
   # entry form IDs and must return a list of (student ID, grade entry form IDs)

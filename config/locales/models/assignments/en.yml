@@ -45,6 +45,8 @@ en:
           attributes:
             is_timed:
               not_scanned: scanned_exam and is_timed cannot both be true
+            remote_autotest_settings_id:
+              taken: remote_autotest_settings_id has already been taken by the same autotester.
             start_time:
               before_due_date: must be before due date
     models:

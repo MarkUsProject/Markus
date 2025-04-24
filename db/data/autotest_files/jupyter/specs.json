@@ -4,7 +4,7 @@
       "tester_type": "py",
       "env_data": {
         "pip_requirements": "matplotlib numpy git+https://github.com/MarkUsProject/autotest-helpers.git#subdirectory=notebook_helper",
-        "python_version": "3.9"
+        "python_version": "3.13"
       },
       "test_data": [
         {
@@ -26,7 +26,7 @@
     {
       "tester_type": "jupyter",
       "env_data": {
-        "python_version": "3.9",
+        "python_version": "3.13",
         "pip_requirements": "matplotlib numpy"
       },
       "test_data": [

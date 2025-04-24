@@ -8,7 +8,7 @@ class Role < ApplicationRecord
   delegate_missing_to :user
 
   # Group relationships
-  has_many :memberships, dependent: :delete_all
+  has_many :memberships
   has_many :groupings, through: :memberships
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :annotations, as: :creator

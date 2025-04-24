@@ -3,7 +3,7 @@
 
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      window.submissionFileManager = makeSubmissionFileManager(document.getElementById('file_manager'),
+      makeSubmissionFileManager(document.getElementById('file_manager'),
         {
           course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>,
@@ -11,7 +11,8 @@
           readOnly: <%= !@assignment.allow_web_submits %>,
           enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
           enableUrlSubmit: <%= @grouping.assignment.url_submit %>,
-          starterFileChanged: <%= @grouping.starter_file_changed %>
+          starterFileChanged: <%= @grouping.starter_file_changed %>,
+          rmd_convert_enabled: <%= Rails.application.config.rmd_convert_enabled %>
         });
     });
   <% end %>
