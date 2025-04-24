@@ -3,7 +3,7 @@
  */
 
 import {StudentTable} from "../student_table";
-import {render, screen, within} from "@testing-library/react";
+import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 describe("For the StudentTable component's states and props", () => {
@@ -265,6 +265,57 @@ describe("For the StudentTable's display of students", () => {
 
     it("No rows found is shown", async () => {
       await screen.findByText("No rows found");
+    });
+  });
+
+  describe("When the remove button is pressed", () => {
+    let mock_course_id = 1;
+    let mock_student_id = 42;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      jest.spyOn(global, "fetch").mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          students: [
+            {
+              _id: mock_student_id,
+              user_name: "testtest",
+              first_name: "Test",
+              last_name: "Test",
+              email: "test@test.com",
+              hidden: false,
+            },
+          ],
+          sections: {},
+          counts: {all: 1, active: 1, inactive: 0},
+        }),
+      });
+
+      document.querySelector = jest.fn().mockReturnValue({
+        content: "mocked-csrf-token",
+      });
+    });
+
+    it("calls the correct endpoint when removeStudent is triggered", async () => {
+      render(<StudentTable course_id={mock_course_id} />);
+
+      await screen.findByText("testtest");
+
+      fireEvent.click(screen.getByText(I18n.t("remove")));
+
+      await waitFor(() => {
+        expect(fetch).toHaveBeenCalledWith(
+          Routes.course_student_path(mock_course_id, mock_student_id),
+          expect.objectContaining({
+            method: "DELETE",
+            headers: expect.objectContaining({
+              "Content-Type": "application/json",
+              "X-CSRF-Token": expect.any(String),
+            }),
+          })
+        );
+      });
     });
   });
 });

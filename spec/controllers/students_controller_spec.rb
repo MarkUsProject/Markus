@@ -168,6 +168,126 @@ describe StudentsController do
         let(:role) { instructor }
       end
     end
+
+    describe '#destroy' do
+      context 'when destroy fails' do
+        before do
+          allow_any_instance_of(Role).to receive(:destroy).and_return(false)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'does not remove the student' do
+          expect(Student.count).to eq(1)
+        end
+
+        it 'does not flash a success message' do
+          expect(flash.now[:success]).to be_nil
+        end
+
+        it 'flashes an error message' do
+          expect(flash[:error]).to contain_message(I18n.t('flash.students.destroy.error', user_name: student.user_name,
+                                                                                          message: ''))
+        end
+
+        it 'gets a bad request response' do
+          expect(response).to have_http_status(:bad_request)
+        end
+      end
+
+      context 'when student has a membership' do
+        before do
+          grouping = create(:grouping_with_inviter, inviter: student)
+          create(:membership, role: student, grouping: grouping)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'does not remove the student' do
+          expect(Student.count).to eq(1)
+        end
+
+        it 'does not flash a success message' do
+          expect(flash.now[:success]).to be_nil
+        end
+
+        it 'flashes an error message' do
+          expect(flash[:error]).to contain_message(I18n.t('flash.students.destroy.restricted',
+                                                          user_name: student.user_name, message: ''))
+        end
+
+        it 'gets a conflict response' do
+          expect(response).to have_http_status(:conflict)
+        end
+      end
+
+      context 'when student has a grade_entry_student that has an associated grade with a nil grade' do
+        before do
+          create(:grade_entry_form)
+          create(:grade, grade_entry_student: student.grade_entry_students.first, grade: nil)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'removes the student' do
+          expect(Student.count).to eq(0)
+        end
+
+        it 'flashes a success message' do
+          expect(flash.now[:success]).to contain_message(I18n.t('flash.students.destroy.success',
+                                                                user_name: student.user_name, message: ''))
+        end
+
+        it 'does not flash an error message' do
+          expect(flash[:error]).to be_nil
+        end
+
+        it 'gets a no content request response' do
+          expect(response).to have_http_status(:no_content)
+        end
+      end
+
+      context 'when student has a grade_entry_student that has an associated grade with a non-nil grade' do
+        before do
+          create(:grade_entry_form)
+          create(:grade, grade_entry_student: student.grade_entry_students.first)
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'does not remove the student' do
+          expect(Student.count).to eq(1)
+        end
+
+        it 'does not flash a success message' do
+          expect(flash.now[:success]).to be_nil
+        end
+
+        it 'flashes an error message' do
+          expect(flash[:error]).to contain_message(I18n.t('flash.students.destroy.error',
+                                                          user_name: student.user_name, message: ''))
+        end
+
+        it 'gets a bad request response' do
+          expect(response).to have_http_status(:bad_request)
+        end
+      end
+
+      context 'succeeds for student removal' do
+        before do
+          delete_as instructor, :destroy, params: { course_id: course.id, id: student.id }
+        end
+
+        it 'removes student' do
+          expect(Student.exists?).to be(false)
+        end
+
+        it 'flashes a success message' do
+          expect(flash.now[:success]).to contain_message(I18n.t('flash.students.destroy.success',
+                                                                user_name: student.user_name))
+        end
+
+        it 'gets a no content response' do
+          expect(response).to have_http_status(:no_content)
+        end
+      end
+    end
   end
 
   describe 'role is a student' do

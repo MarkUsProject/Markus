@@ -62,6 +62,24 @@ class RawStudentTable extends React.Component {
     }).then(this.fetchData);
   };
 
+  removeStudent = student_id => {
+    fetch(Routes.course_student_path(this.props.course_id, student_id), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          this.fetchData();
+        }
+      })
+      .catch(error => {
+        console.error("Error removing student:", error);
+      });
+  };
+
   render() {
     const {data, loading} = this.state;
 
@@ -178,12 +196,19 @@ class RawStudentTable extends React.Component {
               Header: I18n.t("actions"),
               accessor: "_id",
               Cell: data => (
-                <span>
-                  <a href={Routes.edit_course_student_path(this.props.course_id, data.value)}>
-                    {I18n.t("edit")}
-                  </a>
-                  &nbsp;
-                </span>
+                <>
+                  <span>
+                    <a href={Routes.edit_course_student_path(this.props.course_id, data.value)}>
+                      {I18n.t("edit")}
+                    </a>
+                  </span>
+                  &nbsp;|&nbsp;
+                  <span>
+                    <a href="#" onClick={() => this.removeStudent(data.value)}>
+                      {I18n.t("remove")}
+                    </a>
+                  </span>
+                </>
               ),
               sortable: false,
               filterable: false,
