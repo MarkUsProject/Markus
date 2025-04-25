@@ -3,10 +3,10 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
     window.dashboard = makeDashboard(document.getElementById('dashboard-react'),
-                                     { course_id: <%= @current_course.id %> });
-    <% unless @current_assignment.nil? %>
-      window.dashboard.setState({assessment_id: <%= @current_assignment.id %>, assessment_type: 'Assignment'});
-    <% end %>
+                                     { course_id: <%= @current_course.id %>,
+                                       initial_assessment_id: <%= @current_assignment&.id || 'null' %>,
+                                       initial_assessment_type: "<%= @current_assignment.nil? ? '' : 'Assignment' %>"
+                                     });
     })
   <% end %>
 <% end %>

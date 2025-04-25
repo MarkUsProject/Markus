@@ -40,6 +40,7 @@ Rails.application.routes.draw do
           member do
             put 'add_tag'
             put 'remove_tag'
+            post 'collect_submission'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
@@ -169,7 +170,6 @@ Rails.application.routes.draw do
     resources :submissions, only: [] do
       member do
         get 'collect_and_begin_grading'
-        get 'get_file'
       end
     end
 
@@ -328,7 +328,7 @@ Rails.application.routes.draw do
           get 'download'
           post 'zip_groupings_files'
           get 'download_zipped_file'
-          get 'notebook_content'
+          get 'html_content'
           get 'download_summary'
           get 'repo_browser'
           post 'repo_browser'
@@ -455,7 +455,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :students, only: [:create, :new, :index, :edit, :update] do
+    resources :students, only: [:create, :new, :index, :edit, :update, :destroy] do
       collection do
         patch 'bulk_modify'
         get 'manage'

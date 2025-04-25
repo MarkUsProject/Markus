@@ -49,7 +49,7 @@ describe GradersController do
     end
 
     context 'doing a POST on :upload (assigning to groups)' do
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @assignment.id, model: TaMembership, groupings: true } }
       end
 
@@ -186,7 +186,7 @@ describe GradersController do
     end
 
     context 'doing a POST on :upload (assigning to criteria)' do
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: @assignment.id, model: TaMembership, criteria: true } }
       end
 
@@ -561,6 +561,7 @@ describe GradersController do
           @grouping1 = create(:grouping, assignment: @assignment)
           @grouping2 = create(:grouping, assignment: @assignment)
           @grouping3 = create(:grouping, assignment: @assignment)
+          @grouping4 = create(:grouping, assignment: @assignment)
           @ta1 = create(:ta)
           @ta2 = create(:ta)
           @ta3 = create(:ta)
@@ -759,6 +760,38 @@ describe GradersController do
 
             it 'should assign graders' do
               expect(@grouping1.tas).to be_empty
+            end
+          end
+        end
+
+        context 'and when assigning to multiple groupings and skip_empty_submissions is true' do
+          before do
+            # defining submissions for use in the 'asisgn' post
+            submission
+            submission2
+            submission3
+            submission4
+            post_as @instructor,
+                    :global_actions,
+                    params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
+                              groupings: [@grouping1.id, @grouping2.id, @grouping3.id, @grouping4.id],
+                              graders: [@ta1.id], current_table: 'groups_table', skip_empty_submissions: 'true' }
+          end
+
+          context 'and some groups have empty submissions while some do not' do
+            let(:submission) { create(:version_used_submission, grouping: @grouping1, is_empty: true) }
+            let(:submission2) { create(:version_used_submission, grouping: @grouping2, is_empty: false) }
+            let(:submission3) { create(:version_used_submission, grouping: @grouping3, is_empty: true) }
+            let(:submission4) { create(:version_used_submission, grouping: @grouping4, is_empty: false) }
+
+            it 'should not assign graders to groups with empty submissions' do
+              expect(@grouping1.tas).to be_empty
+              expect(@grouping3.tas).to be_empty
+            end
+
+            it 'should assign graders to groups with non-empty submissions' do
+              expect(@grouping2.tas).to include(@ta1)
+              expect(@grouping4.tas).to include(@ta1)
             end
           end
         end

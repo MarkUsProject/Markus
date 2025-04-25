@@ -3,7 +3,7 @@ describe TasController do
   let(:course) { instructor.course }
 
   describe '#upload' do
-    include_examples 'a controller supporting upload', formats: [:csv], background: true do
+    it_behaves_like 'a controller supporting upload', formats: [:csv], background: true do
       let(:params) { { course_id: course.id } }
     end
 
@@ -300,7 +300,8 @@ describe TasController do
       it 'does not delete the TA, shows an error message, and gets a bad request response' do
         expect(Ta.count).to eq(1)
         expect(flash.now[:success]).to be_nil
-        expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.error', user_name: ta.user_name, message: ''))
+        expect(flash[:error]).to contain_message(I18n.t('flash.tas.destroy.error', user_name: ta.user_name,
+                                                                                   message: ''))
         expect(response).to have_http_status(:bad_request)
       end
     end
@@ -317,8 +318,8 @@ describe TasController do
       it 'does not delete the TA, shows an error message and gets a conflict response' do
         expect(Ta.count).to eq(1)
         expect(flash.now[:success]).to be_nil
-        expect(flash[:error].first).to include(I18n.t('flash.tas.destroy.restricted', user_name: ta.user_name,
-                                                                                      message: ''))
+        expect(flash[:error]).to contain_message(I18n.t('flash.tas.destroy.restricted', user_name: ta.user_name,
+                                                                                        message: ''))
         expect(response).to have_http_status(:conflict)
       end
     end
@@ -341,8 +342,8 @@ describe TasController do
 
       it 'deletes TA, flashes success, and gets an ok response' do
         expect(Ta.exists?).to be(false)
-        expect(flash.now[:success].first).to include(I18n.t('flash.tas.destroy.success', user_name: ta.user_name))
-        expect(response).to have_http_status(:ok)
+        expect(flash.now[:success]).to contain_message(I18n.t('flash.tas.destroy.success', user_name: ta.user_name))
+        expect(response).to have_http_status(:no_content)
       end
 
       it 'deletes associated grader permisison' do

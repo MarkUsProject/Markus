@@ -16,20 +16,20 @@ repos:
               )$
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
-  -   repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v3.1.0
+  -   repo: https://github.com/rbubley/mirrors-prettier
+      rev: v3.5.3
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v16.10.0
+      rev: v16.18.0
       hooks:
         - id: stylelint
           additional_dependencies: [
-              "stylelint@16.3.1",
+              "stylelint@16.11.0",
               "postcss-scss@4.0.9",
-              "stylelint-config-sass-guidelines@11.1.0",
-              "postcss@8.4.38",
+              "stylelint-config-sass-guidelines@12.1.0",
+              "postcss@8.4.49",
             ]
           args: ["--fix"]
           types_or: ["css", "scss"]
@@ -39,7 +39,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.68.0
+    rev: v1.75.2
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -52,10 +52,10 @@ repos:
             Vagrantfile
           )$
         additional_dependencies:
-          - rubocop-rails:2.26.1
-          - rubocop-performance:1.22.1
+          - rubocop-rails:2.27.0
+          - rubocop-performance:1.23.0
           - rubocop-factory_bot:2.26.1
-          - rubocop-rspec:3.0.5
+          - rubocop-rspec:3.2.0
           - rubocop-rspec_rails:2.30.0
           - rubocop-capybara:2.21.0
 

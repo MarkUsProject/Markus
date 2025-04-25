@@ -34,6 +34,6 @@ describe LtiRosterSyncJob do
          role_types: [LtiDeployment::LTI_ROLES[:learner], LtiDeployment::LTI_ROLES[:ta]] }]
     end
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 end

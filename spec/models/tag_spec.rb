@@ -3,5 +3,7 @@ describe Tag do
 
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id) }
+
+  it_behaves_like 'course associations'
 end

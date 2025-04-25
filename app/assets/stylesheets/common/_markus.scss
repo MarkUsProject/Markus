@@ -88,6 +88,13 @@ h4 {
   margin: 0;
 }
 
+h5,
+h6 {
+  font: 400 1em $fonts;
+  font-style: italic;
+  margin: 0;
+}
+
 /** Paragraphs */
 
 p + p {
@@ -186,8 +193,8 @@ textarea {
 
   &:focus {
     background-color: $background-main;
-    border-color: $primary-three;
-    border-width: 3px;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px $primary-three;
   }
 
   &:invalid {
@@ -1167,13 +1174,77 @@ nav {
 
 // Text editing and previews
 .preview {
-  border: 1px dashed $primary-two;
-  margin: 1em 0;
-  max-height: 15em;
+  border: 1px dashed $primary-three;
+  margin-right: 1em;
+  max-height: 20em;
   min-height: 3em;
   overflow-y: auto;
   padding: 0 10px;
   word-wrap: break-word;
+}
+
+.annotation_text_display,
+.preview {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 1rem;
+  }
+
+  ol,
+  ul {
+    padding-left: 1.5rem;
+  }
+
+  // The following is based on Simple.css: https://simplecss.org/.
+  blockquote {
+    border-inline-start: 0.2rem solid $primary-three;
+    font-style: normal;
+    margin-inline-start: 1rem;
+    margin-inline-end: 0;
+    margin-block: 1rem;
+    padding: 0.2rem 0.8rem;
+  }
+
+  table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+
+  figure > table {
+    width: max-content;
+    margin: 0;
+  }
+
+  td,
+  th {
+    border: 1px solid $line;
+    text-align: start;
+    padding: 0.5rem;
+  }
+
+  th {
+    background-color: $primary-one;
+    color: $background-main;
+    font-weight: bold;
+  }
+
+  table caption {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
 }
 
 .autosave-text {

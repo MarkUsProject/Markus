@@ -21,6 +21,20 @@ services:
       - postgres
       - redis
 
+  deps-updater: &deps-updater
+    <<: *app
+    entrypoint: ".dockerfiles/entrypoint-dev-deps-updater.sh"
+    profiles: ["manual"]  # Prevent service from starting automatically
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/app/tmp/pw-browsers
+    volumes:
+      - .:/app:cached
+      - .dockerfiles/:/app/.dockerfiles
+      - bundle:/bundle
+      - node_modules:/app/node_modules
+      - python:/app/venv
+      - tmp:/app/tmp
+
   rails: &rails
     <<: *app
     image: markus-dev-rails:1.2.0
@@ -68,7 +82,7 @@ services:
       - TZ=America/Toronto
     command: /usr/sbin/sshd -D -e
     user: root
-    extra_hosts: []
+    extra_hosts: {}
     ports:
       - '2222:22'
     entrypoint: .dockerfiles/entrypoint-dev-ssh.sh
@@ -77,7 +91,6 @@ services:
   resque: &resque
     <<: *rails
     image: markus-dev-resque:1.2.0
-    entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
@@ -110,7 +123,6 @@ services:
   webpack:
     <<: *app
     image: markus-dev-webpack:1.2.0
-    entrypoint: .dockerfiles/entrypoint-dev-webpack.sh
     command: npm run build-dev
     volumes:
       - bundle:/bundle

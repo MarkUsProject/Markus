@@ -19,7 +19,7 @@ describe AnnotationText do
     it { is_expected.to belong_to(:last_editor).optional }
     it { is_expected.to have_one(:course) }
 
-    include_examples 'course associations'
+    it_behaves_like 'course associations'
 
     describe '#escape_content' do
       it 'double escapes forward slash' do

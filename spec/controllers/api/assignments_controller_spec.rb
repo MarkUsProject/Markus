@@ -204,7 +204,7 @@ describe Api::AssignmentsController do
     end
 
     context 'GET #index' do
-      include_examples 'GET #index'
+      it_behaves_like 'GET #index'
 
       context 'with a single hidden assignment' do
         let(:assignment_hidden) { create(:assignment, course: course, is_hidden: true) }
@@ -610,7 +610,7 @@ describe Api::AssignmentsController do
     end
 
     context 'GET #index' do
-      include_examples 'GET #index'
+      it_behaves_like 'GET #index'
 
       context 'with a single hidden assignment' do
         let(:assignment_hidden) { create(:assignment, course: course, is_hidden: true) }
@@ -701,7 +701,7 @@ describe Api::AssignmentsController do
         end
 
         context 'when the file does not exist yet' do
-          include_examples 'submits successfully'
+          it_behaves_like 'submits successfully'
         end
 
         context 'when the file already exists' do
@@ -731,7 +731,7 @@ describe Api::AssignmentsController do
             expect(response).to have_http_status(:forbidden)
           end
 
-          include_examples 'does not submit'
+          it_behaves_like 'does not submit'
         end
 
         context 'when the assignment is hidden' do
@@ -744,7 +744,7 @@ describe Api::AssignmentsController do
             expect(response).to have_http_status(:forbidden)
           end
 
-          include_examples 'does not submit'
+          it_behaves_like 'does not submit'
         end
 
         context 'when the assignment requires submission of only required files' do
@@ -760,13 +760,13 @@ describe Api::AssignmentsController do
               expect(response).to have_http_status(:unprocessable_entity)
             end
 
-            include_examples 'does not submit'
+            it_behaves_like 'does not submit'
           end
 
           context 'the file is required' do
             before { create(:assignment_file, filename: 'v1/x/y/test.txt', assessment_id: assignment.id) }
 
-            include_examples 'submits successfully'
+            it_behaves_like 'submits successfully'
           end
         end
 
@@ -803,7 +803,7 @@ describe Api::AssignmentsController do
     end
 
     context 'GET #index' do
-      include_examples 'GET #index'
+      it_behaves_like 'GET #index'
 
       context 'with a single hidden assignment' do
         let(:assignment_hidden) { create(:assignment, course: course, is_hidden: true) }

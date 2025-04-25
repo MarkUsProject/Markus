@@ -18,7 +18,7 @@ class SubmissionsController < ApplicationController
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
-  content_security_policy_report_only only: :notebook_content
+  content_security_policy_report_only only: :html_content
 
   def index
     respond_to do |format|
@@ -459,6 +459,7 @@ class SubmissionsController < ApplicationController
           commit_success, commit_msg = commit_transaction(repo, txn)
           flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
           messages << commit_msg
+          head :ok
         else
           head :unprocessable_entity
         end
@@ -472,64 +473,6 @@ class SubmissionsController < ApplicationController
     head :bad_request
   end
 
-  def get_file
-    submission = record
-    grouping = submission.grouping
-    assignment = grouping.assignment
-
-    if !current_role.is_a_reviewer?(assignment.pr_assignment) && current_role.student? &&
-      current_role.accepted_grouping_for(assignment.id).id != grouping.id
-      flash_message(:error,
-                    t('submission_file.error.no_access',
-                      submission_file_id: params[:submission_file_id]))
-      redirect_back(fallback_location: root_path)
-      return
-    end
-
-    file = SubmissionFile.find(params[:submission_file_id])
-    file_size = begin
-      file.retrieve_file.size
-    rescue StandardError
-      0
-    end
-    if file.is_supported_image?
-      render json: { type: 'image', size: file_size }
-    elsif file.is_pdf?
-      render json: { type: 'pdf', size: file_size }
-    elsif file.is_pynb?
-      render json: { type: 'jupyter-notebook', size: file_size }
-    else
-      grouping.access_repo do |repo|
-        revision = repo.get_revision(submission.revision_identifier)
-        raw_file = revision.files_at_path(file.path)[file.filename]
-        file_type = FileHelper.get_file_type(file.filename)
-        if raw_file.nil?
-          file_contents = I18n.t('student.submission.missing_file', file_name: file.filename)
-          file_type = 'unknown'
-        else
-          file_contents = repo.download_as_string(raw_file)
-          file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-
-          file_type = 'unknown' unless file_type != 'markusurl' || assignment.url_submit
-
-          if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
-            # If the file appears to be binary, display a warning
-            file_contents = I18n.t('submissions.cannot_display')
-            file_type = 'binary'
-          end
-        end
-
-        max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
-        # Omit content if it exceeds the maximum size requests by the client
-        render json: {
-          content: file_size <= max_content_size || max_content_size == -1 ? file_contents.to_json : '',
-          type: file_type,
-          size: file_size
-        }
-      end
-    end
-  end
-
   def download_file
     if params[:download_zip_button]
       download_file_zip
@@ -540,10 +483,13 @@ class SubmissionsController < ApplicationController
       return head :not_found
     end
 
-    if params[:show_in_browser] == 'true' && file.is_pynb? && Rails.application.config.nbconvert_enabled
-      redirect_to notebook_content_course_assignment_submissions_url(current_course,
-                                                                     record.grouping.assignment,
-                                                                     select_file_id: params[:select_file_id])
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
+    if params[:show_in_browser] == 'true' &&
+      ((file.is_pynb? && nbconvert_enabled) || (file.is_rmd? && rmd_convert_enabled))
+      redirect_to html_content_course_assignment_submissions_url(current_course,
+                                                                 record.grouping.assignment,
+                                                                 select_file_id: params[:select_file_id])
       return
     end
 
@@ -558,6 +504,13 @@ class SubmissionsController < ApplicationController
       head :internal_server_error
       return
     end
+
+    max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
+    if max_content_size != -1 && file_contents.size > max_content_size
+      head :payload_too_large
+      return
+    end
+
     filename = file.filename
     # Display the file in the page if it is an image/pdf, and download button
     # was not explicitly pressed
@@ -610,9 +563,11 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
     nbconvert_enabled = Rails.application.config.nbconvert_enabled
-
-    if FileHelper.get_file_type(params[:file_name]) == 'jupyter-notebook' && preview && nbconvert_enabled
-      redirect_to action: :notebook_content,
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
+    file_type = FileHelper.get_file_type(params[:file_name])
+    if ((file_type == 'jupyter-notebook' && nbconvert_enabled) \
+     || (file_type == 'rmarkdown' && rmd_convert_enabled)) && preview
+      redirect_to action: :html_content,
                   course_id: current_course.id,
                   assignment_id: params[:assignment_id],
                   grouping_id: params[:grouping_id],
@@ -692,7 +647,7 @@ class SubmissionsController < ApplicationController
     send_data_download csv_data, filename: "#{assignment.short_identifier}_submissions.csv"
   end
 
-  def notebook_content
+  def html_content
     if params[:select_file_id]
       file = SubmissionFile.find(params[:select_file_id])
       file_contents = file.retrieve_file
@@ -723,15 +678,19 @@ class SubmissionsController < ApplicationController
       filename = params[:file_name]
     end
 
-    @notebook_type = FileHelper.get_file_type(filename)
+    @file_type = FileHelper.get_file_type(filename)
     if path.nil?
-      @notebook_content = ''
+      @html_content = ''
     else
       sanitized_filename = ActiveStorage::Filename.new("#{filename}.#{revision_identifier}").sanitized
       unique_path = File.join(grouping.group.repo_name, path, sanitized_filename)
-      @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+      if @file_type == 'rmarkdown'
+        @html_content = rmd_to_html(file_contents, unique_path)
+      else
+        @html_content = notebook_to_html(file_contents, unique_path, @file_type)
+      end
     end
-    render layout: 'notebook'
+    render layout: 'html_content'
   end
 
   ##
@@ -992,6 +951,27 @@ class SubmissionsController < ApplicationController
         elem.set_attribute(:id, unique_id)
       end
       File.write(cache_file, html.to_html)
+    end
+    File.read(cache_file)
+  end
+
+  def rmd_to_html(file_contents, unique_path)
+    cache_file = Pathname.new('tmp/rmd_html_cache').join("#{unique_path}.html")
+    unless File.exist? cache_file
+      FileUtils.mkdir_p(cache_file.dirname)
+      begin
+        file_contents.gsub!(/^\s*```{r[^}]*}\s*/m, "```r\n")
+        args = [
+          'pandoc',
+          '-o', Rails.root.join(cache_file).to_s,
+          '--to=html',
+          '--standalone'
+        ]
+        _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
+        return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?
+      rescue StandardError => e
+        return "#{I18n.t('submissions.invalid_rmd_content')}: #{e}"
+      end
     end
     File.read(cache_file)
   end

@@ -1,5 +1,139 @@
 # Changelog
 
+## [v2.7.0]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
+- Fix front-end content shift when an input element is focused (#7384)
+- Tooltip text for Package requirements file for Python autotester settings (#7383)
+- Pass back tags and overall comments from Autotester to MarkUs (#7387)
+- Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
+- Group test results by Test Groups id (#7422)
+- Display HTML previews of RMarkdown files (#7394)
+- Allow instructors to assign scans to inactive students (#7482)
+- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
+- Modified add_group_api to use username as group name for individual assignments (#7481)
+- Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
+- Allow creating image annotations from a test run's outputs (#7486)
+- Added an API that collects a single submission (#7494)
+- Enable removal of a student from a course (#7480)
+
+### 🐛 Bug fixes
+
+- Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+- Ensures mark levels on a rubric criterion are properly scaled when its max mark is updated (#7311)
+- Refactor contributors list in About section to read from markus-contributors.txt (#7374)
+- Optimized the querying of submissions when assigning graders (#7381)
+- Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
+- Fix tag creation failing in tags table (#7426)
+- Ensure tag names are unique within an assignment (#7430)
+- Update flash style to "notice" for "setting up test env" message (#7445)
+- Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
+- Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
+- Ensured annotations appear in results view when in fullscreen mode (#7487)
+- Fixed bug in `ImageViewer` where annotations did not always appear on initial image load (#7487)
+
+### 🔧 Internal changes
+
+- Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
+- Replace moment.js dependency with much smaller dayjs (#7346)
+- Refactor `FileViewer`, `TextViewer`, `BinaryViewer` and `ImageViewer` components (#7270)
+- Pin `mistune` Python dependency to preserve compatibility with `nbconvert` (#7371)
+- Cache playwright's chromium installation on GitHub Actions (#7372)
+- Fix broken link to the Vagrant installation guide in `README.md` (#7349)
+- Fix `extra_hosts` configuration in `compose.yaml` (#7375)
+- Add unit tests for `marks_graders_controller` (#7382)
+- Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
+- Refactor the `Result` component and its children to use React context API (#7380)
+- Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
+- Update Python version to 3.13 in seed autotest schemas (#7388)
+- Rename jupyter notebook content functions and files to generalize to html content (#7391)
+- Update to React v18 (#7392)
+- Remove unused Javascript files (#7442)
+- Refactor scanned test generation and test splitting from polling to websockets (#7428)
+- Move Docker dependency updates into separate service (#7451)
+- Fixed flaky test due to daylight savings time issue (#7452)
+- Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
+- Updated to react-flatpickr v4.0.0 (#7478)
+- Remove `mistune` Python explicit dependency (#7483)
+- Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
+- Added explicit permissions to GitHub Actions workflow configuration (#7495)
+
+## [v2.6.1]
+
+### ✨ New features and improvements
+
+- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
+- Added zoom and rotate functionality to PDF viewer (#7306)
+
+### 🐛 Bug fixes
+
+- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+- Fixed bug in grading context menu for editing/deleting annotations (#7314)
+- Fixed bug in grading annotations table when deleting annotations (#7314)
+- Ensure correct LTI version of lti_user_id is used on launch (#7335)
+
+## [v2.6.0]
+
+### ✨ New features and improvements
+
+- Fix front-end content shift when an input element is focused (#7384)
+- Tooltip text for Package requirements file for Python autotester settings (#7383)
+- Pass back tags and overall comments from Autotester to MarkUs (#7387)
+- Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
+- Group test results by Test Groups id (#7422)
+- Display HTML previews of RMarkdown files (#7394)
+- Allow instructors to assign scans to inactive students (#7482)
+- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
+- Modified add_group_api to use username as group name for individual assignments (#7481)
+- Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
+- Allow creating image annotations from a test run's outputs (#7486)
+- Added an API that collects a single submission (#7494)
+- Enable removal of a student from a course (#7480)
+
+### 🐛 Bug fixes
+
+- Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+- Ensures mark levels on a rubric criterion are properly scaled when its max mark is updated (#7311)
+- Refactor contributors list in About section to read from markus-contributors.txt (#7374)
+- Optimized the querying of submissions when assigning graders (#7381)
+- Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
+- Fix tag creation failing in tags table (#7426)
+- Ensure tag names are unique within an assignment (#7430)
+- Update flash style to "notice" for "setting up test env" message (#7445)
+- Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
+- Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
+- Ensured annotations appear in results view when in fullscreen mode (#7487)
+- Fixed bug in `ImageViewer` where annotations did not always appear on initial image load (#7487)
+
+### 🔧 Internal changes
+
+- Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
+- Replace moment.js dependency with much smaller dayjs (#7346)
+- Refactor `FileViewer`, `TextViewer`, `BinaryViewer` and `ImageViewer` components (#7270)
+- Pin `mistune` Python dependency to preserve compatibility with `nbconvert` (#7371)
+- Cache playwright's chromium installation on GitHub Actions (#7372)
+- Fix broken link to the Vagrant installation guide in `README.md` (#7349)
+- Fix `extra_hosts` configuration in `compose.yaml` (#7375)
+- Add unit tests for `marks_graders_controller` (#7382)
+- Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
+- Refactor the `Result` component and its children to use React context API (#7380)
+- Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
+- Update Python version to 3.13 in seed autotest schemas (#7388)
+- Rename jupyter notebook content functions and files to generalize to html content (#7391)
+- Update to React v18 (#7392)
+- Remove unused Javascript files (#7442)
+- Refactor scanned test generation and test splitting from polling to websockets (#7428)
+- Move Docker dependency updates into separate service (#7451)
+- Fixed flaky test due to daylight savings time issue (#7452)
+- Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
+- Updated to react-flatpickr v4.0.0 (#7478)
+- Remove `mistune` Python explicit dependency (#7483)
+- Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
+- Added explicit permissions to GitHub Actions workflow configuration (#7495)
+
 ## [v2.6.1]
 
 ### ✨ New features and improvements

@@ -167,24 +167,25 @@ class GroupsController < ApplicationController
   def get_names
     names = current_course.students
                           .joins(:user)
-                          .where('(lower(first_name) like ? OR
+                          .where("(lower(first_name) like ? OR
                                    lower(last_name) like ? OR
                                    lower(user_name) like ? OR
-                                   id_number like ?) AND roles.hidden = false AND roles.id NOT IN (?)',
+                                   id_number like ?) AND roles.hidden IN (?) AND roles.id NOT IN (?)",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term].downcase)}%",
                                  "#{ApplicationRecord.sanitize_sql_like(params[:term])}%",
+                                 params[:display_inactive] == 'true' ? [true, false] : [false],
                                  Membership.select(:role_id)
                                            .joins(:grouping)
                                            .where(groupings: { assessment_id: params[:assignment_id] }))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
-                                         'users.first_name', 'users.last_name')
+                                         'users.first_name', 'users.last_name', 'roles.hidden')
     names = names.map do |h|
       { id: h[:id],
         id_number: h['users.id_number'],
         user_name: h['users.user_name'],
-        value: "#{h['users.first_name']} #{h['users.last_name']}" }
+        value: "#{h['users.first_name']} #{h['users.last_name']}#{h['roles.hidden'] ? ' (inactive)' : ''}" }
     end
     render json: names
   end

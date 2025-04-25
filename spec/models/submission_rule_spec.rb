@@ -125,7 +125,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.ago)
           end
 
-          include_examples 'due_date_calculations', true, true
+          it_behaves_like 'due_date_calculations', true, true
         end
 
         context 'and Section Due Date is in the future' do
@@ -133,7 +133,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.from_now)
           end
 
-          include_examples 'due_date_calculations', true, false
+          it_behaves_like 'due_date_calculations', true, false
         end
       end
 
@@ -147,7 +147,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.ago)
           end
 
-          include_examples 'due_date_calculations', false, true
+          it_behaves_like 'due_date_calculations', false, true
         end
 
         context 'and Section Due Date is in the future' do
@@ -155,7 +155,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.from_now)
           end
 
-          include_examples 'due_date_calculations', false, false
+          it_behaves_like 'due_date_calculations', false, false
         end
       end
     end
@@ -173,7 +173,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.ago)
           end
 
-          include_examples 'due_date_calculations', true, true, section_enabled: false
+          it_behaves_like 'due_date_calculations', true, true, section_enabled: false
         end
 
         context 'and Section Due Date is in the future' do
@@ -181,7 +181,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.from_now)
           end
 
-          include_examples 'due_date_calculations', true, true, section_enabled: false
+          it_behaves_like 'due_date_calculations', true, true, section_enabled: false
         end
       end
 
@@ -195,7 +195,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.ago)
           end
 
-          include_examples 'due_date_calculations', false, false, section_enabled: false
+          it_behaves_like 'due_date_calculations', false, false, section_enabled: false
         end
 
         context 'and Section Due Date is in the future' do
@@ -203,7 +203,7 @@ describe SubmissionRule do
             section_due_date.update!(due_date: 1.day.from_now)
           end
 
-          include_examples 'due_date_calculations', false, false, section_enabled: false
+          it_behaves_like 'due_date_calculations', false, false, section_enabled: false
         end
       end
     end

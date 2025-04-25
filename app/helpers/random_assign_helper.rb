@@ -12,7 +12,6 @@ module RandomAssignHelper
   # at the end of the assignment, including pre-existing peer reviews.
   def perform_random_assignment(pr_assignment, num_groups,
                                 reviewer_ids, reviewee_ids)
-
     # If the caller passes string ids from get_grouping_info,
     # they should be converted.
     reviewer_ids = reviewer_ids.map(&:to_i)

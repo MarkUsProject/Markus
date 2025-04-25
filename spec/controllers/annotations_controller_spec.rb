@@ -4,6 +4,7 @@ describe AnnotationsController do
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
   let(:notebook_submission_file) { create(:notebook_submission_file, submission: submission) }
+  let(:rmd_submission_file) { create(:rmd_submission_file, submission: submission) }
   let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
   let(:image_submission_file) { create(:image_submission_file, submission: submission) }
   let(:submission_file) { create(:submission_file, submission: submission) }
@@ -60,7 +61,7 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully creates an html annotation' do
+      it 'successfully creates an html annotation for jupyter notebook file' do
         post_as user,
                 :add_existing_annotation,
                 params: { annotation_text_id: annotation_text.id, submission_file_id: notebook_submission_file.id,
@@ -70,6 +71,38 @@ describe AnnotationsController do
 
         expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
+      end
+
+      context 'when rmd_convert_enabled is true' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+        it 'adds an html annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
+
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
+      end
+
+      context 'when rmd_convert_enabled is false' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
+        it 'adds a text annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            line_start: 1, line_end: 1, column_start: 1, column_end: 1, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
+
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
       end
 
       it 'successfully creates a PDF annotation' do
@@ -217,7 +250,7 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully creates an html annotation' do
+      it 'successfully creates an html annotation for a jupyter notebook file' do
         post_as user,
                 :create,
                 params: { content: annotation_text.content, category_id: annotation_category.id,
@@ -228,6 +261,38 @@ describe AnnotationsController do
 
         expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
+      end
+
+      context 'when rmd_convert_enabled is true' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+        it 'adds an html annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            start_node: 'a', start_offset: 1, end_node: 'b', end_offset: 0, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
+
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
+      end
+
+      context 'when rmd_convert_enabled is false' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
+        it 'adds a text annotation to an RMarkdown submission file' do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: rmd_submission_file.id,
+                            line_start: 1, line_end: 1, column_start: 1, column_end: 1, result_id: result.id,
+                            course_id: course.id },
+                  format: :js
+
+          expect(response).to have_http_status(:success)
+          expect(result.annotations.reload.size).to eq 1
+        end
       end
 
       it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do
@@ -379,7 +444,7 @@ describe AnnotationsController do
   describe 'an authenticated instructor' do
     let!(:user) { create(:instructor) }
 
-    include_examples 'an authenticated instructor or TA'
+    it_behaves_like 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -442,7 +507,7 @@ describe AnnotationsController do
   describe 'an authenticated TA' do
     let!(:user) { create(:ta) }
 
-    include_examples 'an authenticated instructor or TA'
+    it_behaves_like 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }

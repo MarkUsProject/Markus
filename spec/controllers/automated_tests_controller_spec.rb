@@ -16,7 +16,7 @@ describe AutomatedTestsController do
   end
 
   shared_examples 'An authorized instructor and grader managing automated testing' do
-    include_examples 'An unauthorized role accessing student interface'
+    it_behaves_like 'An unauthorized role accessing student interface'
     context 'PUT update' do
       before { put_as role, :update, params: params }
       # TODO: write tests
@@ -279,7 +279,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not save the file' do
@@ -294,7 +294,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not create the folder' do
@@ -309,7 +309,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not delete the folder' do
@@ -324,7 +324,7 @@ describe AutomatedTestsController do
         end
 
         it 'flashes an error message' do
-          expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          expect(flash[:error]).to contain_message(I18n.t('errors.invalid_path'))
         end
 
         it 'does not delete the file' do
@@ -578,7 +578,7 @@ describe AutomatedTestsController do
             get_as student, :student_interface, params: params
             assignment.reload
             token_start_time = assignment.token_start_date
-            expected_next_token_generation_time = token_start_time + 2.days
+            expected_next_token_generation_time = token_start_time + 48.hours
             formatted_expected_time = I18n.l(expected_next_token_generation_time)
             expect(assigns(:next_token_generation_time)).to eq(formatted_expected_time)
           end
@@ -673,27 +673,27 @@ describe AutomatedTestsController do
     end
 
     context 'when student trying to manage automated testing' do
-      include_examples 'An unauthorized role managing automated testing'
+      it_behaves_like 'An unauthorized role managing automated testing'
     end
   end
 
   describe 'an authenticated instructor' do
     let(:role) { create(:instructor) }
 
-    include_examples 'An authorized instructor and grader managing automated testing'
+    it_behaves_like 'An authorized instructor and grader managing automated testing'
   end
 
   context 'when the grader is allowed to manage automated testing' do
     let(:role) { create(:ta, manage_assessments: true) }
 
-    include_examples 'An authorized instructor and grader managing automated testing'
+    it_behaves_like 'An authorized instructor and grader managing automated testing'
   end
 
   context 'when the grader is not allowed to manage automated testing' do
     # By default all the permissions are set to false for a grader
     let(:role) { create(:ta) }
 
-    include_examples 'An unauthorized role managing automated testing'
-    include_examples 'An unauthorized role accessing student interface'
+    it_behaves_like 'An unauthorized role managing automated testing'
+    it_behaves_like 'An unauthorized role accessing student interface'
   end
 end

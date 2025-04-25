@@ -65,7 +65,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   # Split up PDF file based on this exam template.
-  def split_pdf(path, original_filename = nil, current_role = nil, on_duplicate = nil)
+  def split_pdf(path, original_filename = nil, current_role = nil, on_duplicate = nil, current_user = nil)
     basename = File.basename path, '.pdf'
     filename = original_filename.nil? ? basename : File.basename(original_filename)
     pdf = CombinePDF.load path
@@ -86,7 +86,13 @@ class ExamTemplate < ApplicationRecord
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role, on_duplicate)
+    SplitPdfJob.perform_later(self,
+                              path,
+                              split_pdf_log,
+                              original_filename,
+                              current_role,
+                              on_duplicate,
+                              current_user)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)
@@ -154,7 +160,7 @@ class ExamTemplate < ApplicationRecord
         assignment_folder = self.assignment.repository_folder
         txn = repo.get_transaction(self.course.instructors.first.user_name)
         self.template_divisions.each do |template_division|
-          next unless template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
+          next unless page_num.to_i.between?(template_division.start, template_division.end)
 
           submission_file = CombinePDF.new
           (template_division.start..template_division.end).each do |i|

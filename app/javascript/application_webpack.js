@@ -15,19 +15,24 @@ import "jquery-ui/dist/jquery-ui";
 import "ui-contextmenu";
 
 // Callbacks for AJAX events (both jQuery and ujs).
-import * as ajax_events from "javascripts/ajax_events";
+import * as ajax_events from "./common/ajax_events";
 window.ajax_events = ajax_events;
 
 // vendor libraries
 import "javascripts/jquery.easyModal";
 
 // Markdown support (using marked and DOMpurify)
-import safe_marked from "javascripts/safe_marked";
+import safe_marked from "./common/safe_marked";
 window.safe_marked = safe_marked;
 
-// moment (date/times manipulation)
-import moment from "moment";
-window.moment = moment;
+// dayjs (date/times manipulation) and PeriodDeltaChain
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+dayjs.locale(I18N_LOCALE);
+
+import PeriodDeltaChain from "./common/PeriodDeltaChain";
+window.PeriodDeltaChain = PeriodDeltaChain;
 
 // mousetrap (keybindings)
 import "mousetrap";
@@ -41,6 +46,7 @@ window.Rails = Rails;
 import {I18n} from "i18n-js";
 import translations from "translations.json";
 window.I18n = new I18n(translations);
+window.I18n.locale = I18N_LOCALE;
 
 // JCrop
 import Jcrop from "jcrop";
@@ -50,7 +56,7 @@ window.Jcrop = Jcrop;
 import {Chart, registerables} from "chart.js";
 Chart.register(...registerables);
 window.Chart = Chart;
-import "javascripts/chart_config";
+import "./common/chart_config";
 
 // flatpickr
 import flatpickr from "flatpickr";
@@ -78,90 +84,94 @@ import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons";
 window.HELP_ICON_HTML = icon(faCircleQuestion).node[0];
 
 // assets with side-effects only
-import "javascripts/flatpickr_config";
-import "javascripts/fontawesome_config";
-import "javascripts/help-system";
-import "javascripts/layouts";
-import "javascripts/menu";
-import "javascripts/react_config";
-import "javascripts/redirect";
-import "javascripts/fetch_proxy";
+import "./common/flatpickr_config";
+import "./common/fontawesome_config";
+import "./common/help-system";
+import "./common/layouts";
+import "./common/menu";
+import "./common/react_config";
+import "./common/redirect";
+import "./common/fetch_proxy";
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.
-import {poll_job} from "javascripts/job_poller";
+import {poll_job} from "./common/job_poller";
 window.poll_job = poll_job;
-import {colours} from "javascripts/markus_colors";
+import {colours} from "./common/markus_colors";
 window.colours = colours;
-import {set_theme} from "javascripts/theme_colors";
+import {set_theme} from "./common/theme_colors";
 window.set_theme = set_theme;
-import {refreshOrLogout} from "javascripts/refresh_or_logout";
+import {refreshOrLogout} from "./common/refresh_or_logout";
 window.refreshOrLogout = refreshOrLogout;
-import {ModalMarkus} from "javascripts/modals";
+import {ModalMarkus} from "./common/modals";
 window.ModalMarkus = ModalMarkus;
-import {makeDashboard} from "javascripts/Components/dashboard";
+import {makeDashboard} from "./Components/dashboard";
 window.makeDashboard = makeDashboard;
-import {makeAssignmentSummary} from "javascripts/Components/assignment_summary";
+import {makeAssignmentSummary} from "./Components/assignment_summary";
 window.makeAssignmentSummary = makeAssignmentSummary;
-import {makeGradeEntryFormSummary} from "javascripts/Components/grade_entry_form_summary";
+import {makeGradeEntryFormSummary} from "./Components/grade_entry_form_summary";
 window.makeGradeEntryFormSummary = makeGradeEntryFormSummary;
-import {makeTATable} from "javascripts/Components/ta_table";
+import {makeTATable} from "./Components/ta_table";
 window.makeTATable = makeTATable;
-import {makeInstructorTable} from "javascripts/Components/instructor_table";
+import {makeInstructorTable} from "./Components/instructor_table";
 window.makeInstructorTable = makeInstructorTable;
-import {makeStudentTable} from "javascripts/Components/student_table";
+import {makeStudentTable} from "./Components/student_table";
 window.makeStudentTable = makeStudentTable;
-import {makeOneTimeAnnotationsTable} from "javascripts/Components/one_time_annotations_table";
+import {makeOneTimeAnnotationsTable} from "./Components/one_time_annotations_table";
 window.makeOneTimeAnnotationsTable = makeOneTimeAnnotationsTable;
-import {makeExamScanLogTable} from "javascripts/Components/exam_scan_log_table";
+import {makeExamScanLogTable} from "./Components/exam_scan_log_table";
 window.makeExamScanLogTable = makeExamScanLogTable;
-import {makeSubmissionFileManager} from "javascripts/Components/submission_file_manager";
+import {makeSubmissionFileManager} from "./Components/submission_file_manager";
 window.makeSubmissionFileManager = makeSubmissionFileManager;
-import {makeRepoBrowser} from "javascripts/Components/repo_browser";
+import {makeRepoBrowser} from "./Components/repo_browser";
 window.makeRepoBrowser = makeRepoBrowser;
-import {makeTestRunTable} from "javascripts/Components/test_run_table";
+import {makeTestRunTable} from "./Components/test_run_table";
 window.makeTestRunTable = makeTestRunTable;
-import {makeSubmissionTable} from "javascripts/Components/submission_table";
+import {makeSubmissionTable} from "./Components/submission_table";
 window.makeSubmissionTable = makeSubmissionTable;
-import {makeTagTable} from "javascripts/Components/tag_table";
+import {makeTagTable} from "./Components/tag_table";
 window.makeTagTable = makeTagTable;
-import {makeMarksGradersManager} from "javascripts/Components/marks_graders_manager";
+import {makeMarksGradersManager} from "./Components/marks_graders_manager";
 window.makeMarksGradersManager = makeMarksGradersManager;
-import {makePeerReviewsManager} from "javascripts/Components/peer_reviews_manager";
+import {makePeerReviewsManager} from "./Components/peer_reviews_manager";
 window.makePeerReviewsManager = makePeerReviewsManager;
-import {makePeerReviewTable} from "javascripts/Components/peer_review_table";
+import {makePeerReviewTable} from "./Components/peer_review_table";
 window.makePeerReviewTable = makePeerReviewTable;
-import {makeGroupsManager} from "javascripts/Components/groups_manager";
+import {makeGroupsManager} from "./Components/groups_manager";
 window.makeGroupsManager = makeGroupsManager;
-import {makeGradersManager} from "javascripts/Components/graders_manager";
+import {makeGradersManager} from "./Components/graders_manager";
 window.makeGradersManager = makeGradersManager;
-import {makeBatchTestRunTable} from "javascripts/Components/batch_test_run_table";
+import {makeBatchTestRunTable} from "./Components/batch_test_run_table";
 window.makeBatchTestRunTable = makeBatchTestRunTable;
-import {makeMarkingSchemeTable} from "javascripts/Components/marking_schemes_table";
+import {makeMarkingSchemeTable} from "./Components/marking_schemes_table";
 window.makeMarkingSchemeTable = makeMarkingSchemeTable;
-import {makeAutotestManager} from "javascripts/Components/autotest_manager";
+import {makeAutotestManager} from "./Components/autotest_manager";
 window.makeAutotestManager = makeAutotestManager;
-import {makeStudentPeerReviewsTable} from "javascripts/Components/student_peer_reviews_table";
+import {makeStudentPeerReviewsTable} from "./Components/student_peer_reviews_table";
 window.makeStudentPeerReviewsTable = makeStudentPeerReviewsTable;
-import {makeAnnotationUsagePanel} from "javascripts/Components/annotation_usage_panel";
+import {makeAnnotationUsagePanel} from "./Components/annotation_usage_panel";
 window.makeAnnotationUsagePanel = makeAnnotationUsagePanel;
-import {makeGradesSummaryDisplay} from "javascripts/Components/grades_summary_display";
+import {makeGradesSummaryDisplay} from "./Components/grades_summary_display";
 window.makeGradesSummaryDisplay = makeGradesSummaryDisplay;
-import {makeDataChart} from "javascripts/Components/Helpers/data_chart";
+import {makeDataChart} from "./Components/Helpers/data_chart";
 window.makeDataChart = makeDataChart;
-import {makeStarterFileManager} from "javascripts/Components/starter_file_manager";
+import {makeStarterFileManager} from "./Components/starter_file_manager";
 window.makeStarterFileManager = makeStarterFileManager;
-import {makeNotesTable} from "javascripts/Components/notes_table";
+import {makeNotesTable} from "./Components/notes_table";
 window.makeNotesTable = makeNotesTable;
-import {makeAdminCourseList} from "javascripts/Components/admin_course_list";
+import {makeAdminCourseList} from "./Components/admin_course_list";
 window.makeAdminCourseList = makeAdminCourseList;
-import {makeAdminUsersList} from "javascripts/Components/admin_users_list";
+import {makeAdminUsersList} from "./Components/admin_users_list";
 window.makeAdminUsersList = makeAdminUsersList;
-import {makeCourseList} from "javascripts/Components/course_list";
+import {makeCourseList} from "./Components/course_list";
 window.makeCourseList = makeCourseList;
-import {makeSubmitViewTokenModal} from "javascripts/Components/Modals/submit_view_token_modal";
+import {makeSubmitViewTokenModal} from "./Components/Modals/submit_view_token_modal";
 window.makeSubmitViewTokenModal = makeSubmitViewTokenModal;
-import {makeLtiSettings} from "javascripts/Components/lti_settings";
+import {makeLtiSettings} from "./Components/lti_settings";
 window.makeLtiSettings = makeLtiSettings;
-import {makeResult} from "javascripts/Components/Result/result";
+import {makeResult} from "./Components/Result/result";
 window.makeResult = makeResult;
+import {createConsumer} from "@rails/actioncable";
+window.createConsumer = createConsumer;
+import {renderFlashMessages} from "./common/flash";
+window.renderFlashMessages = renderFlashMessages;

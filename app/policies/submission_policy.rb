@@ -3,7 +3,7 @@ class SubmissionPolicy < ApplicationPolicy
   alias_rule :manually_collect_and_begin_grading?, :collect_submissions?, :update_submissions?, to: :manage?
   alias_rule :index?, :browse?, :set_result_marking_state?, :revisions?, :repo_browser?,
              :zip_groupings_files?, :download_zipped_file?, :download_summary?, to: :manage_files?
-  alias_rule :download?, :downloads?, :get_file?, :populate_file_manager?, :update_files?, to: :view_files?
+  alias_rule :download?, :downloads?, :populate_file_manager?, :update_files?, :html_content?, to: :view_files?
   alias_rule :download_file_zip?, to: :download_file?
   alias_rule :update_remark_request?, :cancel_remark_request?, to: :change_remark_status?
 
@@ -27,10 +27,6 @@ class SubmissionPolicy < ApplicationPolicy
 
   def view_files?
     true
-  end
-
-  def notebook_content?
-    Rails.application.config.nbconvert_enabled && check?(:view_files?)
   end
 
   def run_tests?

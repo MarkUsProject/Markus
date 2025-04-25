@@ -806,7 +806,7 @@ describe SubmissionsController do
       let(:role) { create(:ta) }
       let(:grouping) { @grouping1 }
 
-      include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
+      it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
     end
 
     it 'should be able to access the repository browser.' do
@@ -900,7 +900,7 @@ describe SubmissionsController do
                     params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
                               current_revision_identifier: revision_identifier }
 
-            expect(flash[:error]).to eq(["<p>#{I18n.t('submissions.collect.could_not_collect_released')}</p>"])
+            expect(flash[:error]).to have_message(I18n.t('submissions.collect.could_not_collect_released'))
           end
         end
       end
@@ -1025,7 +1025,7 @@ describe SubmissionsController do
         let(:role) { create(:ta) }
         let(:grouping) { @grouping }
 
-        include_examples 'An authorized instructor and grader accessing #set_result_marking_state'
+        it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
       end
 
       context 'when at least one submission can be collected' do
@@ -1590,16 +1590,16 @@ describe SubmissionsController do
         end
 
         let(:redirect_location) do
-          notebook_content_course_assignment_submissions_url(course_id: course.id,
-                                                             assignment_id: assignment.id,
-                                                             file_name: 'example.ipynb',
-                                                             grouping_id: grouping.id)
+          html_content_course_assignment_submissions_url(course_id: course.id,
+                                                         assignment_id: assignment.id,
+                                                         file_name: 'example.ipynb',
+                                                         grouping_id: grouping.id)
         end
 
         context 'and the python dependencies are installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
 
-          it 'should redirect to "notebook_content"' do
+          it 'should redirect to "html_content"' do
             expect(subject).to redirect_to(redirect_location)
           end
         end
@@ -1607,20 +1607,42 @@ describe SubmissionsController do
         context 'and the python dependencies are not installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
 
-          it 'should redirect to "notebook_content"' do
+          it 'should redirect to "html_content"' do
             expect(subject).not_to redirect_to(redirect_location)
           end
         end
       end
 
-      describe 'When the file is an rmarkdown file' do
-        it 'should render the contents of the file' do
+      describe 'When the file is a rmarkdown file' do
+        subject do
           get_as instructor, :download, params: { course_id: course.id,
                                                   assignment_id: assignment.id,
-                                                  file_name: file5.original_filename,
+                                                  file_name: 'example.Rmd',
                                                   preview: true,
                                                   grouping_id: grouping.id }
-          expect(response.body).to eq(File.read(file5))
+        end
+
+        let(:redirect_location) do
+          html_content_course_assignment_submissions_url(course_id: course.id,
+                                                         assignment_id: assignment.id,
+                                                         file_name: 'example.Rmd',
+                                                         grouping_id: grouping.id)
+        end
+
+        context 'and the rmd_convert_enabled flag is true' do
+          before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+          it 'should redirect to "html_content"' do
+            expect(subject).to redirect_to(redirect_location)
+          end
+        end
+
+        context 'and the rmd_convert_enabled flag is false' do
+          before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
+          it 'should not redirect to "html_content"' do
+            expect(subject).not_to redirect_to(redirect_location)
+          end
         end
       end
 
@@ -1671,6 +1693,17 @@ describe SubmissionsController do
         end
       end
 
+      describe 'When the file is a RMarkdown file' do
+        it 'should download the file as is' do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: 'example.Rmd',
+                                                  preview: false,
+                                                  grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file5))
+        end
+      end
+
       describe 'When the file is a binary file' do
         it 'should download all the contents of the zip file' do
           get_as instructor, :download, params: { course_id: course.id,
@@ -1700,22 +1733,22 @@ describe SubmissionsController do
     end
   end
 
-  describe '#notebook_content' do
+  describe '#html_content' do
     let(:assignment) { create(:assignment) }
     let(:instructor) { create(:instructor) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:notebook_file) { fixture_file_upload(filename) }
-    let(:submission) { submit_file(assignment, grouping, notebook_file.original_filename, notebook_file.read) }
+    let(:file) { fixture_file_upload(filename) }
+    let(:submission) { submit_file(assignment, grouping, file.original_filename, file.read) }
 
-    shared_examples 'notebook types' do
-      shared_examples 'notebook content' do
+    shared_examples 'html content types' do
+      shared_examples 'html content' do
         it 'is successful' do
           subject
           expect(response).to have_http_status(:success)
         end
 
         it 'renders the correct template' do
-          expect(subject).to render_template('notebook')
+          expect(subject).to render_template('html_content')
         end
       end
 
@@ -1723,7 +1756,7 @@ describe SubmissionsController do
               skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
         let(:filename) { 'example.ipynb' }
 
-        it_behaves_like 'notebook content'
+        it_behaves_like 'html content'
       end
 
       context 'a jupyter-notebook file with widgets',
@@ -1736,54 +1769,59 @@ describe SubmissionsController do
           expect(response.body).not_to include("KeyError: 'state'")
         end
 
-        it_behaves_like 'notebook content'
+        it_behaves_like 'html content'
       end
 
-      context 'an rmarkdown file' do
+      context 'an rmarkdown file',
+              skip: Rails.application.config.rmd_convert_enabled ? false : 'rmd_convert_enabled not set to true' do
         let(:filename) { 'example.Rmd' }
 
-        it_behaves_like 'notebook content'
+        it_behaves_like 'html content'
       end
     end
 
     context 'called with a collected submission' do
       subject do
-        get_as instructor, :notebook_content,
+        get_as instructor, :html_content,
                params: { course_id: course.id, assignment_id: assignment.id, select_file_id: submission_file.id }
       end
 
       let(:submission_file) { create(:submission_file, submission: submission, filename: filename) }
 
-      it_behaves_like 'notebook types'
+      it_behaves_like 'html content types'
     end
 
     context 'called with a revision identifier' do
       subject do
-        get_as instructor, :notebook_content, params: { course_id: course.id,
-                                                        assignment_id: assignment.id,
-                                                        file_name: filename,
-                                                        grouping_id: grouping.id,
-                                                        revision_identifier: submission.revision_identifier }
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier }
       end
 
-      it_behaves_like 'notebook types'
+      it_behaves_like 'html content types'
     end
 
-    context 'called with an invalid path' do
-      subject do
-        get_as instructor, :notebook_content, params: { course_id: course.id,
+    context 'called with an invalid path for multiple file types' do
+      ['example.ipynb', 'example.Rmd'].each do |test_filename|
+        context "when the file is #{test_filename}" do
+          subject do
+            get_as instructor, :html_content, params: { course_id: course.id,
                                                         assignment_id: assignment.id,
                                                         file_name: filename,
                                                         grouping_id: grouping.id,
                                                         revision_identifier: submission.revision_identifier,
                                                         path: '../..' }
-      end
+          end
 
-      let(:filename) { 'example.ipynb' }
+          let(:filename) { test_filename }
 
-      it 'flashes an error message' do
-        subject
-        expect(flash[:error].join('\n')).to include(I18n.t('errors.invalid_path'))
+          it 'flashes an error message' do
+            subject
+            expect(flash[:error]).to have_message(I18n.t('errors.invalid_path'))
+          end
+        end
       end
     end
 
@@ -1792,201 +1830,28 @@ describe SubmissionsController do
       let(:filename) { 'pdf_with_ipynb_extension.ipynb' }
 
       it 'should display an invalid Jupyter notebook content error message' do
-        get_as instructor, :notebook_content, params: { course_id: course.id,
-                                                        assignment_id: assignment.id,
-                                                        file_name: filename,
-                                                        preview: true,
-                                                        grouping_id: grouping.id,
-                                                        revision_identifier: submission.revision_identifier }
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    preview: true,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier }
         expect(response.body).to include(I18n.t('submissions.invalid_jupyter_notebook_content'))
       end
     end
-  end
 
-  describe '#get_file' do
-    let(:assignment) { create(:assignment) }
-    let(:instructor) { create(:instructor) }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
-    let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip', true) }
-    let(:file3) { fixture_file_upload('example.ipynb') }
-    let(:file4) { fixture_file_upload('page_white_text.png') }
-    let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
-    let(:file6) { fixture_file_upload('example.Rmd') }
-    let(:file7) { fixture_file_upload('sample.markusurl') }
-    let(:file8) { fixture_file_upload('35_bytes.txt') }
+    context 'where there is an invalid rmarkdown content' do
+      render_views
+      let(:filename) { 'pdf_with_rmd_extension.Rmd' }
 
-    let!(:submission) do
-      files.map do |file|
-        submit_file(assignment, grouping, file.original_filename, file.read)
-      end.last
-    end
-
-    describe 'when the file is not a binary file' do
-      let(:files) { [file1] }
-
-      it 'should download the file' do
-        submission_file = submission.submission_files.find_by(filename: file1.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['content']).to eq(ActiveSupport::JSON.encode(File.read(file1)))
-      end
-    end
-
-    describe 'When the file is a jupyter notebook file' do
-      let(:files) { [file3] }
-
-      it 'should return the file type' do
-        submission_file = submission.submission_files.find_by(filename: file3.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq 'jupyter-notebook'
-      end
-    end
-
-    describe 'When the file is an rmarkdown notebook file' do
-      let(:files) { [file6] }
-
-      it 'should return the file type' do
-        submission_file = submission.submission_files.find_by(filename: file6.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq 'markdown'
-      end
-    end
-
-    describe 'When the file is a binary file' do
-      let(:files) { [file2] }
-
-      it 'should download a warning instead of the file content' do
-        submission_file = submission.submission_files.find_by(filename: file2.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
-        expect(response.parsed_body['content']).to eq(expected)
-      end
-
-      describe 'when force_text is true' do
-        it 'should download the file content' do
-          submission_file = submission.submission_files.find_by(filename: file2.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  force_text: true,
-                                                  submission_file_id: submission_file.id }
-          file2.seek(0)
-          actual = JSON.parse(response.parsed_body['content'])
-          expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-          expect(actual).to eq(expected)
-        end
-      end
-    end
-
-    describe 'When the file is a url file' do
-      context 'with a valid url file format' do
-        let(:files) { [file7] }
-
-        before do
-          assignment.update!(url_submit: true)
-        end
-
-        it 'should return the file type and non-zero size' do
-          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id,
-                                                  format: :json }
-          expect(response.parsed_body['type']).to eq 'markusurl'
-          expect(response.parsed_body['size']).to be > 0
-        end
-      end
-
-      context 'with urls disabled' do
-        let(:files) { [file7] }
-
-        it 'should return an unknown type' do
-          submission_file = submission.submission_files.find_by(filename: file7.original_filename)
-          get_as instructor, :get_file, params: { course_id: course.id,
-                                                  id: submission.id,
-                                                  submission_file_id: submission_file.id,
-                                                  format: :json }
-          expect(response.parsed_body['type']).to eq 'unknown'
-        end
-      end
-    end
-
-    describe 'when the file is an image' do
-      let(:files) { [file4] }
-
-      it 'should return the file type and size' do
-        submission_file = submission.submission_files.find_by(filename: file4.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq('image')
-        expect(response.parsed_body['size']).to be > 0
-      end
-    end
-
-    describe 'when the file is a pdf' do
-      let(:files) { [file5] }
-
-      it 'should return the file type and size' do
-        submission_file = submission.submission_files.find_by(filename: file5.original_filename)
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq('pdf')
-        expect(response.parsed_body['size']).to be > 0
-      end
-    end
-
-    describe 'when the file is missing' do
-      let(:files) { [file1] }
-
-      it 'should return an unknown file type and zero size' do
-        submission_file = submission.submission_files.find_by(filename: file1.original_filename)
-        allow_any_instance_of(MemoryRevision).to receive(:files_at_path).and_return({})
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id }
-        expect(response.parsed_body['type']).to eq('unknown')
-        expect(response.parsed_body['size']).to be 0
-      end
-    end
-
-    describe 'when the maximum content size query parameter is passed' do
-      let(:files) { [file8] }
-      let!(:submission_file) { submission.submission_files.find_by(filename: file8.original_filename) }
-
-      it 'should return the file content if it does not exceed the maximum' do
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id,
-                                                max_content_size: 36 }
-        expect(response.parsed_body['size']).to be 35
-        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
-      end
-
-      it 'should return the file content if it is the same size as the maximum' do
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id,
-                                                max_content_size: 35 }
-        expect(response.parsed_body['size']).to be 35
-        expect(response.parsed_body['content']).to eql '"The size of this file is 35 bytes.\\n"'
-      end
-
-      it 'should not return the file content if it exceeds the maximum' do
-        get_as instructor, :get_file, params: { course_id: course.id,
-                                                id: submission.id,
-                                                submission_file_id: submission_file.id,
-                                                max_content_size: 34 }
-        expect(response.parsed_body['size']).to be 35
-        expect(response.parsed_body['content']).to eql ''
+      it 'should display a cannot display content error message' do
+        get_as instructor, :html_content, params: { course_id: course.id,
+                                                    assignment_id: assignment.id,
+                                                    file_name: filename,
+                                                    preview: true,
+                                                    grouping_id: grouping.id,
+                                                    revision_identifier: submission.revision_identifier }
+        expect(response.body).to include(I18n.t('submissions.invalid_rmd_content'))
       end
     end
   end
@@ -2167,6 +2032,47 @@ describe SubmissionsController do
         end
       end
 
+      context 'with max content size parameter' do
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        max_content_size: SAMPLE_FILE_CONTENT.size }
+        end
+
+        it { expect(response).to have_http_status(:success) }
+
+        test_no_flash
+        it 'should have the correct content type' do
+          expect(response.header['Content-Type']).to eq 'text/plain'
+        end
+
+        it 'should show the file content in the response body' do
+          expect(response.body).to eq SAMPLE_FILE_CONTENT
+        end
+      end
+
+      context 'with max content size parameter less than the content size' do
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+          get :download_file, params: { course_id: course.id,
+                                        select_file_id: submission_file.id,
+                                        from_codeviewer: from_codeviewer,
+                                        id: submission.id,
+                                        assignment_id: assignment.id,
+                                        max_content_size: SAMPLE_FILE_CONTENT.size - 1 }
+        end
+
+        it { expect(response).to have_http_status(:payload_too_large) }
+
+        it 'should have an empty response body' do
+          expect(response.body).to be_empty
+        end
+      end
+
       context 'and with a file error' do
         before do
           allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_raise SAMPLE_ERROR_MESSAGE
@@ -2221,15 +2127,15 @@ describe SubmissionsController do
         context 'file is a jupyter-notebook file' do
           let(:filename) { 'example.ipynb' }
           let(:redirect_location) do
-            notebook_content_course_assignment_submissions_path(course,
-                                                                assignment,
-                                                                select_file_id: submission_file.id)
+            html_content_course_assignment_submissions_path(course,
+                                                            assignment,
+                                                            select_file_id: submission_file.id)
           end
 
           context 'and the python dependencies are installed' do
             before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
 
-            it 'should redirect to "notebook_content"' do
+            it 'should redirect to "html_content"' do
               expect(subject).to(redirect_to(redirect_location))
             end
           end
@@ -2237,26 +2143,41 @@ describe SubmissionsController do
           context 'and the python dependencies are not installed' do
             before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
 
-            it 'should not redirect to "notebook_content"' do
+            it 'should not redirect to "html_content"' do
               expect(subject).not_to(redirect_to(redirect_location))
             end
           end
         end
 
-        context 'file is a rmarkdown file' do
+        context 'file is a RMarkdown file' do
           let(:filename) { 'example.Rmd' }
+          let(:redirect_location) do
+            html_content_course_assignment_submissions_path(course,
+                                                            assignment,
+                                                            select_file_id: submission_file.id)
+          end
 
-          it 'should show the file content in the response body' do
-            allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-            subject
-            expect(response.body).to eq SAMPLE_FILE_CONTENT
+          context 'and the rmd_convert_enabled flag is true' do
+            before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+            it 'should redirect to "html_content"' do
+              expect(subject).to redirect_to(redirect_location)
+            end
+          end
+
+          context 'and the rmd_convert_enabled flag is false' do
+            before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+
+            it 'should not redirect to "html_content"' do
+              expect(subject).not_to redirect_to(redirect_location)
+            end
           end
         end
       end
     end
 
     shared_examples 'shared ta and instructor tests' do
-      include_examples 'download files'
+      it_behaves_like 'download files'
       context 'accessing download_zip' do
         before do
           grouping.group.access_repo do |repo|
@@ -2368,7 +2289,7 @@ describe SubmissionsController do
     context 'An Instructor' do
       before { sign_in instructor }
 
-      include_examples 'shared ta and instructor tests'
+      it_behaves_like 'shared ta and instructor tests'
     end
 
     context 'A TA' do
@@ -2408,13 +2329,13 @@ describe SubmissionsController do
       context 'that has been assigned to grade the group\'s result' do
         before { create(:ta_membership, role: ta, grouping: grouping) }
 
-        include_examples 'shared ta and instructor tests'
+        it_behaves_like 'shared ta and instructor tests'
       end
 
       context 'that can manage submissions' do
         let(:ta) { create(:ta, manage_submissions: true) }
 
-        include_examples 'shared ta and instructor tests'
+        it_behaves_like 'shared ta and instructor tests'
       end
     end
 
@@ -2447,11 +2368,11 @@ describe SubmissionsController do
           context 'from_codeviewer is true' do
             let(:from_codeviewer) { true }
 
-            include_examples 'download files'
+            it_behaves_like 'download files'
           end
 
           context 'from_codeviewer is nil' do
-            include_examples 'without permission'
+            it_behaves_like 'without permission'
           end
         end
 
@@ -2463,7 +2384,7 @@ describe SubmissionsController do
               let(:submission_file) { create(:submission_file, submission: incomplete_result.submission) }
               let(:grouping) { incomplete_result.grouping }
 
-              include_examples 'download files'
+              it_behaves_like 'download files'
             end
 
             context 'and the selected file is associated with a different submission' do
@@ -2483,12 +2404,12 @@ describe SubmissionsController do
           context 'role is not an accepted member of the results grouping' do
             let(:student) { create(:student) }
 
-            include_examples 'without permission'
+            it_behaves_like 'without permission'
           end
         end
       end
 
-      include_examples 'download files'
+      it_behaves_like 'download files'
     end
   end
 

@@ -77,6 +77,7 @@ class ImageAnnotationManager extends AnnotationManager {
         } else {
           holder.style.cursor = "auto";
         }
+        holder.onmouseleave = this.check_for_annotations.bind(this);
 
         this.image_preview.parentNode.insertBefore(holder, this.image_preview);
       }
@@ -201,6 +202,7 @@ class ImageAnnotationManager extends AnnotationManager {
       holder.onmousemove = this.check_for_annotations.bind(this);
       holder.onmousedown = this.start_select_box.bind(this);
       holder.onmouseup = null;
+      holder.onmouseleave = this.check_for_annotations.bind(this);
     }
   }
 

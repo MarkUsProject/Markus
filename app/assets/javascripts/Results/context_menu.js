@@ -14,25 +14,25 @@ var annotation_context_menu = {
       check_mark_annotation: {
         title: "✔️",
         cmd: "check_mark_annotation",
-        action: () => resultComponent.addQuickAnnotation("✔️"),
+        action: () => resultComponent.current.addQuickAnnotation("✔️"),
         addClass: "emoji-annotation-context-menu-item",
       },
       thumbs_up_annotation: {
         title: "👍",
         cmd: "thumbs_up_annotation",
-        action: () => resultComponent.addQuickAnnotation("👍"),
+        action: () => resultComponent.current.addQuickAnnotation("👍"),
         addClass: "emoji-annotation-context-menu-item",
       },
       heart_annotation: {
         title: "❤️",
         cmd: "heart_annotation",
-        action: () => resultComponent.addQuickAnnotation("❤️"),
+        action: () => resultComponent.current.addQuickAnnotation("❤️"),
         addClass: "emoji-annotation-context-menu-item",
       },
       smile_annotation: {
         title: "😄",
         cmd: "smile_annotation",
-        action: () => resultComponent.addQuickAnnotation("😄️"),
+        action: () => resultComponent.current.addQuickAnnotation("😄️"),
         addClass: "emoji-annotation-context-menu-item",
       },
       new_annotation: {
@@ -40,7 +40,7 @@ var annotation_context_menu = {
           model: I18n.t("activerecord.models.annotation.one"),
         }),
         cmd: "new_annotation",
-        action: () => resultComponent.newAnnotation(),
+        action: () => resultComponent.current.newAnnotation(),
         disabled: true,
       },
       common_annotations: {
@@ -55,7 +55,7 @@ var annotation_context_menu = {
           var clicked_element = ui.target[0];
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            resultComponent.editAnnotation(annot_id);
+            resultComponent.current.editAnnotation(annot_id);
           }
         },
         disabled: true,
@@ -67,7 +67,7 @@ var annotation_context_menu = {
           var clicked_element = $(ui.target)[0];
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            resultComponent.removeAnnotation(annot_id);
+            resultComponent.current.removeAnnotation(annot_id);
           }
         },
         disabled: true,

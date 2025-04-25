@@ -18,7 +18,7 @@ MarkUs is a Ruby on Rails and React web application for the submission and gradi
 
 To install MarkUs for production, see the [Installation Guide](https://github.com/MarkUsProject/Wiki/blob/release/Installation.md) for details and step by step instructions.
 
-To install MarkUs for development, see either of the [docker installation](https://github.com/MarkUsProject/Wiki/blob/master/Developer-Guide--Set-Up-With-Docker.md) or [vagrant installation](https://github.com/MarkUsProject/Wiki/blob/master/Developer-Guide--Set-Up-With-Vagrant) guides.
+To install MarkUs for development, see either of the [docker installation](https://github.com/MarkUsProject/Wiki/blob/master/Developer-Guide--Set-Up-With-Docker.md) or [vagrant installation](https://github.com/MarkUsProject/Wiki/blob/master/Developer-Guide--Set-Up-With-Vagrant.md) guides.
 
 ## 3. Who is Using MarkUs?
 

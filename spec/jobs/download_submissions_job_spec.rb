@@ -13,7 +13,7 @@ describe DownloadSubmissionsJob do
   context 'when running as a background job' do
     let(:job_args) { [groupings.map(&:id), 'zip_path.zip', assignment.id, assignment.course_id] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   context 'when print is false' do

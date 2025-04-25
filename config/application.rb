@@ -136,6 +136,8 @@ module Markus
 
     config.action_cable.allowed_request_origins = Settings.rails.action_cable.web_socket_allowed_request_origins
 
+    config.rmd_convert_enabled = Settings.rmd_convert_enabled
+
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib

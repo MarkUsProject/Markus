@@ -39,6 +39,8 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
+    permissions:
+      contents: read
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -73,6 +75,13 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}-${{ hashFiles('requirements-qr.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+      - name: Cache playwright's installation of Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('requirements-jupyter.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - name: Install python packages and playwright dependencies
         run: |
           python3.10 -m venv venv
@@ -124,6 +133,8 @@ jobs:
     needs: test
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: write
     steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@v2

@@ -1,7 +1,4 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date', nonce: true %>
-
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       window.autotestManagerComponent = makeAutotestManager(document.getElementById('autotest-manager'),

@@ -81,7 +81,7 @@ describe AnnotationCategoriesController do
   end
 
   shared_examples 'An authorized user managing annotation categories' do
-    include_examples 'A grader or instructor accessing the index or find_annotation_text routes'
+    it_behaves_like 'A grader or instructor accessing the index or find_annotation_text routes'
     describe '#show' do
       it 'should respond with 200' do
         get_as role, :show, params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
@@ -688,7 +688,7 @@ describe AnnotationCategoriesController do
     end
 
     describe '#upload' do
-      include_examples 'a controller supporting upload' do
+      it_behaves_like 'a controller supporting upload' do
         let(:params) { { course_id: course.id, assignment_id: assignment.id } }
       end
       it_behaves_like 'role is from a different course' do
@@ -702,8 +702,7 @@ describe AnnotationCategoriesController do
 
         expect(response).to have_http_status(:found)
         expect(flash[:error]).to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
-                                                                         count: 2)].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 2))
         expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
         expect(AnnotationCategory.all.size).to eq(2)
@@ -729,8 +728,7 @@ describe AnnotationCategoriesController do
 
         expect(response).to have_http_status :found
         expect(flash[:error]).to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
-                                                                         count: 3)].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 3))
         expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
         expect(AnnotationCategory.all.size).to eq 3
@@ -1125,22 +1123,22 @@ describe AnnotationCategoriesController do
   describe 'When the user is instructor' do
     let(:role) { create(:instructor) }
 
-    include_examples 'An authorized user managing annotation categories'
+    it_behaves_like 'An authorized user managing annotation categories'
   end
 
   describe 'When the user is grader' do
     context 'When the grader is allowed to manage annotations' do
       let(:role) { create(:ta, manage_assessments: true) }
 
-      include_examples 'An authorized user managing annotation categories'
+      it_behaves_like 'An authorized user managing annotation categories'
     end
 
     context 'When the grader is not allowed to manage annotations' do
       # By default all the grader permissions are set to false
       let(:role) { create(:ta) }
 
-      include_examples 'An unauthorized user managing annotation categories'
-      include_examples 'A grader or instructor accessing the index or find_annotation_text routes'
+      it_behaves_like 'An unauthorized user managing annotation categories'
+      it_behaves_like 'A grader or instructor accessing the index or find_annotation_text routes'
     end
   end
 end

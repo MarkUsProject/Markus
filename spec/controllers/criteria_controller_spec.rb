@@ -1,4 +1,6 @@
 describe CriteriaController do
+  include UploadHelper
+
   # TODO: add 'role is from a different course' shared tests to each route test below
   let(:instructor) { create(:instructor) }
   let(:course) { instructor.course }
@@ -57,7 +59,7 @@ describe CriteriaController do
   describe 'Using Checkbox Criterion' do
     let(:criterion) { :checkbox_criterion }
 
-    include_examples 'callbacks'
+    it_behaves_like 'callbacks'
   end
 
   describe 'Using Flexible Criteria' do
@@ -75,7 +77,7 @@ describe CriteriaController do
              name: 'Flexible Criterion 2')
     end
 
-    include_examples 'callbacks'
+    it_behaves_like 'callbacks'
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       describe '#index' do
@@ -418,8 +420,7 @@ describe CriteriaController do
                   params: { course_id: course.id, id: flexible_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
-        i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
-        expect(i18t_strings).to eql(flash[:success].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('flash.criteria.destroy.success'))
         expect(subject).to respond_with(:success)
 
         expect { FlexibleCriterion.find(flexible_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
@@ -442,7 +443,7 @@ describe CriteriaController do
              name: 'Rubric Criterion 2')
     end
 
-    include_examples 'callbacks'
+    it_behaves_like 'callbacks'
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       describe '#index' do
@@ -816,8 +817,7 @@ describe CriteriaController do
           end
 
           it 'displays an error message' do
-            expect(flash[:error].map { |f| extract_text f })
-              .to eq([I18n.t('criteria.errors.criteria_not_found')].map { |f| extract_text f })
+            expect(flash[:error]).to have_message(I18n.t('criteria.errors.criteria_not_found'))
           end
         end
       end
@@ -830,8 +830,7 @@ describe CriteriaController do
                   params: { course_id: course.id, id: rubric_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
-        i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
-        expect(i18t_string).to eql(flash[:success].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('flash.criteria.destroy.success'))
         expect(subject).to respond_with(:success)
 
         expect { RubricCriterion.find(rubric_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
@@ -876,8 +875,7 @@ describe CriteriaController do
         post_as instructor, :upload,
                 params: { course_id: course.id, assignment_id: assignment.id, upload_file: empty_file }
 
-        expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('upload_errors.blank')].map { |f| extract_text f })
+        expect(flash[:error]).to have_message(I18n.t('upload_errors.blank'))
       end
 
       it 'deletes all criteria previously created' do
@@ -916,8 +914,7 @@ describe CriteriaController do
                                                                     'cr90',
                                                                     'cr40',
                                                                     'cr50')
-        expect(flash[:success].map { |f| extract_text f })
-          .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 8))
       end
 
       it 'creates rubric criteria with properly formatted entries' do
@@ -1041,8 +1038,7 @@ describe CriteriaController do
                                                                     'cr90',
                                                                     'cr40',
                                                                     'cr50')
-        expect(flash[:success].map { |f| extract_text f })
-          .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 8))
       end
 
       it 'creates criteria correctly when a valid yml file with the wrong extension is uploaded' do
@@ -1057,8 +1053,7 @@ describe CriteriaController do
                                                                     'cr90',
                                                                     'cr40',
                                                                     'cr50')
-        expect(flash[:success].map { |f| extract_text f })
-          .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
+        expect(flash[:success]).to have_message(I18n.t('upload_success', count: 8))
       end
 
       it 'does not create criteria with format errors in entries' do
@@ -1066,8 +1061,8 @@ describe CriteriaController do
                                                upload_file: invalid_mixed_file }
 
         expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50', 'cr70')
-        expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.errors.invalid_format') + ' cr40, cr70, cr50'].map { |f| extract_text f })
+        expect(flash[:error]).to contain_message(I18n.t('criteria.errors.invalid_format'))
+        expect(flash[:error]).to contain_message(' cr40, cr70, cr50')
       end
 
       it 'does not create criteria with an invalid mark' do
@@ -1082,8 +1077,8 @@ describe CriteriaController do
                                                upload_file: missing_levels_file }
 
         expect(assignment.criteria.where(name: %w[no_levels empty_levels])).to be_empty
-        expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.errors.invalid_format') + ' no_levels, empty_levels'].map { |f| extract_text f })
+        expect(flash[:error]).to contain_message(I18n.t('criteria.errors.invalid_format'))
+        expect(flash[:error]).to contain_message(' no_levels, empty_levels')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
@@ -1110,19 +1105,18 @@ describe CriteriaController do
       end
 
       context 'When some criteria have been previously uploaded and and instructor performs a download' do
-        it 'responds with appropriate status' do
-          post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
-                                                 upload_file: uploaded_file }
+        before do
+          Criterion.upload_criteria_from_yaml(assignment, parse_yaml_content(test_upload_download_file.read))
+        end
 
-          get :download, params: { course_id: course.id, assignment_id: assignment.id }
+        it 'responds with appropriate status' do
+          get_as instructor, :download, params: { course_id: course.id, assignment_id: assignment.id }
 
           expect(response).to have_http_status(:ok)
         end
 
         it 'sends the correct information' do
-          post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
-                                                 upload_file: test_upload_download_file }
-          get :download, params: { course_id: course.id, assignment_id: assignment.id }
+          get_as instructor, :download, params: { course_id: course.id, assignment_id: assignment.id }
 
           expect(YAML.safe_load(response.body, permitted_classes: [Symbol], symbolize_names: true))
             .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
@@ -1132,7 +1126,7 @@ describe CriteriaController do
   end
 
   describe '#upload' do
-    include_examples 'a controller supporting upload', formats: [:yml] do
+    it_behaves_like 'a controller supporting upload', formats: [:yml] do
       let(:params) { { course_id: course.id, assignment_id: assignment.id } }
     end
   end

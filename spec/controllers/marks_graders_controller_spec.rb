@@ -5,7 +5,7 @@ describe MarksGradersController do
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
 
   describe '#upload' do
-    include_examples 'a controller supporting upload' do
+    it_behaves_like 'a controller supporting upload' do
       let(:params) { { course_id: course.id, grade_entry_form_id: grade_entry_form.id, model: GradeEntryStudentTa } }
     end
 
@@ -43,7 +43,7 @@ describe MarksGradersController do
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to(action: 'index',
                                         grade_entry_form_id:
-                                            grade_entry_form_with_data.id)
+                                          grade_entry_form_with_data.id)
 
         # check that the ta was assigned to each student
         @student_user_names.each do |name|
@@ -80,7 +80,7 @@ describe MarksGradersController do
         @student_user_names.each do |name|
           expect(
             GradeEntryStudentTa.joins(grade_entry_student: :user)
-              .exists?(grade_entry_student: { users: { user_name: name } })
+                               .exists?(grade_entry_student: { users: { user_name: name } })
           ).to be true
         end
         expect(ges.tas.count).to eq 0
@@ -126,6 +126,254 @@ describe MarksGradersController do
       get_as instructor, :grader_mapping,
              params: { course_id: course.id, grade_entry_form_id: grade_entry_form.id }, format: 'csv'
       expect(response.media_type).to eq 'text/csv'
+    end
+  end
+
+  describe '#assign_all' do
+    before do
+      allow(GradeEntryStudent).to receive(:assign_all_tas)
+    end
+
+    context 'when students and graders are selected' do
+      it 'calls GradeEntryStudent `assign_all` and return a success response' do
+        student = create(:student)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
+        grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
+        expect(GradeEntryStudent).to receive(:assign_all_tas).with(
+          [grade_entry_student.id.to_s],
+          [grade_entry_student_ta.id.to_s],
+          grade_entry_form
+        )
+
+        post_as instructor, :assign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [grade_entry_student.id],
+          graders: [grade_entry_student_ta.id]
+        }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when students are not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :assign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [],
+          graders: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when graders are not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :assign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [1],
+          graders: []
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+
+    context 'when students parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :assign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          graders: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when graders parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :assign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+  end
+
+  describe '#unassign_all' do
+    before do
+      allow(GradeEntryStudent).to receive(:unassign_tas)
+    end
+
+    context 'when students and graders are selected' do
+      it 'calls GradeEntryStudent `unassign_all` and return a success response' do
+        student = create(:student)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
+        grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
+        expect(GradeEntryStudent).to receive(:unassign_tas).with(
+          [grade_entry_student.id.to_s],
+          [grade_entry_student_ta.id.to_s],
+          grade_entry_form
+        )
+
+        post_as instructor, :unassign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [grade_entry_student.id],
+          graders: [grade_entry_student_ta.id]
+        }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when students are not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [],
+          graders: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when graders are not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [1],
+          graders: []
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+
+    context 'when students parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          graders: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when graders parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_all, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+  end
+
+  describe '#unassign_single' do
+    before do
+      allow(GradeEntryStudent).to receive(:unassign_tas)
+    end
+
+    context 'when students and graders are selected' do
+      it 'calls GradeEntryStudent `unassign_single` and return a success response' do
+        student = create(:student)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
+        grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
+        expect(GradeEntryStudent).to receive(:unassign_tas).with(
+          [grade_entry_student.id.to_s],
+          [grade_entry_student_ta.ta.id],
+          grade_entry_form
+        )
+
+        post_as instructor, :unassign_single, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          student_id: grade_entry_student.id,
+          grader_user_name: grade_entry_student_ta.ta.user_name
+        }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when student id is not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_single, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          student_id: nil,
+          grader_user_name: 'grader'
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when grader name is not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_single, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          student_id: 1,
+          grader_user_name: nil
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+
+    context 'when student id parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_single, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          grader_user_name: 'grader'
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when grader name parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :unassign_single, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          student_id: 1
+        }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
     end
   end
 end
