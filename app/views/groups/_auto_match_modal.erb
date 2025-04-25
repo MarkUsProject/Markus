@@ -3,18 +3,18 @@
 <%= content_for :modal_open_link, '#autoMatchModal' %>
 
 <%= content_for :modal_content do %>
-  <%= form_tag upload_course_assignment_groups_path(@current_course, @assignment),
+  <%= form_tag match_students_course_assignment_groups_path(@current_course, @assignment),
                { multipart: true } do %>
     <p>
       <%= label_tag '!!Exam Template' %>
-      <%= select_tag(:exam_template, options_for_select(@encodings)) %>
+      <%= select_tag(:exam_template, options_from_collection_for_select(@assignment.exam_templates, "id", "name")) %>
     </p>
 
     <section class='dialog-actions'>
       <%= submit_tag '!!Auto-match',
                      data: { disable_with: t(:uploading_please_wait) },
-                     disabled: true,
-                     id: 'upload' %>
+                     disabled: false,
+                     id: 'auto_match' %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
