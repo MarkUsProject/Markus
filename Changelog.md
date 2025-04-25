@@ -6,6 +6,16 @@
 
 ### ✨ New features and improvements
 
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.7.0]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
 - Fix front-end content shift when an input element is focused (#7384)
 - Tooltip text for Package requirements file for Python autotester settings (#7383)
 - Pass back tags and overall comments from Autotester to MarkUs (#7387)
