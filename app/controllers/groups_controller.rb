@@ -593,7 +593,12 @@ class GroupsController < ApplicationController
     groupings = Grouping.find(grouping_ids)
     exam_template = ExamTemplate.find(exam_template_id)
 
-    MatchStudentJob.perform_later(groupings, exam_template)
+    @current_job = MatchStudentJob.perform_later groupings, exam_template
+    session[:job_id] = @current_job.job_id
+
+    respond_to do |format|
+      format.js { render 'shared/_poll_job' }
+    end
   end
 
   private

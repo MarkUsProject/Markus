@@ -1,13 +1,25 @@
 class MatchStudentJob < ApplicationJob
+  def self.on_complete_js(_status)
+    '() => {window.groupsManager && window.groupsManager.current.fetchData()}'
+  end
+
+  def self.show_status(status)
+    I18n.t('poll_job.match_students_job', progress: status[:progress], total: status[:total])
+  end
+
   def perform(groupings, exam_template)
     return unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
+    progress.total = groupings.length
+    raw_dir = File.join(exam_template.base_path, 'raw')
+
     groupings.each do |grouping|
       # get cover page
       grouping.access_repo do |repo|
-        assignment_folder = exam_template.assignment.repository_folder
         revision = repo.get_latest_revision
-        cover_pdf_path = File.join(assignment_folder, 'COVER.pdf')
-        cover_pdf = revision.files_at_path(cover_pdf_path)
+        cover_pdf_raw = repo.download_as_string(
+          revision.files_at_path(exam_template.assignment.repository_folder)['COVER.pdf']
+        )
+        cover_pdf = CombinePDF.parse(cover_pdf_raw)
 
         begin
           # convert PDF to an image
@@ -42,6 +54,7 @@ class MatchStudentJob < ApplicationJob
                                               membership_status: StudentMembership::STATUSES[:inviter])
         end
       end
+      progress.increment
     end
   end
 
