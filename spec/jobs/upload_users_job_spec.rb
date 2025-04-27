@@ -3,7 +3,7 @@ describe UploadUsersJob do
     let(:file) { fixture_file_upload('admin/users_good.csv', 'text/csv') }
     let(:job_args) { [EndUser, File.read(file), nil] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   describe '#perform' do
@@ -66,7 +66,7 @@ describe UploadUsersJob do
     context 'uploading EndUsers' do
       let(:user_type) { EndUser }
 
-      include_examples 'uploading users'
+      it_behaves_like 'uploading users'
     end
   end
 end

@@ -40,6 +40,7 @@ Rails.application.routes.draw do
           member do
             put 'add_tag'
             put 'remove_tag'
+            post 'collect_submission'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
@@ -454,7 +455,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :students, only: [:create, :new, :index, :edit, :update] do
+    resources :students, only: [:create, :new, :index, :edit, :update, :destroy] do
       collection do
         patch 'bulk_modify'
         get 'manage'

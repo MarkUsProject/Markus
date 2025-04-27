@@ -99,7 +99,7 @@ class AssignmentProperties < ApplicationRecord
   private
 
   def minimum_number_of_groups
-    return unless (group_max && group_min) && group_max < group_min
+    return unless group_max && group_min && group_max < group_min
     errors.add(:group_max, 'must be greater than the minimum number of groups')
     false
   end

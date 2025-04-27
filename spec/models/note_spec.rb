@@ -6,7 +6,7 @@ describe Note do
   it { is_expected.to belong_to(:role) }
   it { is_expected.to have_one(:course) }
 
-  include_examples 'course associations'
+  it_behaves_like 'course associations'
 
   context 'noteables_exist?' do
     it 'returns false when no noteables exist' do
@@ -30,19 +30,19 @@ describe Note do
   end
 
   context 'when Grouping exist' do
-    include_examples 'testing noteable on different models' do
+    it_behaves_like 'testing noteable on different models' do
       let(:noteable) { create(:grouping) }
     end
   end
 
   context 'when Student exist' do
-    include_examples 'testing noteable on different models' do
+    it_behaves_like 'testing noteable on different models' do
       let(:noteable) { create(:student) }
     end
   end
 
   context 'when Assignment exist' do
-    include_examples 'testing noteable on different models' do
+    it_behaves_like 'testing noteable on different models' do
       let(:noteable) { create(:assignment) }
     end
   end

@@ -50,7 +50,7 @@ class TATable extends React.Component {
         }
       })
       .catch(error => {
-        console.error("Error deleting TA:", error);
+        console.error("Error removing TA:", error);
       });
   };
 
@@ -116,7 +116,7 @@ class TATable extends React.Component {
                 &nbsp;|&nbsp;
                 <span>
                   <a href="#" onClick={() => this.removeTA(data.value)}>
-                    {I18n.t("delete")}
+                    {I18n.t("remove")}
                   </a>
                 </span>
               </>

@@ -1407,7 +1407,7 @@ describe ResultsController do
      :refresh_view_tokens,
      :update_view_token_expiry,
      :download_view_tokens].each { |route_name| test_unauthorized(route_name) }
-    include_examples 'showing json data', true
+    it_behaves_like 'showing json data', true
     describe '#view_token_check' do
       subject { get :view_token_check, params: params }
 
@@ -1637,7 +1637,7 @@ describe ResultsController do
       test_assigns_not_nil :result
     end
 
-    include_examples 'showing json data', false
+    it_behaves_like 'showing json data', false
 
     context 'accessing update_overall_comment' do
       before do
@@ -1985,8 +1985,8 @@ describe ResultsController do
 
       before { groupings }
 
-      include_examples 'ta and instructor #next_grouping with filters'
-      include_examples 'instructor and ta #next_grouping with different orderings'
+      it_behaves_like 'ta and instructor #next_grouping with filters'
+      it_behaves_like 'instructor and ta #next_grouping with different orderings'
 
       context 'filter by tas' do
         let(:ta1) { create(:ta) }
@@ -2482,10 +2482,10 @@ describe ResultsController do
             create(:ta_membership, role: ta, grouping: groupings[3])
           end
 
-          include_examples 'ta and instructor #next_grouping with filters'
+          it_behaves_like 'ta and instructor #next_grouping with filters'
         end
 
-        include_examples 'instructor and ta #next_grouping with different orderings'
+        it_behaves_like 'instructor and ta #next_grouping with different orderings'
         context 'filter by tas' do
           let(:ta1) { create(:ta) }
           let(:ta2) { create(:ta) }

@@ -39,6 +39,8 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
+    permissions:
+      contents: read
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -131,6 +133,8 @@ jobs:
     needs: test
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: write
     steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@v2

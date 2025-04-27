@@ -13,6 +13,7 @@ en:
       page_number: Page Number
       upside_down: Page Upside Down?
     assign_scans:
+      display_inactive: Display inactive students
       done: All groups have been successfully assigned students
       help: Assign students to scanned exam groups based on printed student names.
       no_cover_page: This submission does not have a cover page.

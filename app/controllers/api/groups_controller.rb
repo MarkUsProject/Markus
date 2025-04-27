@@ -11,7 +11,7 @@ module Api
     def create
       assignment = Assignment.find(params[:assignment_id])
       begin
-        group = assignment.add_group_api(params[:new_group_name])
+        group = assignment.add_group_api(params[:new_group_name], params[:members])
         respond_to do |format|
           format.xml do
             render xml: group.to_xml(root: 'group', skip_types: 'true')
@@ -367,6 +367,38 @@ module Api
       end
     rescue ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+    end
+
+    def collect_submission
+      @grouping = Grouping.find_by(group_id: params[:id], assignment: params[:assignment_id])
+      unless @grouping.current_submission_used.nil?
+        released = @grouping.current_submission_used.results.exists?(released_to_students: true)
+        if released
+          render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          return
+        end
+      end
+
+      @revision_identifier = params[:revision_identifier]
+      apply_late_penalty = if params[:apply_late_penalty].nil?
+                             false
+                           else
+                             params[:apply_late_penalty]
+                           end
+      retain_existing_grading = if params[:retain_existing_grading].nil?
+                                  false
+                                else
+                                  params[:retain_existing_grading]
+                                end
+      SubmissionsJob.perform_now([@grouping],
+                                 revision_identifier: @revision_identifier,
+                                 collect_current: params[:collect_current],
+                                 apply_late_penalty: apply_late_penalty,
+                                 retain_existing_grading: retain_existing_grading)
+
+      render 'shared/http_status', locals: { code: '201', message:
+        HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
     end
 
     private

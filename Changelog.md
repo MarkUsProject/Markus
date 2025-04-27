@@ -12,6 +12,13 @@
 - Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
 - Group test results by Test Groups id (#7422)
 - Display HTML previews of RMarkdown files (#7394)
+- Allow instructors to assign scans to inactive students (#7482)
+- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
+- Modified add_group_api to use username as group name for individual assignments (#7481)
+- Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
+- Allow creating image annotations from a test run's outputs (#7486)
+- Added an API that collects a single submission (#7494)
+- Enable removal of a student from a course (#7480)
 
 ### 🐛 Bug fixes
 
@@ -23,6 +30,10 @@
 - Fix tag creation failing in tags table (#7426)
 - Ensure tag names are unique within an assignment (#7430)
 - Update flash style to "notice" for "setting up test env" message (#7445)
+- Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
+- Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
+- Ensured annotations appear in results view when in fullscreen mode (#7487)
+- Fixed bug in `ImageViewer` where annotations did not always appear on initial image load (#7487)
 
 ### 🔧 Internal changes
 
@@ -46,6 +57,10 @@
 - Move Docker dependency updates into separate service (#7451)
 - Fixed flaky test due to daylight savings time issue (#7452)
 - Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
+- Updated to react-flatpickr v4.0.0 (#7478)
+- Remove `mistune` Python explicit dependency (#7483)
+- Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
+- Added explicit permissions to GitHub Actions workflow configuration (#7495)
 
 ## [v2.6.1]
 

@@ -1,4 +1,3 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
 nbconvert==7.16.6
-playwright==1.49.1
-mistune==3.1.2
+playwright==1.51.0

@@ -40,7 +40,7 @@ gem 'i18n-js'
 gem 'rails-i18n', '~> 7.0.10'
 
 # Redis
-gem 'redis', '~> 5.3.0'
+gem 'redis', '~> 5.4.0'
 
 # Exam template requirements
 gem 'combine_pdf'
@@ -107,7 +107,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'rspec-rails', '~> 7.1.0'
+  gem 'rspec-rails', '~> 7.1.1'
   gem 'selenium-webdriver'
 end
 

@@ -20,7 +20,7 @@ describe AutotestRunJob do
 
     before { allow(AutotestResultsJob).to receive(:set) }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   describe '#perform' do
@@ -154,7 +154,7 @@ describe AutotestRunJob do
         subject
       end
 
-      include_examples 'autotest jobs'
+      it_behaves_like 'autotest jobs'
 
       context 'where there is a starter file associated with the group' do
         let(:starter_file_group) { create(:starter_file_group, assignment: assignment) }

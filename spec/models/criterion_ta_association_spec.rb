@@ -8,7 +8,7 @@ describe CriterionTaAssociation do
     it { is_expected.to allow_values(subject.criterion.assignment.id).for :assessment_id }
     it { is_expected.to have_one(:course) }
 
-    include_examples 'course associations'
+    it_behaves_like 'course associations'
   end
 
   describe '#self.from_csv' do

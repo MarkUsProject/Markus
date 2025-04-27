@@ -8,7 +8,7 @@ describe GenerateJob do
   context 'when running as a background job' do
     let(:job_args) { [exam_template, 2, 0] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   describe '#perform' do

@@ -7,7 +7,7 @@ describe AutotestResetUrlJob do
   context 'when running as a background job' do
     let(:job_args) { [course, url, host_with_port] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   context 'when running as a foreground job' do

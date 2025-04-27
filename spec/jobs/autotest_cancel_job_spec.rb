@@ -16,7 +16,7 @@ describe AutotestCancelJob do
   context 'when running as a background job' do
     let(:job_args) { [assignment.id, test_run_ids] }
 
-    include_examples 'background job'
+    it_behaves_like 'background job'
   end
 
   describe '#perform' do
@@ -71,7 +71,7 @@ describe AutotestCancelJob do
         expect(test_runs.map { |t| t.reload.status }.uniq).to contain_exactly('cancelled')
       end
 
-      include_examples 'autotest jobs'
+      it_behaves_like 'autotest jobs'
     end
 
     context 'tests are not set up' do

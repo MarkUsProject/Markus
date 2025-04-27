@@ -1,6 +1,6 @@
 # Student user for a given course.
 class Student < Role
-  has_many :grade_entry_students, foreign_key: :role_id, inverse_of: :role
+  has_many :grade_entry_students, dependent: :destroy, foreign_key: :role_id, inverse_of: :role
   has_many :accepted_memberships,
            -> {
              where membership_status: [StudentMembership::STATUSES[:accepted],
@@ -30,7 +30,7 @@ class Student < Role
            through: :memberships,
            source: :grouping
 
-  has_many :student_memberships, foreign_key: 'role_id', inverse_of: :role
+  has_many :student_memberships, dependent: :restrict_with_exception, foreign_key: 'role_id', inverse_of: :role
 
   has_many :grace_period_deductions, through: :memberships
 
