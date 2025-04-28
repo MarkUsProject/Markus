@@ -26,6 +26,7 @@ en:
     due_date_extension: Due Date Extension
     duration_extension: Duration Extension
     empty: Empty Group
+    exam_template: Exam Template
     grace_day_over_limit: You have assigned one or more students who has less grace credits than the amount already used by group %{group} for this assignment.
     group_name_already_in_use: This name is already in use for this assignment.
     group_name_already_in_use_diff_assignment: The group can't be renamed, because it would result in the loss of submission data. Try a name that is not in use for another assignment.

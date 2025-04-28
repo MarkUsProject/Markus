@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
+import AutoMatchModal from "./Modals/auto_match_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -18,6 +19,8 @@ class GroupsManager extends React.Component {
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
+      isAutoMatchModalOpen: false,
+      examTemplates: [],
       loading: true,
     };
   }
@@ -78,6 +81,28 @@ class GroupsManager extends React.Component {
           loading: false,
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
+        });
+      });
+
+    fetch(
+      Routes.list_course_assignment_exam_templates_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(res => {
+        this.setState({
+          examTemplates: res,
         });
       });
   };
@@ -195,7 +220,19 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
-  autoMatch = () => {
+  handleShowAutoMatchModal = () => {
+    this.setState({
+      isAutoMatchModalOpen: true,
+    });
+  };
+
+  handleCloseAutoMatchModal = () => {
+    this.setState({
+      isAutoMatchModalOpen: false,
+    });
+  };
+
+  autoMatch = examTemplate => {
     if (this.groupsTable.state.selection.length === 0) {
       alert(I18n.t("groups.select_a_group"));
       return;
@@ -208,7 +245,7 @@ class GroupsManager extends React.Component {
       ),
       data: {
         groupings: this.groupsTable.state.selection,
-        exam_template: 4,
+        exam_template: examTemplate,
       },
     });
   };
@@ -274,11 +311,11 @@ class GroupsManager extends React.Component {
       <div>
         <GroupsActionBox
           assign={this.assign}
-          autoMatch={this.autoMatch}
           can_create_all_groups={this.props.can_create_all_groups}
           createAllGroups={this.createAllGroups}
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
+          handleShowAutoMatchModal={this.handleShowAutoMatchModal}
           hiddenStudentsCount={this.state.loading ? null : this.state.hidden_students_count}
           hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
           scanned_exam={this.props.scanned_exam}
@@ -331,6 +368,12 @@ class GroupsManager extends React.Component {
           title={title}
           extra_info={this.extraModalInfo()}
           key={this.state.selected_extension_data.id} // this causes the ExtensionModal to be recreated if this value changes
+        />
+        <AutoMatchModal
+          isOpen={this.state.isAutoMatchModalOpen}
+          onRequestClose={this.handleCloseAutoMatchModal}
+          examTemplates={this.state.examTemplates}
+          onSubmit={this.autoMatch}
         />
       </div>
     );
@@ -705,7 +748,7 @@ class GroupsActionBox extends React.Component {
           {I18n.t("groups.add_to_group")}
         </button>
         {this.props.scanned_exam ? (
-          <button className="" onClick={this.props.autoMatch}>
+          <button className="" onClick={this.props.handleShowAutoMatchModal}>
             <FontAwesomeIcon icon="fa-solid fa-file-import" />
             {I18n.t("groups.auto_match")}
           </button>
