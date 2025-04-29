@@ -16,6 +16,7 @@
 - Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
 - Modified add_group_api to use username as group name for individual assignments (#7481)
 - Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
+- Changed the PDF scanning job separate the student matching process into its own job. (#7499)
 
 ### 🐛 Bug fixes
 
