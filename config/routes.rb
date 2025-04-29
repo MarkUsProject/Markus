@@ -237,7 +237,6 @@ Rails.application.routes.draw do
         get 'lti_settings'
         post 'create_lti_grades'
         post 'create_lti_line_items'
-        get 'list_exam_templates'
       end
 
       resources :starter_file_groups, only: [:create]
