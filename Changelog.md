@@ -6,6 +6,16 @@
 
 ### ✨ New features and improvements
 
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.7.0]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
 - Fix front-end content shift when an input element is focused (#7384)
 - Tooltip text for Package requirements file for Python autotester settings (#7383)
 - Pass back tags and overall comments from Autotester to MarkUs (#7387)
@@ -16,6 +26,9 @@
 - Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
 - Modified add_group_api to use username as group name for individual assignments (#7481)
 - Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
+- Allow creating image annotations from a test run's outputs (#7486)
+- Added an API that collects a single submission (#7494)
+- Enable removal of a student from a course (#7480)
 - Changed the PDF scanning job separate the student matching process into its own job. (#7499)
 
 ### 🐛 Bug fixes
@@ -57,6 +70,7 @@
 - Updated to react-flatpickr v4.0.0 (#7478)
 - Remove `mistune` Python explicit dependency (#7483)
 - Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
+- Added explicit permissions to GitHub Actions workflow configuration (#7495)
 
 ## [v2.6.1]
 

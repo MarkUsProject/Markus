@@ -343,7 +343,7 @@ describe TasController do
       it 'deletes TA, flashes success, and gets an ok response' do
         expect(Ta.exists?).to be(false)
         expect(flash.now[:success]).to contain_message(I18n.t('flash.tas.destroy.success', user_name: ta.user_name))
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
       end
 
       it 'deletes associated grader permisison' do
