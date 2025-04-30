@@ -587,13 +587,14 @@ class GroupsController < ApplicationController
     redirect_to course_assignment_path(current_course, assignment)
   end
 
-  def match_students
+  def auto_match
+    assignment = Assignment.find(params[:assignment_id])
     grouping_ids = params[:groupings]
-    exam_template_id = params[:exam_template]
-    groupings = Grouping.find(grouping_ids)
-    exam_template = ExamTemplate.find(exam_template_id)
+    exam_template_id = params[:exam_template_id]
+    groupings = assignment.groupings.find(grouping_ids)
+    exam_template = assignment.exam_templates.find(exam_template_id)
 
-    @current_job = MatchStudentJob.perform_later groupings, exam_template
+    @current_job = AutoMatchJob.perform_later groupings, exam_template
     session[:job_id] = @current_job.job_id
 
     respond_to do |format|

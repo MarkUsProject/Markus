@@ -274,7 +274,6 @@ Rails.application.routes.draw do
         collection do
           get 'view_logs'
           patch 'split'
-          get 'list'
         end
       end
 
@@ -306,7 +305,7 @@ Rails.application.routes.draw do
           delete 'delete_rejected'
           post 'invite_member'
           patch 'disinvite_member'
-          post 'match_students'
+          post 'auto_match'
         end
       end
 

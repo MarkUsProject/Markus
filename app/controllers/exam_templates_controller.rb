@@ -329,20 +329,4 @@ class ExamTemplatesController < ApplicationController
             :crop_height
           )
   end
-
-  def list
-    @assignment = Assignment.find(params[:assignment_id])
-    @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)
-
-    respond_to do |format|
-      format.json do
-        render json: @exam_templates.map { |template|
-          {
-            id: template.id,
-            name: template.name
-          }
-        }
-      end
-    end
-  end
 end

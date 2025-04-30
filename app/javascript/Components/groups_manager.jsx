@@ -81,28 +81,7 @@ class GroupsManager extends React.Component {
           loading: false,
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
-        });
-      });
-
-    fetch(
-      Routes.list_course_assignment_exam_templates_path(
-        this.props.course_id,
-        this.props.assignment_id
-      ),
-      {
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    )
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then(res => {
-        this.setState({
-          examTemplates: res,
+          examTemplates: res.exam_templates,
         });
       });
   };
@@ -239,13 +218,13 @@ class GroupsManager extends React.Component {
     }
 
     $.post({
-      url: Routes.match_students_course_assignment_groups_path(
+      url: Routes.auto_match_course_assignment_groups_path(
         this.props.course_id,
         this.props.assignment_id
       ),
       data: {
         groupings: this.groupsTable.state.selection,
-        exam_template: examTemplate,
+        exam_template_id: examTemplate,
       },
     });
   };
@@ -747,12 +726,12 @@ class GroupsActionBox extends React.Component {
           <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("groups.add_to_group")}
         </button>
-        {this.props.scanned_exam ? (
-          <button className="" onClick={this.props.handleShowAutoMatchModal}>
+        {this.props.scanned_exam && (
+          <button onClick={this.props.handleShowAutoMatchModal}>
             <FontAwesomeIcon icon="fa-solid fa-file-import" />
             {I18n.t("groups.auto_match")}
           </button>
-        ) : undefined}
+        )}
         {this.props.can_create_all_groups ? (
           <button className="" onClick={this.props.createAllGroups}>
             <FontAwesomeIcon icon="fa-solid fa-people-group" />

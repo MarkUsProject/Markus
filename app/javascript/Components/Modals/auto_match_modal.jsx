@@ -37,7 +37,7 @@ export default class AutoMatchModal extends React.Component {
       >
         <h2>{I18n.t("groups.auto_match")}</h2>
         <form onSubmit={event => this.handleSubmit(event)}>
-          {I18n.t("groups.exam_template")}
+          {I18n.t("activerecord.models.exam_template.one")}
           <select
             id="auto-match-select"
             value={this.state.value}
@@ -52,7 +52,7 @@ export default class AutoMatchModal extends React.Component {
           </select>
           <div className={"modal-container"}>
             <button type="submit" value="Submit" disabled={this.state.value === undefined}>
-              {I18n.t("continue")}
+              {I18n.t("groups.auto_match")}
             </button>
             <button type="reset" onClick={this.props.onRequestClose}>
               {I18n.t("cancel")}

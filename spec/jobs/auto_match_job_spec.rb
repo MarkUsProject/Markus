@@ -1,4 +1,4 @@
-describe MatchStudentJob do
+describe AutoMatchJob do
   let(:instructor) { create(:instructor) }
   let(:user) { instructor.user }
   let(:exam_template) { create(:exam_template_midterm) }
@@ -14,7 +14,7 @@ describe MatchStudentJob do
       FileUtils.cp "db/data/scanned_exams/#{filename}",
                    File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
       SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor, user)
-      MatchStudentJob.perform_now([grouping], exam_template)
+      AutoMatchJob.perform_now([grouping], exam_template)
     end
 
     let(:exam_template) { create(:exam_template_with_automatic_parsing) }

@@ -1,10 +1,10 @@
-class MatchStudentJob < ApplicationJob
+class AutoMatchJob < ApplicationJob
   def self.on_complete_js(_status)
     '() => {window.groupsManager && window.groupsManager.current.fetchData()}'
   end
 
   def self.show_status(status)
-    I18n.t('poll_job.match_students_job', progress: status[:progress], total: status[:total])
+    I18n.t('poll_job.auto_match_job', progress: status[:progress], total: status[:total])
   end
 
   def perform(groupings, exam_template)

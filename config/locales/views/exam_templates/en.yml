@@ -21,8 +21,6 @@ en:
       skip_group: Skip group
       student_not_found: Student with name %{name} does not exist.
       title: Assign Scans
-    auto_match:
-      title: Auto-match
     back_to_exam_templates_page: Back to Exam Templates page
     create:
       add_division: Add Template Division

@@ -12,7 +12,7 @@ en:
     download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
     failed: Failed
     generate_job: Generating copy %{progress} of %{total} for %{exam_name}
-    match_students_job: "%{progress}/%{total} groups matched"
+    auto_match_job: "%{progress}/%{total} groups matched"
     not_enqueued: No job was enqueued
     queued: Queued
     split_pdf_job: Processing page %{progress} out of %{total} for %{exam_name}
