@@ -7,12 +7,17 @@ export default class AutoMatchModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      exam_template: undefined,
-      value: undefined,
+      value: this.props.examTemplates.length === 0 ? undefined : this.props.examTemplates[0].id,
     };
   }
 
   static contextType = ResultContext;
+
+  componentDidUpdate() {
+    if (this.state.value === undefined && this.props.examTemplates.length > 0) {
+      this.setState({value: this.props.examTemplates[0].id});
+    }
+  }
 
   componentDidMount() {
     Modal.setAppElement("body");
@@ -43,7 +48,6 @@ export default class AutoMatchModal extends React.Component {
             value={this.state.value}
             onChange={event => this.handleChange(event)}
           >
-            <option disabled selected></option>
             {this.props.examTemplates.map(examTemplate => (
               <option key={examTemplate.id} value={examTemplate.id}>
                 {examTemplate.name}
@@ -51,10 +55,15 @@ export default class AutoMatchModal extends React.Component {
             ))}
           </select>
           <div className={"modal-container"}>
-            <button type="submit" value="Submit" disabled={this.state.value === undefined}>
+            <button
+              className="button"
+              type="submit"
+              value="Submit"
+              disabled={this.state.value === undefined}
+            >
               {I18n.t("groups.auto_match")}
             </button>
-            <button type="reset" onClick={this.props.onRequestClose}>
+            <button className="button" type="reset" onClick={this.props.onRequestClose}>
               {I18n.t("cancel")}
             </button>
           </div>

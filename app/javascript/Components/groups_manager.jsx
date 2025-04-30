@@ -200,6 +200,11 @@ class GroupsManager extends React.Component {
   };
 
   handleShowAutoMatchModal = () => {
+    if (this.groupsTable.state.selection.length === 0) {
+      alert(I18n.t("groups.select_a_group"));
+      return;
+    }
+
     this.setState({
       isAutoMatchModalOpen: true,
     });
@@ -212,11 +217,6 @@ class GroupsManager extends React.Component {
   };
 
   autoMatch = examTemplate => {
-    if (this.groupsTable.state.selection.length === 0) {
-      alert(I18n.t("groups.select_a_group"));
-      return;
-    }
-
     $.post({
       url: Routes.auto_match_course_assignment_groups_path(
         this.props.course_id,

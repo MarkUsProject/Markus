@@ -28,7 +28,8 @@ class AutoMatchJob < ApplicationJob
             options.density = '300'
           end
         rescue StandardError
-          return
+          progress.increment
+          next
         end
 
         img = imglist.first
