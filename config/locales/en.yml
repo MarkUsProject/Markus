@@ -3,6 +3,7 @@ en:
   date_validator:
     invalid_date: is not a valid date
   poll_job:
+    auto_match_job: "%{progress}/%{total} groups matched"
     autotest_run_job_enqueuing: Enqueuing tests
     autotest_specs_job: Setting up automated tests.
     completed: Completed
@@ -12,7 +13,6 @@ en:
     download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
     failed: Failed
     generate_job: Generating copy %{progress} of %{total} for %{exam_name}
-    auto_match_job: "%{progress}/%{total} groups matched"
     not_enqueued: No job was enqueued
     queued: Queued
     split_pdf_job: Processing page %{progress} out of %{total} for %{exam_name}
