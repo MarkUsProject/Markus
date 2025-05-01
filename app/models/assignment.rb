@@ -369,7 +369,8 @@ class Assignment < Assessment
 
     {
       students: students.values,
-      groups: groupings
+      groups: groupings,
+      exam_templates: assignment.exam_templates
     }
   end
 

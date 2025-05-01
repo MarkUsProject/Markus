@@ -29,6 +29,7 @@
 - Allow creating image annotations from a test run's outputs (#7486)
 - Added an API that collects a single submission (#7494)
 - Enable removal of a student from a course (#7480)
+- Changed the PDF scanning job separate the student matching process into its own job. (#7499)
 
 ### 🐛 Bug fixes
 
