@@ -3,6 +3,7 @@ en:
   date_validator:
     invalid_date: is not a valid date
   poll_job:
+    auto_match_job: "%{progress}/%{total} groups processed"
     autotest_run_job_enqueuing: Enqueuing tests
     autotest_specs_job: Setting up automated tests.
     completed: Completed

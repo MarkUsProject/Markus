@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
+import AutoMatchModal from "./Modals/auto_match_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -18,6 +19,8 @@ class GroupsManager extends React.Component {
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
+      isAutoMatchModalOpen: false,
+      examTemplates: [],
       loading: true,
     };
   }
@@ -78,6 +81,7 @@ class GroupsManager extends React.Component {
           loading: false,
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
+          examTemplates: res.exam_templates,
         });
       });
   };
@@ -195,6 +199,36 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
+  handleShowAutoMatchModal = () => {
+    if (this.groupsTable.state.selection.length === 0) {
+      alert(I18n.t("groups.select_a_group"));
+      return;
+    }
+
+    this.setState({
+      isAutoMatchModalOpen: true,
+    });
+  };
+
+  handleCloseAutoMatchModal = () => {
+    this.setState({
+      isAutoMatchModalOpen: false,
+    });
+  };
+
+  autoMatch = examTemplate => {
+    $.post({
+      url: Routes.auto_match_course_assignment_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        groupings: this.groupsTable.state.selection,
+        exam_template_id: examTemplate,
+      },
+    });
+  };
+
   validate = grouping_id => {
     if (!confirm(I18n.t("groups.validate_confirm"))) {
       return;
@@ -260,8 +294,10 @@ class GroupsManager extends React.Component {
           createAllGroups={this.createAllGroups}
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
+          handleShowAutoMatchModal={this.handleShowAutoMatchModal}
           hiddenStudentsCount={this.state.loading ? null : this.state.hidden_students_count}
           hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
+          scanned_exam={this.props.scanned_exam}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.updateShowHidden}
         />
@@ -311,6 +347,12 @@ class GroupsManager extends React.Component {
           title={title}
           extra_info={this.extraModalInfo()}
           key={this.state.selected_extension_data.id} // this causes the ExtensionModal to be recreated if this value changes
+        />
+        <AutoMatchModal
+          isOpen={this.state.isAutoMatchModalOpen}
+          onRequestClose={this.handleCloseAutoMatchModal}
+          examTemplates={this.state.examTemplates}
+          onSubmit={this.autoMatch}
         />
       </div>
     );
@@ -684,6 +726,12 @@ class GroupsActionBox extends React.Component {
           <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("groups.add_to_group")}
         </button>
+        {this.props.scanned_exam && (
+          <button onClick={this.props.handleShowAutoMatchModal}>
+            <FontAwesomeIcon icon="fa-solid fa-file-import" />
+            {I18n.t("groups.auto_match")}
+          </button>
+        )}
         {this.props.can_create_all_groups ? (
           <button className="" onClick={this.props.createAllGroups}>
             <FontAwesomeIcon icon="fa-solid fa-people-group" />
