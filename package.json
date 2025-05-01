@@ -23,7 +23,7 @@
     "jquery-ui": "^1.14.1",
     "marked": "^15.0.7",
     "mathjax": "^3.2.2",
-    "mime": "^4.0.6",
+    "mime": "^4.0.7",
     "mousetrap": "^1.6.5",
     "pdfjs-dist": "^4.10.38",
     "prismjs": "^1.30.0",
