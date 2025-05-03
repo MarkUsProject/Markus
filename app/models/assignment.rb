@@ -831,7 +831,7 @@ class Assignment < Assessment
     if ta_id.nil?
       groupings.size
     elsif bulk
-      cache_ta_results.dig(ta_id, :total_results)&.size
+      cache_ta_results.dig(ta_id, :total_results)&.size || 0
     else
       ta_memberships.where(role_id: ta_id).size
     end
@@ -863,12 +863,12 @@ class Assignment < Assessment
     data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
     # Group results by TA ID
     grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
-
-    results_by_id = current_results.includes(:marks).index_by(&:id)
-
-    ta_to_criteria = self.criterion_ta_associations.group_by(&:ta_id).transform_values do |assocs|
-      assocs.map(&:criterion_id)
-    end
+    current_results.includes(:marks).index_by(&:id)
+    # map ta_ids to criteria_ids
+    ta_to_criteria = self.criterion_ta_associations
+                         .pluck([:ta_id, :criterion_id])
+                         .group_by { |ta_id, _| ta_id }
+                         .transform_values { |pairs| pairs.map { |_, criterion_id| criterion_id } }
 
     @cache_ta_results = grouped_data.map do |ta_id, results|
       total_results = results.map { |_, result_id, _| result_id }
@@ -881,22 +881,11 @@ class Assignment < Assessment
         if criteria_count == 0
           # If the TA has no assigned criteria, fallback to using marking_state to determine marked results
           complete_results = results.select do |_, _, marking_state|
-            marking_state ==
-                      Result::MARKING_STATES[:complete]
+            marking_state == Result::MARKING_STATES[:complete]
           end
           marked_result_ids = complete_results.map { |_, result_id, _| result_id }
         else
           # Count results where all assigned criteria have been marked
-          total_results.select do |result_id|
-            result = results_by_id[result_id]
-            next false unless result
-
-            marks_for_ta = result.marks.select do |mark|
-              assigned_criteria_ids.include?(mark.criterion_id) && !mark.mark.nil?
-            end
-            # Only include this result if all criteria assigned to the TA have been marked
-            marks_for_ta.size == criteria_count
-          end
           marked_result_ids = Result.joins(:marks)
                                     .where(id: total_results, marks: { criterion_id: assigned_criteria_ids })
                                     .where.not(marks: { mark: nil })
@@ -909,15 +898,13 @@ class Assignment < Assessment
         marked_result_ids = results.select { |_, _, marking_state| marking_state == Result::MARKING_STATES[:complete] }
                                    .map { |_, result_id, _| result_id }
       end
-      # Save the results into the cache
       [ta_id, { total_results: results, marked_result_ids: marked_result_ids }]
     end.to_h
   end
 
   def get_num_marked(ta_id = nil, bulk: false)
     if bulk
-      cache_ta_results
-      return @cache_ta_results[ta_id][:marked_result_ids].size
+      return cache_ta_results.dig(ta_id, :marked_result_ids)&.size || 0
     end
     if ta_id.nil?
       self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).count
