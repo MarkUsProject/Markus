@@ -406,21 +406,21 @@ GEM
     rqrcode_core (1.2.0)
     rspec-core (3.13.3)
       rspec-support (~> 3.13.0)
-    rspec-expectations (3.13.3)
+    rspec-expectations (3.13.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.2)
+    rspec-mocks (3.13.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-rails (7.1.1)
-      actionpack (>= 7.0)
-      activesupport (>= 7.0)
-      railties (>= 7.0)
+    rspec-rails (8.0.0)
+      actionpack (>= 7.2)
+      activesupport (>= 7.2)
+      railties (>= 7.2)
       rspec-core (~> 3.13)
       rspec-expectations (~> 3.13)
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
-    rspec-support (3.13.2)
+    rspec-support (3.13.3)
     rtesseract (3.1.3)
     ruby-next-core (1.0.3)
     ruby-progressbar (1.13.0)
@@ -554,7 +554,7 @@ DEPENDENCIES
   resque
   resque-scheduler
   rmagick (~> 6.1.1)
-  rspec-rails (~> 7.1.1)
+  rspec-rails (~> 8.0.0)
   rtesseract
   rubyzip
   rugged
