@@ -59,7 +59,6 @@ gem 'rugged'
 
 # Rails miscellany
 gem 'activemodel-serializers-xml'
-gem 'activerecord-session_store'
 gem 'config'
 gem 'cookies_eu'
 gem 'dry-validation'  # For settings schema validation
