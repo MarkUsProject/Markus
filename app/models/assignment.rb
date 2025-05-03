@@ -863,7 +863,6 @@ class Assignment < Assessment
     data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
     # Group results by TA ID
     grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
-    current_results.includes(:marks).index_by(&:id)
     # map ta_ids to criteria_ids
     ta_to_criteria = self.criterion_ta_associations
                          .pluck([:ta_id, :criterion_id])
