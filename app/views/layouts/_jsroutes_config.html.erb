@@ -1,9 +1,6 @@
 <%= javascript_tag nonce: true do %>
   Routes.configure({
-    url_links: true,
-    <% if Rails.application.config.relative_url_root %>
-      prefix: '<%= Rails.application.config.relative_url_root %>'
-    <% end %>
+    url_links: true
   });
   Routes.config();
 <% end %>
