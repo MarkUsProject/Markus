@@ -10,6 +10,8 @@
 
 ### 🔧 Internal changes
 
+- Remove `activerecord-session_store` gem (#7517)
+
 ## [v2.7.0]
 
 ### 🚨 Breaking changes
