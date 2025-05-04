@@ -51,6 +51,19 @@ module Markus
     # Ensure form_with calls generate remote forms by
     config.action_view.form_with_generates_remote_forms = true
 
+    # Set conservative Regexp.timeout (Rails default is 1s)
+    Regexp.timeout = 10
+
+    ###
+    # Specifies whether `to_time` methods preserve the UTC offset of their receivers or preserves the timezone.
+    # If set to `:zone`, `to_time` methods will use the timezone of their receivers.
+    # If set to `:offset`, `to_time` methods will use the UTC offset.
+    # If `false`, `to_time` methods will convert to the local system UTC offset instead.
+    #
+    # Pre-Rails 8 the default was :offset; Rails 8 makes the default :zone.
+    #++
+    config.active_support.to_time_preserves_timezone = :offset
+
     # Settings below are configurable
 
     config.time_zone = Settings.rails.time_zone
