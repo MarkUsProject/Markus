@@ -64,6 +64,7 @@
 - Update Python version to 3.13 in seed autotest schemas (#7388)
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
+- Refactor querying on dashboard graph to query per-assignment rather than per-TA (#7420)
 - Remove unused Javascript files (#7442)
 - Refactor scanned test generation and test splitting from polling to websockets (#7428)
 - Move Docker dependency updates into separate service (#7451)

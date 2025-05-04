@@ -30,10 +30,7 @@ class Ta < Role
   # If TAs are assigned to grade criteria, returns just the subtotal
   # for the criteria the TA was assigned.
   def percentage_grades_array(assignment)
-    result_ids = assignment.current_results
-                           .joins(grouping: :tas)
-                           .where(marking_state: Result::MARKING_STATES[:complete], 'roles.id': self.id)
-                           .ids
+    result_ids = assignment.marked_result_ids_for(self.id)
 
     if assignment.assign_graders_to_criteria
       criterion_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
