@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.2.2'
+gem 'rails', '~> 8.0.2'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -37,7 +37,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 7.0.10'
+gem 'rails-i18n', '~> 8.0.1'
 
 # Redis
 gem 'redis', '~> 5.4.0'

@@ -2,9 +2,10 @@ require:
   - rubocop-rails
   - rubocop-performance
   - rubocop-factory_bot
-  - rubocop-rspec
   - rubocop-rspec_rails
   - rubocop-capybara
+plugins:
+  - rubocop-rspec
 
 AllCops:
   Exclude:
