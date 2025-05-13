@@ -199,23 +199,49 @@ describe CriteriaController do
       end
 
       describe '#new' do
-        before do
-          get_as instructor,
-                 :new,
-                 params: { course_id: course.id, assignment_id: assignment.id },
-                 format: :js
+        context 'assignment marks are not released' do
+          before do
+            get_as instructor,
+                   :new,
+                   params: { course_id: course.id, assignment_id: assignment.id },
+                   format: :js
+          end
+
+          it 'should respond with appropriate content' do
+            expect(assigns(:assignment)).to be_truthy
+          end
+
+          it 'should render the new template' do
+            expect(subject).to render_template(:new)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
         end
 
-        it 'should respond with appropriate content' do
-          expect(assigns(:assignment)).to be_truthy
-        end
+        context 'assignment marks are released' do
+          let(:released_assignment) { create(:assignment) }
 
-        it 'should render the new template' do
-          expect(subject).to render_template(:new)
-        end
+          before do
+            grouping = create(:grouping, assignment: released_assignment)
+            submission = create(:submission, grouping: grouping)
+            result = submission.get_latest_result
+            result.update!(released_to_students: true)
 
-        it 'should respond with success' do
-          expect(subject).to respond_with(:success)
+            get_as instructor,
+                   :new,
+                   params: { course_id: course.id, assignment_id: released_assignment.id },
+                   format: :js
+          end
+
+          it 'displays an error message' do
+            expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+          end
+
+          it 'responds with appropriate status' do
+            expect(response).to have_http_status(:bad_request)
+          end
         end
       end
 
@@ -372,6 +398,32 @@ describe CriteriaController do
 
           it 'should respond with success' do
             expect(subject).to respond_with(:success)
+          end
+        end
+
+        context 'assignment marks are released' do
+          let(:released_assignment) { create(:assignment) }
+
+          before do
+            grouping = create(:grouping, assignment: released_assignment)
+            submission = create(:submission, grouping: grouping)
+            result = submission.get_latest_result
+            result.update!(released_to_students: true)
+
+            post_as instructor,
+                    :create,
+                    params: { course_id: course.id, assignment_id: released_assignment.id,
+                              flexible_criterion: { name: 'first', max_mark: 10 },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
+                    format: :js
+          end
+
+          it 'displays an error message' do
+            expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+          end
+
+          it 'responds with appropriate status' do
+            expect(response).to have_http_status(:bad_request)
           end
         end
       end
