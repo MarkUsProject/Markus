@@ -199,7 +199,7 @@ describe CriteriaController do
       end
 
       describe '#new' do
-        context 'assignment marks are not released' do
+        context 'when assignment marks are not released' do
           before do
             get_as instructor,
                    :new,
@@ -220,7 +220,7 @@ describe CriteriaController do
           end
         end
 
-        context 'assignment marks are released' do
+        context 'when assignment marks are released' do
           let(:released_assignment) { create(:assignment) }
 
           before do
@@ -239,7 +239,7 @@ describe CriteriaController do
             expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
           end
 
-          it 'responds with appropriate status' do
+          it 'responds with :bad_request status' do
             expect(response).to have_http_status(:bad_request)
           end
         end
@@ -401,7 +401,7 @@ describe CriteriaController do
           end
         end
 
-        context 'assignment marks are released' do
+        context 'when assignment marks are released' do
           let(:released_assignment) { create(:assignment) }
 
           before do
@@ -422,7 +422,7 @@ describe CriteriaController do
             expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
           end
 
-          it 'responds with appropriate status' do
+          it 'responds with :bad_request status' do
             expect(response).to have_http_status(:bad_request)
           end
         end

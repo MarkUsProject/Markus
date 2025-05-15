@@ -13,7 +13,7 @@
 
 - Remove `activerecord-session_store` gem (#7517)
 - Upgrade to Rails 8 (#7504)
-- Tests added for #new and #create actions for CriteriaController (#7521)
+- Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
 
 ## [v2.7.0]
 
