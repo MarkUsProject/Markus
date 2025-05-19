@@ -1033,12 +1033,37 @@ describe AssignmentsController do
         let(:params) { { course_id: assignment.course.id, id: ssfg.starter_file_group.assignment.id } }
 
         it 'should contain the right values' do
+          expect(response.parsed_body['sections'].size).to eq 1
           file_data = response.parsed_body['sections'].first
           expected = { section_id: section.id,
                        section_name: section.name,
                        group_id: starter_file_group.id,
                        group_name: starter_file_group.name }
           expect(file_data).to eq(expected.transform_keys(&:to_s))
+        end
+
+        context 'when there is another assignment with sections' do
+          let(:a2) { create(:assignment) }
+          let(:other_starter_file_group) { create(:starter_file_group, assignment: a2) }
+          let(:ssfg2) do
+            create(:section_starter_file_group, starter_file_group: other_starter_file_group, section: section)
+          end
+          let(:params) do
+            # Ensure creation of both assignments and starter file groups
+            ssfg
+            ssfg2
+            { course_id: assignment.course.id, id: ssfg.starter_file_group.assignment.id }
+          end
+
+          it 'should only contain the section data for the requested assignment' do
+            expect(response.parsed_body['sections'].size).to eq 1
+            file_data = response.parsed_body['sections'].first
+            expected = { section_id: section.id,
+                         section_name: section.name,
+                         group_id: starter_file_group.id,
+                         group_name: starter_file_group.name }
+            expect(file_data).to eq(expected.transform_keys(&:to_s))
+          end
         end
       end
     end
