@@ -6,7 +6,6 @@
 
 ### ✨ New features and improvements
 
-
 ### 🐛 Bug fixes
 
 ### 🔧 Internal changes
