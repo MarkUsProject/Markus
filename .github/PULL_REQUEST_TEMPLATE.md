@@ -1,6 +1,7 @@
 ## Proposed Changes
 *(Describe your changes here. Also describe the motivation for your changes: what problem do they solve, or how do they improve the application or codebase? If this pull request fixes an open issue, [use a keyword to link this pull request to the issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword).)*
 
+...
 
 <details>
 <summary>Screenshots of your changes (if applicable)</summary>
@@ -39,7 +40,7 @@ Before opening your pull request:
   - This is **required** for all bug fixes and new features.
 - [ ] I have updated the project documentation, if applicable.
   - This is **required** for new features.
-- [ ] If this is my first contribution, I have added myself to the [list of contributors](/Users/freyazhang/Desktop/sds-Markus/Markus/doc/markus-contributors.txt).
+- [ ] If this is my first contribution, I have added myself to the list of contributors.
 
 After opening your pull request:
 
