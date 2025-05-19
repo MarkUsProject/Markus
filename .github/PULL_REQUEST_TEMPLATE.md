@@ -39,7 +39,7 @@ Before opening your pull request:
   - This is **required** for all bug fixes and new features.
 - [ ] I have updated the project documentation, if applicable.
   - This is **required** for new features.
-- [ ] If this is my first contribution, I have added myself to the [list of contributors](../doc/markus-contributors.txt).
+- [ ] If this is my first contribution, I have added myself to the [list of contributors](/Users/freyazhang/Desktop/sds-Markus/Markus/doc/markus-contributors.txt).
 
 After opening your pull request:
 
