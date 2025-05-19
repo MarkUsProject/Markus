@@ -5,6 +5,8 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Remove the ... under "Proposed changes".
+- Make the text "list of contributors" a link to the file in the repository.
 
 ### 🐛 Bug fixes
 
