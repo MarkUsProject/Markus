@@ -102,7 +102,7 @@ describe Section do
       end
     end
 
-    context 'when a starter file group is already assigned' do
+    context 'when a starter file group is already assigned for that assignment' do
       let(:section) { sections.second }
 
       before { section.update_starter_file_group(assignment.id, starter_file_groups.first.id) }
@@ -115,6 +115,27 @@ describe Section do
       it 'should remove the old starter file group' do
         ids = section.reload.section_starter_file_groups.pluck(:starter_file_group_id)
         expect(ids).not_to include starter_file_groups.second.id
+      end
+    end
+
+    context 'when a starter file group is assigned for a different assignment' do
+      let(:assignment2) { create(:assignment) }
+      let!(:starter_file_groups2) { create_list(:starter_file_group_with_entries, 2, assignment: assignment2) }
+      let(:section) { sections.second }
+
+      before do
+        create(:section_starter_file_group, starter_file_group: starter_file_groups2.second, section: section)
+        section.update_starter_file_group(assignment.id, starter_file_groups.first.id)
+      end
+
+      it 'should assign the new starter file group' do
+        ids = section.reload.section_starter_file_groups.pluck(:starter_file_group_id)
+        expect(ids).to include starter_file_groups.first.id
+      end
+
+      it 'should not remove the starter file group for the other assignment' do
+        ids = section.reload.section_starter_file_groups.pluck(:starter_file_group_id)
+        expect(ids).to include starter_file_groups2.second.id
       end
     end
   end
