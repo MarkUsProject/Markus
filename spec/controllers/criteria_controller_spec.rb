@@ -267,7 +267,6 @@ describe CriteriaController do
           end
         end
 
-        # there should not be a bad request expectation because it was not implemented.
         context 'when assignment marks have been released' do
           let!(:released_assignment) do
             create(:assignment, course: course).tap do |assignment|
@@ -294,6 +293,7 @@ describe CriteriaController do
             expect(flash[:notice]).to have_message(I18n.t('criteria.errors.released_marks'))
           end
 
+          # there should not be a bad request expectation because the view renders successfully in read-only mode
           it 'responds with success' do
             expect(subject).to respond_with(:success)
           end
