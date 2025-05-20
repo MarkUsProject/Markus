@@ -17,6 +17,8 @@
 - Remove `activerecord-session_store` gem (#7517)
 - Upgrade to Rails 8 (#7504)
 - Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
+- Remove the placeholder "..." text under the "Proposed changes" section in `PULL_REQUEST_TEMPLATE.md`. (#7524)
+- Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
 
 ## [v2.7.0]
 
