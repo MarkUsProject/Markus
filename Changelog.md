@@ -8,10 +8,13 @@
 
 ### 🐛 Bug fixes
 
+- Fix bugs when assigning sections to starter file groups across multiple assignments (#7523)
+
 ### 🔧 Internal changes
 
 - Remove `activerecord-session_store` gem (#7517)
 - Upgrade to Rails 8 (#7504)
+- Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
 
 ## [v2.7.0]
 

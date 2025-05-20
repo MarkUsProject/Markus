@@ -24,10 +24,11 @@ class Section < ApplicationRecord
   end
 
   def update_starter_file_group(assessment_id, starter_file_group_id)
-    return if starter_file_groups.where(assessment_id: assessment_id).first&.id == starter_file_group_id
+    starter_files_groups_for_assignment = starter_file_groups.where(assessment_id: assessment_id)
+    return if starter_files_groups_for_assignment.first&.id == starter_file_group_id
 
     # delete all old section starter file groups
-    section_starter_file_groups.where.not(starter_file_group_id: starter_file_group_id).find_each(&:destroy)
+    section_starter_file_groups.where(starter_file_group_id: starter_files_groups_for_assignment).find_each(&:destroy)
 
     unless starter_file_group_id.nil?
       SectionStarterFileGroup.find_or_create_by(section_id: self.id, starter_file_group_id: starter_file_group_id)
