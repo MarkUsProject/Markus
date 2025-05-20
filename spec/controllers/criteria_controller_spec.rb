@@ -271,7 +271,6 @@ describe CriteriaController do
         context 'when assignment marks have been released' do
           let!(:released_assignment) do
             create(:assignment, course: course).tap do |assignment|
-              # create one criterion *before* release
               create(:flexible_criterion, assignment: assignment, name: 'Pre-release Criterion')
 
               grouping = create(:grouping,  assignment: assignment)
@@ -468,7 +467,6 @@ describe CriteriaController do
         context 'when assignment marks have been released' do
           let!(:released_assignment) do
             create(:assignment, course: course).tap do |assignment|
-              # create one criterion *before* release
               create(:flexible_criterion, assignment: assignment, name: 'Pre-release Criterion')
 
               grouping = create(:grouping,  assignment: assignment)
