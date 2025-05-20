@@ -220,23 +220,59 @@ describe CriteriaController do
       end
 
       describe '#edit' do
-        before do
-          get_as instructor,
-                 :edit,
-                 params: { course_id: course.id, id: flexible_criterion.id },
-                 format: :js
+        context 'when assignment marks have not been released' do
+          before do
+            get_as instructor,
+                   :edit,
+                   params: { course_id: course.id, id: flexible_criterion.id },
+                   format: :js
+          end
+
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion)).to be_truthy
+          end
+
+          it 'should render edit template' do
+            expect(subject).to render_template(:edit)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
         end
 
-        it 'should respond with appropriate content' do
-          expect(assigns(:criterion)).to be_truthy
-        end
+        # there should not be a bad request expectation because it was not implemented.
+        context 'when assignment marks have been released' do
+          let!(:released_assignment) do
+            create(:assignment, course: course).tap do |assignment|
+              # create one criterion *before* release
+              create(:flexible_criterion, assignment: assignment, name: 'Pre-release Criterion')
 
-        it 'should render edit template' do
-          expect(subject).to render_template(:edit)
-        end
+              grouping = create(:grouping,  assignment: assignment)
+              submission = create(:submission, grouping: grouping)
+              submission.get_latest_result.update!(released_to_students: true)
+            end
+          end
 
-        it 'should respond with success' do
+          let(:flexible_criterion) do
+            released_assignment.criteria.find_by(type: 'FlexibleCriterion')
+          end
+
+          before do
+            get_as instructor,
+                   :edit,
+                   params: { course_id: released_assignment.course_id, id: flexible_criterion.id },
+                   format: :js
+          end
+
+          it 'flashes message with error' do
+            expect(flash[:notice]).to have_message(I18n.t('criteria.errors.released_marks'))
+          end
+
+          it 'responds with success' do
           expect(subject).to respond_with(:success)
+          end
+
         end
       end
 
@@ -373,6 +409,41 @@ describe CriteriaController do
           it 'should respond with success' do
             expect(subject).to respond_with(:success)
           end
+        end
+      end
+
+      describe '#update' do
+        context 'when assignment marks have been released' do
+          let!(:released_assignment) do
+            create(:assignment, course: course).tap do |assignment|
+              # create one criterion *before* release
+              create(:flexible_criterion, assignment: assignment, name: 'Pre-release Criterion')
+
+              grouping = create(:grouping,  assignment: assignment)
+              submission = create(:submission, grouping: grouping)
+              submission.get_latest_result.update!(released_to_students: true)
+            end
+          end
+
+          let(:flexible_criterion) do
+            released_assignment.criteria.find_by(type: 'FlexibleCriterion')
+          end
+
+          before do
+            post_as instructor,
+                   :update,
+                   params: { course_id: released_assignment.course_id, id: flexible_criterion.id },
+                   format: :js
+          end
+
+          it 'flashes message with error' do
+            expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+          end
+
+          it 'responds with :bad_request status' do
+            expect(response).to have_http_status(:bad_request)
+          end
+
         end
       end
 
