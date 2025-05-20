@@ -273,7 +273,7 @@ describe CriteriaController do
             create(:assignment, course: course).tap do |assignment|
               create(:flexible_criterion, assignment: assignment, name: 'Pre-release Criterion')
 
-              grouping = create(:grouping,  assignment: assignment)
+              grouping = create(:grouping, assignment: assignment)
               submission = create(:submission, grouping: grouping)
               submission.get_latest_result.update!(released_to_students: true)
             end
@@ -295,9 +295,8 @@ describe CriteriaController do
           end
 
           it 'responds with success' do
-          expect(subject).to respond_with(:success)
+            expect(subject).to respond_with(:success)
           end
-
         end
       end
 
@@ -469,7 +468,7 @@ describe CriteriaController do
             create(:assignment, course: course).tap do |assignment|
               create(:flexible_criterion, assignment: assignment, name: 'Pre-release Criterion')
 
-              grouping = create(:grouping,  assignment: assignment)
+              grouping = create(:grouping, assignment: assignment)
               submission = create(:submission, grouping: grouping)
               submission.get_latest_result.update!(released_to_students: true)
             end
@@ -481,9 +480,9 @@ describe CriteriaController do
 
           before do
             post_as instructor,
-                   :update,
-                   params: { course_id: released_assignment.course_id, id: flexible_criterion.id },
-                   format: :js
+                    :update,
+                    params: { course_id: released_assignment.course_id, id: flexible_criterion.id },
+                    format: :js
           end
 
           it 'flashes message with error' do
@@ -493,7 +492,6 @@ describe CriteriaController do
           it 'responds with :bad_request status' do
             expect(response).to have_http_status(:bad_request)
           end
-
         end
       end
 
