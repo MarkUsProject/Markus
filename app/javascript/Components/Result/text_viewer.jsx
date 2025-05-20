@@ -37,6 +37,10 @@ export class TextViewer extends React.PureComponent {
   componentDidMount() {
     this.highlight_root = this.raw_content.current.parentNode;
 
+    if (localStorage.getItem("text_viewer_font_size") != null) {
+      this.setState({font_size: Number(localStorage.getItem("text_viewer_font_size"))});
+    }
+
     // Fetch content from a URL if it is passed as a prop. The URL should point to plaintext data.
     if (this.props.url) {
       this.props.setLoadingCallback(true);
@@ -178,7 +182,9 @@ export class TextViewer extends React.PureComponent {
   };
 
   change_font_size = delta => {
-    this.setState({font_size: Math.max(this.state.font_size + delta, 0.25)});
+    let font_size = Math.max(this.state.font_size + delta, 0.25);
+    this.setState({font_size: font_size});
+    localStorage.setItem("text_viewer_font_size", font_size);
   };
 
   display_annotation = annotation => {
