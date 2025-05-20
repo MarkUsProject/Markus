@@ -106,6 +106,10 @@ export class TextViewer extends React.PureComponent {
     if (content && (content !== prevContent || this.props.annotations !== prevProps.annotations)) {
       this.ready_annotations();
       this.setState({copy_success: false});
+
+      if (localStorage.getItem("text_viewer_font_size") != null) {
+        this.setState({font_size: Number(localStorage.getItem("text_viewer_font_size"))});
+      }
     } else if (this.props.focusLine !== prevProps.focusLine) {
       this.scrollToLine(this.props.focusLine);
     }
@@ -178,7 +182,9 @@ export class TextViewer extends React.PureComponent {
   };
 
   change_font_size = delta => {
-    this.setState({font_size: Math.max(this.state.font_size + delta, 0.25)});
+    let font_size = Math.max(this.state.font_size + delta, 0.25);
+    this.setState({font_size: font_size});
+    localStorage.setItem("text_viewer_font_size", font_size);
   };
 
   display_annotation = annotation => {
