@@ -15,7 +15,7 @@
 - Remove `activerecord-session_store` gem (#7517)
 - Upgrade to Rails 8 (#7504)
 - Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
-- Add tests for `#edit` and `#update` when user is trying to change criteria in `CriteriaController` (#7526)
+- Add tests for `#edit` and `#update` when user is trying to change criteria in `CriteriaController` (#7527)
 
 ## [v2.7.0]
 
