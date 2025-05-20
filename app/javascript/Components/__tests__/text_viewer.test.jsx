@@ -2,6 +2,8 @@ import React from "react";
 import {render, screen, waitFor} from "@testing-library/react";
 import {TextViewer} from "../Result/text_viewer";
 import fetchMock from "jest-fetch-mock";
+import userEvent from "@testing-library/user-event";
+
 import {BinaryViewer} from "../Result/binary_viewer";
 
 describe("TextViewer", () => {
@@ -19,6 +21,17 @@ describe("TextViewer", () => {
   afterEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
+  });
+
+  it("should save font size to localStorage when font size change", async () => {
+    jest.spyOn(Storage.prototype, "getItem");
+
+    render(<TextViewer {...props} />);
+    userEvent.click(screen.getByText("+A"));
+
+    await waitFor(() => {
+      expect(localStorage.getItem("text_viewer_font_size")).toBe("1.25");
+    });
   });
 
   it("should render its text content when the content ends with a new line", () => {
