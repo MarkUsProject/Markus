@@ -26,7 +26,7 @@ en:
     format_string:
       flatpickr: Y-m-d h:i K
       js: YYYY-MM-DD h:mm A
-      placeholder: YYYY-MM-DD H:MM AM/PM
+      placeholder: Leave blank to use assignment due date.
     formats:
       default: "%A, %B %d, %Y, %I:%M:%S %p %Z"
       flatpickr: "%Y-%m-%d %I:%M %p"

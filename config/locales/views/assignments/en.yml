@@ -19,7 +19,7 @@ en:
       persist_groups_from: Persist groups from previous assignment
       remarks: Remark Requests
       required_files_by_student: You may specify file(s) that students are required to submit.
-      section_due_dates_info_html: "<strong>Important</strong> The global due date and start time need to be filled in. If a section has no due date specified, the global due date will be used instead. If a section has no start time specified, the global start time will be used instead. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
+      section_due_dates_info_html: "<strong>Important</strong> If the section-specific settings option is checked, students can only form groups within their section. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
       section_due_dates_option: If the section-specific settings option is checked, students can only form groups within their section.
     grace_credits_used_html: 'Grace Credits Used: <strong>%{grace_credits_used}</strong>'
     help:
@@ -38,7 +38,7 @@ en:
       under_review: This exam is still under review.
     section_hidden:
       default: Default
-      hidden: Hidden
+      hidden: Section-specific Visibility
       hidden_option: If the section-specific settings option is checked, the value for individual sections will override this value.
       visible: Visible
     starter_file:
@@ -76,7 +76,7 @@ en:
       before_start_time: This timed assessment is not available to start yet.
       details_heading: Start this assessment
       duration_extension_info: "(this includes a duration extension of %{extension_string})"
-      end_time: Students may start this assessment before
+      end_time: Section-specific Due Date
       end_time_instructions: 'You must start this timed assessment before: '
       modal_current_duration: 'This will extend the current duration for this group. The current duration is: %{duration}.'
       past_end_time: Unfortunately, you did not start this timed assessment within the allowed time window, and it is now over.

@@ -88,13 +88,6 @@
                          size: 35,
                          required: true,
                          placeholder: t('time.format_string.placeholder') %>
-        <% unless @sections.empty? %>
-          <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
-          <span>
-            <%= ap_f.check_box :section_due_dates_type %>
-            &nbsp; (<%= t('assignments.form.section_due_dates_option') %>)
-          </span>
-        <% end %>
         <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
         <span>
           <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
@@ -103,6 +96,13 @@
           <%= f.radio_button :is_hidden, false %>
           (<%= I18n.t('assignments.section_hidden.hidden_option') %>)
         </span>
+        <% unless @sections.empty? %>
+          <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
+          <span>
+            <%= ap_f.check_box :section_due_dates_type %>
+            &nbsp; (<%= t('assignments.form.section_due_dates_option') %>)
+          </span>
+        <% end %>
       </div>
       <% unless @sections.empty? %>
         <div id='assessment_section_properties_information'
