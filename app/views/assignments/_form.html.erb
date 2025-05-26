@@ -107,21 +107,18 @@
       <% unless @sections.empty? %>
         <div id='assessment_section_properties_information'
              class='<%= 'no-display' unless @assignment.section_due_dates_type %>'>
-          <p class='information'>
-            <%= t('assignments.form.section_due_dates_info_html') %>
-          </p>
           <div class='assessment_section_properties_form table'>
             <table>
               <thead>
                 <tr>
                   <th><%= Section.model_name.human %></th>
                   <% if @assignment.is_timed %>
-                    <th><%= I18n.t('assignments.timed.start_time')  %></th>
+                    <th><%= I18n.t('assignments.section_specific_table.start_time')  %></th>
                   <% end %>
                   <th><%= @assignment.is_timed ?
-                            I18n.t('assignments.timed.end_time') :
-                            Assignment.human_attribute_name(:due_date) %></th>
-                  <th><%= I18n.t('assignments.section_hidden.hidden') %></th>
+                            I18n.t('assignments.section_specific_table.end_time') :
+                            I18n.t('assignments.section_specific_table.due_date') %></th>
+                  <th><%= I18n.t('assignments.section_specific_table.visibility') %></th>
                 </tr>
               </thead>
               <tbody>

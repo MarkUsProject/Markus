@@ -19,8 +19,8 @@ en:
       persist_groups_from: Persist groups from previous assignment
       remarks: Remark Requests
       required_files_by_student: You may specify file(s) that students are required to submit.
-      section_due_dates_info_html: "<strong>Important</strong> If the section-specific settings option is checked, students can only form groups within their section. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
-      section_due_dates_option: If the section-specific settings option is checked, students can only form groups within their section.
+      section_due_dates_info_html: "<strong>Important</strong> The global due date and start time need to be filled in. If a section has no due date specified, the global due date will be used instead. If a section has no start time specified, the global start time will be used instead. If the section-specific settings option is checked, students can only form groups within their section. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
+      section_due_dates_option:
     grace_credits_used_html: 'Grace Credits Used: <strong>%{grace_credits_used}</strong>'
     help:
       edit:
@@ -38,7 +38,7 @@ en:
       under_review: This exam is still under review.
     section_hidden:
       default: Default
-      hidden: Section-specific Visibility
+      hidden: Hidden
       hidden_option: If the section-specific settings option is checked, the value for individual sections will override this value.
       visible: Visible
     starter_file:
@@ -76,7 +76,7 @@ en:
       before_start_time: This timed assessment is not available to start yet.
       details_heading: Start this assessment
       duration_extension_info: "(this includes a duration extension of %{extension_string})"
-      end_time: Section-specific Due Date
+      end_time: Students may start this assessment before
       end_time_instructions: 'You must start this timed assessment before: '
       modal_current_duration: 'This will extend the current duration for this group. The current duration is: %{duration}.'
       past_end_time: Unfortunately, you did not start this timed assessment within the allowed time window, and it is now over.
@@ -89,6 +89,11 @@ en:
       started_on: 'You started on:'
       starter_file_prompt: Click below to download the starter files for this assessment.
       time_until_due_warning: This assessment is due before %{due_date} without penalty.
+    section_specific_table:
+      due_date: Section-specific Due Date
+      visibility: Section-specific Visibility
+      start_time: Section-specific Start Time (students may start after)
+      end_time: Section-specific End Time (students may start before)
     upload_config_help_html: "<p>This zip file will configure and create this assignment.</p><p>This does not configure student or grader settings.<br>For more information please visit <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Importing-and-Exporting-Data.md#%{section_id}>this page</a>.</p>"
     upload_file_requirement: Filename %{file_name} is not allowed for this assignment.
-    upload_file_requirement_in_folder: Filename %{file_name} in %{file_path} is not allowed for this assignment.
+    upload_file_requirement_in_folder: Filename %{file_name} in %{file_path} is not allowed for this assignment.\
