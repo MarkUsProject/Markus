@@ -107,6 +107,9 @@
       <% unless @sections.empty? %>
         <div id='assessment_section_properties_information'
              class='<%= 'no-display' unless @assignment.section_due_dates_type %>'>
+          <p class='information'>
+            <%= t('assignments.form.section_due_dates_info_html') %>
+          </p>
           <div class='assessment_section_properties_form table'>
             <table>
               <thead>
