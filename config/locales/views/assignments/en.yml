@@ -41,6 +41,11 @@ en:
       hidden: Hidden
       hidden_option: If the section-specific settings option is checked, the value for individual sections will override this value.
       visible: Visible
+    section_specific_table:
+      due_date: Section-specific Due Date
+      end_time: Section-specific End Time
+      start_time: Section-specific Start Time
+      visibility: Section-specific Visibility
     starter_file:
       aria_labels:
         action_button: Starter file group action button
