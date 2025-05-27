@@ -43,8 +43,8 @@ en:
       visible: Visible
     section_specific_table:
       due_date: Section-specific Due Date
-      end_time: Section-specific End Time (students may start before)
-      start_time: Section-specific Start Time (students may start after)
+      end_time: Section-specific End Time
+      start_time: Section-specific Start Time
       visibility: Section-specific Visibility
     starter_file:
       aria_labels:
