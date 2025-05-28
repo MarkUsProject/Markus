@@ -20,7 +20,6 @@ en:
       remarks: Remark Requests
       required_files_by_student: You may specify file(s) that students are required to submit.
       section_due_dates_info_html: "<strong>Important</strong> If the section-specific settings are enabled, students can only form groups within their section. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
-      section_due_dates_option: If the section-specific settings option is checked, students can only form groups within their section.
     grace_credits_used_html: 'Grace Credits Used: <strong>%{grace_credits_used}</strong>'
     help:
       edit:
