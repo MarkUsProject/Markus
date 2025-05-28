@@ -1,6 +1,7 @@
 ---
 en:
   assignments:
+    assignment_information: Assignment Information
     assignment_has_groupings: Assignment has groupings.
     average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
@@ -58,7 +59,7 @@ en:
       populate_repo_confirm: Are you sure you want to add the starter files to your repository? If they already exist in the repository, any changes will be overwritten.
       populate_repo_error: Unfortunately, the starter files could not be added to your repository. Please download them as a zip file instead.
       populate_repo_success: Starter files successfully added to your repository.
-      provided: Starter files have been provided for this assignment
+      provided: Starter files have been provided for this assignment.
       rename: Rename Selected File or Directory
       starter_file_rule: Starter File Assignment Rules
       starter_file_rule_types:
@@ -66,7 +67,7 @@ en:
         sections: Assign starter file groups by section
         shuffle: Randomly select one top level file or directory from each starter file group
         simple: Assign the default starter file group to all students
-      title: Starter Files
+      title: Starter files
       upload_confirmation: The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?
       use_original_filename: Use original filename
     successful_deletion: Assignment with id '%{invalid_id}' has been successfully deleted.

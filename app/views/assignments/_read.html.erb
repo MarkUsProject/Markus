@@ -1,8 +1,4 @@
-<% short_identifier = @assignment.is_peer_review? ?
-     "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
-     @assignment.short_identifier %>
-
-<h2><%= "#{short_identifier}: #{@assignment.description}" %></h2>
+<h2><%= t('assignments.assignment_information') %></h2>
 
 <div class='block-content'>
   <% if @assignment.message %>
@@ -134,6 +130,32 @@
       </div>
     <% end %>
   <% end %>
+  <% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
+    <% if allowed_to?(:download_starter_file?, @grouping) %>
+      <h3><%= I18n.t('assignments.starter_file.title') %></h3>
+      <p><%= I18n.t('assignments.starter_file.provided') %></p>
+      <p><%= I18n.t('assignments.starter_file.changed_at',
+                    changed_date: I18n.l(@assignment.starter_file_updated_at)) %></p>
+      <p>
+        <%= button_to t(:download_the, item: t('assignments.starter_file.title')),
+                      download_starter_file_course_assignment_groups_path(@current_course, @assignment),
+                      method: 'get' %>
+      </p>
+      <% # Display the URL of this group's repository if applicable
+         if allowed_to?(:access_repo?, @grouping) %>
+        <p>
+          <%= button_to t('assignments.starter_file.populate_repo'),
+                        populate_repo_with_starter_files_course_assignment_groups_path(
+                          course_id: @assignment.course_id,
+                          assignment_id: @assignment.id
+                        ),
+                        { method: :patch,
+                          data: { confirm: t('assignments.starter_file.populate_repo_confirm'),
+                                  disable_with: t(:please_wait) } } %>
+        </p>
+      <% end %>
+    <% end %>
+  <% end %>
   <% if !peer_review && (!@assignment.is_timed || !@grouping&.start_time.nil? || @grouping&.past_collection_date?) %>
     <h3><%= Submission.model_name.human.pluralize %></h3>
     <% if @grouping.nil? %>
@@ -146,19 +168,17 @@
         </p>
       <% end %>
       <ul>
+        <li><%= link_to t('submissions.student.files_submitted', count: @num_submitted_files), "https://google.com" %></li>
         <% if @num_submitted_files > 0 %>
           <li>
             <%= t('submissions.student.last_revision_date') %>
             <%= l(@last_modified_date) %>
           </li>
         <% end %>
-        <li><%= t('submissions.student.files_submitted', count: @num_submitted_files) %></li>
       </ul>
 
-      <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
-      <% if @assignment.assignment_files.length == 0 %>
-        <p><%= t('assignments.no_required_files') %></p>
-      <% else %>
+      <% if @assignment.assignment_files.length > 0 %>
+        <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
         <ul>
           <% @assignment.assignment_files.each do |assignment_file| %>
             <li><%= assignment_file.filename %></li>
@@ -174,31 +194,5 @@
         </p>
       <% end %>
     <% end %>
-<% end %>
-<% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
-  <% if allowed_to?(:download_starter_file?, @grouping) %>
-    <h3><%= I18n.t('assignments.starter_file.title') %></h3>
-    <p><%= I18n.t('assignments.starter_file.provided') %></p>
-    <p><%= I18n.t('assignments.starter_file.changed_at',
-                  changed_date: I18n.l(@assignment.starter_file_updated_at)) %></p>
-    <p>
-      <%= button_to t(:download_the, item: t('assignments.starter_file.title')),
-                    download_starter_file_course_assignment_groups_path(@current_course, @assignment),
-                    method: 'get' %>
-    </p>
-    <% # Display the URL of this group's repository if applicable
-       if allowed_to?(:access_repo?, @grouping) %>
-       <p>
-         <%= button_to t('assignments.starter_file.populate_repo'),
-                       populate_repo_with_starter_files_course_assignment_groups_path(
-                         course_id: @assignment.course_id,
-                         assignment_id: @assignment.id
-                       ),
-                       { method: :patch,
-                         data: { confirm: t('assignments.starter_file.populate_repo_confirm'),
-                                 disable_with: t(:please_wait) } } %>
-       </p>
-    <% end %>
-  <% end %>
 <% end %>
 </div>
