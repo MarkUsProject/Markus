@@ -116,12 +116,12 @@
                 <tr>
                   <th><%= Section.model_name.human %></th>
                   <% if @assignment.is_timed %>
-                    <th><%= I18n.t('assignments.section_specific_table.start_time') %></th>
+                    <th><%= I18n.t('assignments.section_settings.start_time') %></th>
                   <% end %>
                   <th><%= @assignment.is_timed ?
-                            I18n.t('assignments.section_specific_table.end_time') :
-                            I18n.t('assignments.section_specific_table.due_date') %></th>
-                  <th><%= I18n.t('assignments.section_specific_table.visibility') %></th>
+                            I18n.t('assignments.section_settings.end_time') :
+                            I18n.t('assignments.section_settings.due_date') %></th>
+                  <th><%= I18n.t('assignments.section_settings.visibility') %></th>
                 </tr>
               </thead>
               <tbody>
