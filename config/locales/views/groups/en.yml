@@ -86,7 +86,7 @@ en:
       not_allowed_to_delete_group: If you would like to remove this group, you must contact your instructor.
       not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
       section_groups_only: You can only form a group with students in your section.
-      students_work_alone: Students work individually.
+      students_work_alone: You must complete this assignment individually.
       url_repository: Repository URL
       work_alone: Work alone
       working_alone: You have indicated you are working individually on this assignment. If you change your mind and want to create or join a group, first delete your group using the button below.
