@@ -134,7 +134,9 @@
                       <%= due_date_f.text_field :start_time,
                                                 class: 'assessment_section_properties_input',
                                                 value: obj.start_time.nil? ? '' :
-                                                         l(obj.start_time, format: :flatpickr) %>
+                                                         l(obj.start_time, format: :flatpickr),
+                                                placeholder: t('assignments.section_settings.start_time_placeholder'),
+                                                size: 35 %>
                     </td>
                   <% end %>
                   <td>
@@ -142,7 +144,9 @@
                     <%= due_date_f.text_field :due_date,
                                               class: 'assessment_section_properties_input',
                                               value: obj.due_date.nil? ? '' :
-                                                       l(obj.due_date, format: :flatpickr) %>
+                                                       l(obj.due_date, format: :flatpickr),
+                                              placeholder: t('assignments.section_settings.due_date_placeholder'),
+                                              size: 35 %>
                   </td>
                   <td>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>
