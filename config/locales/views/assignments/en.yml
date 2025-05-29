@@ -2,8 +2,8 @@
 en:
   assignments:
     assignment_has_groupings: Assignment has groupings.
-    average_annotations: "%{average_annotations} annotations per marked submission"
     assignment_information: Assignment information
+    average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
     deletion_confirmation: Are you sure you want to delete this assignment?
@@ -33,7 +33,6 @@ en:
     hidden: "%{assignment_text} (hidden)"
     manage_course_work: Manage Course Work
     marking_scheme: 'Marking Scheme: %{identifier}'
-    no_required_files: There are no required files for this assignment.
     none: There are currently no assignments.
     scanned_exam:
       under_review: This exam is still under review.
