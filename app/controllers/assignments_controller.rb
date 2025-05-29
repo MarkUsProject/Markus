@@ -438,13 +438,26 @@ class AssignmentsController < ApplicationController
         use_rename: g.use_rename,
         files: starter_file_group_file_data(g) }
     end
+    sections = current_course.sections.pluck(:id, :name)
     section_data = current_course.sections
-                                 .left_outer_joins(:starter_file_groups)
-                                 .order(:id)
+                                 .joins(:starter_file_groups)
+                                 .where('starter_file_groups.assessment_id': assignment.id)
                                  .pluck_to_hash('sections.id as section_id',
                                                 'sections.name as section_name',
                                                 'starter_file_groups.id as group_id',
                                                 'starter_file_groups.name as group_name')
+    section_data_ids = section_data.pluck(:section_id)
+    sections.each do |id, name|
+      unless section_data_ids.include? id
+        section_data << {
+          section_id: id,
+          section_name: name,
+          group_id: nil,
+          group_name: nil
+        }
+      end
+    end
+    section_data.sort_by! { |x| x[:section_id] }
     data = { files: file_data,
              sections: section_data,
              available_after_due: assignment.starter_files_after_due,
