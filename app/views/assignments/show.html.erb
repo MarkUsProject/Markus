@@ -24,7 +24,7 @@
   <% end %>
 <% end %>
 
-<% content_for :title, "#{@assignment.short_identifier}: #{Assignment.model_name.human}" %>
+<% content_for :title, "#{@assignment.short_identifier}: #{@assignment.description}" %>
 
 <div class='pane-wrapper'>
   <div class='pane block'>
