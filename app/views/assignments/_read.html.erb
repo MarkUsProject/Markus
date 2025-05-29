@@ -168,7 +168,9 @@
         </p>
       <% end %>
       <ul>
-        <li><%= link_to t('submissions.student.files_submitted', count: @num_submitted_files), "https://google.com" %></li>
+        <li><%= link_to t('submissions.student.files_submitted', count: @num_submitted_files),
+                        file_manager_course_assignment_submissions_path(course_id: @assignment.course_id,
+                                                                        assignment_id: @assignment.id)%></li>
         <% if @num_submitted_files > 0 %>
           <li>
             <%= t('submissions.student.last_revision_date') %>
