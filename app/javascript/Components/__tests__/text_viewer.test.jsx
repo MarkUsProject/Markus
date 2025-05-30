@@ -3,7 +3,6 @@ import {render, screen, waitFor} from "@testing-library/react";
 import {TextViewer} from "../Result/text_viewer";
 import fetchMock from "jest-fetch-mock";
 import userEvent from "@testing-library/user-event";
-
 import {BinaryViewer} from "../Result/binary_viewer";
 
 describe("TextViewer", () => {
