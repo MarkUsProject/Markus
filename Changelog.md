@@ -8,8 +8,6 @@
 
 ### 🐛 Bug fixes
 
-- Fix bugs when assigning sections to starter file groups across multiple assignments (#7523)
-
 ### 🔧 Internal changes
 
 - Remove `activerecord-session_store` gem (#7517)
@@ -18,6 +16,12 @@
 - Add tests for `#edit` and `#update` when user is trying to change criteria in `CriteriaController` (#7527)
 - Remove the placeholder "..." text under the "Proposed changes" section in `PULL_REQUEST_TEMPLATE.md`. (#7524)
 - Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
+
+## [v2.7.1]
+
+### 🐛 Bug fixes
+
+- Fix bugs when assigning sections to starter file groups across multiple assignments (#7523)
 
 ## [v2.7.0]
 
