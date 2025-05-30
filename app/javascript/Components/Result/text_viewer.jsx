@@ -37,8 +37,13 @@ export class TextViewer extends React.PureComponent {
   componentDidMount() {
     this.highlight_root = this.raw_content.current.parentNode;
 
-    if (localStorage.getItem("text_viewer_font_size") != null) {
-      this.setState({font_size: Number(localStorage.getItem("text_viewer_font_size"))});
+    if (localStorage.getItem("text_viewer_font_size") !== null) {
+      try {
+        this.setState({font_size: Number(localStorage.getItem("text_viewer_font_size"))});
+      } catch (error) {
+        localStorage.removeItem("text_viewer_font_size");
+        console.error("An error occurred:", error.message);
+      }
     }
 
     // Fetch content from a URL if it is passed as a prop. The URL should point to plaintext data.

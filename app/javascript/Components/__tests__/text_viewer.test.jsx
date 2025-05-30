@@ -10,6 +10,7 @@ describe("TextViewer", () => {
   const successfulFetchResp = "File content";
   const loadingCallback = jest.fn();
   const errorCallback = jest.fn();
+  const getItemMock = jest.spyOn(Storage.prototype, "getItem");
   const props = {
     annotations: [],
     focusLine: null,
@@ -21,16 +22,28 @@ describe("TextViewer", () => {
   afterEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
+    getItemMock.mockReset();
   });
 
   it("should save font size to localStorage when font size change", async () => {
-    jest.spyOn(Storage.prototype, "getItem");
+    jest.spyOn(Storage.prototype, "setItem");
 
     render(<TextViewer {...props} />);
     userEvent.click(screen.getByText("+A"));
 
     await waitFor(() => {
-      expect(localStorage.getItem("text_viewer_font_size")).toBe("1.25");
+      expect(localStorage.setItem).toHaveBeenCalledWith("text_viewer_font_size", 1.25);
+    });
+  });
+
+  it("should render using font size from localStorage", async () => {
+    getItemMock.mockReturnValue("3");
+
+    const {container} = render(<TextViewer {...props} />);
+    const element = container.querySelector(".line-numbers");
+
+    await waitFor(() => {
+      expect(element).toHaveStyle("font-size: 3em");
     });
   });
 
