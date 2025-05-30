@@ -88,13 +88,6 @@
                          size: 35,
                          required: true,
                          placeholder: t('time.format_string.placeholder') %>
-        <% unless @sections.empty? %>
-          <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
-          <span>
-            <%= ap_f.check_box :section_due_dates_type %>
-            &nbsp; (<%= t('assignments.form.section_due_dates_option') %>)
-          </span>
-        <% end %>
         <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
         <span>
           <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
@@ -103,6 +96,12 @@
           <%= f.radio_button :is_hidden, false %>
           (<%= I18n.t('assignments.section_hidden.hidden_option') %>)
         </span>
+        <% unless @sections.empty? %>
+          <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
+          <span>
+            <%= ap_f.check_box :section_due_dates_type %>
+          </span>
+        <% end %>
       </div>
       <% unless @sections.empty? %>
         <div id='assessment_section_properties_information'
@@ -116,12 +115,12 @@
                 <tr>
                   <th><%= Section.model_name.human %></th>
                   <% if @assignment.is_timed %>
-                    <th><%= I18n.t('assignments.timed.start_time')  %></th>
+                    <th><%= I18n.t('assignments.section_settings.start_time') %></th>
                   <% end %>
                   <th><%= @assignment.is_timed ?
-                            I18n.t('assignments.timed.end_time') :
-                            Assignment.human_attribute_name(:due_date) %></th>
-                  <th><%= I18n.t('assignments.section_hidden.hidden') %></th>
+                            I18n.t('assignments.section_settings.end_time') :
+                            I18n.t('assignments.section_settings.due_date') %></th>
+                  <th><%= I18n.t('assignments.section_settings.visibility') %></th>
                 </tr>
               </thead>
               <tbody>
@@ -135,7 +134,9 @@
                       <%= due_date_f.text_field :start_time,
                                                 class: 'assessment_section_properties_input',
                                                 value: obj.start_time.nil? ? '' :
-                                                         l(obj.start_time, format: :flatpickr) %>
+                                                         l(obj.start_time, format: :flatpickr),
+                                                placeholder: t('assignments.section_settings.start_time_placeholder'),
+                                                size: 35 %>
                     </td>
                   <% end %>
                   <td>
@@ -143,7 +144,9 @@
                     <%= due_date_f.text_field :due_date,
                                               class: 'assessment_section_properties_input',
                                               value: obj.due_date.nil? ? '' :
-                                                       l(obj.due_date, format: :flatpickr) %>
+                                                       l(obj.due_date, format: :flatpickr),
+                                              placeholder: t('assignments.section_settings.due_date_placeholder'),
+                                              size: 35 %>
                   </td>
                   <td>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>

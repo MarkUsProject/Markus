@@ -19,8 +19,7 @@ en:
       persist_groups_from: Persist groups from previous assignment
       remarks: Remark Requests
       required_files_by_student: You may specify file(s) that students are required to submit.
-      section_due_dates_info_html: "<strong>Important</strong> The global due date and start time need to be filled in. If a section has no due date specified, the global due date will be used instead. If a section has no start time specified, the global start time will be used instead. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
-      section_due_dates_option: If the section-specific settings option is checked, students can only form groups within their section.
+      section_due_dates_info_html: "<strong>Important</strong> If the section-specific settings are enabled, students can only form groups within their section. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
     grace_credits_used_html: 'Grace Credits Used: <strong>%{grace_credits_used}</strong>'
     help:
       edit:
@@ -41,6 +40,13 @@ en:
       hidden: Hidden
       hidden_option: If the section-specific settings option is checked, the value for individual sections will override this value.
       visible: Visible
+    section_settings:
+      due_date: Section-specific Due Date
+      due_date_placeholder: Leave blank to use assignment due date.
+      end_time: Section-specific End Time
+      start_time: Section-specific Start Time
+      start_time_placeholder: Leave blank to use assignment start date.
+      visibility: Section-specific Visibility
     starter_file:
       aria_labels:
         action_button: Starter file group action button
