@@ -38,18 +38,6 @@
                               browse_course_assignment_submissions_path(@current_course, assignment) %>
                 </span>
               <% end %>
-              <% unless assignment.results_average.nil? %>
-                <br>
-                <span>
-                  <%= "#{t(:class_average)}: #{number_to_percentage(assignment.results_average, precision: 1)}" %>
-                </span>
-              <% end %>
-              <% unless assignment.results_median.nil? %>
-                <br>
-                <span>
-                  <%= "#{t(:class_median)}: #{number_to_percentage(assignment.results_median, precision: 1)}" %>
-                </span>
-              <% end %>
               <% if assignment.submission_rule.can_collect_all_now? %>
                 <% ta_id = @current_role.instructor? ? nil : @current_role.id %>
                 <br>
@@ -59,10 +47,8 @@
                         num_assigned: assignment.get_num_assigned(ta_id)) %>
                 </span>
                 <br>
-                <span>
-                  <%= t('assignments.average_annotations',
-                        average_annotations: assignment.average_annotations(ta_id)) %>
-                </span>
+                <%= link_to t('summary_assignment'),
+                            summary_course_assignment_path(course_id: assignment.course_id, id: assignment.id) %>
               <% end %>
             </td>
           </tr>
