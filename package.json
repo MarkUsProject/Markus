@@ -14,7 +14,7 @@
     "chart.js": "^4.4.9",
     "core-js": "^3.42.0",
     "dayjs": "^1.11.13",
-    "dompurify": "^3.2.4",
+    "dompurify": "^3.2.6",
     "flatpickr": "^4.6.13",
     "heic2any": "^0.0.4",
     "i18n-js": "^4.5.1",
