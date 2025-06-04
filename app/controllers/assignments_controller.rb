@@ -412,12 +412,6 @@ class AssignmentsController < ApplicationController
     render json: json_data
   end
 
-  # def average_annotations
-  #   ta_id = params[:ta_id]
-  #   average = @assignment.average_annotations(ta_id)
-  #   render json: {average_annotations: average}
-  #
-  # end
   def view_summary
     @assignment = record
   end
