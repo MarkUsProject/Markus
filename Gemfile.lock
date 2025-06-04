@@ -93,7 +93,7 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
-    bigdecimal (3.1.9)
+    bigdecimal (3.2.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
     bootsnap (1.18.4)
@@ -201,7 +201,7 @@ GEM
     glob (0.4.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    hashdiff (1.1.1)
+    hashdiff (1.2.0)
     highline (3.1.2)
       reline
     histogram (0.2.4.1)
@@ -297,7 +297,7 @@ GEM
     psych (5.2.4)
       date
       stringio
-    public_suffix (6.0.1)
+    public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
     raabro (1.4.0)
@@ -478,7 +478,7 @@ GEM
     uniform_notifier (1.16.0)
     uri (1.0.3)
     useragent (0.16.11)
-    webmock (3.24.0)
+    webmock (3.25.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
