@@ -5,7 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Fix front-end Assignment view for students (#7533)
+- Improve Assignment view for students (#7533)
 
 ### 🐛 Bug fixes
 

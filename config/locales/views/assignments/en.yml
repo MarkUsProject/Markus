@@ -66,7 +66,7 @@ en:
         sections: Assign starter file groups by section
         shuffle: Randomly select one top level file or directory from each starter file group
         simple: Assign the default starter file group to all students
-      title: Starter files
+      title: Starter Files
       upload_confirmation: The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?
       use_original_filename: Use original filename
     successful_deletion: Assignment with id '%{invalid_id}' has been successfully deleted.

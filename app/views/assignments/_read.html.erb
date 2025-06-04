@@ -132,7 +132,7 @@
   <% end %>
   <% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
     <% if allowed_to?(:download_starter_file?, @grouping) %>
-      <h3><%= I18n.t('assignments.starter_file.title') %></h3>
+      <h3><%= I18n.t('assignments.starter_file.title').downcase.capitalize %></h3>
       <p><%= I18n.t('assignments.starter_file.provided') %></p>
       <p><%= I18n.t('assignments.starter_file.changed_at',
                     changed_date: I18n.l(@assignment.starter_file_updated_at)) %></p>
@@ -168,7 +168,7 @@
         </p>
       <% end %>
       <ul>
-        <li><%= link_to t('submissions.student.files_submitted', count: @num_submitted_files),
+        <li> <%= link_to t('submissions.student.files_submitted', count: @num_submitted_files),
                         file_manager_course_assignment_submissions_path(course_id: @assignment.course_id,
                                                                         assignment_id: @assignment.id)%></li>
         <% if @num_submitted_files > 0 %>
