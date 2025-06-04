@@ -348,6 +348,7 @@ class AssignmentsController < ApplicationController
     assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
     summary = {
       name: "#{assignment.short_identifier}: #{assignment.description}",
+      average_annotations: assignment.average_annotations,
       average: assignment.results_average(points: true) || 0,
       median: assignment.results_median(points: true) || 0,
       max_mark: assignment.max_mark || 0,
@@ -411,6 +412,12 @@ class AssignmentsController < ApplicationController
     render json: json_data
   end
 
+  # def average_annotations
+  #   ta_id = params[:ta_id]
+  #   average = @assignment.average_annotations(ta_id)
+  #   render json: {average_annotations: average}
+  #
+  # end
   def view_summary
     @assignment = record
   end
