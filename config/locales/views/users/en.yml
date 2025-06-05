@@ -2,10 +2,10 @@
 en:
   instructors:
     edit: Edit an Instructor
+    empty_table: No instructors found
     help:
       manage_instructors: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
     new: Add an Instructor
-    empty_table: No instructors found
   roles:
     active: Active
     inactive: Inactive
@@ -13,6 +13,7 @@ en:
   students:
     display_inactive: Display inactive students
     edit: Edit a Student
+    empty_table: No students found
     errors:
       group_creation_failure: Sorry! For some reason, your group could not be created. Please wait a few seconds, then hit refresh to try again. If you come back to this page, you should inform the course instructor.
       grouping_creation_failure: Sorry! For some reason, your grouping could not be created. Please wait a few seconds, and hit refresh to try again. If you come back to this page, you should inform the course instructor.
@@ -31,14 +32,13 @@ en:
     not_successfully_added_message_3: Student names are alphanumeric.
     not_successfully_added_message_4: Each field is separated by a comma (no spaces).
     not_successfully_added_message_5: Each line has the required fields specified near the upload form.
-    empty_table: No students found
   tas:
     display_inactive: Display inactive graders
     edit: Edit a Grader
+    empty_table: No graders found
     help:
       manage_graders: Create graders.
     new: Add a Grader
-    empty_table: No graders found
   users:
     account_settings: Account Settings
     api_key:
