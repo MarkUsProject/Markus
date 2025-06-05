@@ -24,7 +24,11 @@
   <% end %>
 <% end %>
 
-<% content_for :title, "#{Assignment.model_name.human} #{@assignment.short_identifier}" %>
+<% short_identifier = @assignment.is_peer_review? ?
+                        "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
+                        @assignment.short_identifier %>
+
+<% content_for :title, "#{short_identifier}: #{@assignment.description}" %>
 
 <div class='pane-wrapper'>
   <div class='pane block'>
