@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Design improvement for student, ta, and instructor tables when the table is empty. (#7557)
 
 ### 🐛 Bug fixes
 
