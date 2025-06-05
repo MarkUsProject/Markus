@@ -87,7 +87,7 @@ describe("For the InstructorTable's display of instructors", () => {
     });
 
     it("No rows found is shown", async () => {
-      await screen.findByText("No rows found");
+      await screen.findByText(I18n.t("instructors.empty_table"));
     });
   });
 });

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import ReactTable from "react-table";
 import {selectFilter} from "./Helpers/table_helpers";
+import {tableNoDataComponent} from "./table_no_data";
 
 class TATable extends React.Component {
   constructor() {
@@ -127,6 +128,7 @@ class TATable extends React.Component {
         ]}
         filterable
         loading={this.state.loading}
+        NoDataComponent={() => tableNoDataComponent(I18n.t("tas.empty_table"))}
       />
     );
   }

@@ -457,6 +457,13 @@ th.required::after {
   width: 100%;
 }
 
+.rt-no-data {
+  background-color: $background-support;
+  margin: 0;
+  padding: 1em 0;
+  text-align: center;
+}
+
 // Styling patches for react-keyed-file-browser
 .div.rendered-react-keyed-file-browser div.action-bar ul.item-actions {
   overflow: auto;

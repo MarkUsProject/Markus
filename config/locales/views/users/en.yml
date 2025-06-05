@@ -2,6 +2,7 @@
 en:
   instructors:
     edit: Edit an Instructor
+    empty_table: No instructors found
     help:
       manage_instructors: Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks.
     new: Add an Instructor
@@ -12,6 +13,7 @@ en:
   students:
     display_inactive: Display inactive students
     edit: Edit a Student
+    empty_table: No students found
     errors:
       group_creation_failure: Sorry! For some reason, your group could not be created. Please wait a few seconds, then hit refresh to try again. If you come back to this page, you should inform the course instructor.
       grouping_creation_failure: Sorry! For some reason, your grouping could not be created. Please wait a few seconds, and hit refresh to try again. If you come back to this page, you should inform the course instructor.
@@ -33,6 +35,7 @@ en:
   tas:
     display_inactive: Display inactive graders
     edit: Edit a Grader
+    empty_table: No graders found
     help:
       manage_graders: Create graders.
     new: Add a Grader

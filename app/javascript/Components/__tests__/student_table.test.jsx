@@ -264,7 +264,7 @@ describe("For the StudentTable's display of students", () => {
     });
 
     it("No rows found is shown", async () => {
-      await screen.findByText("No rows found");
+      await screen.findByText(I18n.t("students.empty_table"));
     });
   });
 

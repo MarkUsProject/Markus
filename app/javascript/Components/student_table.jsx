@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
+import {tableNoDataComponent} from "./table_no_data";
 
 class RawStudentTable extends React.Component {
   constructor() {
@@ -221,6 +222,7 @@ class RawStudentTable extends React.Component {
           ]}
           filterable
           loading={loading}
+          NoDataComponent={() => tableNoDataComponent(I18n.t("students.empty_table"))}
           {...this.props.getCheckboxProps()}
         />
       </div>
@@ -306,6 +308,7 @@ class StudentsActionBox extends React.Component {
     );
   };
 }
+
 StudentsActionBox.propTypes = {
   onSubmit: PropTypes.func,
   disabled: PropTypes.bool,
@@ -321,8 +324,10 @@ RawStudentTable.propTypes = {
 };
 
 let StudentTable = withSelection(RawStudentTable);
+
 function makeStudentTable(elem, props) {
   const root = createRoot(elem);
   root.render(<StudentTable {...props} />);
 }
+
 export {StudentTable, StudentsActionBox, makeStudentTable};
