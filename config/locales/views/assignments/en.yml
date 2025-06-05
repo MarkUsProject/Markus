@@ -1,6 +1,7 @@
 ---
 en:
   assignments:
+    annotation_summary: Annotation Summary
     assignment_has_groupings: Assignment has groupings.
     assignment_information: Assignment information
     average_annotations: "%{average_annotations} annotations per marked submission"

@@ -190,7 +190,7 @@ export class AssignmentChart extends React.Component {
 
       let annotation_summary = (
         <div className="distribution-graph">
-          <h3>{I18n.t("annotation_summary")}</h3>
+          <h3>{I18n.t("assignments.annotation_summary")}</h3>
           <p>{I18n.t("assignments.average_annotations", {average_annotations: 2.75})}</p>
         </div>
       );
