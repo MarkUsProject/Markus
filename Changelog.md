@@ -6,6 +6,7 @@
 
 ### ✨ New features and improvements
 - Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)
+- Improved Assignment view for students (#7533)
 
 ### 🐛 Bug fixes
 

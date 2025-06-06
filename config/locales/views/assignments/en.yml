@@ -2,6 +2,7 @@
 en:
   assignments:
     assignment_has_groupings: Assignment has groupings.
+    assignment_information: Assignment information
     average_annotations: "%{average_annotations} annotations per marked submission"
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
@@ -31,7 +32,6 @@ en:
     hidden: "%{assignment_text} (hidden)"
     manage_course_work: Manage Course Work
     marking_scheme: 'Marking Scheme: %{identifier}'
-    no_required_files: There are no required files for this assignment.
     none: There are currently no assignments.
     scanned_exam:
       under_review: This exam is still under review.
@@ -64,7 +64,7 @@ en:
       populate_repo_confirm: Are you sure you want to add the starter files to your repository? If they already exist in the repository, any changes will be overwritten.
       populate_repo_error: Unfortunately, the starter files could not be added to your repository. Please download them as a zip file instead.
       populate_repo_success: Starter files successfully added to your repository.
-      provided: Starter files have been provided for this assignment
+      provided: Starter files have been provided for this assignment.
       rename: Rename Selected File or Directory
       starter_file_rule: Starter File Assignment Rules
       starter_file_rule_types:
