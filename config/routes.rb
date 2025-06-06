@@ -32,9 +32,6 @@ Rails.application.routes.draw do
         end
       end
       resources :assignments, except: [:new, :edit] do
-        member do
-          get 'average_annotations'
-        end
         resources :groups, except: [:new, :edit, :destroy] do
           collection do
             get 'annotations'
