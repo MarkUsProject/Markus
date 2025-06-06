@@ -92,7 +92,7 @@
     </li>
     <% if assessment.is_a?(Assignment) && !assessment.is_peer_review? %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
-        <%= link_to t('results.summary'),
+        <%= link_to t('assignments.grades'),
                     summary_course_assignment_path(@current_course, target_id) %>
       </li>
     <% end %>
