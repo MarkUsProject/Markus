@@ -7,6 +7,8 @@
 ### ✨ New features and improvements
 - Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)
 - Improved Assignment view for students (#7533)
+- Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
+- Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
 
 ### 🐛 Bug fixes
 
