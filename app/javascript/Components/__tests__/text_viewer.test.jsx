@@ -2,12 +2,14 @@ import React from "react";
 import {render, screen, waitFor} from "@testing-library/react";
 import {TextViewer} from "../Result/text_viewer";
 import fetchMock from "jest-fetch-mock";
+import userEvent from "@testing-library/user-event";
 import {BinaryViewer} from "../Result/binary_viewer";
 
 describe("TextViewer", () => {
   const successfulFetchResp = "File content";
   const loadingCallback = jest.fn();
   const errorCallback = jest.fn();
+  const getItemMock = jest.spyOn(Storage.prototype, "getItem");
   const props = {
     annotations: [],
     focusLine: null,
@@ -19,6 +21,38 @@ describe("TextViewer", () => {
   afterEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
+  });
+
+  it("should save font size to localStorage when font size change", async () => {
+    jest.spyOn(Storage.prototype, "setItem");
+
+    render(<TextViewer {...props} />);
+    userEvent.click(screen.getByText("+A"));
+
+    await waitFor(() => {
+      expect(localStorage.setItem).toHaveBeenCalledWith("text_viewer_font_size", 1.25);
+    });
+  });
+
+  it("should remove local storage text_viewer_font_size when it is not a number", async () => {
+    localStorage.setItem("text_viewer_font_size", "not a number");
+
+    render(<TextViewer {...props} />);
+
+    await waitFor(() => {
+      expect(localStorage.getItem("text_viewer_font_size")).toBeNull();
+    });
+  });
+
+  it("should render using font size from localStorage", async () => {
+    getItemMock.mockReturnValue("3");
+
+    const {container} = render(<TextViewer {...props} />);
+    const element = container.querySelector(".line-numbers");
+
+    await waitFor(() => {
+      expect(element).toHaveStyle("font-size: 3em");
+    });
   });
 
   it("should render its text content when the content ends with a new line", () => {
