@@ -21,7 +21,6 @@ describe("TextViewer", () => {
   afterEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
-    getItemMock.mockReset();
   });
 
   it("should save font size to localStorage when font size change", async () => {
@@ -32,6 +31,16 @@ describe("TextViewer", () => {
 
     await waitFor(() => {
       expect(localStorage.setItem).toHaveBeenCalledWith("text_viewer_font_size", 1.25);
+    });
+  });
+
+  it("should remove local storage text_viewer_font_size when it is not a number", async () => {
+    localStorage.setItem("text_viewer_font_size", "not a number");
+
+    render(<TextViewer {...props} />);
+
+    await waitFor(() => {
+      expect(localStorage.getItem("text_viewer_font_size")).toBeNull();
     });
   });
 

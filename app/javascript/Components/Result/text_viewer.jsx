@@ -37,9 +37,13 @@ export class TextViewer extends React.PureComponent {
   componentDidMount() {
     this.highlight_root = this.raw_content.current.parentNode;
 
-    if (localStorage.getItem("text_viewer_font_size") !== null) {
+    let textViewerFontSize = localStorage.getItem("text_viewer_font_size");
+    if (textViewerFontSize !== null) {
       try {
-        this.setState({font_size: Number(localStorage.getItem("text_viewer_font_size"))});
+        if (isNaN(textViewerFontSize) || textViewerFontSize.trim() === "") {
+          throw new Error("Local storage item 'text_viewer_font_size' is not a number.");
+        }
+        this.setState({font_size: Number(textViewerFontSize)});
       } catch (error) {
         localStorage.removeItem("text_viewer_font_size");
         console.error("An error occurred:", error.message);
