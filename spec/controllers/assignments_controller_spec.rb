@@ -1305,6 +1305,7 @@ describe AssignmentsController do
       it 'should contain the right keys' do
         keys = response.parsed_body['summary'].keys
         expect(keys).to contain_exactly('name',
+                                        'average_annotations',
                                         'average',
                                         'median',
                                         'max_mark',
@@ -1325,6 +1326,7 @@ describe AssignmentsController do
         summary = response.parsed_body['summary']
         assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
         expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
+                     average_annotations: assignment.average_annotations,
                      average: assignment.results_average(points: true) || 0,
                      median: assignment.results_median(points: true) || 0,
                      max_mark: assignment.max_mark || 0,
