@@ -102,7 +102,7 @@ GEM
       racc
     browser (6.2.0)
     builder (3.3.0)
-    bullet (8.0.5)
+    bullet (8.0.8)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     capybara (3.40.0)
@@ -477,7 +477,7 @@ GEM
     unicorn (6.1.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    uniform_notifier (1.16.0)
+    uniform_notifier (1.17.0)
     uri (1.0.3)
     useragent (0.16.11)
     webmock (3.25.1)
