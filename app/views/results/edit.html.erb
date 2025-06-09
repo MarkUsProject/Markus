@@ -35,56 +35,56 @@
 
 <!-- Dialogs -->
 <aside class='markus-dialog no-display' id='notes_dialog'></aside>
-<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog' %>
 
 <aside class='markus-dialog no-display' id='help_dialog'>
-  <h2><%=t('results.keybinding.keyboard_help')%></h2>
+  <h2><%= t('results.keybinding.keyboard_help') %></h2>
   <table class="shortcuts-table">
     <tr>
       <td><kbd>Alt</kbd> + <kbd>Enter/return</kbd></td>
-      <td><%=t('results.keybinding.toggle_compact')%></td>
+      <td><%= t('results.keybinding.toggle_compact') %></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇨</kbd></td>
-      <td><%=t('results.next_submission')%></td>
+      <td><%= t('results.next_submission') %></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇦</kbd></td>
-      <td><%=t('results.previous_submission')%></td>
+      <td><%= t('results.previous_submission') %></td>
     </tr>
-    <%if @current_role.class.name != 'Student'%>
+    <% if @current_role.class.name != 'Student' %>
       <tr>
         <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>⇨</kbd></td>
-        <td><%=t('results.random_incomplete_submission')%></td>
+        <td><%= t('results.random_incomplete_submission') %></td>
       </tr>
-    <%end%>
+    <% end %>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇧</kbd></td>
-      <td><%=t('results.keybinding.previous_criterion')%></td>
+      <td><%= t('results.keybinding.previous_criterion') %></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇩</kbd></td>
-      <td><%=t('results.keybinding.next_criterion')%></td>
+      <td><%= t('results.keybinding.next_criterion') %></td>
     </tr>
     <tr>
       <td><kbd>⇧</kbd></td>
-      <td><%=t('results.keybinding.when_rubric') + t('results.keybinding.previous_level')%></td>
+      <td><%= t('results.keybinding.when_rubric') + t('results.keybinding.previous_level') %></td>
     </tr>
     <tr>
       <td><kbd>⇩</kbd></td>
-      <td><%=t('results.keybinding.when_rubric') + t('results.keybinding.next_level')%></td>
+      <td><%= t('results.keybinding.when_rubric') + t('results.keybinding.next_level') %></td>
     </tr>
     <tr>
       <td><kbd>Enter/return</kbd></td>
-      <td><%=t('results.keybinding.when_rubric') + t('results.keybinding.confirm_level')%></td>
+      <td><%= t('results.keybinding.when_rubric') + t('results.keybinding.confirm_level') %></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>n</kbd></td>
-      <td><%=t('results.keybinding.open_annotation')%></td>
+      <td><%= t('results.keybinding.open_annotation') %></td>
     </tr>
     <tr>
       <td><kbd>Cmd/Ctrl</kbd> + <kbd>Enter/return</kbd></td>
-      <td><%=t('results.keybinding.confirm_annotation')%></td>
+      <td><%= t('results.keybinding.confirm_annotation') %></td>
     </tr>
   </table>
 </aside>

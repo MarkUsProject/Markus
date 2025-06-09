@@ -50,8 +50,7 @@
           (controller.controller_name == 'assignments' &&
           controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
           class='active'
-          <% end %>
-      >
+          <% end %>>
         <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
             <%= link_to t('menu.settings'),
                         edit_course_assignment_path(@current_course, target_id) %>
@@ -84,8 +83,7 @@
       <% if controller.controller_name == 'submissions' ||
             controller.controller_name == 'results' %>
         class='active'
-      <% end %>
-    >
+      <% end %>>
       <%= link_to assessment.is_peer_review? || @result&.is_a_review? ?
                     PeerReview.model_name.human.pluralize : Submission.model_name.human.pluralize,
                   browse_course_assignment_submissions_path(@current_course, target_id) %>

@@ -2,8 +2,7 @@
 
 <% upcoming, past = @current_role.visible_assessments
                                  .order(:due_date, :id)
-                                 .partition { |a| a.upcoming(@current_role) }
-%>
+                                 .partition { |a| a.upcoming(@current_role) } %>
 <div class='section'>
   <h3><%= t('assignments.due_date.upcoming') %></h3>
   <%= render partial: 'assessments/list', locals: { assessments: upcoming, upcoming: true } %>

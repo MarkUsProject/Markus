@@ -5,7 +5,7 @@
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
   <%= javascript_include_tag 'application_webpack', nonce: true %>
   <%= javascript_include_tag 'application', nonce: true %>
-  <% unless session[:auth_type] == 'remote'%>
+  <% unless session[:auth_type] == 'remote' %>
     <%= javascript_include_tag 'check_timeout', nonce: true %>
   <% end %>
   <%= render partial: 'layouts/jsroutes_config' %>
@@ -34,7 +34,7 @@
 
     <section id='content' class='flex-col'>
       <%= render partial: 'shared/flash_message' %>
-      <%= render partial: 'layouts/noscript'%>
+      <%= render partial: 'layouts/noscript' %>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
   </div>

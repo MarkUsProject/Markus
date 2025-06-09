@@ -118,7 +118,8 @@
     <div>
       <h2 id="group_name"></h2>
       <form id="assign_student">
-        <input id="names" name="names" type="text" placeholder="<%= User.human_attribute_name(:full_name) %>">
+        <input id="names" name="names" type="text" placeholder="<%= User.human_attribute_name(:full_name) %>"
+               autocomplete="off">
         <input id="student_id" name="s_id" type="hidden">
         <input id="grouping_id" name="g_id" value="" type="hidden">
 

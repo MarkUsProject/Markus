@@ -24,14 +24,14 @@
             <div class="inline-help">
               <p><%= GraderPermission.human_attribute_name(:manage_assessments_tooltip) %></p>
             </div>
-          </div><br/>
+          </div><br>
           <div>
             <%= ff.check_box :manage_submissions %>
             <%= ff.label :manage_submissions, GraderPermission.human_attribute_name(:manage_submissions) %>
             <div class="inline-help">
               <p><%= GraderPermission.human_attribute_name(:manage_submissions_tooltip) %></p>
             </div>
-          </div><br/>
+          </div><br>
           <div>
             <%= ff.check_box :run_tests %>
             <%= ff.label :run_tests, GraderPermission.human_attribute_name(:run_tests) %>
