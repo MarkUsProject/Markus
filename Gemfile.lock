@@ -115,7 +115,7 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     chunky_png (1.4.0)
-    combine_pdf (1.0.29)
+    combine_pdf (1.0.31)
       matrix
       ruby-rc4 (>= 0.1.5)
     concurrent-ruby (1.3.5)
@@ -415,7 +415,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.3)
-    rtesseract (3.1.3)
+    rtesseract (3.1.4)
     ruby-next-core (1.1.1)
     ruby-progressbar (1.13.0)
     ruby-rc4 (0.1.5)
