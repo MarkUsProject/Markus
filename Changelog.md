@@ -22,6 +22,7 @@
 - Add tests for `#edit` and `#update` when user is trying to change criteria in `CriteriaController` (#7527)
 - Remove the placeholder "..." text under the "Proposed changes" section in `PULL_REQUEST_TEMPLATE.md`. (#7524)
 - Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
+- Enabled `erb_lint` linter for erb files (#7561)
 
 ## [v2.7.1]
 
