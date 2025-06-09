@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
-import {tableNoDataComponent} from "./table_no_data";
 
 class RawStudentTable extends React.Component {
   constructor() {
@@ -222,7 +221,7 @@ class RawStudentTable extends React.Component {
           ]}
           filterable
           loading={loading}
-          NoDataComponent={() => tableNoDataComponent(I18n.t("students.empty_table"))}
+          noDataText={I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>
