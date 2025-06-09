@@ -100,13 +100,13 @@ function add_template_division(target) {
   var new_division_row = `
     <tr id="${input_id}_holder" class="new">
       <td>
-        <input type="text" required="required" name="${nested_form_path}[label]">
+        <input type="text" required="required" name="${nested_form_path}[label]" autocomplete="off">
       </td>
       <td>
-        <input type="number" min="2" required="required" name="${nested_form_path}[start]">
+        <input type="number" min="2" required="required" name="${nested_form_path}[start]" autocomplete="off">
       </td>
       <td>
-        <input type="number" min="2" required="required" name="${nested_form_path}[end]">
+        <input type="number" min="2" required="required" name="${nested_form_path}[end]" autocomplete="off">
       </td>
       <td>
         <a href="#" class="delete-exam-template-row">
@@ -176,12 +176,7 @@ function attach_crop_box(id) {
  */
 function toggle_crop_scale_buttons(id) {
   $("#decrease-crop-scale").on("click", function () {
-    if (crop_scale - SCALE_CHANGE < MIN_SIZE) {
-      crop_scale = MIN_SIZE;
-    } else {
-      crop_scale -= SCALE_CHANGE;
-    }
-
+    crop_scale = Math.max(crop_scale - SCALE_CHANGE, MIN_SIZE);
     attach_crop_box(id);
   });
 

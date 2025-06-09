@@ -37,7 +37,7 @@
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: CriterionPolicy) %>
-            <li <% if controller.controller_name == 'criteria'%>
+            <li <% if controller.controller_name == 'criteria' %>
                 class='active'
                 <% end %>>
               <%= link_to Criterion.model_name.human.pluralize,

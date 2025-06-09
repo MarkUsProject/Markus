@@ -7,6 +7,7 @@
         <%= label_tag :new_group_name, Group.human_attribute_name(:group) %>
         <%= text_field_tag :new_group_name,
                            '',
+                           autocomplete: 'off',
                            maxlength: 30 %>
         <section class='dialog-actions'>
           <%= submit_tag t('helpers.submit.create', model: Group.model_name.human) %>

@@ -31,8 +31,8 @@
 <%= form_for [@current_course, @assignment] do |f| %>
   <%= f.fields_for :assignment_properties do |ap_f| %>
 
-    <%= ap_f.hidden_field :scanned_exam, value: @assignment.scanned_exam  %>
-    <%= ap_f.hidden_field :is_timed, value: @assignment.is_timed  %>
+    <%= ap_f.hidden_field :scanned_exam, value: @assignment.scanned_exam %>
+    <%= ap_f.hidden_field :is_timed, value: @assignment.is_timed %>
 
     <label class='required'><%= t('required_fields') %></label>
 
@@ -166,7 +166,7 @@
       <% if @assignment.is_timed %>
           <fieldset class="nested-fieldset">
             <legend>
-              <span><%= Assignment.human_attribute_name(:duration)%></span>
+              <span><%= Assignment.human_attribute_name(:duration) %></span>
             </legend>
             <div>
             <%= ap_f.fields_for :duration do |dur_f| %>
@@ -353,7 +353,8 @@
                         # The below conditional is meant to filter out periods that do not match
                         # the currently selected submission rule. This only happens when we fail to
                         # save a new submission rule.
-                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
+                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil?
+                      %>
                           <%= render partial: 'grace_period',
                                      locals: { grace_period: period_form.object,
                                                pf: rule } %>
@@ -396,7 +397,8 @@
                         # The below conditional is meant to filter out periods that do not match
                         # the currently selected submission rule. This only happens when we fail to
                         # save a new submission rule.
-                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
+                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil?
+                      %>
                           <%= render partial: 'penalty_decay_period',
                                      locals: { penalty_decay_period: period_form.object,
                                                pf: rule } %>
@@ -438,7 +440,8 @@
                         # The below conditional is meant to filter out periods that do not match
                         # the currently selected submission rule. This only happens when we fail to
                         # save a new submission rule.
-                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
+                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil?
+                      %>
                           <%= render partial: 'penalty_period',
                                      locals: { penalty_period: period_form.object,
                                                pf: rule } %>
@@ -460,7 +463,7 @@
     <%# Remark request rules %>
     <fieldset>
       <legend>
-        <span><%= t('assignments.form.remarks')%></span>
+        <span><%= t('assignments.form.remarks') %></span>
       </legend>
 
       <div class='help'>
@@ -504,6 +507,5 @@
                   title: has_groups ? I18n.t('assignments.assignment_has_groupings') :
                            I18n.t('helpers.submit.delete', model: Assignment.model_name.human),
                   disabled: has_groups
-                }
-  %>
+                } %>
 <% end %>

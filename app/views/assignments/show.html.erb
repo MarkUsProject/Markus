@@ -42,8 +42,8 @@
       <h2><%= t('groups.student_interface.group_information') %></h2>
 
       <div class='block-content'>
-        <% # If student has no group, inform them
-           if @grouping.nil? %>
+        <%# If student has no group, inform them %>
+        <% if @grouping.nil? %>
           <p class='notice'>
             <i class="fa-solid fa-circle-info left-icon"></i>
             <%= t('groups.student_interface.no_group_yet') %>
@@ -58,17 +58,17 @@
             </p>
           <% end %>
 
-          <% # See if the student has been invited to some group
-             if @current_role.has_pending_groupings_for?(@assignment.id) %>
+          <%# See if the student has been invited to some group %>
+          <% if @current_role.has_pending_groupings_for?(@assignment.id) %>
             <h3><%= t('groups.members.invitations') %></h3>
 
-            <% @current_role.pending_groupings_for(@assignment.id).each do |grouping|%>
+            <% @current_role.pending_groupings_for(@assignment.id).each do |grouping| %>
               <div>
                 <p><%= t('groups.members.invited_by',
                          inviter_display_name: grouping.inviter.display_name) %>
                 </p>
                 <ul>
-                  <% grouping.student_memberships.includes(role: :user).each do |member|%>
+                  <% grouping.student_memberships.includes(role: :user).each do |member| %>
                     <%= render partial: 'assignments/member',
                                locals: { member: member,
                                          grouping: grouping } %>
@@ -95,10 +95,10 @@
             <% end %>
           <% end %>
 
-          <% # If students are allowed to form groups and
-             # the grace period for this assignment has not yet passed,
-             # render UI elements for group creation
-             if !@assignment.past_collection_date?(@current_role.section) && @assignment.student_form_groups %>
+          <%# If students are allowed to form groups and
+              the grace period for this assignment has not yet passed,
+              render UI elements for group creation %>
+          <% if !@assignment.past_collection_date?(@current_role.section) && @assignment.student_form_groups %>
 
             <h3><%= t('groups.student_interface.form_group') %></h3>
 
@@ -128,22 +128,22 @@
             </p>
           <% end %>
         <% else %>
-          <% # Since the student has a group already, we display information about the group only %>
+          <%# Since the student has a group already, we display information about the group only %>
           <h3>
             <%= t('groups.student_interface.your_group') %>
           </h3>
-          <% # Display group properties are read only warning
-             # when the due date and grace period (if any) have passed.
-             if @assignment.past_collection_date?(@current_role.section) && @assignment.student_form_groups &&
+          <%# Display group properties are read only warning
+             when the due date and grace period (if any) have passed. %>
+          <% if @assignment.past_collection_date?(@current_role.section) && @assignment.student_form_groups &&
                @assignment.group_max > 1 %>
             <p class='information'>
               <%= t('groups.student_interface.modification_limited') %>
             </p>
           <% end %>
 
-          <% # If the group does not have the right amount of members yet, display
-             # 'group is not valid' warning.
-             unless @grouping.is_valid? %>
+          <%# If the group does not have the right amount of members yet, display
+              'group is not valid' warning. %>
+          <% unless @grouping.is_valid? %>
             <p class='warning'>
               <i class="fa-solid fa-warning icon-left"></i>
               <%= t('groups.student_interface.invite_more_students') %>
@@ -152,7 +152,7 @@
 
           <%# For each member of this group, display name and status %>
           <ul>
-            <% @grouping.student_memberships.includes(:role).each do |member|%>
+            <% @grouping.student_memberships.includes(:role).each do |member| %>
               <%= render partial: 'assignments/member',
                          locals: { member: member,
                                    grouping: @grouping } %>
@@ -167,15 +167,15 @@
             <p><%= t('groups.student_interface.working_alone') %></p>
           <% end %>
 
-          <% # Student not reached the group max and is not working alone
-             if @grouping.inviter == @current_role &&
+          <%# Student not reached the group max and is not working alone %>
+          <% if @grouping.inviter == @current_role &&
                @assignment.student_form_groups &&
                !@assignment.past_collection_date?(@current_role.section) &&
-               @grouping&.extension.nil?%>
-            <% # Student has reached the group max and is not working alone
-               if @grouping.student_membership_number < @assignment.group_max &&
+               @grouping&.extension.nil? %>
+            <%# Student has reached the group max and is not working alone %>
+            <% if @grouping.student_membership_number < @assignment.group_max &&
                  @grouping.group.group_name != @current_role.user_name %>
-              <%= button_tag t('groups.members.invite'), id: 'invite-student'%>
+              <%= button_tag t('groups.members.invite'), id: 'invite-student' %>
             <% elsif @grouping.student_membership_number ==
               @assignment.group_max &&
               @grouping.group.group_name != @current_role.user_name %>
@@ -194,8 +194,7 @@
               <%= button_to t('helpers.submit.delete', model: Group.model_name.human),
                             course_assignment_group_path(@current_course.id, @assignment.id, @grouping.id),
                             method: :delete,
-                            data: { confirm: t('groups.student_interface.confirm_delete_group') }
-              %>
+                            data: { confirm: t('groups.student_interface.confirm_delete_group') } %>
             <% else %>
               <p><%= t('groups.student_interface.not_allowed_to_delete_group') %></p>
             <% end %>
@@ -225,15 +224,15 @@
   <% end %>
 </div>
 
-<% # HTML for the invite dialog
-   if !@grouping.nil? && @grouping.inviter == @current_role && @assignment.student_form_groups %>
+<%# HTML for the invite dialog %>
+<% if !@grouping.nil? && @grouping.inviter == @current_role && @assignment.student_form_groups %>
   <aside class='markus-dialog' id='invite_dialog'>
     <%= form_tag(invite_member_course_assignment_groups_path(course_id: @current_course.id, assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { id: 'invite-student-form' }) do %>
       <h2><%= t('groups.members.invite') %></h2>
       <p><%= t('groups.members.invite_instructions') %></p>
       <label for='invite_member'><%= User.human_attribute_name(:user_name).pluralize %></label>
-      <%= text_field_tag 'invite_member', nil, required: true %>
+      <%= text_field_tag 'invite_member', nil, required: true, autocomplete: 'off' %>
 
       <section class='dialog-actions'>
         <%= submit_tag t('groups.members.invite') %>

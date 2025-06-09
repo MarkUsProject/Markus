@@ -20,8 +20,7 @@
                                                                   membership: member.id),
                    method: 'PATCH',
                    class: 'delete inline-button',
-                   data: { confirm: t('groups.members.cancel_invitation_confirm') }
-       %>
+                   data: { confirm: t('groups.members.cancel_invitation_confirm') } %>
      <% end %>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>

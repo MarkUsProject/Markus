@@ -124,7 +124,7 @@
       <div class='sub_block'>
         HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
         <% if allowed_to?(:view?, with: KeyPairPolicy) %>
-          <br/>
+          <br>
           SSH: <a href='#'><%= @grouping.group.repository_ssh_access_url %></a>
         <% end %>
       </div>
@@ -141,8 +141,8 @@
                       download_starter_file_course_assignment_groups_path(@current_course, @assignment),
                       method: 'get' %>
       </p>
-      <% # Display the URL of this group's repository if applicable
-         if allowed_to?(:access_repo?, @grouping) %>
+      <%# Display the URL of this group's repository if applicable %>
+      <% if allowed_to?(:access_repo?, @grouping) %>
         <p>
           <%= button_to t('assignments.starter_file.populate_repo'),
                         populate_repo_with_starter_files_course_assignment_groups_path(

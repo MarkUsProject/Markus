@@ -3,13 +3,14 @@
                { method: 'post', remote: true } do %>
     <div id='role_switch_error'></div>
 
-    <h2><%= t('main.role_switch.switch_role')%></h2>
+    <h2><%= t('main.role_switch.switch_role') %></h2>
 
     <%= text_field_tag 'effective_user_login',
                        nil,
                        placeholder: t('main.role_switch.log_in_as'),
                        'aria-label': t('main.role_switch.log_in_as'),
-                       autocorrect: 'off' %>
+                       autocorrect: 'off',
+                       autocomplete: 'off' %>
 
     <section class='dialog-actions'>
       <%= submit_tag t('main.log_in'),
