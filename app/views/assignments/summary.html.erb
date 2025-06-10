@@ -1,4 +1,4 @@
-<% content_for :title, t('assignments.grades', short_id: @assignment.short_identifier) %>
+<% content_for :title, t('grade_entry_form_summary', short_id: @assignment.short_identifier) %>
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
