@@ -11,6 +11,7 @@
 - Maintain font size in grading view (#7525)
 
 ### 🐛 Bug fixes
+- Added host authorization setting for Resque (#7562)
 
 ### 🔧 Internal changes
 
