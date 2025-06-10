@@ -127,6 +127,7 @@ class TATable extends React.Component {
         ]}
         filterable
         loading={this.state.loading}
+        noDataText={I18n.t("tas.empty_table")}
       />
     );
   }

@@ -100,6 +100,7 @@ class InstructorTable extends React.Component {
         ]}
         filterable
         loading={this.state.loading}
+        noDataText={I18n.t("instructors.empty_table")}
       />
     );
   }

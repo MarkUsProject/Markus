@@ -221,6 +221,7 @@ class RawStudentTable extends React.Component {
           ]}
           filterable
           loading={loading}
+          noDataText={I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>
@@ -306,6 +307,7 @@ class StudentsActionBox extends React.Component {
     );
   };
 }
+
 StudentsActionBox.propTypes = {
   onSubmit: PropTypes.func,
   disabled: PropTypes.bool,
@@ -321,8 +323,10 @@ RawStudentTable.propTypes = {
 };
 
 let StudentTable = withSelection(RawStudentTable);
+
 function makeStudentTable(elem, props) {
   const root = createRoot(elem);
   root.render(<StudentTable {...props} />);
 }
+
 export {StudentTable, StudentsActionBox, makeStudentTable};
