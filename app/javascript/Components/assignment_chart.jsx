@@ -191,7 +191,22 @@ export class AssignmentChart extends React.Component {
       let annotation_summary = (
         <div className="distribution-graph">
           <h3>{I18n.t("assignments.annotation_summary")}</h3>
-          <p>{I18n.t("assignments.average_annotations", {average_annotations: 2.75})}</p>
+          <p>
+            {I18n.t("assignments.average_annotations", {
+              average_annotations: this.state.summary.average_annotations,
+            })}
+          </p>
+          <p>
+            {I18n.t("assignments.average_annotations_detail_descriptor")}{" "}
+            <a
+              href={Routes.course_assignment_annotation_categories_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("assignments.annotation")}
+            </a>
+          </p>
         </div>
       );
 
