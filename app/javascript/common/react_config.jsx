@@ -1,7 +1,12 @@
 import {ReactTableDefaults} from "react-table";
 import {I18n} from "i18n-js";
 import translations from "translations.json";
-import {defaultSort, stringFilterMethod, textFilter} from "../Components/Helpers/table_helpers";
+import {
+  defaultSort,
+  stringFilterMethod,
+  textFilter,
+  customNoDataComponent,
+} from "../Components/Helpers/table_helpers";
 
 const i18n = new I18n(translations);
 
@@ -15,6 +20,7 @@ Object.assign(ReactTableDefaults, {
   defaultSortMethod: defaultSort,
   defaultFilterMethod: stringFilterMethod,
   FilterComponent: textFilter,
+  NoDataComponent: customNoDataComponent,
 });
 
 Object.assign(ReactTableDefaults.column, {
