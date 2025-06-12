@@ -9,6 +9,8 @@
 - Design improvement of tables when the data is empty. (#7557)
 - Improved Assignment view for students (#7533)
 - Maintain font size in grading view (#7525)
+- Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
+- Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
 
 ### 🐛 Bug fixes
 
