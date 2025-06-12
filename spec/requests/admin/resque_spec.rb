@@ -19,6 +19,12 @@ describe 'Resque dashboard authorization' do
         expect(response).to have_http_status :redirect
         expect(response).to redirect_to('/admin/resque/overview')
       end
+
+      it 'returns a 403 status code' do
+        host! 'unauthorized_host'
+        get '/admin/resque'
+        expect(response).to have_http_status :forbidden
+      end
     end
 
     context 'and is an instructor' do
