@@ -21,8 +21,7 @@ describe 'Resque dashboard authorization' do
       end
 
       it 'returns a 403 status code' do
-        host! 'unauthorized_host'
-        get '/admin/resque'
+        get '/admin/resque', params: {}, headers: { 'Host' => 'test.host' }
         expect(response).to have_http_status :forbidden
       end
     end
