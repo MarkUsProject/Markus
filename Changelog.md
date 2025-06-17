@@ -13,6 +13,7 @@
 - Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
 
 ### 🐛 Bug fixes
+- Added host authorization setting for Resque (#7562)
 
 ### 🔧 Internal changes
 
