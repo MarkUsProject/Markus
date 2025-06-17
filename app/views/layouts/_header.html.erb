@@ -87,6 +87,6 @@
 </header>
 
 <%= javascript_tag nonce: true do %>
-<%= render partial: 'shared/poll_job', formats: [:js], handlers: [:erb] %>
-set_theme('<%= @current_user.theme %>');
+  <%= render partial: 'shared/poll_job', formats: [:js], handlers: [:erb] %>
+  set_theme('<%= @current_user.theme %>');
 <% end %>

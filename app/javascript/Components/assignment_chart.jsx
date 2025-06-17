@@ -193,7 +193,7 @@ export class AssignmentChart extends React.Component {
           <h3>{I18n.t("assignments.annotation_summary")}</h3>
           <p>
             {I18n.t("assignments.average_annotations", {
-              average_annotations: this.state.summary.average_annotations,
+              average_annotations: this.state.summary.average_annotations || 0,
             })}
           </p>
           <p>
@@ -204,7 +204,7 @@ export class AssignmentChart extends React.Component {
                 this.props.assessment_id
               )}
             >
-              {I18n.t("assignments.annotation")}
+              {I18n.t("activerecord.models.annotation.one")}
             </a>
           </p>
         </div>

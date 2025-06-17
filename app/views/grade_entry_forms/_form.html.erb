@@ -1,10 +1,9 @@
-<% # Grade entry creation form
-   # #{short_identifier} - An identifier for this grade entry form
-   # #{description} - A name for this grade entry form
-   # #{message} - Some additional information about this grade entry form
-   # #{date} - The date the exam/test/lab corresponding to this grade entry form took place
-   # #{grade_entry_item(s)} - Column name and total
-%>
+<%# Grade entry creation form
+    #{short_identifier} - An identifier for this grade entry form
+    #{description} - A name for this grade entry form
+    #{message} - Some additional information about this grade entry form
+    #{date} - The date the exam/test/lab corresponding to this grade entry form took place
+    #{grade_entry_item(s)} - Column name and total %>
 
 <% content_for :head do %>
   <%= render partial: 'boot',
@@ -96,6 +95,5 @@
                 course_grade_entry_form_path(@current_course.id, @grade_entry_form.id),
                 method: :delete,
                 title: not_deletable ? t('grade_entry_forms.grades.non_nil_grade_exists') : nil,
-                disabled: not_deletable
-  %>
+                disabled: not_deletable %>
 <% end %>

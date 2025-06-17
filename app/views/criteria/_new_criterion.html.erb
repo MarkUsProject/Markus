@@ -4,12 +4,13 @@
                remote: true do %>
     <div class='inline-labels'>
       <%= label_tag :new_criterion_prompt, Criterion.human_attribute_name(:name) %>
-      <%= text_field_tag :new_criterion_prompt, '' %>
+      <%= text_field_tag :new_criterion_prompt, '', autocomplete: 'off' %>
       <%= label_tag :max_mark_prompt, Criterion.human_attribute_name(:max_mark) %>
-      <%= number_field_tag(:max_mark_prompt,
+      <%= number_field_tag :max_mark_prompt,
                            RubricCriterion::DEFAULT_MAX_MARK,
                            size: 4,
-                           step: 0.1) %>
+                           step: 0.1,
+                           autocomplete: 'off' %>
     </div>
     <p>
       <%= radio_button_tag(:criterion_type,
@@ -18,15 +19,15 @@
       <i class="fa-solid fa-table"></i>
       <%= label_tag('criterion_type_RubricCriterion',
                     t('criteria.rubric')) %>
-      <%= radio_button_tag(:criterion_type,
+      <%= radio_button_tag :criterion_type,
                            'FlexibleCriterion',
-                           checked = false) %>
-      <span title=<%= t('criteria.flexible') %>> ⅔ </span>
+                           false %>
+      <span title="<%= t('criteria.flexible') %>"> ⅔ </span>
       <%= label_tag('criterion_type_FlexibleCriterion',
                     t('criteria.flexible')) %>
-      <%= radio_button_tag(:criterion_type,
+      <%= radio_button_tag :criterion_type,
                            'CheckboxCriterion',
-                           checked = false) %>
+                           false %>
       <i class="fa-solid fa-square-check"></i>
       <%= label_tag('criterion_type_CheckboxCriterion',
                     t('criteria.checkbox')) %>
@@ -34,5 +35,3 @@
     <p><%= submit_tag(t(:save), data: { disable_with: t('working') }) %></p>
   <% end %>
 </li>
-
-<!--"check_box.png" designed by interactivemania, used under Creative Commons BY-ND 3.0-->

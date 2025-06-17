@@ -34,8 +34,8 @@
     <h2><%= t('groups.student_interface.group_information') %></h2>
 
     <div class='block-content'>
-      <% # If student has no group, inform them
-         if @grouping.nil? %>
+      <%# If student has no group, inform them %>
+      <% if @grouping.nil? %>
           <p class='notice'>
             <i class="fa-solid fa-circle-info left-icon"></i>
             <%= t('groups.student_interface.no_group_yet') %>.
@@ -80,7 +80,7 @@
 
           <%# For each member of this group, display name %>
           <ul>
-            <% @grouping.student_memberships.includes(:role).each do |member|%>
+            <% @grouping.student_memberships.includes(:role).each do |member| %>
                 <li>
                     <%= member.role.display_name %>
                 </li>

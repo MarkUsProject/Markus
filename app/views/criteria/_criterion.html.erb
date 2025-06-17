@@ -2,11 +2,11 @@
   <i class="fa-solid fa-grip-vertical icon-left"></i>
   <span class='left'>
     <% if criterion.class.to_s == 'RubricCriterion' %>
-      <i class="fa-solid fa-table" title=<%= t('criteria.rubric') %>></i>
+      <i class="fa-solid fa-table" title="<%= t('criteria.rubric') %>"></i>
     <% elsif criterion.class.to_s == 'FlexibleCriterion' %>
-      <span title=<%= t('criteria.flexible') %>> ⅔ </span>
+      <span title="<%= t('criteria.flexible') %>"> ⅔ </span>
     <% elsif criterion.class.to_s == 'CheckboxCriterion' %>
-      <i class="fa-solid fa-square-check" title=<%= t('criteria.checkbox') %>></i>
+      <i class="fa-solid fa-square-check" title="<%= t('criteria.checkbox') %>"></i>
     <% end %>
     <%= link_to truncate(criterion.name,
                          length: 27,

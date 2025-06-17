@@ -1,0 +1,10 @@
+---
+EnableDefaultLinters: true
+linters:
+  NoJavascriptTagHelper:
+    enabled: false
+  ErbSafety:
+    enabled: false  # TODO: enable this
+    better_html_config: .better-html.yml
+  Rubocop:
+    enabled: false  # TODO: enable this

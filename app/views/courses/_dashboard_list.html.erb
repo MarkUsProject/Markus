@@ -20,8 +20,7 @@
                                          "#{h(assignment.short_identifier)}: #{h(assignment.description)}")),
                             view_summary_course_assignment_path(@current_course, assignment.id),
                             data: { remote: true, id: assignment.short_identifier },
-                            class: (assignment.id == @current_assignment.id ? "inactive" : "")
-                             %>
+                            class: (assignment.id == @current_assignment.id ? "inactive" : "") %>
               <% else %>
                 <%= link_to assignment.short_identifier + ': ' + assignment.description,
                             view_summary_course_assignment_path(@current_course, assignment.id),

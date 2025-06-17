@@ -10,6 +10,8 @@
 - Improved Assignment view for students (#7533)
 - Added average annotations section in Assignment Summary (#7559)
 - Maintain font size in grading view (#7525)
+- Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
+- Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
 
 ### 🐛 Bug fixes
 
@@ -21,6 +23,7 @@
 - Add tests for `#edit` and `#update` when user is trying to change criteria in `CriteriaController` (#7527)
 - Remove the placeholder "..." text under the "Proposed changes" section in `PULL_REQUEST_TEMPLATE.md`. (#7524)
 - Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
+- Enabled `erb_lint` linter for erb files (#7561)
 
 ## [v2.7.1]
 
