@@ -12,7 +12,7 @@ import CreateModifyAnnotationPanel from "../Modals/create_modify_annotation_pane
 import CreateTagModal from "../Modals/create_tag_modal";
 import {pathToNode} from "../Helpers/range_selector";
 import {ResultContext} from "./result_context";
-import {annotation_context_menu} from "../../../assets/javascripts/Results/context_menu";
+import {annotation_context_menu} from "./context_menu";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
