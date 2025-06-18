@@ -19,6 +19,16 @@ describe 'Resque dashboard authorization' do
         expect(response).to have_http_status :redirect
         expect(response).to redirect_to('/admin/resque/overview')
       end
+
+      it 'returns a 200 status code for a permitted host' do
+        get '/admin/resque', params: {}, headers: { 'Host' => 'test.localhost' }
+        expect(response).to have_http_status :redirect
+      end
+
+      it 'returns a 403 status code for a non permitted host' do
+        get '/admin/resque', params: {}, headers: { 'Host' => 'test.host' }
+        expect(response).to have_http_status :forbidden
+      end
     end
 
     context 'and is an instructor' do
