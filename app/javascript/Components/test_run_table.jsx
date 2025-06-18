@@ -386,6 +386,19 @@ class TestGroupFeedbackFileTable extends React.Component {
       {
         Header: I18n.t("activerecord.attributes.submission.feedback_files"),
         accessor: "filename",
+        Cell: row => {
+          const { filename, id } = row.original;
+          const isHtml = filename.toLowerCase().endsWith(".html");
+          const url = Routes.course_feedback_file_path(this.props.course_id, id);
+
+          return isHtml ? (
+            <a href={url} target="_blank" rel="noopener noreferrer">
+              {I18n.t("automated_tests.view_html_preview") || "View HTML Preview"}
+            </a>
+          ) : (
+            filename
+          );
+        },
       },
     ];
 

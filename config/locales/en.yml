@@ -16,7 +16,7 @@ en:
     not_enqueued: No job was enqueued
     queued: Queued
     split_pdf_job: Processing page %{progress} out of %{total} for %{exam_name}
-    uncollect_submissions_job: 'Uncollecting assignments ... '
+    uncollect_submissions_job: "Uncollecting assignments ... "
     update_repo_max_file_size_job: "%{progress}/%{total} Student repositories updated with new maximum file size"
     update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
     working_message: "%{progress} out of %{total}"
@@ -35,11 +35,13 @@ en:
       conflicts: Conflicts
       empty_file_warning: "%{file_name} is empty"
       external_submit_only: MarkUs is only accepting external submits
-      file_conflicts: 'Your changes have not been made.  The following file conflicts were detected:'
+      file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
       file_extension_mismatch: The contents of the uploaded file do not match the file extension %{extension}.
       file_too_large: The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB.
-      invalid_file_name: 'Invalid file name on submitted file: %{file_name}'
-      invalid_folder_name: 'Invalid folder name on submitted folder: %{folder_name}'
+      invalid_file_name: "Invalid file name on submitted file: %{file_name}"
+      invalid_folder_name: "Invalid folder name on submitted folder: %{folder_name}"
       missing_file: Could not download %{file_name}.  File may be missing.
-      missing_files: 'You still need to submit %{file} required file(s) for this assignment:'
+      missing_files: "You still need to submit %{file} required file(s) for this assignment:"
       no_action_detected: No actions were detected in the last submit.  Nothing was changed.
+  automated_tests:
+    view_html_preview: "View HTML Preview"
