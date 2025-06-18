@@ -24,7 +24,7 @@ class AutotestRunJob < AutotestJob
           File.write(file_path, file.download_file)
           output_path = file_path.sub_ext('.html')
 
-          script = Rails.root.join('lib', 'tasks', 'render_rmd.sh')
+          script = Rails.root.join('lib/tasks/render_rmd.sh')
           system("bash #{script} #{Shellwords.escape(file_path.to_s)} #{Shellwords.escape(output_path.to_s)}")
 
           if File.exist?(output_path)
