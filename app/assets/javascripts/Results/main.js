@@ -16,5 +16,4 @@
 // Page-specific Javascript
 //= require Grader/marking
 //= require panes
-//= require Results/context_menu
 //= require Results/keybinding
