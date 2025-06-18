@@ -204,7 +204,7 @@ export class AssignmentChart extends React.Component {
                 this.props.assessment_id
               )}
             >
-              {I18n.t("activerecord.models.annotation.one")}
+              {I18n.t("activerecord.models.annotation.other")}
             </a>
           </p>
         </div>
