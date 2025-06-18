@@ -26,6 +26,7 @@
 - Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
 - Enabled `erb_lint` linter for erb files (#7561)
 - Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
+- Added test metadata examples to seed data for R autotesting (#7564)
 
 ## [v2.7.1]
 
