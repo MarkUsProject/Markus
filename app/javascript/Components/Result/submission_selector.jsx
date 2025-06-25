@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {FilterModal} from "../Modals/filter_modal";
+import {bind_keybindings} from "../../../assets/javascripts/Results/keybinding";
 import {ResultContext} from "./result_context";
 
 export class SubmissionSelector extends React.Component {
@@ -10,6 +11,9 @@ export class SubmissionSelector extends React.Component {
     this.state = {
       showFilterModal: false,
     };
+  }
+  componentDidMount() {
+    bind_keybindings();
   }
 
   static contextType = ResultContext;

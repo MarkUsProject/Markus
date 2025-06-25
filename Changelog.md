@@ -27,6 +27,7 @@
 - Enabled `erb_lint` linter for erb files (#7561)
 - Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
 - Added test metadata examples to seed data for R autotesting (#7564)
+- Refactored the method of loading `javascripts/Results/keybinding.js` in `submission_selector.jsx` (#7566)
 
 ## [v2.7.1]
 
