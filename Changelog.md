@@ -8,6 +8,7 @@
 - Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)
 - Design improvement of tables when the data is empty. (#7557)
 - Improved Assignment view for students (#7533)
+- Added average annotations section in Assignment Summary (#7559)
 - Maintain font size in grading view (#7525)
 - Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
 - Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
@@ -24,6 +25,8 @@
 - Remove the placeholder "..." text under the "Proposed changes" section in `PULL_REQUEST_TEMPLATE.md`. (#7524)
 - Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
 - Enabled `erb_lint` linter for erb files (#7561)
+- Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
+- Added test metadata examples to seed data for R autotesting (#7564)
 
 ## [v2.7.1]
 
