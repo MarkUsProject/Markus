@@ -1,6 +1,6 @@
 // Open the keyboard shortcuts help modal
 export function bind_keybindings() {
-  Mouset$current_criteriarap.bind("?", function () {
+  Mousetrap.bind("?", function () {
     modal_help.open();
   });
 
