@@ -1,4 +1,5 @@
 // Open the keyboard shortcuts help modal
+import Mousetrap from "mousetrap";
 export function bind_keybindings() {
   Mousetrap.bind("?", function () {
     modal_help.open();
