@@ -43,7 +43,8 @@ class AutoMatchJob < ApplicationJob
 
         python_exe = Rails.application.config.python
         char_type = exam_template.cover_fields == 'id_number' ? 'digit' : 'letter'
-        stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', student_info_file, char_type)
+        stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', 'char', student_info_file,
+                                        '--char_type', char_type)
         parsed = stdout.strip.split("\n")
 
         next unless status.success? && parsed.length == 1
