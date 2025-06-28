@@ -30,10 +30,6 @@ printf "[MarkUs] Running pip install -q -r requirements-scanner.txt..."
 if ./venv/bin/python3 -m pip install -q -r requirements-scanner.txt; then
   printf " \e[32m✔\e[0m \n"
 fi
-printf "[MarkUs] Running pip install -q -r requirements-qr.txt..."
-if ./venv/bin/python3 -m pip install -q -r requirements-qr.txt; then
-  printf " \e[32m✔\e[0m \n"
-fi
 
 # Install chromium (for nbconvert webpdf conversion)
 printf "[MarkUs] Running playwright install chromium..."
