@@ -178,7 +178,7 @@ module.exports = {
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: [
-    "/node_modules/(?!i18n-js|mime|react-dnd-html5-backend)",
+    "/node_modules/(?!i18n-js|marked|mime|react-dnd-html5-backend)",
     "\\.pnp\\.[^\\/]+$",
   ],
 
