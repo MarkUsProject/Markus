@@ -21,7 +21,7 @@
     "jcrop": "^0.0.1",
     "jquery": "^3.7.1",
     "jquery-ui": "^1.14.1",
-    "marked": "^15.0.12",
+    "marked": "^16.0.0",
     "mathjax": "^3.2.2",
     "mime": "^4.0.7",
     "mousetrap": "^1.6.5",
