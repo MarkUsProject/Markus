@@ -152,7 +152,7 @@ function SearchFilter({column}) {
 }
 
 function SelectFilter({column}) {
-  const uniqueValuesMap = React.useMemo(() => column.getFacetedUniqueValues(), [column]);
+  const uniqueValuesMap = column.getFacetedUniqueValues();
 
   const sortedUniqueValues = React.useMemo(() => {
     return Array.from(uniqueValuesMap.keys()).sort();
