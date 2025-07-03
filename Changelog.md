@@ -27,6 +27,7 @@
 - Enabled `erb_lint` linter for erb files (#7561)
 - Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
 - Added test metadata examples to seed data for R autotesting (#7564)
+- Refactor `DropDownMenu` class to a new React component (#7592)
 
 ## [v2.7.1]
 
