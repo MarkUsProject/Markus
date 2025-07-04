@@ -85,7 +85,7 @@ jobs:
       - name: Install python packages and playwright dependencies
         run: |
           python3.10 -m venv venv
-          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt -r requirements-qr.txt
+          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt
           ./venv/bin/playwright install chromium
           ./venv/bin/playwright install-deps chromium
       - name: Configure server
