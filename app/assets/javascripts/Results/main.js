@@ -1,6 +1,3 @@
-// UI LIBRARIES
-//= require DropDownMenu/DropDownMenu
-
 // Source code highlighting
 //= require Annotations/globals
 //= require Annotations/annotation_manager
