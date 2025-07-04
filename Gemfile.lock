@@ -96,7 +96,7 @@ GEM
     bigdecimal (3.2.2)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
-    bootsnap (1.18.4)
+    bootsnap (1.18.6)
       msgpack (~> 1.2)
     brakeman (7.0.2)
       racc
@@ -257,7 +257,7 @@ GEM
     mini_portile2 (2.8.9)
     minitest (5.25.5)
     mono_logger (1.1.2)
-    msgpack (1.7.2)
+    msgpack (1.8.0)
     multi_json (1.15.0)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
