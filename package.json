@@ -48,7 +48,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "babel-jest": "^29.4.3",
+    "babel-jest": "^30.0.4",
     "babel-loader": "^10.0.0",
     "babel-plugin-prismjs": "^2.1.0",
     "css-loader": "^7.1.2",
