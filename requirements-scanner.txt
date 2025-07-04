@@ -1,2 +1,2 @@
 # TODO: replace requirements files with Pipfile file (when it is stable and supported by pip)
-markus_exam_matcher==0.1.0
+markus_exam_matcher==0.1.1
