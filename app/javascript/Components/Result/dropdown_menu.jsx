@@ -1,4 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
+
+import safe_marked from "../../common/safe_marked";
 
 export class DropDownMenu extends React.Component {
   constructor(props) {
@@ -21,11 +24,13 @@ export class DropDownMenu extends React.Component {
           <li
             className="annotation_category"
             id={`annotation_category_${cat.id}`}
+            data-testid={`category-${cat.id}`}
             key={cat.id}
-            onMouseEnter={this.handleMouseEnter}
+            onMouseEnter={() => this.handleMouseEnter(cat.id)}
             onMouseLeave={this.handleMouseLeave}
             onMouseDown={e => e.preventDefault()}
           >
+            {cat.className}
             {this.state.hoveredCatId === cat.id && (
               <div id={`annotation_text_list_${cat.id}`}>
                 <ul>
@@ -33,10 +38,8 @@ export class DropDownMenu extends React.Component {
                     <li
                       key={`annotation_text_${text.id}`}
                       id={`annotation_text_${text.id}`}
-                      onClick={e => {
-                        e.preventDefault();
-                        this.props.addExistingAnnotation(text.id);
-                      }}
+                      data-testid={`text-${text.id}`}
+                      onMouseEnter={() => this.props.addExistingAnnotation(text.id)}
                       onMouseDown={e => e.preventDefault()}
                       title={text.content}
                     >

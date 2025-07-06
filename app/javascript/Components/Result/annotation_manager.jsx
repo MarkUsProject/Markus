@@ -13,6 +13,7 @@ export class AnnotationManager extends React.Component {
 
         <DropDownMenu
           categories={this.props.categories}
+          newAnnotation={this.props.newAnnotation}
           addExistingAnnotation={this.props.addExistingAnnotation}
         />
       </React.Fragment>
