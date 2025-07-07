@@ -282,7 +282,7 @@ class Result < ApplicationRecord
       end
 
       extra_marks.each do |extra_mark|
-        text "#{extra_mark.description}: #{extra_mark.extra_mark}#{extra_mark.unit == 'percentage' ? '%' : ''}"
+        text "#{extra_mark.description}: #{extra_mark.extra_mark}#{'%' if extra_mark.unit == 'percentage'}"
       end
       move_down line_space
 
