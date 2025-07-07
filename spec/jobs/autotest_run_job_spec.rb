@@ -44,7 +44,7 @@ describe AutotestRunJob do
         url_root = Rails.configuration.relative_url_root
         groups.map do |group|
           file_url = "http://localhost:3000#{url_root}/api/courses/#{assignment.course.id}/assignments/" \
-                     "#{assignment.id}/groups/#{group.id}/submission_files?#{collected ? 'collected=true' : ''}"
+                     "#{assignment.id}/groups/#{group.id}/submission_files?#{'collected=true' if collected}"
           starter_files = assignment.groupings
                                     .joins(starter_file_entries: :starter_file_group)
                                     .where(group_id: group.id)

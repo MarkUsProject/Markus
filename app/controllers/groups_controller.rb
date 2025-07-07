@@ -185,7 +185,7 @@ class GroupsController < ApplicationController
       { id: h[:id],
         id_number: h['users.id_number'],
         user_name: h['users.user_name'],
-        value: "#{h['users.first_name']} #{h['users.last_name']}#{h['roles.hidden'] ? ' (inactive)' : ''}" }
+        value: "#{h['users.first_name']} #{h['users.last_name']}#{' (inactive)' if h['roles.hidden']}" }
     end
     render json: names
   end

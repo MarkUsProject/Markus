@@ -24,10 +24,10 @@ class AutotestResetUrlJob < ApplicationJob
         }
         if (!document.getElementById('manage-connection')) {
           window.addEventListener("load", () => {
-           document.getElementById('manage-connection').className='#{url.empty? ? 'no-display' : ''}'
+           document.getElementById('manage-connection').className='#{'no-display' if url.empty?}'
           })
         } else {
-           document.getElementById('manage-connection').className='#{url.empty? ? 'no-display' : ''}'
+           document.getElementById('manage-connection').className='#{'no-display' if url.empty?}'
         }
       }
     )
