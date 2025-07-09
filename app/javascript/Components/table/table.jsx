@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import Filter from "./filter";
 
 export default function Table({columns, data, noDataText}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
@@ -17,7 +18,6 @@ export default function Table({columns, data, noDataText}) {
   const table = useReactTable({
     data,
     columns,
-    filterFns: {},
     state: {
       columnFilters,
       columnSizing,
@@ -28,7 +28,6 @@ export default function Table({columns, data, noDataText}) {
     getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
-    debugColumns: false,
     enableSortingRemoval: false,
     enableColumnResizing: true,
     columnResizeMode: "onChange",
@@ -54,7 +53,7 @@ export default function Table({columns, data, noDataText}) {
                     role="columnheader"
                     tabIndex="-1"
                     key={header.id}
-                    style={{flex: "100 0 auto", width: header.getSize()}}
+                    style={{width: header.getSize()}}
                   >
                     <div
                       className="rt-resizable-header-content"
@@ -89,7 +88,7 @@ export default function Table({columns, data, noDataText}) {
                     key={header.id}
                     role="columnheader"
                     tabIndex="-1"
-                    style={{flex: "100 0 auto", width: header.getSize()}}
+                    style={{width: header.getSize()}}
                   >
                     {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
                   </div>
@@ -101,7 +100,7 @@ export default function Table({columns, data, noDataText}) {
         <div className="rt-tbody" style={{minWidth: table.getCenterTotalSize()}}>
           {table.getRowModel().rows.map(row => {
             return (
-              <div className="rt-tr-group" role="rowgroup">
+              <div className="rt-tr-group" role="rowgroup" key={row.id}>
                 <div className="rt-tr -odd" role="row" key={row.id}>
                   {row.getVisibleCells().map(cell => {
                     return (
@@ -120,60 +119,10 @@ export default function Table({columns, data, noDataText}) {
             );
           })}
           {!table.getRowModel().rows.length && (
-            <p className="rt-no-data">{noDataText || "No rows found"}</p>
+            <p className="rt-no-data">{noDataText || I18n.t("table.no_data")}</p>
           )}
         </div>
       </div>
     </div>
-  );
-}
-
-function Filter({column}) {
-  const {filterVariant} = column.columnDef.meta ?? {};
-
-  return filterVariant === "select" ? (
-    <SelectFilter column={column} />
-  ) : (
-    <SearchFilter column={column} />
-  );
-}
-
-function SearchFilter({column}) {
-  return (
-    <input
-      placeholder={`Search`}
-      type="text"
-      onChange={e => column.setFilterValue(e.target.value)}
-      value={column.getFilterValue()?.toString()}
-      style={{width: "100%"}}
-      aria-label="Search"
-    />
-  );
-}
-
-function SelectFilter({column}) {
-  const uniqueValuesMap = column.getFacetedUniqueValues();
-
-  const sortedUniqueValues = React.useMemo(() => {
-    return Array.from(uniqueValuesMap.keys()).sort();
-  }, [uniqueValuesMap]);
-
-  const totalRowCount = React.useMemo(() => {
-    return [...uniqueValuesMap.values()].reduce((sum, count) => sum + count, 0);
-  }, [uniqueValuesMap]);
-
-  return (
-    <select
-      onChange={e => column.setFilterValue(e.target.value)}
-      value={column.getFilterValue()?.toString()}
-      style={{width: "100%"}}
-    >
-      <option value="">All ({totalRowCount})</option>
-      {sortedUniqueValues.map(value => (
-        <option value={value} key={value}>
-          {value} ({uniqueValuesMap.get(value).toString()})
-        </option>
-      ))}
-    </select>
   );
 }

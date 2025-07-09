@@ -1,7 +1,7 @@
 import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Table from "../table";
+import Table from "../table/table";
 
 const mockColumns = [
   {
@@ -74,6 +74,18 @@ describe("Table Component", () => {
       expect(document.querySelector(".rt-thead.-filters")).toBeInTheDocument();
       expect(document.querySelector(".rt-tbody")).toBeInTheDocument();
     });
+
+    it("renders rows in correct order", () => {
+      const {container} = render(<Table columns={mockColumns} data={mockData} />);
+
+      const rows = container.querySelectorAll(".rt-tbody .rt-tr");
+      expect(rows).toHaveLength(4);
+
+      expect(rows[0]).toHaveTextContent("John Doe");
+      expect(rows[1]).toHaveTextContent("Jane Smith");
+      expect(rows[2]).toHaveTextContent("Bob Johnson");
+      expect(rows[3]).toHaveTextContent("Alice Brown");
+    });
   });
 
   describe("No Data Handling", () => {
@@ -132,6 +144,103 @@ describe("Table Component", () => {
 
       expect(headerElement).toHaveClass("--cursor-pointerundefined");
     });
+
+    it("sorts rows in correct order when name column is clicked", async () => {
+      const user = userEvent.setup();
+      const {container} = render(<Table columns={mockColumns} data={mockData} />);
+
+      const nameHeader = screen.getByText("Name");
+      await user.click(nameHeader);
+
+      await waitFor(() => {
+        const rows = container.querySelectorAll(".rt-tbody .rt-tr");
+        expect(rows).toHaveLength(4);
+
+        expect(rows[0]).toHaveTextContent("Alice Brown");
+        expect(rows[1]).toHaveTextContent("Bob Johnson");
+        expect(rows[2]).toHaveTextContent("Jane Smith");
+        expect(rows[3]).toHaveTextContent("John Doe");
+      });
+    });
+
+    it("sorts rows in reverse order when name column is clicked twice", async () => {
+      const user = userEvent.setup();
+      const {container} = render(<Table columns={mockColumns} data={mockData} />);
+
+      const nameHeader = screen.getByText("Name");
+      await user.click(nameHeader);
+      await user.click(nameHeader);
+
+      await waitFor(() => {
+        const rows = container.querySelectorAll(".rt-tbody .rt-tr");
+        expect(rows).toHaveLength(4);
+
+        expect(rows[0]).toHaveTextContent("John Doe");
+        expect(rows[1]).toHaveTextContent("Jane Smith");
+        expect(rows[2]).toHaveTextContent("Bob Johnson");
+        expect(rows[3]).toHaveTextContent("Alice Brown");
+      });
+    });
+
+    it("handles empty columns array", () => {
+      render(<Table columns={[]} data={mockData} />);
+
+      expect(screen.getByRole("grid")).toBeInTheDocument();
+    });
+
+    it("handles null/undefined data", () => {
+      render(<Table columns={mockColumns} data={[]} />);
+
+      expect(screen.getByText("No rows found")).toBeInTheDocument();
+    });
+
+    it("handles data with missing properties", () => {
+      const incompleteData = [
+        {id: 1, name: "John"},
+        {id: 2, age: 25},
+        {id: 3, email: "test@example.com"},
+      ];
+
+      render(<Table columns={mockColumns} data={incompleteData} />);
+
+      expect(screen.getByText("John")).toBeInTheDocument();
+      expect(screen.getByText("25")).toBeInTheDocument();
+      expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    });
+
+    it("handles numeric zero values", () => {
+      const zeroData = [
+        {
+          id: 0,
+          name: "Zero Test",
+          age: 0,
+          email: "zero@example.com",
+          status: "active",
+        },
+      ];
+
+      render(<Table columns={mockColumns} data={zeroData} />);
+
+      expect(screen.getByText("0")).toBeInTheDocument();
+      expect(screen.getByText("Zero Test")).toBeInTheDocument();
+    });
+
+    it("handles boolean values", () => {
+      const booleanColumns = [
+        {accessorKey: "name", header: "Name"},
+        {accessorKey: "active", header: "Active"},
+      ];
+
+      const booleanData = [
+        {name: "Test User", active: true},
+        {name: "Another User", active: false},
+      ];
+
+      render(<Table columns={booleanColumns} data={booleanData} />);
+
+      expect(screen.getByText("Test User")).toBeInTheDocument();
+      expect(screen.getByText("Another User")).toBeInTheDocument();
+    });
   });
 
   describe("Column Resizing", () => {
@@ -139,7 +248,7 @@ describe("Table Component", () => {
       render(<Table columns={mockColumns} data={mockData} />);
 
       const resizers = document.querySelectorAll(".rt-resizer");
-      expect(resizers).toHaveLength(4); // One for each column
+      expect(resizers).toHaveLength(4);
     });
 
     it("applies resizing class when column is being resized", () => {
@@ -245,68 +354,6 @@ describe("Table Component", () => {
 
         expect(values).toEqual(sortedValues);
       });
-    });
-  });
-
-  describe("Edge Cases", () => {
-    it("handles empty columns array", () => {
-      render(<Table columns={[]} data={mockData} />);
-
-      expect(screen.getByRole("grid")).toBeInTheDocument();
-    });
-
-    it("handles null/undefined data", () => {
-      render(<Table columns={mockColumns} data={[]} />);
-
-      expect(screen.getByText("No rows found")).toBeInTheDocument();
-    });
-
-    it("handles data with missing properties", () => {
-      const incompleteData = [
-        {id: 1, name: "John"},
-        {id: 2, age: 25},
-        {id: 3, email: "test@example.com"},
-      ];
-
-      render(<Table columns={mockColumns} data={incompleteData} />);
-
-      expect(screen.getByText("John")).toBeInTheDocument();
-      expect(screen.getByText("25")).toBeInTheDocument();
-      expect(screen.getByText("test@example.com")).toBeInTheDocument();
-    });
-
-    it("handles numeric zero values", () => {
-      const zeroData = [
-        {
-          id: 0,
-          name: "Zero Test",
-          age: 0,
-          email: "zero@example.com",
-          status: "active",
-        },
-      ];
-
-      render(<Table columns={mockColumns} data={zeroData} />);
-
-      expect(screen.getByText("0")).toBeInTheDocument();
-      expect(screen.getByText("Zero Test")).toBeInTheDocument();
-    });
-
-    it("handles boolean values", () => {
-      const booleanColumns = [
-        {accessorKey: "name", header: "Name"},
-        {accessorKey: "active", header: "Active"},
-      ];
-
-      const booleanData = [
-        {name: "Test User", active: true},
-        {name: "Another User", active: false},
-      ];
-
-      render(<Table columns={booleanColumns} data={booleanData} />);
-
-      expect(screen.getByText("Test User")).toBeInTheDocument();
-      expect(screen.getByText("Another User")).toBeInTheDocument();
     });
   });
 });

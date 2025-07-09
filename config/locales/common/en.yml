@@ -73,6 +73,10 @@ en:
   search: Search
   select_filename: Select Filename
   skip: Skip
+  table:
+    no_data: No rows found
+    search: Search
+
   this: This
   to: to
   working: Loading
