@@ -13,10 +13,7 @@ jest.doMock("mousetrap", () => ({
   reset: mockReset,
 }));
 
-const {
-  bind_keybindings,
-  unbind_all_keybindings,
-} = require("../../../assets/javascripts/Results/keybinding");
+const {bind_keybindings, unbind_all_keybindings} = require("../Result/keybinding");
 
 let props;
 const INITIAL_FILTER_MODAL_STATE = {
