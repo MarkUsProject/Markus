@@ -2,7 +2,7 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import PropTypes from "prop-types";
 
-import Table from "./table";
+import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
 
 class InstructorTable extends React.Component {
@@ -38,9 +38,10 @@ class InstructorTable extends React.Component {
       columnHelper.accessor("id", {
         id: "id",
         enableSorting: false,
+        enableColumnFilter: false,
         header: () => I18n.t("actions"),
-        cell: info => (
-          <a href={Routes.edit_course_instructor_path(this.props.course_id, info.getValue())}>
+        cell: props => (
+          <a href={Routes.edit_course_instructor_path(this.props.course_id, props.getValue())}>
             {I18n.t("edit")}
           </a>
         ),
