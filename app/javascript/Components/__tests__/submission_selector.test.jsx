@@ -5,6 +5,19 @@ import {SubmissionSelector} from "../Result/submission_selector";
 import {ResultContext} from "../Result/result_context";
 import {renderInResultContext} from "./result_context_renderer";
 
+jest.resetModules();
+const mockBind = jest.fn();
+const mockReset = jest.fn();
+jest.doMock("mousetrap", () => ({
+  bind: mockBind,
+  reset: mockReset,
+}));
+
+const {
+  bind_keybindings,
+  unbind_all_keybindings,
+} = require("../../../assets/javascripts/Results/keybinding");
+
 let props;
 const INITIAL_FILTER_MODAL_STATE = {
   ascending: true,
@@ -24,7 +37,6 @@ const INITIAL_FILTER_MODAL_STATE = {
   },
   criteria: {},
 };
-
 const basicProps = {
   assignment_max_mark: 100,
   available_tags: [],
@@ -209,5 +221,44 @@ describe("SubmissionSelector", () => {
 
     const button = screen.queryByRole("button", {name: I18n.t("results.set_to_complete")});
     expect(button).toBeDisabled();
+  });
+});
+
+describe("SubmissionSelectorKeybinding", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    unbind_all_keybindings();
+  });
+
+  describe("bind keybindings", () => {
+    it("should have all expected keybindings", () => {
+      bind_keybindings();
+
+      expect(mockBind).toHaveBeenCalledWith("?", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("shift+left", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("shift+right", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("ctrl+shift+right", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("shift+up", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("shift+down", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("up", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("down", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("enter", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("shift+n", expect.any(Function));
+      expect(mockBind).toHaveBeenCalledWith("alt+enter", expect.any(Function));
+    });
+
+    it("should have 11 bindings", () => {
+      bind_keybindings();
+
+      expect(mockBind).toHaveBeenCalledTimes(11);
+    });
+  });
+
+  describe("reset keybindings", () => {
+    it("should reset all keybindings", () => {
+      unbind_all_keybindings();
+
+      expect(mockReset).toHaveBeenCalled();
+    });
   });
 });

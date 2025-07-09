@@ -117,3 +117,7 @@ export function bind_keybindings() {
     resultComponent.current.toggleFullscreen();
   });
 }
+
+export function unbind_all_keybindings() {
+  Mousetrap.reset();
+}
