@@ -31,10 +31,9 @@ export class DropDownMenu extends React.Component {
             {this.props.items.map(item => (
               <li
                 key={item.id}
-                data-testid={`item-${item.id}`}
                 onClick={e => {
                   e.preventDefault();
-                  this.props.addExistingAnnotation(item.id);
+                  this.props.onItemClick(item.id);
                 }}
               >
                 <span

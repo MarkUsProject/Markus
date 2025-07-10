@@ -13,11 +13,7 @@ describe("DropDownMenu", () => {
 
   beforeEach(() => {
     render(
-      <DropDownMenu
-        header={"Logic"}
-        items={mockItems}
-        addExistingAnnotation={mockAddExistingAnnotation}
-      />
+      <DropDownMenu header={"Logic"} items={mockItems} onItemClick={mockAddExistingAnnotation} />
     );
   });
 
