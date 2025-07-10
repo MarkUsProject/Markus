@@ -1,5 +1,5 @@
 import React from "react";
-import SearchFilter from "./serch_filter";
+import SearchFilter from "./search_filter";
 import SelectFilter from "./select_filter";
 
 export default function Filter({column}) {
