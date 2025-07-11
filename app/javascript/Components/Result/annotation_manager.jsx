@@ -24,4 +24,3 @@ export class AnnotationManager extends React.Component {
     );
   }
 }
-``;
