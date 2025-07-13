@@ -814,7 +814,7 @@ class Assignment < Assessment
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
-    criteria.count > 0 ? criteria.last.position + 1 : 1
+    criteria.exists? ? criteria.last.position + 1 : 1
   end
 
   # Returns all the submissions that have not been graded (completed).
@@ -971,7 +971,7 @@ class Assignment < Assessment
   end
 
   def has_a_collected_submission?
-    submissions.where(submission_version_used: true).count > 0
+    submissions.exists?(submission_version_used: true)
   end
 
   # Returns the groupings of this assignment that have no associated section

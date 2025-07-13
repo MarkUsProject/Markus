@@ -147,7 +147,10 @@ Naming/AccessorMethodName:
 Naming/MethodParameterName:
   MinNameLength: 1
 
-Naming/PredicateName:
+Naming/PredicateMethod:
+  Enabled: false
+
+Naming/PredicatePrefix:
   Enabled: false
 
 # Performance checks
@@ -282,6 +285,9 @@ Style/DocumentDynamicEvalDefinition:
   Enabled: true
 
 Style/Documentation:
+  Enabled: false
+
+Style/EmptyStringInsideInterpolation:
   Enabled: false
 
 # Enable this when we upgrade to Ruby version 3.0+

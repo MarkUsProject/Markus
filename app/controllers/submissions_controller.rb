@@ -227,7 +227,7 @@ class SubmissionsController < ApplicationController
 
       collectable << grouping
     end
-    if collectable.count > 0
+    unless collectable.empty?
       current_job = SubmissionsJob.perform_later(collectable,
                                                  enqueuing_user: @current_user,
                                                  collection_dates: collection_dates.transform_keys(&:to_s),
@@ -756,7 +756,7 @@ class SubmissionsController < ApplicationController
       end
 
       files = revision.files_at_path(assignment.repository_folder)
-      if files.count == 0
+      if files.empty?
         flash_message(:error, t('submissions.no_files_available'))
         redirect_back(fallback_location: root_path)
         return
