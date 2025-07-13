@@ -1430,7 +1430,7 @@ describe AssignmentsController do
         expected = { name: criterion.name,
                      average: criterion.average,
                      median: criterion.median || 0,
-                     max_mark: criterion.max_mark.to_f || 0,
+                     max_mark: criterion.max_mark.to_f,
                      standard_deviation: criterion.standard_deviation || 0,
                      position: criterion.position,
                      num_zeros: criterion.grades_array.count(&:zero?) }
@@ -2179,7 +2179,7 @@ describe AssignmentsController do
         uploaded_criterion = uploaded_assignment.criteria.find_by(name: criteria.name)
         uploaded_test_groups = uploaded_assignment.test_groups
         received_automated_test_data = {
-          uploaded_a_test_group: uploaded_test_groups.count == 1,
+          uploaded_a_test_group: uploaded_test_groups.one?,
           spec_file: autotest_settings_for(uploaded_assignment),
           autotest_files: uploaded_assignment.autotest_files.to_set
         }

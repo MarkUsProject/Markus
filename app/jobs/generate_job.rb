@@ -4,7 +4,7 @@ class GenerateJob < ApplicationJob
     progress.total = num_copies
     template_pdf = CombinePDF.load exam_template.file_path
     generated_pdf = CombinePDF.new
-    (start..start + num_copies - 1).each do |exam_num|
+    (start..(start + num_copies - 1)).each do |exam_num|
       m_logger.log("Now generating: #{exam_num}")
       pdf = Prawn::Document.new(margin: 15, skip_page_creation: true) do
         template_pdf.pages.each_with_index do |page, page_num|

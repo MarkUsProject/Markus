@@ -259,7 +259,7 @@ class Grouping < ApplicationRecord
 
   # Returns whether or not a TA is assigned to mark this Grouping
   def has_ta_for_marking?
-    ta_memberships.count > 0
+    ta_memberships.exists?
   end
 
   def is_collected?
