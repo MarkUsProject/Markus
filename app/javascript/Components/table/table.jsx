@@ -11,6 +11,8 @@ import {
 } from "@tanstack/react-table";
 import Filter from "./filter";
 
+export const defaultNoDataText = () => I18n.t("table.no_data");
+
 export default function Table({columns, data, noDataText}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
@@ -46,6 +48,7 @@ export default function Table({columns, data, noDataText}) {
                   {
                     asc: " rt-resizable-header-content -sort-asc",
                     desc: " rt-resizable-header-content -sort-desc",
+                    false: "",
                   }[header.column.getIsSorted()];
                 return (
                   <div
@@ -119,7 +122,7 @@ export default function Table({columns, data, noDataText}) {
             );
           })}
           {!table.getRowModel().rows.length && (
-            <p className="rt-no-data">{noDataText || I18n.t("table.no_data")}</p>
+            <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
           )}
         </div>
       </div>
