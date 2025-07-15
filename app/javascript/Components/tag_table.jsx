@@ -6,6 +6,8 @@ import ReactTable from "react-table";
 import CreateTagModal from "./Modals/create_tag_modal";
 import EditTagModal from "./Modals/edit_tag_modal";
 import {ResultContext} from "./Result/result_context";
+import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class TagTable extends React.Component {
   constructor(props) {
@@ -90,12 +92,22 @@ class TagTable extends React.Component {
       Cell: ({value}) => {
         return (
           <span>
-            <a href="#" onClick={() => this.edit(value)}>
-              {I18n.t("edit")}
+            <a
+              href="#"
+              onClick={() => this.edit(value)}
+              aria-label={I18n.t("edit")}
+              title={I18n.t("edit")}
+            >
+              <FontAwesomeIcon icon={faPencil} />
             </a>
             &nbsp;|&nbsp;
-            <a href="#" onClick={() => this.delete(value)}>
-              {I18n.t("delete")}
+            <a
+              href="#"
+              onClick={() => this.delete(value)}
+              aria-label={I18n.t("delete")}
+              title={I18n.t("delete")}
+            >
+              <FontAwesomeIcon icon={faTrashCan} />
             </a>
           </span>
         );

@@ -213,8 +213,8 @@ class RawStudentTable extends React.Component {
                     <a
                       href="#"
                       onClick={() => this.removeStudent(data.value)}
-                      aria-label={I18n.t("delete")}
-                      title={I18n.t("delete")}
+                      aria-label={I18n.t("remove")}
+                      title={I18n.t("remove")}
                     >
                       <FontAwesomeIcon icon={faTrashCan} />
                     </a>
