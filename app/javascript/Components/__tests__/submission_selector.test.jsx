@@ -225,30 +225,29 @@ describe("SubmissionSelectorKeybinding", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     unbind_all_keybindings();
+    bind_keybindings();
   });
 
   describe("bind keybindings", () => {
-    it("should have all expected keybindings", () => {
-      bind_keybindings();
-
-      expect(mockBind).toHaveBeenCalledWith("?", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("shift+left", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("shift+right", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("ctrl+shift+right", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("shift+up", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("shift+down", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("up", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("down", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("enter", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("shift+n", expect.any(Function));
-      expect(mockBind).toHaveBeenCalledWith("alt+enter", expect.any(Function));
+    test.each([
+      ["?"],
+      ["shift+left"],
+      ["shift+right"],
+      ["ctrl+shift+right"],
+      ["shift+up"],
+      ["shift+down"],
+      ["up"],
+      ["down"],
+      ["enter"],
+      ["shift+n"],
+      ["alt+enter"],
+    ])("should expect a function to be binded with %s", argument => {
+      expect(mockBind).toHaveBeenCalledWith(argument, expect.any(Function));
     });
+  });
 
-    it("should have 11 bindings", () => {
-      bind_keybindings();
-
-      expect(mockBind).toHaveBeenCalledTimes(11);
-    });
+  it("should have 11 bindings", () => {
+    expect(mockBind).toHaveBeenCalledTimes(11);
   });
 
   describe("reset keybindings", () => {
