@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 
 import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
+import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class InstructorTable extends React.Component {
   constructor() {
@@ -41,8 +43,12 @@ class InstructorTable extends React.Component {
         enableColumnFilter: false,
         header: () => I18n.t("actions"),
         cell: props => (
-          <a href={Routes.edit_course_instructor_path(this.props.course_id, props.getValue())}>
-            {I18n.t("edit")}
+          <a
+            href={Routes.edit_course_instructor_path(this.props.course_id, props.getValue())}
+            aria-label={I18n.t("edit")}
+            title={I18n.t("edit")}
+          >
+            <FontAwesomeIcon icon={faPencil} />
           </a>
         ),
       }),
