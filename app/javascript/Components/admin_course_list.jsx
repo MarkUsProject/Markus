@@ -2,6 +2,8 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import {selectFilter} from "./Helpers/table_helpers";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPencil} from "@fortawesome/free-solid-svg-icons";
 
 class AdminCourseList extends React.Component {
   constructor() {
@@ -76,7 +78,13 @@ class AdminCourseList extends React.Component {
       Cell: ({value}) => {
         return (
           <span>
-            <a href={Routes.edit_admin_course_path(value)}>{I18n.t("edit")}</a>
+            <a
+              href={Routes.edit_admin_course_path(value)}
+              aria-label={I18n.t("edit")}
+              title={I18n.t("edit")}
+            >
+              <FontAwesomeIcon icon={faPencil} />
+            </a>
             &nbsp;|&nbsp;
             <a href={Routes.course_path(value)}>{I18n.t("courses.go_to_course")}</a>
           </span>
