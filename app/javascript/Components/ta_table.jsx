@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 
 import ReactTable from "react-table";
 import {selectFilter} from "./Helpers/table_helpers";
+import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class TATable extends React.Component {
   constructor() {
@@ -109,14 +111,23 @@ class TATable extends React.Component {
             Cell: data => (
               <>
                 <span>
-                  <a href={Routes.edit_course_ta_path(this.props.course_id, data.value)}>
-                    {I18n.t("edit")}
+                  <a
+                    href={Routes.edit_course_ta_path(this.props.course_id, data.value)}
+                    aria-label={I18n.t("edit")}
+                    title={I18n.t("edit")}
+                  >
+                    <FontAwesomeIcon icon={faPencil} />
                   </a>
                 </span>
                 &nbsp;|&nbsp;
                 <span>
-                  <a href="#" onClick={() => this.removeTA(data.value)}>
-                    {I18n.t("remove")}
+                  <a
+                    href="#"
+                    onClick={() => this.removeTA(data.value)}
+                    aria-label={I18n.t("remove")}
+                    title={I18n.t("remove")}
+                  >
+                    <FontAwesomeIcon icon={faTrashCan} />
                   </a>
                 </span>
               </>
