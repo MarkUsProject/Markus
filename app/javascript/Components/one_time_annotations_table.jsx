@@ -3,7 +3,6 @@ import {createRoot} from "react-dom/client";
 
 import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
-
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class OneTimeAnnotationsTable extends React.Component {
