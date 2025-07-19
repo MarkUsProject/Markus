@@ -1,7 +1,9 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 
-import ReactTable from "react-table";
+import Table from "./table/table";
+import {createColumnHelper} from "@tanstack/react-table";
+
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class OneTimeAnnotationsTable extends React.Component {
@@ -11,6 +13,70 @@ class OneTimeAnnotationsTable extends React.Component {
       data: [],
       loading: true,
     };
+
+    const columnHelper = createColumnHelper();
+    this.columns = [
+      columnHelper.accessor("group_name", {
+        id: "group_name",
+        header: () => I18n.t("activerecord.models.group.one"),
+        cell: props => {
+          const row = props.row;
+          let remove_button = (
+            <a
+              title={I18n.t("delete")}
+              onClick={() => this.removeAnnotation(row.original.id, row.original.result_id)}
+            >
+              <FontAwesomeIcon icon="fa-solid fa-trash" />
+            </a>
+          );
+          if (row.original.result_id) {
+            const path = Routes.edit_course_result_path(
+              this.props.course_id,
+              row.original.result_id
+            );
+            return (
+              <div>
+                {remove_button}
+                <a className="alignright" href={path}>
+                  {row.original.group_name}
+                </a>
+              </div>
+            );
+          } else {
+            return (
+              <div>
+                {remove_button}
+                <span className="alignright">{row.original.group_name}</span>
+              </div>
+            );
+          }
+        },
+      }),
+      columnHelper.accessor("creator", {
+        id: "creator",
+        header: () => I18n.t("activerecord.attributes.annotation_text.creator"),
+        cell: row => <span>{row.getValue()}</span>,
+      }),
+      columnHelper.accessor("last_editor", {
+        id: "last_editor",
+        header: () => I18n.t("annotations.last_edited_by"),
+        cell: row => <span>{row.getValue()}</span>,
+      }),
+      columnHelper.accessor("content", {
+        id: "content",
+        header: () => I18n.t("activerecord.models.annotation_text.one"),
+        cell: props => {
+          const row = props.row;
+          return (
+            <AnnotationTextCell
+              content={row.original.content}
+              id={row.original.id}
+              editAnnotation={this.editAnnotation}
+            />
+          );
+        },
+      }),
+    ];
   }
 
   componentDidMount() {
@@ -78,82 +144,14 @@ class OneTimeAnnotationsTable extends React.Component {
     }).then(this.fetchData);
   };
 
-  columns = [
-    {
-      Header: I18n.t("activerecord.models.group.one"),
-      accessor: "group_name",
-      id: "group_name",
-      Cell: row => {
-        let remove_button = (
-          <a
-            title={I18n.t("delete")}
-            onClick={() => this.removeAnnotation(row.original.id, row.original.result_id)}
-          >
-            <FontAwesomeIcon icon="fa-solid fa-trash" />
-          </a>
-        );
-        if (row.original.result_id) {
-          const path = Routes.edit_course_result_path(this.props.course_id, row.original.result_id);
-          return (
-            <div>
-              {remove_button}
-              <a className="alignright" href={path}>
-                {row.original.group_name}
-              </a>
-            </div>
-          );
-        } else {
-          return (
-            <div>
-              {remove_button}
-              <span className="alignright">{row.original.group_name}</span>
-            </div>
-          );
-        }
-      },
-    },
-    {
-      Header: I18n.t("activerecord.attributes.annotation_text.creator"),
-      accessor: "creator",
-      id: "creator",
-      Cell: row => {
-        return <span>{row.original.creator}</span>;
-      },
-    },
-    {
-      Header: I18n.t("annotations.last_edited_by"),
-      accessor: "last_editor",
-      id: "last_editor",
-      Cell: row => {
-        return <span>{row.original.last_editor}</span>;
-      },
-    },
-    {
-      Header: I18n.t("activerecord.models.annotation_text.one"),
-      accessor: "content",
-      id: "content",
-      width: 600,
-      Cell: row => {
-        return (
-          <AnnotationTextCell
-            content={row.original.content}
-            id={row.original.id}
-            editAnnotation={this.editAnnotation}
-          />
-        );
-      },
-    },
-  ];
-
   render() {
     return (
       <div id="one_time_annotations_table_wrapper">
-        <ReactTable
+        <Table
           key="one_time_annotations_table"
           data={this.state.data}
           columns={this.columns}
-          filterable
-          defaultSorted={[{id: "group_name"}]}
+          enableColumnFilter={true}
           loading={this.state.loading}
           noDataText={I18n.t("annotations.empty_uncategorized")}
         />

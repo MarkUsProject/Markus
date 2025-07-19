@@ -1,7 +1,8 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 
-import ReactTable from "react-table";
+import Table from "./table/table";
+import {createColumnHelper} from "@tanstack/react-table";
 
 import CreateTagModal from "./Modals/create_tag_modal";
 import EditTagModal from "./Modals/edit_tag_modal";
@@ -21,13 +22,60 @@ class TagTable extends React.Component {
       currentTagName: "",
       currentTagDescription: "",
     };
+
+    const columnHelper = createColumnHelper();
+    this.columns = [
+      columnHelper.accessor("name", {
+        header: () => I18n.t("activerecord.attributes.tags.name"),
+      }),
+      columnHelper.accessor("creator", {
+        header: () => I18n.t("activerecord.attributes.tags.user"),
+      }),
+      columnHelper.accessor("description", {
+        header: () => I18n.t("activerecord.attributes.tags.description"),
+      }),
+      columnHelper.accessor("use", {
+        header: () => I18n.t("tags.use"),
+        cell: use => {
+          return <div>{I18n.t("tags.submissions_used", {count: use.getValue()})}</div>;
+        },
+      }),
+      columnHelper.accessor("id", {
+        header: () => I18n.t("actions"),
+        cell: props => {
+          const value = props.getValue();
+          return (
+            <span>
+              <a
+                href="#"
+                onClick={() => this.edit(value)}
+                aria-label={I18n.t("edit")}
+                title={I18n.t("edit")}
+              >
+                <FontAwesomeIcon icon={faPencil} />
+              </a>
+              &nbsp;|&nbsp;
+              <a
+                href="#"
+                onClick={() => this.delete(value)}
+                aria-label={I18n.t("delete")}
+                title={I18n.t("delete")}
+              >
+                <FontAwesomeIcon icon={faTrashCan} />
+              </a>
+            </span>
+          );
+        },
+        enableSorting: false,
+      }),
+    ];
   }
 
   componentDidMount() {
     this.fetchData();
   }
 
-  fetchData = () => {
+  fetchData() {
     const url = Routes.course_tags_path(this.props.course_id, {
       assignment_id: this.props.assignment_id,
     });
@@ -48,7 +96,7 @@ class TagTable extends React.Component {
           loading: false,
         });
       });
-  };
+  }
 
   edit = tag_id => {
     const currentTag = this.state.tags.find(tag => tag.id === tag_id);
@@ -65,56 +113,6 @@ class TagTable extends React.Component {
       method: "DELETE",
     }).then(this.fetchData);
   };
-
-  columns = () => [
-    {
-      Header: I18n.t("activerecord.attributes.tags.name"),
-      accessor: "name",
-    },
-    {
-      Header: I18n.t("activerecord.attributes.tags.user"),
-      accessor: "creator",
-    },
-    {
-      Header: I18n.t("activerecord.attributes.tags.description"),
-      accessor: "description",
-    },
-    {
-      Header: I18n.t("tags.use"),
-      accessor: "use",
-      Cell: ({value}) => {
-        return I18n.t("tags.submissions_used", {count: value});
-      },
-    },
-    {
-      Header: I18n.t("actions"),
-      accessor: "id",
-      Cell: ({value}) => {
-        return (
-          <span>
-            <a
-              href="#"
-              onClick={() => this.edit(value)}
-              aria-label={I18n.t("edit")}
-              title={I18n.t("edit")}
-            >
-              <FontAwesomeIcon icon={faPencil} />
-            </a>
-            &nbsp;|&nbsp;
-            <a
-              href="#"
-              onClick={() => this.delete(value)}
-              aria-label={I18n.t("delete")}
-              title={I18n.t("delete")}
-            >
-              <FontAwesomeIcon icon={faTrashCan} />
-            </a>
-          </span>
-        );
-      },
-      sortable: false,
-    },
-  ];
 
   onCreateTagButtonClick = () => {
     this.setState({isCreateTagModalOpen: true});
@@ -139,7 +137,7 @@ class TagTable extends React.Component {
     };
 
     return (
-      <React.Fragment>
+      <>
         {!this.state.loading && (
           <button type="submit" onClick={this.onCreateTagButtonClick}>
             {I18n.t("helpers.submit.create", {
@@ -147,12 +145,7 @@ class TagTable extends React.Component {
             })}
           </button>
         )}
-        <ReactTable
-          data={this.state.tags}
-          columns={this.columns()}
-          defaultSorted={[{id: "name"}]}
-          loading={this.state.loading}
-        />
+        <Table data={this.state.tags} columns={this.columns} loading={this.state.loading} />
         {this.state.isCreateTagModalOpen && (
           <ResultContext.Provider value={contextValue}>
             <CreateTagModal
@@ -172,7 +165,7 @@ class TagTable extends React.Component {
             currentTagDescription={this.state.currentTagDescription}
           />
         )}
-      </React.Fragment>
+      </>
     );
   }
 }
