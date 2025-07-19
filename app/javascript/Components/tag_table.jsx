@@ -36,8 +36,8 @@ class TagTable extends React.Component {
       }),
       columnHelper.accessor("use", {
         header: () => I18n.t("tags.use"),
-        cell: use => {
-          return <div>{I18n.t("tags.submissions_used", {count: use.getValue()})}</div>;
+        cell: props => {
+          return <div>{I18n.t("tags.submissions_used", {count: props.getValue()})}</div>;
         },
       }),
       columnHelper.accessor("id", {
