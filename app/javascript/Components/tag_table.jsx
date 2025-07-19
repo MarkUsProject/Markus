@@ -75,7 +75,7 @@ class TagTable extends React.Component {
     this.fetchData();
   }
 
-  fetchData() {
+  fetchData = () => {
     const url = Routes.course_tags_path(this.props.course_id, {
       assignment_id: this.props.assignment_id,
     });
@@ -96,7 +96,7 @@ class TagTable extends React.Component {
           loading: false,
         });
       });
-  }
+  };
 
   edit = tag_id => {
     const currentTag = this.state.tags.find(tag => tag.id === tag_id);
