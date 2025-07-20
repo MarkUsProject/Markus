@@ -51,3 +51,15 @@ def test_with_markers(request):
     request.node.add_marker(pytest.mark.markus_overall_comments(
         "Here is some general feedback for this submission."
     ))
+
+
+def test_with_partial_credit(request):
+    """This test gives the student a score of 1/2."""
+    request.node.add_marker(pytest.mark.markus_marks_earned(0))
+    request.node.add_marker(pytest.mark.markus_marks_total(2))
+
+
+def test_with_bonus(request):
+    """This test gives the student a score of 3/2."""
+    request.node.add_marker(pytest.mark.markus_marks_earned(3))
+    request.node.add_marker(pytest.mark.markus_marks_total(2))
