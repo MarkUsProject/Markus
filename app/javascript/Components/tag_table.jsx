@@ -37,7 +37,7 @@ class TagTable extends React.Component {
       columnHelper.accessor("use", {
         header: () => I18n.t("tags.use"),
         cell: props => {
-          return <div>{I18n.t("tags.submissions_used", {count: props.getValue()})}</div>;
+          return I18n.t("tags.submissions_used", {count: props.getValue()});
         },
       }),
       columnHelper.accessor("id", {
@@ -67,6 +67,7 @@ class TagTable extends React.Component {
           );
         },
         enableSorting: false,
+        enableColumnFilter: false,
       }),
     ];
   }
@@ -145,7 +146,14 @@ class TagTable extends React.Component {
             })}
           </button>
         )}
-        <Table data={this.state.tags} columns={this.columns} loading={this.state.loading} />
+        <Table
+          data={this.state.tags}
+          columns={this.columns}
+          initialState={{
+            sorting: [{id: "name"}],
+          }}
+          loading={this.state.loading}
+        />
         {this.state.isCreateTagModalOpen && (
           <ResultContext.Provider value={contextValue}>
             <CreateTagModal

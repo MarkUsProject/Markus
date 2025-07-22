@@ -13,7 +13,7 @@ import Filter from "./filter";
 
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
-export default function Table({columns, data, noDataText}) {
+export default function Table({columns, data, noDataText, initialState}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
 
@@ -24,6 +24,7 @@ export default function Table({columns, data, noDataText}) {
       columnFilters,
       columnSizing,
     },
+    initialState: initialState || {},
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

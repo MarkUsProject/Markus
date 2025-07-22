@@ -54,12 +54,10 @@ class OneTimeAnnotationsTable extends React.Component {
       columnHelper.accessor("creator", {
         id: "creator",
         header: () => I18n.t("activerecord.attributes.annotation_text.creator"),
-        cell: row => <span>{row.getValue()}</span>,
       }),
       columnHelper.accessor("last_editor", {
         id: "last_editor",
         header: () => I18n.t("annotations.last_edited_by"),
-        cell: row => <span>{row.getValue()}</span>,
       }),
       columnHelper.accessor("content", {
         id: "content",
@@ -74,6 +72,7 @@ class OneTimeAnnotationsTable extends React.Component {
             />
           );
         },
+        size: 600,
       }),
     ];
   }
@@ -150,7 +149,6 @@ class OneTimeAnnotationsTable extends React.Component {
           key="one_time_annotations_table"
           data={this.state.data}
           columns={this.columns}
-          enableColumnFilter={true}
           loading={this.state.loading}
           noDataText={I18n.t("annotations.empty_uncategorized")}
         />
