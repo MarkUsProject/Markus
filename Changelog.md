@@ -31,6 +31,7 @@
 - Refactored the method of loading `javascripts/Results/keybinding.js` in `submission_selector.jsx` (#7566)
 - Updated the instructor table to use `@tanstack/react-table` v8 (#7589)
 - Refactor `DropDownMenu` class to a new React component (#7592)
+- Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
 
 ## [v2.7.1]
 
