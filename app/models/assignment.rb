@@ -669,6 +669,33 @@ class Assignment < Assessment
 
   # Generates the summary of the most test results associated with an assignment.
   def summary_test_results
+    latest_test_run_by_grouping = TestRun.select('created_at as test_runs_created_at',
+                                                 'grouping_id')
+                                         .where.not(submission_id: nil)
+                                         .to_sql
+
+    latest_test_runs = TestRun
+                       .joins(grouping: :group)
+                       .joins("INNER JOIN (#{latest_test_run_by_grouping}) latest_test_run_by_grouping \
+            ON latest_test_run_by_grouping.grouping_id = test_runs.grouping_id \
+            AND latest_test_run_by_grouping.test_runs_created_at = test_runs.created_at")
+                       .select('id', 'test_runs.grouping_id', 'groups.group_name')
+                       .to_sql
+
+    self.test_groups.joins(test_group_results: :test_results)
+        .joins("INNER JOIN (#{latest_test_runs}) latest_test_runs \
+              ON test_group_results.test_run_id = latest_test_runs.id")
+        .select('test_groups.name',
+                'test_groups.id as test_groups_id',
+                'latest_test_runs.group_name',
+                'test_results.name as test_result_name',
+                'test_results.status',
+                'test_results.marks_earned',
+                'test_results.marks_total',
+                :output, :extra_info, :error_type)
+  end
+
+  def latest_summary_test_results
     latest_test_run_by_grouping = TestRun.group('grouping_id').select('MAX(created_at) as test_runs_created_at',
                                                                       'grouping_id')
                                          .where.not(submission_id: nil)
@@ -696,8 +723,10 @@ class Assignment < Assessment
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
-  def summary_test_result_json
-    self.summary_test_results.group_by(&:group_name).transform_values do |grouping|
+  def summary_test_result_json(latest: true)
+    test_results = latest ? latest_summary_test_results : summary_test_results
+
+    test_results.group_by(&:group_name).transform_values do |grouping|
       grouping.group_by(&:name)
     end.to_json
   end
@@ -706,7 +735,7 @@ class Assignment < Assessment
   def summary_test_result_csv
     results = {}
     headers = Set.new
-    summary_test_results = self.summary_test_results.as_json
+    summary_test_results = self.latest_summary_test_results.as_json
 
     summary_test_results.each do |test_result|
       header = "#{test_result['name']}:#{test_result['test_result_name']}"
