@@ -108,34 +108,70 @@ describe AssignmentsController do
     let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
     it 'responds with the appropriate status' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'json'
       expect(response).to have_http_status :success
     end
 
     it 'responds with the appropriate header' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'json'
       expect(response.header['Content-Type']).to eq('application/json')
     end
 
     it 'sets disposition as attachment' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'json'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
 
     it 'responds with the appropriate filename' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'json'
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq("#{assignment.short_identifier}_test_results.json")
     end
 
     it 'returns application/json type' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'json'
       expect(response.media_type).to eq 'application/json'
     end
 
     it 'returns the most recent test results' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'json'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'json'
       body = response.parsed_body
 
       # We want to ensure that the test result's group name, test name and status exists
@@ -156,29 +192,59 @@ describe AssignmentsController do
     let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
     it 'responds with the appropriate status' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       expect(response).to have_http_status :success
     end
 
     it 'sets disposition as attachment' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
 
     it 'responds with the appropriate filename' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       filename = response.header['Content-Disposition'].split[1].split('"').second
       expect(filename).to eq("#{assignment.short_identifier}_test_results.csv")
     end
 
     it 'returns text/csv type' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       expect(response.media_type).to eq 'text/csv'
     end
 
     it 'returns the most recent test results of the correct size' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
 
       test_results = CSV.parse(response.body, headers: true)
 
@@ -187,10 +253,21 @@ describe AssignmentsController do
     end
 
     it 'returns the correct csv headers' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true)
 
-      assignment_results = assignment.summary_test_results
+      assignment_results = SummaryTestResultsHelper::SummaryTestResults.fetch(
+        test_groups: assignment.test_groups,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      ).instance_variable_get(:@test_results)
 
       headers = Set.new(test_results.headers.drop(1)).sort
       assignment_results.each do |result|
@@ -199,7 +276,13 @@ describe AssignmentsController do
     end
 
     it 'returns the correct csv headers in the correct order' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true)
 
       headers = test_results.headers.drop(1)
@@ -210,7 +293,13 @@ describe AssignmentsController do
     end
 
     it 'returns the correct amount of passed tests per group' do
-      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+      get_as user, :download_test_results, params: {
+        course_id: user.course.id,
+        id: assignment.id,
+        latest: true,
+        student_run: true,
+        instructor_run: false
+      }, format: 'csv'
       test_results = CSV.parse(response.body, headers: true).to_a.drop(1)
       test_results.to_a.each do |row|
         count = 0
@@ -230,7 +319,13 @@ describe AssignmentsController do
       let(:csv_results) { CSV.parse(response.body, headers: true) }
 
       before do
-        get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'csv'
+        get_as user, :download_test_results, params: {
+          course_id: user.course.id,
+          id: assignment.id,
+          latest: true,
+          student_run: true,
+          instructor_run: false
+        }, format: 'csv'
       end
 
       it 'returns the correct headers' do
@@ -2349,6 +2444,25 @@ describe AssignmentsController do
                                                       problem_message: 'some error'))
       expect(Assignment.exists?(assignment.id)).to be true
       expect(response).to redirect_to(edit_course_assignment_path(course.id, assignment.id))
+    end
+  end
+
+  describe '#download_test_results' do
+    let(:course) { assignment.course }
+    let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+    let(:instructor) { create(:instructor) }
+
+    context 'when latest is false and format is json' do
+      it 'should send a zip file' do
+        get_as instructor, :download_test_results,
+               params: { course_id: course.id, id: assignment.id, latest: 'false' },
+               format: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.headers['Content-Type']).to eq('application/zip')
+        expect(response.headers['Content-Disposition']).to include('attachment')
+        expect(response.headers['Content-Disposition']).to include("#{assignment.short_identifier}_test_results.zip")
+      end
     end
   end
 end
