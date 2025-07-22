@@ -270,28 +270,41 @@ class AssignmentsController < ApplicationController
   end
 
   def download_test_results
+    @assignment = record
     latest = params[:latest] == 'true'
 
-    @assignment = record
+    test_results = SummaryTestResultsHelper::SummaryTestResults.fetch(
+      test_groups: @assignment.test_groups,
+      latest:
+    )
+
     respond_to do |format|
       format.json do
-        data = @assignment.summary_test_result_json(latest:)
+        data = test_results.as_json
+
         zip_path = "tmp/#{@assignment.short_identifier}_test_results.zip"
         Zip::File.open(zip_path, create: true) do |zip_file|
           zip_file.get_output_stream('test_results.json') do |f|
             f.write(data)
           end
         end
-        send_file zip_path, disposition: 'inline',
-                  filename: "#{@assignment.short_identifier}_test_results.zip"
+
+        send_file(
+          zip_path,
+          disposition: 'inline',
+          filename: "#{@assignment.short_identifier}_test_results.zip"
+        )
       end
+
       format.csv do
-        data = @assignment.summary_test_result_csv
         filename = "#{@assignment.short_identifier}_test_results.csv"
-        send_data data,
-                  disposition: 'attachment',
-                  type: 'text/csv',
-                  filename: filename
+
+        send_data(
+          test_results.as_csv,
+          disposition: 'attachment',
+          type: 'text/csv',
+          filename: filename
+        )
       end
     end
   end
