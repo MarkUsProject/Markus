@@ -47,13 +47,24 @@ class TATable extends React.Component {
         enableColumnFilter: false,
         header: () => I18n.t("actions"),
         cell: props => (
-          <a
-            href={Routes.edit_course_instructor_path(this.props.course_id, props.getValue())}
-            aria-label={I18n.t("edit")}
-            title={I18n.t("edit")}
-          >
-            <FontAwesomeIcon icon={faPencil} />
-          </a>
+          <span>
+            <a
+              href={Routes.edit_course_ta_path(this.props.course_id, props.getValue())}
+              aria-label={I18n.t("edit")}
+              title={I18n.t("edit")}
+            >
+              <FontAwesomeIcon icon={faPencil} />
+            </a>
+            &nbsp;|&nbsp;
+            <a
+              href="#"
+              onClick={() => this.removeTA(props.getValue())}
+              aria-label={I18n.t("remove")}
+              title={I18n.t("remove")}
+            >
+              <FontAwesomeIcon icon={faTrashCan} />
+            </a>
+          </span>
         ),
       }),
     ];
