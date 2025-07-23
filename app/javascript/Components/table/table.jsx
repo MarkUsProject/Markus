@@ -24,7 +24,7 @@ export default function Table({columns, data, noDataText, initialState}) {
       columnFilters,
       columnSizing,
     },
-    initialState: initialState || {},
+    initialState: initialState,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

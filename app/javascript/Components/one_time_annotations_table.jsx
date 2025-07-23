@@ -149,6 +149,9 @@ class OneTimeAnnotationsTable extends React.Component {
           key="one_time_annotations_table"
           data={this.state.data}
           columns={this.columns}
+          initialState={{
+            sorting: [{id: "group_name"}],
+          }}
           loading={this.state.loading}
           noDataText={I18n.t("annotations.empty_uncategorized")}
         />
