@@ -31,6 +31,7 @@
 - Refactored the method of loading `javascripts/Results/keybinding.js` in `submission_selector.jsx` (#7566)
 - Updated the instructor table to use `@tanstack/react-table` v8 (#7589)
 - Refactor `DropDownMenu` class to a new React component (#7592)
+- Updated the tag table and "one time only annotations" table to use `@tanstack/react-table` v8 (#7596)
 - Updated Python autotest script file to include example of using `pytest.mark` to customize test marks (#7597)
 - Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
 
