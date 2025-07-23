@@ -2,8 +2,6 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import PropTypes from "prop-types";
 
-import ReactTable from "react-table";
-import {selectFilter} from "./Helpers/table_helpers";
 import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -16,7 +14,6 @@ class TATable extends React.Component {
     this.state = {
       data: [],
       loading: true,
-      counts: {all: 0, active: 0, inactive: 0},
     };
     this.fetchData = this.fetchData.bind(this);
 
@@ -87,6 +84,7 @@ class TATable extends React.Component {
       })
       .then(json => json.data);
   }
+
   processData(data) {
     data.forEach(row => (row.hidden = I18n.t(row.hidden ? "roles.inactive" : "roles.active")));
     return data;
@@ -111,7 +109,6 @@ class TATable extends React.Component {
   };
 
   render() {
-    const {data} = this.state;
     return (
       <Table data={this.state.data} columns={this.columns} noDataText={I18n.t("tas.empty_table")} />
     );
