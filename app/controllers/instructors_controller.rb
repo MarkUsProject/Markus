@@ -7,6 +7,7 @@ class InstructorsController < ApplicationController
   responders :flash, :collection
 
   def index
+    sleep 5
     respond_to do |format|
       format.html
       format.json do

@@ -1,4 +1,5 @@
 import React from "react";
+import {Grid} from "react-loader-spinner";
 
 import {
   flexRender,
@@ -122,9 +123,30 @@ export default function Table({columns, data, noDataText, initialState}) {
               </div>
             );
           })}
-          {!table.getRowModel().rows.length && (
-            <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
-          )}
+          {!table.getRowModel().rows.length &&
+            (noDataText === "Loading" ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50px",
+                }}
+              >
+                <Grid
+                  visible={true}
+                  height="25"
+                  width="25"
+                  color="#31649B"
+                  ariaLabel="grid-loading"
+                  radius="12.5"
+                  wrapperStyle={{}}
+                  wrapperClass="grid-wrapper"
+                />
+              </div>
+            ) : (
+              <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
+            ))}
         </div>
       </div>
     </div>
