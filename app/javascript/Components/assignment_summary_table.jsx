@@ -7,8 +7,8 @@ import {createColumnHelper} from "@tanstack/react-table";
 import Table from "./table/table";
 
 export class AssignmentSummaryTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     const markingStates = getMarkingStates([]);
     this.state = {
       data: [],
@@ -70,7 +70,10 @@ export class AssignmentSummaryTable extends React.Component {
       .then(res => {
         res.criteriaColumns.forEach(col => {
           col["enableColumnFilter"] = false;
-          col["sortDescFirst"] = true;
+
+          if (!col.id && typeof col.accessor === "string") {
+            col.id = col.accessor;
+          }
         });
 
         let inactive_groups_count = 0;
