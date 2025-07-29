@@ -165,6 +165,7 @@ export class AssignmentSummaryTable extends React.Component {
       }),
       markingStateColumn(this.state.marking_states, this.state.markingStateFilter),
       this.columnHelper.accessor("tags", {
+        id: "tags",
         header: () => I18n.t("activerecord.models.tag.other"),
         cell: props => (
           <ul className="tag-list">
@@ -187,6 +188,7 @@ export class AssignmentSummaryTable extends React.Component {
         },
       }),
       this.columnHelper.accessor("final_grade", {
+        id: "final_grade",
         header: () => I18n.t("results.total_mark"),
         cell: props => {
           if (props.getValue() || props.getValue() === 0) {
@@ -201,6 +203,7 @@ export class AssignmentSummaryTable extends React.Component {
         sortDescFirst: true,
       }),
       this.columnHelper.accessor("total_extra_marks", {
+        id: "total_extra_marks",
         header: () => I18n.t("activerecord.models.extra_mark.other"),
         cell: props => props.getValue(),
         meta: {className: "number"},
