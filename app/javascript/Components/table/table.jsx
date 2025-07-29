@@ -23,6 +23,7 @@ export default function Table({columns, data, noDataText, initialState}) {
     state: {
       columnFilters,
       columnSizing,
+      columnVisibility,
     },
     initialState: initialState,
     onColumnFiltersChange: setColumnFilters,
