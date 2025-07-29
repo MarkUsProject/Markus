@@ -39,8 +39,7 @@ class SplitPdfJob < ApplicationJob
         img.destroy!
         code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         python_exe = Rails.application.config.python
-        read_qr_py_file = Rails.root.join('lib/scanner/read_qr_code.py').to_s
-        stdout, status = Open3.capture2(python_exe, read_qr_py_file, qr_file_location)
+        stdout, status = Open3.capture2(python_exe, '-m', 'markus_exam_matcher', 'qr', qr_file_location)
         if status.success?
           m = code_regex.match(stdout)
         else
