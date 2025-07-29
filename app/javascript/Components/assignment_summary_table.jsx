@@ -70,6 +70,7 @@ export class AssignmentSummaryTable extends React.Component {
       .then(res => {
         res.criteriaColumns.forEach(col => {
           col["filterable"] = false;
+          col["defaultSortDesc"] = true;
         });
 
         let inactive_groups_count = 0;
