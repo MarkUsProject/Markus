@@ -200,16 +200,15 @@ export class AssignmentSummaryTable extends React.Component {
         enableColumnFilter: false,
         sortDescFirst: true,
       }),
+      this.columnHelper.accessor("total_extra_marks", {
+        header: () => I18n.t("activerecord.models.extra_mark.other"),
+        cell: props => props.getValue(),
+        meta: {className: "number"},
+        enableColumnFilter: false,
+        sortDescFirst: true,
+      }),
     ];
   };
-
-  bonusColumn = this.columnHelper.accessor("total_extra_marks", {
-    header: () => I18n.t("activerecord.models.extra_mark.other"),
-    cell: props => props.getValue(),
-    meta: {className: "number"},
-    enableColumnFilter: false,
-    sortDescFirst: true,
-  });
 
   onDownloadTestsModal = () => {
     this.setState({showDownloadTestsModal: true});
@@ -317,7 +316,7 @@ export class AssignmentSummaryTable extends React.Component {
         </div>
         <Table
           data={data}
-          columns={this.fixedColumns().concat(criteriaColumns, [this.bonusColumn])}
+          columns={this.fixedColumns().concat(criteriaColumns)}
           state={{
             columnFilters: this.state.filtered,
             columnVisibility: {
