@@ -16,6 +16,7 @@ export const defaultNoDataText = () => I18n.t("table.no_data");
 export default function Table({columns, data, noDataText, initialState}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
+  const [columnVisibility, setColumnVisibility] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -36,6 +37,7 @@ export default function Table({columns, data, noDataText, initialState}) {
     enableColumnResizing: true,
     columnResizeMode: "onChange",
     onColumnSizingChange: setColumnSizing,
+    onColumnVisibilityChange: setColumnVisibility,
   });
 
   return (
