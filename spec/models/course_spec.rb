@@ -713,8 +713,6 @@ describe Course do
   end
 end
 
-private
-
 # Parse the +yaml_string+ and return the data as a hash.
 def parse_yaml_content(yaml_string)
   YAML.safe_load(yaml_string,

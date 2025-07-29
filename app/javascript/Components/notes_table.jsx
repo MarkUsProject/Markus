@@ -1,6 +1,8 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
+import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class NotesTable extends React.Component {
   constructor(props) {
@@ -40,8 +42,10 @@ class NotesTable extends React.Component {
           <a
             href={Routes.edit_course_note_path(this.props.course_id, id)}
             className="inline-button button"
+            aria-label={I18n.t("edit")}
+            title={I18n.t("edit")}
           >
-            {I18n.t("edit")}
+            <FontAwesomeIcon icon={faPencil} />
           </a>
 
           <a
@@ -49,8 +53,10 @@ class NotesTable extends React.Component {
             className="inline-button button"
             data-method="delete"
             data-confirm={I18n.t("notes.delete.link_confirm")}
+            aria-label={I18n.t("delete")}
+            title={I18n.t("delete")}
           >
-            {I18n.t("delete")}
+            <FontAwesomeIcon icon={faTrashCan} />
           </a>
         </div>
       );

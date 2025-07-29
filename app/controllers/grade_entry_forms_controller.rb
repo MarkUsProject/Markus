@@ -236,12 +236,12 @@ class GradeEntryFormsController < ApplicationController
       { label: item.name, data: item.grade_distribution_array(intervals) }
     end
     column_distributions = {
-      labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
+      labels: (0..(intervals - 1)).map { |i| "#{5 * i}-#{5 * i + 5}" },
       datasets: dict_data
     }
 
     grade_distribution = {
-      labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
+      labels: (0..(intervals - 1)).map { |i| "#{5 * i}-#{5 * i + 5}" },
       datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }]
     }
 

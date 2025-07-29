@@ -12,6 +12,7 @@
 - Maintain font size in grading view (#7525)
 - Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
 - Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
+- Replaced "Edit" and "Delete" action text links with Font Awesome icons across all tables. (#7595)
 
 ### 🐛 Bug fixes
 - Added host authorization setting for Resque (#7562)
@@ -27,7 +28,13 @@
 - Enabled `erb_lint` linter for erb files (#7561)
 - Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
 - Added test metadata examples to seed data for R autotesting (#7564)
+- Refactored the method of loading `javascripts/Results/keybinding.js` in `submission_selector.jsx` (#7566)
 - Moved QR scanning to external python package markus_exam_matcher (#7567)
+- Updated the instructor table to use `@tanstack/react-table` v8 (#7589)
+- Refactor `DropDownMenu` class to a new React component (#7592)
+- Updated the tag table and "one time only annotations" table to use `@tanstack/react-table` v8 (#7596)
+- Updated Python autotest script file to include example of using `pytest.mark` to customize test marks (#7597)
+- Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
 
 ## [v2.7.1]
 

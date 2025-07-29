@@ -127,9 +127,9 @@ describe GradersController do
         assert @grouping1.tas.count == 2
         assert @grouping1.tas.include? @ta1
         assert @grouping1.tas.include? @ta2
-        assert @grouping2.tas.count == 1
+        assert @grouping2.tas.one?
         assert @grouping2.tas.include? @ta1
-        assert @grouping3.tas.count == 0
+        assert @grouping3.tas.none?
       end
 
       it 'and some groupings are invalid' do

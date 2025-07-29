@@ -136,7 +136,7 @@ describe("For the TATable's display of TAs", () => {
 
       await screen.findByText("testtest");
 
-      fireEvent.click(screen.getByText(I18n.t("remove")));
+      fireEvent.click(screen.getByLabelText(I18n.t("remove")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(

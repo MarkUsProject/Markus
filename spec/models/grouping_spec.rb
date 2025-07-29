@@ -1463,7 +1463,7 @@ describe Grouping do
       it 'should return one entry from each starter file group' do
         entries = grouping.select_starter_file_entries
         starter_file_groups.each do |grp|
-          expect(entries).to satisfy('contain one of') { |e| (e & grp.starter_file_entries).count == 1 }
+          expect(entries).to satisfy('contain one of') { |e| (e & grp.starter_file_entries).one? }
         end
       end
     end

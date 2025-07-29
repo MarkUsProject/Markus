@@ -302,7 +302,7 @@ describe("For the StudentTable's display of students", () => {
 
       await screen.findByText("testtest");
 
-      fireEvent.click(screen.getByText(I18n.t("remove")));
+      fireEvent.click(screen.getByLabelText(I18n.t("remove")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(
