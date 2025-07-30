@@ -2,6 +2,21 @@ import React from "react";
 import Modal from "react-modal";
 
 class DownloadTestResultsModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      downloadLatestResults: true,
+    };
+
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+  }
+
+  handleCheckboxChange(event) {
+    this.setState({
+      downloadLatestResults: event.target.checked,
+    });
+  }
+
   componentDidMount() {
     Modal.setAppElement("body");
   }
@@ -19,11 +34,21 @@ class DownloadTestResultsModal extends React.Component {
           })}
         </h2>
         <div className={"modal-container-vertical"} style={{alignItems: "center"}}>
+          <label>
+            <input
+              type="checkbox"
+              id="latest-results-checkbox"
+              checked={this.state.downloadLatestResults}
+              onChange={this.handleCheckboxChange}
+            />
+            Only latest results
+          </label>
           <a
             href={Routes.download_test_results_course_assignment_path({
               course_id: this.props.course_id,
               id: this.props.assignment_id,
               format: "json",
+              latest: this.state.downloadLatestResults,
               _options: true,
             })}
           >
@@ -48,6 +73,7 @@ class DownloadTestResultsModal extends React.Component {
               type="submit"
               name="download-test-results-csv"
               onClick={this.props.onRequestClose}
+              disabled={!this.state.downloadLatestResults}
             >
               <i className="fa-solid fa-download" aria-hidden="true" />
               {I18n.t("download_csv")}
