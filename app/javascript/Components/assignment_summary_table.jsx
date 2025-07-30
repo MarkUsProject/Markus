@@ -309,18 +309,16 @@ export class AssignmentSummaryTable extends React.Component {
                       _options: true,
                     })}
                   >
-                    <button>
-                      Download Instructor-Run Test Results
-                    </button>
+                    <button>Download Instructor-Run Test Results</button>
                   </a>
-                  </>
-                  )}
-                  {ltiButton}
                 </>
               )}
-            </div>
-            <ReactTable
-            data={data}
+              {ltiButton}
+            </>
+          )}
+        </div>
+        <ReactTable
+          data={data}
           columns={this.fixedColumns().concat(criteriaColumns, [this.bonusColumn])}
           filterable
           filtered={this.state.filtered}
