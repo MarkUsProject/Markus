@@ -40,7 +40,7 @@ gem 'i18n-js'
 gem 'rails-i18n', '~> 8.0.1'
 
 # Redis
-gem 'redis', '~> 5.4.0'
+gem 'redis', '~> 5.4.1'
 
 # Exam template requirements
 gem 'combine_pdf'
