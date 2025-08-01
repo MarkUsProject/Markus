@@ -35,6 +35,7 @@
 - Updated the tag table and "one time only annotations" table to use `@tanstack/react-table` v8 (#7596)
 - Updated Python autotest script file to include example of using `pytest.mark` to customize test marks (#7597)
 - Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
+- Updated `dependabot.yml` to add React dependency group and increase, remove old webpack ignored versions, and remove open PR limits (#7627)
 
 ## [v2.7.1]
 
