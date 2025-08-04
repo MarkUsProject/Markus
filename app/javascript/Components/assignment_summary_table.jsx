@@ -1,13 +1,31 @@
 import React from "react";
 import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
 
-import ReactTable from "react-table";
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 import LtiGradeModal from "./Modals/send_lti_grades_modal";
+import {createColumnHelper} from "@tanstack/react-table";
+import Table from "./table/table";
+
+const renderSubComponent = ({row}) => {
+  return (
+    <div>
+      <h4>{I18n.t("activerecord.models.ta", {count: 2})}</h4>
+      <ul>
+        {row.original.graders.map(grader => {
+          return (
+            <li key={grader[0]}>
+              ({grader[0]}) {grader[1]} {grader[2]}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
 
 export class AssignmentSummaryTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     const markingStates = getMarkingStates([]);
     this.state = {
       data: [],
@@ -30,10 +48,114 @@ export class AssignmentSummaryTable extends React.Component {
     this.fetchData();
   }
 
-  toggleShowInactiveGroups = showInactiveGroups => {
-    let filtered = this.state.filtered.filter(group => {
-      group.id !== "inactive";
+  getColumns = () => {
+    const columnHelper = createColumnHelper();
+
+    const expanderColumn = columnHelper.display({
+      id: "expander",
+      header: () => null,
+      size: 32,
+      cell: ({row}) => {
+        return row.getCanExpand() ? (
+          <button
+            onClick={row.getToggleExpandedHandler()}
+            className={`rt-expander${row.getIsExpanded() ? " -open" : ""}`}
+          />
+        ) : null;
+      },
     });
+
+    const fixedColumns = [
+      columnHelper.accessor("inactive", {
+        id: "inactive",
+      }),
+      columnHelper.accessor("group_name", {
+        id: "group_name",
+        header: () => I18n.t("activerecord.models.group.one"),
+        cell: info => {
+          if (info.row.original.result_id) {
+            const path = Routes.edit_course_result_path(
+              this.props.course_id,
+              info.row.original.result_id
+            );
+            return (
+              <a href={path}>
+                {info.row.original.group_name}
+                {this.memberDisplay(info.row.original.group_name, info.row.original.members)}
+              </a>
+            );
+          } else {
+            return (
+              <span>
+                {info.row.original.group_name}
+                {this.memberDisplay(info.row.original.group_name, info.row.original.members)}
+              </span>
+            );
+          }
+        },
+      }),
+      markingStateColumn(this.state.marking_states, this.state.markingStateFilter),
+      columnHelper.accessor("tags", {
+        header: () => I18n.t("activerecord.models.tag.other"),
+        cell: info => (
+          <ul className="tag-list">
+            {info.row.original.tags.map(tag => (
+              <li key={`${info.row.original._id}-${tag}`} className="tag-element">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        ),
+        minWidth: 80,
+        enableSorting: false,
+        filterFn: (row, columnId, filterValue) => {
+          if (filterValue) {
+            // Check tag names
+            return row.original.tags.some(tag => tag.includes(filterValue));
+          } else {
+            return true;
+          }
+        },
+      }),
+      columnHelper.accessor("final_grade", {
+        header: () => I18n.t("results.total_mark"),
+        cell: info => {
+          if (info.row.original.final_grade || info.row.original.final_grade === 0) {
+            const max_mark = Math.round(info.row.original.max_mark * 100) / 100;
+            return info.row.original.final_grade + " / " + max_mark;
+          } else {
+            return "";
+          }
+        },
+        meta: {className: "number"},
+        enableColumnFilter: false,
+        sortDescFirst: true,
+      }),
+    ];
+
+    const criteriaColumns = this.state.criteriaColumns.map(col =>
+      columnHelper.accessor(col.accessor, {
+        id: col.id,
+        header: () => col.Header,
+        cell: value => value.getValue(),
+        meta: {className: "number"},
+        enableColumnFilter: false,
+      })
+    );
+
+    const bonusColumn = columnHelper.accessor("total_extra_marks", {
+      header: () => I18n.t("activerecord.models.extra_mark.other"),
+      cell: info => info.getValue(),
+      meta: {className: "number"},
+      enableColumnFilter: false,
+      sortDescFirst: true,
+    });
+
+    return [expanderColumn, ...fixedColumns, ...criteriaColumns, bonusColumn];
+  };
+
+  toggleShowInactiveGroups = showInactiveGroups => {
+    let filtered = this.state.filtered.filter(group => group.id !== "inactive");
 
     if (!showInactiveGroups) {
       filtered.push({id: "inactive", value: false});
@@ -57,11 +179,14 @@ export class AssignmentSummaryTable extends React.Component {
   };
 
   fetchData = () => {
-    fetch(Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id), {
-      headers: {
-        Accept: "application/json",
-      },
-    })
+    return fetch(
+      Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id),
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -69,8 +194,8 @@ export class AssignmentSummaryTable extends React.Component {
       })
       .then(res => {
         res.criteriaColumns.forEach(col => {
-          col["filterable"] = false;
-          col["defaultSortDesc"] = true;
+          col.enableColumnFilter = false;
+          col.sortDescFirst = true;
         });
 
         let inactive_groups_count = 0;
@@ -111,112 +236,6 @@ export class AssignmentSummaryTable extends React.Component {
     }
   };
 
-  fixedColumns = () => {
-    return [
-      {
-        show: false,
-        accessor: "inactive",
-        id: "inactive",
-      },
-      {
-        Header: I18n.t("activerecord.models.group.one"),
-        id: "group_name",
-        accessor: "group_name",
-        Cell: row => {
-          if (row.original.result_id) {
-            const path = Routes.edit_course_result_path(
-              this.props.course_id,
-              row.original.result_id
-            );
-            return (
-              <a href={path}>
-                {row.original.group_name}
-                {this.memberDisplay(row.original.group_name, row.original.members)}
-              </a>
-            );
-          } else {
-            return (
-              <span>
-                {row.original.group_name}
-                {this.memberDisplay(row.original.group_name, row.original.members)}
-              </span>
-            );
-          }
-        },
-        filterMethod: (filter, row) => {
-          if (filter.value) {
-            // Check group name
-            if (row._original.group_name.includes(filter.value)) {
-              return true;
-            }
-
-            // Check member names
-            const member_matches = row._original.members.some(member =>
-              member.some(name => name.includes(filter.value))
-            );
-
-            if (member_matches) {
-              return true;
-            }
-
-            // Check grader user names
-            return row._original.graders.some(grader => grader.includes(filter.value));
-          } else {
-            return true;
-          }
-        },
-      },
-      markingStateColumn(this.state.marking_states, this.state.markingStateFilter),
-      {
-        Header: I18n.t("activerecord.models.tag.other"),
-        accessor: "tags",
-        Cell: row => (
-          <ul className="tag-list">
-            {row.original.tags.map(tag => (
-              <li key={`${row.original._id}-${tag}`} className="tag-element">
-                {tag}
-              </li>
-            ))}
-          </ul>
-        ),
-        minWidth: 80,
-        sortable: false,
-        filterMethod: (filter, row) => {
-          if (filter.value) {
-            // Check tag names
-            return row._original.tags.some(tag => tag.includes(filter.value));
-          } else {
-            return true;
-          }
-        },
-      },
-      {
-        Header: I18n.t("results.total_mark"),
-        accessor: "final_grade",
-        Cell: row => {
-          if (row.original.final_grade || row.original.final_grade === 0) {
-            const max_mark = Math.round(row.original.max_mark * 100) / 100;
-            return row.original.final_grade + " / " + max_mark;
-          } else {
-            return "";
-          }
-        },
-        className: "number",
-        filterable: false,
-        defaultSortDesc: true,
-      },
-    ];
-  };
-
-  bonusColumn = {
-    Header: I18n.t("activerecord.models.extra_mark.other"),
-    accessor: "total_extra_marks",
-    Cell: ({value}) => value,
-    className: "number",
-    filterable: false,
-    defaultSortDesc: true,
-  };
-
   onDownloadTestsModal = () => {
     this.setState({showDownloadTestsModal: true});
   };
@@ -226,7 +245,7 @@ export class AssignmentSummaryTable extends React.Component {
   };
 
   render() {
-    const {data, criteriaColumns} = this.state;
+    const {data} = this.state;
     let ltiButton;
     if (this.state.lti_deployments.length > 0) {
       ltiButton = (
@@ -304,30 +323,14 @@ export class AssignmentSummaryTable extends React.Component {
             </>
           )}
         </div>
-        <ReactTable
+        <Table
           data={data}
-          columns={this.fixedColumns().concat(criteriaColumns, [this.bonusColumn])}
-          filterable
-          filtered={this.state.filtered}
-          onFilteredChange={this.onFilteredChange}
-          defaultSorted={[{id: "group_name"}]}
-          ref={r => (this.wrappedInstance = r)}
-          SubComponent={row => {
-            return (
-              <div>
-                <h4>{I18n.t("activerecord.models.ta", {count: 2})}</h4>
-                <ul>
-                  {row.original.graders.map(grader => {
-                    return (
-                      <li key={grader[0]}>
-                        ({grader[0]}) {grader[1]} {grader[2]}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
+          columns={this.getColumns()}
+          initialState={{
+            sorting: [{id: "group_name"}],
           }}
+          getRowCanExpand={() => true}
+          renderSubComponent={renderSubComponent}
           loading={this.state.loading}
         />
         <DownloadTestResultsModal
