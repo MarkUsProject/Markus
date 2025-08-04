@@ -58,10 +58,25 @@ export class AssignmentSummaryTable extends React.Component {
       cell: ({row}) => {
         return row.getCanExpand() ? (
           <button
-            onClick={row.getToggleExpandedHandler()}
-            className={`rt-expander${row.getIsExpanded() ? " -open" : ""}`}
-          />
-        ) : null;
+            {...{
+              onClick: row.getToggleExpandedHandler(),
+              style: {
+                all: "unset",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                fontSize: "0.7rem",
+              },
+            }}
+          >
+            {row.getIsExpanded() ? "▼" : "▶"}
+          </button>
+        ) : (
+          " "
+        );
       },
     });
 
