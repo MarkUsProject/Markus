@@ -3,6 +3,7 @@ import React from "react";
 import {
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
@@ -13,9 +14,18 @@ import Filter from "./filter";
 
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
-export default function Table({columns, data, noDataText, initialState}) {
+export default function Table({
+  columns,
+  data,
+  noDataText,
+  initialState,
+  renderSubComponent,
+  getRowCanExpand,
+}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
+  const [columnVisibility, setColumnVisibility] = React.useState({inactive: false});
+  const [expanded, setExpanded] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -23,18 +33,24 @@ export default function Table({columns, data, noDataText, initialState}) {
     state: {
       columnFilters,
       columnSizing,
+      columnVisibility,
+      expanded,
     },
     initialState: initialState,
     onColumnFiltersChange: setColumnFilters,
+    onColumnSizingChange: setColumnSizing,
+    onColumnVisibilityChange: setColumnVisibility,
+    onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
+    getRowCanExpand,
     enableSortingRemoval: false,
     enableColumnResizing: true,
     columnResizeMode: "onChange",
-    onColumnSizingChange: setColumnSizing,
   });
 
   return (
@@ -107,9 +123,10 @@ export default function Table({columns, data, noDataText, initialState}) {
               <div className="rt-tr-group" role="rowgroup" key={row.id}>
                 <div className="rt-tr -odd" role="row" key={row.id}>
                   {row.getVisibleCells().map(cell => {
+                    const metaClass = cell.column.columnDef.meta?.className || "";
                     return (
                       <div
-                        className="rt-td"
+                        className={`rt-td ${metaClass}`}
                         role="gridcell"
                         style={{flex: "100 0 auto", width: cell.column.getSize()}}
                         key={cell.id}
@@ -119,6 +136,11 @@ export default function Table({columns, data, noDataText, initialState}) {
                     );
                   })}
                 </div>
+                {row.getIsExpanded() && (
+                  <tr>
+                    <td colSpan={row.getVisibleCells().length}>{renderSubComponent({row})}</td>
+                  </tr>
+                )}
               </div>
             );
           })}
