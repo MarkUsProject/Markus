@@ -227,7 +227,8 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join self.assignment.scanned_exams_path, self.id.to_s
+    return @base_path if defined? @base_path
+    @base_path = File.join self.assignment.scanned_exams_path, self.id.to_s
   end
 
   def file_path

@@ -86,7 +86,9 @@ en:
       save: Save
       title: Automatic Student Matching
     split_pdf_log:
+      qr_scan_in_progress: Scanning QR codes (this may take a few minutes)
       scan_error: Some files have not been scanned properly.
+      submission_in_progress: Scanning QR codes done, now preparing PDF pages for grading
     update:
       failure: Exam Template has not been successfully updated
       instruction: Replace template file
