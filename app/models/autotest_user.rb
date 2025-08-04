@@ -1,6 +1,7 @@
 # Model for Autotest user
 class AutotestUser < User
   include AutomatedTestsHelper::AutotestApi
+
   USERNAME = '.autotestuser'.freeze
 
   def self.find_or_create
