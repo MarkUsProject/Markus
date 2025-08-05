@@ -294,24 +294,11 @@ export class AssignmentSummaryTable extends React.Component {
                 </button>
               </form>
               {this.state.enable_test && (
-                <>
-                  <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
-                    Download Student-Run Test Results
-                  </button>
-                  <a
-                    href={Routes.download_test_results_course_assignment_path({
-                      course_id: this.props.course_id,
-                      id: this.props.assignment_id,
-                      format: "json",
-                      latest: true,
-                      instructor_run: true,
-                      student_run: false,
-                      _options: true,
-                    })}
-                  >
-                    <button>Download Instructor-Run Test Results</button>
-                  </a>
-                </>
+                <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
+                  {I18n.t("download_the", {
+                    item: I18n.t("activerecord.models.test_result.other"),
+                  })}
+                </button>
               )}
               {ltiButton}
             </>
