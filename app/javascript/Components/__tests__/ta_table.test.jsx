@@ -1,5 +1,6 @@
 import {TATable} from "../ta_table";
 import {render, screen, fireEvent, waitFor, within} from "@testing-library/react";
+import {StudentTable} from "../student_table";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -150,6 +151,25 @@ describe("For the TATable's display of TAs", () => {
           })
         );
       });
+    });
+  });
+});
+
+describe("For each TATable's loading status", () => {
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("TATable Spinner", () => {
+    it("shows loading spinner when data is being fetched", async () => {
+      render(<TATable course_id={mock_course_id} />);
+
+      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      expect(spinner).toBeInTheDocument();
     });
   });
 });

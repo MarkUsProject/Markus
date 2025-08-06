@@ -110,7 +110,11 @@ class TATable extends React.Component {
 
   render() {
     return (
-      <Table data={this.state.data} columns={this.columns} noDataText={I18n.t("tas.empty_table")} />
+      <Table
+        data={this.state.data}
+        columns={this.columns}
+        noDataText={this.state.loading ? "Loading" : I18n.t("instructors.empty_table")}
+      />
     );
   }
 }

@@ -232,7 +232,7 @@ class RawStudentTable extends React.Component {
           ]}
           filterable
           loading={loading}
-          noDataText={I18n.t("students.empty_table")}
+          noDataText={this.state.loading ? null : I18n.t("instructors.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>

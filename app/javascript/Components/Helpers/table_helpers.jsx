@@ -1,9 +1,43 @@
 import React from "react";
+import {Grid} from "react-loader-spinner";
 
 /**
  * @file
  * Provides generic helper functions and components for react-table tables.
  */
+
+export function customLoadingProp(props) {
+  const {loading, noDataText} = props;
+
+  if (loading) {
+    return (
+      <div
+        className="flex gap-4"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50px",
+        }}
+      >
+        <Grid
+          visible={true}
+          height="25"
+          width="25"
+          color="#31649B"
+          ariaLabel="grid-loading"
+          radius="12.5"
+          wrapperStyle={{}}
+          wrapperClass="grid-wrapper"
+        />
+      </div>
+    );
+  }
+
+  if (noDataText === I18n.t("instructors.empty_table")) {
+    return <p className="rt-no-data">{noDataText || "No data available"}</p>;
+  }
+}
 
 export function defaultSort(a, b) {
   // Sort values, putting undefined/nulls below all other values.
@@ -230,6 +264,12 @@ export function getMarkingStates(data) {
   return markingStates;
 }
 
-export function customNoDataComponent({children}) {
-  return <p className="rt-no-data">{children}</p>;
+export function customNoDataComponent({children, props}) {
+  const loading = props?.loading;
+  // I am not sure how to remove the rectangular square when the page is loading
+  if (loading) {
+    return null;
+  } else {
+    return <p className="rt-no-data">{children}</p>;
+  }
 }

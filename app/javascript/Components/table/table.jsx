@@ -1,5 +1,5 @@
 import React from "react";
-import {Grid, TailSpin, LineWave, Oval} from "react-loader-spinner";
+import {Grid} from "react-loader-spinner";
 
 import {
   flexRender,
@@ -134,46 +134,15 @@ export default function Table({columns, data, noDataText, initialState}) {
                   height: "50px",
                 }}
               >
-                {/*<Grid*/}
-                {/*  visible={true}*/}
-                {/*  height="25"*/}
-                {/*  width="25"*/}
-                {/*  color="#31649B"*/}
-                {/*  ariaLabel="grid-loading"*/}
-                {/*  radius="12.5"*/}
-                {/*  wrapperStyle={{}}*/}
-                {/*  wrapperClass="grid-wrapper"*/}
-                {/*/>*/}
-                {/*<LineWave*/}
-                {/*  visible={true}*/}
-                {/*  height="50"*/}
-                {/*  width="70"*/}
-                {/*  color="#31649B"*/}
-                {/*  ariaLabel="line-wave-loading"*/}
-                {/*  wrapperStyle={{}}*/}
-                {/*  wrapperClass=""*/}
-                {/*  firstLineColor=""*/}
-                {/*  middleLineColor=""*/}
-                {/*  lastLineColor=""*/}
-                {/*/>*/}
-                {/*<Oval*/}
-                {/*  visible={true}*/}
-                {/*  height="25"*/}
-                {/*  width="25"*/}
-                {/*  color="#31649B"*/}
-                {/*  ariaLabel="oval-loading"*/}
-                {/*  wrapperStyle={{}}*/}
-                {/*  wrapperClass=""*/}
-                {/*/>*/}
-                <TailSpin
+                <Grid
                   visible={true}
                   height="25"
                   width="25"
                   color="#31649B"
-                  ariaLabel="tail-spin-loading"
-                  radius="1"
+                  ariaLabel="grid-loading"
+                  radius="12.5"
                   wrapperStyle={{}}
-                  wrapperClass=""
+                  wrapperClass="grid-wrapper"
                 />
               </div>
             ) : (

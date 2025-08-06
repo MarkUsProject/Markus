@@ -319,3 +319,22 @@ describe("For the StudentTable's display of students", () => {
     });
   });
 });
+
+describe("For each StudentTable's loading status", () => {
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("StudentTable Spinner", () => {
+    it("shows loading spinner when data is being fetched", async () => {
+      render(<StudentTable selection={["c5anthei"]} course_id={1} />);
+
+      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      expect(spinner).toBeInTheDocument();
+    });
+  });
+});
