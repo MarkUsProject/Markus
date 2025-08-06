@@ -85,6 +85,10 @@ class User < ApplicationRecord
     end
   end
 
+  def self.get_orphaned_users
+    self.where.missing(:roles)
+  end
+
   # Helper methods -----------------------------------------------------
   def autotest_user?
     self.instance_of?(AutotestUser)
