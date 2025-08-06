@@ -123,6 +123,8 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
   return {
     header: I18n.t("activerecord.attributes.result.marking_state"),
     accessorKey: "marking_state",
+    size: 100,
+    enableResizing: true,
     cell: info => {
       let marking_state = "";
       switch (info.row.original.marking_state) {

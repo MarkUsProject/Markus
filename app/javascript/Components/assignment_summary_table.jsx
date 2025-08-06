@@ -87,6 +87,8 @@ export class AssignmentSummaryTable extends React.Component {
       columnHelper.accessor("group_name", {
         id: "group_name",
         header: () => I18n.t("activerecord.models.group.one"),
+        size: 100,
+        enableResizing: true,
         cell: info => {
           if (info.row.original.result_id) {
             const path = Routes.edit_course_result_path(
@@ -112,6 +114,8 @@ export class AssignmentSummaryTable extends React.Component {
       markingStateColumn(this.state.marking_states, this.state.markingStateFilter),
       columnHelper.accessor("tags", {
         header: () => I18n.t("activerecord.models.tag.other"),
+        size: 90,
+        enableResizing: true,
         cell: info => (
           <ul className="tag-list">
             {info.row.original.tags.map(tag => (
@@ -134,6 +138,8 @@ export class AssignmentSummaryTable extends React.Component {
       }),
       columnHelper.accessor("final_grade", {
         header: () => I18n.t("results.total_mark"),
+        size: 100,
+        enableResizing: true,
         cell: info => {
           if (info.row.original.final_grade || info.row.original.final_grade === 0) {
             const max_mark = Math.round(info.row.original.max_mark * 100) / 100;
@@ -152,6 +158,8 @@ export class AssignmentSummaryTable extends React.Component {
       columnHelper.accessor(col.accessor, {
         id: col.id,
         header: () => col.Header,
+        size: 100,
+        enableResizing: true,
         cell: value => value.getValue(),
         meta: {className: "number"},
         enableColumnFilter: false,
@@ -160,6 +168,8 @@ export class AssignmentSummaryTable extends React.Component {
 
     const bonusColumn = columnHelper.accessor("total_extra_marks", {
       header: () => I18n.t("activerecord.models.extra_mark.other"),
+      size: 100,
+      enableResizing: true,
       cell: info => info.getValue(),
       meta: {className: "number"},
       enableColumnFilter: false,
