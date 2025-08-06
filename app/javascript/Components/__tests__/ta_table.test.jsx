@@ -1,6 +1,5 @@
 import {TATable} from "../ta_table";
-import {render, screen, fireEvent, waitFor, within} from "@testing-library/react";
-import {StudentTable} from "../student_table";
+import {render, screen, fireEvent, waitFor, within, act} from "@testing-library/react";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -85,7 +84,7 @@ describe("For the TATable's display of TAs", () => {
   });
 
   describe("when no TAs are fetched", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       tas_sample = [];
       // Mocking the response returned by fetch, used in TATable fetchData
       fetch.mockReset();
@@ -96,11 +95,13 @@ describe("For the TATable's display of TAs", () => {
           counts: {all: 0, active: 0, inactive: 0},
         }),
       });
-      render(<TATable course_id={1} />);
+      await act(async () => {
+        render(<TATable course_id={1} />);
+      });
     });
 
     it("No rows found is shown", async () => {
-      await screen.findByText(I18n.t("tas.empty_table"));
+      await screen.findByText(I18n.t("tas.empty_table"), {}, {timeout: 3000});
     });
   });
 
@@ -156,6 +157,8 @@ describe("For the TATable's display of TAs", () => {
 });
 
 describe("For each TATable's loading status", () => {
+  let mock_course_id = 1;
+
   beforeEach(() => {
     jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
   });

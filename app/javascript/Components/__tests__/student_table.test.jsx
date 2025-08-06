@@ -3,7 +3,7 @@
  */
 
 import {StudentTable} from "../student_table";
-import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
+import {render, screen, within, fireEvent, waitFor, act} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 describe("For the StudentTable component's states and props", () => {
@@ -247,7 +247,7 @@ describe("For the StudentTable's display of students", () => {
   });
 
   describe("when no students are fetched", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       students_sample = [];
       // Mocking the response returned by $.ajax, used in StudentTable fetchData
       fetch.mockReset();
@@ -260,7 +260,9 @@ describe("For the StudentTable's display of students", () => {
           counts: {all: 0, active: 0, inactive: 0},
         }),
       });
-      render(<StudentTable selection={[]} course_id={1} />);
+      await act(async () => {
+        render(<StudentTable selection={[]} course_id={1} />);
+      });
     });
 
     it("No rows found is shown", async () => {
@@ -329,12 +331,12 @@ describe("For each StudentTable's loading status", () => {
     jest.restoreAllMocks();
   });
 
-  describe("StudentTable Spinner", () => {
-    it("shows loading spinner when data is being fetched", async () => {
+  it("shows loading spinner when data is being fetched", async () => {
+    await act(async () => {
       render(<StudentTable selection={["c5anthei"]} course_id={1} />);
-
-      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
-      expect(spinner).toBeInTheDocument();
     });
+
+    const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+    expect(spinner).toBeInTheDocument();
   });
 });

@@ -19,6 +19,7 @@ export function customLoadingProp(props) {
           alignItems: "center",
           height: "50px",
         }}
+        data-testid="loading-spinner"
       >
         <Grid
           visible={true}
