@@ -29,11 +29,13 @@
 - Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
 - Added test metadata examples to seed data for R autotesting (#7564)
 - Refactored the method of loading `javascripts/Results/keybinding.js` in `submission_selector.jsx` (#7566)
+- Moved QR scanning to external python package markus_exam_matcher (#7567)
 - Updated the instructor table to use `@tanstack/react-table` v8 (#7589)
 - Refactor `DropDownMenu` class to a new React component (#7592)
 - Updated the tag table and "one time only annotations" table to use `@tanstack/react-table` v8 (#7596)
 - Updated Python autotest script file to include example of using `pytest.mark` to customize test marks (#7597)
 - Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
+- Updated `dependabot.yml` to add React dependency group and increase, remove old webpack ignored versions, and remove open PR limits (#7627)
 
 ## [v2.7.1]
 

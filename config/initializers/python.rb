@@ -36,7 +36,6 @@ Rails.application.config.after_initialize do
 
       jupyter_requirements = process_requirements(Rails.root.join('requirements-jupyter.txt'))
       scanner_requirements = process_requirements(Rails.root.join('requirements-scanner.txt'))
-      qr_requirements = process_requirements(Rails.root.join('requirements-qr.txt'))
 
       if (jupyter_requirements - installed).empty?
         Rails.application.config.nbconvert_enabled = true
@@ -45,18 +44,12 @@ Rails.application.config.after_initialize do
              'Jupyter notebook rendering will be disabled. ' \
              "To enable notebook rendering run: #{pip} install -r #{Rails.root.join('requirements-jupyter.txt')}"
       end
-      unless (qr_requirements - installed).empty?
-        warn 'MARKUS WARNING: not all packages required to process scanned exams ' \
-             'are installed. Exam scanning will not be enabled. ' \
-             'To enable exam scanning run: ' \
-             "#{pip} install -r #{Rails.root.join('requirements-qr.txt')}"
-      end
       if (scanner_requirements - installed).empty?
         Rails.application.config.scanner_enabled = true
       else
-        warn 'MARKUS WARNING: not all packages required to automatically match students for scanned exams ' \
-             'are installed. Automatic student matching will be disabled. ' \
-             'To enable automatic student matching run: ' \
+        warn 'MARKUS WARNING: not all packages required to process scanned exams and automatically match students ' \
+             'for scanned exams are installed. Exam scanning will not be enabled and automatic student matching will ' \
+             'be disabled. To enable exam scanning and automatic student matching run: ' \
              "#{pip} install -r #{Rails.root.join('requirements-scanner.txt')}"
       end
     else
