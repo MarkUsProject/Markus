@@ -4,9 +4,8 @@ module SummaryTestResultsHelper
       def fetch(test_groups:, latest:, student_run:, instructor_run:)
         query = base_query(latest:)
 
-        query = query.student_run if student_run
-        query = query.instructor_run if instructor_run
-        query = query.unscoped if instructor_run && student_run
+        query = query.student_run if student_run && !instructor_run
+        query = query.instructor_run if !student_run && instructor_run
 
         test_results = fetch_with_query(test_groups:, query:)
 

@@ -288,6 +288,13 @@ class AssignmentsController < ApplicationController
         data = test_results.as_json
 
         if latest
+          send_data(
+            data,
+            type: "application/json",
+            disposition: 'attachment',
+            filename: "#{@assignment.short_identifier}_test_results.json"
+          )
+        else
           zip_path = "tmp/#{@assignment.short_identifier}_test_results.zip"
           Zip::File.open(zip_path, create: true) do |zip_file|
             zip_file.get_output_stream('test_results.json') do |f|
@@ -297,15 +304,8 @@ class AssignmentsController < ApplicationController
 
           send_file(
             zip_path,
-            disposition: 'inline',
+            disposition: 'attachment',
             filename: "#{@assignment.short_identifier}_test_results.zip"
-          )
-        else
-          send_data(
-            data,
-            type: "text/json",
-            disposition: 'inline',
-            filename: "#{@assignment.short_identifier}_test_results.json"
           )
         end
       end
