@@ -40,13 +40,13 @@ gem 'i18n-js'
 gem 'rails-i18n', '~> 8.0.1'
 
 # Redis
-gem 'redis', '~> 5.4.0'
+gem 'redis', '~> 5.4.1'
 
 # Exam template requirements
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.1.1'
+gem 'rmagick', '~> 6.1.2'
 gem 'rtesseract'
 
 # Ruby miscellany
