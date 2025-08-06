@@ -28,6 +28,8 @@ Depends:
   libyaml-dev,
 # nodejs: for serving/managing javascript
   nodejs (>= 18), nodejs (<< 21),
+# poppler-utils: required for scanned exams
+  poppler-utils,
 # tesseract-ocr: required for scanned exams
   tesseract-ocr (>= 4.1.1-2build2),
 # pandoc: required for Jupyter notebook to PDF conversion
