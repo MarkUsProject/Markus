@@ -39,7 +39,7 @@ export class AssignmentSummaryTable extends React.Component {
       showDownloadTestsModal: false,
       showLtiGradeModal: false,
       lti_deployments: [],
-      filtered: [],
+      columnFilters: [],
       inactiveGroupsCount: 0,
     };
   }
@@ -180,13 +180,13 @@ export class AssignmentSummaryTable extends React.Component {
   };
 
   toggleShowInactiveGroups = showInactiveGroups => {
-    let filtered = this.state.filtered.filter(group => group.id !== "inactive");
+    let columnFilters = this.state.columnFilters.filter(group => group.id !== "inactive");
 
     if (!showInactiveGroups) {
-      filtered.push({id: "inactive", value: false});
+      columnFilters.push({id: "inactive", value: false});
     }
 
-    this.setState({filtered});
+    this.setState({columnFilters});
   };
 
   memberDisplay = (group_name, members) => {
@@ -354,6 +354,7 @@ export class AssignmentSummaryTable extends React.Component {
           initialState={{
             sorting: [{id: "group_name"}],
           }}
+          columnFilters={this.state.columnFilters}
           getRowCanExpand={() => true}
           renderSubComponent={renderSubComponent}
           loading={this.state.loading}
