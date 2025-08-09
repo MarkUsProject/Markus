@@ -1,6 +1,7 @@
 import {render, screen} from "@testing-library/react";
 
 import {InstructorTable} from "../instructor_table";
+import {TATable} from "../ta_table";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -88,6 +89,25 @@ describe("For the InstructorTable's display of instructors", () => {
 
     it("No rows found is shown", async () => {
       await screen.findByText(I18n.t("instructors.empty_table"));
+    });
+  });
+});
+
+describe("For each InstructorTable's loading status", () => {
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("InstructorTable Spinner", () => {
+    it("shows loading spinner when data is being fetched", async () => {
+      render(<InstructorTable course_id={1} />);
+
+      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      expect(spinner).toBeInTheDocument();
     });
   });
 });
