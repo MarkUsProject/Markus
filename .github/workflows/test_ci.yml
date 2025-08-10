@@ -123,35 +123,6 @@ jobs:
   test_jest:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-22.04
-    services:
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: markus_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-          --entrypoint redis-server
-    env:
-      BUNDLE_WITHOUT: development:production:console:unicorn
-      RAILS_ENV: test
-      NODE_ENV: test
-      RSPEC_RENDER_VIEWS: true
     permissions:
       contents: read
     steps:
@@ -164,24 +135,6 @@ jobs:
           cache: npm
       - name: Install npm packages
         run: npm ci
-      - name: Set up ruby and cache gems
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ruby-3.3
-          bundler-cache: true
-      - name: Configure server
-        run: |
-          sudo rm -f /etc/localtime
-          sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
-          sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
-          cp config/database.yml.ci config/database.yml
-      - name: Set up database
-        run: bundle exec rails db:migrate
-      - name: Build assets
-        run: |
-          bundle exec rake javascript:build
-          bundle exec rake css:build
-
       - name: Run jest tests
         run: npm run test-cov
       - name: Coveralls Parallel (jest)
