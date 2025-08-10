@@ -154,6 +154,9 @@ jobs:
           cp config/database.yml.ci config/database.yml
       - name: Export i18n translations
         run: bundle exec rake i18n:js:export
+      - name: Build assets
+        run: |
+          bundle exec rake javascript:build
       - name: Set up node and cache packages
         uses: actions/setup-node@v4
         with:
