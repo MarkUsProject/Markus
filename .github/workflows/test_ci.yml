@@ -37,7 +37,6 @@ jobs:
     env:
       BUNDLE_WITHOUT: development:production:console:unicorn
       RAILS_ENV: test
-      NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
     permissions:
       contents: read
@@ -125,6 +124,9 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
+    env:
+      RAILS_ENV: test
+      NODE_ENV: test
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
