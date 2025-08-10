@@ -133,6 +133,12 @@ jobs:
         with:
           ruby-version: ruby-3.3
           bundler-cache: true
+      - name: Configure server
+        run: |
+          sudo rm -f /etc/localtime
+          sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+          sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
+          cp config/database.yml.ci config/database.yml
       - name: Export i18n translations
         run: bundle exec rake i18n:js:export
       - name: Set up node and cache packages
