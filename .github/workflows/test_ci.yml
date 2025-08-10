@@ -128,6 +128,13 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - name: Set up ruby and cache gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.3
+          bundler-cache: true
+      - name: Export i18n translations
+        run: bundle exec rake i18n:js:export
       - name: Set up node and cache packages
         uses: actions/setup-node@v4
         with:
