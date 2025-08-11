@@ -19,6 +19,7 @@
 
 ### 🔧 Internal changes
 
+- Updated `test_ci.yml`, making GitHub Actions run rspec and jest tests in parallel. (#7634)
 - Remove `activerecord-session_store` gem (#7517)
 - Upgrade to Rails 8 (#7504)
 - Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
