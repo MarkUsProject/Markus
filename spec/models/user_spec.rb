@@ -189,11 +189,11 @@ describe User do
   end
 
   context 'get orphaned users' do
-    let!(:course) { create(:course) }
     let!(:admin) { create(:admin_user) }
     let!(:end_user) { create(:end_user) }
     let!(:autotest_user) { create(:autotest_user) }
-    let!(:student) { create(:student, course: course) }
+    let!(:student_role) { create(:student) }
+    let!(:admin_role) { create(:admin_role) }
 
     it 'should return orphaned user of type AdminUser' do
       expect(AdminUser.get_orphaned_users).to contain_exactly(admin)
@@ -208,7 +208,11 @@ describe User do
     end
 
     it 'should not include student who is in a course as an orphaned user' do
-      expect(User.get_orphaned_users).not_to include(student)
+      expect(EndUser.get_orphaned_users).not_to include(student_role.user)
+    end
+
+    it 'should not include admin who is in a course as an orphaned user' do
+      expect(AdminUser.get_orphaned_users).not_to include(admin_role.user)
     end
   end
 end
