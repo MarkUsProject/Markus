@@ -1,6 +1,6 @@
 <%= form_for(@key_pair) do |f| %>
   <div class="field">
-    <%= f.label t('key_pairs.file') %><br />
+    <%= f.label t('key_pairs.file') %><br>
     <%= f.file_field :file, {accept: '.pub'} %>
     <p><strong><%= t('key_pairs.or') %></strong></p>
     <%= f.label t('key_pairs.copy_paste_key') %>

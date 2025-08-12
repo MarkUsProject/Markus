@@ -11,6 +11,7 @@ export class AssignmentChart extends React.Component {
     this.state = {
       summary: {
         average: null,
+        average_annotations: null,
         median: null,
         num_submissions_collected: null,
         num_submissions_graded: null,
@@ -187,6 +188,28 @@ export class AssignmentChart extends React.Component {
         );
       }
 
+      let annotation_summary = (
+        <div className="distribution-graph">
+          <h3>{I18n.t("assignments.annotation_summary")}</h3>
+          <p>
+            {I18n.t("assignments.average_annotations", {
+              average_annotations: this.state.summary.average_annotations || 0,
+            })}
+          </p>
+          <p>
+            {I18n.t("assignments.average_annotations_detail_descriptor")}{" "}
+            <a
+              href={Routes.course_assignment_annotation_categories_path(
+                this.props.course_id,
+                this.props.assessment_id
+              )}
+            >
+              {I18n.t("activerecord.models.annotation.other")}
+            </a>
+          </p>
+        </div>
+      );
+
       return (
         <React.Fragment>
           <h2>
@@ -227,6 +250,7 @@ export class AssignmentChart extends React.Component {
           />
           {criteria_graph}
           {ta_grade_distribution_chart}
+          {annotation_summary}
         </React.Fragment>
       );
     }

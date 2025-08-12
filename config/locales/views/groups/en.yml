@@ -7,6 +7,7 @@ en:
     assign_over_limit: You have assigned more than the maximum number of students to group %{group}.
     assigned_students: Assigned
     assignment_to_use: Which assignments groups would you like to use?
+    auto_match: Auto-match
     clone_warning:
       could_not_find_source: Could not find source assignment for cloning groups.
       could_not_find_target: Could not find target assignment for cloning groups.
@@ -85,7 +86,7 @@ en:
       not_allowed_to_delete_group: If you would like to remove this group, you must contact your instructor.
       not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
       section_groups_only: You can only form a group with students in your section.
-      students_work_alone: Students work individually.
+      students_work_alone: You must complete this assignment individually.
       url_repository: Repository URL
       work_alone: Work alone
       working_alone: You have indicated you are working individually on this assignment. If you change your mind and want to create or join a group, first delete your group using the button below.

@@ -31,13 +31,13 @@
             <span class='info'>(<%= section.students.count %>)</span>
           </td>
           <td>
-            <%= button_to t('delete'),
-                          { action: 'destroy',
-                            id: section.id },
-                          data: { confirm: t('.destroy_confirm') },
-                          method: 'delete',
-                          disabled: !section.students.empty?,
-                          class: 'inline-button' %>
+            <%= button_to({ action: 'destroy', id: section.id },
+                          { data: { confirm: t('.destroy_confirm') },
+                            method: 'delete',
+                            disabled: !section.students.empty?,
+                            class: 'inline-button' }) do %>
+              <i class="fa fa-trash-can" title=I18n.t("delete") aria-hidden="true"></i>
+            <% end %>
           </td>
         </tr>
       <% end %>

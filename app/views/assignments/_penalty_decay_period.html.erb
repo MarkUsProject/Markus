@@ -1,11 +1,10 @@
-<% # Template for Penalty Periods - uses Prototypes Template class
-   # #{hours} - The number of hours for which to deduct credits.
-   # #{interval} - The number of hours between decay periods.
-   # #{deduction} - The default number of decay period credits to deduct.
-   # #{period_key} - The unique key that represents this Period.  This helps to
-   #  differentiate it on submission, and connects the hours and deduction inputs
-   #  with a common value
-%>
+<%# Template for Penalty Periods - uses Prototypes Template class
+    #{hours} - The number of hours for which to deduct credits.
+    #{interval} - The number of hours between decay periods.
+    #{deduction} - The default number of decay period credits to deduct.
+    #{period_key} - The unique key that represents this Period.  This helps to
+     differentiate it on submission, and connects the hours and deduction inputs
+     with a common value %>
 
 <tr class='period'>
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>

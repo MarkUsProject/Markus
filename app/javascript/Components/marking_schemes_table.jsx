@@ -2,6 +2,8 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 
 import ReactTable from "react-table";
+import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class MarkingSchemeTable extends React.Component {
   constructor() {
@@ -51,12 +53,22 @@ class MarkingSchemeTable extends React.Component {
       Header: I18n.t("actions"),
       Cell: ({original}) => (
         <span>
-          <a href={original.edit_link} data-remote="true">
-            {I18n.t("edit")}
+          <a
+            href={original.edit_link}
+            data-remote="true"
+            aria-label={I18n.t("edit")}
+            title={I18n.t("edit")}
+          >
+            <FontAwesomeIcon icon={faPencil} />
           </a>
           &nbsp;|&nbsp;
-          <a href={original.delete_link} data-method="delete">
-            {I18n.t("delete")}
+          <a
+            href={original.delete_link}
+            data-method="delete"
+            aria-label={I18n.t("delete")}
+            title={I18n.t("delete")}
+          >
+            <FontAwesomeIcon icon={faTrashCan} />
           </a>
         </span>
       ),

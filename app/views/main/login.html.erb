@@ -39,6 +39,7 @@
                            nil,
                            placeholder: User.human_attribute_name(:user_name),
                            'aria-label': User.human_attribute_name(:user_name),
+                           autocomplete: 'off',
                            autocorrect: 'off',
                            autocapitalize: 'off',
                            autofocus: user_login == '',
@@ -60,11 +61,11 @@
   <% end %>
     <% if Settings.remote_auth_login_url %>
       <div class="login-selector">
-        <a
-          class="button"
-          href="<%= login_remote_auth_main_index_path %>"
-        ><%= t('main.login_with',
-               name: Settings.remote_auth_login_name || t('main.external_authentication_default_name') ) %></a>
+        <a class="button"
+           href="<%= login_remote_auth_main_index_path %>">
+          <%= t('main.login_with',
+               name: Settings.remote_auth_login_name || t('main.external_authentication_default_name') ) %>
+        </a>
       </div>
     <% end %>
   </div>

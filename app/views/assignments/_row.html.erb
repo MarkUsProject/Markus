@@ -9,7 +9,7 @@
     <%= render partial: 'assignments/assignment_date',
                locals: { assignment: assignment } %>
     <% if grace_credits_used > 0 %>
-      <span><%= t('assignments.grace_credits_used_html', grace_credits_used: grace_credits_used)%></span>
+      <span><%= t('assignments.grace_credits_used_html', grace_credits_used: grace_credits_used) %></span>
     <% end %>
   </td>
   <% unless upcoming %>

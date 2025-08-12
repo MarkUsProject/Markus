@@ -17,8 +17,7 @@
       <% duration = assignment.duration + (grouping&.extension&.time_delta || 0)
          parts = AssignmentProperties.duration_parts(duration)
          duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
-                            "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ')
-      %>
+                            "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ') %>
       <% if grouping&.extension.nil? %>
         <%= I18n.t('assignments.timed.before_start_instructions', duration_string: duration_string) %>
       <% else %>

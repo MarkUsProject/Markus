@@ -587,6 +587,21 @@ class GroupsController < ApplicationController
     redirect_to course_assignment_path(current_course, assignment)
   end
 
+  def auto_match
+    assignment = Assignment.find(params[:assignment_id])
+    grouping_ids = params[:groupings]
+    exam_template_id = params[:exam_template_id]
+    groupings = assignment.groupings.find(grouping_ids)
+    exam_template = assignment.exam_templates.find(exam_template_id)
+
+    @current_job = AutoMatchJob.perform_later groupings, exam_template
+    session[:job_id] = @current_job.job_id
+
+    respond_to do |format|
+      format.js { render 'shared/_poll_job' }
+    end
+  end
+
   private
 
   # These methods are called through global actions.

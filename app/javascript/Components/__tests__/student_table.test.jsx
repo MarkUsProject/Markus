@@ -264,7 +264,7 @@ describe("For the StudentTable's display of students", () => {
     });
 
     it("No rows found is shown", async () => {
-      await screen.findByText("No rows found");
+      await screen.findByText(I18n.t("students.empty_table"));
     });
   });
 
@@ -302,7 +302,7 @@ describe("For the StudentTable's display of students", () => {
 
       await screen.findByText("testtest");
 
-      fireEvent.click(screen.getByText(I18n.t("remove")));
+      fireEvent.click(screen.getByLabelText(I18n.t("remove")));
 
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(

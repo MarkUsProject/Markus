@@ -232,6 +232,8 @@ class MemoryRepository < Repository::AbstractRepository
     end
   end
 
+  def reload_non_bare_repo; end
+
   private
 
   # Creates a directory as part of the provided revision

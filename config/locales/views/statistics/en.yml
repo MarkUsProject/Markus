@@ -1,6 +1,5 @@
 ---
 en:
-  assignment_summary: 'Summary: %{short_id}'
   assignments_graded: Number of submissions graded
   assignments_submitted: Number of submissions collected
   average: Average

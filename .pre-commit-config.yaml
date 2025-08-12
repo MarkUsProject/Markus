@@ -17,12 +17,12 @@ repos:
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
   -   repo: https://github.com/rbubley/mirrors-prettier
-      rev: v3.5.3
+      rev: v3.6.2
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v16.18.0
+      rev: v16.21.1
       hooks:
         - id: stylelint
           additional_dependencies: [
@@ -39,7 +39,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.75.2
+    rev: v1.77.0
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -58,6 +58,21 @@ repos:
           - rubocop-rspec:3.2.0
           - rubocop-rspec_rails:2.30.0
           - rubocop-capybara:2.21.0
+  - repo: local
+    hooks:
+      - id: erb_lint
+        name: erb_lint
+        entry: erb_lint
+        language: ruby
+        types: ["erb"]
+        args: ["--autocorrect"]
+        exclude: |
+          (?x)^(
+          .*.xml.erb|
+          .*/assign_scans.html.erb
+          )$
+        additional_dependencies:
+          - erb_lint:0.9.0
 
 exclude: vendor
 

@@ -3,7 +3,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-    makeCourseList(document.getElementById('course_list'));
+      makeCourseList(document.getElementById('course_list'));
     });
   <% end %>
 <% end %>

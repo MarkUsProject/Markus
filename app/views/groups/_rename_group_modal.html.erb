@@ -3,10 +3,10 @@
 <%= content_for :modal_content do %>
     <%= form_tag '', remote: true do %>
         <%= label_tag :new_groupname, Group.human_attribute_name(:group_name) %>
-        <%= text_field_tag :new_groupname, '', maxlength: 30 %>
+        <%= text_field_tag :new_groupname, '', maxlength: 30, autocomplete: 'off' %>
         <section class='dialog-actions'>
           <%= submit_tag t('groups.rename_group') %>
-          <input type='reset' value='<%= t(:cancel) %>'/>
+          <input type='reset' value='<%= t(:cancel) %>'>
         </section>
     <% end %>
 <% end %>

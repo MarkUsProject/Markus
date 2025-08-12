@@ -1,6 +1,3 @@
-// UI LIBRARIES
-//= require DropDownMenu/DropDownMenu
-
 // Source code highlighting
 //= require Annotations/globals
 //= require Annotations/annotation_manager
@@ -16,5 +13,3 @@
 // Page-specific Javascript
 //= require Grader/marking
 //= require panes
-//= require Results/context_menu
-//= require Results/keybinding

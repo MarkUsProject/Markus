@@ -1,10 +1,9 @@
-<% # Template for Grace Day Periods
-   # #{hours} - The default number of hours set on this period
-   # #{deduction} - The default number of grace period credits to deduct
-   # #{period_key} - The unique key that represents this Period.  This helps to
-   #  differentiate it on submission, and connects the hours and deduction inputs
-   #  with a common value
-%>
+<%# Template for Grace Day Periods
+    #{hours} - The default number of hours set on this period
+    #{deduction} - The default number of grace period credits to deduct
+    #{period_key} - The unique key that represents this Period.  This helps to
+     differentiate it on submission, and connects the hours and deduction inputs
+     with a common value %>
 <tr class='period'>
 
   <%= pf.fields_for :periods, grace_period do |f| %>
@@ -13,7 +12,7 @@
                          min: 0.001,
                          step: :any,
                          required: true,
-                         class: 'PeriodDeltaChain_Hours grace-period-hours'%>
+                         class: 'PeriodDeltaChain_Hours grace-period-hours' %>
       <%= t('submission_rules.hours') %>
     </td>
     <td>

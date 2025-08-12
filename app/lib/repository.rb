@@ -177,6 +177,12 @@ module Repository
       raise NotImplementedError
     end
 
+    # This function allows a cached value of non_bare_repo to be cleared.
+    # Currently only implemented in GitRepository.
+    def reload_non_bare_repo
+      raise NotImplementedError
+    end
+
     # Updates permissions file unless it is being called from within a
     # block passed to self.update_permissions_after or if it does not
     # read the most up to date data (using self.get_all_permissions)

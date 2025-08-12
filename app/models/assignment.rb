@@ -369,7 +369,8 @@ class Assignment < Assessment
 
     {
       students: students.values,
-      groups: groupings
+      groups: groupings,
+      exam_templates: assignment.exam_templates
     }
   end
 
@@ -813,7 +814,7 @@ class Assignment < Assessment
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
-    criteria.count > 0 ? criteria.last.position + 1 : 1
+    criteria.exists? ? criteria.last.position + 1 : 1
   end
 
   # Returns all the submissions that have not been graded (completed).
@@ -826,9 +827,11 @@ class Assignment < Assessment
     assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
-  def get_num_assigned(ta_id = nil)
+  def get_num_assigned(ta_id = nil, bulk: false)
     if ta_id.nil?
       groupings.size
+    elsif bulk
+      cache_ta_results.dig(ta_id, :total_results)&.size || 0
     else
       ta_memberships.where(role_id: ta_id).size
     end
@@ -850,7 +853,58 @@ class Assignment < Assessment
              .count(&:is_valid?)
   end
 
-  def get_num_marked(ta_id = nil)
+  def marked_result_ids_for(ta_id)
+    cache_ta_results.dig(ta_id, :marked_result_ids) || []
+  end
+
+  def cache_ta_results
+    return @cache_ta_results if defined? @cache_ta_results
+
+    data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
+    # Group results by TA ID
+    grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
+    # map ta_ids to criteria_ids
+    ta_to_criteria = self.criterion_ta_associations
+                         .pluck([:ta_id, :criterion_id])
+                         .group_by { |ta_id, _| ta_id }
+                         .transform_values { |pairs| pairs.map { |_, criterion_id| criterion_id } }
+
+    @cache_ta_results = grouped_data.map do |ta_id, results|
+      total_results = results.map { |_, result_id, _| result_id }
+
+      if self.assign_graders_to_criteria
+        # Get the list of criteria IDs assigned to this TA
+        assigned_criteria_ids = ta_to_criteria[ta_id] || []
+        criteria_count = assigned_criteria_ids.size
+
+        if criteria_count == 0
+          # If the TA has no assigned criteria, fallback to using marking_state to determine marked results
+          complete_results = results.select do |_, _, marking_state|
+            marking_state == Result::MARKING_STATES[:complete]
+          end
+          marked_result_ids = complete_results.map { |_, result_id, _| result_id }
+        else
+          # Count results where all assigned criteria have been marked
+          marked_result_ids = Result.joins(:marks)
+                                    .where(id: total_results, marks: { criterion_id: assigned_criteria_ids })
+                                    .where.not(marks: { mark: nil })
+                                    .group('results.id')
+                                    .having('count(marks.id) = ?', criteria_count)
+                                    .pluck('results.id')
+        end
+      else
+        # Grading not by criterion: count only completed results
+        marked_result_ids = results.select { |_, _, marking_state| marking_state == Result::MARKING_STATES[:complete] }
+                                   .map { |_, result_id, _| result_id }
+      end
+      [ta_id, { total_results: results, marked_result_ids: marked_result_ids }]
+    end.to_h
+  end
+
+  def get_num_marked(ta_id = nil, bulk: false)
+    if bulk
+      return cache_ta_results.dig(ta_id, :marked_result_ids)&.size || 0
+    end
     if ta_id.nil?
       self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).count
     elsif is_criteria_mark?(ta_id)
@@ -917,7 +971,7 @@ class Assignment < Assessment
   end
 
   def has_a_collected_submission?
-    submissions.where(submission_version_used: true).count > 0
+    submissions.exists?(submission_version_used: true)
   end
 
   # Returns the groupings of this assignment that have no associated section

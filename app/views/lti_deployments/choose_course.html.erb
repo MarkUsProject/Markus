@@ -18,10 +18,10 @@
     <div id="no-courses-available"><h3><%= t('lti.no_courses') %></h3></div>
   <% else %>
     <div id="lti-course-info">
-      <h3><%=t('lti.course_select_instructions') %></h3>
+      <h3><%= t('lti.course_select_instructions') %></h3>
     </div>
     <div class="lti-course-selector">
-      <a class="button" id="lti-selector"><%=t('lti.select_course', course_name: @lti_deployment.lms_course_name) %></a>
+      <a class="button" id="lti-selector"><%= t('lti.select_course', course_name: @lti_deployment.lms_course_name) %></a>
     </div>
     <div id="lti-course-table" class="no-display">
     <%= form_with(local:true) do |f| %>

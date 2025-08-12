@@ -426,6 +426,12 @@ class GitRepository < Repository::AbstractRepository
     end
   end
 
+  # This function allows a cached value of non_bare_repo to be cleared.
+  def reload_non_bare_repo
+    @non_bare_repo = nil
+    non_bare_repo
+  end
+
   ####################################################################
   ##  Private method definitions
   ####################################################################

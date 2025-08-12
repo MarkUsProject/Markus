@@ -58,7 +58,7 @@
         <%= annotation_text[:last_editor] %>
       <% end %>
     </div>
-    <% unless annotation_text[:deduction].nil?  %>
+    <% unless annotation_text[:deduction].nil? %>
       <div class='annotation-text-details'>
         <%= AnnotationText.human_attribute_name(:deduction) %>
         <%= annotation_text[:deduction] %>
