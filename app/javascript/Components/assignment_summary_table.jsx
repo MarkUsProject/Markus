@@ -39,7 +39,7 @@ export class AssignmentSummaryTable extends React.Component {
       showDownloadTestsModal: false,
       showLtiGradeModal: false,
       lti_deployments: [],
-      columnFilters: [],
+      columnFilters: [{id: "inactive", value: false}],
       inactiveGroupsCount: 0,
     };
   }
@@ -232,8 +232,6 @@ export class AssignmentSummaryTable extends React.Component {
             group.inactive = false;
           }
         });
-
-        this.toggleShowInactiveGroups(false);
 
         const markingStates = getMarkingStates(res.data);
         this.setState({
