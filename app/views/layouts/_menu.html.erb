@@ -21,7 +21,7 @@
                 controller.controller_name == 'annotation_categories' ||
                 controller.controller_name == 'grade_entry_forms' ||
                 controller.controller_name == 'automated_tests' ||
-                controller.controller_name == 'exam_templates'%>
+                controller.controller_name == 'exam_templates' %>
             class='active'
           <% end %>>
         <%= link_to Assignment.model_name.human.pluralize, course_assignments_path(@current_course) %>
@@ -50,7 +50,7 @@
         <%= link_to t('menu.home'), course_assignments_path(@current_course) %>
       </li>
       <% unless @current_role.instructor? || @current_role.ta? %>
-        <li <% if controller.controller_name == 'course_summaries'%>
+        <li <% if controller.controller_name == 'course_summaries' %>
             class='active'
             <% end %>>
           <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>

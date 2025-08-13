@@ -5,16 +5,14 @@
           <% if @assignment.nil? && @grade_entry_form.nil? %>
             <%= t('menu.choose') %>
           <% elsif !@assignment.nil? %>
-            <% # Display the assignment's short identifier %>
             <%= @assignment.is_peer_review? ?
                   @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
                   @assignment.short_identifier %>
           <% elsif !@grade_entry_form.nil? %>
-            <% # Display the grade entry form's short identifier %>
             <%= @grade_entry_form.short_identifier %>
           <% end %>
           <ul>
-            <%= render partial: 'shared/assignments_dropdown_menu'%>
+            <%= render partial: 'shared/assignments_dropdown_menu' %>
           </ul>
         </span>
     </li>
@@ -78,7 +76,7 @@
       <% end %>
 
       <% if @assignment.has_peer_review_assignment? && allowed_to?(:see_hidden?, @assignment.pr_assignment) %>
-        <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
+        <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review' %>'>
           <%= link_to PeerReview.model_name.human.pluralize,
                       controller: 'assignments',
                       action: 'peer_review',

@@ -1,13 +1,7 @@
 import React from "react";
+import {DropDownMenu} from "./dropdown_menu";
 
 export class AnnotationManager extends React.Component {
-  componentDidUpdate() {
-    this.props.categories.forEach(cat => {
-      new DropDownMenu($(`#annotation_category_${cat.id}`), $(`#annotation_text_list_${cat.id}`));
-      MathJax.typeset([`#annotation_text_list_${cat.id}`]);
-    });
-  }
-
   render() {
     return (
       <React.Fragment>
@@ -18,38 +12,12 @@ export class AnnotationManager extends React.Component {
         </button>
         <ul className="tags" key="annotation_categories">
           {this.props.categories.map(cat => (
-            <li
-              className="annotation_category"
-              id={`annotation_category_${cat.id}`}
+            <DropDownMenu
               key={cat.id}
-              onMouseDown={e => e.preventDefault()}
-            >
-              {cat.annotation_category_name}
-              <div id={`annotation_text_list_${cat.id}`}>
-                <ul>
-                  {cat.texts.map(text => (
-                    <li
-                      key={`annotation_text_${text.id}`}
-                      id={`annotation_text_${text.id}`}
-                      onClick={e => {
-                        e.preventDefault();
-                        this.props.addExistingAnnotation(text.id);
-                      }}
-                      onMouseDown={e => e.preventDefault()}
-                      title={text.content}
-                    >
-                      <span
-                        className={"text-content"}
-                        dangerouslySetInnerHTML={{__html: safe_marked(text.content).slice(0, 70)}}
-                      />
-                      <span className={"red-text"}>
-                        {!text.deduction ? "" : "-" + text.deduction}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </li>
+              header={cat.annotation_category_name}
+              items={cat.texts}
+              onItemClick={this.props.addExistingAnnotation}
+            />
           ))}
         </ul>
       </React.Fragment>

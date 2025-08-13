@@ -1305,6 +1305,7 @@ describe AssignmentsController do
       it 'should contain the right keys' do
         keys = response.parsed_body['summary'].keys
         expect(keys).to contain_exactly('name',
+                                        'average_annotations',
                                         'average',
                                         'median',
                                         'max_mark',
@@ -1325,6 +1326,7 @@ describe AssignmentsController do
         summary = response.parsed_body['summary']
         assignment_remark_requests = assignment.groupings.joins(current_submission_used: :submitted_remark)
         expected = { name: "#{assignment.short_identifier}: #{assignment.description}",
+                     average_annotations: assignment.average_annotations,
                      average: assignment.results_average(points: true) || 0,
                      median: assignment.results_median(points: true) || 0,
                      max_mark: assignment.max_mark || 0,
@@ -1428,7 +1430,7 @@ describe AssignmentsController do
         expected = { name: criterion.name,
                      average: criterion.average,
                      median: criterion.median || 0,
-                     max_mark: criterion.max_mark.to_f || 0,
+                     max_mark: criterion.max_mark.to_f,
                      standard_deviation: criterion.standard_deviation || 0,
                      position: criterion.position,
                      num_zeros: criterion.grades_array.count(&:zero?) }
@@ -2177,7 +2179,7 @@ describe AssignmentsController do
         uploaded_criterion = uploaded_assignment.criteria.find_by(name: criteria.name)
         uploaded_test_groups = uploaded_assignment.test_groups
         received_automated_test_data = {
-          uploaded_a_test_group: uploaded_test_groups.count == 1,
+          uploaded_a_test_group: uploaded_test_groups.one?,
           spec_file: autotest_settings_for(uploaded_assignment),
           autotest_files: uploaded_assignment.autotest_files.to_set
         }

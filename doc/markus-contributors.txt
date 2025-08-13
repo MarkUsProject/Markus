@@ -77,6 +77,7 @@ Evan Browning
 Farah Juma
 Fernando Garces
 François Neber
+Freya Zhang
 Gabriel Anover
 Gabriel Roy-Lortie
 Gaëtan Girin
@@ -191,6 +192,7 @@ Shion Kashimura
 Simon Lavigne-Giroux
 Sohee Goo
 Stephen Tsimicalis
+Steven Lin
 Su Zhang
 Tanveer Gill
 Tara Clark

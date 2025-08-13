@@ -229,3 +229,7 @@ export function getMarkingStates(data) {
   });
   return markingStates;
 }
+
+export function customNoDataComponent({children}) {
+  return <p className="rt-no-data">{children}</p>;
+}

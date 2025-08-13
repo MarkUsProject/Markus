@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 
 class RawStudentTable extends React.Component {
   constructor() {
@@ -198,14 +200,23 @@ class RawStudentTable extends React.Component {
               Cell: data => (
                 <>
                   <span>
-                    <a href={Routes.edit_course_student_path(this.props.course_id, data.value)}>
-                      {I18n.t("edit")}
+                    <a
+                      href={Routes.edit_course_student_path(this.props.course_id, data.value)}
+                      aria-label={I18n.t("edit")}
+                      title={I18n.t("edit")}
+                    >
+                      <FontAwesomeIcon icon={faPencil} />
                     </a>
                   </span>
                   &nbsp;|&nbsp;
                   <span>
-                    <a href="#" onClick={() => this.removeStudent(data.value)}>
-                      {I18n.t("remove")}
+                    <a
+                      href="#"
+                      onClick={() => this.removeStudent(data.value)}
+                      aria-label={I18n.t("remove")}
+                      title={I18n.t("remove")}
+                    >
+                      <FontAwesomeIcon icon={faTrashCan} />
                     </a>
                   </span>
                 </>
@@ -221,6 +232,7 @@ class RawStudentTable extends React.Component {
           ]}
           filterable
           loading={loading}
+          noDataText={I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>
@@ -306,6 +318,7 @@ class StudentsActionBox extends React.Component {
     );
   };
 }
+
 StudentsActionBox.propTypes = {
   onSubmit: PropTypes.func,
   disabled: PropTypes.bool,
@@ -321,8 +334,10 @@ RawStudentTable.propTypes = {
 };
 
 let StudentTable = withSelection(RawStudentTable);
+
 function makeStudentTable(elem, props) {
   const root = createRoot(elem);
   root.render(<StudentTable {...props} />);
 }
+
 export {StudentTable, StudentsActionBox, makeStudentTable};

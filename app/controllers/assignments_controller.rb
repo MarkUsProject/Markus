@@ -349,6 +349,7 @@ class AssignmentsController < ApplicationController
     summary = {
       name: "#{assignment.short_identifier}: #{assignment.description}",
       average: assignment.results_average(points: true) || 0,
+      average_annotations: assignment.average_annotations,
       median: assignment.results_median(points: true) || 0,
       max_mark: assignment.max_mark || 0,
       standard_deviation: assignment.results_standard_deviation || 0,
@@ -365,20 +366,21 @@ class AssignmentsController < ApplicationController
       num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete).size
     }
     intervals = 20
-    assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    assignment_labels = (0..(intervals - 1)).map { |i| "#{5 * i}-#{5 * i + 5}" }
     assignment_datasets = [
       {
         data: assignment.grade_distribution_array
       }
     ]
     grade_distribution = { labels: assignment_labels, datasets: assignment_datasets }
-    ta_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    ta_labels = (0..(intervals - 1)).map { |i| "#{5 * i}-#{5 * i + 5}" }
     ta_datasets = assignment.tas.map do |ta|
+      grade_distribution_arr = ta.grade_distribution_array(assignment, intervals)
       num_marked_label = t('submissions.how_many_marked',
-                           num_marked: assignment.get_num_marked(ta.id),
-                           num_assigned: assignment.get_num_assigned(ta.id))
+                           num_marked: assignment.get_num_marked(ta.id, bulk: true),
+                           num_assigned: assignment.get_num_assigned(ta.id, bulk: true))
       { label: "#{ta.display_name} (#{num_marked_label})",
-        data: ta.grade_distribution_array(assignment, intervals) }
+        data: grade_distribution_arr }
     end
     json_data = {
       summary: summary,
@@ -386,7 +388,7 @@ class AssignmentsController < ApplicationController
       ta_data: { labels: ta_labels, datasets: ta_datasets }
     }
     if params[:get_criteria_data] == 'true'
-      criteria_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      criteria_labels = (0..(intervals - 1)).map { |i| "#{5 * i}-#{5 * i + 5}" }
       criteria_datasets = assignment.criteria.map do |criterion|
         { label: criterion.name,
           data: criterion.grade_distribution_array(intervals),
@@ -398,7 +400,7 @@ class AssignmentsController < ApplicationController
           name: criterion.name,
           average: criterion.average || 0,
           median: criterion.median || 0,
-          max_mark: criterion.max_mark.to_f || 0,
+          max_mark: criterion.max_mark.to_f,
           standard_deviation: criterion.standard_deviation || 0,
           position: criterion.position,
           num_zeros: criterion_grades.count(&:zero?)

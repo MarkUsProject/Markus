@@ -33,7 +33,7 @@
 ] %>
 
 <div id='list'>
-  <% # display lines in csv file that has not been successfully processed %>
+  <%# Display lines in csv file that have not been successfully processed %>
   <% if flash[:error] && flash[:error].is_a?(Array) -%>
   <div class='errorExplanation' id='errorExplanation'>
     <p><%= t('students.not_successfully_added_message_1') %></p>
@@ -50,6 +50,6 @@
 </div>
 
 <!-- Modals -->
-<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog' %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog' %>
 <aside class='markus-dialog' id='notes_dialog'></aside>

@@ -184,6 +184,10 @@ describe Api::FeedbackFilesController do
       context 'when trying to create a feedback file larger than the course size limit' do
         let(:file_content) { SecureRandom.alphanumeric(course.max_file_size + 10) }
 
+        before do
+          course.update!(max_file_size: 1000)
+        end
+
         it 'should raise a 413 error' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                   filename: filename, mime_type: 'text/plain',

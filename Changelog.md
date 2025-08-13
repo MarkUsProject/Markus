@@ -1,5 +1,45 @@
 # Changelog
 
+## [v2.8.0]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+- Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)
+- Design improvement of tables when the data is empty. (#7557)
+- Improved Assignment view for students (#7533)
+- Added average annotations section in Assignment Summary (#7559)
+- Maintain font size in grading view (#7525)
+- Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
+- Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
+- Replaced "Edit" and "Delete" action text links with Font Awesome icons across all tables. (#7595)
+- Create User class method to retrieve orphaned users (#7633)
+
+### 🐛 Bug fixes
+- Added host authorization setting for Resque (#7562)
+
+### 🔧 Internal changes
+
+- Updated `test_ci.yml`, making GitHub Actions run rspec and jest tests in parallel. (#7634)
+- Remove `activerecord-session_store` gem (#7517)
+- Upgrade to Rails 8 (#7504)
+- Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
+- Add tests for `#edit` and `#update` when user is trying to change criteria in `CriteriaController` (#7527)
+- Remove the placeholder "..." text under the "Proposed changes" section in `PULL_REQUEST_TEMPLATE.md`. (#7524)
+- Update the checklist in `PULL_REQUEST_TEMPLATE.md` to make the text "list of contributors" a link to the file in the repository. (#7524)
+- Enabled `erb_lint` linter for erb files (#7561)
+- Refactored the loading method of `javascripts/Results/context_menu.js`. (#7563)
+- Added test metadata examples to seed data for R autotesting (#7564)
+- Refactored the method of loading `javascripts/Results/keybinding.js` in `submission_selector.jsx` (#7566)
+- Moved QR scanning to external python package markus_exam_matcher (#7567)
+- Updated the instructor table to use `@tanstack/react-table` v8 (#7589)
+- Refactor `DropDownMenu` class to a new React component (#7592)
+- Updated the tag table and "one time only annotations" table to use `@tanstack/react-table` v8 (#7596)
+- Updated Python autotest script file to include example of using `pytest.mark` to customize test marks (#7597)
+- Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
+- Updated `dependabot.yml` to add React dependency group and increase, remove old webpack ignored versions, and remove open PR limits (#7627)
+- Improved performance of PDF splitting for scanned assessments (#7632)
+
 ## [v2.7.1]
 
 ### 🐛 Bug fixes
@@ -25,6 +65,7 @@
 - Allow creating image annotations from a test run's outputs (#7486)
 - Added an API that collects a single submission (#7494)
 - Enable removal of a student from a course (#7480)
+- Changed the PDF scanning job separate the student matching process into its own job. (#7499)
 
 ### 🐛 Bug fixes
 
@@ -57,6 +98,7 @@
 - Update Python version to 3.13 in seed autotest schemas (#7388)
 - Rename jupyter notebook content functions and files to generalize to html content (#7391)
 - Update to React v18 (#7392)
+- Refactor querying on dashboard graph to query per-assignment rather than per-TA (#7420)
 - Remove unused Javascript files (#7442)
 - Refactor scanned test generation and test splitting from polling to websockets (#7428)
 - Move Docker dependency updates into separate service (#7451)

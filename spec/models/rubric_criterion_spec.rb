@@ -106,7 +106,7 @@ describe RubricCriterion do
         row = ['criterion 5']
         rubric_levels = 5
         # order is name, number, description, mark
-        (0..rubric_levels - 1).each do |i|
+        rubric_levels.times do |i|
           row << "name#{i}"
           # ...containing commas and quotes in the descriptions
           row << "description#{i} with comma (,) and \"\"quotes\"\""

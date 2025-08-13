@@ -187,4 +187,32 @@ describe User do
       expect(admin.admin_courses).to contain_exactly(course1, course2)
     end
   end
+
+  context 'get orphaned users' do
+    let!(:admin) { create(:admin_user) }
+    let!(:end_user) { create(:end_user) }
+    let!(:autotest_user) { create(:autotest_user) }
+    let!(:student_role) { create(:student) }
+    let!(:admin_role) { create(:admin_role) }
+
+    it 'should return orphaned user of type AdminUser' do
+      expect(AdminUser.get_orphaned_users).to contain_exactly(admin)
+    end
+
+    it 'should return orphaned user of type AutotestUser' do
+      expect(AutotestUser.get_orphaned_users).to contain_exactly(autotest_user)
+    end
+
+    it 'should return orphaned user of type EndUser' do
+      expect(EndUser.get_orphaned_users).to contain_exactly(end_user)
+    end
+
+    it 'should not include student who is in a course as an orphaned user' do
+      expect(EndUser.get_orphaned_users).not_to include(student_role.user)
+    end
+
+    it 'should not include admin who is in a course as an orphaned user' do
+      expect(AdminUser.get_orphaned_users).not_to include(admin_role.user)
+    end
+  end
 end

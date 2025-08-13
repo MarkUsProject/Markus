@@ -7,7 +7,7 @@ on:
       - master
 
 jobs:
-  test:
+  test_rspec:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-22.04
     services:
@@ -37,7 +37,6 @@ jobs:
     env:
       BUNDLE_WITHOUT: development:production:console:unicorn
       RAILS_ENV: test
-      NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
     permissions:
       contents: read
@@ -47,7 +46,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr pandoc
+          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr pandoc poppler-utils
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
@@ -72,7 +71,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}-${{ hashFiles('requirements-qr.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Cache playwright's installation of Chromium
@@ -85,7 +84,7 @@ jobs:
       - name: Install python packages and playwright dependencies
         run: |
           python3.10 -m venv venv
-          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt -r requirements-qr.txt
+          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt
           ./venv/bin/playwright install chromium
           ./venv/bin/playwright install-deps chromium
       - name: Configure server
@@ -119,6 +118,52 @@ jobs:
           flag-name: rspec
           parallel: true
           file: coverage/lcov.info
+
+  test_jest:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-22.04
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --entrypoint redis-server
+    permissions:
+      contents: read
+    env:
+      RAILS_ENV: test
+      NODE_ENV: test
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up ruby and cache gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.3
+          bundler-cache: true
+      - name: Configure server
+        run: |
+          sudo rm -f /etc/localtime
+          sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+          sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
+          cp config/database.yml.ci config/database.yml
+      - name: Export i18n translations
+        run: bundle exec rake i18n:js:export
+      - name: Build assets
+        run: |
+          bundle exec rake javascript:build
+      - name: Set up node and cache packages
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install npm packages
+        run: npm ci
       - name: Run jest tests
         run: npm run test-cov
       - name: Coveralls Parallel (jest)
@@ -130,7 +175,7 @@ jobs:
           file: coverage/lcov.info
 
   finish:
-    needs: test
+    needs: [test_rspec, test_jest]
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-22.04
     permissions:

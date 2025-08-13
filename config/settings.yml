@@ -118,3 +118,6 @@ file_storage:
   default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/
 
 rmd_convert_enabled: false
+
+resque:
+  permitted_hosts: ["localhost"]

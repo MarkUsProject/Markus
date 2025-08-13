@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 7.2.2'
+gem 'rails', '~> 8.0.2'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -37,16 +37,16 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 7.0.10'
+gem 'rails-i18n', '~> 8.0.1'
 
 # Redis
-gem 'redis', '~> 5.4.0'
+gem 'redis', '~> 5.4.1'
 
 # Exam template requirements
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.1.1'
+gem 'rmagick', '~> 6.1.2'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -59,7 +59,6 @@ gem 'rugged'
 
 # Rails miscellany
 gem 'activemodel-serializers-xml'
-gem 'activerecord-session_store'
 gem 'config'
 gem 'cookies_eu'
 gem 'dry-validation'  # For settings schema validation
@@ -93,7 +92,7 @@ group :test do
   gem 'rails-controller-testing'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'shoulda-context', '~> 3.0.0.rc1'
-  gem 'shoulda-matchers', '~> 6.0'
+  gem 'shoulda-matchers', '~> 6.5'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'timecop'
@@ -107,7 +106,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'rspec-rails', '~> 7.1.1'
+  gem 'rspec-rails', '~> 8.0.1'
   gem 'selenium-webdriver'
 end
 

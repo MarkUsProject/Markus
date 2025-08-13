@@ -8,7 +8,7 @@
       * Depends on jQuery and jQuery-ui
     * context_menu.scss (..\app\assets\stylesheets\)
    */
-var annotation_context_menu = {
+export var annotation_context_menu = {
   setup: function () {
     var menu_items = {
       check_mark_annotation: {

@@ -30,7 +30,7 @@
     <%= render partial: 'layouts/modals' %>
 
     <section id='content'>
-      <%= render partial: 'layouts/noscript'%>
+      <%= render partial: 'layouts/noscript' %>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
   </div>

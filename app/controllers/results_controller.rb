@@ -422,7 +422,7 @@ class ResultsController < ApplicationController
     unless result_mark.valid?
       # In case the transaction above doesn't do its job, this will clean up any duplicate marks in the database
       marks = result.marks.where(criterion_id: params[:criterion_id])
-      marks.where.not(id: result_mark.id).destroy_all if marks.count > 1
+      marks.where.not(id: result_mark.id).destroy_all if marks.many?
       result_mark.save
     end
 

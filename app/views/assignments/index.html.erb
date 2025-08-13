@@ -14,9 +14,9 @@
   ] %>
 
   <!-- Modals -->
-  <%= render partial: 'assignment_download_modal', layout: 'layouts/modal_dialog'  %>
-  <%= render partial: 'assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
-  <%= render partial: 'cp_assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
+  <%= render partial: 'assignment_download_modal', layout: 'layouts/modal_dialog' %>
+  <%= render partial: 'assignment_upload_modal', layout: 'layouts/modal_dialog' %>
+  <%= render partial: 'cp_assignment_upload_modal', layout: 'layouts/modal_dialog' %>
 
   <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
               new_course_assignment_path(@current_course),

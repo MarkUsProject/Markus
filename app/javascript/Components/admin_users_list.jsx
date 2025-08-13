@@ -2,6 +2,8 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import {selectFilter} from "./Helpers/table_helpers";
+import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class AdminUsersList extends React.Component {
   constructor() {
@@ -94,7 +96,15 @@ class AdminUsersList extends React.Component {
       Header: I18n.t("actions"),
       accessor: "id",
       minWidth: 70,
-      Cell: ({value}) => <a href={Routes.edit_admin_user_path(value)}>{I18n.t("edit")}</a>,
+      Cell: ({value}) => (
+        <a
+          href={Routes.edit_admin_user_path(value)}
+          aria-label={I18n.t("edit")}
+          title={I18n.t("edit")}
+        >
+          <FontAwesomeIcon icon={faPencil} />
+        </a>
+      ),
       sortable: false,
       filterable: false,
     },

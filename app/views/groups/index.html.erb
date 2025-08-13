@@ -4,8 +4,7 @@
   <%= javascript_tag nonce: true do %>
     <% parts = @assignment.duration_parts
        duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
-                          "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ')
-    %>
+                          "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ') %>
     document.addEventListener('DOMContentLoaded', () => {
       window.groupsManager = makeGroupsManager(document.getElementById('groups-manager'),
         {
@@ -42,9 +41,8 @@
 <% end %>
 
 <% content_for :additional_headings do %>
-    <% # Allow cloning groups forward only if its vcs submits are allowed
-       # for this assignment.
-       if @assignment.vcs_submit %>
+    <%# Allow cloning groups forward only if vcs submits are allowed for this assignment. %>
+    <% if @assignment.vcs_submit %>
       <%= link_to t('groups.another_assignment_group'),
                   '#',
                   id: 'assignment-group-use' %>
@@ -63,9 +61,9 @@
 <div id='groups_manager'></div>
 
 <!-- Modals -->
-<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'assignment_group_use_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'create_group_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'rename_group_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog' %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog' %>
+<%= render partial: 'assignment_group_use_modal', layout: 'layouts/modal_dialog' %>
+<%= render partial: 'create_group_modal', layout: 'layouts/modal_dialog' %>
+<%= render partial: 'rename_group_modal', layout: 'layouts/modal_dialog' %>
 <aside class='markus-dialog' id='notes_dialog'></aside>

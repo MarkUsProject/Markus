@@ -1,21 +1,20 @@
-<% # Manage grades page %>
+<%# Manage grades page %>
 <% content_for :title, t('grade_entry_form_summary', short_id: @grade_entry_form.short_identifier) %>
 <% content_for :head do %>
-
   <%= javascript_tag nonce: true do %>
-  document.addEventListener('DOMContentLoaded', () => {
-    makeGradeEntryFormSummary(
-      document.getElementById('react_grades_table'),
-      {
-        course_id: <%= @current_course.id %>,
-        grade_entry_form_id: <%= @grade_entry_form.id %>,
-        show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
-        max_mark: <%= @grade_entry_form.max_mark %>,
-        show_sections: <%= @current_course.sections.exists? %>,
-        can_manage: <%= allowed_to? :manage? %>
-      }
-    );
-  })
+    document.addEventListener('DOMContentLoaded', () => {
+      makeGradeEntryFormSummary(
+        document.getElementById('react_grades_table'),
+        {
+          course_id: <%= @current_course.id %>,
+          grade_entry_form_id: <%= @grade_entry_form.id %>,
+          show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
+          max_mark: <%= @grade_entry_form.max_mark %>,
+          show_sections: <%= @current_course.sections.exists? %>,
+          can_manage: <%= allowed_to? :manage? %>
+        }
+      );
+    })
   <% end %>
 <% end %>
 
@@ -31,5 +30,5 @@
 <div id="react_grades_table"></div>
 
 <!-- Modals -->
-<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog' %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog' %>

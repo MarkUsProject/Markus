@@ -12,6 +12,7 @@ import CreateModifyAnnotationPanel from "../Modals/create_modify_annotation_pane
 import CreateTagModal from "../Modals/create_tag_modal";
 import {pathToNode} from "../Helpers/range_selector";
 import {ResultContext} from "./result_context";
+import {annotation_context_menu} from "./context_menu";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -224,7 +225,7 @@ class Result extends React.Component {
   updateContextMenu = () => {
     if (this.state.released_to_students || this.props.role === "Student") return;
 
-    window.annotation_context_menu.setup(
+    annotation_context_menu.setup(
       Routes.course_annotations_path,
       this.props.course_id,
       this.state.result_id,
@@ -270,7 +271,7 @@ class Result extends React.Component {
       };
     });
 
-    window.annotation_context_menu.set_common_annotations(common_annotations);
+    annotation_context_menu.set_common_annotations(common_annotations);
   };
 
   toggleFullscreen = () => {

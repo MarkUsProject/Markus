@@ -305,6 +305,7 @@ Rails.application.routes.draw do
           delete 'delete_rejected'
           post 'invite_member'
           patch 'disinvite_member'
+          post 'auto_match'
         end
       end
 

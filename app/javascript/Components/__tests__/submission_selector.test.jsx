@@ -5,6 +5,16 @@ import {SubmissionSelector} from "../Result/submission_selector";
 import {ResultContext} from "../Result/result_context";
 import {renderInResultContext} from "./result_context_renderer";
 
+jest.resetModules();
+const mockBind = jest.fn();
+const mockReset = jest.fn();
+jest.doMock("mousetrap", () => ({
+  bind: mockBind,
+  reset: mockReset,
+}));
+
+const {bind_keybindings, unbind_all_keybindings} = require("../Result/keybinding");
+
 let props;
 const INITIAL_FILTER_MODAL_STATE = {
   ascending: true,
@@ -24,7 +34,6 @@ const INITIAL_FILTER_MODAL_STATE = {
   },
   criteria: {},
 };
-
 const basicProps = {
   assignment_max_mark: 100,
   available_tags: [],
@@ -209,5 +218,43 @@ describe("SubmissionSelector", () => {
 
     const button = screen.queryByRole("button", {name: I18n.t("results.set_to_complete")});
     expect(button).toBeDisabled();
+  });
+});
+
+describe("SubmissionSelectorKeybinding", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    unbind_all_keybindings();
+    bind_keybindings();
+  });
+
+  describe("bind keybindings", () => {
+    test.each([
+      ["?"],
+      ["shift+left"],
+      ["shift+right"],
+      ["ctrl+shift+right"],
+      ["shift+up"],
+      ["shift+down"],
+      ["up"],
+      ["down"],
+      ["enter"],
+      ["shift+n"],
+      ["alt+enter"],
+    ])("should expect a function to be binded with %s", argument => {
+      expect(mockBind).toHaveBeenCalledWith(argument, expect.any(Function));
+    });
+
+    it("should have 11 bindings", () => {
+      expect(mockBind).toHaveBeenCalledTimes(11);
+    });
+  });
+
+  describe("reset keybindings", () => {
+    it("should reset all keybindings", () => {
+      unbind_all_keybindings();
+
+      expect(mockReset).toHaveBeenCalled();
+    });
   });
 });

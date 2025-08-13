@@ -30,17 +30,16 @@
       <%= submit_tag t('upload_the', item: t('graders.download.grader_groups')),
                      data: { disable_with: t(:uploading_please_wait) },
                      name: 'groupings',
-                     id: 'upload-groupings'  %>
+                     id: 'upload-groupings' %>
       <br>
       <% if @assignment.assign_graders_to_criteria %>
         <%= submit_tag t('upload_the', item: t('graders.download.grader_criteria')),
                        data: { disable_with: t(:uploading_please_wait) },
                        id: 'upload-criteria',
-                       name: 'criteria'
-        %>
+                       name: 'criteria' %>
         <br>
       <% end %>
-      <input type='reset' value='<%= t(:cancel) %>'/>
+      <input type='reset' value='<%= t(:cancel) %>'>
     </section>
   <% end %>
 <% end %>

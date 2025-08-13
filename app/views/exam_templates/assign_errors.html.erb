@@ -1,7 +1,7 @@
 <%= javascript_tag nonce: true do %>
-<%= render partial: 'exam_templates/assign_errors',
-           formats: [:js],
-           handlers: [:erb] %>
+  <%= render partial: 'exam_templates/assign_errors',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
 
 <% content_for :title do %>
@@ -37,11 +37,13 @@
                       t('exam_templates.assign_errors.copy_number') %>
         <%= number_field_tag :copy_number, nil,
                              autofocus: true,
+                             autocomplete: 'off',
                              min: 1,
                              required: true %>
         <%= label_tag :page_number,
                       t('exam_templates.assign_errors.page_number') %>
         <%= number_field_tag :page_number, nil,
+                             autocomplete: 'off',
                              min: 1,
                              max: @split_pdf_log.exam_template.num_pages,
                              required: true %>

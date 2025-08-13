@@ -55,7 +55,7 @@ class StudentMembership < Membership
   def update_repo_permissions_after_destroy
     return unless grouping.assignment.vcs_submit
     return if [STATUSES[:pending], STATUSES[:rejected]].include?(membership_status)
-    return if grouping.group.assignments.count > 1
+    return if grouping.group.assignments.many?
     Repository.get_class.update_permissions
   end
 

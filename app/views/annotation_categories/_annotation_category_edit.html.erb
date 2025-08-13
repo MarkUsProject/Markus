@@ -6,8 +6,7 @@
                  remote: true do |f| %>
       <%= submit_tag t(:delete),
                      data: { confirm: t('annotation_categories.destroy.warning') },
-                     class: 'delete'
-      %>
+                     class: 'delete' %>
     <% end %>
   </div>
   <h2><%= annotation_category.annotation_category_name %></h2>
