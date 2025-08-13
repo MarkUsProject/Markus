@@ -7,6 +7,7 @@ import {Grid} from "react-loader-spinner";
  */
 
 export function customLoadingProp(props) {
+  console.log(props);
   const {loading, noDataText} = props;
 
   if (loading) {
@@ -35,9 +36,11 @@ export function customLoadingProp(props) {
     );
   }
 
-  if (noDataText === I18n.t("instructors.empty_table")) {
-    return <p className="rt-no-data">{noDataText || "No data available"}</p>;
-  }
+  // if (noDataText) {
+  //   return <p className="rt-no-data">{noDataText}</p>;
+  // }
+
+  return null;
 }
 
 export function defaultSort(a, b) {
@@ -265,12 +268,37 @@ export function getMarkingStates(data) {
   return markingStates;
 }
 
-export function customNoDataComponent({children, props}) {
-  const loading = props?.loading;
-  // I am not sure how to remove the rectangular square when the page is loading
+export function customNoDataComponent({children, loading}) {
+  // export function customNoDataComponent(value) {
+  // console.log("Children", children)
+  // console.log("Value", value)
+  // const { loading } = value;
+  console.log("Loading", loading);
+  // const {loading = props?.loading;
   if (loading) {
     return null;
-  } else {
-    return <p className="rt-no-data">{children}</p>;
   }
+  return <p className="rt-no-data">{children}</p>;
+}
+
+export function customNoDataProps({state}) {
+  // console.log("State", state)
+  return {
+    loading: state.loading,
+    // data: state.data,
+  };
+}
+
+// export function customNoDataText({ props }) {
+export function customNoDataText(props) {
+  // console.log("Value", value)
+  // console.log(props)
+  // const {loading} = props?.loading;
+  // const loading = value?.props?.loading;
+  const {loading} = props;
+  console.log("LoadingText", loading);
+  if (loading) {
+    return "";
+  }
+  return I18n.t("students.empty_table");
 }

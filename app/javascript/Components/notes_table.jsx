@@ -19,6 +19,7 @@ class NotesTable extends React.Component {
   }
 
   fetchData = () => {
+    this.setState({loading: true});
     fetch(Routes.course_notes_path(this.props.course_id, {format: "json"}), {
       headers: {Accept: "application/json"},
     })
@@ -117,6 +118,10 @@ class NotesTable extends React.Component {
         columns={this.columns}
         sortable={false}
         loading={this.state.loading}
+        state={this.state}
+        getNoDataProps={() => ({
+          loading: this.state.loading,
+        })}
       />
     );
   }

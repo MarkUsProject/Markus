@@ -25,6 +25,7 @@ class RawStudentTable extends React.Component {
   }
 
   fetchData = () => {
+    this.setState({loading: true});
     fetch(Routes.course_students_path(this.props.course_id), {
       headers: {
         Accept: "application/json",
@@ -95,8 +96,10 @@ class RawStudentTable extends React.Component {
           authenticity_token={this.props.authenticity_token}
         />
         <CheckboxTable
+          loading={this.state.loading}
+          state={this.state}
           ref={r => (this.checkboxTable = r)}
-          data={data.students}
+          data={this.state.loading ? [] : data.students}
           columns={[
             {
               Header: I18n.t("activerecord.attributes.user.user_name"),
@@ -225,14 +228,15 @@ class RawStudentTable extends React.Component {
               filterable: false,
             },
           ]}
+          getNoDataProps={() => ({
+            loading, // <-- explicitly pass loading here
+          })}
           defaultSorted={[
             {
               id: "user_name",
             },
           ]}
           filterable
-          loading={loading}
-          noDataText={this.state.loading ? null : I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>
