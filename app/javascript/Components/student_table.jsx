@@ -25,7 +25,6 @@ class RawStudentTable extends React.Component {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
     fetch(Routes.course_students_path(this.props.course_id), {
       headers: {
         Accept: "application/json",
@@ -97,7 +96,6 @@ class RawStudentTable extends React.Component {
         />
         <CheckboxTable
           loading={this.state.loading}
-          state={this.state}
           ref={r => (this.checkboxTable = r)}
           data={this.state.loading ? [] : data.students}
           columns={[

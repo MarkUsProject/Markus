@@ -7,8 +7,7 @@ import {Grid} from "react-loader-spinner";
  */
 
 export function customLoadingProp(props) {
-  console.log(props);
-  const {loading, noDataText} = props;
+  const {loading} = props;
 
   if (loading) {
     return (
@@ -35,10 +34,6 @@ export function customLoadingProp(props) {
       </div>
     );
   }
-
-  // if (noDataText) {
-  //   return <p className="rt-no-data">{noDataText}</p>;
-  // }
 
   return null;
 }
@@ -269,12 +264,6 @@ export function getMarkingStates(data) {
 }
 
 export function customNoDataComponent({children, loading}) {
-  // export function customNoDataComponent(value) {
-  // console.log("Children", children)
-  // console.log("Value", value)
-  // const { loading } = value;
-  console.log("Loading", loading);
-  // const {loading = props?.loading;
   if (loading) {
     return null;
   }
@@ -282,21 +271,11 @@ export function customNoDataComponent({children, loading}) {
 }
 
 export function customNoDataProps({state}) {
-  // console.log("State", state)
-  return {
-    loading: state.loading,
-    // data: state.data,
-  };
+  return {loading: state.loading};
 }
 
-// export function customNoDataText({ props }) {
 export function customNoDataText(props) {
-  // console.log("Value", value)
-  // console.log(props)
-  // const {loading} = props?.loading;
-  // const loading = value?.props?.loading;
   const {loading} = props;
-  console.log("LoadingText", loading);
   if (loading) {
     return "";
   }

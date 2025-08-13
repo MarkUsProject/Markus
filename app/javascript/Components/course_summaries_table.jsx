@@ -113,6 +113,9 @@ export class CourseSummaryTable extends React.Component {
         filtered={this.state.filtered}
         onFilteredChange={filtered => this.setState({filtered})}
         className={"auto-overflow"}
+        getNoDataProps={() => ({
+          loading: this.props.loading,
+        })}
       />,
     ];
   }
