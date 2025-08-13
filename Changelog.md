@@ -1,12 +1,6 @@
 # Changelog
 
-## [v2.7.1]
-
-### 🐛 Bug fixes
-
-- Fix bugs when assigning sections to starter file groups across multiple assignments (#7523)
-
-## [v2.7.0]
+## [v2.8.0]
 
 ### 🚨 Breaking changes
 
