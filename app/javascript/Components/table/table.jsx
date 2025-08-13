@@ -21,12 +21,18 @@ export default function Table({
   initialState,
   renderSubComponent,
   getRowCanExpand,
-  columnFilters,
-  setColumnFilters,
+  columnFilters: externalColumnFilters,
 }) {
+  const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState({inactive: false});
   const [expanded, setExpanded] = React.useState({});
+
+  React.useEffect(() => {
+    if (externalColumnFilters !== undefined) {
+      setColumnFilters(externalColumnFilters);
+    }
+  }, [externalColumnFilters]);
 
   const table = useReactTable({
     data,
