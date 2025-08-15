@@ -54,7 +54,6 @@ export class AssignmentSummaryTable extends React.Component {
     const fixedColumns = [
       columnHelper.accessor("inactive", {
         id: "inactive",
-        enableHiding: true,
       }),
       columnHelper.accessor("group_name", {
         id: "group_name",
@@ -80,6 +79,28 @@ export class AssignmentSummaryTable extends React.Component {
                 {this.memberDisplay(props.row.original.group_name, props.row.original.members)}
               </span>
             );
+          }
+        },
+        filterFn: (row, columnId, filterValue) => {
+          if (filterValue) {
+            // Check group name
+            if (row.original.group_name.includes(filterValue)) {
+              return true;
+            }
+
+            // Check member names
+            const member_matches = row.original.members.some(member =>
+              member.some(name => name.includes(filterValue))
+            );
+
+            if (member_matches) {
+              return true;
+            }
+
+            // Check grader user names
+            return row.original.graders.some(grader => grader.includes(filterValue));
+          } else {
+            return true;
           }
         },
       }),
