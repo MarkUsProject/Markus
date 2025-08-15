@@ -95,8 +95,9 @@ class RawStudentTable extends React.Component {
           authenticity_token={this.props.authenticity_token}
         />
         <CheckboxTable
+          loading={this.state.loading}
           ref={r => (this.checkboxTable = r)}
-          data={data.students}
+          data={this.state.loading ? [] : data.students}
           columns={[
             {
               Header: I18n.t("activerecord.attributes.user.user_name"),
@@ -225,14 +226,17 @@ class RawStudentTable extends React.Component {
               filterable: false,
             },
           ]}
+          noDataText={this.state.loading ? "" : I18n.t("students.empty_table")}
+          getNoDataProps={() => ({
+            loading,
+            data,
+          })}
           defaultSorted={[
             {
               id: "user_name",
             },
           ]}
           filterable
-          loading={loading}
-          noDataText={I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>
