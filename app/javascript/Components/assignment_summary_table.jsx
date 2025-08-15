@@ -9,7 +9,7 @@ import Table from "./table/table";
 const renderSubComponent = ({row}) => {
   return (
     <div>
-      <h4>{I18n.t("activerecord.models.ta", {count: 2})}</h4>
+      <h4>{I18n.t("activerecord.models.ta", {count: row.original.graders.length})}</h4>
       <ul>
         {row.original.graders.map(grader => {
           return (
@@ -51,61 +51,33 @@ export class AssignmentSummaryTable extends React.Component {
   getColumns = () => {
     const columnHelper = createColumnHelper();
 
-    const expanderColumn = columnHelper.display({
-      id: "expander",
-      header: () => null,
-      size: 32,
-      cell: ({row}) => {
-        return row.getCanExpand() ? (
-          <button
-            {...{
-              onClick: row.getToggleExpandedHandler(),
-              style: {
-                all: "unset",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                height: "100%",
-                fontSize: "0.7rem",
-              },
-            }}
-          >
-            {row.getIsExpanded() ? "▼" : "▶"}
-          </button>
-        ) : (
-          " "
-        );
-      },
-    });
-
     const fixedColumns = [
       columnHelper.accessor("inactive", {
         id: "inactive",
+        enableHiding: true,
       }),
       columnHelper.accessor("group_name", {
         id: "group_name",
         header: () => I18n.t("activerecord.models.group.one"),
         size: 100,
         enableResizing: true,
-        cell: info => {
-          if (info.row.original.result_id) {
+        cell: props => {
+          if (props.row.original.result_id) {
             const path = Routes.edit_course_result_path(
               this.props.course_id,
-              info.row.original.result_id
+              props.row.original.result_id
             );
             return (
               <a href={path}>
-                {info.row.original.group_name}
-                {this.memberDisplay(info.row.original.group_name, info.row.original.members)}
+                {props.getValue()}
+                {this.memberDisplay(props.getValue(), props.row.original.members)}
               </a>
             );
           } else {
             return (
               <span>
-                {info.row.original.group_name}
-                {this.memberDisplay(info.row.original.group_name, info.row.original.members)}
+                {props.row.original.group_name}
+                {this.memberDisplay(props.row.original.group_name, props.row.original.members)}
               </span>
             );
           }
@@ -116,10 +88,10 @@ export class AssignmentSummaryTable extends React.Component {
         header: () => I18n.t("activerecord.models.tag.other"),
         size: 90,
         enableResizing: true,
-        cell: info => (
+        cell: props => (
           <ul className="tag-list">
-            {info.row.original.tags.map(tag => (
-              <li key={`${info.row.original._id}-${tag}`} className="tag-element">
+            {props.row.original.tags.map(tag => (
+              <li key={`${props.row.original._id}-${tag}`} className="tag-element">
                 {tag}
               </li>
             ))}
@@ -140,10 +112,10 @@ export class AssignmentSummaryTable extends React.Component {
         header: () => I18n.t("results.total_mark"),
         size: 100,
         enableResizing: true,
-        cell: info => {
-          if (info.row.original.final_grade || info.row.original.final_grade === 0) {
-            const max_mark = Math.round(info.row.original.max_mark * 100) / 100;
-            return info.row.original.final_grade + " / " + max_mark;
+        cell: props => {
+          if (props.row.original.final_grade || props.row.original.final_grade === 0) {
+            const max_mark = Math.round(props.row.original.max_mark * 100) / 100;
+            return props.row.original.final_grade + " / " + max_mark;
           } else {
             return "";
           }
@@ -158,11 +130,12 @@ export class AssignmentSummaryTable extends React.Component {
       columnHelper.accessor(col.accessor, {
         id: col.id,
         header: () => col.Header,
-        size: 100,
-        enableResizing: true,
-        cell: value => value.getValue(),
-        meta: {className: "number"},
-        enableColumnFilter: false,
+        size: col.size || 100,
+        enableResizing: col.enableResizing !== undefined ? col.enableResizing : true,
+        cell: props => props.getValue(),
+        meta: {className: col.className},
+        enableColumnFilter: col.enableColumnFilter,
+        sortDescFirst: col.sortDescFirst,
       })
     );
 
@@ -170,13 +143,12 @@ export class AssignmentSummaryTable extends React.Component {
       header: () => I18n.t("activerecord.models.extra_mark.other"),
       size: 100,
       enableResizing: true,
-      cell: info => info.getValue(),
       meta: {className: "number"},
       enableColumnFilter: false,
       sortDescFirst: true,
     });
 
-    return [expanderColumn, ...fixedColumns, ...criteriaColumns, bonusColumn];
+    return [...fixedColumns, ...criteriaColumns, bonusColumn];
   };
 
   toggleShowInactiveGroups = showInactiveGroups => {

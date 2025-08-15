@@ -125,9 +125,9 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
     accessorKey: "marking_state",
     size: 100,
     enableResizing: true,
-    cell: info => {
+    cell: props => {
       let marking_state = "";
-      switch (info.row.original.marking_state) {
+      switch (props.getValue()) {
         case "not_collected":
           marking_state = I18n.t("submissions.state.not_collected");
           break;
@@ -148,7 +148,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
           break;
         default:
           // should not get here
-          marking_state = info.row.original.marking_state;
+          marking_state = props.getValue();
       }
       return marking_state;
     },
