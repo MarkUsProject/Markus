@@ -249,14 +249,10 @@ describe("For the AssignmentSummaryTable's subcomponent behavior", () => {
   });
 
   it("should show grader subcomponent when expanded", async () => {
-    expect(screen.getByText("▶")).toBeInTheDocument();
+    expect(screen.getByTestId("expander-button")).toBeInTheDocument();
 
     await act(async () => {
-      fireEvent.click(screen.getByText("▶"));
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText("▼")).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("expander-button"));
     });
 
     await waitFor(() => {

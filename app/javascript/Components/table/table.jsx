@@ -25,6 +25,7 @@ export const expanderColumn = columnHelper.display({
       <div
         className={`rt-expander ${row.getIsExpanded() ? "-open" : ""}`}
         onClick={row.getToggleExpandedHandler()}
+        data-testid="expander-button"
       ></div>
     ) : null;
   },
