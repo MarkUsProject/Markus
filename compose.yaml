@@ -53,6 +53,7 @@ services:
       - localhost:host-gateway
     ports:
       - '3000:3000'
+      - '3336:3336'
     volumes:
       - app_data:/app/data/development
       - repos:/app/data/development/repos

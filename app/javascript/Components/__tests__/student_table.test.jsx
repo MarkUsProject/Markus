@@ -5,6 +5,7 @@
 import {StudentTable} from "../student_table";
 import {render, screen, within, fireEvent, waitFor, act} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import preview from "jest-preview";
 
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
@@ -332,9 +333,7 @@ describe("For each StudentTable's loading status", () => {
   });
 
   it("shows loading spinner when data is being fetched", async () => {
-    await act(async () => {
-      render(<StudentTable selection={["c5anthei"]} course_id={1} />);
-    });
+    render(<StudentTable course_id={1} initialLoading={true} />);
 
     const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
     expect(spinner).toBeInTheDocument();

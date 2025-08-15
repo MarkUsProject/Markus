@@ -124,7 +124,7 @@ export default function Table({columns, data, noDataText, initialState}) {
             );
           })}
           {!table.getRowModel().rows.length &&
-            (noDataText === "Loading" ? (
+            (noDataText === "" ? (
               <div
                 className="flex gap-4"
                 style={{

@@ -271,13 +271,13 @@ export function customNoDataComponent({children, loading}) {
 }
 
 export function customNoDataProps({state}) {
-  return {loading: state.loading};
+  return {loading: state.loading, data: state.data};
 }
 
-export function customNoDataText(props) {
-  const {loading} = props;
-  if (loading) {
-    return "";
-  }
-  return I18n.t("students.empty_table");
-}
+// export function customNoDataText(props) {
+//   const {loading} = props;
+//   if (loading) {
+//     return "";
+//   }
+//   return I18n.t("students.empty_table");
+// }

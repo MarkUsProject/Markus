@@ -226,8 +226,10 @@ class RawStudentTable extends React.Component {
               filterable: false,
             },
           ]}
+          noDataText={this.state.loading ? "" : I18n.t("students.empty_table")}
           getNoDataProps={() => ({
-            loading, // <-- explicitly pass loading here
+            loading,
+            data,
           })}
           defaultSorted={[
             {
