@@ -1,6 +1,7 @@
 import React from "react";
 
 import {
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -13,6 +14,21 @@ import {
 import Filter from "./filter";
 
 export const defaultNoDataText = () => I18n.t("table.no_data");
+
+const columnHelper = createColumnHelper();
+export const expanderColumn = columnHelper.display({
+  id: "expander",
+  header: () => null,
+  size: 32,
+  cell: ({row}) => {
+    return row.getCanExpand() ? (
+      <div
+        className={`rt-expander ${row.getIsExpanded() ? "-open" : ""}`}
+        onClick={row.getToggleExpandedHandler()}
+      ></div>
+    ) : null;
+  },
+});
 
 export default function Table({
   columns,
@@ -34,9 +50,11 @@ export default function Table({
     }
   }, [externalColumnFilters]);
 
+  const finalColumns = renderSubComponent ? [expanderColumn, ...columns] : columns;
+
   const table = useReactTable({
     data,
-    columns,
+    columns: finalColumns,
     state: {
       columnFilters,
       columnSizing,
@@ -143,11 +161,7 @@ export default function Table({
                     );
                   })}
                 </div>
-                {row.getIsExpanded() && (
-                  <tr>
-                    <td colSpan={row.getVisibleCells().length}>{renderSubComponent({row})}</td>
-                  </tr>
-                )}
+                {row.getIsExpanded() && <div>{renderSubComponent({row})}</div>}
               </div>
             );
           })}
