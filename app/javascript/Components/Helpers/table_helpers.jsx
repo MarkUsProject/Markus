@@ -121,13 +121,11 @@ export function selectFilter({filter, onChange, column}) {
 
 export function markingStateColumn(marking_states, markingStateFilter, ...override_keys) {
   return {
-    header: I18n.t("activerecord.attributes.result.marking_state"),
-    accessorKey: "marking_state",
-    size: 100,
-    enableResizing: true,
-    cell: props => {
+    Header: I18n.t("activerecord.attributes.result.marking_state"),
+    accessor: "marking_state",
+    Cell: row => {
       let marking_state = "";
-      switch (props.getValue()) {
+      switch (row.original.marking_state) {
         case "not_collected":
           marking_state = I18n.t("submissions.state.not_collected");
           break;
@@ -148,13 +146,16 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
           break;
         default:
           // should not get here
-          marking_state = props.getValue();
+          marking_state = row.original.marking_state;
       }
       return marking_state;
     },
-    filterFn: "equalsString",
-    meta: {
-      filterVariant: "select",
+    filterMethod: (filter, row) => {
+      if (filter.value === "all") {
+        return true;
+      } else {
+        return filter.value === row[filter.id];
+      }
     },
     filterAllOptionText:
       I18n.t("all") +

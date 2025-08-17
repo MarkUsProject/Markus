@@ -1,27 +1,10 @@
 import React from "react";
-import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
+import {getMarkingStates, selectFilter} from "./Helpers/table_helpers";
 
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 import LtiGradeModal from "./Modals/send_lti_grades_modal";
 import {createColumnHelper} from "@tanstack/react-table";
 import Table from "./table/table";
-
-const renderSubComponent = ({row}) => {
-  return (
-    <div>
-      <h4>{I18n.t("activerecord.models.ta", {count: row.original.graders.length})}</h4>
-      <ul>
-        {row.original.graders.map(grader => {
-          return (
-            <li key={grader[0]}>
-              ({grader[0]}) {grader[1]} {grader[2]}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-};
 
 export class AssignmentSummaryTable extends React.Component {
   constructor(props) {
@@ -104,7 +87,73 @@ export class AssignmentSummaryTable extends React.Component {
           }
         },
       }),
-      markingStateColumn(this.state.marking_states, this.state.markingStateFilter),
+      columnHelper.accessor("marking_state", {
+        header: () => I18n.t("activerecord.attributes.result.marking_state"),
+        accessorKey: "marking_state",
+        size: 100,
+        enableResizing: true,
+        cell: props => props.getValue(),
+        filterFn: "equalsString",
+        meta: {
+          filterVariant: "select",
+        },
+        filterAllOptionText:
+          I18n.t("all") +
+          (this.state.markingStateFilter === "all"
+            ? ` (${Object.values(this.state.marking_states).reduce((a, b) => a + b)})`
+            : ""),
+        filterOptions: [
+          {
+            value: "before_due_date",
+            text:
+              I18n.t("submissions.state.before_due_date") +
+              (["before_due_date", "all"].includes(this.state.markingStateFilter)
+                ? ` (${this.state.marking_states["before_due_date"]})`
+                : ""),
+          },
+          {
+            value: "not_collected",
+            text:
+              I18n.t("submissions.state.not_collected") +
+              (["not_collected", "all"].includes(this.state.markingStateFilter)
+                ? ` (${this.state.marking_states["not_collected"]})`
+                : ""),
+          },
+          {
+            value: "incomplete",
+            text:
+              I18n.t("submissions.state.in_progress") +
+              (["incomplete", "all"].includes(this.state.markingStateFilter)
+                ? ` (${this.state.marking_states["incomplete"]})`
+                : ""),
+          },
+          {
+            value: "complete",
+            text:
+              I18n.t("submissions.state.complete") +
+              (["complete", "all"].includes(this.state.markingStateFilter)
+                ? ` (${this.state.marking_states["complete"]})`
+                : ""),
+          },
+          {
+            value: "released",
+            text:
+              I18n.t("submissions.state.released") +
+              (["released", "all"].includes(this.state.markingStateFilter)
+                ? ` (${this.state.marking_states["released"]})`
+                : ""),
+          },
+          {
+            value: "remark",
+            text:
+              I18n.t("submissions.state.remark_requested") +
+              (["remark", "all"].includes(this.state.markingStateFilter)
+                ? ` (${this.state.marking_states["remark"]})`
+                : ""),
+          },
+        ],
+        Filter: selectFilter,
+      }),
       columnHelper.accessor("tags", {
         header: () => I18n.t("activerecord.models.tag.other"),
         size: 90,
@@ -152,9 +201,7 @@ export class AssignmentSummaryTable extends React.Component {
         id: col.id,
         header: () => col.Header,
         size: col.size || 100,
-        enableResizing: col.enableResizing !== undefined ? col.enableResizing : true,
-        cell: props => props.getValue(),
-        meta: {className: col.className},
+        meta: {headerClassName: col.headerClassName},
         enableColumnFilter: col.enableColumnFilter,
         sortDescFirst: col.sortDescFirst,
       })
@@ -226,9 +273,10 @@ export class AssignmentSummaryTable extends React.Component {
           }
         });
 
-        const markingStates = getMarkingStates(res.data);
+        const processedData = this.processData(res.data);
+        const markingStates = getMarkingStates(processedData);
         this.setState({
-          data: res.data,
+          data: processedData,
           criteriaColumns: res.criteriaColumns,
           num_assigned: res.numAssigned,
           num_marked: res.numMarked,
@@ -240,6 +288,35 @@ export class AssignmentSummaryTable extends React.Component {
         });
       });
   };
+
+  processData(data) {
+    data.forEach(row => {
+      switch (row.marking_state) {
+        case "not_collected":
+          row.marking_state = I18n.t("submissions.state.not_collected");
+          break;
+        case "incomplete":
+          row.marking_state = I18n.t("submissions.state.in_progress");
+          break;
+        case "complete":
+          row.marking_state = I18n.t("submissions.state.complete");
+          break;
+        case "released":
+          row.marking_state = I18n.t("submissions.state.released");
+          break;
+        case "remark":
+          row.marking_state = I18n.t("submissions.state.remark_requested");
+          break;
+        case "before_due_date":
+          row.marking_state = I18n.t("submissions.state.before_due_date");
+          break;
+        default:
+          // should not get here
+          row.marking_state = row.original.marking_state;
+      }
+    });
+    return data;
+  }
 
   onFilteredChange = (filtered, column) => {
     const summaryTable = this.wrappedInstance;
@@ -368,3 +445,20 @@ export class AssignmentSummaryTable extends React.Component {
     );
   }
 }
+
+const renderSubComponent = ({row}) => {
+  return (
+    <div>
+      <h4>{I18n.t("activerecord.models.ta", {count: row.original.graders.length})}</h4>
+      <ul>
+        {row.original.graders.map(grader => {
+          return (
+            <li key={grader[0]}>
+              ({grader[0]}) {grader[1]} {grader[2]}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};

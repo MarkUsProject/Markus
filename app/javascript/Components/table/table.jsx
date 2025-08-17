@@ -95,7 +95,7 @@ export default function Table({
                   }[header.column.getIsSorted()];
                 return (
                   <div
-                    className={class_name}
+                    className={`${class_name} ${header.column.columnDef.meta?.headerClassName || ""}`}
                     role="columnheader"
                     tabIndex="-1"
                     key={header.id}
@@ -130,7 +130,7 @@ export default function Table({
               {headerGroup.headers.map(header => {
                 return (
                   <div
-                    className="rt-th"
+                    className={`rt-th ${header.column.columnDef.meta?.headerClassName || ""}`}
                     key={header.id}
                     role="columnheader"
                     tabIndex="-1"

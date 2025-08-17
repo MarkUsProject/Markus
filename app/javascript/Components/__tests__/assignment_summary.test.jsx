@@ -4,6 +4,7 @@
 
 import {AssignmentSummaryTable} from "../assignment_summary_table";
 import {render, screen, fireEvent, waitFor, act} from "@testing-library/react";
+import {expect} from "@jest/globals";
 
 describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   let groups_sample;
@@ -201,7 +202,7 @@ describe("For the AssignmentSummaryTable's subcomponent behavior", () => {
           ["c8holstg", "Holst", "Gustav", false],
         ],
         tags: [],
-        graders: [],
+        graders: [["c9varoqu", "Nelle", "Varoquaux"]],
         marking_state: "released",
         final_grade: 6.0,
         criteria: {1: 2.0},
@@ -244,19 +245,22 @@ describe("For the AssignmentSummaryTable's subcomponent behavior", () => {
 
   it("should initially hide grader subcomponent content", () => {
     expect(
-      screen.queryByText(I18n.t("activerecord.models.ta", {count: 2}))
+      screen.queryByText(I18n.t("activerecord.models.ta", {count: groups_sample[0].graders.length}))
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(I18n.t("activerecord.models.ta", {count: groups_sample[1].graders.length}))
     ).not.toBeInTheDocument();
   });
 
   it("should show grader subcomponent when expanded", async () => {
-    expect(screen.getByTestId("expander-button")).toBeInTheDocument();
+    const expanders = await screen.findAllByTestId("expander-button");
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("expander-button"));
-    });
+    fireEvent.click(expanders[0]);
 
     await waitFor(() => {
-      expect(screen.getByText(I18n.t("activerecord.models.ta", {count: 2}))).toBeInTheDocument();
+      expect(
+        screen.getByText(I18n.t("activerecord.models.ta", {count: groups_sample[0].graders.length}))
+      ).toBeInTheDocument();
     });
   });
 });
