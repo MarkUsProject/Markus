@@ -201,7 +201,10 @@ export class AssignmentSummaryTable extends React.Component {
         id: col.id,
         header: () => col.Header,
         size: col.size || 100,
-        meta: {headerClassName: col.headerClassName},
+        meta: {
+          className: col.className,
+          headerClassName: col.headerClassName,
+        },
         enableColumnFilter: col.enableColumnFilter,
         sortDescFirst: col.sortDescFirst,
       })
