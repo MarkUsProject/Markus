@@ -17,7 +17,7 @@ module Api
     before_action { authorize! }
 
     AUTHTYPE = 'MarkUsAuth'.freeze
-    AUTH_TOKEN_REGEX = /#{AUTHTYPE} ([^\s,]+)/.freeze
+    AUTH_TOKEN_REGEX = /#{AUTHTYPE} ([^\s,]+)/
 
     def page_not_found(message = HttpStatusHelper::ERROR_CODE['message']['404'])
       render 'shared/http_status',
