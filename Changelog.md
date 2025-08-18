@@ -1,7 +1,6 @@
 # Changelog
 
 ## [unreleased]
-- Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
 
 ### 🚨 Breaking changes
 
@@ -10,6 +9,7 @@
 ### 🐛 Bug fixes
 
 ### 🔧 Internal changes
+- Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
 
 ## [v2.8.0]
 
