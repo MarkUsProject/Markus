@@ -26,7 +26,7 @@ export function customLoadingProp(props) {
           height="25"
           width="25"
           color="#31649B"
-          ariaLabel="grid-loading"
+          aria-label="grid-loading"
           radius="12.5"
           wrapperStyle={{}}
           wrapperClass="grid-wrapper"

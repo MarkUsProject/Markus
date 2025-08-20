@@ -1,5 +1,5 @@
 import React from "react";
-
+import {ReactTableDefaults} from "react-table";
 import ReactTable from "react-table";
 
 export class CourseSummaryTable extends React.Component {
@@ -84,6 +84,11 @@ export class CourseSummaryTable extends React.Component {
   };
 
   render() {
+    const effectiveLoadingComponent =
+      process.env.NODE_ENV === "test"
+        ? this.props.LoadingComponent
+        : ReactTableDefaults.LoadingComponent;
+
     return [
       !this.props.student && (
         <div key="show-hidden" style={{height: "2em"}}>
@@ -110,6 +115,7 @@ export class CourseSummaryTable extends React.Component {
           },
         ]}
         loading={this.props.loading}
+        LoadingComponent={effectiveLoadingComponent}
         filtered={this.state.filtered}
         onFilteredChange={filtered => this.setState({filtered})}
         className={"auto-overflow"}
