@@ -1,7 +1,7 @@
 describe 'routing' do
   Rails.application.routes.routes.map do |r|
     spec = r.path.spec.to_s
-    next if spec.match %r{^/rails|^/assets|^/cable|.*\*path\(.:format\)}.freeze
+    next if %r{^/rails|^/assets|^/cable|.*\*path\(.:format\)}.match?(spec)
     r.verb.split('|').each do |verb|
       it "#{verb}: #{r.path.spec}" do
         parts = r.required_parts.index_with { |_part| '1' }

@@ -2,8 +2,10 @@ import React from "react";
 import {Grid} from "react-loader-spinner";
 
 import {
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
@@ -14,28 +16,68 @@ import Filter from "./filter";
 
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
-export default function Table({columns, data, noDataText, initialState}) {
+const columnHelper = createColumnHelper();
+export const expanderColumn = columnHelper.display({
+  id: "expander",
+  header: () => null,
+  size: 32,
+  cell: ({row}) => {
+    return row.getCanExpand() ? (
+      <div
+        className={`rt-expander ${row.getIsExpanded() ? "-open" : ""}`}
+        onClick={row.getToggleExpandedHandler()}
+        data-testid="expander-button"
+      ></div>
+    ) : null;
+  },
+});
+
+export default function Table({
+  columns,
+  data,
+  noDataText,
+  initialState,
+  renderSubComponent,
+  getRowCanExpand,
+  columnFilters: externalColumnFilters,
+}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
+  const [columnVisibility, setColumnVisibility] = React.useState({inactive: false});
+  const [expanded, setExpanded] = React.useState({});
+
+  React.useEffect(() => {
+    if (externalColumnFilters !== undefined) {
+      setColumnFilters(externalColumnFilters);
+    }
+  }, [externalColumnFilters]);
+
+  const finalColumns = renderSubComponent ? [expanderColumn, ...columns] : columns;
 
   const table = useReactTable({
     data,
-    columns,
+    columns: finalColumns,
     state: {
       columnFilters,
       columnSizing,
+      columnVisibility,
+      expanded,
     },
     initialState: initialState,
     onColumnFiltersChange: setColumnFilters,
+    onColumnSizingChange: setColumnSizing,
+    onColumnVisibilityChange: setColumnVisibility,
+    onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
+    getRowCanExpand,
     enableSortingRemoval: false,
     enableColumnResizing: true,
     columnResizeMode: "onChange",
-    onColumnSizingChange: setColumnSizing,
   });
 
   return (
@@ -54,7 +96,7 @@ export default function Table({columns, data, noDataText, initialState}) {
                   }[header.column.getIsSorted()];
                 return (
                   <div
-                    className={class_name}
+                    className={`${class_name} ${header.column.columnDef.meta?.headerClassName || ""}`}
                     role="columnheader"
                     tabIndex="-1"
                     key={header.id}
@@ -89,7 +131,7 @@ export default function Table({columns, data, noDataText, initialState}) {
               {headerGroup.headers.map(header => {
                 return (
                   <div
-                    className="rt-th"
+                    className={`rt-th ${header.column.columnDef.meta?.headerClassName || ""}`}
                     key={header.id}
                     role="columnheader"
                     tabIndex="-1"
@@ -108,9 +150,10 @@ export default function Table({columns, data, noDataText, initialState}) {
               <div className="rt-tr-group" role="rowgroup" key={row.id}>
                 <div className="rt-tr -odd" role="row" key={row.id}>
                   {row.getVisibleCells().map(cell => {
+                    const metaClass = cell.column.columnDef.meta?.className || "";
                     return (
                       <div
-                        className="rt-td"
+                        className={`rt-td ${metaClass}`}
                         role="gridcell"
                         style={{flex: "100 0 auto", width: cell.column.getSize()}}
                         key={cell.id}
@@ -120,6 +163,7 @@ export default function Table({columns, data, noDataText, initialState}) {
                     );
                   })}
                 </div>
+                {row.getIsExpanded() && <div>{renderSubComponent({row})}</div>}
               </div>
             );
           })}
