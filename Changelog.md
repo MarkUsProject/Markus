@@ -2,6 +2,9 @@
 
 ## [v2.8.1]
 
+### 🐛 Bug fixes
+- Fixed group member filtering in assignment summary table (#7644)
+
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
 
