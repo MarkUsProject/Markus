@@ -1,9 +1,42 @@
 import React from "react";
+import {Grid} from "react-loader-spinner";
 
 /**
  * @file
  * Provides generic helper functions and components for react-table tables.
  */
+
+export function customLoadingProp(props) {
+  const {loading} = props;
+
+  if (loading) {
+    return (
+      <div
+        className="flex gap-4"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50px",
+        }}
+        data-testid="loading-spinner"
+      >
+        <Grid
+          visible={true}
+          height="25"
+          width="25"
+          color="#31649B"
+          aria-label="grid-loading"
+          radius="12.5"
+          wrapperStyle={{}}
+          wrapperClass="grid-wrapper"
+        />
+      </div>
+    );
+  }
+
+  return null;
+}
 
 export function defaultSort(a, b) {
   // Sort values, putting undefined/nulls below all other values.
@@ -230,6 +263,21 @@ export function getMarkingStates(data) {
   return markingStates;
 }
 
-export function customNoDataComponent({children}) {
+export function customNoDataComponent({children, loading}) {
+  if (loading) {
+    return null;
+  }
   return <p className="rt-no-data">{children}</p>;
 }
+
+export function customNoDataProps({state}) {
+  return {loading: state.loading, data: state.data};
+}
+
+// export function customNoDataText(props) {
+//   const {loading} = props;
+//   if (loading) {
+//     return "";
+//   }
+//   return I18n.t("students.empty_table");
+// }

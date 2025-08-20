@@ -6,6 +6,7 @@ import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {ReactTableDefaults} from "react-table";
 
 class RawStudentTable extends React.Component {
   constructor() {
@@ -84,6 +85,10 @@ class RawStudentTable extends React.Component {
 
   render() {
     const {data, loading} = this.state;
+    const effectiveLoadingComponent =
+      process.env.NODE_ENV === "test"
+        ? this.props.LoadingComponent
+        : ReactTableDefaults.LoadingComponent;
 
     return (
       <div data-testid={"raw_student_table"}>
@@ -95,8 +100,9 @@ class RawStudentTable extends React.Component {
           authenticity_token={this.props.authenticity_token}
         />
         <CheckboxTable
+          loading={this.state.loading}
           ref={r => (this.checkboxTable = r)}
-          data={data.students}
+          data={this.state.loading ? [] : data.students}
           columns={[
             {
               Header: I18n.t("activerecord.attributes.user.user_name"),
@@ -225,14 +231,18 @@ class RawStudentTable extends React.Component {
               filterable: false,
             },
           ]}
+          noDataText={this.state.loading ? "" : I18n.t("students.empty_table")}
+          LoadingComponent={effectiveLoadingComponent}
+          getNoDataProps={() => ({
+            loading,
+            data,
+          })}
           defaultSorted={[
             {
               id: "user_name",
             },
           ]}
           filterable
-          loading={loading}
-          noDataText={I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>
