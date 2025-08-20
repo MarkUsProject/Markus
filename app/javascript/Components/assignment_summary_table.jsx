@@ -66,14 +66,15 @@ export class AssignmentSummaryTable extends React.Component {
         },
         filterFn: (row, columnId, filterValue) => {
           if (filterValue) {
+            filterValue = filterValue.toLowerCase();
             // Check group name
-            if (row.original.group_name.includes(filterValue)) {
+            if (row.original.group_name.toLowerCase().includes(filterValue)) {
               return true;
             }
 
-            // Check member names
+            // Check member names (first three values of each "member" array)
             const member_matches = row.original.members.some(member =>
-              member.some(name => name.includes(filterValue))
+              member.slice(0, 3).some(name => name.toLowerCase().includes(filterValue))
             );
 
             if (member_matches) {
@@ -81,7 +82,7 @@ export class AssignmentSummaryTable extends React.Component {
             }
 
             // Check grader user names
-            return row.original.graders.some(grader => grader.includes(filterValue));
+            return row.original.graders.some(grader => grader.toLowerCase().includes(filterValue));
           } else {
             return true;
           }
