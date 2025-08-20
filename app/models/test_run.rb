@@ -13,6 +13,9 @@ class TestRun < ApplicationRecord
   validate :autotest_test_id_uniqueness
   before_save :unset_autotest_test_id
 
+  scope :student_run, -> { where.not(submission_id: nil) }
+  scope :instructor_run, -> { where(submission_id: nil) }
+
   SETTINGS_FILES_DIR = (Settings.file_storage.autotest || File.join(Settings.file_storage.default_root_path,
                                                                     'autotest')).freeze
   SPECS_FILE = 'specs.json'.freeze
