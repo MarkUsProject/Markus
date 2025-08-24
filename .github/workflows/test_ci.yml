@@ -48,9 +48,6 @@ jobs:
         with:
           packages: libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr pandoc poppler-utils
           version: 1.0
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git libgl1 tesseract-ocr pandoc poppler-utils
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
