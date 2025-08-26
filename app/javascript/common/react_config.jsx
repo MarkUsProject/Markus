@@ -8,7 +8,6 @@ import {
   customNoDataComponent,
   customLoadingProp,
   customNoDataProps,
-  // customNoDataText,
 } from "../Components/Helpers/table_helpers";
 
 const i18n = new I18n(translations);
@@ -25,7 +24,6 @@ Object.assign(ReactTableDefaults, {
   FilterComponent: textFilter,
   NoDataComponent: customNoDataComponent,
   noDataProps: customNoDataProps,
-  // noDataText: customNoDataText,
   LoadingComponent: customLoadingProp,
   loadingText: null,
 });

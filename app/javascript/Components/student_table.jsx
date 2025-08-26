@@ -85,10 +85,6 @@ class RawStudentTable extends React.Component {
 
   render() {
     const {data, loading} = this.state;
-    const effectiveLoadingComponent =
-      process.env.NODE_ENV === "test"
-        ? this.props.LoadingComponent
-        : ReactTableDefaults.LoadingComponent;
 
     return (
       <div data-testid={"raw_student_table"}>
@@ -231,8 +227,7 @@ class RawStudentTable extends React.Component {
               filterable: false,
             },
           ]}
-          noDataText={this.state.loading ? "" : I18n.t("students.empty_table")}
-          LoadingComponent={effectiveLoadingComponent}
+          noDataText={I18n.t("students.empty_table")}
           getNoDataProps={() => ({
             loading,
             data,

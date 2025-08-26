@@ -14,7 +14,7 @@ import Filter from "./filter";
 
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
-export default function Table({columns, data, noDataText, initialState}) {
+export default function Table({columns, data, noDataText, loading, initialState}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
 
@@ -124,16 +124,8 @@ export default function Table({columns, data, noDataText, initialState}) {
             );
           })}
           {!table.getRowModel().rows.length &&
-            (noDataText === "" ? (
-              <div
-                className="flex gap-4"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "50px",
-                }}
-              >
+            (loading ? (
+              <div className="loading-spinner">
                 <Grid
                   visible={true}
                   height="25"

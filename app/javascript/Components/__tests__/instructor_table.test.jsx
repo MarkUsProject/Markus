@@ -1,7 +1,6 @@
 import {render, screen} from "@testing-library/react";
 
 import {InstructorTable} from "../instructor_table";
-import {TATable} from "../ta_table";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({

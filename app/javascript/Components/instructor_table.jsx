@@ -84,7 +84,8 @@ class InstructorTable extends React.Component {
       <Table
         data={this.state.data}
         columns={this.columns}
-        noDataText={this.state.loading ? "" : I18n.t("instructors.empty_table")}
+        noDataText={I18n.t("instructors.empty_table")}
+        loading={this.state.loading}
       />
     );
   }

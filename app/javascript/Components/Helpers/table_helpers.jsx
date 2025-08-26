@@ -11,16 +11,7 @@ export function customLoadingProp(props) {
 
   if (loading) {
     return (
-      <div
-        className="flex gap-4"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "50px",
-        }}
-        data-testid="loading-spinner"
-      >
+      <div className="loading-spinner" data-testid="loading-spinner">
         <Grid
           visible={true}
           height="25"

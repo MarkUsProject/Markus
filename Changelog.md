@@ -13,6 +13,7 @@
 - Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
 - Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
 - Replaced "Edit" and "Delete" action text links with Font Awesome icons across all tables. (#7595)
+- Added new loading spinner icon for tables (#7602)
 
 ### 🐛 Bug fixes
 - Added host authorization setting for Resque (#7562)
