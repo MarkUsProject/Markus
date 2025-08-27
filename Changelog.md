@@ -5,6 +5,20 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+
+### 🐛 Bug fixes
+- Fixed group member filtering in assignment summary table (#7644)
+
+### 🔧 Internal changes
+- Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
+- Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+- Added new loading spinner icon for tables (#7602)
+
+## [v2.8.0]
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
 - Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)
 - Design improvement of tables when the data is empty. (#7557)
 - Improved Assignment view for students (#7533)
@@ -13,13 +27,14 @@
 - Replaced assignment summary statistics in the "Status" column on the instructor Assignments page with a link to the grades page. (#7560)
 - Renamed the "Summary" sub-tab label to "Grades" in the Assignment interface. (#7560)
 - Replaced "Edit" and "Delete" action text links with Font Awesome icons across all tables. (#7595)
-- Added new loading spinner icon for tables (#7602)
+- Create User class method to retrieve orphaned users (#7633)
 
 ### 🐛 Bug fixes
 - Added host authorization setting for Resque (#7562)
 
 ### 🔧 Internal changes
 
+- Updated `test_ci.yml`, making GitHub Actions run rspec and jest tests in parallel. (#7634)
 - Remove `activerecord-session_store` gem (#7517)
 - Upgrade to Rails 8 (#7504)
 - Add tests for `#new` and `#create` actions in `CriteriaController` (#7521)
@@ -37,6 +52,7 @@
 - Updated Python autotest script file to include example of using `pytest.mark` to customize test marks (#7597)
 - Refactor `Grader` table in `Users` to use `@tanstack/react-table` v8 (#7598)
 - Updated `dependabot.yml` to add React dependency group and increase, remove old webpack ignored versions, and remove open PR limits (#7627)
+- Improved performance of PDF splitting for scanned assessments (#7632)
 
 ## [v2.7.1]
 

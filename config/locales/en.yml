@@ -15,7 +15,6 @@ en:
     generate_job: Generating copy %{progress} of %{total} for %{exam_name}
     not_enqueued: No job was enqueued
     queued: Queued
-    split_pdf_job: Processing page %{progress} out of %{total} for %{exam_name}
     uncollect_submissions_job: 'Uncollecting assignments ... '
     update_repo_max_file_size_job: "%{progress}/%{total} Student repositories updated with new maximum file size"
     update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
