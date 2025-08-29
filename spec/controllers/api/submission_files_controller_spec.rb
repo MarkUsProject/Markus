@@ -57,19 +57,41 @@ describe Api::SubmissionFilesController do
 
     context 'POST create' do
       context 'when the file does not exist yet' do
+        let(:filename) { 'v1/x/y/test.txt' }
+        let(:content) { 'This is a test file' }
+        let(:mime_type) { 'text/plain' }
+
         before do
-          post :create, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/test.txt',
-                                  mime_type: 'text', file_content: 'This is a test file', course_id: course.id }
+          post :create, params: { assignment_id: assignment.id, group_id: group.id, filename: filename,
+                                  mime_type: mime_type, file_content: content, course_id: course.id }
         end
 
-        it 'should create a file in the corresponding directory' do
-          path = Pathname.new('v1/x/y')
-          success, _messages = group.access_repo do |repo|
-            file_path = Pathname.new(assignment.repository_folder).join path
-            files = repo.get_latest_revision.files_at_path(file_path.to_s)
-            files.key? 'test.txt'
+        context 'when the file is plaintext' do
+          it 'should create the file in the corresponding directory' do
+            path = Pathname.new('v1/x/y')
+            success, _messages = group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              files.key? File.basename(filename)
+            end
+            expect(success).to be_truthy
           end
-          expect(success).to be_truthy
+        end
+
+        context 'when the file is binary' do
+          let(:filename) { 'v1/x/y/test.pdf' }
+          let(:content) { file_fixture('submission_files/pdf.pdf') }
+          let(:mime_type) { 'application/pdf' }
+
+          it 'should create the file in the corresponding directory' do
+            path = Pathname.new('v1/x/y')
+            success, _messages = group.access_repo do |repo|
+              file_path = Pathname.new(assignment.repository_folder).join path
+              files = repo.get_latest_revision.files_at_path(file_path.to_s)
+              files.key? File.basename(filename)
+            end
+            expect(success).to be_truthy
+          end
         end
 
         it_behaves_like 'for a different course'
