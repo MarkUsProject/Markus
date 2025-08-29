@@ -8,6 +8,7 @@
 
 ### 🐛 Bug fixes
 - Fixed group member filtering in assignment summary table (#7644)
+- Fixed spacing issue for the remote authentication login button (#7646)
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
