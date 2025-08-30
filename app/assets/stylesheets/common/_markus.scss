@@ -1530,3 +1530,76 @@ canvas {
 .jcrop-centered {
   display: inline-block;
 }
+
+.feature-option {
+  margin: 0.5rem;
+}
+
+.feature-option input[type='radio'] {
+  display: none;
+}
+
+.feature-option label {
+  width: 100px;
+  background: linear-gradient(to top, $background-main, $background-support);
+  border: 1px solid $primary-three;
+  border-radius: $radius;
+  box-shadow: inset 0 -1px 0 $primary-two;
+  color: $line;
+  cursor: pointer;
+  display: inline-block;
+  font: 400 1em $fonts;
+  min-width: 150px;
+  outline: none;
+  padding: 0.5em 1.5em;
+  text-align: center;
+  transition: all $time-quick;
+}
+
+.feature-option input[type='radio']:checked + label {
+  background: linear-gradient(to bottom, $primary-one, $primary-three);
+  border: 1px solid $primary-one;
+  color: $background-main;
+  box-shadow: inset 0 1px 0 $primary-one;
+}
+
+.feature-option label:hover {
+  border-color: $primary-one;
+  box-shadow:
+    inset 0 -1px 0 $primary-two,
+    0 1px 0 $background-main;
+}
+
+.feature-option input[type='radio']:disabled + label {
+  color: $line;
+  cursor: not-allowed;
+  background: linear-gradient(to top, $background-main, $disabled-area);
+  border-color: $disabled-area;
+  box-shadow: none;
+}
+
+.feature-option input[type='radio']:disabled + label:hover {
+  border-color: $disabled-area;
+}
+
+.feature-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  column-gap: 0;
+}
+
+.feature-row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  column-gap: inherit;
+  width: 150px;
+}
+
+.feature-submit-group {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: right;
+  margin-top: 2rem;
+}

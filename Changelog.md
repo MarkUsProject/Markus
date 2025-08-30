@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added more download options to automated test result summaries (#7599)
 
 ### 🐛 Bug fixes
 - Fixed group member filtering in assignment summary table (#7644)
