@@ -6,6 +6,8 @@ import {
   stringFilterMethod,
   textFilter,
   customNoDataComponent,
+  customLoadingProp,
+  customNoDataProps,
 } from "../Components/Helpers/table_helpers";
 
 const i18n = new I18n(translations);
@@ -21,6 +23,9 @@ Object.assign(ReactTableDefaults, {
   defaultFilterMethod: stringFilterMethod,
   FilterComponent: textFilter,
   NoDataComponent: customNoDataComponent,
+  noDataProps: customNoDataProps,
+  LoadingComponent: customLoadingProp,
+  loadingText: null,
 });
 
 Object.assign(ReactTableDefaults.column, {
