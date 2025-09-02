@@ -79,3 +79,16 @@ global.activeCriterion = jest.fn();
 // Ensure @testing-library/react cleanup function is called after every test
 import {cleanup} from "@testing-library/react";
 afterEach(cleanup);
+
+import {
+  customLoadingProp,
+  customNoDataComponent,
+  customNoDataProps,
+} from "/app/javascript/Components/Helpers/table_helpers";
+import {ReactTableDefaults} from "react-table";
+
+Object.assign(ReactTableDefaults, {
+  NoDataComponent: customNoDataComponent,
+  noDataProps: customNoDataProps,
+  LoadingComponent: customLoadingProp,
+});

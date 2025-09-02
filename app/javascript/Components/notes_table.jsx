@@ -3,6 +3,7 @@ import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
 import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {ReactTableDefaults} from "react-table";
 
 class NotesTable extends React.Component {
   constructor(props) {
@@ -117,6 +118,9 @@ class NotesTable extends React.Component {
         columns={this.columns}
         sortable={false}
         loading={this.state.loading}
+        getNoDataProps={() => ({
+          loading: this.state.loading,
+        })}
       />
     );
   }

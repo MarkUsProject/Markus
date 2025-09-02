@@ -91,3 +91,22 @@ describe("For the InstructorTable's display of instructors", () => {
     });
   });
 });
+
+describe("For each InstructorTable's loading status", () => {
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("InstructorTable Spinner", () => {
+    it("shows loading spinner when data is being fetched", async () => {
+      render(<InstructorTable course_id={1} />);
+
+      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      expect(spinner).toBeInTheDocument();
+    });
+  });
+});
