@@ -4,6 +4,7 @@ en:
     attributes:
       test_run:
         status: Status
+        type: Submission time
         user: Run by
     models:
       test_run:
