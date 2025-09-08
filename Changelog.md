@@ -11,6 +11,7 @@
 - Fixed spacing issue for the remote authentication login button (#7646)
 - Fixed API bug when creating binary submission files (#7647)
 - Fixed preview of URL submissions (#7661)
+- Fixed autogeneration of URL alias in URL submission form (#7661)
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
