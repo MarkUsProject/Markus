@@ -14,6 +14,7 @@
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+- Added new loading spinner icon for tables (#7602)
 
 ## [v2.8.0]
 

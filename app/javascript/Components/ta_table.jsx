@@ -68,7 +68,7 @@ class TATable extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchData().then(data => this.setState({data: this.processData(data)}));
+    this.fetchData().then(data => this.setState({data: this.processData(data), loading: false}));
   }
 
   fetchData() {
@@ -110,7 +110,12 @@ class TATable extends React.Component {
 
   render() {
     return (
-      <Table data={this.state.data} columns={this.columns} noDataText={I18n.t("tas.empty_table")} />
+      <Table
+        data={this.state.data}
+        columns={this.columns}
+        noDataText={I18n.t("tas.empty_table")}
+        loading={this.state.loading}
+      />
     );
   }
 }
