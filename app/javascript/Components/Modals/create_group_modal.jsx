@@ -13,15 +13,15 @@ export default class CreateGroupModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  handleChange = (event) => {
+  handleChange = event => {
     this.setState({groupName: event.target.value});
-  }
+  };
 
-  handleSubmit = (event) => {
+  handleSubmit = event => {
     event.preventDefault();
     this.props.handleSubmitCreateGroup(this.state.groupName);
     this.setState({groupName: ""});
-  }
+  };
 
   render() {
     return (
@@ -34,17 +34,9 @@ export default class CreateGroupModal extends React.Component {
         <h2>{I18n.t("groups.create_group")}</h2>
         <form onSubmit={this.handleSubmit}>
           {I18n.t("activerecord.attributes.group.group_name")}
-          <input
-            type="text"
-            value={this.state.groupName}
-            onChange={this.handleChange}
-          />
+          <input type="text" value={this.state.groupName} onChange={this.handleChange} />
           <div className={"modal-container"}>
-            <button
-              className="button"
-              type="submit"
-              disabled={!this.state.groupName}
-            >
+            <button className="button" type="submit" disabled={!this.state.groupName}>
               {I18n.t("groups.create_group")}
             </button>
             <button className="button" type="button" onClick={this.props.onRequestClose}>
