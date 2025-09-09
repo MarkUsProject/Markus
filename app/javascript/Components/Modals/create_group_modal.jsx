@@ -13,11 +13,11 @@ export default class CreateGroupModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  handleChange(event) {
+  handleChange = (event) => {
     this.setState({groupName: event.target.value});
   }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
     this.props.onSubmit(this.state.groupName);
     this.setState({groupName: ""});

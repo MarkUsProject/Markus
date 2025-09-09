@@ -183,7 +183,7 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
-  handleCloseCreateGroupModal = () => {
+handleCloseCreateGroupModal = () => {
     this.setState({
       isCreateGroupModalOpen: false,
     });
@@ -343,6 +343,10 @@ class GroupsManager extends React.Component {
           onRequestClose={this.handleCloseAutoMatchModal}
           examTemplates={this.state.examTemplates}
           onSubmit={this.autoMatch}
+        />
+        <CreateGroupModal
+          isOpen={this.state.isCreateGroupModalOpen}
+          onRequestClose={this.handleCloseCreateGroupModal}
         />
       </div>
     );
