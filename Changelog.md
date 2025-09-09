@@ -14,6 +14,7 @@
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+- Converted "Create Group" functionality to React modal (#7663)
 
 ## [v2.8.0]
 

@@ -183,9 +183,22 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
-handleCloseCreateGroupModal = () => {
+  handleCloseCreateGroupModal = () => {
     this.setState({
       isCreateGroupModalOpen: false,
+    });
+  };
+
+  handleSubmitCreateGroup = (groupName) => {
+    $.post({
+        url: Routes.new_course_assignment_group_path(
+          this.props.course_id,
+          this.props.assignment_id
+        ),
+        data: {group: {group_name: groupName}},
+    }).then(() => {
+      this.setState({isCreateGroupModalOpen: false});
+      this.fetchData();
     });
   };
 
@@ -347,6 +360,7 @@ handleCloseCreateGroupModal = () => {
         <CreateGroupModal
           isOpen={this.state.isCreateGroupModalOpen}
           onRequestClose={this.handleCloseCreateGroupModal}
+          handleSubmitCreateGroup={this.handleSubmitCreateGroup}
         />
       </div>
     );
