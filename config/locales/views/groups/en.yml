@@ -8,6 +8,7 @@ en:
     assigned_students: Assigned
     assignment_to_use: Which assignments groups would you like to use?
     auto_match: Auto-match
+    create_group: Create Group
     clone_warning:
       could_not_find_source: Could not find source assignment for cloning groups.
       could_not_find_target: Could not find target assignment for cloning groups.
