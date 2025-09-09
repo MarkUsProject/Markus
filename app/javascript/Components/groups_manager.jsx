@@ -6,6 +6,7 @@ import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
+import CreateGroupModal from "./Modals/create_group_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class GroupsManager extends React.Component {
       selected_extension_data: {},
       updating_extension: false,
       isAutoMatchModalOpen: false,
+      isCreateGroupModalOpen: false,
       examTemplates: [],
       loading: true,
     };
@@ -36,11 +38,6 @@ class GroupsManager extends React.Component {
   }
 
   componentDidMountCB = () => {
-    $("#create_group_dialog form").on("ajax:success", () => {
-      modalCreate.close();
-      this.fetchData();
-    });
-
     $("#rename_group_dialog form").on("ajax:success", () => {
       modal_rename.close();
       this.fetchData();
@@ -97,21 +94,8 @@ class GroupsManager extends React.Component {
         Routes.new_course_assignment_group_path(this.props.course_id, this.props.assignment_id)
       ).then(this.fetchData);
     } else {
-      modalCreate.open();
-      $("#new_group_name").val("");
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", this.createGroupCB);
-      } else {
-        this.createGroupCB();
+      this.setState({isCreateGroupModalOpen: true});
       }
-    }
-  };
-
-  createGroupCB = () => {
-    $("#modal-create-close").click(function () {
-      modalCreate.close();
-    });
   };
 
   createAllGroups = () => {
@@ -197,6 +181,12 @@ class GroupsManager extends React.Component {
         students: students,
       },
     }).then(this.fetchData);
+  };
+
+  handleCloseCreateGroupModal = () => {
+    this.setState({
+      isCreateGroupModalOpen: false,
+    });
   };
 
   handleShowAutoMatchModal = () => {
@@ -353,6 +343,11 @@ class GroupsManager extends React.Component {
           onRequestClose={this.handleCloseAutoMatchModal}
           examTemplates={this.state.examTemplates}
           onSubmit={this.autoMatch}
+        />
+        <CreateGroupModal
+          isOpen={this.state.isCreateGroupModalOpen}
+          onRequestClose={this.handleCloseCreateGroupModal}
+          onSubmit={this.createGroup}
         />
       </div>
     );
