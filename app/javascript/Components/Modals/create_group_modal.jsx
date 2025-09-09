@@ -14,14 +14,14 @@ export default class CreateGroupModal extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
+    this.setState({groupName: event.target.value});
   }
 
   handleSubmit(event) {
     event.preventDefault();
     this.props.onSubmit(this.state.groupName);
     this.setState({groupName: ""});
-  };
+  }
 
   render() {
     return (
@@ -39,7 +39,7 @@ export default class CreateGroupModal extends React.Component {
               className="button"
               type="submit"
               value="Submit"
-              disabled={this.state.value === undefined}
+              disabled={!this.state.groupName}
             >
               {I18n.t("groups.create_group")}
             </button>
