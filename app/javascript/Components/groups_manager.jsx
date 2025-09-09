@@ -95,7 +95,7 @@ class GroupsManager extends React.Component {
       ).then(this.fetchData);
     } else {
       this.setState({isCreateGroupModalOpen: true});
-      }
+    }
   };
 
   createAllGroups = () => {

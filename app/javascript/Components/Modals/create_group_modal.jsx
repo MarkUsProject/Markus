@@ -21,7 +21,7 @@ export default class CreateGroupModal extends React.Component {
     event.preventDefault();
     this.props.onSubmit(this.state.groupName);
     this.setState({groupName: ""});
-  };
+  }
 
   render() {
     return (
@@ -52,4 +52,3 @@ export default class CreateGroupModal extends React.Component {
     );
   }
 }
-
