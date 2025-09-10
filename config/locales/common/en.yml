@@ -4,6 +4,7 @@ en:
   add: Add
   additional_not_shown: Additional %{count} not shown.
   all: All
+  anyone: Anyone
   apply: Apply
   cancel: Cancel
   clear_all: Clear All
@@ -17,9 +18,14 @@ en:
   errors:
     invalid_path: Invalid path provided.
   file: File
+  file_format: File format
   filter_by: Filter by %{name}
   forbidden: Forbidden
+  format:
+    csv: CSV
+    json: JSON
   help: Help
+  latest: Latest
   lti:
     config_error: Error configuring LTI.
     course_exists: A course with this name already exists on MarkUs. Please select a course to link to.
