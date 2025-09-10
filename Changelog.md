@@ -7,6 +7,13 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+
+### 🔧 Internal changes
+- Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+
+## [v2.8.1]
+
+### 🐛 Bug fixes
 - Fixed group member filtering in assignment summary table (#7644)
 - Fixed spacing issue for the remote authentication login button (#7646)
 - Fixed API bug when creating binary submission files (#7647)
@@ -15,7 +22,6 @@
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
-- Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
 
 ## [v2.8.0]
 
