@@ -192,8 +192,8 @@ class GroupsManager extends React.Component {
 
   handleSubmitCreateGroup = groupName => {
     $.post({
-        url: Routes.new_course_assignment_group_path(this.props.course_id, this.props.assignment_id),
-        data: {group: {group_name: groupName}},
+      url: Routes.new_course_assignment_group_path(this.props.course_id, this.props.assignment_id),
+      data: {group: {group_name: groupName}},
     }).then(() => {
       this.setState({isCreateGroupModalOpen: false});
       this.fetchData();
