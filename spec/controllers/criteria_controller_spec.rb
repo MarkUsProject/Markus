@@ -206,7 +206,7 @@ describe CriteriaController do
             submission = create(:submission, grouping: grouping)
             result = submission.get_latest_result
             result.update!(marking_state: Result::MARKING_STATES[:complete])
-            
+
             get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment_with_marking.id }
           end
 
@@ -1281,8 +1281,9 @@ describe CriteriaController do
 
       context 'when there is a syntax error in the YAML file' do
         it 'handles Psych::SyntaxError gracefully' do
-          allow(YAML).to receive(:safe_load).and_raise(Psych::SyntaxError.new('file', 1, 1, 0, 'syntax error', 'context'))
-          
+          allow(YAML).to receive(:safe_load).and_raise(Psych::SyntaxError.new('file', 1, 1, 0, 'syntax error',
+                                                                              'context'))
+
           post_as instructor, :upload,
                   params: { course_id: course.id, assignment_id: assignment.id, upload_file: mixed_file }
 
@@ -1294,7 +1295,7 @@ describe CriteriaController do
       context 'when there is a general upload error' do
         it 'handles StandardError gracefully' do
           allow_any_instance_of(CriteriaController).to receive(:process_file_upload).and_raise(StandardError.new('Upload failed'))
-          
+
           post_as instructor, :upload,
                   params: { course_id: course.id, assignment_id: assignment.id, upload_file: mixed_file }
 
