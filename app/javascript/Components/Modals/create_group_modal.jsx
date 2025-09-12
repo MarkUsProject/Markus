@@ -9,12 +9,6 @@ export default class CreateGroupModal extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.isOpen && !this.props.isOpen) {
-      this.setState({groupName: ""});
-    }
-  }
-
   componentDidMount() {
     Modal.setAppElement("body");
   }
@@ -39,8 +33,9 @@ export default class CreateGroupModal extends React.Component {
       >
         <h2>{I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}</h2>
         <form onSubmit={this.handleSubmit}>
-          {I18n.t("activerecord.models.group.one")}
+          <label htmlFor="groupName">{I18n.t("activerecord.models.group.one")}</label>
           <input
+            id="groupName"
             type="text"
             value={this.state.groupName}
             onChange={event => this.handleChange(event)}
