@@ -4,22 +4,42 @@ export class URLViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      externalURL: "",
       embeddedURL: "",
     };
   }
 
   componentDidMount() {
-    this.configDisplay();
+    this.fetchUrl();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.externalUrl !== this.props.externalUrl) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.url !== this.props.url) {
+      this.fetchUrl();
+    } else if (prevState.externalURL !== this.state.externalURL) {
       this.configDisplay();
     }
   }
 
+  fetchUrl = () => {
+    if (!this.props.url) {
+      return;
+    }
+    this.props.setLoadingCallback(true);
+    fetch(this.props.url)
+      .then(response => response.text())
+      .then(content =>
+        this.setState({externalURL: content}, () => this.props.setLoadingCallback(false))
+      )
+      .catch(error => {
+        this.props.setLoadingCallback(false);
+        if (error instanceof DOMException) return;
+        console.error(error);
+      });
+  };
+
   configDisplay = () => {
-    const url = this.isValidURL(this.props.externalUrl);
+    const url = this.isValidURL(this.state.externalURL);
     if (!url) {
       return;
     }
@@ -35,7 +55,6 @@ export class URLViewer extends React.Component {
       default:
         this.setState({embeddedURL: ""});
     }
-    this.setState({isInvalidUrl: false});
   };
 
   /*
@@ -117,8 +136,8 @@ export class URLViewer extends React.Component {
           {errorMessage(I18n.t("submissions.url_preview_error"))}
         </iframe>
       );
-    } else if (!this.isValidURL(this.props.externalUrl)) {
-      return errorMessage(I18n.t("submissions.invalid_url", {item: I18n.t("this")}));
+    } else if (!this.isValidURL(this.state.externalURL)) {
+      return errorMessage(I18n.t("submissions.invalid_url", {item: `"${this.state.externalURL}"`}));
     } else {
       return errorMessage(I18n.t("submissions.url_preview_error"));
     }
@@ -129,11 +148,11 @@ export class URLViewer extends React.Component {
       <div className="url-container">
         <div className="link-display">
           {/* Make Invalid URLs unclickable */}
-          {!this.isValidURL(this.props.externalUrl) ? (
-            this.props.externalUrl
+          {!this.isValidURL(this.state.externalURL) ? (
+            this.state.externalURL
           ) : (
-            <a href={this.props.externalUrl} target="_blank">
-              {this.props.externalUrl}
+            <a href={this.state.externalURL} target="_blank">
+              {this.state.externalURL}
             </a>
           )}
         </div>
