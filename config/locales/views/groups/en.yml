@@ -15,7 +15,6 @@ en:
       no_member: 'Member ''%{member}'' not added to group ''%{group}'': %{error}.'
       other: 'Group ''%{group}'' not cloned: %{error}.'
     could_not_delete: Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading.
-    create_group: Create Group
     delete: Delete group(s)
     delete_confirm: This will remove all members in the group and delete all information associated with this group. Continue?
     delete_group_has_submission: 'The following groupings could not be deleted since they have submissions: '

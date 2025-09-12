@@ -7,7 +7,7 @@ import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
-import {course_assignment_group_path} from "../routes";
+import {course_assignment_groups_path} from "../routes";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -191,9 +191,9 @@ class GroupsManager extends React.Component {
   };
 
   handleSubmitCreateGroup = groupName => {
-    $.post({
+    $.get({
       url: Routes.new_course_assignment_group_path(this.props.course_id, this.props.assignment_id),
-      data: {group: {group_name: groupName}},
+      data: {new_group_name: groupName},
     }).then(() => {
       this.setState({isCreateGroupModalOpen: false});
       this.fetchData();

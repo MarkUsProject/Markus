@@ -9,6 +9,12 @@ export default class CreateGroupModal extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.isOpen && !this.props.isOpen) {
+      this.setState({groupName: ""});
+    }
+  }
+
   componentDidMount() {
     Modal.setAppElement("body");
   }
@@ -31,15 +37,24 @@ export default class CreateGroupModal extends React.Component {
         onRequestClose={this.props.onRequestClose}
         id="create_group_modal"
       >
-        <h2>{I18n.t("groups.create_group")}</h2>
+        <h2>{I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}</h2>
         <form onSubmit={this.handleSubmit}>
           {I18n.t("activerecord.models.group.one")}
-          <input type="text" value={this.state.groupName} onChange={this.handleChange} />
+          <input
+            type="text"
+            value={this.state.groupName}
+            onChange={event => this.handleChange(event)}
+          />
           <div className={"modal-container"}>
-            <button className="button" type="submit" disabled={!this.state.groupName}>
-              {I18n.t("groups.create_group")}
+            <button
+              className="button"
+              type="submit"
+              value="Submit"
+              disabled={!this.state.groupName}
+            >
+              {I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}
             </button>
-            <button className="button" type="button" onClick={this.props.onRequestClose}>
+            <button className="button" type="reset" onClick={this.props.onRequestClose}>
               {I18n.t("cancel")}
             </button>
           </div>
