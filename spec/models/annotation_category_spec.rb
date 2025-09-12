@@ -411,7 +411,11 @@ describe AnnotationCategory do
         end
         expect(category_ids).to match_array([category1.id, category2.id])
 
-        texts_json = categories_json.flat_map { |c| c[:texts].map { |t| t[:id] } }
+        texts_json = categories_json.flat_map do |c|
+          c[:texts].map do |t|
+            t[:id]
+          end
+        end
         expect(texts_json).to include(text1.id, text2.id, text3.id)
       end
     end
