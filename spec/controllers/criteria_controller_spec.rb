@@ -196,6 +196,24 @@ describe CriteriaController do
         it 'should respond with success' do
           expect(subject).to respond_with(:success)
         end
+
+        context 'when marking has started' do
+          let(:assignment_with_marking) { create(:assignment) }
+
+          before do
+            # Create a completed result to trigger marking_started?
+            grouping = create(:grouping, assignment: assignment_with_marking)
+            submission = create(:submission, grouping: grouping)
+            result = submission.get_latest_result
+            result.update!(marking_state: Result::MARKING_STATES[:complete])
+            
+            get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment_with_marking.id }
+          end
+
+          it 'displays marking started warning' do
+            expect(flash[:notice]).to have_message(I18n.t('assignments.due_date.marking_started_warning'))
+          end
+        end
       end
 
       describe '#new' do
@@ -339,6 +357,22 @@ describe CriteriaController do
 
           it 'should render the update template' do
             expect(subject).to render_template(:update)
+          end
+        end
+
+        context 'with assignment files' do
+          let(:assignment_file) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            get_as instructor,
+                   :update,
+                   params: { course_id: course.id, id: flexible_criterion.id,
+                             flexible_criterion: { name: 'Updated', assignment_files: [assignment_file.id] } },
+                   format: :js
+          end
+
+          it 'associates assignment files with criterion' do
+            expect(flexible_criterion.reload.criteria_assignment_files_joins).not_to be_empty
           end
         end
       end
@@ -543,6 +577,28 @@ describe CriteriaController do
         expect(subject).to respond_with(:success)
 
         expect { FlexibleCriterion.find(flexible_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      context 'when assignment has released marks' do
+        let(:criterion_with_released_marks) { create(:flexible_criterion, assignment: assignment) }
+
+        before do
+          # Create released marks
+          grouping = create(:grouping, assignment: assignment)
+          submission = create(:submission, grouping: grouping)
+          result = submission.get_latest_result
+          result.update!(released_to_students: true)
+        end
+
+        it 'prevents deletion and displays error' do
+          delete_as instructor,
+                    :destroy,
+                    params: { course_id: course.id, id: criterion_with_released_marks.id },
+                    format: :js
+
+          expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+          expect(Criterion.exists?(criterion_with_released_marks.id)).to be true
+        end
       end
     end
   end
@@ -1220,6 +1276,30 @@ describe CriteriaController do
           post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
                                                  upload_file: no_type_file }
           expect(flash[:error]).not_to be_nil
+        end
+      end
+
+      context 'when there is a syntax error in the YAML file' do
+        it 'handles Psych::SyntaxError gracefully' do
+          allow(YAML).to receive(:safe_load).and_raise(Psych::SyntaxError.new('file', 1, 1, 0, 'syntax error', 'context'))
+          
+          post_as instructor, :upload,
+                  params: { course_id: course.id, assignment_id: assignment.id, upload_file: mixed_file }
+
+          expect(flash[:error]).to include('syntax_error')
+          expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
+        end
+      end
+
+      context 'when there is a general upload error' do
+        it 'handles StandardError gracefully' do
+          allow_any_instance_of(CriteriaController).to receive(:process_file_upload).and_raise(StandardError.new('Upload failed'))
+          
+          post_as instructor, :upload,
+                  params: { course_id: course.id, assignment_id: assignment.id, upload_file: mixed_file }
+
+          expect(flash[:error]).to eq('Upload failed')
+          expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
         end
       end
 
