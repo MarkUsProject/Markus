@@ -67,9 +67,9 @@ export class FileViewer extends React.Component {
     ) {
       return <HTMLViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
     } else if (this.props.selectedFileType === "binary") {
-      return <BinaryViewer content={this.state.content} {...commonProps} />;
+      return <BinaryViewer {...commonProps} />;
     } else if (this.props.selectedFileType === "markusurl") {
-      return <URLViewer externalUrl={this.state.content} {...commonProps} />;
+      return <URLViewer {...commonProps} />;
     } else if (this.props.selectedFileType !== "") {
       return (
         <TextViewer

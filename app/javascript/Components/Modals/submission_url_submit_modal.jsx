@@ -7,6 +7,7 @@ class SubmitUrlUploadModal extends React.Component {
     this.state = {
       newUrl: "",
       newUrlText: "",
+      manualUrlAlias: false,
     };
   }
 
@@ -26,8 +27,8 @@ class SubmitUrlUploadModal extends React.Component {
   handleUrlChange = event => {
     const urlInput = event.target.value;
     try {
-      const validatedURL = new URL(urlInput);
-      if (this.state.newUrlText === "") {
+      if (!this.state.manualUrlAlias) {
+        const validatedURL = new URL(urlInput);
         const suggestedText = validatedURL.hostname;
         this.setState({newUrlText: suggestedText});
       }
@@ -39,13 +40,14 @@ class SubmitUrlUploadModal extends React.Component {
   };
 
   handleUrlAliasChange = event => {
-    this.setState({newUrlText: event.target.value});
+    this.setState({newUrlText: event.target.value, manualUrlAlias: true});
   };
 
   handleModalClose = () => {
     this.setState({
       newUrl: "",
       newUrlText: "",
+      manualUrlAlias: false,
     });
     this.props.onRequestClose();
   };
