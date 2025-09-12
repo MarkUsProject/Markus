@@ -353,4 +353,76 @@ describe AnnotationCategory do
       end
     end
   end
+
+  describe '.to_json' do
+    let(:assignment) { create(:assignment) }
+
+    context 'when there is a single category and single text' do
+      let!(:category) { create(:annotation_category, assignment: assignment, annotation_category_name: 'Test A') }
+      let!(:text) { create(:annotation_text, annotation_category: category, content: 'Test A text') }
+
+      it 'returns a JSON for the category with its text' do
+        category_json = AnnotationCategory.to_json([category]).first
+        expect(category_json[:id]).to eq(category.id)
+        expect(category_json[:annotation_category_name]).to eq('Test A')
+        expect(category_json[:texts].size).to eq(1)
+
+        text_json = category_json[:texts].first
+        expect(text_json[:id]).to eq(text.id)
+        expect(text_json[:content]).to eq('Test A text')
+        expect(text_json[:deduction]).to be_nil
+      end
+    end
+
+    context 'when there is a category with multiple texts' do
+      let!(:category) { create(:annotation_category, assignment: assignment, annotation_category_name: 'Test B') }
+
+      it 'returns a JSON including all the texts for the category' do
+        create(:annotation_text, annotation_category: category, content: 'Test B text 1')
+        create(:annotation_text, annotation_category: category, content: 'Test B text 2')
+
+        category_json = AnnotationCategory.to_json([category]).first
+        expect(category_json[:id]).to eq(category.id)
+        expect(category_json[:annotation_category_name]).to eq('Test B')
+        expect(category_json[:texts].size).to eq(2)
+
+        texts_json = category_json[:texts]
+        expect(texts_json.pluck(:content)).to match_array(['Test B text 1', 'Test B text 2'])
+        expect(texts_json.pluck(:deduction)).to all(be_nil)
+      end
+    end
+
+    context 'when there are multiple categories with text(s)' do
+      let!(:category1) do
+        create(:annotation_category, assignment: assignment, annotation_category_name: 'Category A')
+      end
+      let!(:category2) do
+        create(:annotation_category, assignment: assignment, annotation_category_name: 'Category B')
+      end
+
+      it 'returns JSON for all categories with their texts' do
+        text1 = create(:annotation_text, annotation_category: category1, content: 'Category A text 1')
+        text2 = create(:annotation_text, annotation_category: category1, content: 'Category A text 2')
+        text3 = create(:annotation_text, annotation_category: category2, content: 'Category B text 3')
+
+        categories_json = AnnotationCategory.to_json([category1, category2])
+        category_ids = categories_json.each_with_object([]) do |category, ids|
+          ids << category[:id]
+        end
+        expect(category_ids).to match_array([category1.id, category2.id])
+
+        texts_json = categories_json.flat_map { |c| c[:texts].map { |t| t[:id] } }
+        expect(texts_json).to include(text1.id, text2.id, text3.id)
+      end
+    end
+
+    context 'when a category has no texts' do
+      let!(:category) { create(:annotation_category, assignment: assignment, annotation_category_name: 'Empty A') }
+
+      it 'returns an empty texts array' do
+        category_json = AnnotationCategory.to_json([category]).first
+        expect(category_json[:texts]).to eq([])
+      end
+    end
+  end
 end
