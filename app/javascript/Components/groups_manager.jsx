@@ -7,7 +7,6 @@ import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
-import {course_assignment_groups_path} from "../routes";
 
 class GroupsManager extends React.Component {
   constructor(props) {
