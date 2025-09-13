@@ -22,6 +22,7 @@
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
+- Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
 
 ## [v2.8.0]
 
