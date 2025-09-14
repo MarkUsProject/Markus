@@ -85,7 +85,7 @@ module SubmissionsHelper
       content = params[:file_content]
     end
 
-    tmpfile = Tempfile.new
+    tmpfile = Tempfile.new(binmode: true)
     begin
       tmpfile.write(content)
       tmpfile.rewind
