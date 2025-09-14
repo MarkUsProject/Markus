@@ -84,7 +84,7 @@ describe("For the TATable's display of TAs", () => {
   });
 
   describe("when no TAs are fetched", () => {
-    beforeAll(async () => {
+    beforeAll(() => {
       tas_sample = [];
       // Mocking the response returned by fetch, used in TATable fetchData
       fetch.mockReset();
@@ -95,9 +95,7 @@ describe("For the TATable's display of TAs", () => {
           counts: {all: 0, active: 0, inactive: 0},
         }),
       });
-      await act(async () => {
-        render(<TATable course_id={1} />);
-      });
+      render(<TATable course_id={1} />);
     });
 
     it("No rows found is shown", async () => {

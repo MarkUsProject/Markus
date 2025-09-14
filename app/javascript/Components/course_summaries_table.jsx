@@ -1,5 +1,4 @@
 import React from "react";
-import {ReactTableDefaults} from "react-table";
 import ReactTable from "react-table";
 
 export class CourseSummaryTable extends React.Component {

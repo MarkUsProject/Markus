@@ -1,4 +1,3 @@
-import {ReactTableDefaults} from "react-table";
 import {I18n} from "i18n-js";
 import translations from "translations.json";
 import {
@@ -25,7 +24,6 @@ Object.assign(ReactTableDefaults, {
   NoDataComponent: customNoDataComponent,
   noDataProps: customNoDataProps,
   LoadingComponent: customLoadingProp,
-  loadingText: null,
 });
 
 Object.assign(ReactTableDefaults.column, {

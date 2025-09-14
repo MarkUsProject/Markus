@@ -6,7 +6,6 @@ import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {selectFilter} from "./Helpers/table_helpers";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
-import {ReactTableDefaults} from "react-table";
 
 class RawStudentTable extends React.Component {
   constructor() {
@@ -98,7 +97,7 @@ class RawStudentTable extends React.Component {
         <CheckboxTable
           loading={this.state.loading}
           ref={r => (this.checkboxTable = r)}
-          data={this.state.loading ? [] : data.students}
+          data={data.students}
           columns={[
             {
               Header: I18n.t("activerecord.attributes.user.user_name"),
@@ -227,7 +226,6 @@ class RawStudentTable extends React.Component {
               filterable: false,
             },
           ]}
-          noDataText={I18n.t("students.empty_table")}
           getNoDataProps={() => ({
             loading,
             data,
@@ -238,6 +236,7 @@ class RawStudentTable extends React.Component {
             },
           ]}
           filterable
+          noDataText={I18n.t("students.empty_table")}
           {...this.props.getCheckboxProps()}
         />
       </div>

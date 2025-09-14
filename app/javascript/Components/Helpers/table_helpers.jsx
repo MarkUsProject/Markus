@@ -6,9 +6,7 @@ import {Grid} from "react-loader-spinner";
  * Provides generic helper functions and components for react-table tables.
  */
 
-export function customLoadingProp(props) {
-  const {loading} = props;
-
+export function customLoadingProp({loading}) {
   if (loading) {
     return (
       <div className="loading-spinner" data-testid="loading-spinner">
@@ -264,11 +262,3 @@ export function customNoDataComponent({children, loading}) {
 export function customNoDataProps({state}) {
   return {loading: state.loading, data: state.data};
 }
-
-// export function customNoDataText(props) {
-//   const {loading} = props;
-//   if (loading) {
-//     return "";
-//   }
-//   return I18n.t("students.empty_table");
-// }

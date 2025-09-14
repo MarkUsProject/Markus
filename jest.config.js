@@ -172,6 +172,10 @@ module.exports = {
 
   // Setting this value to "fake" allows the use of fake timers for functions such as "setTimeout"
   // timers: "real",
+
+  // A map from regular expressions to paths to transformers
+  transform: {"\\.[jt]sx?$": "babel-jest"},
+
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: [
     "/node_modules/(?!i18n-js|marked|mime|react-dnd-html5-backend)",
