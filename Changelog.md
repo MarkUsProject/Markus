@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added tests to the Criteria Controller class to achieve full test coverage
 
 ### 🐛 Bug fixes
 
