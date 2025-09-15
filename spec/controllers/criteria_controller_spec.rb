@@ -201,9 +201,10 @@ describe CriteriaController do
           before do
             # Create a grouping, submission, and result with marks to simulate marking having started
             grouping = create(:grouping, assignment: assignment)
-            submission = create(:submission, grouping: grouping)
-            result = create(:result, submission: submission)
-            create(:mark, result: result, criterion: create(:flexible_criterion, assignment: assignment), mark: 5)
+            submission = create(:submission, grouping: grouping, submission_version_used: true)
+            result = create(:result, submission: submission, marking_state: Result::MARKING_STATES[:complete])
+            criterion = create(:flexible_criterion, assignment: assignment, max_mark: 10)
+            create(:mark, result: result, criterion: criterion, mark: 5)
             get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
           end
 
