@@ -196,6 +196,17 @@ describe CriteriaController do
         it 'should respond with success' do
           expect(subject).to respond_with(:success)
         end
+
+        context 'when marking has started' do
+          before do
+            assignment.update!(marking_started: true)
+            get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
+          end
+
+          it 'should display marking started warning' do
+            expect(flash[:notice]).to have_message(I18n.t('assignments.due_date.marking_started_warning'))
+          end
+        end
       end
 
       describe '#new' do
@@ -368,7 +379,9 @@ describe CriteriaController do
         context 'with save error' do
           before do
             allow_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
-            allow_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
+            error_object = instance_double(ActiveModel::Errors)
+            allow(error_object).to receive(:full_messages).and_return(['Test error message'])
+            allow_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(error_object)
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id,
@@ -384,6 +397,10 @@ describe CriteriaController do
 
           it 'should respond with unprocessable entity' do
             expect(subject).to respond_with(:unprocessable_entity)
+          end
+
+          it 'should display error messages' do
+            expect(flash[:error]).to include('Test error message')
           end
         end
 
