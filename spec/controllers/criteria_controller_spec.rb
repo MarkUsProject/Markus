@@ -199,7 +199,11 @@ describe CriteriaController do
 
         context 'when marking has started' do
           before do
-            assignment.update!(marking_started: true)
+            # Create a grouping, submission, and result with marks to simulate marking having started
+            grouping = create(:grouping, assignment: assignment)
+            submission = create(:submission, grouping: grouping)
+            result = create(:result, submission: submission)
+            create(:mark, result: result, criterion: create(:flexible_criterion, assignment: assignment), mark: 5)
             get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
           end
 
@@ -400,7 +404,7 @@ describe CriteriaController do
           end
 
           it 'should display error messages' do
-            expect(flash[:error]).to include('Test error message')
+            expect(flash[:error]).to include('<p>Test error message</p>')
           end
         end
 
