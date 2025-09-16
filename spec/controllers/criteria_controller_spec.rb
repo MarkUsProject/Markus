@@ -515,6 +515,57 @@ describe CriteriaController do
             expect(response).to have_http_status(:bad_request)
           end
         end
+
+        context 'when updating with assignment files' do
+          let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+          let!(:assignment_file2) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: flexible_criterion.id,
+                     flexible_criterion: {
+                       name: 'Updated Criterion',
+                       assignment_files: [assignment_file1.id.to_s, assignment_file2.id.to_s]
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should associate assignment files with criterion' do
+            expect(flexible_criterion.reload.assignment_files).to include(assignment_file1, assignment_file2)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
+        end
+
+        context 'when update fails with validation errors' do
+          before do
+            # Make the criterion invalid by setting an invalid max_mark
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: flexible_criterion.id,
+                     flexible_criterion: {
+                       max_mark: -1  # Invalid max_mark to trigger validation error
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should display error messages' do
+            expect(flash[:error]).not_to be_empty
+          end
+
+          it 'should respond with unprocessable entity' do
+            expect(subject).to respond_with(:unprocessable_entity)
+          end
+        end
       end
 
       describe '#edit' do
@@ -565,6 +616,31 @@ describe CriteriaController do
         expect(subject).to respond_with(:success)
 
         expect { FlexibleCriterion.find(flexible_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      context 'when assignment marks are released' do
+        let!(:released_assignment) { create(:assignment_with_criteria_and_results) }
+        let!(:criterion_with_released_marks) do
+          released_assignment.criteria.find_by(type: 'FlexibleCriterion')
+        end
+
+        before do
+          # Release marks by setting released_to_students to true on results
+          Result.joins(:submission).where(submissions: { grouping_id: released_assignment.groupings.ids })
+                .update_all(released_to_students: true)
+          delete_as instructor,
+                    :destroy,
+                    params: { course_id: released_assignment.course_id, id: criterion_with_released_marks.id },
+                    format: :js
+        end
+
+        it 'should flash error message' do
+          expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+        end
+
+        it 'should not delete the criterion' do
+          expect(FlexibleCriterion.find(criterion_with_released_marks.id)).to be_present
+        end
       end
     end
   end
