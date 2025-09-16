@@ -1,5 +1,5 @@
 import {TATable} from "../ta_table";
-import {render, screen, fireEvent, waitFor, within, act} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor, within} from "@testing-library/react";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({

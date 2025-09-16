@@ -3,7 +3,7 @@
  */
 
 import {StudentTable} from "../student_table";
-import {render, screen, within, fireEvent, waitFor, act} from "@testing-library/react";
+import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {CourseSummaryTable} from "../course_summaries_table";
 
