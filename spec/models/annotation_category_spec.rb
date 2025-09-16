@@ -406,9 +406,8 @@ describe AnnotationCategory do
         text3 = create(:annotation_text, annotation_category: category2, content: 'Category B text 3')
 
         categories_json = AnnotationCategory.to_json([category1, category2])
-        category_ids = categories_json.each_with_object([]) do |category, ids|
-          ids << category[:id]
-        end
+        category_ids = categories_json.pluck(:id)  # rubocop:disable Rails/PluckId
+
         expect(category_ids).to match_array([category1.id, category2.id])
 
         all_texts = categories_json.flat_map { |c| c[:texts] }
