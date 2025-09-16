@@ -10,6 +10,7 @@
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+- Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
 
 ## [v2.8.1]
 
@@ -22,7 +23,6 @@
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
-- Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
 
 ## [v2.8.0]
 
