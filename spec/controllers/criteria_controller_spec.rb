@@ -58,8 +58,45 @@ describe CriteriaController do
 
   describe 'Using Checkbox Criterion' do
     let(:criterion) { :checkbox_criterion }
+    let(:checkbox_criterion) do
+      create(:checkbox_criterion,
+             assignment: assignment,
+             position: 1,
+             name: 'Checkbox Criterion')
+    end
 
     it_behaves_like 'callbacks'
+
+    describe 'An authenticated and authorized instructor doing a PUT' do
+      describe '#update' do
+        context 'when updating with assignment files' do
+          let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+          let!(:assignment_file2) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: checkbox_criterion.id,
+                     checkbox_criterion: {
+                       name: 'Updated Checkbox Criterion',
+                       assignment_files: [assignment_file1.id.to_s, assignment_file2.id.to_s]
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should associate assignment files with criterion' do
+            expect(checkbox_criterion.reload.assignment_files).to include(assignment_file1, assignment_file2)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
+        end
+      end
+    end
   end
 
   describe 'Using Flexible Criteria' do
@@ -863,6 +900,33 @@ describe CriteriaController do
             expect(subject).to render_template(:update)
           end
         end
+
+        context 'when updating with assignment files' do
+          let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+          let!(:assignment_file2) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: rubric_criterion.id,
+                     rubric_criterion: {
+                       name: 'Updated Rubric Criterion',
+                       assignment_files: [assignment_file1.id.to_s, assignment_file2.id.to_s]
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should associate assignment files with criterion' do
+            expect(rubric_criterion.reload.assignment_files).to include(assignment_file1, assignment_file2)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
+        end
       end
     end
 
@@ -1343,6 +1407,32 @@ describe CriteriaController do
   end
 
   describe '#upload' do
+    context 'when marks are released' do
+      let!(:released_assignment) { create(:assignment_with_criteria_and_results) }
+      let(:test_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
+
+      before do
+        # Release marks by setting released_to_students to true on results
+        Result.joins(:submission).where(submissions: { grouping_id: released_assignment.groupings.ids })
+              .update_all(released_to_students: true)
+
+        post_as instructor, :upload,
+                params: {
+                  course_id: released_assignment.course_id,
+                  assignment_id: released_assignment.id,
+                  upload_file: test_file
+                }
+      end
+
+      it 'should flash error message' do
+        expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+      end
+
+      it 'should redirect to index' do
+        expect(response).to redirect_to(action: 'index', id: released_assignment.id)
+      end
+    end
+
     it_behaves_like 'a controller supporting upload', formats: [:yml] do
       let(:params) { { course_id: course.id, assignment_id: assignment.id } }
     end
