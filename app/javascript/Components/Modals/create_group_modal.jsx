@@ -39,14 +39,10 @@ export default class CreateGroupModal extends React.Component {
             type="text"
             value={this.state.groupName}
             onChange={event => this.handleChange(event)}
+            autoFocus
           />
-          <div className={"modal-container"}>
-            <button
-              className="button"
-              type="submit"
-              value="Submit"
-              disabled={!this.state.groupName}
-            >
+          <div className={"dialog-actions"}>
+            <button className="button" type="submit">
               {I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}
             </button>
             <button className="button" type="reset" onClick={this.props.onRequestClose}>
