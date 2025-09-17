@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Update message and page displaying cannot create new course via quercus (#7669)
 
 ### 🐛 Bug fixes
 
