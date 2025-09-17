@@ -2,6 +2,7 @@ import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import CreateGroupModal from "../Modals/create_group_modal";
 import Modal from "react-modal";
+import {expect} from "@jest/globals";
 
 describe("CreateGroupModal", () => {
   let props;
@@ -44,7 +45,7 @@ describe("CreateGroupModal", () => {
     });
   });
 
-  it("should not submit when group name is empty", async () => {
+  it("should not add the new group when the inputted group name is empty", async () => {
     const createGroupButton = screen
       .getAllByText(
         I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})
@@ -54,6 +55,7 @@ describe("CreateGroupModal", () => {
 
     await waitFor(() => {
       expect(props.onSubmit).not.toHaveBeenCalled();
+      expect(props.onRequestClose).toHaveBeenCalledTimes(1);
     });
   });
 });
