@@ -12,14 +12,6 @@ class FlexibleCriterion < Criterion
     end
   end
 
-  def update_assigned_groups_count
-    result = []
-    tas.each do |ta|
-      result.concat(ta.get_groupings_by_assignment(assignment))
-    end
-    self.assigned_groups_count = result.uniq.length
-  end
-
   # Instantiate a FlexibleCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
