@@ -42,5 +42,5 @@ lti:
   course_filter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
-  unpermitted_new_course_message: 'You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator.'
+  unpermitted_new_course_message: 'You are not permitted to create a new MarkUs course for %{course_name}. If you are interested to use MarkUs for your course, please contact the MarkUs team at instrsoft@teach.cs.toronto.edu.'
   sync_schedule: "0 3 * * *"
