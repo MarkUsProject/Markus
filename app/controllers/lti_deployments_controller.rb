@@ -187,7 +187,7 @@ class LtiDeploymentsController < ApplicationController
         Settings.lti.unpermitted_new_course_message,
         course_name: record.lms_course_name
       )
-      render 'unpermitted_course_creation'
+      render 'unpermitted_course_creation', status: :unprocessable_entity
       return
     end
 
