@@ -10,9 +10,7 @@ unless ENV['NO_INIT_SCHEDULER']
     Resque::Server.class_eval do
       include SessionHandler
 
-      configure :production do
-        set :host_authorization, { permitted_hosts: Settings.resque.permitted_hosts }
-      end
+      set :host_authorization, { permitted_hosts: Settings.resque.permitted_hosts }
 
       before do
         unless real_user&.admin_user?
