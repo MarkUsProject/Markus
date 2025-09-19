@@ -19,9 +19,6 @@ export default class CreateGroupModal extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (!this.state.groupName) {
-      return this.props.onRequestClose();
-    }
     this.props.onSubmit(this.state.groupName);
     this.setState({groupName: ""});
   };
@@ -45,7 +42,7 @@ export default class CreateGroupModal extends React.Component {
             autoFocus
           />
           <div className={"dialog-actions"}>
-            <button className="button" type="submit">
+            <button className="button" type="submit" disabled={!this.state.groupName}>
               {I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}
             </button>
             <button className="button" type="reset" onClick={this.props.onRequestClose}>
