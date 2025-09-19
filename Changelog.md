@@ -5,6 +5,9 @@
 ### ✨ New features and improvements
 - Update message and page displaying cannot create new course via external LTI tool (#7669)
 
+### 🐛 Bug fixes
+- Resque Host Authorization, removing env condition as this is for all environments (#7671)
+
 ## [v2.8.1]
 
 ### 🐛 Bug fixes

@@ -120,4 +120,4 @@ file_storage:
 rmd_convert_enabled: false
 
 resque:
-  permitted_hosts: ["localhost"]
+  permitted_hosts: [".localhost", ".internal"]
