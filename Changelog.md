@@ -5,13 +5,13 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Added tests to the Criteria Controller class to achieve full test coverage
 
 ### 🐛 Bug fixes
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
 - Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
+- Added tests to the Criteria Controller class to achieve full test coverage
 
 ## [v2.8.1]
 
