@@ -60,9 +60,7 @@ describe CriteriaController do
     let(:criterion) { :checkbox_criterion }
     let(:checkbox_criterion) do
       create(:checkbox_criterion,
-             assignment: assignment,
-             position: 1,
-             name: 'Checkbox Criterion')
+             assignment: assignment)
     end
 
     it_behaves_like 'callbacks'
@@ -81,7 +79,7 @@ describe CriteriaController do
                      id: checkbox_criterion.id,
                      checkbox_criterion: {
                        name: 'Updated Checkbox Criterion',
-                       assignment_files: [assignment_file1.id.to_s, assignment_file2.id.to_s]
+                       assignment_files: [assignment_file1.id, assignment_file2.id]
                      }
                    },
                    format: :js
@@ -442,7 +440,7 @@ describe CriteriaController do
           end
 
           it 'should display error messages' do
-            expect(flash[:error]).to include('<p>Test error message</p>')
+            expect(flash[:error]).to have_message('<p>Test error message</p>')
           end
         end
 
@@ -565,7 +563,7 @@ describe CriteriaController do
                      id: flexible_criterion.id,
                      flexible_criterion: {
                        name: 'Updated Criterion',
-                       assignment_files: [assignment_file1.id.to_s, assignment_file2.id.to_s]
+                       assignment_files: [assignment_file1.id, assignment_file2.id]
                      }
                    },
                    format: :js
@@ -582,7 +580,6 @@ describe CriteriaController do
 
         context 'when update fails with validation errors' do
           before do
-            # Make the criterion invalid by setting an invalid max_mark
             put_as instructor,
                    :update,
                    params: {
@@ -656,15 +653,12 @@ describe CriteriaController do
       end
 
       context 'when assignment marks are released' do
-        let!(:released_assignment) { create(:assignment_with_criteria_and_results) }
+        let!(:released_assignment) { create(:assignment_with_criteria_and_released_results) }
         let!(:criterion_with_released_marks) do
           released_assignment.criteria.find_by(type: 'FlexibleCriterion')
         end
 
         before do
-          # Release marks by setting released_to_students to true on results
-          Result.joins(:submission).where(submissions: { grouping_id: released_assignment.groupings.ids })
-                .update_all(released_to_students: true)
           delete_as instructor,
                     :destroy,
                     params: { course_id: released_assignment.course_id, id: criterion_with_released_marks.id },
@@ -913,7 +907,7 @@ describe CriteriaController do
                      id: rubric_criterion.id,
                      rubric_criterion: {
                        name: 'Updated Rubric Criterion',
-                       assignment_files: [assignment_file1.id.to_s, assignment_file2.id.to_s]
+                       assignment_files: [assignment_file1.id, assignment_file2.id]
                      }
                    },
                    format: :js
@@ -1408,14 +1402,10 @@ describe CriteriaController do
 
   describe '#upload' do
     context 'when marks are released' do
-      let!(:released_assignment) { create(:assignment_with_criteria_and_results) }
+      let!(:released_assignment) { create(:assignment_with_criteria_and_released_results) }
       let(:test_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
 
       before do
-        # Release marks by setting released_to_students to true on results
-        Result.joins(:submission).where(submissions: { grouping_id: released_assignment.groupings.ids })
-              .update_all(released_to_students: true)
-
         post_as instructor, :upload,
                 params: {
                   course_id: released_assignment.course_id,
