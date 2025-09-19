@@ -6,6 +6,7 @@ import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
+import RenameGroupModal from "./Modals/rename_group_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class GroupsManager extends React.Component {
       selected_extension_data: {},
       updating_extension: false,
       isAutoMatchModalOpen: false,
+      isRenameGroupDialogOpen: false,
       examTemplates: [],
       loading: true,
     };
@@ -38,11 +40,6 @@ class GroupsManager extends React.Component {
   componentDidMountCB = () => {
     $("#create_group_dialog form").on("ajax:success", () => {
       modalCreate.close();
-      this.fetchData();
-    });
-
-    $("#rename_group_dialog form").on("ajax:success", () => {
-      modal_rename.close();
       this.fetchData();
     });
   };
@@ -147,13 +144,36 @@ class GroupsManager extends React.Component {
     ).then(this.fetchData);
   };
 
-  renameGroup = grouping_id => {
-    $("#new_groupname").val("");
-    $("#rename_group_dialog form").attr(
-      "action",
-      Routes.rename_group_course_group_path(this.props.course_id, grouping_id)
-    );
-    modal_rename.open();
+  renameGroup = (grouping_id, group_name) => {
+    this.setState({
+      isRenameGroupDialogOpen: true,
+      groupingId: grouping_id,
+      groupName: group_name,
+    });
+  };
+
+  handleRenameGroupDialog = groupName => {
+    $.get({
+      url: Routes.rename_group_course_assignment_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        new_groupname: groupName,
+        grouping_id: this.state.groupingId,
+      },
+    }).then(() => {
+      this.setState({isRenameGroupDialogOpen: false});
+      this.fetchData();
+    });
+  };
+
+  handleCloseRenameGroupDialog = () => {
+    this.setState({
+      isRenameGroupDialogOpen: false,
+      groupingId: null,
+      groupName: "",
+    });
   };
 
   unassign = (grouping_id, student_user_name) => {
@@ -354,6 +374,11 @@ class GroupsManager extends React.Component {
           examTemplates={this.state.examTemplates}
           onSubmit={this.autoMatch}
         />
+        <RenameGroupModal
+          isOpen={this.state.isRenameGroupDialogOpen}
+          onRequestClose={this.handleCloseRenameGroupDialog}
+          onSubmit={this.handleRenameGroupDialog}
+        />
       </div>
     );
   }
@@ -391,7 +416,7 @@ class RawGroupsTable extends React.Component {
             <span>{row.value}</span>
             <a
               href="#"
-              onClick={() => this.props.renameGroup(row.original._id)}
+              onClick={() => this.props.renameGroup(row.original._id, row.value)}
               title={I18n.t("groups.rename_group")}
             >
               <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-right" />
