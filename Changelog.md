@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+- Resque Host Authorization, removing env condition as this is for all environments (#7671)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
