@@ -20,7 +20,7 @@ export default class CreateGroupModal extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     if (!this.state.groupName) {
-      return this.props.onRequestClose();
+      return;
     }
     this.props.onSubmit(this.state.groupName);
     this.setState({groupName: ""});

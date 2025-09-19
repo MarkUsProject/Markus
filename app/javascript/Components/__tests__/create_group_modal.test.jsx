@@ -55,7 +55,6 @@ describe("CreateGroupModal", () => {
 
     await waitFor(() => {
       expect(props.onSubmit).not.toHaveBeenCalled();
-      expect(props.onRequestClose).toHaveBeenCalledTimes(1);
     });
   });
 });
