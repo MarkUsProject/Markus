@@ -1,11 +1,13 @@
-import {ReactTableDefaults} from "react-table";
 import {I18n} from "i18n-js";
 import translations from "translations.json";
+import {ReactTableDefaults} from "react-table";
 import {
   defaultSort,
   stringFilterMethod,
   textFilter,
   customNoDataComponent,
+  customLoadingProp,
+  customNoDataProps,
 } from "../Components/Helpers/table_helpers";
 
 const i18n = new I18n(translations);
@@ -21,6 +23,8 @@ Object.assign(ReactTableDefaults, {
   defaultFilterMethod: stringFilterMethod,
   FilterComponent: textFilter,
   NoDataComponent: customNoDataComponent,
+  noDataProps: customNoDataProps,
+  LoadingComponent: customLoadingProp,
 });
 
 Object.assign(ReactTableDefaults.column, {

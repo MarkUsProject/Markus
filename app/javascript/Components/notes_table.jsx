@@ -117,6 +117,9 @@ class NotesTable extends React.Component {
         columns={this.columns}
         sortable={false}
         loading={this.state.loading}
+        getNoDataProps={() => ({
+          loading: this.state.loading,
+        })}
       />
     );
   }

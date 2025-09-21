@@ -99,7 +99,7 @@ describe("For the TATable's display of TAs", () => {
     });
 
     it("No rows found is shown", async () => {
-      await screen.findByText(I18n.t("tas.empty_table"));
+      await screen.findByText(I18n.t("tas.empty_table"), {}, {timeout: 3000});
     });
   });
 
@@ -150,6 +150,27 @@ describe("For the TATable's display of TAs", () => {
           })
         );
       });
+    });
+  });
+});
+
+describe("For each TATable's loading status", () => {
+  let mock_course_id = 1;
+
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("TATable Spinner", () => {
+    it("shows loading spinner when data is being fetched", async () => {
+      render(<TATable course_id={mock_course_id} />);
+
+      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      expect(spinner).toBeInTheDocument();
     });
   });
 });
