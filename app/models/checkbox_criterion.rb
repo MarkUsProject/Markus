@@ -1,10 +1,6 @@
 class CheckboxCriterion < Criterion
   DEFAULT_MAX_MARK = 1
 
-  def weight
-    max_mark
-  end
-
   # Instantiate a CheckboxCriterion from a CSV row and attach it to the supplied
   # assignment.
   # row: An array representing one CSV file row. Should be in the following

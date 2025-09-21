@@ -96,10 +96,6 @@ class FlexibleCriterion < Criterion
         'bonus' => self.bonus } }
   end
 
-  def weight
-    1
-  end
-
   def scale_marks
     super
     return if self.annotation_categories.nil?
