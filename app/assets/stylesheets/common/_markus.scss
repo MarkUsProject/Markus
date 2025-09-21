@@ -878,6 +878,7 @@ ul.tags {
 }
 
 .ReactModal__Overlay--after-open {
+  background-color: rgba(0, 0, 0, 0.75) !important;
   z-index: 100;
 }
 
@@ -922,6 +923,10 @@ ul.tags {
   .preview {
     height: 10em;
     max-height: 10em;
+  }
+
+  form label {
+    margin-right: 0.3em;
   }
 }
 
