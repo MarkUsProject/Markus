@@ -31,12 +31,6 @@ class GroupsManager extends React.Component {
 
   componentDidMount() {
     this.fetchData();
-    // TODO: Remove reliance on global modal
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", this.componentDidMountCB);
-    } else {
-      this.componentDidMountCB();
-    }
   }
 
   fetchData = () => {
