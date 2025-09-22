@@ -42,6 +42,13 @@ FactoryBot.define do
     end
   end
 
+  factory :assignment_with_criteria_and_released_results, parent: :assignment_with_criteria_and_results do
+    after(:create) do |a|
+      # Release marks by setting released_to_students to true on all current results
+      a.current_results.update_all(released_to_students: true)
+    end
+  end
+
   factory :assignment_with_criteria_and_test_results, parent: :assignment do
     after(:create) do |a|
       create_list(:flexible_criterion, 3, assignment: a)

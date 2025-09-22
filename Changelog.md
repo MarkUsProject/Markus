@@ -5,11 +5,16 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added new loading spinner icon for tables (#7602)
 
 ### 🐛 Bug fixes
+- Resque Host Authorization, removing env condition as this is for all environments (#7671)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+- Converted "Create Group" functionality to React modal (#7663)
+- Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
+- Added tests to the Criteria Controller class to achieve full test coverage
 
 ## [v2.8.1]
 
@@ -22,6 +27,7 @@
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
+- Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
 
 ## [v2.8.0]
 

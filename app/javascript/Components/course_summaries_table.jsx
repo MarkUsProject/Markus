@@ -1,5 +1,4 @@
 import React from "react";
-
 import ReactTable from "react-table";
 
 export class CourseSummaryTable extends React.Component {
@@ -113,6 +112,9 @@ export class CourseSummaryTable extends React.Component {
         filtered={this.state.filtered}
         onFilteredChange={filtered => this.setState({filtered})}
         className={"auto-overflow"}
+        getNoDataProps={() => ({
+          loading: this.props.loading,
+        })}
       />,
     ];
   }

@@ -6,8 +6,8 @@ import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
+import CreateGroupModal from "./Modals/create_group_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
-import {rename_group_course_assignment_groups_path} from "../routes";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -22,6 +22,7 @@ class GroupsManager extends React.Component {
       selected_extension_data: {},
       updating_extension: false,
       isAutoMatchModalOpen: false,
+      isCreateGroupModalOpen: false,
       isRenameGroupDialogOpen: false,
       examTemplates: [],
       loading: true,
@@ -37,13 +38,6 @@ class GroupsManager extends React.Component {
       this.componentDidMountCB();
     }
   }
-
-  componentDidMountCB = () => {
-    $("#create_group_dialog form").on("ajax:success", () => {
-      modalCreate.close();
-      this.fetchData();
-    });
-  };
 
   fetchData = () => {
     fetch(Routes.course_assignment_groups_path(this.props.course_id, this.props.assignment_id), {
@@ -95,21 +89,8 @@ class GroupsManager extends React.Component {
         Routes.new_course_assignment_group_path(this.props.course_id, this.props.assignment_id)
       ).then(this.fetchData);
     } else {
-      modalCreate.open();
-      $("#new_group_name").val("");
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", this.createGroupCB);
-      } else {
-        this.createGroupCB();
-      }
+      this.setState({isCreateGroupModalOpen: true});
     }
-  };
-
-  createGroupCB = () => {
-    $("#modal-create-close").click(function () {
-      modalCreate.close();
-    });
   };
 
   createAllGroups = () => {
@@ -215,6 +196,22 @@ class GroupsManager extends React.Component {
         students: students,
       },
     }).then(this.fetchData);
+  };
+
+  handleCloseCreateGroupModal = () => {
+    this.setState({
+      isCreateGroupModalOpen: false,
+    });
+  };
+
+  handleSubmitCreateGroup = groupName => {
+    $.get({
+      url: Routes.new_course_assignment_group_path(this.props.course_id, this.props.assignment_id),
+      data: {new_group_name: groupName},
+    }).then(() => {
+      this.setState({isCreateGroupModalOpen: false});
+      this.fetchData();
+    });
   };
 
   handleShowAutoMatchModal = () => {
@@ -371,6 +368,11 @@ class GroupsManager extends React.Component {
           onRequestClose={this.handleCloseAutoMatchModal}
           examTemplates={this.state.examTemplates}
           onSubmit={this.autoMatch}
+        />
+        <CreateGroupModal
+          isOpen={this.state.isCreateGroupModalOpen}
+          onRequestClose={this.handleCloseCreateGroupModal}
+          onSubmit={this.handleSubmitCreateGroup}
         />
         <RenameGroupModal
           isOpen={this.state.isRenameGroupDialogOpen}

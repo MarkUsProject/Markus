@@ -58,8 +58,43 @@ describe CriteriaController do
 
   describe 'Using Checkbox Criterion' do
     let(:criterion) { :checkbox_criterion }
+    let(:checkbox_criterion) do
+      create(:checkbox_criterion,
+             assignment: assignment)
+    end
 
     it_behaves_like 'callbacks'
+
+    describe 'An authenticated and authorized instructor doing a PUT' do
+      describe '#update' do
+        context 'when updating with assignment files' do
+          let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+          let!(:assignment_file2) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: checkbox_criterion.id,
+                     checkbox_criterion: {
+                       name: 'Updated Checkbox Criterion',
+                       assignment_files: [assignment_file1.id, assignment_file2.id]
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should associate assignment files with criterion' do
+            expect(checkbox_criterion.reload.assignment_files).to include(assignment_file1, assignment_file2)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
+        end
+      end
+    end
   end
 
   describe 'Using Flexible Criteria' do
@@ -195,6 +230,22 @@ describe CriteriaController do
 
         it 'should respond with success' do
           expect(subject).to respond_with(:success)
+        end
+
+        context 'when marking has started' do
+          before do
+            # Create a grouping, submission, and result with marks to simulate marking having started
+            grouping = create(:grouping, assignment: assignment)
+            submission = create(:submission, grouping: grouping, submission_version_used: true)
+            result = create(:result, submission: submission, marking_state: Result::MARKING_STATES[:complete])
+            criterion = create(:flexible_criterion, assignment: assignment, max_mark: 10)
+            create(:mark, result: result, criterion: criterion, mark: 5)
+            get_as instructor, :index, params: { course_id: course.id, assignment_id: assignment.id }
+          end
+
+          it 'should display marking started warning' do
+            expect(flash[:notice]).to have_message(I18n.t('assignments.due_date.marking_started_warning'))
+          end
         end
       end
 
@@ -368,7 +419,9 @@ describe CriteriaController do
         context 'with save error' do
           before do
             allow_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
-            allow_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
+            error_object = instance_double(ActiveModel::Errors)
+            allow(error_object).to receive(:full_messages).and_return(['Test error message'])
+            allow_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(error_object)
             post_as instructor,
                     :create,
                     params: { course_id: course.id, assignment_id: assignment.id,
@@ -384,6 +437,10 @@ describe CriteriaController do
 
           it 'should respond with unprocessable entity' do
             expect(subject).to respond_with(:unprocessable_entity)
+          end
+
+          it 'should display error messages' do
+            expect(flash[:error]).to have_message('<p>Test error message</p>')
           end
         end
 
@@ -493,6 +550,56 @@ describe CriteriaController do
             expect(response).to have_http_status(:bad_request)
           end
         end
+
+        context 'when updating with assignment files' do
+          let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+          let!(:assignment_file2) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: flexible_criterion.id,
+                     flexible_criterion: {
+                       name: 'Updated Criterion',
+                       assignment_files: [assignment_file1.id, assignment_file2.id]
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should associate assignment files with criterion' do
+            expect(flexible_criterion.reload.assignment_files).to include(assignment_file1, assignment_file2)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
+          end
+        end
+
+        context 'when update fails with validation errors' do
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: flexible_criterion.id,
+                     flexible_criterion: {
+                       max_mark: -1  # Invalid max_mark to trigger validation error
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should display error messages' do
+            expect(flash[:error]).not_to be_empty
+          end
+
+          it 'should respond with unprocessable entity' do
+            expect(subject).to respond_with(:unprocessable_entity)
+          end
+        end
       end
 
       describe '#edit' do
@@ -543,6 +650,28 @@ describe CriteriaController do
         expect(subject).to respond_with(:success)
 
         expect { FlexibleCriterion.find(flexible_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      context 'when assignment marks are released' do
+        let!(:released_assignment) { create(:assignment_with_criteria_and_released_results) }
+        let!(:criterion_with_released_marks) do
+          released_assignment.criteria.find_by(type: 'FlexibleCriterion')
+        end
+
+        before do
+          delete_as instructor,
+                    :destroy,
+                    params: { course_id: released_assignment.course_id, id: criterion_with_released_marks.id },
+                    format: :js
+        end
+
+        it 'should flash error message' do
+          expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+        end
+
+        it 'should not delete the criterion' do
+          expect(FlexibleCriterion.find(criterion_with_released_marks.id)).to be_present
+        end
       end
     end
   end
@@ -763,6 +892,33 @@ describe CriteriaController do
 
           it 'should render the update template' do
             expect(subject).to render_template(:update)
+          end
+        end
+
+        context 'when updating with assignment files' do
+          let!(:assignment_file1) { create(:assignment_file, assignment: assignment) }
+          let!(:assignment_file2) { create(:assignment_file, assignment: assignment) }
+
+          before do
+            put_as instructor,
+                   :update,
+                   params: {
+                     course_id: course.id,
+                     id: rubric_criterion.id,
+                     rubric_criterion: {
+                       name: 'Updated Rubric Criterion',
+                       assignment_files: [assignment_file1.id, assignment_file2.id]
+                     }
+                   },
+                   format: :js
+          end
+
+          it 'should associate assignment files with criterion' do
+            expect(rubric_criterion.reload.assignment_files).to include(assignment_file1, assignment_file2)
+          end
+
+          it 'should respond with success' do
+            expect(subject).to respond_with(:success)
           end
         end
       end
@@ -1245,6 +1401,28 @@ describe CriteriaController do
   end
 
   describe '#upload' do
+    context 'when marks are released' do
+      let!(:released_assignment) { create(:assignment_with_criteria_and_released_results) }
+      let(:test_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
+
+      before do
+        post_as instructor, :upload,
+                params: {
+                  course_id: released_assignment.course_id,
+                  assignment_id: released_assignment.id,
+                  upload_file: test_file
+                }
+      end
+
+      it 'should flash error message' do
+        expect(flash[:error]).to have_message(I18n.t('criteria.errors.released_marks'))
+      end
+
+      it 'should redirect to index' do
+        expect(response).to redirect_to(action: 'index', id: released_assignment.id)
+      end
+    end
+
     it_behaves_like 'a controller supporting upload', formats: [:yml] do
       let(:params) { { course_id: course.id, assignment_id: assignment.id } }
     end
