@@ -128,11 +128,11 @@ class GroupsManager extends React.Component {
     });
   };
 
-  handleRenameGroupDialog = groupName => {
+  handleRenameGroupDialog = newGroupName => {
     $.post({
       url: Routes.rename_group_course_group_path(this.props.course_id, this.state.groupingId),
       data: {
-        new_groupname: groupName,
+        new_groupname: newGroupName,
         assignment_id: this.props.assignment_id,
       },
     }).then(() => {
@@ -372,7 +372,6 @@ class GroupsManager extends React.Component {
           isOpen={this.state.isRenameGroupDialogOpen}
           onRequestClose={this.handleCloseRenameGroupDialog}
           onSubmit={this.handleRenameGroupDialog}
-          currentGroupName={this.state.groupName}
         />
       </div>
     );

@@ -14,12 +14,6 @@ export default class RenameGroupModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isOpen && this.props.currentGroupName) {
-      this.setState({groupName: this.props.currentGroupName});
-    }
-  }
-
   handleChange = event => {
     this.setState({groupName: event.target.value});
   };
@@ -69,10 +63,3 @@ export default class RenameGroupModal extends React.Component {
     );
   }
 }
-
-RenameGroupModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  currentGroupName: PropTypes.string,
-};
