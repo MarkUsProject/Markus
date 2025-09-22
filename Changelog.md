@@ -15,6 +15,7 @@
 - Converted "Create Group" functionality to React modal (#7663)
 - Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
 - Added tests to the Criteria Controller class to achieve full test coverage
+- Converted "Rename Group" functionality to React modal (#7673)
 
 ## [v2.8.1]
 
