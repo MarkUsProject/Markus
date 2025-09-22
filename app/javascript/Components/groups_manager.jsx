@@ -7,6 +7,7 @@ import ExtensionModal from "./Modals/extension_modal";
 import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
+import {rename_group_course_assignment_groups_path} from "../routes";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -153,14 +154,11 @@ class GroupsManager extends React.Component {
   };
 
   handleRenameGroupDialog = groupName => {
-    $.get({
-      url: Routes.rename_group_course_assignment_groups_path(
-        this.props.course_id,
-        this.props.assignment_id
-      ),
+    $.post({
+      url: Routes.rename_group_course_group_path(this.props.course_id, this.state.groupingId),
       data: {
         new_groupname: groupName,
-        grouping_id: this.state.groupingId,
+        assignment_id: this.props.assignment_id,
       },
     }).then(() => {
       this.setState({isRenameGroupDialogOpen: false});
@@ -378,6 +376,7 @@ class GroupsManager extends React.Component {
           isOpen={this.state.isRenameGroupDialogOpen}
           onRequestClose={this.handleCloseRenameGroupDialog}
           onSubmit={this.handleRenameGroupDialog}
+          currentGroupName={this.state.groupName}
         />
       </div>
     );
@@ -416,7 +415,7 @@ class RawGroupsTable extends React.Component {
             <span>{row.value}</span>
             <a
               href="#"
-              onClick={() => this.props.renameGroup(row.original._id, row.value)}
+              onClick={() => this.props.renameGroup(row.original._id)}
               title={I18n.t("groups.rename_group")}
             >
               <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-right" />

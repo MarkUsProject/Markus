@@ -14,6 +14,12 @@ export default class RenameGroupModal extends React.Component {
     Modal.setAppElement("body");
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.isOpen && this.props.currentGroupName) {
+      this.setState({groupName: this.props.currentGroupName});
+    }
+  }
+
   handleChange = event => {
     this.setState({groupName: event.target.value});
   };
@@ -37,7 +43,7 @@ export default class RenameGroupModal extends React.Component {
       >
         <h2>{I18n.t("groups.rename_group")}</h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="groupName">{I18n.t("activerecord.models.group.one")}</label>
+          <label htmlFor="groupName">{I18n.t("activerecord.attributes.group.group_name")}</label>
           <input
             id="groupName"
             type="text"
@@ -46,7 +52,7 @@ export default class RenameGroupModal extends React.Component {
             autoFocus
           />
           <div className={"dialog-actions"}>
-            <button className="button" type="submit">
+            <button className="button" type="submit" disabled={!this.state.groupName}>
               {I18n.t("groups.rename_group")}
             </button>
             <button className="button" type="reset" onClick={this.props.onRequestClose}>
@@ -58,3 +64,10 @@ export default class RenameGroupModal extends React.Component {
     );
   }
 }
+
+RenameGroupModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  currentGroupName: PropTypes.string,
+};
