@@ -52,7 +52,12 @@ export default class RenameGroupModal extends React.Component {
             autoFocus
           />
           <div className={"dialog-actions"}>
-            <button className="button" type="submit" disabled={!this.state.groupName}>
+            <button
+              className="button"
+              type="submit"
+              disabled={!this.state.groupName}
+              data-testid="rename-submit-button"
+            >
               {I18n.t("groups.rename_group")}
             </button>
             <button className="button" type="reset" onClick={this.props.onRequestClose}>
