@@ -212,7 +212,7 @@ describe Api::UsersController do
           let(:new_user) { build(:end_user, user_name: '   dragon ..') }
 
           it 'should raise a 422 error' do
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 
@@ -220,7 +220,7 @@ describe Api::UsersController do
           let(:new_user) { build(:end_user, type: 'Dragon') }
 
           it 'should raise a 422 error' do
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
       end
