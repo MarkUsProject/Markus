@@ -22,6 +22,7 @@ en:
   help: Help
   lti:
     config_error: Error configuring LTI.
+    course_creation_denied: Course Creation Not Allowed
     course_exists: A course with this name already exists on MarkUs. Please select a course to link to.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.

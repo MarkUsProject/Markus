@@ -183,11 +183,12 @@ class LtiDeploymentsController < ApplicationController
 
   def create_course
     if LtiConfig.respond_to?(:allowed_to_create_course?) && !LtiConfig.allowed_to_create_course?(record)
-      render 'shared/http_status',
-             locals: { code: '422',
-                       message: format(Settings.lti.unpermitted_new_course_message,
-                                       course_name: record.lms_course_name) },
-             status: :unprocessable_entity, layout: false
+      @title = I18n.t('lti.course_creation_denied')
+      @message = format(
+        Settings.lti.unpermitted_new_course_message,
+        course_name: record.lms_course_name
+      )
+      render 'message', status: :forbidden
       return
     end
 
