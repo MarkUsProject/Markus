@@ -16,7 +16,7 @@
 - Converted "Create Group" functionality to React modal (#7663)
 - Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
 - Added tests to the Criteria Controller class to achieve full test coverage
-- Refactored Criterion subclasses to remove redundant code3
+- Refactored Criterion subclasses to remove redundant code
 - Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
 
 ## [v2.8.1]
