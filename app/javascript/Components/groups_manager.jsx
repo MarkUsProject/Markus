@@ -22,9 +22,11 @@ class GroupsManager extends React.Component {
       selected_extension_data: {},
       updating_extension: false,
       isAutoMatchModalOpen: false,
+      isAssignmentGroupUseModalOpen: false,
       isCreateGroupModalOpen: false,
       examTemplates: [],
       loading: true,
+      cloneAssignments: [],
     };
   }
 
@@ -80,6 +82,7 @@ class GroupsManager extends React.Component {
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
           examTemplates: res.exam_templates,
+          cloneAssignments: res.clone_assignments,
         });
       });
   };
@@ -196,6 +199,34 @@ class GroupsManager extends React.Component {
       data: {new_group_name: groupName},
     }).then(() => {
       this.setState({isCreateGroupModalOpen: false});
+      this.fetchData();
+    });
+  };
+
+  handleShowAssignmentGroupUseModal = () => {
+    this.setState({
+      isAssignmentGroupUseModalOpen: true,
+    });
+    this.fetchData();
+  };
+
+  handleCloseAssignmentGroupUseModal = () => {
+    this.setState({
+      isAssignmentGroupUseModalOpen: false,
+    });
+  };
+
+  handleSubmitAssignmentGroupUseModal = selectedAssignmentId => {
+    $.post({
+      url: Routes.use_another_assignment_groups_course_assignment_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        clone_assignment_id: selectedAssignmentId,
+      },
+    }).then(() => {
+      this.setState({isAssignmentGroupUseModalOpen: false});
       this.fetchData();
     });
   };

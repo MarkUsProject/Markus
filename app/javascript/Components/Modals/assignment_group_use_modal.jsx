@@ -10,12 +10,6 @@ export default class AssignmentGroupUseModal extends React.Component {
     };
   }
 
-  componentDidUpdate() {
-    if (this.state.value === undefined && this.props.examTemplates.length > 0) {
-      this.setState({value: this.props.examTemplates[0].id});
-    }
-  }
-
   componentDidMount() {
     Modal.setAppElement("body");
   }
@@ -25,8 +19,12 @@ export default class AssignmentGroupUseModal extends React.Component {
   }
 
   handleSubmit(event) {
-    this.props.onSubmit(this.state.value);
-    this.props.onRequestClose();
+    event.preventDefault();
+
+    if (window.confirm(I18n.t("groups.delete_groups_linked"))) {
+      this.props.onSubmit(this.state.assignmentId);
+      this.props.onRequestClose();
+    }
   }
 
   render() {
@@ -42,7 +40,7 @@ export default class AssignmentGroupUseModal extends React.Component {
           {I18n.t("groups.assignment_to_use")}
           <select
             id="assignment-group-select"
-            value={this.state.value}
+            value={this.state.assignmentId}
             onChange={this.handleChange}
           >
             {this.props.cloneAssignments.map(assignment => (
@@ -52,12 +50,16 @@ export default class AssignmentGroupUseModal extends React.Component {
             ))}
           </select>
           <div className={"dialog-actions"}>
-            <button className="button" type="submit" disabled={this.state.value === undefined}>
+            <button
+              className="button"
+              type="submit"
+              disabled={this.state.assignmentId === undefined}
+            >
               {I18n.t("save")}
             </button>
             <button
               className="button"
-              type="reset"
+              type="button"
               id="assignment-group-use-close"
               onClick={this.props.onRequestClose}
             >
