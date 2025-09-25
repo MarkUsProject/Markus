@@ -40,7 +40,7 @@ module Api
       if has_missing_params?([:short_identifier])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -60,7 +60,7 @@ module Api
         new_form = GradeEntryForm.new(create_params)
         unless new_form.save
           render 'shared/http_status', locals: { code: '422', message:
-            new_form.errors.full_messages.first }, status: :unprocessable_entity
+            new_form.errors.full_messages.first }, status: :unprocessable_content
           raise ActiveRecord::Rollback
         end
 
@@ -69,7 +69,7 @@ module Api
           grade_item = new_form.grade_entry_items.build(**column_params, position: i + 1)
           unless grade_item.save
             render 'shared/http_status', locals: { code: '422', message:
-              grade_item.errors.full_messages.first }, status: :unprocessable_entity
+              grade_item.errors.full_messages.first }, status: :unprocessable_content
             raise ActiveRecord::Rollback
           end
         end
@@ -137,7 +137,7 @@ module Api
       if has_missing_params?([:user_name, :grade_entry_items])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -151,7 +151,7 @@ module Api
       if grade_entry_student.nil?
         # There is no student with that user_name
         render 'shared/http_status', locals: { code: '422', message:
-          'There is no student with that user_name' }, status: :unprocessable_entity
+          'There is no student with that user_name' }, status: :unprocessable_content
         return
       end
 
@@ -162,7 +162,7 @@ module Api
           if grade_entry_item.nil?
             # There is no such grade entry item
             render 'shared/http_status', locals: { code: '422', message:
-              "There is no grade entry item named #{item}" }, status: :unprocessable_entity
+              "There is no grade entry item named #{item}" }, status: :unprocessable_content
             raise ActiveRecord::Rollback
           end
           grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id: grade_entry_item.id)
