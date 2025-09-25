@@ -18,6 +18,8 @@ class GroupsManager extends React.Component {
       show_hidden: false,
       hidden_students_count: 0,
       inactive_groups_count: 0,
+      renameGroupingId: null,
+      renameGroupName: null,
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
@@ -123,17 +125,16 @@ class GroupsManager extends React.Component {
   renameGroup = (grouping_id, group_name) => {
     this.setState({
       isRenameGroupDialogOpen: true,
-      groupingId: grouping_id,
-      groupName: group_name,
+      renameGroupingId: grouping_id,
+      renameGroupName: group_name,
     });
   };
 
   handleRenameGroupDialog = newGroupName => {
     $.post({
-      url: Routes.rename_group_course_group_path(this.props.course_id, this.state.groupingId),
+      url: Routes.rename_group_course_group_path(this.props.course_id, this.state.renameGroupingId),
       data: {
         new_groupname: newGroupName,
-        assignment_id: this.props.assignment_id,
       },
     }).then(() => {
       this.setState({isRenameGroupDialogOpen: false});
@@ -144,8 +145,8 @@ class GroupsManager extends React.Component {
   handleCloseRenameGroupDialog = () => {
     this.setState({
       isRenameGroupDialogOpen: false,
-      groupingId: null,
-      groupName: "",
+      renameGroupingId: null,
+      renameGroupName: "",
     });
   };
 
@@ -372,6 +373,7 @@ class GroupsManager extends React.Component {
           isOpen={this.state.isRenameGroupDialogOpen}
           onRequestClose={this.handleCloseRenameGroupDialog}
           onSubmit={this.handleRenameGroupDialog}
+          currentGroupName={this.state.renameGroupName}
         />
       </div>
     );
