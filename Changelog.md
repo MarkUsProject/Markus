@@ -10,6 +10,7 @@
 
 ### 🐛 Bug fixes
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
+- Provide file viewer the option to render Microsoft files (#7676)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
