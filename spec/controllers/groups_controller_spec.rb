@@ -1052,14 +1052,14 @@ describe GroupsController do
       it 'fails to accept when there is no invitation' do
         post_as @current_student, :accept_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'fails to accept when the invitation has already been accepted' do
         create(:accepted_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :accept_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'fails to accept when another invitation has already been accepted' do
@@ -1068,7 +1068,7 @@ describe GroupsController do
         create(:accepted_student_membership, role: @current_student, grouping: grouping2)
         post_as @current_student, :accept_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'rejects other pending invitations' do
@@ -1104,13 +1104,13 @@ describe GroupsController do
         create(:accepted_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :decline_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'fails to reject when there is no invitation' do
         post_as @current_student, :decline_invitation,
                 params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

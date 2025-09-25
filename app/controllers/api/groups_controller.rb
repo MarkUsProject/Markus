@@ -20,7 +20,7 @@ module Api
         end
       rescue StandardError => e
         render 'shared/http_status', locals: { code: '422', message:
-          e.message }, status: :unprocessable_entity
+          e.message }, status: :unprocessable_content
       end
     end
 
@@ -68,7 +68,7 @@ module Api
       if self.grouping.nil?
         # The group doesn't have a grouping associated with that assignment
         render 'shared/http_status', locals: { code: '422', message:
-          'The group is not involved with that assignment' }, status: :unprocessable_entity
+          'The group is not involved with that assignment' }, status: :unprocessable_content
         return
       end
 
@@ -281,7 +281,7 @@ module Api
       if has_missing_params?([:marking_state])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
       result = self.grouping&.current_submission_used&.get_latest_result
@@ -336,7 +336,7 @@ module Api
         else
           # cannot delete a non existent extension; render failure
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         end
       when 'POST'
         if grouping.extension.nil?
@@ -349,7 +349,7 @@ module Api
         else
           # cannot create extension as it already exists; render failure
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         end
       when 'PATCH'
         if grouping.extension.present?
@@ -362,11 +362,11 @@ module Api
         else
           # cannot update extension as it does not exists; render failure
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         end
       end
     rescue ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     end
 
     def collect_submission
@@ -375,7 +375,7 @@ module Api
         released = @grouping.current_submission_used.results.exists?(released_to_students: true)
         if released
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
           return
         end
       end

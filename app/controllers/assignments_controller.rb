@@ -536,7 +536,7 @@ class AssignmentsController < ApplicationController
 
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
-      head :unprocessable_entity
+      head :unprocessable_content
       return
     end
     head :ok

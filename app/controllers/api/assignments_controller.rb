@@ -57,7 +57,7 @@ module Api
       if has_missing_params?([:short_identifier, :due_date, :description])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -205,7 +205,7 @@ module Api
         begin
           content = JSON.parse params[:specs]
         rescue JSON::ParserError => e
-          render 'shared/http_status', locals: { code: '422', message: e.message }, status: :unprocessable_entity
+          render 'shared/http_status', locals: { code: '422', message: e.message }, status: :unprocessable_content
           return
         end
       end
@@ -213,7 +213,7 @@ module Api
         render 'shared/http_status',
                locals: { code: '422',
                          message: HttpStatusHelper::ERROR_CODE['message']['422'] },
-               status: :unprocessable_entity
+               status: :unprocessable_content
       else
         AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment, content)
       end
