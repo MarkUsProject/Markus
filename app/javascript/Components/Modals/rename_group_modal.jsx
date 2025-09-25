@@ -14,12 +14,6 @@ export default class RenameGroupModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isOpen && this.props.currentGroupName) {
-      this.setState({groupName: this.props.currentGroupName});
-    }
-  }
-
   handleChange = event => {
     this.setState({groupName: event.target.value});
   };
