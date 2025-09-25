@@ -1,17 +1,14 @@
 import React from "react";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
-import {ResultContext} from "../Result/result_context";
 
-export default class AutoMatchModal extends React.Component {
+export default class AssignmentGroupUseModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.examTemplates.length === 0 ? undefined : this.props.examTemplates[0].id,
+      assignmentId: null,
     };
   }
-
-  static contextType = ResultContext;
 
   componentDidUpdate() {
     if (this.state.value === undefined && this.props.examTemplates.length > 0) {
@@ -24,7 +21,7 @@ export default class AutoMatchModal extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
+    this.setState({assignmentId: event.target.value});
   }
 
   handleSubmit(event) {
@@ -38,32 +35,32 @@ export default class AutoMatchModal extends React.Component {
         className="react-modal markus-dialog"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
-        id="auto_match_modal"
+        id="assignment_group_use_modal"
       >
-        <h2>{I18n.t("groups.auto_match")}</h2>
-        <form onSubmit={event => this.handleSubmit(event)}>
-          {I18n.t("activerecord.models.exam_template.one")}
+        <h2>{I18n.t("groups.reuse_groups")}</h2>
+        <form onSubmit={this.handleSubmit}>
+          {I18n.t("groups.assignment_to_use")}
           <select
-            id="auto-match-select"
+            id="assignment-group-select"
             value={this.state.value}
-            onChange={event => this.handleChange(event)}
+            onChange={this.handleChange}
           >
-            {this.props.examTemplates.map(examTemplate => (
-              <option key={examTemplate.id} value={examTemplate.id}>
-                {examTemplate.name}
+            {this.props.cloneAssignments.map(assignment => (
+              <option key={assignment.id} value={assignment.id}>
+                {assignment.short_identifier}
               </option>
             ))}
           </select>
-          <div className={"modal-container"}>
+          <div className={"dialog-actions"}>
+            <button className="button" type="submit" disabled={this.state.value === undefined}>
+              {I18n.t("save")}
+            </button>
             <button
               className="button"
-              type="submit"
-              value="Submit"
-              disabled={this.state.value === undefined}
+              type="reset"
+              id="assignment-group-use-close"
+              onClick={this.props.onRequestClose}
             >
-              {I18n.t("groups.auto_match")}
-            </button>
-            <button className="button" type="reset" onClick={this.props.onRequestClose}>
               {I18n.t("cancel")}
             </button>
           </div>
@@ -72,10 +69,3 @@ export default class AutoMatchModal extends React.Component {
     );
   }
 }
-
-AutoMatchModal.propType = {
-  isOpen: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
-  examTemplates: PropTypes.array.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
