@@ -19,7 +19,7 @@ class GroupsManager extends React.Component {
       hidden_students_count: 0,
       inactive_groups_count: 0,
       renameGroupingId: null,
-      renameGroupName: null,
+      renameGroupName: "",
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
