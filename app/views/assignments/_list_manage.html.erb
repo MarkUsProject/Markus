@@ -1,6 +1,6 @@
 <% assignments = @current_course.assignments
                                 .includes(:submission_rule, :assessment_section_properties, :pr_assignment)
-                                .order(:id) %>
+                                .order(:due_date, :short_identifier) %>
 <% action = @current_role.instructor? ? 'edit' : 'summary' %>
 
 <% if assignments.empty? %>
