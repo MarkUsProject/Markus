@@ -409,6 +409,12 @@ class GradeEntryCell extends React.Component {
         value={this.state.value}
         min={this.props.bonus ? "" : 0}
         onChange={this.handleChange}
+        onWheel={e => e.currentTarget.blur()} // prevent scroll changing value
+        onKeyDown={e => {
+          if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+            e.preventDefault(); // block arrow keys changing value
+          }
+        }}
       />
     );
   }
