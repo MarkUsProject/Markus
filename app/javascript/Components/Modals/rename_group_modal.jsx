@@ -6,7 +6,7 @@ export default class RenameGroupModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      groupName: "",
+      groupName: props.initialGroupName || "",
     };
   }
 
@@ -15,8 +15,8 @@ export default class RenameGroupModal extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.isOpen && !prevProps.isOpen && this.props.currentGroupName) {
-      this.setState({groupName: this.props.currentGroupName});
+    if (this.props.isOpen && !prevProps.isOpen && this.props.initialGroupName) {
+      this.setState({groupName: this.props.initialGroupName});
     }
   }
 

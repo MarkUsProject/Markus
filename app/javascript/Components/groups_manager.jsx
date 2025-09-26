@@ -373,7 +373,7 @@ class GroupsManager extends React.Component {
           isOpen={this.state.isRenameGroupDialogOpen}
           onRequestClose={this.handleCloseRenameGroupDialog}
           onSubmit={this.handleRenameGroupDialog}
-          currentGroupName={this.state.renameGroupName}
+          initialGroupName={this.state.renameGroupName}
         />
       </div>
     );
