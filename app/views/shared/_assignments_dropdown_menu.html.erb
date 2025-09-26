@@ -28,7 +28,7 @@
 
 <li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
-<% assignments = @current_role.visible_assessments(assessment_type: 'Assignment').order(:due_date, :id) %>
+<% assignments = @current_role.visible_assessments(assessment_type: 'Assignment').order(:due_date, :short_identifier) %>
 <% grade_entry_forms = @current_role.visible_assessments(assessment_type: 'GradeEntryForm') %>
 
 <%= render partial: 'shared/assignment_dropdown_link',
