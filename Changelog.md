@@ -7,6 +7,7 @@
 ### ✨ New features and improvements
 - Added new loading spinner icon for tables (#7602)
 - Update message and page displaying cannot create new course via external LTI tool (#7669)
+- Provide file viewer the option to render Microsoft files (#7676)
 
 ### 🐛 Bug fixes
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
