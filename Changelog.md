@@ -7,6 +7,7 @@
 - Provide file viewer the option to render Microsoft files (#7676)
 
 ### 🐛 Bug fixes
+- Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
 
 ## [v2.8.1]
