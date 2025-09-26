@@ -49,7 +49,7 @@ describe StarterFileEntry do
 
     it 'should add files to an open zip file' do
       FileUtils.rm_f(zip_path)
-      Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+      Zip::File.open(zip_path, create: true) do |zip_file|
         starter_file_entry.add_files_to_zip_file(zip_file)
       end
       Zip::File.open(zip_path) do |zip_file|
