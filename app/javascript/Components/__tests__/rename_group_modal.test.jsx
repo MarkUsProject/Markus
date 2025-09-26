@@ -33,7 +33,7 @@ describe("RenameGroupModal", () => {
     });
   });
 
-  it("should call onRequestClose on successful submit", async () => {
+  it("should call onRequestClose on successful call", async () => {
     fireEvent.click(screen.getByText(I18n.t("cancel")));
     await waitFor(() => {
       expect(props.onRequestClose).toHaveBeenCalledTimes(1);
@@ -47,5 +47,26 @@ describe("RenameGroupModal", () => {
     await waitFor(() => {
       expect(props.onSubmit).not.toHaveBeenCalled();
     });
+  });
+
+  it("should populate input when modal opens with initialGroupName", async () => {
+    const {rerender} = render(
+      <RenameGroupModal {...props} isOpen={false} initialGroupName="Initial Group" />
+    );
+
+    rerender(<RenameGroupModal {...props} isOpen={true} initialGroupName="Initial Group" />);
+
+    expect(screen.getByDisplayValue("Initial Group")).toBeInTheDocument();
+  });
+
+  it("should not submit when group name is empty", async () => {
+    fireEvent.change(screen.getByLabelText(I18n.t("activerecord.attributes.group.group_name")), {
+      target: {value: ""},
+    });
+
+    const form = document.querySelector("form");
+    fireEvent.submit(form);
+
+    expect(props.onSubmit).not.toHaveBeenCalled();
   });
 });

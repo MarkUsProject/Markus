@@ -1,6 +1,5 @@
 import React from "react";
 import Modal from "react-modal";
-import PropTypes from "prop-types";
 
 export default class RenameGroupModal extends React.Component {
   constructor(props) {
@@ -27,7 +26,7 @@ export default class RenameGroupModal extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     if (!this.state.groupName) {
-      return this.props.onRequestClose();
+      return;
     }
     this.props.onSubmit(this.state.groupName);
     this.setState({groupName: ""});
