@@ -346,7 +346,7 @@ class GroupsController < ApplicationController
     target_assignment = Assignment.find(params[:assignment_id])
     source_assignment = Assignment.find(params[:clone_assignment_id])
 
-    return head :unprocessable_entity if target_assignment.course != source_assignment.course
+    return head :unprocessable_content if target_assignment.course != source_assignment.course
 
     if source_assignment.nil?
       flash_message(:warning, t('groups.clone_warning.could_not_find_source'))
@@ -371,7 +371,7 @@ class GroupsController < ApplicationController
       current_role.join(@grouping)
     rescue ActiveRecord::RecordInvalid, RuntimeError => e
       flash_message(:error, e.message)
-      status = :unprocessable_entity
+      status = :unprocessable_content
     else
       m_logger = MarkusLogger.instance
       m_logger.log("Student '#{current_role.user_name}' joined group " \
@@ -389,7 +389,7 @@ class GroupsController < ApplicationController
       @grouping.decline_invitation(current_role)
     rescue RuntimeError => e
       flash_message(:error, e.message)
-      status = :unprocessable_entity
+      status = :unprocessable_content
     else
       m_logger = MarkusLogger.instance
       m_logger.log("Student '#{current_role.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")

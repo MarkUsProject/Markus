@@ -6,8 +6,11 @@
 
 ### ✨ New features and improvements
 - Added new loading spinner icon for tables (#7602)
+- Update message and page displaying cannot create new course via external LTI tool (#7669)
+- Provide file viewer the option to render Microsoft files (#7676)
 
 ### 🐛 Bug fixes
+- Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
 
 ### 🔧 Internal changes
@@ -16,6 +19,7 @@
 - Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
 - Added tests to the Criteria Controller class to achieve full test coverage
 - Refactored Criterion subclasses to remove redundant code
+- Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
 
 ## [v2.8.1]
 

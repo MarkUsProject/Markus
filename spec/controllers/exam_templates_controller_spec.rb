@@ -318,7 +318,7 @@ describe ExamTemplatesController do
         end
 
         it 'responds with an error status code' do
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
     end
@@ -332,7 +332,7 @@ describe ExamTemplatesController do
         end
 
         it 'responds with an error status code' do
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
     end

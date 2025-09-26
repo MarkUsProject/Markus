@@ -151,7 +151,7 @@ describe LtiDeploymentsController do
 
       it 'responds with an error message' do
         post_as instructor, :create_course, params: course_params
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

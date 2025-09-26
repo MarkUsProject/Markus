@@ -461,7 +461,7 @@ class SubmissionsController < ApplicationController
           messages << commit_msg
           head :ok
         else
-          head :unprocessable_entity
+          head :unprocessable_content
         end
       end
       flash_repository_messages messages, @grouping.course
@@ -507,7 +507,7 @@ class SubmissionsController < ApplicationController
 
     max_content_size = params[:max_content_size].blank? ? -1 : params[:max_content_size].to_i
     if max_content_size != -1 && file_contents.size > max_content_size
-      head :payload_too_large
+      head :content_too_large
       return
     end
 

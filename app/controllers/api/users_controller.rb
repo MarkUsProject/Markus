@@ -23,7 +23,7 @@ module Api
       if has_missing_params?([:user_name, :type, :first_name, :last_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -47,11 +47,11 @@ module Api
           AdminUser.create!(params.permit(*DEFAULT_FIELDS))
         else
           render 'shared/http_status', locals: { code: '422', message: 'Unknown user type' },
-                                       status: :unprocessable_entity
+                                       status: :unprocessable_content
           return
         end
       rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-        render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+        render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
       else
         render 'shared/http_status',
                locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
@@ -85,7 +85,7 @@ module Api
       end
       user.update!(user_params)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
         HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
@@ -102,7 +102,7 @@ module Api
         # incomplete/invalid HTTP params
         render 'shared/http_status',
                locals: { code: '422', message: HttpStatusHelper::ERROR_CODE['message']['422'] },
-               status: :unprocessable_entity
+               status: :unprocessable_content
         return
       end
 
@@ -113,7 +113,7 @@ module Api
       end
       user.update!(user_params)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
         HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
