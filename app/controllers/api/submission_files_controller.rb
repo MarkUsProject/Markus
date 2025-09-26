@@ -3,6 +3,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionFilesController < MainApiController
     include SubmissionsHelper
+
     # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
     # Requires: assignment_id, group_id
