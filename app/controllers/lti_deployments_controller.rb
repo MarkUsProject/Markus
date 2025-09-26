@@ -12,7 +12,7 @@ class LtiDeploymentsController < ApplicationController
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
       params[:target_link_uri].blank? || params[:lti_message_hint].blank?
-      head :unprocessable_entity
+      head :unprocessable_content
       return
     end
     nonce = rand(10 ** 30).to_s.rjust(30, '0')
@@ -176,18 +176,19 @@ class LtiDeploymentsController < ApplicationController
     known_lti_hosts << URI(root_url).host
     if known_lti_hosts.exclude?(URI(request.referer).host)
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
-                                   status: :unprocessable_entity, layout: false
+                                   status: :unprocessable_content, layout: false
       nil
     end
   end
 
   def create_course
     if LtiConfig.respond_to?(:allowed_to_create_course?) && !LtiConfig.allowed_to_create_course?(record)
-      render 'shared/http_status',
-             locals: { code: '422',
-                       message: format(Settings.lti.unpermitted_new_course_message,
-                                       course_name: record.lms_course_name) },
-             status: :unprocessable_entity, layout: false
+      @title = I18n.t('lti.course_creation_denied')
+      @message = format(
+        Settings.lti.unpermitted_new_course_message,
+        course_name: record.lms_course_name
+      )
+      render 'message', status: :forbidden
       return
     end
 
