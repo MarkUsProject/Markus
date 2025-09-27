@@ -9,6 +9,7 @@
 ### 🐛 Bug fixes
 - Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
+- Fixed ordering of assignments in the Assignment dropdown menu and Assignment index page (#7642)
 
 ## [v2.8.1]
 
