@@ -1,6 +1,7 @@
 module Admin
   class CoursesController < ApplicationController
     include AutomatedTestsHelper::AutotestApi
+
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
     before_action { authorize! }
 

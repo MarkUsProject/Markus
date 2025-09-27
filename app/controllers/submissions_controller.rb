@@ -3,6 +3,7 @@ require 'json'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include RepositoryHelper
+
   before_action { authorize! }
 
   authorize :from_codeviewer, through: :from_codeviewer_param

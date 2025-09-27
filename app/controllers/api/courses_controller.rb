@@ -2,6 +2,7 @@ module Api
   # API controller for Courses
   class CoursesController < MainApiController
     include AutomatedTestsHelper::AutotestApi
+
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
 
     def index
