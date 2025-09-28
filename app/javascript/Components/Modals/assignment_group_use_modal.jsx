@@ -6,7 +6,7 @@ export default class AssignmentGroupUseModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assignmentId: null,
+      cloneAssignmentId: this.props.cloneAssignments || "",
     };
   }
 
@@ -14,6 +14,12 @@ export default class AssignmentGroupUseModal extends React.Component {
     Modal.setAppElement("body");
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.state.assignmentId === undefined && this.props.cloneAssignments?.length > 0) {
+      this.setState({assignmentId: this.props.cloneAssignments[0].id});
+    }
+  }
+  o;
   handleChange(event) {
     this.setState({assignmentId: event.target.value});
   }
@@ -40,7 +46,7 @@ export default class AssignmentGroupUseModal extends React.Component {
           {I18n.t("groups.assignment_to_use")}
           <select
             id="assignment-group-select"
-            value={this.state.assignmentId}
+            value={this.state.assignmentId || ""}
             onChange={this.handleChange}
           >
             {this.props.cloneAssignments.map(assignment => (

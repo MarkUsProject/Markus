@@ -6,7 +6,6 @@ var modalCreate,
   const domContentLoadedCB = function () {
     window.modal_rename = new ModalMarkus("#rename_group_dialog");
     modalNotesGroup = new ModalMarkus("#notes_dialog");
-    modalAssignmentGroupReUse = new ModalMarkus("#assignment_group_use_dialog");
   };
 
   if (document.readyState === "loading") {

@@ -82,7 +82,7 @@ class GroupsManager extends React.Component {
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
           examTemplates: res.exam_templates,
-          cloneAssignments: res.clone_assignments,
+          cloneAssignments: res.clone_assignments || [],
         });
       });
   };
@@ -207,7 +207,6 @@ class GroupsManager extends React.Component {
     this.setState({
       isAssignmentGroupUseModalOpen: true,
     });
-    this.fetchData();
   };
 
   handleCloseAssignmentGroupUseModal = () => {
@@ -383,6 +382,7 @@ class GroupsManager extends React.Component {
         <AutoMatchModal
           isOpen={this.state.isAutoMatchModalOpen}
           onRequestClose={this.handleCloseAutoMatchModal}
+          onRequestClose={this.handleCloseAutoMatchModal}
           examTemplates={this.state.examTemplates}
           onSubmit={this.autoMatch}
         />
@@ -390,6 +390,12 @@ class GroupsManager extends React.Component {
           isOpen={this.state.isCreateGroupModalOpen}
           onRequestClose={this.handleCloseCreateGroupModal}
           onSubmit={this.handleSubmitCreateGroup}
+        />
+        <AssignmentGroupUseModal
+          isOpen={this.state.isAssignmentGroupUseModalOpen}
+          onRequestClose={this.handleCloseAssignmentGroupUseModal}
+          onSubmit={this.handleSubmitAssignmentGroupUseModal}
+          cloneAssignments={this.state.cloneAssignments}
         />
       </div>
     );
