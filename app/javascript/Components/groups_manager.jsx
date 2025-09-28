@@ -412,7 +412,7 @@ class RawGroupsTable extends React.Component {
             <span>{row.value}</span>
             <a
               href="#"
-              onClick={() => this.props.renameGroup(row.original._id)}
+              onClick={() => this.props.renameGroup(row.original._id, row.value)}
               title={I18n.t("groups.rename_group")}
             >
               <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-right" />
