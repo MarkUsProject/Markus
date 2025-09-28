@@ -49,14 +49,18 @@ describe("RenameGroupModal", () => {
     });
   });
 
-  it("should populate input when modal opens with initialGroupName", async () => {
-    const {rerender} = render(
-      <RenameGroupModal {...props} isOpen={false} initialGroupName="Initial Group" />
-    );
+  it("should populate input with initialGroupName when modal opens", async () => {
+    const propsWithInitialName = {
+      isOpen: true,
+      onRequestClose: jest.fn(),
+      onSubmit: jest.fn(),
+      initialGroupName: "Original Group Name",
+    };
 
-    rerender(<RenameGroupModal {...props} isOpen={true} initialGroupName="Initial Group" />);
+    const {rerender} = render(<RenameGroupModal {...propsWithInitialName} isOpen={false} />);
+    rerender(<RenameGroupModal {...propsWithInitialName} isOpen={true} />);
 
-    expect(screen.getByDisplayValue("Initial Group")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Original Group Name")).toBeInTheDocument();
   });
 
   it("should not submit when group name is empty", async () => {
