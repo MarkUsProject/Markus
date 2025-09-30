@@ -60,6 +60,7 @@ class SectionsController < ApplicationController
       flash_message(:error, t('.not_empty'))
     else
       @section.assessment_section_properties.each(&:destroy)
+      @section.section_starter_file_groups.each(&:destroy)
       @section.destroy
       flash_message(:success, t('.success'))
     end
