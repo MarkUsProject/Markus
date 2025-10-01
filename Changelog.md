@@ -8,12 +8,12 @@
 - Added new loading spinner icon for tables (#7602)
 - Update message and page displaying cannot create new course via external LTI tool (#7669)
 - Provide file viewer the option to render Microsoft files (#7676)
-- Prevent grade change when scrolling up or down with mouse or keys (#7680)
 
 ### 🐛 Bug fixes
 - Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
 - Fixed ordering of assignments in the Assignment dropdown menu and Assignment index page (#7642)
+- Prevent grade change in the grades table for a Marks Spreadsheet, when scrolling up or down with mouse or keys (#7680)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
