@@ -3,8 +3,8 @@ class Section < ApplicationRecord
                    format: { with: /\A[a-zA-Z0-9\-_ ]+\z/ }
   validates :name, uniqueness: { scope: :course_id }
   has_many :students
-  has_many :assessment_section_properties, class_name: 'AssessmentSectionProperties'
-  has_many :section_starter_file_groups
+  has_many :assessment_section_properties, class_name: 'AssessmentSectionProperties', dependent: :destroy
+  has_many :section_starter_file_groups, dependent: :destroy
   has_many :starter_file_groups, through: :section_starter_file_groups
 
   belongs_to :course, inverse_of: :sections
