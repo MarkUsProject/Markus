@@ -1,6 +1,4 @@
-var modalCreate,
-  modalNotesGroup,
-  modalAssignmentGroupReUse = null;
+var modalCreate, modalNotesGroup;
 
 (function () {
   const domContentLoadedCB = function () {
