@@ -106,6 +106,31 @@ describe SectionsController do
         expect(flash[:error]).to have_message(I18n.t('sections.destroy.not_empty'))
         expect(Section.find(section.id)).to be_truthy
       end
+
+      it 'deletes associated section_starter_file_groups when section is destroyed' do
+        assignment = create(:assignment, course: course)
+        starter_file_group = create(:starter_file_group, assignment: assignment)
+        section.section_starter_file_groups.create(starter_file_group: starter_file_group)
+
+        expect do
+          delete_as @instructor, :destroy, params: { course_id: course.id, id: section.id }
+        end.to change { SectionStarterFileGroup.count }.by(-1)
+
+        expect(flash[:success]).to have_message(I18n.t('sections.destroy.success'))
+        expect { Section.find(section.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'deletes associated assessment_section_properties when section is destroyed' do
+        assessment = create(:assignment, course: course)
+        section.assessment_section_properties.create(assessment: assessment)
+
+        expect do
+          delete_as @instructor, :destroy, params: { course_id: course.id, id: section.id }
+        end.to change { AssessmentSectionProperties.count }.by(-1)
+
+        expect(flash[:success]).to have_message(I18n.t('sections.destroy.success'))
+        expect { Section.find(section.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 end
