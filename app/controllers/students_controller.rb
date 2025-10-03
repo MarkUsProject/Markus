@@ -9,7 +9,7 @@ class StudentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        student_data = current_course.students.includes(:grace_period_deductions, :section).map do |s|
+        student_data = current_course.students.includes(:grace_period_deductions, :section, :user).map do |s|
           {
             _id: s.id,
             user_name: s.user_name,

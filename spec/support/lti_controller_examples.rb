@@ -27,33 +27,33 @@ shared_examples 'lti deployment controller' do
       it 'responds with unprocessable_entity if no parameters are passed' do
         request.headers['Referer'] = host
         post :launch, params: {}
-        expect(subject).to respond_with(:unprocessable_entity)
+        expect(subject).to respond_with(:unprocessable_content)
       end
 
       it 'responds with unprocessable_entity if lti_message_hint is not passed' do
         request.headers['Referer'] = host
         post :launch, params: { client_id: client_id, target_link_uri: target_link_uri, login_hint: login_hint }
-        expect(subject).to respond_with(:unprocessable_entity)
+        expect(subject).to respond_with(:unprocessable_content)
       end
 
       it 'responds with unprocessable_entity if client_id is not passed' do
         request.headers['Referer'] = host
         post :launch,
              params: { lti_message_hint: lti_message_hint, target_link_uri: target_link_uri, login_hint: login_hint }
-        expect(subject).to respond_with(:unprocessable_entity)
+        expect(subject).to respond_with(:unprocessable_content)
       end
 
       it 'responds with unprocessable_entity if target_link_uri is not passed' do
         request.headers['Referer'] = host
         post :launch, params: { lti_message_hint: lti_message_hint, client_id: client_id, login_hint: login_hint }
-        expect(subject).to respond_with(:unprocessable_entity)
+        expect(subject).to respond_with(:unprocessable_content)
       end
 
       it 'responds with unprocessable_entity if login_hint is not passed' do
         request.headers['Referer'] = host
         post :launch,
              params: { lti_message_hint: lti_message_hint, client_id: client_id, target_link_uri: target_link_uri }
-        expect(subject).to respond_with(:unprocessable_entity)
+        expect(subject).to respond_with(:unprocessable_content)
       end
 
       context 'when all required params exist' do
@@ -294,7 +294,7 @@ shared_examples 'lti deployment controller' do
       post_as instructor, :launch, params: { lti_message_hint: 'hint',
                                              login_hint: 'hint',
                                              client_id: 'LMS defined ID', target_link_uri: 'test.com' }
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

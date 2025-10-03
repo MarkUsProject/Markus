@@ -371,7 +371,7 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            expect(subject).to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_content)
           end
         end
 
@@ -436,7 +436,7 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            expect(subject).to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_content)
           end
 
           it 'should display error messages' do
@@ -597,7 +597,7 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            expect(subject).to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_content)
           end
         end
       end
@@ -873,7 +873,7 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            expect(subject).to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_content)
           end
         end
 
@@ -962,7 +962,7 @@ describe CriteriaController do
           end
 
           it 'should respond with unprocessable entity' do
-            expect(subject).to respond_with(:unprocessable_entity)
+            expect(subject).to respond_with(:unprocessable_content)
           end
         end
 

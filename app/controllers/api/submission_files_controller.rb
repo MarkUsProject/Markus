@@ -3,6 +3,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionFilesController < MainApiController
     include SubmissionsHelper
+
     # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
     # Requires: assignment_id, group_id
@@ -40,7 +41,7 @@ module Api
           file = revision.files_at_path(File.join(assignment.repository_folder, path))[file_name]
           if file.nil?
             render 'shared/http_status', locals: { code: '422', message:
-              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
             return
           end
           file_contents = repo.download_as_string(file)
@@ -88,7 +89,7 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
       success, messages = grouping.access_repo do |repo|
@@ -115,7 +116,7 @@ module Api
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -143,7 +144,7 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
       success, messages = grouping.access_repo do |repo|

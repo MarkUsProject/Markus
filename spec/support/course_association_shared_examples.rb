@@ -1,5 +1,6 @@
 shared_examples 'course associations' do
   include CourseAssociationHelper
+
   it 'should be valid when all belongs_to associations belong to the same course' do
     expect(subject).to be_valid
   end

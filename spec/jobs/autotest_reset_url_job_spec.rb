@@ -1,5 +1,6 @@
 describe AutotestResetUrlJob do
   include AutomatedTestsHelper
+
   let(:host_with_port) { 'http://localhost:3000' }
   let(:url) { 'http://example.com' }
   let(:course) { create(:course) }

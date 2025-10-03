@@ -199,7 +199,7 @@ describe Api::RolesController do
           let(:user_name) { 'a!!' }
 
           it 'should raise a 422 error' do
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 
@@ -207,7 +207,7 @@ describe Api::RolesController do
           let(:type) { 'Dragon' }
 
           it 'should raise a 422 error' do
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 
@@ -215,7 +215,7 @@ describe Api::RolesController do
           let(:other_params) { { section_name: 'section.name' } }
 
           it 'should raise a 422 error' do
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 
@@ -295,7 +295,7 @@ describe Api::RolesController do
         context 'with an invalid section name' do
           it 'should raise a 422 error' do
             put :update, params: { id: student.id, course_id: course.id, section_name: 'section.name' }
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 
@@ -450,7 +450,7 @@ describe Api::RolesController do
           it 'should raise a 422 error' do
             student = create(:student, course: course)
             post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 
@@ -593,7 +593,7 @@ describe Api::RolesController do
           it 'should raise a 422 error' do
             student = create(:student, course: course)
             post :create, params: { user_name: student.user_name, type: :student, course_id: course.id }
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
 

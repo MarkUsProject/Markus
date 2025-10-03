@@ -1,18 +1,6 @@
 class CheckboxCriterion < Criterion
   DEFAULT_MAX_MARK = 1
 
-  def update_assigned_groups_count
-    result = []
-    tas.each do |ta|
-      result.concat(ta.get_groupings_by_assignment(assignment))
-    end
-    self.assigned_groups_count = result.uniq.length
-  end
-
-  def weight
-    max_mark
-  end
-
   # Instantiate a CheckboxCriterion from a CSV row and attach it to the supplied
   # assignment.
   # row: An array representing one CSV file row. Should be in the following
