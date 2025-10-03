@@ -602,6 +602,31 @@ class RawGroupsTable extends React.Component {
       filterable: false,
       sortMethod: durationSort,
     },
+    {
+      Header: "Penalty",
+      id: "late_penalty_applied",
+      accessor: "extension",
+      Cell: row => {
+        return row.original.extension.apply_penalty ? (
+          <FontAwesomeIcon icon="fa-solid fa-square-check" />
+        ) : (
+          <FontAwesomeIcon icon="fa-solid fa-xmark" />
+        );
+      },
+      minWidth: 30,
+      filterable: false,
+      sortMethod: (a, b) => {
+        // Primary sort: boolean property (true first)
+        if (a.apply_penalty && !b.apply_penalty) {
+          return -1; // a (true) comes before b (false)
+        }
+        if (!a.apply_penalty && b.apply_penalty) {
+          return 1; // a (false) comes after b (true)
+        }
+        // Secondary sort: numeric property (ascending) if boolean properties are equal
+        return durationSort(a, b);
+      },
+    },
   ];
 
   static getDerivedStateFromProps(props, state) {
