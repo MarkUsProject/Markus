@@ -59,7 +59,6 @@ class SectionsController < ApplicationController
     if @section.has_students?
       flash_message(:error, t('.not_empty'))
     else
-      @section.assessment_section_properties.each(&:destroy)
       @section.destroy
       flash_message(:success, t('.success'))
     end
