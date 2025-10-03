@@ -6,6 +6,7 @@ export default class AssignmentGroupUseModal extends React.Component {
     super(props);
     this.state = {
       assignmentId: "",
+      isLoading: false,
     };
   }
 
@@ -16,9 +17,13 @@ export default class AssignmentGroupUseModal extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.isOpen && !prevProps.isOpen) {
       if (this.props.cloneAssignments.length > 0) {
-        this.setState({assignmentId: this.props.cloneAssignments[0].id});
+        this.setState({
+          assignmentId: this.props.cloneAssignments[0].id,
+        });
       } else {
-        this.setState({assignmentId: ""});
+        this.setState({
+          assignmentId: "",
+        });
       }
     }
   }
@@ -30,6 +35,7 @@ export default class AssignmentGroupUseModal extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     if (this.state.assignmentId && window.confirm(I18n.t("groups.delete_groups_linked"))) {
+      this.setState({isLoading: true});
       this.props.onSubmit(this.state.assignmentId);
     }
   };
@@ -60,9 +66,13 @@ export default class AssignmentGroupUseModal extends React.Component {
             <button
               className="button"
               type="submit"
-              disabled={!this.state.assignmentId || this.props.cloneAssignments.length === 0}
+              disabled={
+                !this.state.assignmentId ||
+                this.props.cloneAssignments.length === 0 ||
+                this.state.isLoading
+              }
             >
-              {I18n.t("save")}
+              {this.state.isLoading ? I18n.t("working") : I18n.t("save")}
             </button>
             <button
               className="button"
