@@ -117,7 +117,9 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: @assignment.all_grouping_data
+        render json: @assignment.all_grouping_data.merge(
+          clone_assignments: @clone_assignments.as_json(only: [:id, :short_identifier])
+        )
       end
     end
   end

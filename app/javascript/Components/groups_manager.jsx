@@ -8,6 +8,7 @@ import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
+import AssignmentGroupUseModal from "./Modals/assignment_group_use_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -24,10 +25,12 @@ class GroupsManager extends React.Component {
       selected_extension_data: {},
       updating_extension: false,
       isAutoMatchModalOpen: false,
+      isAssignmentGroupUseModalOpen: false,
       isCreateGroupModalOpen: false,
       isRenameGroupDialogOpen: false,
       examTemplates: [],
       loading: true,
+      cloneAssignments: [],
     };
   }
 
@@ -70,6 +73,7 @@ class GroupsManager extends React.Component {
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
           examTemplates: res.exam_templates,
+          cloneAssignments: res.clone_assignments || [],
         });
       });
   };
@@ -209,6 +213,33 @@ class GroupsManager extends React.Component {
     });
   };
 
+  handleShowAssignmentGroupUseModal = () => {
+    this.setState({
+      isAssignmentGroupUseModalOpen: true,
+    });
+  };
+
+  handleCloseAssignmentGroupUseModal = () => {
+    this.setState({
+      isAssignmentGroupUseModalOpen: false,
+    });
+  };
+
+  handleSubmitAssignmentGroupUseModal = selectedAssignmentId => {
+    $.post({
+      url: Routes.use_another_assignment_groups_course_assignment_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        clone_assignment_id: selectedAssignmentId,
+      },
+    }).then(() => {
+      this.setState({isAssignmentGroupUseModalOpen: false});
+      this.fetchData();
+    });
+  };
+
   handleShowAutoMatchModal = () => {
     if (this.groupsTable.state.selection.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -298,6 +329,14 @@ class GroupsManager extends React.Component {
       : I18n.t("groups.due_date_extension");
     return (
       <div>
+        <div className="title_bar">
+          <div className="heading_buttons">
+            <AdditionalHeadings
+              vcs_submit={this.props.vcs_submit}
+              handleShowAssignmentGroupUseModal={this.handleShowAssignmentGroupUseModal}
+            />
+          </div>
+        </div>
         <GroupsActionBox
           assign={this.assign}
           can_create_all_groups={this.props.can_create_all_groups}
@@ -375,7 +414,36 @@ class GroupsManager extends React.Component {
           onSubmit={this.handleRenameGroupDialog}
           initialGroupName={this.state.renameGroupName}
         />
+        <AssignmentGroupUseModal
+          isOpen={this.state.isAssignmentGroupUseModalOpen}
+          onRequestClose={this.handleCloseAssignmentGroupUseModal}
+          onSubmit={this.handleSubmitAssignmentGroupUseModal}
+          cloneAssignments={this.state.cloneAssignments}
+        />
       </div>
+    );
+  }
+}
+
+class AdditionalHeadings extends React.Component {
+  render() {
+    return (
+      <>
+        {this.props.vcs_submit && (
+          <>
+            <a
+              href="#"
+              onClick={e => {
+                e.preventDefault();
+                this.props.handleShowAssignmentGroupUseModal();
+              }}
+            >
+              {I18n.t("groups.another_assignment_group")}
+            </a>
+            <span className="menu_bar"></span>
+          </>
+        )}
+      </>
     );
   }
 }
