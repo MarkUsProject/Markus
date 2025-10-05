@@ -23,7 +23,7 @@ class GradeEntryForm < Assessment
   before_destroy -> { throw(:abort) if self.grades.where.not(grade: nil).exists? }, prepend: true
 
   # Set the default order of spreadsheets: in ascending order of id
-  default_scope { order('id ASC') }
+  default_scope { order(:id) }
 
   # Constants
   BLANK_MARK = ''.freeze
