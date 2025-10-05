@@ -34,7 +34,7 @@ export default class AssignmentGroupUseModal extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.state.assignmentId && window.confirm(I18n.t("groups.delete_groups_linked"))) {
+    if (window.confirm(I18n.t("groups.delete_groups_linked"))) {
       this.setState({isLoading: true});
       this.props.onSubmit(this.state.assignmentId);
     }
