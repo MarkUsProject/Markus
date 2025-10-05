@@ -24,6 +24,7 @@
 - Refactored Criterion subclasses to remove redundant code
 - Converted "Rename Group" functionality to React modal (#7673)
 - Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
+- Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
 
 ## [v2.8.1]
 

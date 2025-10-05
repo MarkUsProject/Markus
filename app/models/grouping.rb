@@ -11,7 +11,7 @@ class Grouping < ApplicationRecord
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
-  has_many :student_memberships, -> { order('id') }, inverse_of: :grouping
+  has_many :student_memberships, -> { order(:id) }, inverse_of: :grouping
   has_many :non_rejected_student_memberships,
            -> { where.not(memberships: { membership_status: StudentMembership::STATUSES[:rejected] }) },
            class_name: 'StudentMembership',
