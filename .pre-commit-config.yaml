@@ -52,7 +52,7 @@ repos:
             Vagrantfile
           )$
         additional_dependencies:
-          - rubocop-rails:2.27.0
+          - rubocop-rails:2.33.4
           - rubocop-performance:1.23.0
           - rubocop-factory_bot:2.26.1
           - rubocop-rspec:3.2.0

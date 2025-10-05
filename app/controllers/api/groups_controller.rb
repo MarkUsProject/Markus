@@ -404,7 +404,9 @@ module Api
     private
 
     def assignment
-      @assignment ||= Assignment.find_by(id: params[:assignment_id])
+      return @assignment if defined?(@assignment)
+
+      @assignment = Assignment.find_by(id: params[:assignment_id])
     end
 
     def grouping
