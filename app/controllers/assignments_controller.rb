@@ -173,9 +173,7 @@ class AssignmentsController < ApplicationController
       end
     end
     @assessment_section_properties = @assignment.assessment_section_properties
-    @assessment_section_properties.sort_by do |s|
-      [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
-    end
+                                                .sort_by { |s| s.section.name }
 
     @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :edit, layout: 'assignment_content'
@@ -894,15 +892,17 @@ class AssignmentsController < ApplicationController
   end
 
   def graders_options_params
-    params.require(:attribute)
-          .permit(assignment_properties_attributes: [
-            :assign_graders_to_criteria,
-            :anonymize_groups,
-            :hide_unassigned_criteria
-          ])
+    params.expect(attribute: [
+      assignment_properties_attributes: [
+        :assign_graders_to_criteria,
+        :anonymize_groups,
+        :hide_unassigned_criteria
+      ]
+    ])
   end
 
   def assignment_params
+    # rubocop:disable Rails/StrongParametersExpect
     params.require(:assignment).permit(
       :short_identifier,
       :description,
@@ -964,42 +964,44 @@ class AssignmentsController < ApplicationController
         ] }
       ]
     )
+    # rubocop:enable Rails/StrongParametersExpect
   end
 
   def duration_params
-    params.require(:assignment).permit(
+    params.expect(assignment: [
       assignment_properties_attributes: [
         duration: [
           :hours,
           :minutes
         ]
       ]
-    )
+    ])
   end
 
   def submission_rule_params
-    params.require(:assignment)
-          .permit(submission_rule_attributes: [
-            :_destroy,
-            :id,
-            :type,
-            { periods_attributes: [
-              :id,
-              :deduction,
-              :interval,
-              :hours,
-              :_destroy
-            ] }
-          ])
+    params.expect(assignment: [submission_rule_attributes: [
+      :_destroy,
+      :id,
+      :type,
+      { periods_attributes: [
+        :id,
+        :deduction,
+        :interval,
+        :hours,
+        :_destroy
+      ] }
+    ]])
   end
 
   def starter_file_assignment_params
-    params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id, :starter_files_after_due)
+    params.expect(assignment: [:starter_file_type, :default_starter_file_group_id, :starter_files_after_due])
   end
 
   def starter_file_group_params
+    # rubocop:disable Rails/StrongParametersExpect
     params.permit(starter_file_groups: [:id, :name, :entry_rename, :use_rename])
           .require(:starter_file_groups)
+    # rubocop:enable Rails/StrongParametersExpect
   end
 
   def flash_interpolation_options
