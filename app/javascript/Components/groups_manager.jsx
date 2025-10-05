@@ -329,14 +329,6 @@ class GroupsManager extends React.Component {
       : I18n.t("groups.due_date_extension");
     return (
       <div>
-        <div className="title_bar">
-          <div className="heading_buttons">
-            <AdditionalHeadings
-              vcs_submit={this.props.vcs_submit}
-              handleShowAssignmentGroupUseModal={this.handleShowAssignmentGroupUseModal}
-            />
-          </div>
-        </div>
         <GroupsActionBox
           assign={this.assign}
           can_create_all_groups={this.props.can_create_all_groups}
@@ -344,11 +336,13 @@ class GroupsManager extends React.Component {
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
           handleShowAutoMatchModal={this.handleShowAutoMatchModal}
+          handleShowAssignmentGroupUseModal={this.handleShowAssignmentGroupUseModal}
           hiddenStudentsCount={this.state.loading ? null : this.state.hidden_students_count}
           hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
           scanned_exam={this.props.scanned_exam}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.updateShowHidden}
+          vcs_submit={this.props.vcs_submit}
         />
         <div className="mapping-tables">
           <div className="mapping-table">
@@ -421,29 +415,6 @@ class GroupsManager extends React.Component {
           cloneAssignments={this.state.cloneAssignments}
         />
       </div>
-    );
-  }
-}
-
-class AdditionalHeadings extends React.Component {
-  render() {
-    return (
-      <>
-        {this.props.vcs_submit && (
-          <>
-            <a
-              href="#"
-              onClick={e => {
-                e.preventDefault();
-                this.props.handleShowAssignmentGroupUseModal();
-              }}
-            >
-              {I18n.t("groups.another_assignment_group")}
-            </a>
-            <span className="menu_bar"></span>
-          </>
-        )}
-      </>
     );
   }
 }
@@ -811,6 +782,12 @@ class GroupsActionBox extends React.Component {
             {I18n.t("students.display_inactive")}
           </label>
         </span>
+        {this.props.vcs_submit && (
+          <button onClick={this.props.handleShowAssignmentGroupUseModal}>
+            <FontAwesomeIcon icon="fa-solid fa-recycle" />
+            {I18n.t("groups.reuse_groups")}
+          </button>
+        )}
         <button className="" onClick={this.props.assign}>
           <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("groups.add_to_group")}
