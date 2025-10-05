@@ -902,7 +902,6 @@ class AssignmentsController < ApplicationController
   end
 
   def assignment_params
-    # rubocop:disable Rails/StrongParametersExpect
     params.require(:assignment).permit(
       :short_identifier,
       :description,
@@ -964,7 +963,6 @@ class AssignmentsController < ApplicationController
         ] }
       ]
     )
-    # rubocop:enable Rails/StrongParametersExpect
   end
 
   def duration_params
@@ -998,10 +996,8 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_file_group_params
-    # rubocop:disable Rails/StrongParametersExpect
     params.permit(starter_file_groups: [:id, :name, :entry_rename, :use_rename])
           .require(:starter_file_groups)
-    # rubocop:enable Rails/StrongParametersExpect
   end
 
   def flash_interpolation_options
