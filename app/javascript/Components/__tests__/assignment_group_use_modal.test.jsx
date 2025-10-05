@@ -73,7 +73,7 @@ describe("AssignmentGroupUseModal", () => {
   });
 
   it("calls confirm and does not submit when user cancels", () => {
-    global.confirm = jest.fn(() => false);
+    const confirmSpy = jest.spyOn(window, "confirm").mockReturnValue(false);
     render(<AssignmentGroupUseModal {...props} />);
 
     const select = document.getElementById("assignment-group-select");
@@ -81,12 +81,14 @@ describe("AssignmentGroupUseModal", () => {
 
     fireEvent.click(screen.getByText(I18n.t("save")));
 
-    expect(global.confirm).toHaveBeenCalledWith(I18n.t("groups.delete_groups_linked"));
+    expect(confirmSpy).toHaveBeenCalledWith(I18n.t("groups.delete_groups_linked"));
     expect(props.onSubmit).not.toHaveBeenCalled();
+
+    confirmSpy.mockRestore();
   });
 
   it("calls confirm and submits when user confirms", async () => {
-    global.confirm = jest.fn(() => true);
+    const confirmSpy = jest.spyOn(window, "confirm").mockReturnValue(true);
     render(<AssignmentGroupUseModal {...props} />);
 
     const select = document.getElementById("assignment-group-select");
@@ -95,9 +97,11 @@ describe("AssignmentGroupUseModal", () => {
     fireEvent.click(screen.getByText(I18n.t("save")));
 
     await waitFor(() => {
-      expect(global.confirm).toHaveBeenCalledWith(I18n.t("groups.delete_groups_linked"));
+      expect(confirmSpy).toHaveBeenCalledWith(I18n.t("groups.delete_groups_linked"));
       expect(props.onSubmit).toHaveBeenCalledWith("3");
     });
+
+    confirmSpy.mockRestore();
   });
 
   it("should disable save button when no assignments are available", () => {
