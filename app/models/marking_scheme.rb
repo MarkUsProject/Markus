@@ -7,7 +7,7 @@ class MarkingScheme < ApplicationRecord
 
   belongs_to :course
 
-  default_scope { order('id ASC') }
+  default_scope { order(:id) }
 
   # Returns an array of all students' weighted grades that are not nil
   def students_weighted_grades_array(current_role)

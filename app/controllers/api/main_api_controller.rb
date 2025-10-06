@@ -73,9 +73,9 @@ module Api
           'Invalid or malformed parameter values' }, status: :unprocessable_content
         false
       elsif filter_params.empty?
-        collection.order('id')
+        collection.order(:id)
       else
-        collection.order('id').where(**filter_params)
+        collection.order(:id).where(**filter_params)
       end
     end
 
