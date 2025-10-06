@@ -23,6 +23,11 @@ en:
         do_not_have_a_group: You do not currently have a group.
     display_inactive: Display inactive groups
     due_date_extension: Due Date Extension
+    late_submissions_accepted: Late Submissions Accepted
+    groups_without_extension: Groups Without Extension
+    groups_with_extension:
+      with_late_submission: Group With Extension and With Late Submission
+      without_late_submission: Group With Extension and Without Late Submission
     duration_extension: Duration Extension
     empty: Empty Group
     grace_day_over_limit: You have assigned one or more students who has less grace credits than the amount already used by group %{group} for this assignment.

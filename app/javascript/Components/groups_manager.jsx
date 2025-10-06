@@ -559,20 +559,27 @@ class RawGroupsTable extends React.Component {
         let extension = this.props.times
           .map(key => {
             const val = row.original.extension[key];
-            if (val) {
-              // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
-              if (key === "weeks") {
-                return `${val} ${I18n.t("durations.weeks", {count: val})}`;
-              } else if (key === "days") {
-                return `${val} ${I18n.t("durations.days", {count: val})}`;
-              } else if (key === "hours") {
-                return `${val} ${I18n.t("durations.hours", {count: val})}`;
-              } else if (key === "minutes") {
-                return `${val} ${I18n.t("durations.minutes", {count: val})}`;
-              } else {
-                return "";
-              }
+            const lateSubmissionText = row.original.extension.apply_penalty
+              ? `(${I18n.t("groups.late_submissions_accepted")})`
+              : "";
+
+            if (!val) {
+              return null;
             }
+            // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
+            if (key === "weeks") {
+              return `${val} ${I18n.t("durations.weeks", {count: val})} ${lateSubmissionText}`;
+            }
+            if (key === "days") {
+              return `${val} ${I18n.t("durations.days", {count: val})} ${lateSubmissionText}`;
+            }
+            if (key === "hours") {
+              return `${val} ${I18n.t("durations.hours", {count: val})} ${lateSubmissionText}`;
+            }
+            if (key === "minutes") {
+              return `${val} ${I18n.t("durations.minutes", {count: val})} ${lateSubmissionText}`;
+            }
+            return "";
           })
           .filter(Boolean)
           .join(", ");
@@ -599,33 +606,40 @@ class RawGroupsTable extends React.Component {
           );
         }
       },
-      filterable: false,
       sortMethod: durationSort,
-    },
-    {
-      Header: "Penalty",
-      id: "late_penalty_applied",
-      accessor: "extension",
-      Cell: row => {
-        return row.original.extension.apply_penalty ? (
-          <FontAwesomeIcon icon="fa-solid fa-square-check" />
-        ) : (
-          <FontAwesomeIcon icon="fa-solid fa-xmark" />
-        );
-      },
-      minWidth: 30,
-      filterable: false,
-      sortMethod: (a, b) => {
-        // Primary sort: boolean property (true first)
-        if (a.apply_penalty && !b.apply_penalty) {
-          return -1; // a (true) comes before b (false)
+
+      Filter: selectFilter,
+      filterMethod: (filter, row) => {
+        if (filter.value === "all") {
+          return true;
         }
-        if (!a.apply_penalty && b.apply_penalty) {
-          return 1; // a (false) comes after b (true)
+        const applyPenalty = row._original.extension.apply_penalty;
+        const {withExtension, withLateSubmission} = JSON.parse(filter.value);
+        // If there is an extension applied, the extension object will contain a property called weeks
+        const hasExtension = Object.hasOwn(row._original.extension, "weeks");
+
+        if (!withExtension) {
+          return !hasExtension;
         }
-        // Secondary sort: numeric property (ascending) if boolean properties are equal
-        return durationSort(a, b);
+        if (withLateSubmission) {
+          return hasExtension && applyPenalty;
+        }
+        return hasExtension && !applyPenalty;
       },
+      filterOptions: [
+        {
+          value: JSON.stringify({withExtension: false}),
+          text: I18n.t("groups.groups_without_extension"),
+        },
+        {
+          value: JSON.stringify({withExtension: true, withLateSubmission: true}),
+          text: I18n.t("groups.groups_with_extension.with_late_submission"),
+        },
+        {
+          value: JSON.stringify({withExtension: true, withLateSubmission: false}),
+          text: I18n.t("groups.groups_with_extension.without_late_submission"),
+        },
+      ],
     },
   ];
 
