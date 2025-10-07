@@ -614,8 +614,8 @@ class RawGroupsTable extends React.Component {
         }
         const applyPenalty = row._original.extension.apply_penalty;
         const {withExtension, withLateSubmission} = JSON.parse(filter.value);
-        // If there is an extension applied, the extension object will contain a property called weeks
-        const hasExtension = Object.hasOwn(row._original.extension, "weeks");
+        // If there is an extension applied, the extension object will contain a property called hours
+        const hasExtension = Object.hasOwn(row._original.extension, "hours");
 
         if (!withExtension) {
           return !hasExtension;

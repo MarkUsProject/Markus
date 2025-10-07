@@ -1,4 +1,4 @@
-import {render} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import {GroupsManager} from "../groups_manager";
 import {beforeEach, describe, expect, it} from "@jest/globals";
 
@@ -21,17 +21,47 @@ const groupMock = [
         display_label: "(inviter)",
       },
     ],
+    extension: {
+      apply_penalty: false,
+      grouping_id: 22,
+      id: null,
+      note: "",
+    },
     section: "",
+  },
+  {
+    group_name: "student1",
+    inactive: false,
+    instructor_approved: true,
+    members: [
+      {
+        0: "student1",
+        1: "inviter",
+        2: false,
+        display_label: "(inviter)",
+      },
+    ],
+    section: "",
+    extension: {
+      apply_penalty: true,
+      days: 2,
+      grouping_id: 16,
+      hours: 0,
+      id: 51,
+      minutes: 0,
+      note: "",
+      weeks: 0,
+    },
   },
 ];
 const studentMock = [
   {
     assigned: true,
-    first_name: "Magnard",
+    first_name: "coolStudent",
     hidden: false,
     id: 8,
     last_name: "Alberic",
-    user_name: "c9magnar",
+    user_name: "student1",
   },
 ];
 
@@ -46,21 +76,34 @@ describe("GroupsManager", () => {
       json: jest.fn().mockResolvedValueOnce({
         templates: [],
         groups: groupMock,
+        exam_templates: [],
         students: studentMock,
         clone_assignments: [],
       }),
     });
     const props = {
       course_id: 1,
+      timed: false,
       assignment_id: 2,
+      scanned_exam: false,
+      examTemplates: [],
+      times: ["weeks", "days", "hours", "minutes"],
     };
     render(<GroupsManager {...props} ref={wrapper} />);
+    // wait for page to load and render content
+    await screen.findByText("abcd").catch(err => err);
+    // to view screen render: screen.debug(undefined, 300000)
   });
 
   describe("DueDateExtensions", () => {
     beforeEach(() => {
       filter_method =
         wrapper.current.groupsTable.wrapped.checkboxTable.props.columns[5].filterMethod;
+    });
+
+    it("append (Late Submissions Accepted) to assignments with extensions", async () => {
+      const searchTerm = I18n.t("groups.late_submissions_accepted");
+      expect(await screen.getByText(new RegExp(searchTerm, "i"))).toBeInTheDocument();
     });
 
     it("returns true when the selected value is all", () => {
@@ -74,7 +117,7 @@ describe("GroupsManager", () => {
         expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(true);
       });
       it("returns false when assignments with an extension are present", () => {
-        const rowMock = {_original: {extension: {weeks: 1}}};
+        const rowMock = {_original: {extension: {hours: 1}}};
         const filterOptionsMock = JSON.stringify({withExtension: false});
         expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
       });
@@ -83,7 +126,7 @@ describe("GroupsManager", () => {
     describe("withExtension: true", () => {
       describe("withLateSubmission: true", () => {
         it("returns true when assignments have a late submission rule applied", () => {
-          const rowMock = {_original: {extension: {weeks: 1, apply_penalty: true}}};
+          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
           const filterOptionsMock = JSON.stringify({withExtension: true, withLateSubmission: true});
           expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(true);
         });
@@ -95,7 +138,7 @@ describe("GroupsManager", () => {
       });
       describe("withLateSubmission: false", () => {
         it("returns true when assignments are missing an extension", () => {
-          const rowMock = {_original: {extension: {weeks: 1, apply_penalty: true}}};
+          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
           const filterOptionsMock = JSON.stringify({
             withExtension: true,
             withLateSubmission: false,
@@ -104,7 +147,7 @@ describe("GroupsManager", () => {
         });
 
         it("returns false when assignments have a late submission rule applied", () => {
-          const rowMock = {_original: {extension: {weeks: 1, apply_penalty: true}}};
+          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
           const filterOptionsMock = JSON.stringify({
             withExtension: true,
             withLateSubmission: false,
