@@ -15,6 +15,7 @@
 - Fixed ordering of assignments in the Assignment dropdown menu and Assignment index page (#7642)
 - Updated Section model associations with appropriate dependent options to handle cascade deletion while preventing deletion when students exist (#7681)
 - Prevent grade change in the grades table for a Marks Spreadsheet, when scrolling up or down with mouse or keys (#7680)
+- Fix name column search in graders table (#7693)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
