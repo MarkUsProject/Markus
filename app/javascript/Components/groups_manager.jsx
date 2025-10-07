@@ -607,7 +607,6 @@ class RawGroupsTable extends React.Component {
         }
       },
       sortMethod: durationSort,
-
       Filter: selectFilter,
       filterMethod: (filter, row) => {
         if (filter.value === "all") {
@@ -864,3 +863,5 @@ export function makeGroupsManager(elem, props) {
   root.render(<GroupsManager {...props} ref={component} />);
   return component;
 }
+
+export {GroupsManager};
