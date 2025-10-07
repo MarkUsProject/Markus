@@ -492,7 +492,18 @@ class RawGradersTable extends React.Component {
     },
     {
       Header: I18n.t("activerecord.attributes.user.full_name"),
+      accessor: "first_name",
+      id: "full_name",
       Cell: row => `${row.original.first_name} ${row.original.last_name}`,
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          const fullName = `${row._original.first_name} ${row._original.last_name}`.toLowerCase();
+          return fullName.includes(filter.value.toLowerCase());
+        } else {
+          return true;
+        }
+      },
+      sortable: true,
       minWidth: 170,
     },
     {
