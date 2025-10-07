@@ -83,3 +83,118 @@ describe("For the GradersManager's display of inactive groups", () => {
     expect(screen.queryByText("group_0015")).not.toBeInTheDocument();
   });
 });
+
+describe("For the GradersManager's name search", () => {
+  let graders_sample;
+  beforeEach(async () => {
+    graders_sample = [
+      {
+        _id: 1,
+        user_name: "c6gehwol",
+        first_name: "Severin",
+        last_name: "Gehwolf",
+        groups: 5,
+        criteria: 2,
+        hidden: false,
+      },
+      {
+        _id: 2,
+        user_name: "c9rada",
+        first_name: "Mark",
+        last_name: "Rada",
+        groups: 4,
+        criteria: 2,
+        hidden: false,
+      },
+      {
+        _id: 3,
+        user_name: "c9varoqu",
+        first_name: "Nelle",
+        last_name: "Varoquaux",
+        groups: 5,
+        criteria: 2,
+        hidden: false,
+      },
+    ];
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        graders: graders_sample,
+        criteria: [],
+        assign_graders_to_criteria: false,
+        loading: false,
+        sections: {},
+        anonymize_groups: false,
+        hide_unassigned_criteria: false,
+        isGraderDistributionModalOpen: false,
+        groups: [],
+      }),
+    });
+    render(<GradersManager sections={{}} course_id={1} assignment_id={1} />);
+
+    await screen.findByText("Severin Gehwolf");
+  });
+
+  it("displays all graders initially", () => {
+    expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
+    expect(screen.getByText("Mark Rada")).toBeInTheDocument();
+    expect(screen.getByText("Nelle Varoquaux")).toBeInTheDocument();
+  });
+
+  it("filters by first name correctly", async () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Severin"}});
+
+    expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
+    expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
+    expect(screen.queryByText("Nelle Varoquaux")).not.toBeInTheDocument();
+  });
+
+  it("filters by last name correctly", () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Rada"}});
+
+    expect(screen.getByText("Mark Rada")).toBeInTheDocument();
+    expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
+    expect(screen.queryByText("Nelle Varoquaux")).not.toBeInTheDocument();
+  });
+
+  it("filters by full name correctly", () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Nelle Varoquaux"}});
+
+    expect(screen.getByText("Nelle Varoquaux")).toBeInTheDocument();
+    expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
+    expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
+  });
+
+  it("is case insensitive when filtering", () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "mark"}});
+
+    expect(screen.getByText("Mark Rada")).toBeInTheDocument();
+    expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
+    expect(screen.queryByText("Nelle Varoquaux")).not.toBeInTheDocument();
+  });
+
+  it("handles partial matches", () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "ver"}});
+
+    expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
+    expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
+    expect(screen.queryByText("Nelle Varoquaux")).not.toBeInTheDocument();
+  });
+
+  it("shows all graders when filter is cleared", () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: ""}});
+
+    expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
+    expect(screen.getByText("Mark Rada")).toBeInTheDocument();
+    expect(screen.getByText("Nelle Varoquaux")).toBeInTheDocument();
+  });
+
+  it("shows no results when filter matches nothing", () => {
+    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "NonexistentName"}});
+
+    expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
+    expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
+    expect(screen.queryByText("Nelle Varoquaux")).not.toBeInTheDocument();
+  });
+});
