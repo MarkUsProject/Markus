@@ -965,17 +965,18 @@ class AssignmentsController < ApplicationController
   end
 
   def duration_params
-    params.require(:assignment)
-          .permit(assignment_properties_attributes: [
-            duration: [
-              :hours,
-              :minutes
-            ]
-          ])
+    params.require(:assignment).permit(
+      assignment_properties_attributes: [
+        duration: [
+          :hours,
+          :minutes
+        ]
+      ]
+    )
   end
 
   def submission_rule_params
-    params.require(assignment)
+    params.require(:assignment)
           .permit(submission_rule_attributes: [
             :_destroy,
             :id,
@@ -991,7 +992,7 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_file_assignment_params
-    params.require(assignment).permit(:starter_file_type, :default_starter_file_group_id, :starter_files_after_due)
+    params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id, :starter_files_after_due)
   end
 
   def starter_file_group_params
