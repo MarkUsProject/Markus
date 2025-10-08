@@ -8,6 +8,7 @@ import {durationSort, selectFilter} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
+import AssignmentGroupUseModal from "./Modals/assignment_group_use_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -24,10 +25,12 @@ class GroupsManager extends React.Component {
       selected_extension_data: {},
       updating_extension: false,
       isAutoMatchModalOpen: false,
+      isAssignmentGroupUseModalOpen: false,
       isCreateGroupModalOpen: false,
       isRenameGroupDialogOpen: false,
       examTemplates: [],
       loading: true,
+      cloneAssignments: [],
     };
   }
 
@@ -70,6 +73,7 @@ class GroupsManager extends React.Component {
           hidden_students_count: res.students.filter(student => student.hidden).length,
           inactive_groups_count: inactive_groups_count,
           examTemplates: res.exam_templates,
+          cloneAssignments: res.clone_assignments || [],
         });
       });
   };
@@ -209,6 +213,33 @@ class GroupsManager extends React.Component {
     });
   };
 
+  handleShowAssignmentGroupUseModal = () => {
+    this.setState({
+      isAssignmentGroupUseModalOpen: true,
+    });
+  };
+
+  handleCloseAssignmentGroupUseModal = () => {
+    this.setState({
+      isAssignmentGroupUseModalOpen: false,
+    });
+  };
+
+  handleSubmitAssignmentGroupUseModal = selectedAssignmentId => {
+    $.post({
+      url: Routes.use_another_assignment_groups_course_assignment_groups_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
+      data: {
+        clone_assignment_id: selectedAssignmentId,
+      },
+    }).then(() => {
+      this.setState({isAssignmentGroupUseModalOpen: false});
+      this.fetchData();
+    });
+  };
+
   handleShowAutoMatchModal = () => {
     if (this.groupsTable.state.selection.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -305,11 +336,13 @@ class GroupsManager extends React.Component {
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
           handleShowAutoMatchModal={this.handleShowAutoMatchModal}
+          handleShowAssignmentGroupUseModal={this.handleShowAssignmentGroupUseModal}
           hiddenStudentsCount={this.state.loading ? null : this.state.hidden_students_count}
           hiddenGroupsCount={this.state.loading ? null : this.state.inactive_groups_count}
           scanned_exam={this.props.scanned_exam}
           showHidden={this.state.show_hidden}
           updateShowHidden={this.updateShowHidden}
+          vcs_submit={this.props.vcs_submit}
         />
         <div className="mapping-tables">
           <div className="mapping-table">
@@ -374,6 +407,12 @@ class GroupsManager extends React.Component {
           onRequestClose={this.handleCloseRenameGroupDialog}
           onSubmit={this.handleRenameGroupDialog}
           initialGroupName={this.state.renameGroupName}
+        />
+        <AssignmentGroupUseModal
+          isOpen={this.state.isAssignmentGroupUseModalOpen}
+          onRequestClose={this.handleCloseAssignmentGroupUseModal}
+          onSubmit={this.handleSubmitAssignmentGroupUseModal}
+          cloneAssignments={this.state.cloneAssignments}
         />
       </div>
     );
@@ -743,6 +782,12 @@ class GroupsActionBox extends React.Component {
             {I18n.t("students.display_inactive")}
           </label>
         </span>
+        {this.props.vcs_submit && (
+          <button onClick={this.props.handleShowAssignmentGroupUseModal}>
+            <FontAwesomeIcon icon="fa-solid fa-recycle" />
+            {I18n.t("groups.reuse_groups")}
+          </button>
+        )}
         <button className="" onClick={this.props.assign}>
           <FontAwesomeIcon icon="fa-solid fa-user-plus" />
           {I18n.t("groups.add_to_group")}
