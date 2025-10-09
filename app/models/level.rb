@@ -6,18 +6,52 @@ class Level < ApplicationRecord
   attr_accessor :skip_uniqueness_validation
 
   validates :name, presence: true
-  validates :name, uniqueness: { scope: :criterion_id }, unless: :skip_uniqueness_validation
 
   validates :description, exclusion: { in: [nil] }
 
   validates :mark, presence: true
-  validates :mark, uniqueness: { scope: :criterion_id }, unless: :skip_uniqueness_validation
   validates :mark, numericality: { greater_than_or_equal_to: 0 }
 
   validate :only_update_if_results_unreleased
+  validate :unique_name_within_criterion, unless: :skip_uniqueness_validation
+  validate :unique_mark_within_criterion, unless: :skip_uniqueness_validation
 
   before_update :update_associated_marks
   before_destroy :destroy_associated_marks
+
+  # Validates that a name is unique
+  #
+  # Custom validators have access to in memory data and can be used to validate final state changes.
+  # By contrast, built-in rails uniqueness validators query the database,
+  # their information limited, to pre-updated records
+  #
+  # Built in validators run into the issue of constraint infractions.
+  # This happens when an attempt is made to swap two values within the same transaction.
+  # Each record is compared against the database before the second has had a chance to update.
+  def unique_name_within_criterion
+    return unless criterion
+
+    siblings = criterion.levels.reject { |level| level.equal?(self) || level.marked_for_destruction? }
+    duplicate = siblings.find { |level| level.name == name }
+    errors.add(:name, :taken) if duplicate
+  end
+
+  # Validates that a mark is unique
+  #
+  # Custom validators have access to in memory data and can be used to validate final state changes.
+  # By contrast, built-in rails uniqueness validators query the database,
+  # their information limited, to pre-updated records
+  #
+  # Built in validators run into the issue of constraint infractions.
+  # This happens when an attempt is made to swap two values within the same transaction.
+  # Each record is compared against the database before the second has had a chance to update.
+  def unique_mark_within_criterion
+    return unless criterion
+
+    siblings = criterion.levels.reject { |level| level.equal?(self) || level.marked_for_destruction? }
+    duplicate = siblings.find { |level| level.mark == mark }
+    errors.add(:mark, :taken) if duplicate
+  end
 
   def only_update_if_results_unreleased
     return if self.criterion.nil? # When the level is first being created
