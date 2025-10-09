@@ -1,6 +1,7 @@
 import {render, screen} from "@testing-library/react";
 import {GroupsManager} from "../groups_manager";
 import {beforeEach, describe, expect, it} from "@jest/globals";
+import {getTimeExtension} from "../Helpers/table_helpers";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
@@ -30,7 +31,7 @@ const groupMock = [
     section: "",
   },
   {
-    group_name: "student1",
+    group_name: "group2",
     inactive: false,
     instructor_approved: true,
     members: [
@@ -101,9 +102,12 @@ describe("GroupsManager", () => {
         wrapper.current.groupsTable.wrapped.checkboxTable.props.columns[5].filterMethod;
     });
 
-    it("append (Late Submissions Accepted) to assignments with extensions", async () => {
-      const searchTerm = I18n.t("groups.late_submissions_accepted");
-      expect(await screen.getByText(new RegExp(searchTerm, "i"))).toBeInTheDocument();
+    it("append (late submissions accepted) to assignments with extensions", async () => {
+      const groupWithExtension = groupMock[1];
+      const timePeriods = ["weeks", "days", "hours", "minutes"];
+      const timeExtension = getTimeExtension(groupWithExtension.extension, timePeriods);
+      const searchTerm = `${timeExtension} (${I18n.t("groups.late_submissions_accepted")})`;
+      expect(await screen.getByRole("link", {name: searchTerm})).toBeInTheDocument();
     });
 
     it("returns true when the selected value is all", () => {

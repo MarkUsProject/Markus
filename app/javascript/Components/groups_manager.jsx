@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
-import {durationSort, selectFilter} from "./Helpers/table_helpers";
+import {durationSort, selectFilter, getTimeExtension} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
@@ -556,33 +556,12 @@ class RawGroupsTable extends React.Component {
       accessor: "extension",
       show: !this.props.scanned_exam,
       Cell: row => {
-        let extension = this.props.times
-          .map(key => {
-            const val = row.original.extension[key];
-            const lateSubmissionText = row.original.extension.apply_penalty
-              ? `(${I18n.t("groups.late_submissions_accepted")})`
-              : "";
+        const timeExtension = getTimeExtension(row.original.extension, this.props.times);
+        const lateSubmissionText = row.original.extension.apply_penalty
+          ? `(${I18n.t("groups.late_submissions_accepted")})`
+          : "";
+        const extension = `${timeExtension} ${lateSubmissionText}`;
 
-            if (!val) {
-              return null;
-            }
-            // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
-            if (key === "weeks") {
-              return `${val} ${I18n.t("durations.weeks", {count: val})} ${lateSubmissionText}`;
-            }
-            if (key === "days") {
-              return `${val} ${I18n.t("durations.days", {count: val})} ${lateSubmissionText}`;
-            }
-            if (key === "hours") {
-              return `${val} ${I18n.t("durations.hours", {count: val})} ${lateSubmissionText}`;
-            }
-            if (key === "minutes") {
-              return `${val} ${I18n.t("durations.minutes", {count: val})} ${lateSubmissionText}`;
-            }
-            return "";
-          })
-          .filter(Boolean)
-          .join(", ");
         if (!!extension) {
           return (
             <div>
