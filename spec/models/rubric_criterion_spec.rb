@@ -199,6 +199,23 @@ describe RubricCriterion do
         end
       end
 
+      describe 'can swap values in a single transaction' do
+        it 'not raise error' do
+          # Create records
+          a = @criterion.levels.create(name: 'testname', description: 'Description for level', mark: '5')
+          b = @criterion.levels.create(name: 'sillyname', description: 'Description for level 2', mark: '6')
+
+          @criterion.update!(
+            levels_attributes: [
+              { id: a.id, name: 'placeholder' },
+              { id: b.id, name: 'testname' }
+            ]
+          )
+          expect(@criterion.levels.find(a.id).name).to eq 'placeholder'
+          expect(@criterion.levels.find(b.id).name).to eq 'testname'
+        end
+      end
+
       describe 'can delete levels' do
         it 'not raise error' do
           expect(@criterion.levels.length).to eq(5)
