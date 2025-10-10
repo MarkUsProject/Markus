@@ -30,8 +30,9 @@ class Level < ApplicationRecord
   # Each record is compared against the database before the second has had a chance to update.
   def unique_name_within_criterion
     return unless criterion
+    return unless will_save_change_to_name? || new_record?
 
-    siblings = criterion.levels.reject { |level| level.equal?(self) || level.marked_for_destruction? }
+    siblings = criterion.levels.reject { |level| level.id == id || level.marked_for_destruction? }
     duplicate = siblings.find { |level| level.name == name }
     errors.add(:name, :taken) if duplicate
   end
@@ -47,8 +48,9 @@ class Level < ApplicationRecord
   # Each record is compared against the database before the second has had a chance to update.
   def unique_mark_within_criterion
     return unless criterion
+    return unless will_save_change_to_mark? || new_record?
 
-    siblings = criterion.levels.reject { |level| level.equal?(self) || level.marked_for_destruction? }
+    siblings = criterion.levels.reject { |level| level.id == id || level.marked_for_destruction? }
     duplicate = siblings.find { |level| level.mark == mark }
     errors.add(:mark, :taken) if duplicate
   end
