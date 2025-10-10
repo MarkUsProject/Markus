@@ -5,6 +5,10 @@ class AssessmentSectionProperties < ApplicationRecord
 
   has_one :course, through: :assessment
   validate :courses_should_match
+  validate :visible_dates_are_valid
+  validates :visible_on, date: true, allow_nil: true
+  validates :visible_until, date: true, allow_nil: true
+
   # Returns the dute date for a section of an assignment. Defaults to the global
   # due date of the assignment.
   def self.due_date_for(section, assignment)
@@ -13,5 +17,12 @@ class AssessmentSectionProperties < ApplicationRecord
     section_due_date =
       where(section_id: section.id, assessment_id: assignment.id).first
     section_due_date.try(:due_date) || assignment.due_date
+  end
+
+  def visible_dates_are_valid
+    return if visible_on.nil? || visible_until.nil?
+    if visible_on >= visible_until
+      errors.add(:visible_until, 'must be after visible_on')
+    end
   end
 end
