@@ -256,26 +256,70 @@ class Student < Role
     grouping.grace_period_deduction_single
   end
 
-  # Determine what assessments are visible to the role.
-  # By default, returns all assessments visible to the role for the current course.
-  # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,
-  # only returns assessments of that type. Otherwise returns all assessment types.
-  # Optional parameter assessment_id: if passed an assessment id, returns a collection containing
-  # only the assessment with the given id, if it is visible to the current user.
-  # If it is not visible, returns an empty collection.
+  # Returns assessments visible to this student.
+  # Can filter by assessment_type ("Assignment" or "GradeEntryForm") and/or assessment_id.
+  #
+  # Visibility logic:
+  # - visible_on/visible_until datetime columns override is_hidden when set
+  # - Section-specific settings override global settings
+  # - Assessment is visible if current time is within the datetime range
   def visible_assessments(assessment_type: nil, assessment_id: nil)
     visible = self.assessments.where(type: assessment_type || Assessment.type)
     visible = visible.where(id: assessment_id) if assessment_id
+    current_time = Time.current
+
     if self.section_id
       visible = visible.left_outer_joins(:assessment_section_properties)
                        .where('assessment_section_properties.section_id': [self.section_id, nil])
-      visible = visible.where('assessment_section_properties.is_hidden': false)
-                       .or(visible.where('assessment_section_properties.is_hidden': nil,
-                                         'assessments.is_hidden': false))
+
+      # Check section-specific visibility first (takes precedence)
+      section_visible = visible.where('assessment_section_properties.section_id': self.section_id)
+
+      # Make sure current time is within the datetime range
+      section_visible = section_visible.where(
+        '(assessment_section_properties.visible_on IS NULL OR assessment_section_properties.visible_on <= ?) AND ' \
+        '(assessment_section_properties.visible_until IS NULL OR assessment_section_properties.visible_until >= ?)',
+        current_time, current_time
+      )
+
+      # Use datetime if set, otherwise fall back to is_hidden
+      section_visible = section_visible.where(
+        '(assessment_section_properties.visible_on IS NOT NULL OR ' \
+        'assessment_section_properties.visible_until IS NOT NULL) OR ' \
+        'assessment_section_properties.is_hidden = false'
+      )
+
+      # Check global visibility (when no section-specific settings exist)
+      global_visible = visible.where('assessment_section_properties.section_id': nil)
+
+      # Same datetime range check for global settings
+      global_visible = global_visible.where(
+        '(assessments.visible_on IS NULL OR assessments.visible_on <= ?) AND ' \
+        '(assessments.visible_until IS NULL OR assessments.visible_until >= ?)',
+        current_time, current_time
+      )
+
+      # Use datetime if set, otherwise fall back to is_hidden
+      global_visible = global_visible.where(
+        '(assessments.visible_on IS NOT NULL OR assessments.visible_until IS NOT NULL) OR ' \
+        'assessments.is_hidden = false'
+      )
+
+      section_visible.or(global_visible)
     else
-      visible = visible.where(is_hidden: false)
+      # No section assigned - just check global visibility
+      visible = visible.where(
+        '(assessments.visible_on IS NULL OR assessments.visible_on <= ?) AND ' \
+        '(assessments.visible_until IS NULL OR assessments.visible_until >= ?)',
+        current_time, current_time
+      )
+
+      # Use datetime if set, otherwise fall back to is_hidden
+      visible.where(
+        '(assessments.visible_on IS NOT NULL OR assessments.visible_until IS NOT NULL) OR ' \
+        'assessments.is_hidden = false'
+      )
     end
-    visible
   end
 
   def section_name
