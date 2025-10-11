@@ -1,12 +1,11 @@
 import {render, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import {
-  MarksPanel,
-  CheckboxCriterionInput,
-  FlexibleCriterionInput,
-  RubricCriterionInput,
-} from "../Result/marks_panel";
+import {MarksPanel} from "../Result/marks_panel";
+
+import CheckboxCriterionInput from "../Result/checkbox_criterion_input";
+import {FlexibleCriterionInput} from "../Result/flexible_criterion_input";
+import RubricCriterionInput from "../Result/rubric_criterion_input";
 
 const convertToKebabCase = {
   CheckboxCriterion: "checkbox_criterion",
