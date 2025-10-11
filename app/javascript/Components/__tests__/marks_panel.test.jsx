@@ -152,6 +152,10 @@ describe("CheckboxCriterionInput", () => {
 
     expect(screen.queryByText(`(${I18n.t("results.remark.old_mark")}: 1)`)).toBeTruthy();
   });
+
+  it("renders CheckboxCriterionInput", () => {
+    render(<CheckboxCriterionInput {...basicProps} />);
+  });
 });
 
 describe("FlexibleCriterionInput", () => {
@@ -354,6 +358,10 @@ describe("FlexibleCriterionInput", () => {
     render(<FlexibleCriterionInput {...basicProps} />);
     expect(screen.queryAllByRole("textbox")).toEqual([]);
   });
+
+  it("renders FlexibleCriterionInput", () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
+  });
 });
 
 describe("RubricCriterionInput", () => {
@@ -468,5 +476,9 @@ describe("RubricCriterionInput", () => {
     render(<RubricCriterionInput {...basicProps} />);
 
     expect(screen.queryAllByRole("link")).toEqual([]);
+  });
+
+  it("renders RubricCriterionInput", () => {
+    render(<RubricCriterionInput {...basicProps} />);
   });
 });
