@@ -118,7 +118,7 @@ class MainController < ApplicationController
 
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
-  def page_not_found # rubocop:disable Lint/UselessMethodDefinition
+  def page_not_found
     super
   end
 

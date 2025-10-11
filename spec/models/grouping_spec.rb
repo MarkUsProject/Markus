@@ -1641,25 +1641,25 @@ describe Grouping do
     end
 
     it 'should let one navigate right if there is a result directly to the right' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.first.get_next_grouping(role, false)
       expect(new_grouping.group_id).to eq(groupings.last.group_id)
     end
 
     it 'should let one navigate left if there is a result directly to the left' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.last.get_next_grouping(role, true)
       expect(new_grouping.group_id).to eq(groupings.first.group_id)
     end
 
     it 'should not one navigate right if there is no result directly to the right' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.last.get_next_grouping(role, false)
       expect(new_grouping).to be_nil
     end
 
     it 'should not let one navigate left if there is no result directly to the left' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.first.get_next_grouping(role, true)
       expect(new_grouping).to be_nil
     end
@@ -1668,13 +1668,13 @@ describe Grouping do
       let(:groupings_collected) { [false, true] }
 
       it 'should let me navigate to the right if any result exists towards the right' do
-        groupings = assignment.groupings.joins(:group).order('group_name')
+        groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.first.get_next_grouping(role, false)
         expect(new_grouping.group_id).to eq(groupings.last.group_id)
       end
 
       it 'should let one navigate left if there is a result directly to the left' do
-        groupings = assignment.groupings.joins(:group).order('group_name')
+        groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.last.get_next_grouping(role, true)
         expect(new_grouping.group_id).to eq(groupings.first.group_id)
       end
@@ -1695,25 +1695,25 @@ describe Grouping do
     end
 
     it 'should let one navigate right if there is a result directly to the right' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.first.get_next_grouping(role, false)
       expect(new_grouping.group_id).to be(groupings.last.group_id)
     end
 
     it 'should let one navigate left if there is a result directly to the left' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.last.get_next_grouping(role, true)
       expect(new_grouping.group_id).to be(groupings.first.group_id)
     end
 
     it 'should not one navigate right if there is no result directly to the right' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.last.get_next_grouping(role, false)
       expect(new_grouping).to be_nil
     end
 
     it 'should not let one navigate left if there is no result directly to the left' do
-      groupings = assignment.groupings.joins(:group).order('group_name')
+      groupings = assignment.groupings.joins(:group).order(:group_name)
       new_grouping = groupings.first.get_next_grouping(role, true)
       expect(new_grouping).to be_nil
     end
@@ -1727,13 +1727,13 @@ describe Grouping do
       end
 
       it 'should let me navigate to the right if any result exists towards the right' do
-        groupings = assignment.groupings.joins(:group).order('group_name')
+        groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.first.get_next_grouping(role, false)
         expect(new_grouping.group_id).to eq(groupings.last.group_id)
       end
 
       it 'should let one navigate left if there is a result directly to the left' do
-        groupings = assignment.groupings.joins(:group).order('group_name')
+        groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.last.get_next_grouping(role, true)
         expect(new_grouping.group_id).to eq(groupings.first.group_id)
       end
