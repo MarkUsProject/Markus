@@ -238,7 +238,7 @@ describe Course do
           let(:desired_attributes) do
             ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, true, true, false, true, true]
+             true, true, false, true, true, true, true, false, nil, nil, true, true]
           end
           let(:assignment) do
             csv = desired_attributes.to_csv
@@ -358,7 +358,7 @@ describe Course do
           let(:desired_attributes) do
             ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, true, true, false, true, true]
+             true, true, false, true, true, true, true, false, nil, nil, true, true]
           end
           let(:assignment) do
             desired_attribute_value_hash = Assignment::DEFAULT_FIELDS.zip(desired_attributes).to_h

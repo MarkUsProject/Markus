@@ -43,6 +43,7 @@ class Assessment < ApplicationRecord
 
   def visible_dates_are_valid
     return if visible_on.nil? || visible_until.nil?
+    return unless visible_on.respond_to?(:>=) && visible_until.respond_to?(:>=)
     if visible_on >= visible_until
       errors.add(:visible_until, 'must be after visible_on')
     end
