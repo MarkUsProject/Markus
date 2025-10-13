@@ -114,6 +114,7 @@ class Result < ApplicationRecord
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
+    subtotals = Result.get_subtotals(result_ids, user_visibility: user_visibility)
     extra_marks_hash = Hash.new { |h, k| h[k] = nil }
     max_mark_hash = {}
     result_data.each do |id, extra_mark, unit, assessment_id|
@@ -130,6 +131,9 @@ class Result < ApplicationRecord
           assignment_max_mark = max_mark_hash[assessment_id]
         end
         extra_marks_hash[id] += (extra_mark * assignment_max_mark / 100).round(2)
+      elsif unit == 'percentage_of_score'
+        marks_earned = subtotals[id] || 0
+        extra_marks_hash[id] += (extra_mark * marks_earned / 100).round(2)
       end
     end
     extra_marks_hash

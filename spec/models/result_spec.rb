@@ -172,6 +172,58 @@ describe Result do
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
       end
     end
+
+    context 'percentage_of_score' do
+      it 'should calculate extra marks based on percentage of earned score' do
+        ids = Result.ids
+        result = Result.find(ids.first)
+        subtotal = result.get_subtotal
+        extra_mark = 5.0
+
+        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        expected = Hash.new { |h, k| h[k] = nil }
+        expected[ids.first] = (extra_mark * subtotal / 100).round(2)
+        expect(Result.get_total_extra_marks(ids)).to eq(expected)
+      end
+
+      it 'should handle zero subtotal when calculating percentage of score' do
+        ids = Result.ids
+        result = Result.find(ids.first)
+        result.marks.update_all(mark: 0)
+        extra_mark = 10.0
+
+        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        expected = Hash.new { |h, k| h[k] = nil }
+        expected[ids.first] = 0.0
+        expect(Result.get_total_extra_marks(ids)).to eq(expected)
+      end
+
+      it 'should calculate extra marks based on percentage of earned score with negative deduction' do
+        ids = Result.ids
+        result = Result.find(ids.first)
+        subtotal = result.get_subtotal
+        extra_mark = -5.0
+
+        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        expected = Hash.new { |h, k| h[k] = nil }
+        expected[ids.first] = (extra_mark * subtotal / 100).round(2)
+        expect(Result.get_total_extra_marks(ids)).to eq(expected)
+      end
+
+      it 'should round to 2 decimal places' do
+        ids = Result.ids
+        result = Result.find(ids.first)
+        subtotal = result.get_subtotal
+        extra_mark = 7.0
+
+        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        actual = Result.get_total_extra_marks(ids)[ids.first]
+        expect(actual).to eq(actual.round(2))
+
+        expected = (extra_mark * subtotal / 100).round(2)
+        expect(actual).to eq(expected)
+      end
+    end
   end
 
   describe '#get_total_mark' do
