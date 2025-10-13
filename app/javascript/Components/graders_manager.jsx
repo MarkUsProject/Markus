@@ -495,6 +495,17 @@ class RawGradersTable extends React.Component {
       accessor: "full_name",
       id: "full_name",
       filterable: true,
+      Filter: ({filter, onChange}) => (
+        <input
+          placeholder={I18n.t("table.search")}
+          type="text"
+          onChange={e => onChange(e.target.value)}
+          value={filter ? filter.value : ""}
+          style={{width: "100%"}}
+          aria-label={I18n.t("table.search")}
+          data-testid="grader-name-search"
+        />
+      ),
       Cell: row => `${row.original.first_name} ${row.original.last_name}`,
       filterMethod: (filter, row) => {
         if (filter.value) {
