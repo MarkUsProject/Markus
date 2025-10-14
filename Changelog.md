@@ -18,6 +18,7 @@
 - Prevent grade change in the grades table for a Marks Spreadsheet, when scrolling up or down with mouse or keys (#7680)
 - Fixed ordering of sections in the Timed Assessment assignments section-specific settings table (#7690)
 - Fix name column search in graders table (#7693)
+- Reattach, accidentally removed due date extension modifier (#7703)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
