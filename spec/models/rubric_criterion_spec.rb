@@ -190,6 +190,22 @@ describe RubricCriterion do
     end
 
     context 'has basic levels functionality' do
+      describe 'uniqueness validations' do
+        it 'raise error on duplicate mark' do
+          @criterion.levels.create(name: 'A', description: 'A', mark: 5)
+          expect do
+            @criterion.levels.create!(name: 'B', description: 'B', mark: 5)
+          end.to raise_error(ActiveRecord::RecordInvalid, /Mark has already been taken/)
+        end
+
+        it 'raise error on duplicate name' do
+          @criterion.levels.create(name: 'A', description: 'A', mark: 5)
+          expect do
+            @criterion.levels.create!(name: 'A', description: 'B', mark: 6)
+          end.to raise_error(ActiveRecord::RecordInvalid, /Name has already been taken/)
+        end
+      end
+
       describe 'can add levels' do
         it 'not raise error' do
           expect(@criterion.levels.length).to eq(5)
