@@ -14,6 +14,7 @@
 - Updated Section model associations with appropriate dependent options to handle cascade deletion while preventing deletion when students exist (#7681)
 - Prevent grade change in the grades table for a Marks Spreadsheet, when scrolling up or down with mouse or keys (#7680)
 - Fixed ordering of sections in the Timed Assessment assignments section-specific settings table (#7690)
+- Reattach, accidentally removed due date extension modifier (#7703)
 
 ## [v2.8.1]
 
