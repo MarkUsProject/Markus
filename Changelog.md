@@ -9,6 +9,7 @@
 - Update message and page displaying cannot create new course via external LTI tool (#7669)
 - Provide file viewer the option to render Microsoft files (#7676)
 - Added percentage_of_score type to ExtraMark model (#7702)
+- Display late submission selection and add accompanying filter (#7689)
 
 ### 🐛 Bug fixes
 - Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
