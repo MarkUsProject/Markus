@@ -120,6 +120,8 @@ ignore_unused:
   - '*.*.default'
   - 'exam_templates.*'  # TODO: review these ones
   - 'notification_mailer.*'
+  - 'durations.weeks.*'  # TODO: review this
+  - 'durations.days.*'  # TODO: review this
   - 'durations.hours.*'  # TODO: review this
   - 'durations.minutes.*'  # TODO: review this
   - 'date.formats.*'  # See https://github.com/glebm/i18n-tasks/issues/240
