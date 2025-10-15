@@ -276,49 +276,51 @@ class Student < Role
       section_visible = visible.where('assessment_section_properties.section_id': self.section_id)
 
       # Make sure current time is within the datetime range
-      section_visible = section_visible.where(
-        '(assessment_section_properties.visible_on IS NULL OR assessment_section_properties.visible_on <= ?) AND ' \
-        '(assessment_section_properties.visible_until IS NULL OR assessment_section_properties.visible_until >= ?)',
-        current_time, current_time
-      )
+      section_visible = section_visible
+                        .where(assessment_section_properties: { visible_on: nil })
+                        .or(section_visible.where(assessment_section_properties: { visible_on: ..current_time }))
+      section_visible = section_visible
+                        .where(assessment_section_properties: { visible_until: nil })
+                        .or(section_visible.where(assessment_section_properties: { visible_until: current_time.. }))
 
       # Use datetime if set, otherwise fall back to is_hidden
-      section_visible = section_visible.where(
-        '(assessment_section_properties.visible_on IS NOT NULL OR ' \
-        'assessment_section_properties.visible_until IS NOT NULL) OR ' \
-        'assessment_section_properties.is_hidden = false'
-      )
+      section_visible = section_visible
+                        .where.not(assessment_section_properties: { visible_on: nil })
+                        .or(section_visible.where.not(assessment_section_properties: { visible_until: nil }))
+                        .or(section_visible.where(assessment_section_properties: { is_hidden: false }))
 
       # Check global visibility (when no section-specific settings exist)
       global_visible = visible.where('assessment_section_properties.section_id': nil)
 
       # Same datetime range check for global settings
-      global_visible = global_visible.where(
-        '(assessments.visible_on IS NULL OR assessments.visible_on <= ?) AND ' \
-        '(assessments.visible_until IS NULL OR assessments.visible_until >= ?)',
-        current_time, current_time
-      )
+      global_visible = global_visible
+                       .where(assessments: { visible_on: nil })
+                       .or(global_visible.where(assessments: { visible_on: ..current_time }))
+      global_visible = global_visible
+                       .where(assessments: { visible_until: nil })
+                       .or(global_visible.where(assessments: { visible_until: current_time.. }))
 
       # Use datetime if set, otherwise fall back to is_hidden
-      global_visible = global_visible.where(
-        '(assessments.visible_on IS NOT NULL OR assessments.visible_until IS NOT NULL) OR ' \
-        'assessments.is_hidden = false'
-      )
+      global_visible = global_visible
+                       .where.not(assessments: { visible_on: nil })
+                       .or(global_visible.where.not(assessments: { visible_until: nil }))
+                       .or(global_visible.where(assessments: { is_hidden: false }))
 
       section_visible.or(global_visible)
     else
       # No section assigned - just check global visibility
-      visible = visible.where(
-        '(assessments.visible_on IS NULL OR assessments.visible_on <= ?) AND ' \
-        '(assessments.visible_until IS NULL OR assessments.visible_until >= ?)',
-        current_time, current_time
-      )
+      visible = visible
+                .where(assessments: { visible_on: nil })
+                .or(visible.where(assessments: { visible_on: ..current_time }))
+      visible = visible
+                .where(assessments: { visible_until: nil })
+                .or(visible.where(assessments: { visible_until: current_time.. }))
 
       # Use datetime if set, otherwise fall back to is_hidden
-      visible.where(
-        '(assessments.visible_on IS NOT NULL OR assessments.visible_until IS NOT NULL) OR ' \
-        'assessments.is_hidden = false'
-      )
+      visible
+        .where.not(assessments: { visible_on: nil })
+        .or(visible.where.not(assessments: { visible_until: nil }))
+        .or(visible.where(assessments: { is_hidden: false }))
     end
   end
 

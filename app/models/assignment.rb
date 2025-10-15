@@ -1517,7 +1517,11 @@ class Assignment < Assessment
   # Returns whether the visibility for this assignment changed after a save.
   def visibility_changed?
     saved_change_to_is_hidden? ||
+      saved_change_to_visible_on? ||
+      saved_change_to_visible_until? ||
       assessment_section_properties.any?(&:is_hidden_previously_changed?) ||
+      assessment_section_properties.any?(&:visible_on_previously_changed?) ||
+      assessment_section_properties.any?(&:visible_until_previously_changed?) ||
       @prev_assessment_section_property_ids != self.reload.assessment_section_properties.ids
   end
 end

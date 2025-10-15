@@ -5,7 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns
+- Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added new loading spinner icon for tables (#7602)
 - Update message and page displaying cannot create new course via external LTI tool (#7669)
 - Provide file viewer the option to render Microsoft files (#7676)
