@@ -6,10 +6,6 @@
 
 ### ✨ New features and improvements
 - Added new loading spinner icon for tables (#7602)
-- Update message and page displaying cannot create new course via external LTI tool (#7669)
-- Provide file viewer the option to render Microsoft files (#7676)
-- Display late submission selection and add accompanying filter (#7689)
-- Update Model: Level validation checks (#7696)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
