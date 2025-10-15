@@ -9,6 +9,7 @@
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
+- Check against mtime instead of atime for clean up of git repo directories in tmp folder (#7706)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
