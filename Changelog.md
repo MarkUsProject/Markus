@@ -6,7 +6,7 @@
 
 ### ✨ New features and improvements
 - Added new loading spinner icon for tables (#7602)
-- Added percentage_of_score type to ExtraMark model (#7702)
+- Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
