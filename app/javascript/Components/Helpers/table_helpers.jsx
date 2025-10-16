@@ -262,3 +262,27 @@ export function customNoDataComponent({children, loading}) {
 export function customNoDataProps({state}) {
   return {loading: state.loading, data: state.data};
 }
+
+export function getTimeExtension(extension, timePeriods) {
+  return timePeriods
+    .map(key => {
+      const val = extension[key];
+
+      if (!val) {
+        return null;
+      }
+      // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
+      if (key === "weeks") {
+        return `${val} ${I18n.t("durations.weeks", {count: val})}`;
+      } else if (key === "days") {
+        return `${val} ${I18n.t("durations.days", {count: val})}`;
+      } else if (key === "hours") {
+        return `${val} ${I18n.t("durations.hours", {count: val})}`;
+      } else if (key === "minutes") {
+        return `${val} ${I18n.t("durations.minutes", {count: val})}`;
+      }
+      return "";
+    })
+    .filter(Boolean)
+    .join(", ");
+}

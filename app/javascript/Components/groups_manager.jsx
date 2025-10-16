@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
-import {durationSort, selectFilter} from "./Helpers/table_helpers";
+import {durationSort, selectFilter, getTimeExtension} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
@@ -556,27 +556,13 @@ class RawGroupsTable extends React.Component {
       accessor: "extension",
       show: !this.props.scanned_exam,
       Cell: row => {
-        let extension = this.props.times
-          .map(key => {
-            const val = row.original.extension[key];
-            if (val) {
-              // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
-              if (key === "weeks") {
-                return `${val} ${I18n.t("durations.weeks", {count: val})}`;
-              } else if (key === "days") {
-                return `${val} ${I18n.t("durations.days", {count: val})}`;
-              } else if (key === "hours") {
-                return `${val} ${I18n.t("durations.hours", {count: val})}`;
-              } else if (key === "minutes") {
-                return `${val} ${I18n.t("durations.minutes", {count: val})}`;
-              } else {
-                return "";
-              }
-            }
-          })
-          .filter(Boolean)
-          .join(", ");
-        if (!!extension) {
+        const timeExtension = getTimeExtension(row.original.extension, this.props.times);
+        const lateSubmissionText = row.original.extension.apply_penalty
+          ? `(${I18n.t("groups.late_submissions_accepted")})`
+          : "";
+        const extension = `${timeExtension} ${lateSubmissionText}`;
+
+        if (!!timeExtension) {
           return (
             <div>
               <a
@@ -599,8 +585,39 @@ class RawGroupsTable extends React.Component {
           );
         }
       },
-      filterable: false,
       sortMethod: durationSort,
+      Filter: selectFilter,
+      filterMethod: (filter, row) => {
+        if (filter.value === "all") {
+          return true;
+        }
+        const applyPenalty = row._original.extension.apply_penalty;
+        const {withExtension, withLateSubmission} = JSON.parse(filter.value);
+        // If there is an extension applied, the extension object will contain a property called hours
+        const hasExtension = Object.hasOwn(row._original.extension, "hours");
+
+        if (!withExtension) {
+          return !hasExtension;
+        }
+        if (withLateSubmission) {
+          return hasExtension && applyPenalty;
+        }
+        return hasExtension && !applyPenalty;
+      },
+      filterOptions: [
+        {
+          value: JSON.stringify({withExtension: false}),
+          text: I18n.t("groups.groups_without_extension"),
+        },
+        {
+          value: JSON.stringify({withExtension: true, withLateSubmission: true}),
+          text: I18n.t("groups.groups_with_extension.with_late_submission"),
+        },
+        {
+          value: JSON.stringify({withExtension: true, withLateSubmission: false}),
+          text: I18n.t("groups.groups_with_extension.without_late_submission"),
+        },
+      ],
     },
   ];
 
@@ -825,3 +842,5 @@ export function makeGroupsManager(elem, props) {
   root.render(<GroupsManager {...props} ref={component} />);
   return component;
 }
+
+export {GroupsManager};
