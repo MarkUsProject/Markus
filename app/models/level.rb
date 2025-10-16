@@ -30,7 +30,7 @@ class Level < ApplicationRecord
   # Each record is compared against the database before the second has had a chance to update.
   def unique_within_criterion(attr)
     return unless criterion
-    return unless new_record? || public_send("will_save_change_to_#{attr}?")
+    return unless new_record? || public_send(:"will_save_change_to_#{attr}?")
 
     siblings = criterion.levels.reject { |level| level.id == id || level.marked_for_destruction? }
     duplicate = siblings.find { |level| level.public_send(attr) == public_send(attr) }
