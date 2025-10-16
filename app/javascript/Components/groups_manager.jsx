@@ -562,7 +562,7 @@ class RawGroupsTable extends React.Component {
           : "";
         const extension = `${timeExtension} ${lateSubmissionText}`;
 
-        if (!!extension) {
+        if (!!timeExtension) {
           return (
             <div>
               <a
