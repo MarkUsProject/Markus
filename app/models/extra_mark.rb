@@ -11,6 +11,7 @@ class ExtraMark < ApplicationRecord
 
   scope :percentage, -> { where(unit: ExtraMark::PERCENTAGE) }
   scope :points, -> { where(unit: ExtraMark::POINTS) }
+  scope :percentage_of_score, -> { where(unit: ExtraMark::PERCENTAGE_OF_SCORE) }
 
   validates :unit, presence: true
   validates :unit, format: { with: /\Apercentage|points|percentage_of_score\z/ }
