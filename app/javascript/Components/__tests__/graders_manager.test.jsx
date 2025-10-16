@@ -143,7 +143,7 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("filters by first name correctly", async () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Severin"}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {target: {value: "Severin"}});
 
     expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
     expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
@@ -151,7 +151,7 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("filters by last name correctly", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Rada"}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {target: {value: "Rada"}});
 
     expect(screen.getByText("Mark Rada")).toBeInTheDocument();
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
@@ -159,7 +159,9 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("filters by full name correctly", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Nelle Varoquaux"}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {
+      target: {value: "Nelle Varoquaux"},
+    });
 
     expect(screen.getByText("Nelle Varoquaux")).toBeInTheDocument();
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
@@ -167,7 +169,7 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("is case insensitive when filtering", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "mark"}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {target: {value: "mark"}});
 
     expect(screen.getByText("Mark Rada")).toBeInTheDocument();
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
@@ -175,7 +177,7 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("handles partial matches", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "ver"}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {target: {value: "ver"}});
 
     expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
     expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
@@ -183,7 +185,7 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("shows all graders when filter is cleared", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: ""}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {target: {value: ""}});
 
     expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
     expect(screen.getByText("Mark Rada")).toBeInTheDocument();
@@ -191,7 +193,9 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("shows no results when filter matches nothing", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "NonexistentName"}});
+    fireEvent.change(screen.getByTestId("grader-name-search"), {
+      target: {value: "NonexistentName"},
+    });
 
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
     expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
