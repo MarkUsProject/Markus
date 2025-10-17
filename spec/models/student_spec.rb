@@ -413,7 +413,7 @@ describe Student do
         expect(student.visible_assessments).not_to include(assignment)
       end
 
-      it 'shows assessment when datetime range is valid (overrides is_hidden=true)' do
+      it 'shows assessment when datetime range includes current time (overrides is_hidden=true)' do
         assignment = create(:assignment, course: course, is_hidden: true,
                                          visible_on: 1.day.ago, visible_until: 1.day.from_now)
         expect(student.visible_assessments).to include(assignment)
@@ -451,6 +451,12 @@ describe Student do
         expect(student_with_section.visible_assessments).to include(assignment)
       end
 
+      it 'section is_hidden=true overrides global is_hidden=false' do
+        assignment = create(:assignment, course: course, is_hidden: false)
+        create(:assessment_section_properties, assessment: assignment, section: section, is_hidden: true)
+        expect(student_with_section.visible_assessments).not_to include(assignment)
+      end
+
       it 'section datetime overrides global datetime' do
         assignment = create(:assignment, course: course, is_hidden: false,
                                          visible_on: 1.day.ago, visible_until: 1.day.from_now)
@@ -460,7 +466,7 @@ describe Student do
         expect(student_with_section.visible_assessments).not_to include(assignment)
       end
 
-      it 'section datetime makes hidden assessment visible' do
+      it 'section datetime makes hidden assessment visible when range includes current time' do
         assignment = create(:assignment, course: course, is_hidden: true)
         # Section has datetime visibility
         create(:assessment_section_properties, assessment: assignment, section: section,
