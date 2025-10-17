@@ -423,5 +423,57 @@ describe AssignmentPolicy do
         before { assessment_section_properties.update(is_hidden: true) }
       end
     end
+
+    context 'with datetime visibility' do
+      let(:role) { create(:student) }
+
+      succeed 'when visible_on is in the past and visible_until is in the future' do
+        before { assignment.update(is_hidden: true, visible_on: 1.day.ago, visible_until: 1.day.from_now) }
+      end
+
+      failed 'when visible_on is in the future' do
+        before { assignment.update(is_hidden: false, visible_on: 1.day.from_now, visible_until: 2.days.from_now) }
+      end
+
+      failed 'when visible_until is in the past' do
+        before { assignment.update(is_hidden: false, visible_on: 2.days.ago, visible_until: 1.day.ago) }
+      end
+
+      succeed 'when only visible_on is set and in the past' do
+        before { assignment.update(is_hidden: true, visible_on: 1.day.ago, visible_until: nil) }
+      end
+
+      succeed 'when only visible_until is set and in the future' do
+        before { assignment.update(is_hidden: true, visible_on: nil, visible_until: 1.day.from_now) }
+      end
+
+      context 'with section-specific datetime' do
+        let(:role) { create(:student, section: new_section) }
+
+        succeed 'when section datetime is valid' do
+          before do
+            assignment.update(is_hidden: true)
+            create(:assessment_section_properties, assessment: assignment, section: new_section,
+                                                   visible_on: 1.day.ago, visible_until: 1.day.from_now)
+          end
+        end
+
+        failed 'when section visible_on is in the future' do
+          before do
+            assignment.update(is_hidden: false)
+            create(:assessment_section_properties, assessment: assignment, section: new_section,
+                                                   visible_on: 1.day.from_now, visible_until: 2.days.from_now)
+          end
+        end
+
+        failed 'when section visible_until is in the past' do
+          before do
+            assignment.update(is_hidden: false)
+            create(:assessment_section_properties, assessment: assignment, section: new_section,
+                                                   visible_on: 2.days.ago, visible_until: 1.day.ago)
+          end
+        end
+      end
+    end
   end
 end

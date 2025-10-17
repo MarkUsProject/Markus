@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added new loading spinner icon for tables (#7602)
 
 ### 🐛 Bug fixes

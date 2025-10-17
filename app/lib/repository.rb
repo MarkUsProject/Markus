@@ -249,17 +249,46 @@ module Repository
     # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
     # is a boolean indicating whether the given assignment is visible to the given section.
     def self.visibility_hash
+      current_time = Time.current
       records = Assignment.left_outer_joins(:assessment_section_properties)
                           .pluck_to_hash('assessments.id',
                                          'section_id',
                                          'assessments.is_hidden',
-                                         'assessment_section_properties.is_hidden')
+                                         'assessments.visible_on',
+                                         'assessments.visible_until',
+                                         'assessment_section_properties.is_hidden',
+                                         'assessment_section_properties.visible_on',
+                                         'assessment_section_properties.visible_until')
+
       visibilities = records.uniq { |r| r['assessments.id'] }
-                            .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
+                            .map do |r|
+                              # Check if datetime-based visibility is set
+                              visible_on = r['assessments.visible_on']
+                              visible_until = r['assessments.visible_until']
+                              default_visible = if visible_on || visible_until
+                                                  (visible_on.nil? || visible_on <= current_time) &&
+                                                    (visible_until.nil? || visible_until >= current_time)
+                                                else
+                                                  !r['assessments.is_hidden']
+                                                end
+                              [r['assessments.id'], Hash.new { default_visible }]
+                            end
                             .to_h
+
       records.each do |r|
-        unless r['assessment_section_properties.is_hidden'].nil?
-          visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']
+        section_visible_on = r['assessment_section_properties.visible_on']
+        section_visible_until = r['assessment_section_properties.visible_until']
+        section_is_hidden = r['assessment_section_properties.is_hidden']
+
+        unless section_is_hidden.nil? && section_visible_on.nil? && section_visible_until.nil?
+          # Section-specific settings exist
+          section_visible = if section_visible_on || section_visible_until
+                              (section_visible_on.nil? || section_visible_on <= current_time) &&
+                                (section_visible_until.nil? || section_visible_until >= current_time)
+                            else
+                              !section_is_hidden
+                            end
+          visibilities[r['assessments.id']][r['section_id']] = section_visible
         end
       end
       visibilities
