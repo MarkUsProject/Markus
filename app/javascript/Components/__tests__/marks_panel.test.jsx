@@ -1,12 +1,11 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import {
-  MarksPanel,
-  CheckboxCriterionInput,
-  FlexibleCriterionInput,
-  RubricCriterionInput,
-} from "../Result/marks_panel";
+import {MarksPanel} from "../Result/marks_panel";
+
+import CheckboxCriterionInput from "../Result/checkbox_criterion_input";
+import FlexibleCriterionInput from "../Result/flexible_criterion_input";
+import RubricCriterionInput from "../Result/rubric_criterion_input";
 
 const convertToKebabCase = {
   CheckboxCriterion: "checkbox_criterion",
@@ -152,6 +151,10 @@ describe("CheckboxCriterionInput", () => {
     await rerender(<CheckboxCriterionInput {...basicProps} />);
 
     expect(screen.queryByText(`(${I18n.t("results.remark.old_mark")}: 1)`)).toBeTruthy();
+  });
+
+  it("renders CheckboxCriterionInput", () => {
+    render(<CheckboxCriterionInput {...basicProps} />);
   });
 });
 
@@ -303,7 +306,9 @@ describe("FlexibleCriterionInput", () => {
     await userEvent.clear(input);
     await userEvent.type(input, "Hi Prof Liu");
     expect(input.value).toEqual("Hi Prof Liu");
-    expect(input.classList.contains("invalid")).toBeTruthy();
+    await waitFor(() => {
+      expect(input.classList.contains("invalid")).toBeTruthy();
+    });
   });
 
   it("should set the mark as valid if it has a decimal", async () => {
@@ -354,6 +359,10 @@ describe("FlexibleCriterionInput", () => {
     basicProps.released_to_students = true;
     render(<FlexibleCriterionInput {...basicProps} />);
     expect(screen.queryAllByRole("textbox")).toEqual([]);
+  });
+
+  it("renders FlexibleCriterionInput", () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
   });
 });
 
@@ -469,5 +478,9 @@ describe("RubricCriterionInput", () => {
     render(<RubricCriterionInput {...basicProps} />);
 
     expect(screen.queryAllByRole("link")).toEqual([]);
+  });
+
+  it("renders RubricCriterionInput", () => {
+    render(<RubricCriterionInput {...basicProps} />);
   });
 });
