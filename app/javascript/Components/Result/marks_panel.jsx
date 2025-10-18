@@ -1,7 +1,7 @@
 import React from "react";
 
 import CheckboxCriterionInput from "./checkbox_criterion_input";
-import {FlexibleCriterionInput} from "./flexible_criterion_input";
+import FlexibleCriterionInput from "./flexible_criterion_input";
 import RubricCriterionInput from "./rubric_criterion_input";
 
 export class MarksPanel extends React.Component {

@@ -1,10 +1,10 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import {MarksPanel} from "../Result/marks_panel";
 
 import CheckboxCriterionInput from "../Result/checkbox_criterion_input";
-import {FlexibleCriterionInput} from "../Result/flexible_criterion_input";
+import FlexibleCriterionInput from "../Result/flexible_criterion_input";
 import RubricCriterionInput from "../Result/rubric_criterion_input";
 
 const convertToKebabCase = {
@@ -306,7 +306,9 @@ describe("FlexibleCriterionInput", () => {
     await userEvent.clear(input);
     await userEvent.type(input, "Hi Prof Liu");
     expect(input.value).toEqual("Hi Prof Liu");
-    expect(input.classList.contains("invalid")).toBeTruthy();
+    await waitFor(() => {
+      expect(input.classList.contains("invalid")).toBeTruthy();
+    });
   });
 
   it("should set the mark as valid if it has a decimal", async () => {
