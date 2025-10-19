@@ -153,8 +153,23 @@ describe("CheckboxCriterionInput", () => {
     expect(screen.queryByText(`(${I18n.t("results.remark.old_mark")}: 1)`)).toBeTruthy();
   });
 
-  it("renders CheckboxCriterionInput", () => {
+  it("renders CheckboxCriterionInput with radio buttons", () => {
     render(<CheckboxCriterionInput {...basicProps} />);
+
+    // Check at least 1 criterion label renders
+    expect(screen.getAllByText(/criterion/i).length).toBeGreaterThan(0);
+
+    // Check at least 1 radio button pair render (yes/no)
+    const radios = screen.getAllByRole("radio");
+    expect(radios.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("shows Delete Mark link when mark exists and not released", () => {
+    render(<CheckboxCriterionInput {...basicProps} mark={1} />);
+
+    // Check at least one delete link renders
+    const deleteLinks = screen.getAllByText(/delete mark/i);
+    expect(deleteLinks.length).toBeGreaterThan(0);
   });
 });
 
@@ -361,8 +376,27 @@ describe("FlexibleCriterionInput", () => {
     expect(screen.queryAllByRole("textbox")).toEqual([]);
   });
 
-  it("renders FlexibleCriterionInput", () => {
+  it("renders FlexibleCriterionInput with input field", () => {
     render(<FlexibleCriterionInput {...basicProps} />);
+
+    // Check input box for marks renders
+    const input = screen.getByRole("textbox");
+    expect(input).toBeInTheDocument();
+  });
+
+  it("updates input value when mark prop changes", () => {
+    const {rerender} = render(<FlexibleCriterionInput {...basicProps} mark={2} />);
+
+    const input = screen.getByRole("textbox");
+    expect(input.value).toBe("2");
+
+    // Re-render with new mark
+    rerender(<FlexibleCriterionInput {...basicProps} mark={5} />);
+    expect(input.value).toBe("5");
+
+    // Re-render with null mark (should clear it)
+    rerender(<FlexibleCriterionInput {...basicProps} mark={null} />);
+    expect(input.value).toBe("");
   });
 });
 
@@ -480,7 +514,18 @@ describe("RubricCriterionInput", () => {
     expect(screen.queryAllByRole("link")).toEqual([]);
   });
 
-  it("renders RubricCriterionInput", () => {
+  it("renders RubricCriterionInput with rubric levels", () => {
     render(<RubricCriterionInput {...basicProps} />);
+
+    // Check criterion label renders
+    expect(screen.getByText(/criterion/i)).toBeInTheDocument();
+
+    // Check rubric levels render
+    expect(screen.getByText(/level 1/i)).toBeInTheDocument();
+    expect(screen.getByText(/level 2/i)).toBeInTheDocument();
+
+    // Check rubric description renders
+    const descriptions = screen.getAllByText(/description/i);
+    expect(descriptions).toHaveLength(2);
   });
 });
