@@ -274,9 +274,11 @@ class Student < Role
 
       # Check section-specific visibility first (takes precedence when any section property is set)
       section_visible = visible.where('assessment_section_properties.section_id': self.section_id)
-                               .where('assessment_section_properties.is_hidden IS NOT NULL OR ' \
-                                      'assessment_section_properties.visible_on IS NOT NULL OR ' \
-                                      'assessment_section_properties.visible_until IS NOT NULL')
+                               .where.not(assessment_section_properties: { is_hidden: nil })
+                               .or(visible.where('assessment_section_properties.section_id': self.section_id)
+                                          .where.not(assessment_section_properties: { visible_on: nil }))
+                               .or(visible.where('assessment_section_properties.section_id': self.section_id)
+                                          .where.not(assessment_section_properties: { visible_until: nil }))
 
       # Make sure current time is within the datetime range
       section_visible = section_visible
@@ -294,9 +296,9 @@ class Student < Role
 
       # Check global visibility (when no section-specific settings exist)
       global_visible = visible.where('assessment_section_properties.section_id': nil)
-                              .or(visible.where('assessment_section_properties.is_hidden IS NULL AND ' \
-                                                'assessment_section_properties.visible_on IS NULL AND ' \
-                                                'assessment_section_properties.visible_until IS NULL'))
+                              .or(visible.where(assessment_section_properties: { is_hidden: nil,
+                                                                                 visible_on: nil,
+                                                                                 visible_until: nil }))
 
       # Same datetime range check for global settings
       global_visible = global_visible
