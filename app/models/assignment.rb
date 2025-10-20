@@ -780,7 +780,6 @@ class Assignment < Assessment
     subtotals = Result.get_subtotals(result_ids)
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark, subtotals: subtotals)
     total_marks_hash = Result.get_total_marks(result_ids, subtotals: subtotals, extra_marks: extra_marks_hash)
-
     CSV.generate do |csv|
       csv << headers[0]
       csv << headers[1]

@@ -131,7 +131,7 @@ class Result < ApplicationRecord
           assignment_max_mark = max_mark_hash[assessment_id]
         end
         extra_marks_hash[id] += (extra_mark * assignment_max_mark / 100).round(2)
-      elsif unit == ExtraMark::PERCENTAGE_OF_SCORE
+      elsif unit == ExtraMark::PERCENTAGE_OF_MARK
         marks_earned = subtotals[id] || 0
         extra_marks_hash[id] += (extra_mark * marks_earned / 100).round(2)
       end

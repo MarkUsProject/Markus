@@ -173,14 +173,14 @@ describe Result do
       end
     end
 
-    context 'with percentage_of_score extra marks' do
+    context 'with percentage_of_mark extra marks' do
       it 'should calculate extra marks based on percentage of earned score' do
         ids = Result.ids
         result = Result.find(ids.first)
         subtotal = result.get_subtotal
         extra_mark = 5.0
 
-        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        create(:extra_mark_percentage_of_mark, result: result, extra_mark: extra_mark)
         expected = Hash.new { |h, k| h[k] = nil }
         expected[ids.first] = (extra_mark * subtotal / 100).round(2)
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
@@ -192,7 +192,7 @@ describe Result do
         result.marks.update_all(mark: 0)
         extra_mark = 10.0
 
-        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        create(:extra_mark_percentage_of_mark, result: result, extra_mark: extra_mark)
         expected = Hash.new { |h, k| h[k] = nil }
         expected[ids.first] = 0.0
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
@@ -204,7 +204,7 @@ describe Result do
         subtotal = result.get_subtotal
         extra_mark = -5.0
 
-        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        create(:extra_mark_percentage_of_mark, result: result, extra_mark: extra_mark)
         expected = Hash.new { |h, k| h[k] = nil }
         expected[ids.first] = (extra_mark * subtotal / 100).round(2)
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
@@ -216,7 +216,7 @@ describe Result do
         subtotal = result.get_subtotal
         extra_mark = 7.0
 
-        create(:extra_mark_percentage_of_score, result: result, extra_mark: extra_mark)
+        create(:extra_mark_percentage_of_mark, result: result, extra_mark: extra_mark)
         actual = Result.get_total_extra_marks(ids)[ids.first]
         expect(actual).to eq(actual.round(2))
 
