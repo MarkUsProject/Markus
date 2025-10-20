@@ -173,7 +173,7 @@ describe Result do
       end
     end
 
-    context 'percentage_of_score' do
+    context 'with percentage_of_score extra marks' do
       it 'should calculate extra marks based on percentage of earned score' do
         ids = Result.ids
         result = Result.find(ids.first)
