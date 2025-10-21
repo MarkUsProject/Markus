@@ -132,7 +132,6 @@ describe("For the GradersManager's name search", () => {
       }),
     });
     render(<GradersManager sections={{}} course_id={1} assignment_id={1} />);
-
     await screen.findByText("Severin Gehwolf");
   });
 
@@ -143,7 +142,8 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("filters by first name correctly", async () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Severin"}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {target: {value: "Severin"}});
 
     expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
     expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
@@ -151,7 +151,8 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("filters by last name correctly", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Rada"}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {target: {value: "Rada"}});
 
     expect(screen.getByText("Mark Rada")).toBeInTheDocument();
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
@@ -159,7 +160,8 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("filters by full name correctly", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "Nelle Varoquaux"}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {target: {value: "Nelle Varoquaux"}});
 
     expect(screen.getByText("Nelle Varoquaux")).toBeInTheDocument();
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
@@ -167,7 +169,8 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("is case insensitive when filtering", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "mark"}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {target: {value: "mark"}});
 
     expect(screen.getByText("Mark Rada")).toBeInTheDocument();
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
@@ -175,7 +178,8 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("handles partial matches", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "ver"}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {target: {value: "ver"}});
 
     expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
     expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();
@@ -183,7 +187,8 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("shows all graders when filter is cleared", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: ""}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {target: {value: ""}});
 
     expect(screen.getByText("Severin Gehwolf")).toBeInTheDocument();
     expect(screen.getByText("Mark Rada")).toBeInTheDocument();
@@ -191,7 +196,10 @@ describe("For the GradersManager's name search", () => {
   });
 
   it("shows no results when filter matches nothing", () => {
-    fireEvent.change(screen.getAllByRole("textbox")[2], {target: {value: "NonexistentName"}});
+    const nameSearch = screen.getByRole("textbox", {name: `${I18n.t("search")} Name`});
+    fireEvent.change(nameSearch, {
+      target: {value: "NonexistentName"},
+    });
 
     expect(screen.queryByText("Severin Gehwolf")).not.toBeInTheDocument();
     expect(screen.queryByText("Mark Rada")).not.toBeInTheDocument();

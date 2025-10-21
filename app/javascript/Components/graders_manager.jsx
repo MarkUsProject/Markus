@@ -4,7 +4,7 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
-import {selectFilter} from "./Helpers/table_helpers";
+import {selectFilter, textFilter} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
 
@@ -495,6 +495,7 @@ class RawGradersTable extends React.Component {
       accessor: "full_name",
       id: "full_name",
       filterable: true,
+      Filter: textFilter,
       Cell: row => `${row.original.first_name} ${row.original.last_name}`,
       filterMethod: (filter, row) => {
         if (filter.value) {
