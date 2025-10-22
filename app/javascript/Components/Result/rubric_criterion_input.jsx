@@ -11,12 +11,12 @@ export default function RubricCriterionInput({
   levels,
   mark,
   max_mark,
+  name,
   oldMark,
   released_to_students,
   toggleExpanded,
   unassigned,
   updateMark,
-  name,
 }) {
   // The parameter `level` is the level object selected
   const handleChange = level => {

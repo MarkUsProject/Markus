@@ -13,6 +13,7 @@ export default function FlexibleCriterionInput({
   id,
   mark,
   max_mark,
+  name,
   oldMark,
   override,
   released_to_students,
@@ -20,7 +21,6 @@ export default function FlexibleCriterionInput({
   toggleExpanded,
   unassigned,
   updateMark,
-  name,
 }) {
   const [rawText, setRawText] = useState(mark === null ? "" : String(mark));
   const [invalid, setInvalid] = useState(false);

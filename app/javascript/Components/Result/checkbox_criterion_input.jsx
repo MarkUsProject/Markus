@@ -4,19 +4,19 @@ import PropTypes from "prop-types";
 import safe_marked from "../../common/safe_marked";
 
 export default function CheckboxCriterionInput({
+  bonus,
   description,
   destroyMark,
   expanded,
   id,
   mark,
   max_mark,
+  name,
   oldMark,
   released_to_students,
   toggleExpanded,
   unassigned,
   updateMark,
-  name,
-  bonus,
 }) {
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
