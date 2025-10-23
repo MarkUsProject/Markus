@@ -23,6 +23,7 @@
 - Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
 - Refactored "Reuse Groups" functionality to use React modal and relocated button to action box row (#7688)
 - Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
+- Refactored MarksPanel child components and converted the components into hook-based function components
 
 ## [v2.8.2]
 
