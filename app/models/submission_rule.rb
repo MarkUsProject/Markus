@@ -11,6 +11,9 @@ class SubmissionRule < ApplicationRecord
   accepts_nested_attributes_for :periods, allow_destroy: true
   validates_associated :periods
   validates :assignment, uniqueness: true
+  validates :penalty_type,
+            inclusion: { in: [ExtraMark::PERCENTAGE, ExtraMark::POINTS, ExtraMark::PERCENTAGE_OF_MARK, nil] },
+            allow_nil: true
 
   def self.descendants
     [NoLateSubmissionRule,

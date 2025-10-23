@@ -33,5 +33,10 @@ en:
     for: for
     from: from
     hours: hour(s)
+    penalty_type: Penalty type
+    penalty_types:
+      percentage: Percentage
+      percentage_of_mark: Percentage of mark
+      points: Points
     period: period
     to: to

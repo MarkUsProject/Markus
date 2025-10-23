@@ -157,6 +157,9 @@ function change_submission_rule() {
     "disabled",
     "disabled"
   );
+
+  $(".penalty-type-selector").hide();
+
   if ($("#grace_period_submission_rule").is(":checked")) {
     $("#grace_periods").show();
     $("#grace_periods input").prop("disabled", "");
@@ -164,9 +167,11 @@ function change_submission_rule() {
   if ($("#penalty_decay_period_submission_rule").is(":checked")) {
     $("#penalty_decay_periods").show();
     $("#penalty_decay_periods input").prop("disabled", "");
+    $("#penalty_type_selector_decay").show();
   }
   if ($("#penalty_period_submission_rule").is(":checked")) {
     $("#penalty_periods").show();
     $("#penalty_periods input").prop("disabled", "");
+    $("#penalty_type_selector_period").show();
   }
 }
