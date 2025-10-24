@@ -53,8 +53,10 @@ class UpdateCheckRepoPermissionsForDatetimeVisibility < ActiveRecord::Migration[
                         AND groups.repo_name=repo_name_
                         -- Datetime visibility logic: section-specific overrides global
                         AND (
-                          -- Section-specific visibility
-                          (assessment_section_properties.is_hidden IS NOT NULL AND (
+                          -- Section-specific visibility (when any section property is set)
+                          ((assessment_section_properties.is_hidden IS NOT NULL OR
+                            assessment_section_properties.visible_on IS NOT NULL OR
+                            assessment_section_properties.visible_until IS NOT NULL) AND (
                             -- If datetime columns are set, check datetime range
                             ((assessment_section_properties.visible_on IS NOT NULL OR assessment_section_properties.visible_until IS NOT NULL) AND
                              (assessment_section_properties.visible_on IS NULL OR assessment_section_properties.visible_on <= NOW()) AND
@@ -65,8 +67,10 @@ class UpdateCheckRepoPermissionsForDatetimeVisibility < ActiveRecord::Migration[
                              assessment_section_properties.is_hidden=false)
                           ))
                           OR
-                          -- Global visibility (no section properties)
-                          (assessment_section_properties.is_hidden IS NULL AND (
+                          -- Global visibility (no section properties set)
+                          (assessment_section_properties.is_hidden IS NULL AND
+                           assessment_section_properties.visible_on IS NULL AND
+                           assessment_section_properties.visible_until IS NULL AND (
                             -- If datetime columns are set, check datetime range
                             ((assessments.visible_on IS NOT NULL OR assessments.visible_until IS NOT NULL) AND
                              (assessments.visible_on IS NULL OR assessments.visible_on <= NOW()) AND
