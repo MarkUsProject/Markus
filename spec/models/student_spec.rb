@@ -395,4 +395,119 @@ describe Student do
       expect(build(:student, user: create(:autotest_user))).not_to be_valid
     end
   end
+
+  describe '#visible_assessments with datetime visibility' do
+    let(:course) { create(:course) }
+    let(:student) { create(:student, course: course) }
+    let(:section) { create(:section, course: course) }
+    let(:student_with_section) { create(:student, course: course, section: section) }
+
+    context 'with global visibility (no section)' do
+      it 'returns assessment when is_hidden=false and no datetime set' do
+        assignment = create(:assignment, course: course, is_hidden: false)
+        expect(student.visible_assessments).to include(assignment)
+      end
+
+      it 'hides assessment when is_hidden=true and no datetime set' do
+        assignment = create(:assignment, course: course, is_hidden: true)
+        expect(student.visible_assessments).not_to include(assignment)
+      end
+
+      it 'shows assessment when datetime range includes current time (overrides is_hidden=true)' do
+        assignment = create(:assignment, course: course, is_hidden: true,
+                                         visible_on: 1.day.ago, visible_until: 1.day.from_now)
+        expect(student.visible_assessments).to include(assignment)
+      end
+
+      it 'hides assessment when visible_on is in the future' do
+        assignment = create(:assignment, course: course, is_hidden: false,
+                                         visible_on: 1.day.from_now, visible_until: 2.days.from_now)
+        expect(student.visible_assessments).not_to include(assignment)
+      end
+
+      it 'hides assessment when visible_until is in the past' do
+        assignment = create(:assignment, course: course, is_hidden: false,
+                                         visible_on: 2.days.ago, visible_until: 1.day.ago)
+        expect(student.visible_assessments).not_to include(assignment)
+      end
+
+      it 'shows assessment when only visible_on is set and in the past' do
+        assignment = create(:assignment, course: course, is_hidden: true,
+                                         visible_on: 1.day.ago, visible_until: nil)
+        expect(student.visible_assessments).to include(assignment)
+      end
+
+      it 'shows assessment when only visible_until is set and in the future' do
+        assignment = create(:assignment, course: course, is_hidden: true,
+                                         visible_on: nil, visible_until: 1.day.from_now)
+        expect(student.visible_assessments).to include(assignment)
+      end
+    end
+
+    context 'with section-specific visibility' do
+      it 'uses section-specific is_hidden when no datetime set' do
+        assignment = create(:assignment, course: course, is_hidden: true)
+        create(:assessment_section_properties, assessment: assignment, section: section, is_hidden: false)
+        expect(student_with_section.visible_assessments).to include(assignment)
+      end
+
+      it 'section is_hidden=true overrides global is_hidden=false' do
+        assignment = create(:assignment, course: course, is_hidden: false)
+        create(:assessment_section_properties, assessment: assignment, section: section, is_hidden: true)
+        expect(student_with_section.visible_assessments).not_to include(assignment)
+      end
+
+      it 'section datetime overrides global datetime' do
+        assignment = create(:assignment, course: course, is_hidden: false,
+                                         visible_on: 1.day.ago, visible_until: 1.day.from_now)
+        # Section says it's not visible yet
+        create(:assessment_section_properties, assessment: assignment, section: section,
+                                               visible_on: 1.day.from_now, visible_until: 2.days.from_now)
+        expect(student_with_section.visible_assessments).not_to include(assignment)
+      end
+
+      it 'section datetime makes hidden assessment visible when range includes current time' do
+        assignment = create(:assignment, course: course, is_hidden: true)
+        # Section has datetime visibility
+        create(:assessment_section_properties, assessment: assignment, section: section,
+                                               visible_on: 1.day.ago, visible_until: 1.day.from_now)
+        expect(student_with_section.visible_assessments).to include(assignment)
+      end
+
+      it 'hides assessment when section visible_on is in the future' do
+        assignment = create(:assignment, course: course, is_hidden: false)
+        create(:assessment_section_properties, assessment: assignment, section: section,
+                                               visible_on: 1.day.from_now, visible_until: 2.days.from_now)
+        expect(student_with_section.visible_assessments).not_to include(assignment)
+      end
+
+      it 'hides assessment when section visible_until is in the past' do
+        assignment = create(:assignment, course: course, is_hidden: false)
+        create(:assessment_section_properties, assessment: assignment, section: section,
+                                               visible_on: 2.days.ago, visible_until: 1.day.ago)
+        expect(student_with_section.visible_assessments).not_to include(assignment)
+      end
+    end
+
+    context 'with assessment_id parameter' do
+      it 'returns specific assessment if visible' do
+        assignment = create(:assignment, course: course, is_hidden: false)
+        result = student.visible_assessments(assessment_id: assignment.id)
+        expect(result).to include(assignment)
+      end
+
+      it 'returns empty if specific assessment is not visible' do
+        assignment = create(:assignment, course: course, is_hidden: true)
+        result = student.visible_assessments(assessment_id: assignment.id)
+        expect(result).not_to include(assignment)
+      end
+
+      it 'respects datetime visibility for specific assessment' do
+        assignment = create(:assignment, course: course, is_hidden: true,
+                                         visible_on: 1.day.ago, visible_until: 1.day.from_now)
+        result = student.visible_assessments(assessment_id: assignment.id)
+        expect(result).to include(assignment)
+      end
+    end
+  end
 end
