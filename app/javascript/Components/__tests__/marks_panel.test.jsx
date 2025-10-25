@@ -1,12 +1,11 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import {
-  MarksPanel,
-  CheckboxCriterionInput,
-  FlexibleCriterionInput,
-  RubricCriterionInput,
-} from "../Result/marks_panel";
+import {MarksPanel} from "../Result/marks_panel";
+
+import CheckboxCriterionInput from "../Result/checkbox_criterion_input";
+import FlexibleCriterionInput from "../Result/flexible_criterion_input";
+import RubricCriterionInput from "../Result/rubric_criterion_input";
 
 const convertToKebabCase = {
   CheckboxCriterion: "checkbox_criterion",
@@ -152,6 +151,25 @@ describe("CheckboxCriterionInput", () => {
     await rerender(<CheckboxCriterionInput {...basicProps} />);
 
     expect(screen.queryByText(`(${I18n.t("results.remark.old_mark")}: 1)`)).toBeTruthy();
+  });
+
+  it("renders CheckboxCriterionInput with radio buttons", () => {
+    render(<CheckboxCriterionInput {...basicProps} />);
+
+    // Check at least 1 criterion label renders
+    expect(screen.getAllByText(/criterion/i).length).toBeGreaterThan(0);
+
+    // Check at least 1 radio button pair render (yes/no)
+    const radios = screen.getAllByRole("radio");
+    expect(radios.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("shows Delete Mark link when mark exists and not released", () => {
+    render(<CheckboxCriterionInput {...basicProps} mark={1} />);
+
+    // Check at least one delete link renders
+    const deleteLinks = screen.getAllByText(/delete mark/i);
+    expect(deleteLinks.length).toBeGreaterThan(0);
   });
 });
 
@@ -303,7 +321,9 @@ describe("FlexibleCriterionInput", () => {
     await userEvent.clear(input);
     await userEvent.type(input, "Hi Prof Liu");
     expect(input.value).toEqual("Hi Prof Liu");
-    expect(input.classList.contains("invalid")).toBeTruthy();
+    await waitFor(() => {
+      expect(input.classList.contains("invalid")).toBeTruthy();
+    });
   });
 
   it("should set the mark as valid if it has a decimal", async () => {
@@ -354,6 +374,29 @@ describe("FlexibleCriterionInput", () => {
     basicProps.released_to_students = true;
     render(<FlexibleCriterionInput {...basicProps} />);
     expect(screen.queryAllByRole("textbox")).toEqual([]);
+  });
+
+  it("renders FlexibleCriterionInput with input field", () => {
+    render(<FlexibleCriterionInput {...basicProps} />);
+
+    // Check input box for marks renders
+    const input = screen.getByRole("textbox");
+    expect(input).toBeInTheDocument();
+  });
+
+  it("updates input value when mark prop changes", () => {
+    const {rerender} = render(<FlexibleCriterionInput {...basicProps} mark={2} />);
+
+    const input = screen.getByRole("textbox");
+    expect(input.value).toBe("2");
+
+    // Re-render with new mark
+    rerender(<FlexibleCriterionInput {...basicProps} mark={5} />);
+    expect(input.value).toBe("5");
+
+    // Re-render with null mark (should clear it)
+    rerender(<FlexibleCriterionInput {...basicProps} mark={null} />);
+    expect(input.value).toBe("");
   });
 });
 
@@ -469,5 +512,20 @@ describe("RubricCriterionInput", () => {
     render(<RubricCriterionInput {...basicProps} />);
 
     expect(screen.queryAllByRole("link")).toEqual([]);
+  });
+
+  it("renders RubricCriterionInput with rubric levels", () => {
+    render(<RubricCriterionInput {...basicProps} />);
+
+    // Check criterion label renders
+    expect(screen.getByText(/criterion/i)).toBeInTheDocument();
+
+    // Check rubric levels render
+    expect(screen.getByText(/level 1/i)).toBeInTheDocument();
+    expect(screen.getByText(/level 2/i)).toBeInTheDocument();
+
+    // Check rubric description renders
+    const descriptions = screen.getAllByText(/description/i);
+    expect(descriptions).toHaveLength(2);
   });
 });

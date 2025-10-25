@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added new loading spinner icon for tables (#7602)
 - Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
 
@@ -23,6 +24,7 @@
 - Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
 - Refactored "Reuse Groups" functionality to use React modal and relocated button to action box row (#7688)
 - Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
+- Refactored MarksPanel child components and converted the components into hook-based function components
 
 ## [v2.8.2]
 
