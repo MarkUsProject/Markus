@@ -37,6 +37,6 @@ en:
     penalty_types:
       percentage: Percentage
       percentage_of_mark: Percentage of mark
-      points: Points
+      marks: Marks
     period: period
     to: to

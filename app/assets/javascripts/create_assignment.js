@@ -151,6 +151,20 @@ function toggle_assessment_section_properties(section_due_dates_type) {
   $("#assessment_section_properties_information").toggle(section_due_dates_type);
 }
 
+function update_deduction_unit() {
+  if ($("#penalty_type_selector_decay select").val() === "marks") {
+    $("#penalty_decay_periods .deduction-unit").text("marks");
+  } else {
+    $("#penalty_decay_periods .deduction-unit").text("%");
+  }
+
+  if ($("#penalty_type_selector_period select").val() === "marks") {
+    $("#penalty_periods .deduction-unit").text("marks");
+  } else {
+    $("#penalty_periods .deduction-unit").text("%");
+  }
+}
+
 function change_submission_rule() {
   $("#grace_periods, #penalty_periods, #penalty_decay_periods").hide();
   $("#grace_periods input, #penalty_periods input," + "#penalty_decay_periods input").prop(
@@ -174,4 +188,10 @@ function change_submission_rule() {
     $("#penalty_periods input").prop("disabled", "");
     $("#penalty_type_selector_period").show();
   }
+  $("#penalty_type_selector_decay select, #penalty_type_selector_period select").on(
+    "change",
+    function () {
+      update_deduction_unit();
+    }
+  );
 }

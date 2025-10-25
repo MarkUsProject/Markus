@@ -10,8 +10,8 @@ FactoryBot.define do
       extra_mark { -10.0 }
     end
 
-    factory :extra_mark_points do
-      unit { 'points' }
+    factory :extra_mark_marks do
+      unit { 'marks' }
       extra_mark { 1 }
     end
 

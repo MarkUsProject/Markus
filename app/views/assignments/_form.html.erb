@@ -378,12 +378,12 @@
         <%= label_tag 'penalty_decay_period_submission_rule',
                       PenaltyDecayPeriodSubmissionRule.human_attribute_name(:form_description) %>
         </p>
-        <div id='penalty_type_selector_decay' class='penalty-type-selector' style='display:none'>
+        <div id='penalty_type_selector_decay' class='penalty-type-selector table-with-add' style='display:none'>
           <%= t('submission_rules.penalty_type') %>:
           <%= rule.select :penalty_type,
                           [
                             [t('submission_rules.penalty_types.percentage'), 'percentage'],
-                            [t('submission_rules.penalty_types.points'), 'points'],
+                            [t('submission_rules.penalty_types.marks'), 'marks'],
                             [t('submission_rules.penalty_types.percentage_of_mark'), 'percentage_of_mark']
                           ],
                           { selected: rule.object.penalty_type || 'percentage' } %>
@@ -432,12 +432,12 @@
         <%= label_tag 'penalty_period_submission_rule',
                       PenaltyPeriodSubmissionRule.human_attribute_name(:form_description) %>
         </p>
-        <div id='penalty_type_selector_period' class='penalty-type-selector' style='display:none'>
+        <div id='penalty_type_selector_period' class='penalty-type-selector table-with-add' style='display:none'>
           <%= t('submission_rules.penalty_type') %>:
           <%= rule.select :penalty_type,
                           [
                             [t('submission_rules.penalty_types.percentage'), 'percentage'],
-                            [t('submission_rules.penalty_types.points'), 'points'],
+                            [t('submission_rules.penalty_types.marks'), 'marks'],
                             [t('submission_rules.penalty_types.percentage_of_mark'), 'percentage_of_mark']
                           ],
                           { selected: rule.object.penalty_type || 'percentage' } %>
