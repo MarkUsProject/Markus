@@ -151,12 +151,29 @@ function toggle_assessment_section_properties(section_due_dates_type) {
   $("#assessment_section_properties_information").toggle(section_due_dates_type);
 }
 
+function update_deduction_unit() {
+  if ($("#penalty_type_selector_decay select").val() === "points") {
+    $("#penalty_decay_periods .deduction-unit").text("marks");
+  } else {
+    $("#penalty_decay_periods .deduction-unit").text("%");
+  }
+
+  if ($("#penalty_type_selector_period select").val() === "points") {
+    $("#penalty_periods .deduction-unit").text("marks");
+  } else {
+    $("#penalty_periods .deduction-unit").text("%");
+  }
+}
+
 function change_submission_rule() {
   $("#grace_periods, #penalty_periods, #penalty_decay_periods").hide();
   $("#grace_periods input, #penalty_periods input," + "#penalty_decay_periods input").prop(
     "disabled",
     "disabled"
   );
+
+  $(".penalty-type-selector").hide();
+
   if ($("#grace_period_submission_rule").is(":checked")) {
     $("#grace_periods").show();
     $("#grace_periods input").prop("disabled", "");
@@ -164,9 +181,17 @@ function change_submission_rule() {
   if ($("#penalty_decay_period_submission_rule").is(":checked")) {
     $("#penalty_decay_periods").show();
     $("#penalty_decay_periods input").prop("disabled", "");
+    $("#penalty_type_selector_decay").show();
   }
   if ($("#penalty_period_submission_rule").is(":checked")) {
     $("#penalty_periods").show();
     $("#penalty_periods input").prop("disabled", "");
+    $("#penalty_type_selector_period").show();
   }
+  $("#penalty_type_selector_decay select, #penalty_type_selector_period select").on(
+    "change",
+    function () {
+      update_deduction_unit();
+    }
+  );
 }

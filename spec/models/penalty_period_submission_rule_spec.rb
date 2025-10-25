@@ -64,4 +64,32 @@ describe PenaltyPeriodSubmissionRule do
 
     it_behaves_like 'valid overtime message', 2.0, 25.hours
   end
+
+  context 'when penalty_type is percentage_of_mark' do
+    before { rule.update!(penalty_type: 'percentage_of_mark') }
+
+    context 'when the group submitted during the first penalty period' do
+      include_context 'submission_rule_during_first'
+
+      it 'creates a percentage_of_mark penalty' do
+        apply_rule
+        expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE_OF_MARK
+        expect(result.extra_marks.first.extra_mark).to eq(-1.0)
+      end
+
+      it_behaves_like 'valid overtime message', 1.0, 10.hours
+    end
+
+    context 'when the group submitted during the second penalty period' do
+      include_context 'submission_rule_during_second'
+
+      it 'creates a percentage_of_mark penalty' do
+        apply_rule
+        expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE_OF_MARK
+        expect(result.extra_marks.first.extra_mark).to eq(-2.0)
+      end
+
+      it_behaves_like 'valid overtime message', 2.0, 25.hours
+    end
+  end
 end
