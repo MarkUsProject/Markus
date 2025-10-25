@@ -383,7 +383,7 @@
           <%= rule.select :penalty_type,
                           [
                             [t('submission_rules.penalty_types.percentage'), 'percentage'],
-                            [t('submission_rules.penalty_types.marks'), 'marks'],
+                            [t('submission_rules.penalty_types.marks'), 'points'],
                             [t('submission_rules.penalty_types.percentage_of_mark'), 'percentage_of_mark']
                           ],
                           { selected: rule.object.penalty_type || 'percentage' } %>
@@ -437,7 +437,7 @@
           <%= rule.select :penalty_type,
                           [
                             [t('submission_rules.penalty_types.percentage'), 'percentage'],
-                            [t('submission_rules.penalty_types.marks'), 'marks'],
+                            [t('submission_rules.penalty_types.marks'), 'points'],
                             [t('submission_rules.penalty_types.percentage_of_mark'), 'percentage_of_mark']
                           ],
                           { selected: rule.object.penalty_type || 'percentage' } %>

@@ -16,8 +16,8 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     return submission if submission.is_empty
     result = submission.get_original_result
     unit = case self.penalty_type
-           when 'marks'
-             ExtraMark::MARKS
+           when 'points'
+             ExtraMark::POINTS
            when 'percentage_of_mark'
              ExtraMark::PERCENTAGE_OF_MARK
            else

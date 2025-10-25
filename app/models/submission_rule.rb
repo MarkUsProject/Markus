@@ -12,7 +12,7 @@ class SubmissionRule < ApplicationRecord
   validates_associated :periods
   validates :assignment, uniqueness: true
   validates :penalty_type,
-            inclusion: { in: [ExtraMark::PERCENTAGE, ExtraMark::MARKS, ExtraMark::PERCENTAGE_OF_MARK, nil] },
+            inclusion: { in: [ExtraMark::PERCENTAGE, ExtraMark::POINTS, ExtraMark::PERCENTAGE_OF_MARK, nil] },
             allow_nil: true
 
   def self.descendants

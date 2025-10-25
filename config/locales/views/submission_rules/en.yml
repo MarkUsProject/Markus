@@ -35,8 +35,8 @@ en:
     hours: hour(s)
     penalty_type: Penalty type
     penalty_types:
+      marks: Marks
       percentage: Percentage
       percentage_of_mark: Percentage of mark
-      marks: Marks
     period: period
     to: to

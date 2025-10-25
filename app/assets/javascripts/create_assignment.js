@@ -152,13 +152,13 @@ function toggle_assessment_section_properties(section_due_dates_type) {
 }
 
 function update_deduction_unit() {
-  if ($("#penalty_type_selector_decay select").val() === "marks") {
+  if ($("#penalty_type_selector_decay select").val() === "points") {
     $("#penalty_decay_periods .deduction-unit").text("marks");
   } else {
     $("#penalty_decay_periods .deduction-unit").text("%");
   }
 
-  if ($("#penalty_type_selector_period select").val() === "marks") {
+  if ($("#penalty_type_selector_period select").val() === "points") {
     $("#penalty_periods .deduction-unit").text("marks");
   } else {
     $("#penalty_periods .deduction-unit").text("%");
