@@ -1,5 +1,6 @@
 import React from "react";
 import {Grid} from "react-loader-spinner";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {
   createColumnHelper,
@@ -20,14 +21,19 @@ const columnHelper = createColumnHelper();
 export const expanderColumn = columnHelper.display({
   id: "expander",
   header: () => null,
-  size: 32,
+  size: 30,
+  maxSize: 30,
   cell: ({row}) => {
+    const icon = row.getIsExpanded() ? "fa-chevron-up" : "fa-chevron-down";
+    const title = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
     return row.getCanExpand() ? (
       <div
-        className={`rt-expander ${row.getIsExpanded() ? "-open" : ""}`}
+        className={`rt-expandable ${row.getIsExpanded() ? "-open" : ""}`}
         onClick={row.getToggleExpandedHandler()}
         data-testid="expander-button"
-      ></div>
+      >
+        <FontAwesomeIcon icon={icon} title={title} />
+      </div>
     ) : null;
   },
 });
@@ -101,7 +107,10 @@ export default function Table({
                     role="columnheader"
                     tabIndex="-1"
                     key={header.id}
-                    style={{width: header.getSize()}}
+                    style={{
+                      width: header.getSize(),
+                      maxWidth: header.column.columnDef.maxSize || "none",
+                    }}
                   >
                     <div
                       className="rt-resizable-header-content"
@@ -136,7 +145,10 @@ export default function Table({
                     key={header.id}
                     role="columnheader"
                     tabIndex="-1"
-                    style={{width: header.getSize()}}
+                    style={{
+                      width: header.getSize(),
+                      maxWidth: header.column.columnDef.maxSize || "none",
+                    }}
                   >
                     {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
                   </div>
@@ -156,7 +168,11 @@ export default function Table({
                       <div
                         className={`rt-td ${metaClass}`}
                         role="gridcell"
-                        style={{flex: "100 0 auto", width: cell.column.getSize()}}
+                        style={{
+                          flex: "100 0 auto",
+                          width: cell.column.getSize(),
+                          maxWidth: cell.column.columnDef.maxSize || "none",
+                        }}
                         key={cell.id}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

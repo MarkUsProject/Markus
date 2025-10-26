@@ -75,8 +75,10 @@ en:
   select_filename: Select Filename
   skip: Skip
   table:
+    hide_details: Hide details
     no_data: No rows found
     search: Search
+    show_details: Show details
   to: to
   working: Loading
   write: Write
