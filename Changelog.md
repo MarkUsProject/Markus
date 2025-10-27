@@ -13,6 +13,7 @@
 - Fix name column search in graders table (#7693)
 - Check against mtime instead of atime for clean up of git repo directories in tmp folder (#7706)
 - Update Model: Fix level validation checks through use of a custom validator (#7696)
+- Fixed test group results table to display `extra_info` field from all test groups (#7710)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
