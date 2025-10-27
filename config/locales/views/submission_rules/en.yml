@@ -36,7 +36,7 @@ en:
     penalty_type: Penalty type
     penalty_types:
       marks: Marks
-      percentage: Percentage
-      percentage_of_mark: Percentage of mark
+      percentage: Percentage of assignment total
+      percentage_of_mark: Percentage of earned mark
     period: period
     to: to

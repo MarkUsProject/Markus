@@ -1,6 +1,9 @@
 class PenaltyDecayPeriodSubmissionRule < SubmissionRule
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
+  validates :penalty_type,
+            inclusion: { in: [ExtraMark::PERCENTAGE, ExtraMark::POINTS, ExtraMark::PERCENTAGE_OF_MARK] }
+
   def overtime_message(grouping)
     # How far are we into overtime?
     overtime_hours = calculate_overtime_hours_from(Time.current, grouping)
@@ -15,20 +18,12 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     # submission Result
     return submission if submission.is_empty
     result = submission.get_original_result
-    unit = case self.penalty_type
-           when 'points'
-             ExtraMark::POINTS
-           when 'percentage_of_mark'
-             ExtraMark::PERCENTAGE_OF_MARK
-           else
-             ExtraMark::PERCENTAGE
-           end
     overtime_hours = calculate_overtime_hours_from(submission.revision_timestamp, submission.grouping)
     penalty_amount = calculate_penalty(overtime_hours)
     if penalty_amount.positive?
       ExtraMark.create(result: result,
                        extra_mark: -penalty_amount,
-                       unit: unit,
+                       unit: self.penalty_type,
                        description: I18n.t('penalty_decay_period_submission_rules.extramark_description',
                                            overtime_hours: overtime_hours.round(2), penalty_amount: penalty_amount))
     end
