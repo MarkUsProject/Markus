@@ -177,16 +177,15 @@ function change_submission_rule() {
   $("#penalty_type_selector_decay select, #penalty_type_selector_period select").on(
     "change",
     function (event) {
-      var penaltyRule =
+      var isDecay =
         $(event.target).closest(".penalty-type-selector").attr("id") ===
-        "penalty_type_selector_decay"
-          ? "#penalty_decay_periods"
-          : "#penalty_periods";
+        "penalty_type_selector_decay";
+      var selector = isDecay ? "#penalty_decay_periods" : "#penalty_periods";
 
       if ($(event.target).val() === "points") {
-        $(penaltyRule + " .deduction-unit").text("marks");
+        $(selector + " .deduction-unit").text("marks");
       } else {
-        $(penaltyRule + " .deduction-unit").text("%");
+        $(selector + " .deduction-unit").text("%");
       }
     }
   );
