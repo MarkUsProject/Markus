@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import safe_marked from "../../common/safe_marked";
 
@@ -28,7 +29,10 @@ export default function CheckboxCriterionInput({
     >
       <div>
         <div className="criterion-name" onClick={toggleExpanded}>
-          <div className={expanded ? "arrow-up" : "arrow-down"} style={{float: "left"}} />
+          <FontAwesomeIcon
+            className="chevron-expandable"
+            icon={expanded ? "fa-chevron-up" : "fa-chevron-down"}
+          />
           {name}
           {bonus && ` (${I18n.t("activerecord.attributes.criterion.bonus")})`}
           {!released_to_students && !unassigned && mark !== null && (
