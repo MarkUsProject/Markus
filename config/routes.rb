@@ -526,6 +526,7 @@ Rails.application.routes.draw do
     member do
       get 'choose_course'
       post 'choose_course'
+      get 'course_not_set_up'
       post 'create_course'
     end
   end
