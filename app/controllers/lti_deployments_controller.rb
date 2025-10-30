@@ -85,13 +85,13 @@ class LtiDeploymentsController < ApplicationController
                                      layout: false
         return
       end
-
       lti_data = { host: construct_redirect_with_port(request.referer).to_s,
                    client_id: lti_launch_data[:client_id],
                    deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
                    lms_course_name: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title'],
                    lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
-                   lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'] }
+                   lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
+                   user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]] }
       if lti_params.key?(LtiDeployment::LTI_CLAIMS[:names_role])
         name_and_roles_endpoint = lti_params[LtiDeployment::LTI_CLAIMS[:names_role]]['context_memberships_url']
         lti_data[:names_role_service] = name_and_roles_endpoint
@@ -135,9 +135,20 @@ class LtiDeploymentsController < ApplicationController
     LtiUser.find_or_create_by(user: @real_user, lti_client: lti_client,
                               lti_user_id: lti_data[:lti_user_id])
     if lti_deployment.course.nil?
-      # Redirect to course picker page
-      redirect_to choose_course_lti_deployment_path(lti_deployment)
+      # Check if the user has any of the privileged roles
+      has_privileged_role = lti_data[:user_roles].any? do |role_uri|
+        LtiDeployment::LTI_PRIVILEGED_ROLES.include?(role_uri)
+      end
+      has_ta_role = lti_data[:user_roles].include?(LtiDeployment::LTI_ROLES[:ta])
+      can_choose_course = has_privileged_role && !has_ta_role
+      if can_choose_course
+        # Only redirect to course picker if the course is not linked AND user has a privileged role
+        redirect_to choose_course_lti_deployment_path(lti_deployment)
+      else
+        redirect_to course_not_set_up_lti_deployment_path(lti_deployment)
+      end
     else
+      # Course is linked, proceed to the course path
       redirect_to course_path(lti_deployment.course)
     end
   ensure
@@ -148,6 +159,12 @@ class LtiDeploymentsController < ApplicationController
     key = OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH)
     jwk = JWT::JWK.new(key)
     render json: { keys: [jwk.export] }
+  end
+
+  def course_not_set_up
+    @title = I18n.t('lti.course_not_found')
+    @message = I18n.t('lti.course_not_set_up')
+    render 'course_not_set_up', status: :not_found
   end
 
   def choose_course
