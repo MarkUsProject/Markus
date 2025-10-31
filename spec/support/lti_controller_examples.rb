@@ -19,6 +19,29 @@ shared_examples 'lti deployment controller' do
     root_uri.query = launch_params.to_query
     root_uri.to_s
   end
+  let(:mock_roles) { [LtiDeployment::LTI_ROLES[:instructor]] }
+
+  def create_pub_jwk
+    @create_pub_jwk ||= JWT::JWK.new(OpenSSL::PKey::RSA.new(1024))
+  end
+
+  def generate_payload(roles, nonce)
+    { aud: client_id,
+      iss: host,
+      nonce: nonce,
+      LtiDeployment::LTI_CLAIMS[:deployment_id] => 'some_deployment_id',
+      LtiDeployment::LTI_CLAIMS[:context] => { label: 'csc108', title: 'test' },
+      LtiDeployment::LTI_CLAIMS[:custom] => { course_id: 1, user_id: 1 },
+      LtiDeployment::LTI_CLAIMS[:user_id] => 'some_user_id',
+      LtiDeployment::LTI_CLAIMS[:roles] => roles }
+  end
+
+  def generate_lti_jwt(roles, nonce)
+    payload = generate_payload(roles, nonce)
+    pub_jwk = create_pub_jwk
+    JWT.encode(payload, pub_jwk.keypair, 'RS256', { kid: pub_jwk.kid })
+  end
+
   describe '#launch' do
     context 'when launching with invalid parameters' do
       let(:lti_message_hint) { 'opaque string' }
@@ -98,6 +121,8 @@ shared_examples 'lti deployment controller' do
     let(:nonce) { rand(10 ** 30).to_s.rjust(30, '0') }
 
     before do
+      stub_request(:get, jwk_url).to_return(status: 200, body: { keys: [create_pub_jwk.export] }.to_json)
+
       lti_launch_data = {}
       lti_launch_data[:client_id] = client_id
       lti_launch_data[:iss] = host
@@ -129,27 +154,10 @@ shared_examples 'lti deployment controller' do
       end
 
       context 'with correct parameters' do
-        let(:payload) do
-          { aud: client_id,
-            iss: host,
-            nonce: nonce,
-            LtiDeployment::LTI_CLAIMS[:deployment_id] => 'some_deployment_id',
-            LtiDeployment::LTI_CLAIMS[:context] => {
-              label: 'csc108',
-              title: 'test'
-            },
-            LtiDeployment::LTI_CLAIMS[:custom] => {
-              course_id: 1,
-              user_id: 1
-            },
-            LtiDeployment::LTI_CLAIMS[:user_id] => 'some_user_id' }
-        end
-        let(:pub_jwk) { JWT::JWK.new(OpenSSL::PKey::RSA.new(1024)) }
-        let(:lti_jwt) { JWT.encode(payload, pub_jwk.keypair, 'RS256', { kid: pub_jwk.kid }) }
+        let(:lti_jwt) { generate_lti_jwt(mock_roles, nonce) }
 
         before do
           session[:client_id] = client_id
-          stub_request(:get, jwk_url).to_return(status: 200, body: { keys: [pub_jwk.export] }.to_json)
         end
 
         it 'successfully decodes the jwt and redirects' do
@@ -190,6 +198,53 @@ shared_examples 'lti deployment controller' do
       end
     end
 
+    context 'with LTI role authorization' do
+      let(:admin_lti_uri) { LtiDeployment::LTI_ROLES[:admin] }
+      let(:student_lti_uri) { LtiDeployment::LTI_ROLES[:learner] }
+      let(:ta_lti_uri) { LtiDeployment::LTI_ROLES[:ta] }
+      let(:instructor_lti_uri) { LtiDeployment::LTI_ROLES[:instructor] }
+
+      context 'when LTI role is Instructor' do
+        let(:lti_jwt) { generate_lti_jwt([instructor_lti_uri], nonce) }
+
+        it 'redirects to course chooser' do
+          request.headers['Referer'] = host
+          post_as instructor, :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
+          expect(response).to redirect_to(choose_course_lti_deployment_path(LtiDeployment.first))
+        end
+      end
+
+      context 'when LTI role is Admin' do
+        let(:lti_jwt) { generate_lti_jwt([admin_lti_uri], nonce) }
+
+        it 'redirects to course chooser' do
+          request.headers['Referer'] = host
+          post_as instructor, :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
+          expect(response).to redirect_to(choose_course_lti_deployment_path(LtiDeployment.first))
+        end
+      end
+
+      context 'when LTI role is Student' do
+        let(:lti_jwt) { generate_lti_jwt([student_lti_uri], nonce) }
+
+        it 'redirects to "not set up" page' do
+          request.headers['Referer'] = host
+          post_as instructor, :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
+          expect(response).to redirect_to(course_not_set_up_lti_deployment_path(LtiDeployment.first))
+        end
+      end
+
+      context 'when LTI role is TA (even with Instructor claim)' do
+        let(:lti_jwt) { generate_lti_jwt([ta_lti_uri, instructor_lti_uri], nonce) }
+
+        it 'redirects to "not set up" page' do
+          request.headers['Referer'] = host
+          post_as instructor, :redirect_login, params: { state: session.id.to_s, id_token: lti_jwt }
+          expect(response).to redirect_to(course_not_set_up_lti_deployment_path(LtiDeployment.first))
+        end
+      end
+    end
+
     context 'get' do
       it 'returns an error if not logged in' do
         request.headers['Referer'] = host
@@ -212,7 +267,8 @@ shared_examples 'lti deployment controller' do
           lms_course_name: 'Introduction to Computer Science',
           lms_course_label: 'CSC108',
           lms_course_id: 1,
-          lti_user_id: 'user_id' }
+          lti_user_id: 'user_id',
+          user_roles: mock_roles }
       end
       let(:payload) do
         { aud: client_id,
@@ -225,14 +281,12 @@ shared_examples 'lti deployment controller' do
           LtiDeployment::LTI_CLAIMS[:custom] => {
             course_id: 1,
             user_id: 1
-          } }
+          },
+          LtiDeployment::LTI_CLAIMS[:roles] => mock_roles }
       end
-      let(:pub_jwk) { JWT::JWK.new(OpenSSL::PKey::RSA.new(1024)) }
-      let(:lti_jwt) { JWT.encode(payload, pub_jwk.keypair, 'RS256', { kid: pub_jwk.kid }) }
 
       before do
         cookies.permanent.encrypted[:lti_data] = { value: JSON.generate(lti_data), expires: 5.minutes.from_now }
-        stub_request(:get, jwk_url).to_return(status: 200, body: { keys: [pub_jwk.export] }.to_json)
       end
 
       it 'successfully decodes the jwt and redirects' do

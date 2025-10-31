@@ -20,12 +20,14 @@ class LtiDeployment < ApplicationRecord
   LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner',
                 test_user: 'http://purl.imsglobal.org/vocab/lti/system/person#TestUser',
                 ta: 'http://purl.imsglobal.org/vocab/lis/v2/membership/Instructor#TeachingAssistant',
-                instructor: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' }.freeze
-  # Define the roles that are allowed to choose/link a course (Admin or Instructor)
+                instructor: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',
+                admin: 'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator',
+                sysadmin: 'http://purl.imsglobal.org/vocab/lis/v2/system/person#SysAdmin',
+                account_admin: 'http://purl.imsglobal.org/vocab/lis/v2/system/person#AccountAdmin' }.freeze
   LTI_PRIVILEGED_ROLES = [LTI_ROLES[:instructor],
-                          'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator',
-                          'http://purl.imsglobal.org/vocab/lis/v2/system/person#SysAdmin',
-                          'http://purl.imsglobal.org/vocab/lis/v2/system/person#AccountAdmin'].freeze
+                          LTI_ROLES[:admin],
+                          LTI_ROLES[:sysadmin],
+                          LTI_ROLES[:account_admin]].freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
   # with the learner role and creates roles and LTI IDs for each user.
