@@ -9,6 +9,7 @@
 - Added new loading spinner icon for tables (#7602)
 - Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
 - Switched to consistent Font Awesome chevrons for expander icons (#7713)
+- Install Ruby-LSP to allow development inside different IDEs such as VSCode.
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
