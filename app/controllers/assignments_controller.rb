@@ -832,7 +832,22 @@ class AssignmentsController < ApplicationController
       periods = period_attrs.to_h.values.map { |h| h[:id].presence }
       assignment.submission_rule.periods.where.not(id: periods).find_each(&:destroy)
     end
-    assignment.assign_attributes(assignment_params)
+
+    # Handle "scheduled" visibility option
+    # When is_hidden="scheduled", convert to is_hidden=false with datetime values
+    params_copy = assignment_params.deep_dup
+    if params_copy[:is_hidden] == 'scheduled'
+      params_copy[:is_hidden] = false
+    end
+
+    # Handle section-specific "scheduled" visibility
+    params_copy[:assessment_section_properties_attributes]&.each_value do |section_props|
+      if section_props[:is_hidden] == 'scheduled'
+        section_props[:is_hidden] = false
+      end
+    end
+
+    assignment.assign_attributes(params_copy)
     SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).find_each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier
@@ -907,6 +922,8 @@ class AssignmentsController < ApplicationController
       :message,
       :due_date,
       :is_hidden,
+      :visible_on,
+      :visible_until,
       :parent_assessment_id,
       assignment_properties_attributes: [
         :id,
@@ -942,7 +959,9 @@ class AssignmentsController < ApplicationController
         :section_id,
         :due_date,
         :start_time,
-        :is_hidden
+        :is_hidden,
+        :visible_on,
+        :visible_until
       ],
       assignment_files_attributes: [
         :_destroy,

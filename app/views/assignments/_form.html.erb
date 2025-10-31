@@ -24,6 +24,58 @@
           e.preventDefault();
         })
         refresh_event_listeners();
+
+        // Handle global visibility datetime fields show/hide
+        function toggleGlobalVisibilityDatetimeFields() {
+          const scheduledRadio = $('#assignment_is_hidden_scheduled');
+          const visibleOnLabel = $('#visible_on_label');
+          const visibleOnField = $('#assignment_visible_on');
+          const visibleUntilLabel = $('#visible_until_label');
+          const visibleUntilField = $('#assignment_visible_until');
+
+          if (scheduledRadio.is(':checked')) {
+            visibleOnLabel.show();
+            visibleOnField.show();
+            visibleUntilLabel.show();
+            visibleUntilField.show();
+          } else {
+            visibleOnLabel.hide();
+            visibleOnField.hide();
+            visibleUntilLabel.hide();
+            visibleUntilField.hide();
+          }
+        }
+
+        $('input[name="assignment[is_hidden]"]').on('change', toggleGlobalVisibilityDatetimeFields);
+
+        // Initialize on page load - check if we have datetime values set
+        if ($('#assignment_visible_on').val() ||
+            $('#assignment_visible_until').val()) {
+          $('#assignment_is_hidden_scheduled').prop('checked', true);
+        }
+        toggleGlobalVisibilityDatetimeFields();
+
+        // Handle section-specific visibility datetime fields enable/disable
+        function toggleSectionDatetimeFields(row) {
+          const scheduledRadio = $(row).find('input[value="scheduled"].section-visibility-radio');
+          const datetimeInputs = $(row).find('.section-datetime-input');
+
+          if (scheduledRadio.is(':checked')) {
+            datetimeInputs.prop('disabled', false);
+          } else {
+            datetimeInputs.prop('disabled', true);
+          }
+        }
+
+        $('.section-visibility-radio').on('change', function() {
+          const row = $(this).closest('tr');
+          toggleSectionDatetimeFields(row);
+        });
+
+        // Initialize section datetime fields on page load
+        $('tbody tr').each(function() {
+          toggleSectionDatetimeFields(this);
+        });
       });
   <% end %>
 <% end %>
@@ -88,14 +140,42 @@
                          size: 35,
                          required: true,
                          placeholder: t('time.format_string.placeholder') %>
-        <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
+        <%= f.label :is_hidden, 'Default Visibility' %>
         <span>
+          <%
+            # Determine which radio button should be checked
+            has_datetime = @assignment.visible_on.present? || @assignment.visible_until.present?
+            is_scheduled = !@assignment.is_hidden && has_datetime
+          %>
+          <%= f.radio_button :is_hidden, true, id: 'assignment_is_hidden_true', checked: @assignment.is_hidden && !has_datetime %>
           <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
-          <%= f.radio_button :is_hidden, true %>
-          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible'),  value: 'false' %>
-          <%= f.radio_button :is_hidden, false %>
+          <%= f.radio_button :is_hidden, false, id: 'assignment_is_hidden_false', checked: !@assignment.is_hidden && !has_datetime %>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
+          <%= f.radio_button :is_hidden, 'scheduled', id: 'assignment_is_hidden_scheduled', checked: is_scheduled %>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.scheduled'), value: 'scheduled' %>
+          <br>
           (<%= I18n.t('assignments.section_hidden.hidden_option') %>)
         </span>
+
+        <%= f.label :visible_on, I18n.t('assignments.section_hidden.visible_from'),
+                    id: 'visible_on_label',
+                    style: ('display: none;' unless @assignment.visible_on.present? || @assignment.visible_until.present?) %>
+        <%= f.text_field :visible_on,
+                         value: @assignment.visible_on.nil? ? '' : l(@assignment.visible_on, format: :flatpickr),
+                         size: 35,
+                         placeholder: I18n.t('assignments.section_hidden.visible_from_placeholder'),
+                         id: 'assignment_visible_on',
+                         style: ('display: none;' unless @assignment.visible_on.present? || @assignment.visible_until.present?) %>
+
+        <%= f.label :visible_until, I18n.t('assignments.section_hidden.visible_until'),
+                    id: 'visible_until_label',
+                    style: ('display: none;' unless @assignment.visible_on.present? || @assignment.visible_until.present?) %>
+        <%= f.text_field :visible_until,
+                         value: @assignment.visible_until.nil? ? '' : l(@assignment.visible_until, format: :flatpickr),
+                         size: 35,
+                         placeholder: I18n.t('assignments.section_hidden.visible_until_placeholder'),
+                         id: 'assignment_visible_until',
+                         style: ('display: none;' unless @assignment.visible_on.present? || @assignment.visible_until.present?) %>
         <% unless @sections.empty? %>
           <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
           <span>
@@ -121,13 +201,21 @@
                             I18n.t('assignments.section_settings.end_time') :
                             I18n.t('assignments.section_settings.due_date') %></th>
                   <th><%= I18n.t('assignments.section_settings.visibility') %></th>
+                  <th><%= I18n.t('assignments.section_hidden.visible_from') %></th>
+                  <th><%= I18n.t('assignments.section_hidden.visible_until') %></th>
                 </tr>
               </thead>
               <tbody>
               <%= f.fields_for :assessment_section_properties,
                                @assessment_section_properties do |due_date_f| %>
                 <tr>
-                  <% obj = due_date_f.object %>
+                  <%
+                    obj = due_date_f.object
+                    # Determine which radio button should be checked for this section
+                    section_has_datetime = obj.visible_on.present? || obj.visible_until.present?
+                    section_is_scheduled = obj.is_hidden == false && section_has_datetime
+                    section_is_default = obj.is_hidden.nil? || (obj.is_hidden.to_s.empty? && !section_has_datetime)
+                  %>
                   <td><%= obj.section.name %></td>
                   <% if @assignment.is_timed %>
                     <td>
@@ -149,12 +237,30 @@
                                               size: 35 %>
                   </td>
                   <td>
+                    <%= due_date_f.radio_button :is_hidden, '', class: 'section-visibility-radio', checked: section_is_default %>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>
-                    <%= due_date_f.radio_button :is_hidden, '' %>
+                    <%= due_date_f.radio_button :is_hidden, false, class: 'section-visibility-radio', checked: obj.is_hidden == false && !section_has_datetime %>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
-                    <%= due_date_f.radio_button :is_hidden, false %>
+                    <%= due_date_f.radio_button :is_hidden, true, class: 'section-visibility-radio', checked: obj.is_hidden == true && !section_has_datetime %>
                     <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
-                    <%= due_date_f.radio_button :is_hidden, true %>
+                    <%= due_date_f.radio_button :is_hidden, 'scheduled', class: 'section-visibility-radio', checked: section_is_scheduled %>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.scheduled'), value: 'scheduled' %>
+                  </td>
+                  <td>
+                    <%= due_date_f.text_field :visible_on,
+                                              class: 'assessment_section_properties_input section-datetime-input',
+                                              value: obj.visible_on.nil? ? '' : l(obj.visible_on, format: :flatpickr),
+                                              placeholder: I18n.t('assignments.section_hidden.visible_from_placeholder'),
+                                              size: 25,
+                                              disabled: obj.is_hidden != 'scheduled' %>
+                  </td>
+                  <td>
+                    <%= due_date_f.text_field :visible_until,
+                                              class: 'assessment_section_properties_input section-datetime-input',
+                                              value: obj.visible_until.nil? ? '' : l(obj.visible_until, format: :flatpickr),
+                                              placeholder: I18n.t('assignments.section_hidden.visible_until_placeholder'),
+                                              size: 25,
+                                              disabled: obj.is_hidden != 'scheduled' %>
                   </td>
                 </tr>
               <% end %>
