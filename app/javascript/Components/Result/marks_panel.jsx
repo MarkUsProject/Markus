@@ -13,22 +13,47 @@ export class MarksPanel extends React.Component {
     super(props);
     this.state = {
       expanded: new Set(),
+      activeCriterionId: null,
     };
   }
+
+  setActiveCriterion = id => {
+    this.setState({activeCriterionId: id});
+  };
+
+  nextCriterion = () => {
+    const criteria = this.props.marks.filter(
+      c => !(this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(c.id))
+    ); // skip unassigned
+
+    const idx = criteria.findIndex(c => c.id === this.state.activeCriterionId);
+    const next = idx === -1 || idx === criteria.length - 1 ? criteria[0] : criteria[idx + 1];
+    this.setActiveCriterion(next.id);
+  };
+
+  prevCriterion = () => {
+    const criteria = this.props.marks.filter(
+      c => !(this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(c.id))
+    );
+
+    const idx = criteria.findIndex(c => c.id === this.state.activeCriterionId);
+    const prev = idx <= 0 ? criteria[criteria.length - 1] : criteria[idx - 1];
+    this.setActiveCriterion(prev.id);
+  };
 
   componentDidMount() {
     if (!this.props.released_to_students) {
       // TODO: Convert this to pure React
       // Capture the mouse event to add "active-criterion" to the clicked element
-      $(document).on("click", ".rubric_criterion, .flexible_criterion, .checkbox_criterion", e => {
-        let criterion = $(e.target).closest(
-          ".rubric_criterion, .flexible_criterion, .checkbox_criterion"
-        );
-        if (!criterion.hasClass("unassigned")) {
-          e.preventDefault();
-          activeCriterion(criterion);
-        }
-      });
+      // $(document).on("click", ".rubric_criterion, .flexible_criterion, .checkbox_criterion", e => {
+      //   let criterion = $(e.target).closest(
+      //     ".rubric_criterion, .flexible_criterion, .checkbox_criterion"
+      //   );
+      //   if (!criterion.hasClass("unassigned")) {
+      //     e.preventDefault();
+      //     activeCriterion(criterion);
+      //   }
+      // });
     }
   }
 
@@ -93,6 +118,7 @@ export class MarksPanel extends React.Component {
       this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
 
     const props = {
+      active: this.state.activeCriterionId === key,
       key: key,
       released_to_students: this.props.released_to_students,
       unassigned: unassigned,
@@ -100,6 +126,7 @@ export class MarksPanel extends React.Component {
       destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
       oldMark: this.props.old_marks[markData.id],
+      setActive: () => this.setActiveCriterion(key),
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,

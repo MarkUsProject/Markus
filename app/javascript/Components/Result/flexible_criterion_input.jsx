@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import safe_marked from "../../common/safe_marked";
 
 export default function FlexibleCriterionInput({
+  active,
   annotations,
   bonus,
   description,
@@ -19,6 +20,7 @@ export default function FlexibleCriterionInput({
   override,
   released_to_students,
   revertToAutomaticDeductions,
+  setActive,
   toggleExpanded,
   unassigned,
   updateMark,
@@ -160,7 +162,8 @@ export default function FlexibleCriterionInput({
   return (
     <li
       id={`flexible_criterion_${id}`}
-      className={`flexible_criterion ${expandedClass} ${unassignedClass}`}
+      className={`flexible_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
+      onClick={setActive}
     >
       <div data-testid={id}>
         <div className="criterion-name" onClick={toggleExpanded}>

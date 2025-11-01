@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import safe_marked from "../../common/safe_marked";
 
 export default function CheckboxCriterionInput({
+  active,
   bonus,
   description,
   destroyMark,
@@ -15,6 +16,7 @@ export default function CheckboxCriterionInput({
   name,
   oldMark,
   released_to_students,
+  setActive,
   toggleExpanded,
   unassigned,
   updateMark,
@@ -25,7 +27,8 @@ export default function CheckboxCriterionInput({
   return (
     <li
       id={`checkbox_criterion_${id}`}
-      className={`checkbox_criterion ${expandedClass} ${unassignedClass}`}
+      className={`checkbox_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
+      onClick={setActive}
     >
       <div>
         <div className="criterion-name" onClick={toggleExpanded}>

@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import safe_marked from "../../common/safe_marked";
 
 export default function RubricCriterionInput({
+  active,
   bonus,
   destroyMark,
   expanded,
@@ -15,6 +16,7 @@ export default function RubricCriterionInput({
   name,
   oldMark,
   released_to_students,
+  setActive,
   toggleExpanded,
   unassigned,
   updateMark,
@@ -66,7 +68,8 @@ export default function RubricCriterionInput({
   return (
     <li
       id={`rubric_criterion_${id}`}
-      className={`rubric_criterion ${expandedClass} ${unassignedClass}`}
+      className={`rubric_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
+      onClick={setActive}
     >
       <div data-testid={id}>
         <div className="criterion-name" onClick={toggleExpanded}>
