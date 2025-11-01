@@ -19,15 +19,15 @@ en:
     details_message_other: Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours.
     extramark_description: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction.
     overtime_message_percentage: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment.
-    overtime_message_point: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty} marks deducted from the final mark on this assignment.
     overtime_message_percentage_of_mark: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the your earned mark on this assignment.
+    overtime_message_point: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty} marks deducted from the final mark on this assignment.
   penalty_period_submission_rules:
     deadline_html: Due date including <em>maximum</em> late penalty
     details_message: Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}%
     extramark_description: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction.
     overtime_message_percentage: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment.
-    overtime_message_point: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty} marks deducted from the final mark on this assignment.
     overtime_message_percentage_of_mark: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the your earned mark on this assignment.
+    overtime_message_point: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty} marks deducted from the final mark on this assignment.
   submission_rules:
     add_period: Add late period
     deduct: deduction
