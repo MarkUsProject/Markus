@@ -157,6 +157,9 @@ function change_submission_rule() {
     "disabled",
     "disabled"
   );
+
+  $(".penalty-type-selector").hide();
+
   if ($("#grace_period_submission_rule").is(":checked")) {
     $("#grace_periods").show();
     $("#grace_periods input").prop("disabled", "");
@@ -164,9 +167,26 @@ function change_submission_rule() {
   if ($("#penalty_decay_period_submission_rule").is(":checked")) {
     $("#penalty_decay_periods").show();
     $("#penalty_decay_periods input").prop("disabled", "");
+    $("#penalty_type_selector_decay").show();
   }
   if ($("#penalty_period_submission_rule").is(":checked")) {
     $("#penalty_periods").show();
     $("#penalty_periods input").prop("disabled", "");
+    $("#penalty_type_selector_period").show();
   }
+  $("#penalty_type_selector_decay select, #penalty_type_selector_period select").on(
+    "change",
+    function (event) {
+      var isDecay =
+        $(event.target).closest(".penalty-type-selector").attr("id") ===
+        "penalty_type_selector_decay";
+      var selector = isDecay ? "#penalty_decay_periods" : "#penalty_periods";
+
+      if ($(event.target).val() === "points") {
+        $(selector + " .deduction-unit").text("marks");
+      } else {
+        $(selector + " .deduction-unit").text("%");
+      }
+    }
+  );
 }
