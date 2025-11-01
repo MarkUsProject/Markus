@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropTypes from "prop-types";
 
 import safe_marked from "../../common/safe_marked";
 
 export default function RubricCriterionInput({
+  active,
   bonus,
   destroyMark,
   expanded,
@@ -14,6 +15,7 @@ export default function RubricCriterionInput({
   name,
   oldMark,
   released_to_students,
+  setActive,
   toggleExpanded,
   unassigned,
   updateMark,
@@ -30,6 +32,9 @@ export default function RubricCriterionInput({
     let oldMarkClass = "";
     if (mark !== undefined && mark !== null && levelMark === mark.toFixed(2)) {
       selectedClass = "selected";
+    }
+    if (active && selectedClass === "selected") {
+      selectedClass += " active-rubric";
     }
     if (
       oldMark !== undefined &&
@@ -62,10 +67,17 @@ export default function RubricCriterionInput({
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
 
+  useEffect(() => {
+    if (active && !expanded) {
+      toggleExpanded();
+    }
+  }, [active, expanded]);
+
   return (
     <li
       id={`rubric_criterion_${id}`}
-      className={`rubric_criterion ${expandedClass} ${unassignedClass}`}
+      className={`rubric_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
+      onClick={setActive}
     >
       <div data-testid={id}>
         <div className="criterion-name" onClick={toggleExpanded}>

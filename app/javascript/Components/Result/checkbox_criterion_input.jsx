@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 
 import safe_marked from "../../common/safe_marked";
 
 export default function CheckboxCriterionInput({
+  active,
   bonus,
   description,
   destroyMark,
@@ -14,17 +15,26 @@ export default function CheckboxCriterionInput({
   name,
   oldMark,
   released_to_students,
+  setActive,
   toggleExpanded,
   unassigned,
   updateMark,
 }) {
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
+  const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    if (active && firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, [active]);
 
   return (
     <li
       id={`checkbox_criterion_${id}`}
-      className={`checkbox_criterion ${expandedClass} ${unassignedClass}`}
+      className={`checkbox_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
+      onClick={setActive}
     >
       <div>
         <div className="criterion-name" onClick={toggleExpanded}>
@@ -44,6 +54,7 @@ export default function CheckboxCriterionInput({
             <span className="checkbox-criterion-inputs">
               <label onClick={() => updateMark(id, max_mark)} className={`check_correct_${id}`}>
                 <input
+                  ref={firstInputRef}
                   type="radio"
                   readOnly={true}
                   checked={mark === max_mark}
