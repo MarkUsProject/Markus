@@ -15,11 +15,19 @@ class LtiDeployment < ApplicationRecord
                  names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
                  ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
                  deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id',
-                 user_id: 'sub' }.freeze
+                 user_id: 'sub',
+                 roles: 'https://purl.imsglobal.org/spec/lti/claim/roles' }.freeze
   LTI_ROLES = { learner: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner',
                 test_user: 'http://purl.imsglobal.org/vocab/lti/system/person#TestUser',
                 ta: 'http://purl.imsglobal.org/vocab/lis/v2/membership/Instructor#TeachingAssistant',
-                instructor: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' }.freeze
+                instructor: 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor',
+                admin: 'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator',
+                sysadmin: 'http://purl.imsglobal.org/vocab/lis/v2/system/person#SysAdmin',
+                account_admin: 'http://purl.imsglobal.org/vocab/lis/v2/system/person#AccountAdmin' }.freeze
+  LTI_PRIVILEGED_ROLES = [LTI_ROLES[:instructor],
+                          LTI_ROLES[:admin],
+                          LTI_ROLES[:sysadmin],
+                          LTI_ROLES[:account_admin]].freeze
 
   # Gets a list of all users in the LMS course associated with this deployment
   # with the learner role and creates roles and LTI IDs for each user.
