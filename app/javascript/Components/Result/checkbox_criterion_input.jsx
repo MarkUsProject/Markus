@@ -26,10 +26,22 @@ export default function CheckboxCriterionInput({
   const firstInputRef = useRef(null);
 
   useEffect(() => {
-    if (active && firstInputRef.current) {
-      firstInputRef.current.focus();
+    if (active) {
+      // Auto-expand if not already when active
+      if (!expanded) {
+        toggleExpanded();
+      }
+
+      // Focus on first input
+      if (firstInputRef.current) {
+        firstInputRef.current.focus();
+        firstInputRef.current.setSelectionRange(
+          firstInputRef.current.value.length,
+          firstInputRef.current.value.length
+        );
+      }
     }
-  }, [active]);
+  }, [active, expanded]);
 
   return (
     <li
