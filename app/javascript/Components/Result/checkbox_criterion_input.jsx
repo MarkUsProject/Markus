@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -23,6 +23,13 @@ export default function CheckboxCriterionInput({
 }) {
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
+  const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    if (active && firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, [active]);
 
   return (
     <li
@@ -51,6 +58,7 @@ export default function CheckboxCriterionInput({
             <span className="checkbox-criterion-inputs">
               <label onClick={() => updateMark(id, max_mark)} className={`check_correct_${id}`}>
                 <input
+                  ref={firstInputRef}
                   type="radio"
                   readOnly={true}
                   checked={mark === max_mark}

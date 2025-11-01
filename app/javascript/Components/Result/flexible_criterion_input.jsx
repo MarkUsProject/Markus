@@ -28,6 +28,7 @@ export default function FlexibleCriterionInput({
   const [rawText, setRawText] = useState(mark === null ? "" : String(mark));
   const [invalid, setInvalid] = useState(false);
   const typing_timer = useRef(undefined);
+  const inputRef = useRef(null);
 
   const listDeductions = () => {
     let label = I18n.t("annotations.list_deductions");
@@ -142,6 +143,17 @@ export default function FlexibleCriterionInput({
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
 
+  useEffect(() => {
+    if (active && inputRef.current && expanded) {
+      // Focus at end of input
+      inputRef.current.focus();
+      inputRef.current.setSelectionRange(
+        inputRef.current.value.length,
+        inputRef.current.value.length
+      );
+    }
+  }, [active, expanded]);
+
   let markElement;
   if (released_to_students) {
     // Student view
@@ -149,6 +161,7 @@ export default function FlexibleCriterionInput({
   } else {
     markElement = (
       <input
+        ref={inputRef}
         className={invalid ? "invalid" : ""}
         type="text"
         size={4}

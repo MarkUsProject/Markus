@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -34,6 +34,9 @@ export default function RubricCriterionInput({
     if (mark !== undefined && mark !== null && levelMark === mark.toFixed(2)) {
       selectedClass = "selected";
     }
+    if (active && selectedClass === "selected") {
+      selectedClass += " active-rubric";
+    }
     if (
       oldMark !== undefined &&
       oldMark.mark !== undefined &&
@@ -64,6 +67,12 @@ export default function RubricCriterionInput({
   const rubricLevels = levels.map(renderRubricLevel);
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
+
+  useEffect(() => {
+    if (active && !expanded) {
+      toggleExpanded();
+    }
+  }, [active, expanded]);
 
   return (
     <li
