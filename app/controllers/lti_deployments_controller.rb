@@ -140,8 +140,7 @@ class LtiDeploymentsController < ApplicationController
         LtiDeployment::LTI_PRIVILEGED_ROLES.include?(role_uri)
       end
       has_ta_role = lti_data[:user_roles].include?(LtiDeployment::LTI_ROLES[:ta])
-      can_choose_course = has_privileged_role && !has_ta_role
-      if can_choose_course
+      if has_privileged_role && !has_ta_role
         redirect_to choose_course_lti_deployment_path(lti_deployment)
       else
         redirect_to course_not_set_up_lti_deployment_path(lti_deployment)
