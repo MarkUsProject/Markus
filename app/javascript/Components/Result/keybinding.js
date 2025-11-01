@@ -37,7 +37,7 @@ export function bind_keybindings() {
   Mousetrap.bind("shift+up", function (e) {
     if (!is_text_selected()) {
       e.preventDefault();
-      prevCriterion();
+      window.prevCriterion();
       return false;
     }
   });
@@ -46,7 +46,7 @@ export function bind_keybindings() {
   Mousetrap.bind("shift+down", function (e) {
     if (!is_text_selected()) {
       e.preventDefault();
-      nextCriterion();
+      window.nextCriterion();
       return false;
     }
   });

@@ -43,17 +43,15 @@ export class MarksPanel extends React.Component {
 
   componentDidMount() {
     if (!this.props.released_to_students) {
-      // TODO: Convert this to pure React
-      // Capture the mouse event to add "active-criterion" to the clicked element
-      // $(document).on("click", ".rubric_criterion, .flexible_criterion, .checkbox_criterion", e => {
-      //   let criterion = $(e.target).closest(
-      //     ".rubric_criterion, .flexible_criterion, .checkbox_criterion"
-      //   );
-      //   if (!criterion.hasClass("unassigned")) {
-      //     e.preventDefault();
-      //     activeCriterion(criterion);
-      //   }
-      // });
+      // Set first criterion active by default
+      const first = this.props.marks[0];
+      if (first) {
+        this.setState({activeCriterionId: first.id});
+      }
+
+      // Expose navigation for keyboard shortcuts
+      window.goToNextCriterion = this.nextCriterion;
+      window.goToPrevCriterion = this.prevCriterion;
     }
   }
 
