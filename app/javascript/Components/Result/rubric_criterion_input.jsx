@@ -27,15 +27,23 @@ export default function RubricCriterionInput({
   };
 
   // The parameter `level` is the level object selected
-  const renderRubricLevel = level => {
+  const renderRubricLevel = (level, index) => {
     const levelMark = level.mark.toFixed(2);
     let selectedClass = "";
     let oldMarkClass = "";
+    let activeRubricClass = "";
     if (mark !== undefined && mark !== null && levelMark === mark.toFixed(2)) {
       selectedClass = "selected";
     }
-    if (active && selectedClass === "selected") {
-      selectedClass += " active-rubric";
+    if (active) {
+      // If this level is selected, make it active
+      if (selectedClass === "selected") {
+        activeRubricClass = "active-rubric";
+      }
+      // If no level is selected and this is the first level, make it active
+      else if (mark === null && index === 0) {
+        activeRubricClass = "active-rubric";
+      }
     }
     if (
       oldMark !== undefined &&
@@ -49,7 +57,7 @@ export default function RubricCriterionInput({
       <tr
         onClick={() => handleChange(level)}
         key={`${id}-${levelMark}`}
-        className={`rubric-level ${selectedClass} ${oldMarkClass}`}
+        className={`rubric-level ${selectedClass} ${activeRubricClass} ${oldMarkClass}`}
       >
         <td className="level-description">
           <strong>{level.name}</strong>
@@ -64,7 +72,7 @@ export default function RubricCriterionInput({
     );
   };
 
-  const rubricLevels = levels.map(renderRubricLevel);
+  const rubricLevels = levels.map((level, index) => renderRubricLevel(level, index));
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
 
