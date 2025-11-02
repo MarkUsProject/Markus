@@ -171,6 +171,51 @@ describe("CheckboxCriterionInput", () => {
     const deleteLinks = screen.getAllByText(/delete mark/i);
     expect(deleteLinks.length).toBeGreaterThan(0);
   });
+
+  it("auto-expands when active prop changes", () => {
+    const {rerender} = render(<CheckboxCriterionInput {...basicProps} active={false} />);
+
+    // Initially not active & not expanded
+    expect(basicProps.expanded).toBe(false);
+
+    // Rerender with active = true
+    rerender(<CheckboxCriterionInput {...basicProps} active={true} />);
+    expect(basicProps.expanded).toBe(true);
+  });
+  it("focuses the checked input when active or the first input if none checked", () => {
+    // Case 1: First input (Yes) checked
+    basicProps.mark = 1;
+    basicProps.active = false;
+    rerender(<CheckboxCriterionInput {...basicProps} />);
+
+    const yesInput = document.querySelector(`.check_correct_${basicProps.id} input`);
+    const noInput = document.querySelector(`.check_no_${basicProps.id} input`);
+
+    basicProps.active = true;
+    rerender(<CheckboxCriterionInput {...basicProps} />);
+
+    expect(document.activeElement).toBe(yesInput);
+
+    // Case 2: Second input (No) checked
+    basicProps.mark = 0;
+    basicProps.active = false;
+    rerender(<CheckboxCriterionInput {...basicProps} />);
+
+    basicProps.active = true;
+    rerender(<CheckboxCriterionInput {...basicProps} />);
+
+    expect(document.activeElement).toBe(noInput);
+
+    // Case 3: No input checked (mark is null) - should focus first input
+    basicProps.mark = null;
+    basicProps.active = false;
+    rerender(<CheckboxCriterionInput {...basicProps} />);
+
+    basicProps.active = true;
+    rerender(<CheckboxCriterionInput {...basicProps} />);
+
+    expect(document.activeElement).toBe(yesInput);
+  });
 });
 
 describe("FlexibleCriterionInput", () => {
@@ -398,6 +443,30 @@ describe("FlexibleCriterionInput", () => {
     rerender(<FlexibleCriterionInput {...basicProps} mark={null} />);
     expect(input.value).toBe("");
   });
+
+  it("focuses input when active and expanded", () => {
+    const props = {...basicProps, expanded: true};
+    const {rerender} = render(<FlexibleCriterionInput {...props} active={false} />);
+
+    const input = screen.getByRole("textbox");
+    expect(input).toBeInTheDocument();
+
+    // Rerender with active = true
+    rerender(<FlexibleCriterionInput {...props} active={true} />);
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("places cursor at the end of input when focused", () => {
+    const props = {...basicProps, mark: 1.5, expanded: true};
+    const {rerender} = render(<FlexibleCriterionInput {...props} active={false} />);
+    const input = screen.getByRole("textbox");
+
+    rerender(<FlexibleCriterionInput {...props} active={true} />);
+
+    expect(document.activeElement).toBe(input);
+    expect(input.selectionStart).toBe(3); // '1.5' has length 3
+    expect(input.selectionEnd).toBe(3);
+  });
 });
 
 describe("RubricCriterionInput", () => {
@@ -527,5 +596,62 @@ describe("RubricCriterionInput", () => {
     // Check rubric description renders
     const descriptions = screen.getAllByText(/description/i);
     expect(descriptions).toHaveLength(2);
+  });
+
+  it("auto-expands when active becomes true", () => {
+    const {rerender} = render(<RubricCriterionInput {...basicProps} active={false} />);
+
+    // Initially not active & not expanded
+    expect(basicProps.expanded).toBe(false);
+
+    // Rerender with active = true
+    rerender(<RubricCriterionInput {...basicProps} active={true} />);
+    expect(basicProps.expanded).toBe(true);
+  });
+
+  it("highlights the selected rubric level based on mark", () => {
+    // Select the one with mark = 2
+    const props = {...basicProps, mark: 2};
+
+    render(<RubricCriterionInput {...props} />);
+
+    const selectedRow = screen.getByText("level 2").closest("tr");
+    expect(selectedRow).toHaveClass("selected");
+
+    const unselectedRow = screen.getByText("level 1").closest("tr");
+    expect(unselectedRow).not.toHaveClass("selected");
+  });
+
+  it("adds active-rubric class to selected level when active", () => {
+    const props = {...basicProps, mark: 2, active: true};
+    render(<RubricCriterionInput {...props} />);
+
+    const selectedRow = screen.getByText("level 2").closest("tr");
+    expect(selectedRow).toHaveClass("selected");
+    expect(selectedRow).toHaveClass("active-rubric");
+
+    const unselectedRow = screen.getByText("level 1").closest("tr");
+    expect(unselectedRow).not.toHaveClass("active-rubric");
+  });
+
+  it("adds active-rubric class to first level when active and no level selected", () => {
+    const props = {...basicProps, mark: null, active: true};
+    render(<RubricCriterionInput {...props} />);
+
+    const firstRow = screen.getByText("level 1").closest("tr");
+    expect(firstRow).toHaveClass("active-rubric");
+    expect(firstRow).not.toHaveClass("selected");
+
+    const secondRow = screen.getByText("level 2").closest("tr");
+    expect(secondRow).not.toHaveClass("active-rubric");
+  });
+
+  it("does not add active-rubric class when not active", () => {
+    const props = {...basicProps, mark: 2, active: false};
+    render(<RubricCriterionInput {...props} />);
+
+    const selectedRow = screen.getByText("level 2").closest("tr");
+    expect(selectedRow).toHaveClass("selected");
+    expect(selectedRow).not.toHaveClass("active-rubric");
   });
 });
