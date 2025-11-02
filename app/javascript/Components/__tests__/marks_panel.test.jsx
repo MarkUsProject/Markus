@@ -178,7 +178,7 @@ describe("CheckboxCriterionInput", () => {
     // Initially not active & not expanded
     expect(basicProps.expanded).toBe(false);
 
-    // Rerender with active = true
+    // Make component active
     rerender(<CheckboxCriterionInput {...basicProps} active={true} />);
     expect(basicProps.expanded).toBe(true);
   });
@@ -444,6 +444,40 @@ describe("FlexibleCriterionInput", () => {
     expect(input.value).toBe("");
   });
 
+  it("auto-expands when becoming active while collapsed", () => {
+    const props = {...basicProps, expanded: false, active: false};
+    const {rerender} = render(<FlexibleCriterionInput {...props} />);
+
+    expect(basicProps.expanded).toBe(false);
+
+    // Make component active
+    rerender(<FlexibleCriterionInput {...{...props, active: true}} />);
+
+    expect(basicProps.toggleExpanded).toHaveBeenCalled();
+    expect(basicProps.expanded).toBe(true);
+  });
+
+  it("does not focus input when active but not expanded", () => {
+    const props = {...basicProps, expanded: false, active: false};
+    const {rerender} = render(<FlexibleCriterionInput {...props} />);
+
+    const input = screen.getByRole("textbox");
+
+    // Make component active
+    rerender(<FlexibleCriterionInput {...{...props, active: true}} />);
+
+    // Input shouldn't be focused yet because expanded is still false in this render
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it("does not focus input when expanded but not active", () => {
+    const props = {...basicProps, expanded: true, active: false};
+    render(<FlexibleCriterionInput {...props} />);
+
+    const input = screen.getByRole("textbox");
+    expect(document.activeElement).not.toBe(input);
+  });
+
   it("focuses input when active and expanded", () => {
     const props = {...basicProps, expanded: true};
     const {rerender} = render(<FlexibleCriterionInput {...props} active={false} />);
@@ -451,7 +485,7 @@ describe("FlexibleCriterionInput", () => {
     const input = screen.getByRole("textbox");
     expect(input).toBeInTheDocument();
 
-    // Rerender with active = true
+    // Make component active
     rerender(<FlexibleCriterionInput {...props} active={true} />);
     expect(document.activeElement).toBe(input);
   });
@@ -604,7 +638,7 @@ describe("RubricCriterionInput", () => {
     // Initially not active & not expanded
     expect(basicProps.expanded).toBe(false);
 
-    // Rerender with active = true
+    // Make component active
     rerender(<RubricCriterionInput {...basicProps} active={true} />);
     expect(basicProps.expanded).toBe(true);
   });
