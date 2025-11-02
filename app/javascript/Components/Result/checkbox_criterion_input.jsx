@@ -23,7 +23,8 @@ export default function CheckboxCriterionInput({
 }) {
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
-  const firstInputRef = useRef(null);
+  const yesInputRef = useRef(null);
+  const noInputRef = useRef(null);
 
   useEffect(() => {
     if (!active) return;
@@ -33,17 +34,21 @@ export default function CheckboxCriterionInput({
       toggleExpanded();
     }
 
-    // Focus the input if it exists
-    if (firstInputRef.current) {
-      firstInputRef.current.focus();
-
-      // Set cursor at end only if the value exists
-      try {
-        const length = firstInputRef.current.value?.length ?? 0;
-        firstInputRef.current.setSelectionRange(length, length);
-      } catch (e) {}
+    // Focus the checked input OR the first input if none is checked
+    let inputToFocus = null;
+    if (mark === max_mark && yesInputRef.current) {
+      inputToFocus = yesInputRef.current;
+    } else if (mark === 0 && noInputRef.current) {
+      inputToFocus = noInputRef.current;
+    } else if (yesInputRef.current) {
+      // No input checked, focus on first one
+      inputToFocus = yesInputRef.current;
     }
-  }, [active, expanded]);
+
+    if (inputToFocus) {
+      inputToFocus.focus();
+    }
+  }, [active, expanded, mark, max_mark]);
 
   return (
     <li
@@ -72,7 +77,7 @@ export default function CheckboxCriterionInput({
             <span className="checkbox-criterion-inputs">
               <label onClick={() => updateMark(id, max_mark)} className={`check_correct_${id}`}>
                 <input
-                  ref={firstInputRef}
+                  ref={yesInputRef}
                   type="radio"
                   readOnly={true}
                   checked={mark === max_mark}
@@ -82,6 +87,7 @@ export default function CheckboxCriterionInput({
               </label>
               <label onClick={() => updateMark(id, 0)} className={`check_no_${id}`}>
                 <input
+                  ref={noInputRef}
                   type="radio"
                   readOnly={true}
                   checked={mark === 0}
