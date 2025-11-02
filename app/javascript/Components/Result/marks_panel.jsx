@@ -50,8 +50,8 @@ export class MarksPanel extends React.Component {
       }
 
       // Expose navigation for keyboard shortcuts
-      window.goToNextCriterion = this.nextCriterion;
-      window.goToPrevCriterion = this.prevCriterion;
+      window.nextCriterion = this.nextCriterion;
+      window.prevCriterion = this.prevCriterion;
     }
   }
 
