@@ -1,4 +1,4 @@
-import {render, screen, waitFor} from "@testing-library/react";
+import {render, screen, waitFor, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import {MarksPanel} from "../Result/marks_panel";
@@ -67,6 +67,158 @@ describe("MarksPanel", () => {
       expect(
         container.querySelector(`#${convertToKebabCase[mark.criterion_type]}_${mark.id}`)
       ).toBeTruthy();
+    });
+  });
+
+  it("sets the first criterion as active on mount", () => {
+    const props = {
+      ...basicProps,
+      assigned_criteria: null,
+      marks: [
+        {
+          criterion_type: "CheckboxCriterion",
+          id: 67,
+          name: "Criterion 1",
+          mark: 0,
+          max_mark: 1,
+          description: "testing",
+        },
+        {
+          criterion_type: "FlexibleCriterion",
+          id: 66,
+          name: "Criterion 2",
+          mark: 0,
+          max_mark: 2,
+          description: "testing",
+        },
+      ],
+      old_marks: {67: {}, 66: {}},
+    };
+
+    render(<MarksPanel {...props} />);
+
+    const firstCriterion = document.querySelector("#checkbox_criterion_67");
+    expect(firstCriterion).toHaveClass("active-criterion");
+  });
+
+  it("changes active criterion when clicked", () => {
+    const props = {
+      ...basicProps,
+      assigned_criteria: null,
+      marks: [
+        {
+          criterion_type: "CheckboxCriterion",
+          id: 67,
+          name: "Criterion 1",
+          mark: 0,
+          max_mark: 1,
+          description: "testing",
+        },
+        {
+          criterion_type: "FlexibleCriterion",
+          id: 66,
+          name: "Criterion 2",
+          mark: 0,
+          max_mark: 2,
+          description: "testing",
+        },
+      ],
+      old_marks: {67: {}, 66: {}},
+    };
+
+    render(<MarksPanel {...props} />);
+
+    const firstCriterion = document.querySelector("#checkbox_criterion_67");
+    const secondCriterion = document.querySelector("#flexible_criterion_66");
+
+    expect(firstCriterion).toHaveClass("active-criterion");
+    expect(secondCriterion).not.toHaveClass("active-criterion");
+
+    // Click on second criterion
+    fireEvent.click(secondCriterion);
+
+    expect(firstCriterion).not.toHaveClass("active-criterion");
+    expect(secondCriterion).toHaveClass("active-criterion");
+  });
+
+  it("navigates to next criterion using window.nextCriterion", async () => {
+    const props = {
+      ...basicProps,
+      assigned_criteria: null,
+      marks: [
+        {
+          criterion_type: "CheckboxCriterion",
+          id: 67,
+          name: "Criterion 1",
+          mark: 0,
+          max_mark: 1,
+          description: "testing",
+        },
+        {
+          criterion_type: "FlexibleCriterion",
+          id: 66,
+          name: "Criterion 2",
+          mark: 0,
+          max_mark: 2,
+          description: "testing",
+        },
+      ],
+      old_marks: {67: {}, 66: {}},
+    };
+
+    render(<MarksPanel {...props} />);
+
+    const firstCriterion = document.querySelector("#checkbox_criterion_67");
+    const secondCriterion = document.querySelector("#flexible_criterion_66");
+
+    expect(firstCriterion).toHaveClass("active-criterion");
+
+    // Navigate to next
+    window.nextCriterion();
+
+    await waitFor(() => {
+      expect(firstCriterion).not.toHaveClass("active-criterion");
+      expect(secondCriterion).toHaveClass("active-criterion");
+    });
+  });
+
+  it("navigates to previous criterion using window.prevCriterion", async () => {
+    const props = {
+      ...basicProps,
+      assigned_criteria: null,
+      marks: [
+        {
+          criterion_type: "CheckboxCriterion",
+          id: 67,
+          name: "Criterion 1",
+          mark: 0,
+          max_mark: 1,
+          description: "testing",
+        },
+        {
+          criterion_type: "FlexibleCriterion",
+          id: 66,
+          name: "Criterion 2",
+          mark: 0,
+          max_mark: 2,
+          description: "testing",
+        },
+      ],
+      old_marks: {67: {}, 66: {}},
+    };
+
+    render(<MarksPanel {...props} />);
+
+    const firstCriterion = document.querySelector("#checkbox_criterion_67");
+    const secondCriterion = document.querySelector("#flexible_criterion_66");
+
+    expect(firstCriterion).toHaveClass("active-criterion");
+
+    window.prevCriterion();
+
+    await waitFor(() => {
+      expect(firstCriterion).not.toHaveClass("active-criterion");
+      expect(secondCriterion).toHaveClass("active-criterion");
     });
   });
 });
