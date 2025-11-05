@@ -383,10 +383,10 @@
           <%= rule.select :penalty_type,
                           [
                             [t('submission_rules.penalty_types.percentage'), ExtraMark::PERCENTAGE],
-                            [t('submission_rules.penalty_types.marks'), ExtraMark::POINTS],
-                            [t('submission_rules.penalty_types.percentage_of_mark'), ExtraMark::PERCENTAGE_OF_MARK]
+                            [t('submission_rules.penalty_types.percentage_of_mark'), ExtraMark::PERCENTAGE_OF_MARK],
+                            [t('submission_rules.penalty_types.marks'), ExtraMark::POINTS]
                           ],
-                          { selected: rule.object.penalty_type || 'percentage' } %>
+                          { selected: rule.object.penalty_type || ExtraMark::PERCENTAGE } %>
         </div>
         <div id='penalty_decay_periods' class='table-with-add'>
           <table id='penalty_decay_periods_table'>
@@ -437,10 +437,10 @@
           <%= rule.select :penalty_type,
                           [
                             [t('submission_rules.penalty_types.percentage'), ExtraMark::PERCENTAGE],
-                            [t('submission_rules.penalty_types.marks'), ExtraMark::POINTS],
-                            [t('submission_rules.penalty_types.percentage_of_mark'), ExtraMark::PERCENTAGE_OF_MARK]
+                            [t('submission_rules.penalty_types.percentage_of_mark'), ExtraMark::PERCENTAGE_OF_MARK],
+                            [t('submission_rules.penalty_types.marks'), ExtraMark::POINTS]
                           ],
-                          { selected: rule.object.penalty_type || 'percentage' } %>
+                          { selected: rule.object.penalty_type || ExtraMark::PERCENTAGE } %>
         </div>
         <div id='penalty_periods' class='table-with-add'>
           <table id='penalty_periods_table'>

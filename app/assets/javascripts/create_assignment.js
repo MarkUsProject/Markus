@@ -183,9 +183,9 @@ function change_submission_rule() {
       var selector = isDecay ? "#penalty_decay_periods" : "#penalty_periods";
 
       if ($(event.target).val() === "points") {
-        $(selector + " .deduction-unit").text("marks");
+        $(selector + " .deduction-unit").text(I18n.t("submission_rules.deduction_unit.marks"));
       } else {
-        $(selector + " .deduction-unit").text("%");
+        $(selector + " .deduction-unit").text(I18n.t("submission_rules.deduction_unit.percentage"));
       }
     }
   );
