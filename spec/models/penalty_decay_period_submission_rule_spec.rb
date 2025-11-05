@@ -9,16 +9,8 @@ describe PenaltyDecayPeriodSubmissionRule do
       Timecop.freeze(due_date + submission_time_offset) do
         apply_rule
         rule_overtime_message = rule.overtime_message(grouping)
-        type = case rule.penalty_type
-               when ExtraMark::POINTS
-                 '_point'
-               when ExtraMark::PERCENTAGE_OF_MARK
-                 '_percentage_of_mark'
-               else
-                 '_percentage'
-               end
-
-        expected_overtime_message = I18n.t "penalty_decay_period_submission_rules.overtime_message#{type}",
+        penalty_suffix = rule.penalty_type || ExtraMark::PERCENTAGE
+        expected_overtime_message = I18n.t "penalty_decay_period_submission_rules.overtime_message_#{penalty_suffix}",
                                            potential_penalty: potential_penalty
         expect(rule_overtime_message).to eq expected_overtime_message
       end
