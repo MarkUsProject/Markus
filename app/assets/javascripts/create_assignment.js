@@ -159,6 +159,7 @@ function change_submission_rule() {
   );
 
   $(".penalty-type-selector").hide();
+  $(".penalty-type-selector select").prop("disabled", true);
 
   if ($("#grace_period_submission_rule").is(":checked")) {
     $("#grace_periods").show();
@@ -168,11 +169,23 @@ function change_submission_rule() {
     $("#penalty_decay_periods").show();
     $("#penalty_decay_periods input").prop("disabled", "");
     $("#penalty_type_selector_decay").show();
+    $("#penalty_type_selector_decay select").prop("disabled", "");
+    $("#penalty_decay_periods .deduction-unit").text(
+      $("#penalty_type_selector_decay select").val() === "points"
+        ? I18n.t("submission_rules.deduction_unit.marks")
+        : I18n.t("submission_rules.deduction_unit.percentage")
+    );
   }
   if ($("#penalty_period_submission_rule").is(":checked")) {
     $("#penalty_periods").show();
     $("#penalty_periods input").prop("disabled", "");
     $("#penalty_type_selector_period").show();
+    $("#penalty_type_selector_period select").prop("disabled", "");
+    $("#penalty_periods .deduction-unit").text(
+      $("#penalty_type_selector_period select").val() === "points"
+        ? I18n.t("submission_rules.deduction_unit.marks")
+        : I18n.t("submission_rules.deduction_unit.percentage")
+    );
   }
   $("#penalty_type_selector_decay select, #penalty_type_selector_period select").on(
     "change",
