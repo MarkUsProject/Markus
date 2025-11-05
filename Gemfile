@@ -83,6 +83,9 @@ group :development do
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
   gem 'listen' # to listen for changes in i18n-js files
+end
+
+group :development_extra, optional: true do
   gem 'ruby-lsp', require: false
 end
 
