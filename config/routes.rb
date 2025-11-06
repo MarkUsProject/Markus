@@ -41,6 +41,7 @@ Rails.application.routes.draw do
             put 'add_tag'
             put 'remove_tag'
             post 'collect_submission'
+            post 'add_test_results'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
