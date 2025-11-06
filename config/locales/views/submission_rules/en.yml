@@ -15,16 +15,26 @@ en:
     overtime_message_with_credits_left: The due date for this assignment has passed. However, you have %{grace_credits_remaining} grace credit(s) left. If you submit files during this period, you will be spending %{grace_credits_to_use} of those credits.
     overtime_message_without_credits_left: The due date for this assignment has passed, and you do not have enough grace credits to submit new work.
   penalty_decay_period_submission_rules:
-    details_message_first: A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due.
-    details_message_other: Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours.
-    extramark_description: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction.
+    details_message_first_percentage: A deduction of %{deduction}% of the assignment total will be applied every %{interval} hours up to %{hours} hours after the assignment is due.
+    details_message_first_percentage_of_mark: A deduction of %{deduction}% of your earned mark will be applied every %{interval} hours up to %{hours} hours after the assignment is due.
+    details_message_first_points: A deduction of %{deduction} marks will be applied every %{interval} hours up to %{hours} hours after the assignment is due.
+    details_message_other_percentage: Thereafter, a deduction of %{deduction}% of the assignment total will be applied every %{interval} hours up to a maximum of %{hours} hours.
+    details_message_other_percentage_of_mark: Thereafter, a deduction of %{deduction}% of your earned mark will be applied every %{interval} hours up to a maximum of %{hours} hours.
+    details_message_other_points: Thereafter, a deduction of %{deduction}% marks will be applied every %{interval} hours up to a maximum of %{hours} hours.
+    extramark_description_percentage: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction from assignment total.
+    extramark_description_percentage_of_mark: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction from earned mark.
+    extramark_description_points: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount} marks deduction.
     overtime_message_percentage: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% of the assignment total deducted from the final mark on this assignment.
     overtime_message_percentage_of_mark: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% of your earned mark deducted from the final mark on this assignment.
     overtime_message_points: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty} marks deducted from the final mark on this assignment.
   penalty_period_submission_rules:
     deadline_html: Due date including <em>maximum</em> late penalty
-    details_message: Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}%
-    extramark_description: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction.
+    details_message_percentage: Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}% of the assignment total from the final mark on this assignment.
+    details_message_percentage_of_mark: Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}% of your earned mark from the final mark on this assignment.
+    details_message_points: Up to %{hours} hours after the due date, your grade will be reduced by %{deduction} marks from the final mark on this assignment.
+    extramark_description_percentage: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction from assignment total.
+    extramark_description_percentage_of_mark: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction from earned mark .
+    extramark_description_points: Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount} marks deduction.
     overtime_message_percentage: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% of the assignment total deducted from the final mark on this assignment.
     overtime_message_percentage_of_mark: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% of your earned mark deducted from the final mark on this assignment.
     overtime_message_points: The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty} marks deducted from the final mark on this assignment.
