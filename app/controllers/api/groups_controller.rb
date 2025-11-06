@@ -401,6 +401,30 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
     end
 
+    def add_test_results
+      payload = JSON.parse(request.body.read)
+      puts "PARAMETERS: #{payload}"
+      validation = TestResultsContract.new.call(payload["test_results"])
+
+      if validation.failure?
+        render json: {errors: validation.errors.to_h}, status: :unprocessable_entity
+        return
+      end
+
+      test_run = TestRun.create!(
+        status: 1,
+        role_id: params[:role_id],
+        grouping_id: params[:grouping_id],
+        submission_id: grouping.current_submission_used.id,
+      )
+
+      Rails.logger.debug {"TestRun #{JSON.pretty_generate(test_run.as_json)}"}
+
+      render json: {status: 'ok'}
+
+      test_run.update_results!(payload["test_results"])
+    end
+
     private
 
     def assignment
