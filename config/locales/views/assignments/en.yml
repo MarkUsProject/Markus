@@ -42,12 +42,11 @@ en:
       default: Default
       hidden: Hidden
       hidden_option: Sections can override this default setting below.
-      visible: Visible
       scheduled: Visible on/until
-      scheduled_description: Students can see this assignment only during a specific time period
+      visible: Visible
       visible_from: Visible from
-      visible_until: Visible until
       visible_from_placeholder: Leave empty for no start restriction
+      visible_until: Visible until
       visible_until_placeholder: Leave empty for no end restriction
     section_settings:
       due_date: Section-specific Due Date

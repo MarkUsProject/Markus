@@ -2359,17 +2359,20 @@ describe AssignmentsController do
 
     describe '#create with scheduled visibility' do
       it 'should create assignment with visible_on and visible_until' do
+        visible_on_time = 1.day.from_now
+        visible_until_time = 7.days.from_now
+
         params = example_form_params.deep_dup
         params[:assignment][:is_hidden] = 'scheduled'
-        params[:assignment][:visible_on] = 1.day.from_now.to_s
-        params[:assignment][:visible_until] = 7.days.from_now.to_s
+        params[:assignment][:visible_on] = visible_on_time.to_s
+        params[:assignment][:visible_until] = visible_until_time.to_s
 
         post_as instructor, :create, params: params
 
         assignment = Assignment.last
         expect(assignment.is_hidden).to be false
-        expect(assignment.visible_on).to be_within(1.second).of(1.day.from_now)
-        expect(assignment.visible_until).to be_within(1.second).of(7.days.from_now)
+        expect(assignment.visible_on).to be_within(1.second).of(visible_on_time)
+        expect(assignment.visible_until).to be_within(1.second).of(visible_until_time)
       end
 
       it 'should convert is_hidden="scheduled" to is_hidden=false' do
