@@ -5,14 +5,17 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added new loading spinner icon for tables (#7602)
-- Update message and page displaying cannot create new course via external LTI tool (#7669)
-- Provide file viewer the option to render Microsoft files (#7676)
+- Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
+- Switched to consistent Font Awesome chevrons for expander icons (#7713)
+- Install Ruby-LSP to allow development inside different IDEs such as VSCode (#7718)
 
 ### 🐛 Bug fixes
-- Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
-- Resque Host Authorization, removing env condition as this is for all environments (#7671)
-- Fixed ordering of assignments in the Assignment dropdown menu and Assignment index page (#7642)
+- Fix name column search in graders table (#7693)
+- Check against mtime instead of atime for clean up of git repo directories in tmp folder (#7706)
+- Update Model: Fix level validation checks through use of a custom validator (#7696)
+- Fixed test group results table to display `extra_info` field from all test groups (#7710)
 
 ### 🔧 Internal changes
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
@@ -22,6 +25,25 @@
 - Refactored Criterion subclasses to remove redundant code
 - Converted "Rename Group" functionality to React modal (#7673)
 - Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
+- Refactored "Reuse Groups" functionality to use React modal and relocated button to action box row (#7688)
+- Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
+- Refactored MarksPanel child components and converted the components into hook-based function components
+
+## [v2.8.2]
+
+### ✨ New features and improvements
+- Update message and page displaying cannot create new course via external LTI tool (#7669)
+- Provide file viewer the option to render Microsoft files (#7676)
+- Display late submission selection and add accompanying filter (#7689)
+
+### 🐛 Bug fixes
+- Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
+- Resque Host Authorization, removing env condition as this is for all environments (#7671)
+- Fixed ordering of assignments in the Assignment dropdown menu and Assignment index page (#7642)
+- Updated Section model associations with appropriate dependent options to handle cascade deletion while preventing deletion when students exist (#7681)
+- Prevent grade change in the grades table for a Marks Spreadsheet, when scrolling up or down with mouse or keys (#7680)
+- Fixed ordering of sections in the Timed Assessment assignments section-specific settings table (#7690)
+- Reattach, accidentally removed due date extension modifier (#7703)
 
 ## [v2.8.1]
 

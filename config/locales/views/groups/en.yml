@@ -3,7 +3,6 @@ en:
   groups:
     add_all_groups: Create all groups
     add_to_group: Add student(s) to group
-    another_assignment_group: Use another assignment's groups
     assign_over_limit: You have assigned more than the maximum number of students to group %{group}.
     assigned_students: Assigned
     assignment_to_use: Which assignments groups would you like to use?
@@ -29,6 +28,10 @@ en:
     grace_day_over_limit: You have assigned one or more students who has less grace credits than the amount already used by group %{group} for this assignment.
     group_name_already_in_use: This name is already in use for this assignment.
     group_name_already_in_use_diff_assignment: The group can't be renamed, because it would result in the loss of submission data. Try a name that is not in use for another assignment.
+    groups_with_extension:
+      with_late_submission: Groups with Extension (Late Submissions Accepted)
+      without_late_submission: Groups with Extension (Late Submissions Not Accepted)
+    groups_without_extension: Groups Without Extension
     help: Manage student groups. You can create new groups and manually add and remove students to groups.
     invalid_group_warning: 'Your group is currently invalid. You probably haven''t met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. '
     invalidate_confirm: This will prevent this group from submitting, even with the required number of students. Are you sure?
@@ -46,6 +49,7 @@ en:
       success: Invitation(s) successful.
     is_not_valid: Group is not valid
     is_valid: Group is valid
+    late_submissions_accepted: late submissions accepted
     manage_groups: Manage Groups
     members:
       cancel_invitation: Cancel invitation

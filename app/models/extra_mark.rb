@@ -7,12 +7,14 @@ class ExtraMark < ApplicationRecord
   # When you want to avoid allocating strings...
   PERCENTAGE = 'percentage'.freeze
   POINTS = 'points'.freeze
+  PERCENTAGE_OF_MARK = 'percentage_of_mark'.freeze
 
   scope :percentage, -> { where(unit: ExtraMark::PERCENTAGE) }
   scope :points, -> { where(unit: ExtraMark::POINTS) }
+  scope :percentage_of_mark, -> { where(unit: ExtraMark::PERCENTAGE_OF_MARK) }
 
   validates :unit, presence: true
-  validates :unit, format: { with: /\Apercentage|points\z/ }
+  validates :unit, format: { with: /\Apercentage|points|percentage_of_mark\z/ }
 
   scope :positive, -> { where('extra_mark > 0') }
   scope :negative, -> { where('extra_mark < 0') }

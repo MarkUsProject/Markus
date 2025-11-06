@@ -173,9 +173,7 @@ class AssignmentsController < ApplicationController
       end
     end
     @assessment_section_properties = @assignment.assessment_section_properties
-    @assessment_section_properties.sort_by do |s|
-      [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
-    end
+                                                .sort_by { |s| s.section.name }
 
     @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :edit, layout: 'assignment_content'

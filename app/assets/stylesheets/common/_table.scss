@@ -237,30 +237,14 @@
     padding-right: 22px;
   }
 
+  .rt-expandable {
+    text-align: center;
+  }
+
   .rt-expander {
     display: inline-block;
     position: relative;
     margin: 0 10px;
-    color: transparent;
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 0;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-90deg);
-      border-left: 5.04px solid transparent;
-      border-right: 5.04px solid transparent;
-      border-top: 7px solid $sharp-line;
-      transition: all 0.3s var(--easeOutBack);
-      cursor: pointer;
-    }
-
-    &.-open::after {
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
   }
 
   .rt-resizer {
@@ -453,7 +437,8 @@
       cursor: default;
     }
 
-    .rt-expander {
+    .rt-expander,
+    .rt-expander-custom {
       display: none;
     }
   }
@@ -520,21 +505,22 @@
     color: $sharp-line;
   }
 
-  .rt-expandable:empty {
-    cursor: default;
-  }
+  .rt-tbody {
+    .rt-td.rt-expandable {
+      text-align: center;
 
-  .rt-expander::after {
-    border-top-color: $sharp-line;
-  }
+      &:empty {
+        cursor: default;
+      }
 
-  .hide-rt-expander {
-    &.rt-expandable {
-      cursor: default;
-    }
+      &.hide-rt-expander {
+        cursor: default;
 
-    .rt-expander {
-      display: none;
+        .rt-expander,
+        .rt-expander-custom {
+          display: none;
+        }
+      }
     }
   }
 

@@ -15,18 +15,10 @@
           groupMin: <%= @assignment.group_min %>,
           scanned_exam: <%= @assignment.scanned_exam? %>,
           timed: <%= @assignment.is_timed %>,
-          current_duration: '<%= duration_string %>'
+          current_duration: '<%= duration_string %>',
+          vcs_submit: <%= @assignment.vcs_submit.to_json %>
         }
       );
-
-      $('#assignment-group-use').click(function(e) {
-        modalAssignmentGroupReUse.open();
-        $('#assignment-group-use-close').click(function(e) {
-          modalAssignmentGroupReUse.close();
-          e.preventDefault();
-        })
-        e.preventDefault();
-      })
     });
   <% end %>
 <% end %>
@@ -41,20 +33,14 @@
 <% end %>
 
 <% content_for :additional_headings do %>
-    <%# Allow cloning groups forward only if vcs submits are allowed for this assignment. %>
-    <% if @assignment.vcs_submit %>
-      <%= link_to t('groups.another_assignment_group'),
-                  '#',
-                  id: 'assignment-group-use' %>
-      <span class='menu_bar'></span>
-    <% end %>
-    <%= link_to t('download'), '#', id: 'downloadModal' %>
+  <div id="groups-header"></div>
+  <%= link_to t('download'), '#', id: 'downloadModal' %>
+  <span class='menu_bar'></span>
+  <%= link_to t('upload'), '#', id: 'uploadModal' %>
+  <% if @assignment.scanned_exam %>
     <span class='menu_bar'></span>
-    <%= link_to t('upload'), '#', id: 'uploadModal' %>
-    <% if @assignment.scanned_exam %>
-        <span class='menu_bar'></span>
-        <%= link_to t('exam_templates.assign_scans.title'), :assign_scans_course_assignment_groups %>
-    <% end %>
+    <%= link_to t('exam_templates.assign_scans.title'), :assign_scans_course_assignment_groups %>
+  <% end %>
 <% end %>
 
 <div id='groups-manager'></div>
@@ -63,5 +49,4 @@
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog' %>
 <%= render partial: 'upload_modal', layout: 'layouts/modal_dialog' %>
-<%= render partial: 'assignment_group_use_modal', layout: 'layouts/modal_dialog' %>
 <aside class='markus-dialog' id='notes_dialog'></aside>

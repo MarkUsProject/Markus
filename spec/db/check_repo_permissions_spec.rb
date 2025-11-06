@@ -186,6 +186,85 @@ describe 'Check Repo Permissions Function' do
             end
           end
 
+          context 'the assignment has datetime-based visibility' do
+            context 'when visible_on is in the future' do
+              before { grouping.assignment.update! visible_on: 1.hour.from_now, visible_until: 2.hours.from_now }
+
+              it 'should fail' do
+                expect(script_success?).to be_falsy
+              end
+            end
+
+            context 'when visible_until is in the past' do
+              before { grouping.assignment.update! visible_on: 2.hours.ago, visible_until: 1.hour.ago }
+
+              it 'should fail' do
+                expect(script_success?).to be_falsy
+              end
+            end
+
+            context 'when current time is within visibility window' do
+              before { grouping.assignment.update! visible_on: 1.hour.ago, visible_until: 1.hour.from_now }
+
+              it 'should succeed' do
+                expect(script_success?).to be_truthy
+              end
+            end
+
+            context 'when only visible_on is set and in the past' do
+              before { grouping.assignment.update! visible_on: 1.hour.ago, visible_until: nil }
+
+              it 'should succeed' do
+                expect(script_success?).to be_truthy
+              end
+            end
+
+            context 'when only visible_until is set and in the future' do
+              before { grouping.assignment.update! visible_on: nil, visible_until: 1.hour.from_now }
+
+              it 'should succeed' do
+                expect(script_success?).to be_truthy
+              end
+            end
+          end
+
+          context 'the assignment has section-specific datetime visibility' do
+            before { role.update! section_id: section.id }
+
+            context 'when section visible_on is in the future' do
+              before do
+                create(:assessment_section_properties, assessment: grouping.assignment, section: section,
+                                                       visible_on: 1.hour.from_now, visible_until: 2.hours.from_now)
+              end
+
+              it 'should fail' do
+                expect(script_success?).to be_falsy
+              end
+            end
+
+            context 'when section visible_until is in the past' do
+              before do
+                create(:assessment_section_properties, assessment: grouping.assignment, section: section,
+                                                       visible_on: 2.hours.ago, visible_until: 1.hour.ago)
+              end
+
+              it 'should fail' do
+                expect(script_success?).to be_falsy
+              end
+            end
+
+            context 'when current time is within section visibility window' do
+              before do
+                create(:assessment_section_properties, assessment: grouping.assignment, section: section,
+                                                       visible_on: 1.hour.ago, visible_until: 1.hour.from_now)
+              end
+
+              it 'should succeed' do
+                expect(script_success?).to be_truthy
+              end
+            end
+          end
+
           context 'the assessment is timed' do
             let(:due_date) { 10.hours.from_now }
 

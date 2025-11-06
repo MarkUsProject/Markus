@@ -1008,24 +1008,12 @@ nav {
 }
 
 /** Dropdown menu */
-.arrow-down {
-  border-left: 7.5px solid transparent;
-  border-right: 7.5px solid transparent;
-  border-top: 7.5px solid $primary-one;
-  float: right;
-  height: 0;
-  margin-top: 4px;
-  width: 0;
-}
-
+.arrow-down,
 .arrow-up {
-  border-bottom: 7.5px solid $primary-one;
-  border-left: 7.5px solid transparent;
-  border-right: 7.5px solid transparent;
+  color: $primary-one;
   float: right;
-  height: 0;
-  margin-top: 4px;
-  width: 0;
+  margin-left: 5px;
+  margin-top: 1px;
 }
 
 .dropdown {
@@ -1099,11 +1087,6 @@ nav {
       font-weight: 600;
       text-transform: uppercase;
     }
-  }
-
-  .arrow-down,
-  .arrow-up {
-    margin-left: 5px;
   }
 }
 

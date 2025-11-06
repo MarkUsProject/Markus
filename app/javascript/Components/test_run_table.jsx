@@ -309,7 +309,21 @@ class TestGroupResultTable extends React.Component {
   };
 
   render() {
-    const extraInfo = this.props.data[0]["test_group_results.extra_info"];
+    const seen = new Set();
+    const extraInfo = this.props.data
+      .reduce((acc, test_data) => {
+        const id = test_data["test_groups.id"];
+        const name = (test_data["test_groups.name"] || "").trim();
+        const info = (test_data["test_group_results.extra_info"] || "").trim();
+
+        if (!seen.has(id) && info) {
+          seen.add(id);
+          acc.push(`[${name}]`, info);
+        }
+
+        return acc;
+      }, [])
+      .join("\n");
     let extraInfoDisplay;
     if (extraInfo) {
       extraInfoDisplay = (
