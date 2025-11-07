@@ -421,9 +421,9 @@ module Api
 
       # Validate test results against contract schema
       validation = TestResultsContract.new.call(payload['test_results'])
-      
+
       if validation.failure?
-        return render json: { errors: validation.errors.to_h }, status: :unprocessable_content
+        return render json: { errors: validation.errors.to_hash }, status: :unprocessable_content
       end
 
       # Verify grouping exists and is authorized (grouping helper method handles this)

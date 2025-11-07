@@ -1190,7 +1190,8 @@ describe Api::GroupsController do
 
           it 'should return unprocessable entity' do
             post :add_test_results,
-                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping_without_submission.group.id },
+                 params: { course_id: course.id, assignment_id: assignment.id,
+                           id: grouping_without_submission.group.id },
                  body: valid_test_results.to_json
             expect(response).to have_http_status(:unprocessable_content)
             expect(response.parsed_body['errors']).to eq('No submission exists for this grouping')
@@ -1207,7 +1208,7 @@ describe Api::GroupsController do
               post :add_test_results,
                    params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
                    body: valid_test_results.to_json
-            end.to change(TestRun, :count).by(1)
+            end.to change(TestRun.count).by(1)
           end
 
           it 'should return created status' do
@@ -1241,7 +1242,7 @@ describe Api::GroupsController do
               post :add_test_results,
                    params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
                    body: valid_test_results.to_json
-            end.to change(TestGroupResult, :count).by(1)
+            end.to change(TestGroupResult.count).by(1)
           end
 
           it 'should create test results' do
@@ -1249,7 +1250,7 @@ describe Api::GroupsController do
               post :add_test_results,
                    params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
                    body: valid_test_results.to_json
-            end.to change(TestResult, :count).by(1)
+            end.to change(TestResult.count).by(1)
           end
 
           it 'should create test result with correct data' do
@@ -1278,7 +1279,7 @@ describe Api::GroupsController do
               post :add_test_results,
                    params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
                    body: valid_test_results.to_json
-            end.not_to change(TestRun, :count)
+            end.not_to change(TestRun.count)
           end
 
           it 'should return unprocessable entity' do
@@ -1310,7 +1311,7 @@ describe Api::GroupsController do
               post :add_test_results,
                    params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
                    body: valid_test_results.to_json
-            end.not_to change(TestRun, :count)
+            end.not_to change(TestRun.count)
           end
 
           it 'should return internal server error' do
