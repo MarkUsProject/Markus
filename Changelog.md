@@ -13,6 +13,7 @@
 - Install Ruby-LSP to allow development inside different IDEs such as VSCode (#7718)
 - Ensure only instructors and admins can link course, as LMS launch MarkUs button made available for all users (#7714)
 - Include student number in roster sync from Canvas (#7731)
+- Add API endpoint `add_test_results` that allows independent user submissions of test executions to MarkUs (#7730)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
