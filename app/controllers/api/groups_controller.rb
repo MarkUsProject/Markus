@@ -403,12 +403,12 @@ module Api
 
     def add_test_results
       payload = JSON.parse(request.body.read)
-      puts "PARAMETERS: #{payload}"
       validation = TestResultsContract.new.call(payload["test_results"])
 
       if validation.failure?
-        render json: {errors: validation.errors.to_h}, status: :unprocessable_entity
-        return
+        return render json: {
+          errors: validation.errors.to_h
+        }, status: :unprocessable_entity
       end
 
       test_run = TestRun.create!(
@@ -420,9 +420,9 @@ module Api
 
       Rails.logger.debug {"TestRun #{JSON.pretty_generate(test_run.as_json)}"}
 
-      render json: {status: 'ok'}
-
       test_run.update_results!(payload["test_results"])
+      
+      render json: {status: 'ok'}
     end
 
     private
