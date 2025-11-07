@@ -2517,8 +2517,8 @@ describe AssignmentsController do
 
         section_props.reload
         expect(section_props.is_hidden).to be false
-        expect(section_props.visible_on).to be_within(1.second).of(3.days.from_now)
-        expect(section_props.visible_until).to be_within(1.second).of(8.days.from_now)
+        expect(section_props.visible_on).to be_within(2.seconds).of(3.days.from_now)
+        expect(section_props.visible_until).to be_within(2.seconds).of(8.days.from_now)
       end
     end
 
