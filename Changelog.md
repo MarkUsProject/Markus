@@ -6,6 +6,7 @@
 
 ### ✨ New features and improvements
 - Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
+- Added frontend UI for assignment visibility scheduling with three visibility options and section-specific overrides (#7415)
 - Added new loading spinner icon for tables (#7602)
 - Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
 - Switched to consistent Font Awesome chevrons for expander icons (#7713)
