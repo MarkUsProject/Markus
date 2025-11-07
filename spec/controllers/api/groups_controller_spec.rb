@@ -1059,5 +1059,284 @@ describe Api::GroupsController do
         end
       end
     end
+
+    context 'POST add_test_results' do
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+      let(:test_group) { create(:test_group, assignment: assignment) }
+      let(:valid_test_results) do
+        {
+          test_results: {
+            status: 'pass',
+            error: nil,
+            test_groups: [
+              {
+                time: 100,
+                extra_info: {
+                  name: 'Test Group 1',
+                  criterion: 'Correctness',
+                  test_group_id: test_group.id,
+                  display_output: 2
+                },
+                tests: [
+                  {
+                    name: 'test_example',
+                    status: 'pass',
+                    marks_earned: 5,
+                    marks_total: 5,
+                    time: 50,
+                    output: 'Test passed successfully'
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      end
+
+      before do
+        request.env['HTTP_ACCEPT'] = 'application/json'
+      end
+
+      context 'when unauthenticated' do
+        before do
+          request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
+        end
+
+        it 'should fail to authenticate' do
+          post :add_test_results,
+               params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+               body: valid_test_results.to_json
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      context 'when authenticated' do
+        context 'with invalid JSON' do
+          it 'should return bad request with malformed JSON' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: 'invalid json {'
+            expect(response).to have_http_status(:bad_request)
+            expect(response.parsed_body['errors']).to match(/Invalid JSON/)
+          end
+        end
+
+        context 'with oversized payload' do
+          it 'should return payload too large error' do
+            large_payload = { test_results: 'x' * (11 * 1024 * 1024) } # 11MB
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: large_payload.to_json
+            expect(response).to have_http_status(:content_too_large)
+            expect(response.parsed_body['errors']).to eq('Request body too large')
+          end
+        end
+
+        context 'with missing test_results key' do
+          it 'should return bad request' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: { some_other_key: 'value' }.to_json
+            expect(response).to have_http_status(:bad_request)
+            expect(response.parsed_body['errors']).to eq('Missing required key: test_results')
+          end
+        end
+
+        context 'with invalid test results schema' do
+          it 'should return unprocessable entity with validation errors' do
+            invalid_test_results = {
+              test_results: {
+                status: 'pass',
+                error: nil,
+                test_groups: [
+                  {
+                    time: 100,
+                    extra_info: {
+                      name: 'Test Group 1',
+                      criterion: 'Correctness',
+                      test_group_id: test_group.id,
+                      display_output: 2
+                    },
+                    tests: [
+                      {
+                        # Missing required fields: name, status, marks_earned, marks_total, output
+                        time: 50
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: invalid_test_results.to_json
+            expect(response).to have_http_status(:unprocessable_content)
+            expect(response.parsed_body).to have_key('errors')
+          end
+        end
+
+        context 'with non-existent grouping' do
+          it 'should return not found' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: 999_999 },
+                 body: valid_test_results.to_json
+            expect(response).to have_http_status(:not_found)
+          end
+        end
+
+        context 'with grouping that has no submission' do
+          let(:grouping_without_submission) { create(:grouping_with_inviter, assignment: assignment) }
+
+          it 'should return unprocessable entity' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping_without_submission.group.id },
+                 body: valid_test_results.to_json
+            expect(response).to have_http_status(:unprocessable_content)
+            expect(response.parsed_body['errors']).to eq('No submission exists for this grouping')
+          end
+        end
+
+        context 'with valid test results' do
+          before do
+            submission # Ensure submission exists
+          end
+
+          it 'should create a new test run' do
+            expect do
+              post :add_test_results,
+                   params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                   body: valid_test_results.to_json
+            end.to change(TestRun, :count).by(1)
+          end
+
+          it 'should return created status' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            expect(response).to have_http_status(:created)
+          end
+
+          it 'should return success status and test_run_id' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            expect(response.parsed_body['status']).to eq('success')
+            expect(response.parsed_body['test_run_id']).to be_present
+          end
+
+          it 'should create test run with correct attributes' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            test_run = TestRun.last
+            expect(test_run.role).to eq(instructor)
+            expect(test_run.grouping).to eq(grouping)
+            expect(test_run.submission).to eq(submission)
+            expect(test_run.status).to eq('complete')
+          end
+
+          it 'should create test group results' do
+            expect do
+              post :add_test_results,
+                   params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                   body: valid_test_results.to_json
+            end.to change(TestGroupResult, :count).by(1)
+          end
+
+          it 'should create test results' do
+            expect do
+              post :add_test_results,
+                   params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                   body: valid_test_results.to_json
+            end.to change(TestResult, :count).by(1)
+          end
+
+          it 'should create test result with correct data' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            test_result = TestResult.last
+            expect(test_result.name).to eq('test_example')
+            expect(test_result.status).to eq('pass')
+            expect(test_result.marks_earned).to eq(5)
+            expect(test_result.marks_total).to eq(5)
+          end
+        end
+
+        context 'when transaction fails' do
+          before do
+            submission # Ensure submission exists
+            # Mock TestRun.create! to raise an error
+            allow(TestRun).to receive(:create!).and_raise(
+              ActiveRecord::RecordInvalid.new(TestRun.new)
+            )
+          end
+
+          it 'should not create test run' do
+            expect do
+              post :add_test_results,
+                   params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                   body: valid_test_results.to_json
+            end.not_to change(TestRun, :count)
+          end
+
+          it 'should return unprocessable entity' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            expect(response).to have_http_status(:unprocessable_content)
+          end
+
+          it 'should return validation errors' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            expect(response.parsed_body).to have_key('errors')
+          end
+        end
+
+        context 'when update_results! fails' do
+          before do
+            submission # Ensure submission exists
+            # Mock update_results! to raise an error
+            allow_any_instance_of(TestRun).to receive(:update_results!).and_raise(
+              StandardError.new('Processing error')
+            )
+          end
+
+          it 'should rollback test run creation due to transaction' do
+            expect do
+              post :add_test_results,
+                   params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                   body: valid_test_results.to_json
+            end.not_to change(TestRun, :count)
+          end
+
+          it 'should return internal server error' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            expect(response).to have_http_status(:internal_server_error)
+          end
+
+          it 'should return generic error message' do
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+            expect(response.parsed_body['errors']).to eq('Failed to process test results')
+          end
+        end
+
+        it_behaves_like 'for a different course' do
+          before do
+            submission # Ensure submission exists
+            post :add_test_results,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id },
+                 body: valid_test_results.to_json
+          end
+        end
+      end
+    end
   end
 end

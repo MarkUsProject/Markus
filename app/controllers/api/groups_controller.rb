@@ -402,27 +402,59 @@ module Api
     end
 
     def add_test_results
-      payload = JSON.parse(request.body.read)
-      validation = TestResultsContract.new.call(payload["test_results"])
+      begin
+        raw_body = request.body.read
 
-      if validation.failure?
-        return render json: {
-          errors: validation.errors.to_h
-        }, status: :unprocessable_entity
+        # Enforce size limit (10MB)
+        if raw_body.bytesize > 10.megabytes
+          return render json: { errors: 'Request body too large' }, status: :content_too_large
+        end
+
+        payload = JSON.parse(raw_body)
+      rescue JSON::ParserError => e
+        return render json: { errors: "Invalid JSON: #{e.message}" }, status: :bad_request
       end
 
-      test_run = TestRun.create!(
-        status: 1,
-        role_id: params[:role_id],
-        grouping_id: params[:grouping_id],
-        submission_id: grouping.current_submission_used.id,
-      )
+      unless payload.is_a?(Hash) && payload.key?('test_results')
+        return render json: { errors: 'Missing required key: test_results' }, status: :bad_request
+      end
 
-      Rails.logger.debug {"TestRun #{JSON.pretty_generate(test_run.as_json)}"}
-
-      test_run.update_results!(payload["test_results"])
+      # Validate test results against contract schema
+      validation = TestResultsContract.new.call(payload['test_results'])
       
-      render json: {status: 'ok'}
+      if validation.failure?
+        return render json: { errors: validation.errors.to_h }, status: :unprocessable_content
+      end
+
+      # Verify grouping exists and is authorized (grouping helper method handles this)
+      if grouping.nil?
+        return render json: { errors: 'Group not found for this assignment' }, status: :not_found
+      end
+
+      # Verify submission exists before attempting to create test run
+      submission = grouping.current_submission_used
+      if submission.nil?
+        return render json: { errors: 'No submission exists for this grouping' }, status: :unprocessable_content
+      end
+
+      begin
+        ActiveRecord::Base.transaction do
+          test_run = TestRun.create!(
+            status: :in_progress,
+            role: current_role,
+            grouping: grouping,
+            submission: submission
+          )
+
+          test_run.update_results!(payload['test_results'])
+          render json: { status: 'success', test_run_id: test_run.id }, status: :created
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
+      rescue StandardError => e
+        Rails.logger.error("Test results processing failed: #{e.message}\n#{e.backtrace.join("\n")}")
+        render json: { errors: 'Failed to process test results' }, status: :internal_server_error
+      end
     end
 
     private
