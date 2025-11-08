@@ -85,6 +85,10 @@ group :development do
   gem 'listen' # to listen for changes in i18n-js files
 end
 
+group :development_extra, optional: true do
+  gem 'ruby-lsp', require: false
+end
+
 group :test do
   gem 'factory_bot_rails'
   gem 'fuubar'
