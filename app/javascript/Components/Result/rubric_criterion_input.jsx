@@ -36,12 +36,8 @@ export default function RubricCriterionInput({
       selectedClass = "selected";
     }
     if (active) {
-      // If this level is selected, make it active
-      if (selectedClass === "selected") {
-        activeRubricClass = "active-rubric";
-      }
-      // If no level is selected and this is the first level, make it active
-      else if (mark === null && index === 0) {
+      // Make level active if selected OR nothing selected yet & this is the first level
+      if (selectedClass === "selected" || (mark === null && index === 0)) {
         activeRubricClass = "active-rubric";
       }
     }
