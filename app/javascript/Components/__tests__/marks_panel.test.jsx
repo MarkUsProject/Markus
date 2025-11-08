@@ -141,7 +141,7 @@ describe("MarksPanel", () => {
     expect(secondCriterion).toHaveClass("active-criterion");
   });
 
-  it("navigates to next criterion using window.nextCriterion", async () => {
+  it("navigates to next criterion using window.marksPanel.nextCriterion", async () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,
@@ -174,7 +174,7 @@ describe("MarksPanel", () => {
     expect(firstCriterion).toHaveClass("active-criterion");
 
     // Navigate to next
-    window.nextCriterion();
+    window.marksPanel.nextCriterion();
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -182,7 +182,7 @@ describe("MarksPanel", () => {
     });
   });
 
-  it("navigates to previous criterion using window.prevCriterion", async () => {
+  it("navigates to previous criterion using window.marksPanel.prevCriterion", async () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,
@@ -214,7 +214,7 @@ describe("MarksPanel", () => {
 
     expect(firstCriterion).toHaveClass("active-criterion");
 
-    window.prevCriterion();
+    window.marksPanel.prevCriterion();
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
