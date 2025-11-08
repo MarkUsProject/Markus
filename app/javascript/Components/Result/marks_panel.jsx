@@ -11,47 +11,56 @@ export class MarksPanel extends React.Component {
 
   constructor(props) {
     super(props);
+
+    // Set first criterion active by default
+    const first = !props.released_to_students ? props.marks[0] : null;
+
     this.state = {
       expanded: new Set(),
-      activeCriterionId: null,
+      activeCriterionId: first ? first.id : null,
     };
   }
 
-  setActiveCriterion = id => {
+  setActiveCriterionId = id => {
     this.setState({activeCriterionId: id});
   };
 
   nextCriterion = () => {
     const criteria = this.props.marks.filter(
-      c => !(this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(c.id))
+      c => this.props.assigned_criteria === null || this.props.assigned_criteria.includes(c.id)
     ); // skip unassigned
+
+    // If criteria empty, set active criterion to null
+    if (criteria.length === 0) {
+      this.setActiveCriterionId(null);
+      return;
+    }
 
     const idx = criteria.findIndex(c => c.id === this.state.activeCriterionId);
     const next = idx === -1 || idx === criteria.length - 1 ? criteria[0] : criteria[idx + 1];
-    this.setActiveCriterion(next.id);
+    this.setActiveCriterionId(next.id);
   };
 
   prevCriterion = () => {
     const criteria = this.props.marks.filter(
-      c => !(this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(c.id))
+      c => this.props.assigned_criteria === null || this.props.assigned_criteria.includes(c.id)
     );
+
+    // If criteria empty, set active criterion to null
+    if (criteria.length === 0) {
+      this.setActiveCriterionId(null);
+      return;
+    }
 
     const idx = criteria.findIndex(c => c.id === this.state.activeCriterionId);
     const prev = idx <= 0 ? criteria[criteria.length - 1] : criteria[idx - 1];
-    this.setActiveCriterion(prev.id);
+    this.setActiveCriterionId(prev.id);
   };
 
   componentDidMount() {
     if (!this.props.released_to_students) {
-      // Set first criterion active by default
-      const first = this.props.marks[0];
-      if (first) {
-        this.setState({activeCriterionId: first.id});
-      }
-
-      // Expose navigation for keyboard shortcuts
-      window.nextCriterion = this.nextCriterion;
-      window.prevCriterion = this.prevCriterion;
+      // Expose the whole component for keyboard shortcuts
+      window.marksPanel = this;
     }
   }
 
@@ -124,7 +133,7 @@ export class MarksPanel extends React.Component {
       destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
       oldMark: this.props.old_marks[markData.id],
-      setActive: () => this.setActiveCriterion(key),
+      setActive: () => this.setActiveCriterionId(key),
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
