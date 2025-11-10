@@ -70,7 +70,15 @@ describe("MarksPanel", () => {
     });
   });
 
-  it("sets the first criterion as active on mount", () => {
+  it("does not set an active criterion if marks is empty", () => {
+    const {container} = render(<MarksPanel {...basicProps} />);
+
+    // No criterion should be marked active
+    const active = container.querySelector(".active-criterion");
+    expect(active).toBeNull();
+  });
+
+  it("sets the first criterion as active on mount if marks exists", () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,

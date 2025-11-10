@@ -13,7 +13,8 @@ export class MarksPanel extends React.Component {
     super(props);
 
     // Set first criterion active by default
-    const first = !props.released_to_students ? props.marks[0] : null;
+    const hasMarks = Array.isArray(props.marks) && props.marks.length > 0;
+    const first = !props.released_to_students && hasMarks ? props.marks[0] : null;
 
     this.state = {
       expanded: new Set(),
