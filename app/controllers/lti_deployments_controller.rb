@@ -85,6 +85,7 @@ class LtiDeploymentsController < ApplicationController
                                      layout: false
         return
       end
+
       lti_data = { host: construct_redirect_with_port(request.referer).to_s,
                    client_id: lti_launch_data[:client_id],
                    deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
@@ -160,8 +161,6 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def course_not_set_up
-    @title = I18n.t('lti.course_not_found')
-    @message = I18n.t('lti.course_not_set_up')
     render 'course_not_set_up', status: :not_found
   end
 
