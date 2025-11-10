@@ -9,7 +9,8 @@
 <tr class='period'>
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
       <td>
-        <%= f.number_field :deduction, min: 0, step: :any, required: true %> %
+        <%= f.number_field :deduction, min: 0, step: :any, required: true %>
+        <span class="deduction-unit">%</span>
       </td>
       <td>
         <%= f.number_field :interval, min: 0.001, step: :any, required: true %>

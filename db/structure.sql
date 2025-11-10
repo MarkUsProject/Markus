@@ -1957,7 +1957,8 @@ CREATE TABLE public.submission_rules (
     type character varying DEFAULT 'NoLateSubmissionRule'::character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    assessment_id bigint NOT NULL
+    assessment_id bigint NOT NULL,
+    penalty_type character varying DEFAULT 'percentage'::character varying
 );
 
 
@@ -4408,6 +4409,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251023030630'),
 ('20251010150001'),
 ('20251010150000'),
 ('20240313191809'),
