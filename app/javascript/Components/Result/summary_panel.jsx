@@ -159,6 +159,9 @@ export class SummaryPanel extends React.Component {
           return <input type={"number"} step="any" defaultValue={0} />;
         } else if (row.original.unit === "points") {
           return row.value;
+        } else if (row.original.unit === "percentage_of_mark") {
+          let mark_value = ((row.value * this.props.subtotal) / 100).toFixed(2);
+          return `${mark_value} (${row.value}%)`;
         } else {
           // Percentage
           let mark_value = ((row.value * this.props.assignment_max_mark) / 100).toFixed(2);
