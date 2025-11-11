@@ -39,7 +39,7 @@ en:
     scanned_exam:
       under_review: This exam is still under review.
     section_hidden:
-      default: Default
+      default: Assignment visibility
       hidden: Hidden
       hidden_option: If the section-specific settings option is checked, the value for individual sections will override this setting.
       scheduled: Visible during scheduled time
