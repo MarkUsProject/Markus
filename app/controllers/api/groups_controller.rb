@@ -430,7 +430,7 @@ module Api
             submission: submission
           )
 
-          test_run.update_results!(params[:test_results].as_json)
+          test_run.update_results!(JSON.parse(params[:test_results].to_json))
           render json: { status: 'success', test_run_id: test_run.id }, status: :created
         end
       rescue ActiveRecord::RecordInvalid => e
