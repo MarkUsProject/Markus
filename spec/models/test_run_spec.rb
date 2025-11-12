@@ -173,10 +173,10 @@ describe TestRun do
         }] }.deep_stringify_keys
     end
 
-    context 'extra marks (bonus_comments)' do
+    context 'extra marks' do
       let(:base_results) { results.deep_dup } # keep original intact
 
-      shared_context 'bonus setup' do
+      shared_context 'extra marks setup' do
         before do
           submission.reload
           submission.current_result.update!(released_to_students: false)
@@ -184,8 +184,8 @@ describe TestRun do
         end
       end
 
-      context 'when the test run has a submission and a valid POINTS bonus' do
-        include_context 'bonus setup'
+      context 'when the test run has a submission and a valid POINTS extra marks' do
+        include_context 'extra marks setup'
 
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) do
@@ -193,15 +193,13 @@ describe TestRun do
         end
 
         before do
-          base_results['test_groups'].first['tests'].first['extra_properties'] = {
-            'bonus_comments' => [
-              {
-                'mark' => 3,
-                'unit' => 'points',
-                'description' => 'this is a test comment'
-              }
-            ]
-          }
+          base_results['test_groups'].first['extra_marks'] = [
+            {
+              'mark' => 3,
+              'unit' => 'points',
+              'description' => 'this is a test comment'
+            }
+          ]
         end
 
         it 'creates an ExtraMark on the submission result' do
@@ -216,14 +214,14 @@ describe TestRun do
         it 'adds the points to the test_group_result.marks_earned' do
           test_run.update_results!(base_results)
           tgr = TestGroupResult.find_by(test_group_id: test_group.id, test_run_id: test_run.id)
-          # baseline earned = 1 (from first test), +3 bonus = 4 total
+          # baseline earned = 1 (from first test), +3 extra marks = 4 total
           expect(tgr.marks_earned).to eq 4
           expect(tgr.marks_total).to eq 2 # unchanged
         end
       end
 
       context 'when the test run has a submission and a non-POINTS unit (percentage)' do
-        include_context 'bonus setup'
+        include_context 'extra marks setup'
 
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) do
@@ -231,11 +229,9 @@ describe TestRun do
         end
 
         before do
-          base_results['test_groups'].first['tests'].first['extra_properties'] = {
-            'bonus_comments' => [
-              { 'unit' => ExtraMark::PERCENTAGE, 'mark' => 10, 'description' => '10% bump' }
-            ]
-          }
+          base_results['test_groups'].first['extra_marks'] = [
+            { 'unit' => ExtraMark::PERCENTAGE, 'mark' => 10, 'description' => '10% bump' }
+          ]
         end
 
         it 'creates an ExtraMark but does not change marks_earned' do
@@ -254,11 +250,9 @@ describe TestRun do
         end
 
         before do
-          base_results['test_groups'].first['tests'].first['extra_properties'] = {
-            'bonus_comments' => [
-              { 'unit' => 'bananas', 'mark' => 99, 'description' => 'nope' }
-            ]
-          }
+          base_results['test_groups'].first['extra_marks'] = [
+            { 'unit' => 'bananas', 'mark' => 99, 'description' => 'nope' }
+          ]
         end
 
         it 'ignores the comment and does not create an ExtraMark nor change marks' do
@@ -269,16 +263,14 @@ describe TestRun do
         end
       end
 
-      context 'when bonus_comments is not an array' do
+      context 'when extra_marks is not an array' do
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) do
           create(:test_run, status: :in_progress, submission: submission, grouping: grouping, autotest_test_id: 1)
         end
 
         before do
-          base_results['test_groups'].first['tests'].first['extra_properties'] = {
-            'bonus_comments' => 'not-an-array'
-          }
+          base_results['test_groups'].first['extra_marks'] = 'not-an-array'
         end
 
         it 'does nothing' do
@@ -289,7 +281,7 @@ describe TestRun do
         end
       end
 
-      context 'when bonus_comments is missing' do
+      context 'when extra_marks is missing' do
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) do
           create(:test_run, status: :in_progress, submission: submission, grouping: grouping, autotest_test_id: 1)
@@ -307,17 +299,15 @@ describe TestRun do
         let(:test_run) { create(:test_run, status: :in_progress, grouping: grouping, autotest_test_id: 1) }
 
         before do
-          base_results['test_groups'].first['tests'].first['extra_properties'] = {
-            'bonus_comments' => [
-              { 'unit' => ExtraMark::POINTS, 'mark' => 5, 'description' => 'should be ignored' }
-            ]
-          }
+          base_results['test_groups'].first['extra_marks'] = [
+            { 'unit' => ExtraMark::POINTS, 'mark' => 5, 'description' => 'should be ignored' }
+          ]
         end
 
         it 'does not create ExtraMark and does not change marks_earned' do
           expect { test_run.update_results!(base_results) }.not_to(change { ExtraMark.count })
           tgr = TestGroupResult.find_by(test_group_id: test_group.id, test_run_id: test_run.id)
-          # no submission => add_extra_marks_to_test! returns 0, so only earned = 1 baseline
+          # no submission => add_extra_marks returns 0, so only earned = 1 baseline
           expect(tgr.marks_earned).to eq 1
           expect(tgr.marks_total).to eq 2
         end
