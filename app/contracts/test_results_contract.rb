@@ -22,7 +22,7 @@ class TestResultsContract < Dry::Validation::Contract
         required(:name).filled(:string)
         optional(:criterion).maybe(:string)
         required(:test_group_id).filled(:integer)
-        required(:display_output).value(:integer)
+        required(:display_output).value(:string)
       end
 
       optional(:annotations).array(:hash) do
