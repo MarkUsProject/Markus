@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import safe_marked from "../../common/safe_marked";
 
 export default function FlexibleCriterionInput({
+  active,
   annotations,
   bonus,
   description,
@@ -19,6 +20,7 @@ export default function FlexibleCriterionInput({
   override,
   released_to_students,
   revertToAutomaticDeductions,
+  setActive,
   toggleExpanded,
   unassigned,
   updateMark,
@@ -26,6 +28,7 @@ export default function FlexibleCriterionInput({
   const [rawText, setRawText] = useState(mark === null ? "" : String(mark));
   const [invalid, setInvalid] = useState(false);
   const typing_timer = useRef(undefined);
+  const inputRef = useRef(null);
 
   const listDeductions = () => {
     let label = I18n.t("annotations.list_deductions");
@@ -140,6 +143,24 @@ export default function FlexibleCriterionInput({
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
 
+  // Auto-expand if not already when active
+  useEffect(() => {
+    if (active && !expanded) {
+      toggleExpanded();
+    }
+  }, [active, expanded]);
+
+  useEffect(() => {
+    if (active && inputRef.current && expanded) {
+      // Focus at end of input
+      inputRef.current.focus();
+      inputRef.current.setSelectionRange(
+        inputRef.current.value.length,
+        inputRef.current.value.length
+      );
+    }
+  }, [active, expanded]);
+
   let markElement;
   if (released_to_students) {
     // Student view
@@ -147,6 +168,7 @@ export default function FlexibleCriterionInput({
   } else {
     markElement = (
       <input
+        ref={inputRef}
         className={invalid ? "invalid" : ""}
         type="text"
         size={4}
@@ -160,7 +182,8 @@ export default function FlexibleCriterionInput({
   return (
     <li
       id={`flexible_criterion_${id}`}
-      className={`flexible_criterion ${expandedClass} ${unassignedClass}`}
+      className={`flexible_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
+      onClick={setActive}
     >
       <div data-testid={id}>
         <div className="criterion-name" onClick={toggleExpanded}>

@@ -980,6 +980,7 @@ class AssignmentsController < ApplicationController
         :_destroy,
         :id,
         :type,
+        :penalty_type,
         { periods_attributes: [
           :id,
           :deduction,
@@ -1008,6 +1009,7 @@ class AssignmentsController < ApplicationController
             :_destroy,
             :id,
             :type,
+            :penalty_type,
             { periods_attributes: [
               :id,
               :deduction,

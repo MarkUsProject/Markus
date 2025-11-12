@@ -11,6 +11,7 @@
 - Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
 - Switched to consistent Font Awesome chevrons for expander icons (#7713)
 - Install Ruby-LSP to allow development inside different IDEs such as VSCode (#7718)
+- Ensure only instructors and admins can link course, as LMS launch MarkUs button made available for all users (#7714)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
@@ -29,6 +30,7 @@
 - Refactored "Reuse Groups" functionality to use React modal and relocated button to action box row (#7688)
 - Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
 - Refactored MarksPanel child components and converted the components into hook-based function components
+- Refactored jQuery active marks panel component tracking logic into React
 
 ## [v2.8.2]
 
