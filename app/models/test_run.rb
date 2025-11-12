@@ -26,39 +26,6 @@ class TestRun < ApplicationRecord
     self.update(status: :failed, problems: problems) if self.in_progress?
   end
 
-  def add_extra_marks_to_test!(test)
-    submission_result = self.grouping&.current_submission_used&.get_latest_result
-    bonus_comments = test.dig('extra_properties', 'bonus_comments')
-    return 0 if submission_result.nil?
-    return 0 if bonus_comments.nil?
-
-    unless bonus_comments.is_a?(Array)
-      return 0
-    end
-
-    extra_marks = 0
-    bonus_comments.each do |comment|
-      unit = comment['unit']
-      mark = comment['mark']
-
-      unless ExtraMark.valid_unit?(unit)
-        next
-      end
-
-      ExtraMark.create!(
-        unit: unit,
-        extra_mark: mark,
-        result_id: submission_result.id,
-        description: comment['description']
-      )
-      if unit == ExtraMark::POINTS
-        extra_marks += mark
-      end
-    end
-
-    extra_marks
-  end
-
   def update_results!(results)
     if results['status'] == 'failed'
       return failure(results['error'])
@@ -81,8 +48,7 @@ class TestRun < ApplicationRecord
 
             position: i + 1
           )
-          extra_marks = add_extra_marks_to_test!(test)
-          marks_earned += test['marks_earned'] + extra_marks
+          marks_earned += test['marks_earned']
           marks_total += test['marks_total']
         rescue StandardError => e
           extra_info = test_group_result.extra_info
@@ -94,16 +60,21 @@ class TestRun < ApplicationRecord
           end
         end
       end
-      test_group_result.update(marks_earned: marks_earned,
-                               marks_total: marks_total)
       create_annotations(result['annotations'])
       result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
+
       if result['tags'].present?
         add_tags(result['tags'])
       end
       if result['overall_comment'].present?
         new_overall_comments.append(result['overall_comment'])
       end
+      if result["extra_marks"].present?
+        extra_marks = add_extra_marks(result['extra_marks'])
+        marks_earned += extra_marks
+      end
+      test_group_result.update(marks_earned: marks_earned,
+                               marks_total: marks_total)
     end
     self.submission&.set_autotest_marks
     add_overall_comment(new_overall_comments)
@@ -142,6 +113,33 @@ class TestRun < ApplicationRecord
       time: result['time'] || 0,
       error_type: error_type(result)
     )
+  end
+
+  def add_extra_marks(extra_marks)
+    extra_marks_total = 0
+    submission_result = self.grouping&.current_submission_used&.get_latest_result
+    return extra_marks_total if submission_result.nil?
+
+    extra_marks.each do |extra_mark|
+      unit = extra_mark['unit']
+      mark = extra_mark['mark']
+
+      unless ExtraMark.valid_unit?(unit)
+        next
+      end
+
+      ExtraMark.create!(
+        unit: unit,
+        extra_mark: mark,
+        result_id: submission_result.id,
+        description: extra_mark['description']
+      )
+      if unit == ExtraMark::POINTS
+        extra_marks_total += mark
+      end
+    end
+
+    extra_marks_total
   end
 
   def add_tags(tag_data)
