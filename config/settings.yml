@@ -121,3 +121,5 @@ rmd_convert_enabled: false
 
 resque:
   permitted_hosts: [".localhost", ".internal"]
+upload:
+  max_body_size: 10485760

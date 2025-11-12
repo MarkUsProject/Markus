@@ -405,8 +405,8 @@ module Api
       begin
         raw_body = request.body.read
 
-        # Enforce size limit (10MB)
-        if raw_body.bytesize > 10.megabytes
+        # Enforce size limit
+        if raw_body.bytesize > Settings.upload.max_body_size.to_i
           return render json: { errors: 'Request body too large' }, status: :content_too_large
         end
 
