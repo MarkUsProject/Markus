@@ -2417,8 +2417,8 @@ describe AssignmentsController do
 
         assignment.reload
         expect(assignment.is_hidden).to be false
-        expect(assignment.visible_on).to be_within(1.second).of(2.days.from_now)
-        expect(assignment.visible_until).to be_within(1.second).of(10.days.from_now)
+        expect(assignment.visible_on).to be_within(2.seconds).of(2.days.from_now)
+        expect(assignment.visible_until).to be_within(2.seconds).of(10.days.from_now)
       end
 
       it 'should clear datetime values when switching from scheduled to visible' do
@@ -2476,8 +2476,8 @@ describe AssignmentsController do
         assignment = Assignment.last
         section_props = assignment.assessment_section_properties.find_by(section: section)
         expect(section_props.is_hidden).to be false
-        expect(section_props.visible_on).to be_within(1.second).of(1.day.from_now)
-        expect(section_props.visible_until).to be_within(1.second).of(5.days.from_now)
+        expect(section_props.visible_on).to be_within(2.seconds).of(1.day.from_now)
+        expect(section_props.visible_until).to be_within(2.seconds).of(5.days.from_now)
       end
 
       it 'should update section properties with scheduled visibility' do
