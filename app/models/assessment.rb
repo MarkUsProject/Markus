@@ -1,6 +1,9 @@
 # Assessment is an abstract model used for single-table-inheritance with Assignment and GradeEntryForm
 # It can represent any form of graded work (assignment, test, lab, exam...etc.)
 class Assessment < ApplicationRecord
+  # Constant for scheduled visibility option
+  SCHEDULED_VISIBILITY = 'scheduled'.freeze
+
   scope :assignments, -> { where(type: 'Assignment') }
   scope :grade_entry_forms, -> { where(type: 'GradeEntryForm') }
 

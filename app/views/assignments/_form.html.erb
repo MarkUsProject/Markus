@@ -151,8 +151,8 @@
           <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
           <%= f.radio_button :is_hidden, false, id: 'assignment_is_hidden_false', checked: !@assignment.is_hidden && !has_datetime %>
           <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
-          <%= f.radio_button :is_hidden, 'scheduled', id: 'assignment_is_hidden_scheduled', checked: is_scheduled %>
-          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.scheduled'), value: 'scheduled' %>
+          <%= f.radio_button :is_hidden, Assessment::SCHEDULED_VISIBILITY, id: 'assignment_is_hidden_scheduled', checked: is_scheduled %>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.scheduled'), value: Assessment::SCHEDULED_VISIBILITY %>
           <br>
           (<%= I18n.t('assignments.section_hidden.hidden_option') %>)
         </span>
@@ -251,8 +251,8 @@
                         <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
                       </div>
                       <div class="section-visibility-option">
-                        <%= due_date_f.radio_button :is_hidden, 'scheduled', class: 'section-visibility-radio', checked: section_is_scheduled %>
-                        <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.scheduled'), value: 'scheduled' %>
+                        <%= due_date_f.radio_button :is_hidden, Assessment::SCHEDULED_VISIBILITY, class: 'section-visibility-radio', checked: section_is_scheduled %>
+                        <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.scheduled'), value: Assessment::SCHEDULED_VISIBILITY %>
                       </div>
                     </div>
                   </td>
@@ -262,7 +262,7 @@
                                               value: obj.visible_on.nil? ? '' : l(obj.visible_on, format: :flatpickr),
                                               placeholder: I18n.t('assignments.section_hidden.visible_from_placeholder'),
                                               size: 25,
-                                              disabled: obj.is_hidden != 'scheduled' %>
+                                              disabled: obj.is_hidden != Assessment::SCHEDULED_VISIBILITY %>
                   </td>
                   <td>
                     <%= due_date_f.text_field :visible_until,
@@ -270,7 +270,7 @@
                                               value: obj.visible_until.nil? ? '' : l(obj.visible_until, format: :flatpickr),
                                               placeholder: I18n.t('assignments.section_hidden.visible_until_placeholder'),
                                               size: 25,
-                                              disabled: obj.is_hidden != 'scheduled' %>
+                                              disabled: obj.is_hidden != Assessment::SCHEDULED_VISIBILITY %>
                   </td>
                 </tr>
               <% end %>

@@ -2363,7 +2363,7 @@ describe AssignmentsController do
         visible_until_time = 7.days.from_now
 
         params = example_form_params.deep_dup
-        params[:assignment][:is_hidden] = 'scheduled'
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
         params[:assignment][:visible_on] = visible_on_time.to_s
         params[:assignment][:visible_until] = visible_until_time.to_s
 
@@ -2377,7 +2377,7 @@ describe AssignmentsController do
 
       it 'should convert is_hidden="scheduled" to is_hidden=false' do
         params = example_form_params.deep_dup
-        params[:assignment][:is_hidden] = 'scheduled'
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
         params[:assignment][:visible_on] = 1.day.from_now.to_s
         params[:assignment][:visible_until] = 7.days.from_now.to_s
 
@@ -2395,7 +2395,7 @@ describe AssignmentsController do
           id: assignment.id,
           is_group_assignment: true,
           assignment: {
-            is_hidden: 'scheduled',
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
             visible_on: 2.days.from_now.to_s,
             visible_until: 10.days.from_now.to_s,
             short_identifier: assignment.short_identifier,
@@ -2465,7 +2465,7 @@ describe AssignmentsController do
         params[:assignment][:assessment_section_properties_attributes] = {
           '0' => {
             section_id: section.id,
-            is_hidden: 'scheduled',
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
             visible_on: 1.day.from_now.to_s,
             visible_until: 5.days.from_now.to_s
           }
@@ -2501,7 +2501,7 @@ describe AssignmentsController do
               '0' => {
                 id: section_props.id,
                 section_id: section.id,
-                is_hidden: 'scheduled',
+                is_hidden: Assessment::SCHEDULED_VISIBILITY,
                 visible_on: 3.days.from_now.to_s,
                 visible_until: 8.days.from_now.to_s
               }
@@ -2569,7 +2569,7 @@ describe AssignmentsController do
     describe 'edge cases' do
       it 'handles creating assignment with only visible_on' do
         params = example_form_params.deep_dup
-        params[:assignment][:is_hidden] = 'scheduled'
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
         params[:assignment][:visible_on] = 1.day.from_now.to_s
         params[:assignment][:visible_until] = nil
 
@@ -2583,7 +2583,7 @@ describe AssignmentsController do
 
       it 'handles creating assignment with only visible_until' do
         params = example_form_params.deep_dup
-        params[:assignment][:is_hidden] = 'scheduled'
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
         params[:assignment][:visible_on] = nil
         params[:assignment][:visible_until] = 7.days.from_now.to_s
 

@@ -836,7 +836,7 @@ class AssignmentsController < ApplicationController
     # Handle "scheduled" visibility option
     # When is_hidden="scheduled", convert to is_hidden=false with datetime values
     params_copy = assignment_params.deep_dup
-    if params_copy[:is_hidden] == 'scheduled'
+    if params_copy[:is_hidden] == Assessment::SCHEDULED_VISIBILITY
       params_copy[:is_hidden] = false
     elsif params_copy[:is_hidden].present?
       # Clear datetime fields when switching to "Hidden" or "Visible"
@@ -846,7 +846,7 @@ class AssignmentsController < ApplicationController
 
     # Handle section-specific "scheduled" visibility
     params_copy[:assessment_section_properties_attributes]&.each_value do |section_props|
-      if section_props[:is_hidden] == 'scheduled'
+      if section_props[:is_hidden] == Assessment::SCHEDULED_VISIBILITY
         section_props[:is_hidden] = false
       elsif section_props[:is_hidden].present?
         # Clear datetime fields when switching to "Hidden", "Visible", or "Default"
