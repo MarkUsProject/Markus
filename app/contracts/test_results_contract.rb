@@ -1,5 +1,5 @@
 class TestResultsContract < Dry::Validation::Contract
-  json do
+  params do
     required(:error).maybe(:string)
     required(:status).filled(:string)
 
@@ -16,7 +16,6 @@ class TestResultsContract < Dry::Validation::Contract
         required(:status).filled(:string)
         required(:marks_total).filled(:integer)
         required(:marks_earned).filled(:integer)
-        optional(:extra_properties).value(:hash)
       end
 
       required(:extra_info).maybe(:hash) do
@@ -57,6 +56,11 @@ class TestResultsContract < Dry::Validation::Contract
       end
 
       optional(:overall_comment).maybe(:string)
+      optional(:extra_marks).array(:hash) do
+        required(:unit).filled(:string)
+        required(:mark).filled(:integer)
+        required(:description).filled(:string)
+      end
     end
   end
 end

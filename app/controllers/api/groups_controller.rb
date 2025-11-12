@@ -401,26 +401,10 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
     end
 
-    def add_test_results
-      begin
-        raw_body = request.body.read
-
-        # Enforce size limit
-        if raw_body.bytesize > Settings.upload.max_body_size.to_i
-          return render json: { errors: 'Request body too large' }, status: :content_too_large
-        end
-
-        payload = JSON.parse(raw_body)
-      rescue JSON::ParserError => e
-        return render json: { errors: "Invalid JSON: #{e.message}" }, status: :bad_request
-      end
-
-      unless payload.is_a?(Hash) && payload.key?('test_results')
-        return render json: { errors: 'Missing required key: test_results' }, status: :bad_request
-      end
-
+    def add_test_run
+      m_logger = MarkusLogger.instance
       # Validate test results against contract schema
-      validation = TestResultsContract.new.call(payload['test_results'])
+      validation = TestResultsContract.new.call(params[:test_results].as_json)
 
       if validation.failure?
         return render json: { errors: validation.errors.to_hash }, status: :unprocessable_content
@@ -446,13 +430,13 @@ module Api
             submission: submission
           )
 
-          test_run.update_results!(payload['test_results'])
+          test_run.update_results!(params[:test_results].as_json)
           render json: { status: 'success', test_run_id: test_run.id }, status: :created
         end
       rescue ActiveRecord::RecordInvalid => e
         render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
       rescue StandardError => e
-        Rails.logger.error("Test results processing failed: #{e.message}\n#{e.backtrace.join("\n")}")
+        m_logger.log("Test results processing failed: #{e.message}\n#{e.backtrace.join("\n")}")
         render json: { errors: 'Failed to process test results' }, status: :internal_server_error
       end
     end
