@@ -27,18 +27,13 @@ module LtiHelper
     user_data = member_info.filter_map do |user|
       unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
         role_types.none? { |role| user['roles'].include?(role) }
-
-        # Safely access the custom claims hash
-        custom_claims = user.dig('message', 0, 'https://purl.imsglobal.org/spec/lti/claim/custom')
+        custom_claims = user.dig('message', 0, LtiDeployment::LTI_CLAIMS[:custom])
         student_number = custom_claims.present? ? custom_claims['student_number'] : nil
-
-        # Check if the student_number is the Canvas placeholder or nil/blank
         id_number_value = if student_number.blank? || student_number == '$Canvas.user.sisIntegrationId'
-                            nil # Set to nil (which converts to NULL in the DB)
+                            nil
                           else
-                            student_number # Use the actual student number
+                            student_number
                           end
-
         { user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
           first_name: user['given_name'],
           last_name: user['family_name'],

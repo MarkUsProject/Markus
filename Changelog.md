@@ -12,6 +12,7 @@
 - Switched to consistent Font Awesome chevrons for expander icons (#7713)
 - Install Ruby-LSP to allow development inside different IDEs such as VSCode (#7718)
 - Ensure only instructors and admins can link course, as LMS launch MarkUs button made available for all users (#7714)
+- Quercus(Canvas) roster sync with student number included (#7731)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
