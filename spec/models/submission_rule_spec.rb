@@ -1,26 +1,24 @@
-shared_examples 'due_date_calculations' do |assignment_past, section_past, section_enabled: true|
+shared_examples 'due_date_calculations' do |assignment_past, section_past_param, section_enabled: true|
   assignment_due_date_str = 'assignment due date'
-  section_due_date_str = 'section_due_date'
+  section_due_date_str = section_enabled ? 'section_due_date' : assignment_due_date_str
+  section_past = section_enabled ? section_past_param : assignment_past
 
   let(:assignment_due_date) { assignment.due_date }
   let(:section_due_date_due_date) { section_enabled ? section_due_date.due_date : assignment_due_date }
-
-  unless section_enabled
-    section_past = assignment_past
-    section_due_date_str = assignment_due_date_str
-  end
 
   before { assignment.reload }
 
   describe '#can_collect_all_now?' do
     it "should return #{assignment_past && section_past}" do
-      expect(assignment.submission_rule.can_collect_all_now?).to eq(assignment_past && section_past)
+      section_past_value = section_enabled ? section_past_param : assignment_past
+      expect(assignment.submission_rule.can_collect_all_now?).to eq(assignment_past && section_past_value)
     end
   end
 
   describe '#can_collect_grouping_now?(grouping) with section' do
     it "should return #{section_past}" do
-      expect(assignment.submission_rule.can_collect_grouping_now?(grouping_with_section)).to eq(section_past)
+      section_past_value = section_enabled ? section_past_param : assignment_past
+      expect(assignment.submission_rule.can_collect_grouping_now?(grouping_with_section)).to eq(section_past_value)
     end
   end
 
