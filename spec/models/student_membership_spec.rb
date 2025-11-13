@@ -146,8 +146,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be true
     end
 
-    it_behaves_like 'vcs_submit=true', :inviter_student_membership,
-                    { create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true }
+    it_behaves_like 'vcs_submit=true', :inviter_student_membership, -> { update_hash }
     it_behaves_like 'vcs_submit=false', :inviter_student_membership
   end
 
@@ -161,8 +160,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be false
     end
 
-    it_behaves_like 'vcs_submit=true', :accepted_student_membership,
-                    { create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true }
+    it_behaves_like 'vcs_submit=true', :accepted_student_membership, -> { update_hash }
     it_behaves_like 'vcs_submit=false', :accepted_student_membership
   end
 
@@ -176,8 +174,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be false
     end
 
-    it_behaves_like 'vcs_submit=true', :student_membership,
-                    { create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false }
+    it_behaves_like 'vcs_submit=true', :student_membership, -> { update_hash }
     it_behaves_like 'vcs_submit=false', :student_membership
   end
 
@@ -191,8 +188,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be false
     end
 
-    it_behaves_like 'vcs_submit=true', :rejected_student_membership,
-                    { create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false }
+    it_behaves_like 'vcs_submit=true', :rejected_student_membership, -> { update_hash }
     it_behaves_like 'vcs_submit=false', :rejected_student_membership
   end
 end

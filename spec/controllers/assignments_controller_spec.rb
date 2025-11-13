@@ -2629,5 +2629,139 @@ describe AssignmentsController do
         expect(assignment.visible_until).to be_nil
       end
     end
+
+    describe 'section-specific edge cases' do
+      let(:section) { create(:section, course: course) }
+
+      it 'handles creating section with only visible_on' do
+        params = example_form_params.deep_dup
+        params[:assignment][:assignment_properties_attributes][:section_due_dates_type] = 1
+        params[:assignment][:assessment_section_properties_attributes] = {
+          '0' => {
+            section_id: section.id,
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
+            visible_on: 1.day.from_now.to_s,
+            visible_until: nil
+          }
+        }
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        section_props = assignment.assessment_section_properties.find_by(section: section)
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_present
+        expect(section_props.visible_until).to be_nil
+      end
+
+      it 'handles creating section with only visible_until' do
+        params = example_form_params.deep_dup
+        params[:assignment][:assignment_properties_attributes][:section_due_dates_type] = 1
+        params[:assignment][:assessment_section_properties_attributes] = {
+          '0' => {
+            section_id: section.id,
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
+            visible_on: nil,
+            visible_until: 5.days.from_now.to_s
+          }
+        }
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        section_props = assignment.assessment_section_properties.find_by(section: section)
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_nil
+        expect(section_props.visible_until).to be_present
+      end
+
+      it 'handles switching section from scheduled to hidden' do
+        section_props = create(:assessment_section_properties,
+                               assessment: assignment,
+                               section: section,
+                               is_hidden: false,
+                               visible_on: 1.day.from_now,
+                               visible_until: 7.days.from_now)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: false,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 1
+            },
+            assessment_section_properties_attributes: {
+              '0' => {
+                id: section_props.id,
+                section_id: section.id,
+                is_hidden: true
+              }
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        section_props.reload
+        expect(section_props.is_hidden).to be true
+        expect(section_props.visible_on).to be_nil
+        expect(section_props.visible_until).to be_nil
+      end
+
+      it 'handles switching section from scheduled to visible' do
+        section_props = create(:assessment_section_properties,
+                               assessment: assignment,
+                               section: section,
+                               is_hidden: false,
+                               visible_on: 1.day.from_now,
+                               visible_until: 7.days.from_now)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: false,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 1
+            },
+            assessment_section_properties_attributes: {
+              '0' => {
+                id: section_props.id,
+                section_id: section.id,
+                is_hidden: false
+              }
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        section_props.reload
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_nil
+        expect(section_props.visible_until).to be_nil
+      end
+    end
   end
 end
