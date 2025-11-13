@@ -10,6 +10,15 @@ module LtiHelper
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
+    if lti_deployment.resource_link_id
+      query = begin
+        URI.decode_www_form(String(membership_uri.query))
+      rescue StandardError
+        []
+      end
+      query << ['rlid', lti_deployment.resource_link_id]
+      membership_uri.query = URI.encode_www_form(query)
+    end
     member_info, follow = get_member_data(lti_deployment, membership_uri, auth_data)
     while follow != false
       additional_data, follow = get_member_data(lti_deployment, follow, auth_data)
@@ -18,11 +27,24 @@ module LtiHelper
     user_data = member_info.filter_map do |user|
       unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
         role_types.none? { |role| user['roles'].include?(role) }
+
+        # Safely access the custom claims hash
+        custom_claims = user.dig('message', 0, 'https://purl.imsglobal.org/spec/lti/claim/custom')
+        student_number = custom_claims.present? ? custom_claims['student_number'] : nil
+
+        # Check if the student_number is the Canvas placeholder or nil/blank
+        id_number_value = if student_number.blank? || student_number == '$Canvas.user.sisIntegrationId'
+                            nil # Set to nil (which converts to NULL in the DB)
+                          else
+                            student_number # Use the actual student number
+                          end
+
         { user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
           first_name: user['given_name'],
           last_name: user['family_name'],
           display_name: user['name'],
           email: user['email'],
+          id_number: id_number_value,
           lti_user_id: user['user_id'],
           roles: user['roles'] }
       end
