@@ -121,6 +121,9 @@ class ImageAnnotationManager extends AnnotationManager {
       };
 
       document.getElementById("image_container").onmousemove = this.render_holders.bind(this);
+
+      // Touch event handlers
+      this.image_preview.addEventListener("touchstart", this.start_select_box_touch.bind(this));
     }
   }
 
@@ -222,6 +225,69 @@ class ImageAnnotationManager extends AnnotationManager {
     this.sel_box.style.height = Math.abs(xy_coords[1] - this.sel_box.orig_y) + "px";
   }
 
+  /**
+   * Touch event handlers for creating annotations
+   */
+
+  // Start tracking the touch to create an annotation.
+  start_select_box_touch(e) {
+    // Prevent default to avoid scrolling while annotating
+    e.preventDefault();
+
+    this.hide_image_annotations();
+    this.hide_selection_box();
+    let touch = e.touches[0];
+    let xy_coords = get_absolute_cursor_pos_touch(touch);
+
+    this.sel_box.orig_x = xy_coords[0];
+    this.sel_box.orig_y = xy_coords[1];
+    this.sel_box.style.display = "block";
+    this.sel_box.style.left = xy_coords[0] + "px";
+    this.sel_box.style.top = xy_coords[1] + "px";
+    this.sel_box.ontouchmove = this.touch_move.bind(this);
+    this.sel_box.ontouchend = this.stop_select_box_touch.bind(this);
+
+    this.image_preview.ontouchmove = this.touch_move.bind(this);
+    this.image_preview.ontouchend = this.stop_select_box_touch.bind(this);
+
+    for (let annotation_id in this.annotations) {
+      let holder = document.getElementById("annotation_holder_" + annotation_id);
+      holder.ontouchmove = this.touch_move.bind(this);
+      holder.ontouchend = this.stop_select_box_touch.bind(this);
+      holder.ontouchstart = null;
+    }
+  }
+
+  // Stop tracking the touch and open up modal to create an image annotation.
+  stop_select_box_touch() {
+    this.image_preview.ontouchmove = null;
+    this.image_preview.ontouchend = null;
+
+    this.sel_box.ontouchmove = null;
+    this.sel_box.ontouchend = null;
+
+    for (let annotation_id in this.annotations) {
+      let holder = document.getElementById("annotation_holder_" + annotation_id);
+      holder.ontouchmove = null;
+      holder.ontouchstart = this.start_select_box_touch.bind(this);
+      holder.ontouchend = null;
+    }
+  }
+
+  // Draw red selection outline for touch
+  touch_move(e) {
+    // Prevent default to avoid scrolling while annotating
+    e.preventDefault();
+
+    let touch = e.touches[0];
+    let xy_coords = get_absolute_cursor_pos_touch(touch);
+
+    this.sel_box.style.left = Math.min(xy_coords[0], this.sel_box.orig_x) + "px";
+    this.sel_box.style.width = Math.abs(xy_coords[0] - this.sel_box.orig_x) + "px";
+    this.sel_box.style.top = Math.min(xy_coords[1], this.sel_box.orig_y) + "px";
+    this.sel_box.style.height = Math.abs(xy_coords[1] - this.sel_box.orig_y) + "px";
+  }
+
   getSelection(warn_no_selection = true) {
     let box = this.get_selection_box_coordinates();
     if (!box) {
@@ -316,6 +382,30 @@ function get_absolute_cursor_pos(e) {
   } else if (e.clientX || e.clientY) {
     posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
     posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+  }
+
+  let image_container = document.getElementById("image_container");
+  let codeviewer = document.getElementById("codeviewer");
+  posx -= image_container.offsetLeft - codeviewer.scrollLeft;
+  posy -= image_container.offsetTop - codeviewer.scrollTop;
+
+  return [posx, posy];
+}
+
+// Get the coordinates of a touch event relative to image container
+// and return them in an array of the form [x, y].
+function get_absolute_cursor_pos_touch(touch) {
+  let posx = 0;
+  let posy = 0;
+
+  if (!touch) return [0, 0];
+
+  if (touch.pageX || touch.pageY) {
+    posx = touch.pageX;
+    posy = touch.pageY;
+  } else if (touch.clientX || touch.clientY) {
+    posx = touch.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    posy = touch.clientY + document.body.scrollTop + document.documentElement.scrollTop;
   }
 
   let image_container = document.getElementById("image_container");

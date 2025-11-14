@@ -324,6 +324,58 @@
 
         selectionBoxActive = false;
       });
+
+      // Touch event handlers
+      // Touch start, activate the selection box
+      $pages.on("touchstart", ev => {
+        // Prevent default to avoid scrolling while annotating
+        ev.preventDefault();
+
+        let touch = ev.originalEvent.touches[0];
+        let point = getRelativePointForTouchEvent(touch, ev.delegateTarget);
+
+        this.setSelectionBox($(ev.delegateTarget), {
+          x: point.x,
+          y: point.y,
+          width: 0,
+          height: 0,
+          visible: true,
+        });
+
+        start = point;
+        selectionBoxActive = true;
+      });
+
+      // Touch move, change the selection box
+      $pages.on("touchmove", ev => {
+        if (!selectionBoxActive) {
+          return;
+        }
+
+        // Prevent default to avoid scrolling while annotating
+        ev.preventDefault();
+
+        let touch = ev.originalEvent.touches[0];
+        let point = getRelativePointForTouchEvent(touch, ev.delegateTarget);
+        this.setSelectionBox($(ev.delegateTarget), {
+          x: Math.min(start.x, point.x),
+          y: Math.min(start.y, point.y),
+          width: Math.abs(start.x - point.x),
+          height: Math.abs(start.y - point.y),
+        });
+      });
+
+      // Touch end, finish the selection box
+      $pages.on("touchend", () => {
+        let size = this.selectionBoxSize();
+
+        // If the box is REALLY small then hide it
+        if (size.width < HIDE_BOX_THRESHOLD && size.height < HIDE_BOX_THRESHOLD) {
+          this.hide_selection_box();
+        }
+
+        selectionBoxActive = false;
+      });
     }
   }
 
@@ -345,6 +397,30 @@
 
     let x = ev.pageX - offset.left - (mouseOffset || MOUSE_OFFSET);
     let y = ev.pageY - offset.top - (mouseOffset || MOUSE_OFFSET);
+
+    return {
+      x: 1 - (width - x) / width,
+      y: 1 - (height - y) / height,
+    };
+  }
+
+  /**
+   * Returns the selection point in percentage units for a touch event on
+   * a element.
+   *
+   * @param {Touch}                 touch       The touch object from the event.
+   * @param {String|DOMNode|jQuery} relativeTo  The element to calculate the offset for.
+   * @return {{x: number, y:number}}  The relative point in the element the touch occurred in.
+   */
+  function getRelativePointForTouchEvent(touch, relativeTo) {
+    let $elem = $(relativeTo);
+    let offset = $elem.offset();
+
+    let width = $elem.width();
+    let height = $elem.height();
+
+    let x = touch.pageX - offset.left - MOUSE_OFFSET;
+    let y = touch.pageY - offset.top - MOUSE_OFFSET;
 
     return {
       x: 1 - (width - x) / width,
