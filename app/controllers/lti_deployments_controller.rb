@@ -127,8 +127,10 @@ class LtiDeploymentsController < ApplicationController
     lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client,
                                                          external_deployment_id: lti_data[:deployment_id],
                                                          lms_course_id: lti_data[:lms_course_id])
-    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name])
-    lti_deployment.update!(resource_link_id: lti_data[:resource_link_id])
+    lti_deployment.update!(
+      lms_course_name: lti_data[:lms_course_name],
+      resource_link_id: lti_data[:resource_link_id]
+    )
     session[:lti_course_label] = lti_data[:lms_course_label]
     if lti_data.key?(:names_role_service)
       names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')

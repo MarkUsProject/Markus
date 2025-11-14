@@ -10,7 +10,7 @@ module LtiHelper
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
-    if lti_deployment.resource_link_id
+    if lti_deployment.resource_link_id.present?
       query = begin
         URI.decode_www_form(String(membership_uri.query))
       rescue StandardError
@@ -27,8 +27,7 @@ module LtiHelper
     user_data = member_info.filter_map do |user|
       unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
         role_types.none? { |role| user['roles'].include?(role) }
-        custom_claims = user.dig('message', 0, LtiDeployment::LTI_CLAIMS[:custom])
-        student_number = custom_claims.present? ? custom_claims['student_number'] : nil
+        student_number = user.dig('message', 0, LtiDeployment::LTI_CLAIMS[:custom], 'student_number')
         id_number_value = if student_number.blank? || student_number == '$Canvas.user.sisIntegrationId'
                             nil
                           else
