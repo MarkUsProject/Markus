@@ -401,6 +401,46 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
     end
 
+    def add_test_run
+      m_logger = MarkusLogger.instance
+      # Validate test results against contract schema
+      validation = TestResultsContract.new.call(params[:test_results].as_json)
+
+      if validation.failure?
+        return render json: { errors: validation.errors.to_hash }, status: :unprocessable_content
+      end
+
+      # Verify grouping exists and is authorized (grouping helper method handles this)
+      if grouping.nil?
+        return render json: { errors: 'Group not found for this assignment' }, status: :not_found
+      end
+
+      # Verify submission exists before attempting to create test run
+      submission = grouping.current_submission_used
+      if submission.nil?
+        return render json: { errors: 'No submission exists for this grouping' }, status: :unprocessable_content
+      end
+
+      begin
+        ActiveRecord::Base.transaction do
+          test_run = TestRun.create!(
+            status: :in_progress,
+            role: current_role,
+            grouping: grouping,
+            submission: submission
+          )
+
+          test_run.update_results!(JSON.parse(params[:test_results].to_json))
+          render json: { status: 'success', test_run_id: test_run.id }, status: :created
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
+      rescue StandardError => e
+        m_logger.log("Test results processing failed: #{e.message}\n#{e.backtrace.join("\n")}")
+        render json: { errors: 'Failed to process test results' }, status: :internal_server_error
+      end
+    end
+
     private
 
     def assignment
