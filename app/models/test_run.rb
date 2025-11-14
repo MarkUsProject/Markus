@@ -69,7 +69,7 @@ class TestRun < ApplicationRecord
       if result['overall_comment'].present?
         new_overall_comments.append(result['overall_comment'])
       end
-      if result["extra_marks"].present?
+      if result['extra_marks'].present?
         extra_marks = add_extra_marks(result['extra_marks'])
         marks_earned += extra_marks
       end
