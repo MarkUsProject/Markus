@@ -1230,7 +1230,8 @@ CREATE TABLE public.lti_deployments (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     lms_course_id integer NOT NULL,
-    lms_course_name character varying NOT NULL
+    lms_course_name character varying NOT NULL,
+    resource_link_id character varying
 );
 
 
@@ -4409,6 +4410,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251113015424'),
 ('20251023030630'),
 ('20251010150001'),
 ('20251010150000'),

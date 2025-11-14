@@ -93,6 +93,10 @@ class LtiDeploymentsController < ApplicationController
                    lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
                    lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
                    user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]] }
+      if lti_params.key?(LtiDeployment::LTI_CLAIMS[:rlid])
+        rlid = lti_params[LtiDeployment::LTI_CLAIMS[:rlid]]['id']
+        lti_data[:resource_link_id] = rlid
+      end
       if lti_params.key?(LtiDeployment::LTI_CLAIMS[:names_role])
         name_and_roles_endpoint = lti_params[LtiDeployment::LTI_CLAIMS[:names_role]]['context_memberships_url']
         lti_data[:names_role_service] = name_and_roles_endpoint
@@ -123,7 +127,10 @@ class LtiDeploymentsController < ApplicationController
     lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client,
                                                          external_deployment_id: lti_data[:deployment_id],
                                                          lms_course_id: lti_data[:lms_course_id])
-    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name])
+    lti_deployment.update!(
+      lms_course_name: lti_data[:lms_course_name],
+      resource_link_id: lti_data[:resource_link_id]
+    )
     session[:lti_course_label] = lti_data[:lms_course_label]
     if lti_data.key?(:names_role_service)
       names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')

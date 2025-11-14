@@ -11,7 +11,8 @@ describe LtiDeploymentsController do
   describe '#choose_course' do
     let!(:course) { create(:course) }
     let(:instructor) { create(:instructor, course: course) }
-    let!(:lti) { create(:lti_deployment) }
+    let(:test_rlid) { 'a-unique-resource-link-id-12345' }
+    let!(:lti) { create(:lti_deployment, resource_link_id: test_rlid) }
 
     describe 'get' do
       it 'is inaccessible unless logged in' do
@@ -48,6 +49,12 @@ describe LtiDeploymentsController do
           expect(lti.course).to eq(course)
         end
 
+        it 'retains the resource_link_id after updating the course' do
+          post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
+          lti.reload
+          expect(lti.resource_link_id).to eq(test_rlid)
+        end
+
         context 'when the user does not have permission to link' do
           let(:course2) { create(:course) }
           let(:instructor2) { create(:instructor, course: course2) }
@@ -63,7 +70,8 @@ describe LtiDeploymentsController do
   end
 
   describe '#create_course' do
-    let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108') }
+    let(:test_rlid) { 'another-unique-rlid-67890' }
+    let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108', resource_link_id: test_rlid) }
     let(:course_params) do
       { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
     end
@@ -84,6 +92,11 @@ describe LtiDeploymentsController do
 
       it 'creates an instructor role for the user' do
         expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+      end
+
+      it 'retains the resource_link_id after course creation' do
+        lti_deployment.reload
+        expect(lti_deployment.resource_link_id).to eq(test_rlid)
       end
     end
 
