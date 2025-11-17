@@ -8,6 +8,7 @@ en:
   download_json: Download in JSON Format
   download_the: Download %{item}
   download_yml: Download in YML Format
+  download_zip: Download in ZIP Format
   print_the: Print %{item}
   rename: Rename
   submit_the: Submit %{item}
