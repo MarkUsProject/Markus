@@ -211,11 +211,11 @@ describe TestRun do
           expect(em.description).to eq 'this is a test comment'
         end
 
-        it 'adds the points to the test_group_result.marks_earned' do
+        it 'does not add the points to the test_group_result.marks_earned' do
           test_run.update_results!(base_results)
           tgr = TestGroupResult.find_by(test_group_id: test_group.id, test_run_id: test_run.id)
-          # baseline earned = 1 (from first test), +3 extra marks = 4 total
-          expect(tgr.marks_earned).to eq 4
+          # baseline earned = 1 (from first test), extra marks are not added to marks_earned
+          expect(tgr.marks_earned).to eq 1
           expect(tgr.marks_total).to eq 2 # unchanged
         end
       end
@@ -244,6 +244,8 @@ describe TestRun do
       end
 
       context 'when the unit is invalid' do
+        include_context 'extra marks setup'
+
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) do
           create(:test_run, status: :in_progress, submission: submission, grouping: grouping, autotest_test_id: 1)
@@ -263,14 +265,16 @@ describe TestRun do
         end
       end
 
-      context 'when extra_marks is not an array' do
+      context 'when extra_marks is an empty array' do
+        include_context 'extra marks setup'
+
         let(:submission) { create(:version_used_submission, grouping: grouping) }
         let(:test_run) do
           create(:test_run, status: :in_progress, submission: submission, grouping: grouping, autotest_test_id: 1)
         end
 
         before do
-          base_results['test_groups'].first['extra_marks'] = 'not-an-array'
+          base_results['test_groups'].first['extra_marks'] = []
         end
 
         it 'does nothing' do
