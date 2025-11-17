@@ -39,7 +39,8 @@ class CanvasController < LtiDeploymentsController
       custom_fields: {
         user_id: '$Canvas.user.id',
         course_id: '$Canvas.course.id',
-        course_name: '$Canvas.course.name'
+        course_name: '$Canvas.course.name',
+        student_number: '$Canvas.user.sisIntegrationId'
       }
     }
 
