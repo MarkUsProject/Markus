@@ -28,56 +28,54 @@ class TestRun < ApplicationRecord
 
   def update_results!(results)
     if results['status'] == 'failed'
-      return failure(results['error'])
-    end
-    self.update!(status: :complete, problems: results['error'])
-    new_overall_comments = []
-
-    results['test_groups'].each do |result|
-      test_group_result = create_test_group_result(result)
-      marks_total, marks_earned = 0, 0
-      result['tests'].each_with_index do |test, i|
-        ApplicationRecord.transaction do
-          test_group_result.test_results.create!(
-            name: test['name'],
-            status: test['status'],
-            marks_earned: test['marks_earned'],
-            output: test['output'].gsub("\x00", '\\u0000'),
-            marks_total: test['marks_total'],
-            time: test['time'],
-
-            position: i + 1
-          )
-          marks_earned += test['marks_earned']
-          marks_total += test['marks_total']
-        rescue StandardError => e
-          extra_info = test_group_result.extra_info
-          test_name = test['name'].nil? ? '' : "#{test['name']} - "
-          if extra_info.nil?
-            test_group_result.update(extra_info: test_name + e.message)
-          else
-            test_group_result.update(extra_info: extra_info + "\n" + test_name + e.message)
+      failure(results['error'])
+    else
+      self.update!(status: :complete, problems: results['error'])
+      new_overall_comments = []
+      results['test_groups'].each do |result|
+        test_group_result = create_test_group_result(result)
+        marks_total, marks_earned = 0, 0
+        result['tests'].each_with_index do |test, i|
+          ApplicationRecord.transaction do
+            test_group_result.test_results.create!(
+              name: test['name'],
+              status: test['status'],
+              marks_earned: test['marks_earned'],
+              output: test['output'].gsub("\x00", '\\u0000'),
+              marks_total: test['marks_total'],
+              time: test['time'],
+              position: i + 1
+            )
+            marks_earned += test['marks_earned']
+            marks_total += test['marks_total']
+          rescue StandardError => e
+            extra_info = test_group_result.extra_info
+            test_name = test['name'].nil? ? '' : "#{test['name']} - "
+            if extra_info.nil?
+              test_group_result.update(extra_info: test_name + e.message)
+            else
+              test_group_result.update(extra_info: extra_info + "\n" + test_name + e.message)
+            end
           end
         end
-      end
-      create_annotations(result['annotations'])
-      result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
+        create_annotations(result['annotations'])
+        result['feedback']&.each { |feedback| create_feedback_file(feedback, test_group_result) }
 
-      if result['tags'].present?
-        add_tags(result['tags'])
+        if result['tags'].present?
+          add_tags(result['tags'])
+        end
+        if result['overall_comment'].present?
+          new_overall_comments.append(result['overall_comment'])
+        end
+        if result['extra_marks'].present?
+          add_extra_marks(result['extra_marks'])
+        end
+        test_group_result.update(marks_earned: marks_earned,
+                                 marks_total: marks_total)
       end
-      if result['overall_comment'].present?
-        new_overall_comments.append(result['overall_comment'])
-      end
-      if result["extra_marks"].present?
-        extra_marks = add_extra_marks(result['extra_marks'])
-        marks_earned += extra_marks
-      end
-      test_group_result.update(marks_earned: marks_earned,
-                               marks_total: marks_total)
+      self.submission&.set_autotest_marks
+      add_overall_comment(new_overall_comments)
     end
-    self.submission&.set_autotest_marks
-    add_overall_comment(new_overall_comments)
   end
 
   def self.all_test_categories
@@ -116,30 +114,20 @@ class TestRun < ApplicationRecord
   end
 
   def add_extra_marks(extra_marks)
-    extra_marks_total = 0
+    return if self.submission.nil?
     submission_result = self.grouping&.current_submission_used&.get_latest_result
-    return extra_marks_total if submission_result.nil?
 
     extra_marks.each do |extra_mark|
       unit = extra_mark['unit']
       mark = extra_mark['mark']
 
-      unless ExtraMark.valid_unit?(unit)
-        next
-      end
-
-      ExtraMark.create!(
+      ExtraMark.create(
         unit: unit,
         extra_mark: mark,
         result_id: submission_result.id,
         description: extra_mark['description']
       )
-      if unit == ExtraMark::POINTS
-        extra_marks_total += mark
-      end
     end
-
-    extra_marks_total
   end
 
   def add_tags(tag_data)

@@ -8,7 +8,6 @@ class ExtraMark < ApplicationRecord
   PERCENTAGE = 'percentage'.freeze
   POINTS = 'points'.freeze
   PERCENTAGE_OF_MARK = 'percentage_of_mark'.freeze
-  UNITS = [PERCENTAGE, PERCENTAGE_OF_MARK, POINTS].freeze
 
   scope :percentage, -> { where(unit: ExtraMark::PERCENTAGE) }
   scope :points, -> { where(unit: ExtraMark::POINTS) }
@@ -32,10 +31,6 @@ class ExtraMark < ApplicationRecord
   belongs_to :result
 
   has_one :course, through: :result
-
-  def self.valid_unit?(unit)
-    UNITS.include?(unit)
-  end
 
   def ensure_not_released_to_students
     throw(:abort) if result.released_to_students
