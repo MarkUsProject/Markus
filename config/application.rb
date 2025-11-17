@@ -35,6 +35,9 @@ module Markus
     # Do not add autoload paths to load path.
     config.add_autoload_paths_to_load_path = false
 
+    # Add contracts directory to autoload paths
+    config.autoload_paths << Rails.root.join('app/contracts')
+
     # Use RSpec as test framework
     config.generators do |g|
       g.test_framework :rspec
