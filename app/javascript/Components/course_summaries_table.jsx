@@ -7,8 +7,10 @@ export class CourseSummaryTable extends React.Component {
     super(props);
     this.state = {
       showHidden: false,
-      filtered: [{id: "hidden", value: false}],
+      columnFilters: [{id: "hidden", value: false}],
     };
+
+    this.columnHelper = createColumnHelper();
   }
 
   static defaultProps = {
@@ -16,19 +18,27 @@ export class CourseSummaryTable extends React.Component {
     marking_schemes: [],
     data: [],
   };
-  nameColumns() {
-    const columnHelper = createColumnHelper();
+  nameColumns = () => {
+    const columnHelper = this.columnHelper;
     return [
       columnHelper.accessor("hidden", {
         id: "hidden",
-        enableSorting: false,
-        enableHiding: false,
+        filterFn: (row, columnId, filterValue) => {
+          if (filterValue) return true; // If filterValue true, show all rows
+          return row.original.hidden === false; // Else only show non-hidden rows
+        },
         enableColumnFilter: true,
+        enableHiding: false,
+        meta: {
+          className: "rt-hidden",
+          headerClassName: "rt-hidden",
+        },
         cell: () => null,
         header: () => null,
         size: 0,
       }),
       columnHelper.accessor("user_name", {
+        id: "user_name",
         header: () => I18n.t("activerecord.attributes.user.user_name"),
         enableColumnFilter: true,
       }),
@@ -41,7 +51,7 @@ export class CourseSummaryTable extends React.Component {
         enableColumnFilter: true,
       }),
     ];
-  }
+  };
 
   // nameColumns = [
   //   {
@@ -74,12 +84,7 @@ export class CourseSummaryTable extends React.Component {
 
   updateShowHidden = event => {
     let showHidden = event.target.checked;
-    let filtered = [];
-    // for (let i = 0; i < this.state.filtered.length; i++) {
-    //   if (this.state.filtered[i].id !== "hidden") {
-    //     filtered.push(this.state.filtered[i]);
-    //   }
-    // }
+
     let columnFilters = this.state.columnFilters.filter(f => f.id !== "hidden");
 
     if (!showHidden) {
@@ -89,14 +94,18 @@ export class CourseSummaryTable extends React.Component {
   };
 
   dataColumns = () => {
-    const columnHelper = createColumnHelper();
-
+    const columnHelper = this.columnHelper;
     const columns = [];
+
     this.props.assessments.forEach(data => {
       columns.push(
         columnHelper.accessor(`assessment_marks.${data.id}.mark`, {
           header: () => data.name,
           cell: info => info.getValue(),
+          meta: {
+            className: "number",
+            headerStyle: {textAlign: "right"},
+          },
         })
       );
     });
@@ -105,6 +114,10 @@ export class CourseSummaryTable extends React.Component {
         columnHelper.accessor(`weighted_marks.${data.id}.mark`, {
           header: () => data.name,
           cell: info => info.getValue(),
+          meta: {
+            className: "number",
+            headerStyle: {textAlign: "right"},
+          },
         })
       );
     });
@@ -135,16 +148,14 @@ export class CourseSummaryTable extends React.Component {
           data={this.props.data}
           columns={columns}
           columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={columnFilters => this.setState({columnFilters})}
           initialState={{sorting: [{id: "user_name", desc: false}]}}
           loading={this.props.loading}
-          filtered={this.state.filtered}
-          onFilteredChange={columnFilters => this.setState({columnFilters})}
           className={"auto-overflow"}
           getNoDataProps={() => ({
             loading: this.props.loading,
           })}
         />
-        ,
       </>
     );
   }
