@@ -115,7 +115,6 @@ class TestRun < ApplicationRecord
 
   def add_extra_marks(extra_marks)
     return if self.submission.nil?
-    submission_result = self.grouping&.current_submission_used&.get_latest_result
 
     extra_marks.each do |extra_mark|
       unit = extra_mark['unit']
@@ -124,8 +123,8 @@ class TestRun < ApplicationRecord
       ExtraMark.create(
         unit: unit,
         extra_mark: mark,
-        result_id: submission_result.id,
-        description: extra_mark['description']
+        description: extra_mark['description'],
+        result_id: self.submission.get_latest_result.id
       )
     end
   end
