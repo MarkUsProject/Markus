@@ -2351,4 +2351,417 @@ describe AssignmentsController do
       expect(response).to redirect_to(edit_course_assignment_path(course.id, assignment.id))
     end
   end
+
+  describe 'visibility settings' do
+    let(:course) { create(:course) }
+    let(:instructor) { create(:instructor, course: course) }
+    let(:assignment) { create(:assignment, course: course) }
+
+    describe '#create with scheduled visibility' do
+      it 'should create assignment with visible_on and visible_until' do
+        visible_on_time = 1.day.from_now
+        visible_until_time = 7.days.from_now
+
+        params = example_form_params.deep_dup
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
+        params[:assignment][:visible_on] = visible_on_time.to_s
+        params[:assignment][:visible_until] = visible_until_time.to_s
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        expect(assignment.is_hidden).to be false
+        expect(assignment.visible_on).to be_within(1.second).of(visible_on_time)
+        expect(assignment.visible_until).to be_within(1.second).of(visible_until_time)
+      end
+
+      it 'should convert is_hidden="scheduled" to is_hidden=false' do
+        params = example_form_params.deep_dup
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
+        params[:assignment][:visible_on] = 1.day.from_now.to_s
+        params[:assignment][:visible_until] = 7.days.from_now.to_s
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        expect(assignment.is_hidden).to be false
+      end
+    end
+
+    describe '#update with scheduled visibility' do
+      it 'should update assignment with visible_on and visible_until' do
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
+            visible_on: 2.days.from_now.to_s,
+            visible_until: 10.days.from_now.to_s,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 0
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        assignment.reload
+        expect(assignment.is_hidden).to be false
+        expect(assignment.visible_on).to be_within(2.seconds).of(2.days.from_now)
+        expect(assignment.visible_until).to be_within(2.seconds).of(10.days.from_now)
+      end
+
+      it 'should clear datetime values when switching from scheduled to visible' do
+        assignment.update!(is_hidden: false, visible_on: 1.day.from_now, visible_until: 7.days.from_now)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: false,
+            visible_on: nil,
+            visible_until: nil,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 0
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        assignment.reload
+        expect(assignment.is_hidden).to be false
+        expect(assignment.visible_on).to be_nil
+        expect(assignment.visible_until).to be_nil
+      end
+    end
+
+    describe 'section-specific scheduled visibility' do
+      let(:section) { create(:section, course: course) }
+
+      it 'should create section properties with scheduled visibility' do
+        params = example_form_params.deep_dup
+        params[:assignment][:assignment_properties_attributes][:section_due_dates_type] = 1
+        params[:assignment][:assessment_section_properties_attributes] = {
+          '0' => {
+            section_id: section.id,
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
+            visible_on: 1.day.from_now.to_s,
+            visible_until: 5.days.from_now.to_s
+          }
+        }
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        section_props = assignment.assessment_section_properties.find_by(section: section)
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_within(2.seconds).of(1.day.from_now)
+        expect(section_props.visible_until).to be_within(2.seconds).of(5.days.from_now)
+      end
+
+      it 'should update section properties with scheduled visibility' do
+        section_props = create(:assessment_section_properties, assessment: assignment, section: section)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: false,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 1
+            },
+            assessment_section_properties_attributes: {
+              '0' => {
+                id: section_props.id,
+                section_id: section.id,
+                is_hidden: Assessment::SCHEDULED_VISIBILITY,
+                visible_on: 3.days.from_now.to_s,
+                visible_until: 8.days.from_now.to_s
+              }
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        section_props.reload
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_within(2.seconds).of(3.days.from_now)
+        expect(section_props.visible_until).to be_within(2.seconds).of(8.days.from_now)
+      end
+    end
+
+    describe '#edit form loading with scheduled visibility' do
+      it 'loads assignment with visible_on and visible_until correctly' do
+        assignment.update!(is_hidden: false, visible_on: 1.day.from_now, visible_until: 7.days.from_now)
+
+        get_as instructor, :edit, params: { course_id: course.id, id: assignment.id }
+
+        expect(response).to have_http_status(:success)
+        expect(assigns(:assignment).visible_on).to be_present
+        expect(assigns(:assignment).visible_until).to be_present
+        expect(assigns(:assignment).is_hidden).to be false
+      end
+
+      it 'loads assignment with only visible_on set' do
+        assignment.update!(is_hidden: false, visible_on: 1.day.from_now, visible_until: nil)
+
+        get_as instructor, :edit, params: { course_id: course.id, id: assignment.id }
+
+        expect(response).to have_http_status(:success)
+        expect(assigns(:assignment).visible_on).to be_present
+        expect(assigns(:assignment).visible_until).to be_nil
+      end
+
+      it 'loads assignment with only visible_until set' do
+        assignment.update!(is_hidden: false, visible_on: nil, visible_until: 7.days.from_now)
+
+        get_as instructor, :edit, params: { course_id: course.id, id: assignment.id }
+
+        expect(response).to have_http_status(:success)
+        expect(assigns(:assignment).visible_on).to be_nil
+        expect(assigns(:assignment).visible_until).to be_present
+      end
+
+      it 'loads assignment with is_hidden=true and no datetime values' do
+        assignment.update!(is_hidden: true, visible_on: nil, visible_until: nil)
+
+        get_as instructor, :edit, params: { course_id: course.id, id: assignment.id }
+
+        expect(response).to have_http_status(:success)
+        expect(assigns(:assignment).is_hidden).to be true
+        expect(assigns(:assignment).visible_on).to be_nil
+        expect(assigns(:assignment).visible_until).to be_nil
+      end
+    end
+
+    describe 'edge cases' do
+      it 'handles creating assignment with only visible_on' do
+        params = example_form_params.deep_dup
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
+        params[:assignment][:visible_on] = 1.day.from_now.to_s
+        params[:assignment][:visible_until] = nil
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        expect(assignment.is_hidden).to be false
+        expect(assignment.visible_on).to be_present
+        expect(assignment.visible_until).to be_nil
+      end
+
+      it 'handles creating assignment with only visible_until' do
+        params = example_form_params.deep_dup
+        params[:assignment][:is_hidden] = Assessment::SCHEDULED_VISIBILITY
+        params[:assignment][:visible_on] = nil
+        params[:assignment][:visible_until] = 7.days.from_now.to_s
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        expect(assignment.is_hidden).to be false
+        expect(assignment.visible_on).to be_nil
+        expect(assignment.visible_until).to be_present
+      end
+
+      it 'handles switching from scheduled to hidden' do
+        assignment.update!(is_hidden: false, visible_on: 1.day.from_now, visible_until: 7.days.from_now)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: true,
+            visible_on: nil,
+            visible_until: nil,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 0
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        assignment.reload
+        expect(assignment.is_hidden).to be true
+        expect(assignment.visible_on).to be_nil
+        expect(assignment.visible_until).to be_nil
+      end
+    end
+
+    describe 'section-specific edge cases' do
+      let(:section) { create(:section, course: course) }
+
+      it 'handles creating section with only visible_on' do
+        params = example_form_params.deep_dup
+        params[:assignment][:assignment_properties_attributes][:section_due_dates_type] = 1
+        params[:assignment][:assessment_section_properties_attributes] = {
+          '0' => {
+            section_id: section.id,
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
+            visible_on: 1.day.from_now.to_s,
+            visible_until: nil
+          }
+        }
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        section_props = assignment.assessment_section_properties.find_by(section: section)
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_present
+        expect(section_props.visible_until).to be_nil
+      end
+
+      it 'handles creating section with only visible_until' do
+        params = example_form_params.deep_dup
+        params[:assignment][:assignment_properties_attributes][:section_due_dates_type] = 1
+        params[:assignment][:assessment_section_properties_attributes] = {
+          '0' => {
+            section_id: section.id,
+            is_hidden: Assessment::SCHEDULED_VISIBILITY,
+            visible_on: nil,
+            visible_until: 5.days.from_now.to_s
+          }
+        }
+
+        post_as instructor, :create, params: params
+
+        assignment = Assignment.last
+        section_props = assignment.assessment_section_properties.find_by(section: section)
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_nil
+        expect(section_props.visible_until).to be_present
+      end
+
+      it 'handles switching section from scheduled to hidden' do
+        section_props = create(:assessment_section_properties,
+                               assessment: assignment,
+                               section: section,
+                               is_hidden: false,
+                               visible_on: 1.day.from_now,
+                               visible_until: 7.days.from_now)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: false,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 1
+            },
+            assessment_section_properties_attributes: {
+              '0' => {
+                id: section_props.id,
+                section_id: section.id,
+                is_hidden: true
+              }
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        section_props.reload
+        expect(section_props.is_hidden).to be true
+        expect(section_props.visible_on).to be_nil
+        expect(section_props.visible_until).to be_nil
+      end
+
+      it 'handles switching section from scheduled to visible' do
+        section_props = create(:assessment_section_properties,
+                               assessment: assignment,
+                               section: section,
+                               is_hidden: false,
+                               visible_on: 1.day.from_now,
+                               visible_until: 7.days.from_now)
+
+        params = {
+          course_id: course.id,
+          id: assignment.id,
+          is_group_assignment: true,
+          assignment: {
+            is_hidden: false,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.due_date.to_s,
+            assignment_properties_attributes: {
+              id: assignment.assignment_properties.id,
+              scanned_exam: false,
+              section_due_dates_type: 1
+            },
+            assessment_section_properties_attributes: {
+              '0' => {
+                id: section_props.id,
+                section_id: section.id,
+                is_hidden: false
+              }
+            },
+            submission_rule_attributes: {
+              id: assignment.submission_rule.id,
+              type: assignment.submission_rule.type
+            }
+          }
+        }
+
+        put_as instructor, :update, params: params
+
+        section_props.reload
+        expect(section_props.is_hidden).to be false
+        expect(section_props.visible_on).to be_nil
+        expect(section_props.visible_until).to be_nil
+      end
+    end
+  end
 end
