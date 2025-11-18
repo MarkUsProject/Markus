@@ -8,7 +8,6 @@ en:
       status:
         completed: Running tests.
         in_progress: Setting up tests.
-        timeout: Time out.
     cancel_tests: Cancel tests
     category: Run by
     display_output:

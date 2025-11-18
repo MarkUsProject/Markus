@@ -285,19 +285,11 @@ class TestGroupResultTable extends React.Component {
           [0, 0]
         ),
       Aggregated: row => {
-        const subRows = row.subRows || [];
-        const hasTimeout = subRows.some(
-          subRow =>
-            subRow._original && subRow._original["test_group_results.error_type"] === "timeout"
-        );
-        if (hasTimeout) {
-          return I18n.t("activerecord.attributes.test_group_result.timeout");
-        }
-        const [marksEarned, marksTotal] = row.value;
-        if (marksEarned === 0 && marksTotal === 0) {
-          return I18n.t("activerecord.attributes.test_group_result.no_test_results");
-        }
-        return `${marksEarned} / ${marksTotal}`;
+        const timeout_reached = row.value[0] === 0 && row.value[1] === 0;
+        const ret_val = timeout_reached
+          ? I18n.t("activerecord.attributes.test_group_result.no_test_results")
+          : `${row.value[0]} / ${row.value[1]}`;
+        return ret_val;
       },
     },
   ];
