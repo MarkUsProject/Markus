@@ -125,7 +125,7 @@ describe("For the TestRunTable's display of cancelled status", () => {
   beforeEach(async () => {
     test_run_data = [
       {
-        "test_runs.id": 60,
+        "test_runs.id": 49,
         "test_runs.created_at": "Friday, November 14, 2025, 09:00:00 AM EST",
         "test_runs.status": "cancelled",
         "users.user_name": "c9debuss",
@@ -178,7 +178,7 @@ describe("For the TestRunTable's display of in_progress status", () => {
   beforeEach(async () => {
     test_run_data = [
       {
-        "test_runs.id": 61,
+        "test_runs.id": 50,
         "test_runs.created_at": "Friday, November 14, 2025, 09:05:00 AM EST",
         "test_runs.status": "in_progress",
         "users.user_name": "c9yoyo",
@@ -231,7 +231,7 @@ describe("For the TestRunTable's display of timeout error type", () => {
   beforeEach(async () => {
     test_run_data = [
       {
-        "test_runs.id": 55,
+        "test_runs.id": 51,
         "test_runs.created_at": "Thursday, November 13, 2025, 08:22:22 PM EST",
         "test_runs.status": "",
         "users.user_name": "c5bennet",
@@ -272,5 +272,45 @@ describe("For the TestRunTable's display of timeout error type", () => {
     const timeoutText = I18n.t("automated_tests.test_runs_statuses.timeout");
     await screen.findByText(timeoutText);
     expect(screen.getByText(timeoutText)).toBeInTheDocument();
+  });
+});
+
+describe("For the TestRunTable's SubComponent display of problems", () => {
+  let test_run_data;
+
+  beforeEach(async () => {
+    test_run_data = [
+      {
+        "test_runs.id": 52,
+        "test_runs.created_at": "Thursday, November 13, 2025, 08:45:25 PM EST",
+        "test_runs.status": "failed",
+        "test_runs.problems": "Test runs problems",
+        "users.user_name": "c8mahler",
+        test_results: [],
+      },
+    ];
+
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce(test_run_data),
+    });
+
+    render(
+      <TestRunTable
+        course_id={1}
+        result_id={1}
+        submission_id={1}
+        assignment_id={1}
+        grouping_id={1}
+        instructor_run={true}
+        instructor_view={true}
+      />
+    );
+  });
+
+  it("displays problems text when test_runs.problems is present", async () => {
+    await screen.findByText("Thursday, November 13, 2025, 08:45:25 PM EST");
+    expect(screen.getByText("Test runs problems")).toBeInTheDocument();
   });
 });
