@@ -53,35 +53,6 @@ export class CourseSummaryTable extends React.Component {
     ];
   };
 
-  // nameColumns = [
-  //   {
-  //     id: "hidden",
-  //     accessor: "hidden",
-  //     filterMethod: (filter, row) => {
-  //       return filter.value || !row.hidden;
-  //     },
-  //     className: "rt-hidden",
-  //     headerClassName: "rt-hidden",
-  //     resizable: false,
-  //     width: 0,
-  //   },
-  //   {
-  //     Header: I18n.t("activerecord.attributes.user.user_name"),
-  //     accessor: "user_name",
-  //     filterable: true,
-  //   },
-  //   {
-  //     Header: I18n.t("activerecord.attributes.user.first_name"),
-  //     accessor: "first_name",
-  //     filterable: true,
-  //   },
-  //   {
-  //     Header: I18n.t("activerecord.attributes.user.last_name"),
-  //     accessor: "last_name",
-  //     filterable: true,
-  //   },
-  // ];
-
   updateShowHidden = event => {
     let showHidden = event.target.checked;
 
