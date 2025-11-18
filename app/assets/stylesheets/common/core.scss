@@ -332,3 +332,25 @@ option.uncollected {
   display: inline-block;
   width: 16px;
 }
+
+// Section-specific visibility radio buttons - vertical stacking
+.section-visibility-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.section-visibility-option {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+
+  input[type='radio'] {
+    margin: 0;
+  }
+
+  label {
+    margin: 0;
+    cursor: pointer;
+  }
+}
