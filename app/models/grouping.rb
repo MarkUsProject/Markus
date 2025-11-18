@@ -631,6 +631,7 @@ class Grouping < ApplicationRecord
               'test_results.name', 'test_results.status as test_results_status', 'test_results.marks_earned',
               'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_results.position']
     fields << 'test_group_results.extra_info' if include_extra_info
+    fields << 'test_group_results.error_type'
 
     hash_list = assoc.pluck_to_hash(*fields)
 
