@@ -21,8 +21,8 @@ describe("For the TestRunTable's display of complete status", () => {
             "test_groups.id": 1,
             "test_groups.name": "tg1",
             "test_group_results.error_type": null,
-            "test_results.marks_earned": 1,
-            "test_results.marks_total": 2,
+            "test_results.marks_earned": 5,
+            "test_results.marks_total": 10,
             feedback_files: [],
           },
         ],
@@ -56,6 +56,12 @@ describe("For the TestRunTable's display of complete status", () => {
 
     await screen.findByText(statusKey);
     expect(screen.getByText(statusKey)).toBeInTheDocument();
+  });
+
+  it("displays marks earned out of total when error_type is null", async () => {
+    await screen.findByText("Thursday, November 13, 2025, 08:12:15 PM EST");
+    const marksElements = await screen.findAllByText(/5.*\/.*10/);
+    expect(marksElements.length).toBeGreaterThan(0);
   });
 });
 
