@@ -1274,6 +1274,11 @@ describe Grouping do
 
         expect(data[0]['test_results'][0]['feedback_files']).to eq expected
       end
+
+      it 'should include the error_type field for each test group result' do
+        error_type = data[0]['test_results'][0]['test_group_results.error_type']
+        expect(error_type).to eq(test_run.test_group_results.first.error_type)
+      end
     else
       it 'should not return data' do
         expect(data).to be_empty

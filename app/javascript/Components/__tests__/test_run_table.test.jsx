@@ -6,7 +6,7 @@ import {TestRunTable} from "../test_run_table";
 import {render, screen} from "@testing-library/react";
 import {expect} from "@jest/globals";
 
-describe("For the TestRunTable's display of status", () => {
+describe("For the TestRunTable's display of complete status", () => {
   let test_run_data;
 
   beforeEach(async () => {
@@ -48,12 +48,174 @@ describe("For the TestRunTable's display of status", () => {
     );
   });
 
-  it("displays the matching status when run the autotest", async () => {
-    const expectedText = I18n.t(
-      `automated_tests.test_runs_statuses.${test_run_data[0]["test_runs.status"]}`
+  it("displays complete matching status when run the autotest", async () => {
+    const status = test_run_data[0]["test_runs.status"]; // "complete"
+    const statusKey = I18n.t(`automated_tests.test_runs_statuses.${status}`);
+
+    expect(statusKey).toEqual(I18n.t("automated_tests.test_runs_statuses.complete"));
+
+    await screen.findByText(statusKey);
+    expect(screen.getByText(statusKey)).toBeInTheDocument();
+  });
+});
+
+describe("For the TestRunTable's display of failed status", () => {
+  let test_run_data;
+
+  beforeEach(async () => {
+    test_run_data = [
+      {
+        "test_runs.id": 48,
+        "test_runs.created_at": "Thursday, November 13, 2025, 08:13:29 PM EST",
+        "test_runs.status": "failed",
+        "users.user_name": "c8mahler",
+        test_results: [
+          {
+            "test_groups.id": 2,
+            "test_groups.name": "tg2",
+            "test_group_results.error_type": null,
+            "test_results.marks_earned": 1,
+            "test_results.marks_total": 2,
+            feedback_files: [],
+          },
+        ],
+      },
+    ];
+
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce(test_run_data),
+    });
+
+    render(
+      <TestRunTable
+        course_id={1}
+        result_id={1}
+        submission_id={1}
+        assignment_id={1}
+        grouping_id={1}
+        instructor_run={true}
+        instructor_view={true}
+      />
     );
-    await screen.findByText(expectedText);
-    expect(screen.getByText(expectedText)).toBeInTheDocument();
+  });
+
+  it("displays failed status when run the autotest", async () => {
+    const status = test_run_data[0]["test_runs.status"]; // "failed"
+    const statusKey = I18n.t(`automated_tests.test_runs_statuses.${status}`);
+    expect(statusKey).toEqual(I18n.t("automated_tests.test_runs_statuses.failed")); // "error"
+
+    const [statusCell] = await screen.findAllByText(statusKey, {
+      selector: "div.rt-td",
+    });
+    expect(statusCell).toBeInTheDocument();
+  });
+});
+
+describe("For the TestRunTable's display of cancelled status", () => {
+  let test_run_data;
+
+  beforeEach(async () => {
+    test_run_data = [
+      {
+        "test_runs.id": 60,
+        "test_runs.created_at": "Friday, November 14, 2025, 09:00:00 AM EST",
+        "test_runs.status": "cancelled",
+        "users.user_name": "c9debuss",
+        test_results: [
+          {
+            "test_groups.id": 3,
+            "test_groups.name": "tg3",
+            "test_group_results.error_type": null,
+            "test_results.marks_earned": 0,
+            "test_results.marks_total": 1,
+            feedback_files: [],
+          },
+        ],
+      },
+    ];
+
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce(test_run_data),
+    });
+
+    render(
+      <TestRunTable
+        course_id={1}
+        result_id={1}
+        submission_id={1}
+        assignment_id={1}
+        grouping_id={1}
+        instructor_run={true}
+        instructor_view={true}
+      />
+    );
+  });
+
+  it("displays cancelled status when a run is cancelled without timeout", async () => {
+    const status = test_run_data[0]["test_runs.status"]; // "cancelled"
+    const statusKey = I18n.t(`automated_tests.test_runs_statuses.${status}`);
+
+    expect(statusKey).toEqual(I18n.t("automated_tests.test_runs_statuses.cancelled"));
+
+    await screen.findByText(statusKey);
+    expect(screen.getByText(statusKey)).toBeInTheDocument();
+  });
+});
+
+describe("For the TestRunTable's display of in_progress status", () => {
+  let test_run_data;
+
+  beforeEach(async () => {
+    test_run_data = [
+      {
+        "test_runs.id": 61,
+        "test_runs.created_at": "Friday, November 14, 2025, 09:05:00 AM EST",
+        "test_runs.status": "in_progress",
+        "users.user_name": "c9yoyo",
+        test_results: [
+          {
+            "test_groups.id": 4,
+            "test_groups.name": "tg4",
+            "test_group_results.error_type": null,
+            "test_results.marks_earned": 0,
+            "test_results.marks_total": 0,
+            feedback_files: [],
+          },
+        ],
+      },
+    ];
+
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce(test_run_data),
+    });
+
+    render(
+      <TestRunTable
+        course_id={1}
+        result_id={1}
+        submission_id={1}
+        assignment_id={1}
+        grouping_id={1}
+        instructor_run={true}
+        instructor_view={true}
+      />
+    );
+  });
+
+  it("displays in progress status when a test is running", async () => {
+    const status = test_run_data[0]["test_runs.status"]; // "in progress"
+    const statusKey = I18n.t(`automated_tests.test_runs_statuses.${status}`);
+
+    expect(statusKey).toEqual(I18n.t("automated_tests.test_runs_statuses.in_progress"));
+
+    await screen.findByText(statusKey);
+    expect(screen.getByText(statusKey)).toBeInTheDocument();
   });
 });
 
@@ -69,8 +231,8 @@ describe("For the TestRunTable's display of timeout error type", () => {
         "users.user_name": "c5bennet",
         test_results: [
           {
-            "test_groups.id": 2,
-            "test_groups.name": "tg2",
+            "test_groups.id": 5,
+            "test_groups.name": "tg5",
             "test_group_results.error_type": "timeout",
             "test_results.marks_earned": 0,
             "test_results.marks_total": 0,
