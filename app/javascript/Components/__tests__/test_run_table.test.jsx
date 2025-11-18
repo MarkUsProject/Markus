@@ -63,6 +63,13 @@ describe("For the TestRunTable's display of complete status", () => {
     const marksElements = await screen.findAllByText(/5.*\/.*10/);
     expect(marksElements.length).toBeGreaterThan(0);
   });
+
+  it("displays the username with the 'Run by' label", async () => {
+    await screen.findByText("Thursday, November 13, 2025, 08:12:15 PM EST");
+    const userLabel = I18n.t("activerecord.attributes.test_run.user");
+    const expectedText = `${userLabel} c8mahler`;
+    expect(screen.getByText(expectedText)).toBeInTheDocument();
+  });
 });
 
 describe("For the TestRunTable's display of failed status", () => {
@@ -312,5 +319,33 @@ describe("For the TestRunTable's SubComponent display of problems", () => {
   it("displays problems text when test_runs.problems is present", async () => {
     await screen.findByText("Thursday, November 13, 2025, 08:45:25 PM EST");
     expect(screen.getByText("Test runs problems")).toBeInTheDocument();
+  });
+});
+
+describe("For the TestRunTable's display when no data is available", () => {
+  beforeEach(async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce([]),
+    });
+
+    render(
+      <TestRunTable
+        course_id={1}
+        result_id={1}
+        submission_id={1}
+        assignment_id={1}
+        grouping_id={1}
+        instructor_run={true}
+        instructor_view={true}
+      />
+    );
+  });
+
+  it("displays no data text when there are no test runs", async () => {
+    const noResultsText = I18n.t("automated_tests.no_results");
+    await screen.findByText(noResultsText);
+    expect(screen.getByText(noResultsText)).toBeInTheDocument();
   });
 });
