@@ -1085,10 +1085,10 @@
 - Bug fixes on submission dates and grace period credits
 - Python and Ruby Scripts using MarkUs API (see lib/tools)
 - Displaying and annotating images
-  A lot of accessibility features have been implemented :
-  * Missing labels & Better focus on forms
-  * Adding annotations in downloaded code from students repository
-  * Re-arrange criteria using keyboard
+ A lot of accessibility features have been implemented :
+	* Missing labels & Better focus on forms
+	* Adding annotations in downloaded code from students repository
+	* Re-arrange criteria using keyboard
 - MarkUs is now completely internationalized
 - Added new translation : french
 
