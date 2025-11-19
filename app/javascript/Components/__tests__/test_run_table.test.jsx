@@ -6,7 +6,7 @@ import {TestRunTable} from "../test_run_table";
 import {render, screen} from "@testing-library/react";
 import {expect} from "@jest/globals";
 
-describe("For the TestRunTable's display of complete status", () => {
+describe("For the TestRunTable's display of correct data", () => {
   let test_run_data;
 
   beforeEach(async () => {
@@ -48,6 +48,18 @@ describe("For the TestRunTable's display of complete status", () => {
     );
   });
 
+  it("displays the date and time the test was created", async () => {
+    await screen.findByText("Thursday, November 13, 2025, 08:12:15 PM EST");
+    expect(screen.getByText("Thursday, November 13, 2025, 08:12:15 PM EST")).toBeInTheDocument();
+  });
+
+  it("displays the username with the 'Run by' label", async () => {
+    await screen.findByText("Thursday, November 13, 2025, 08:12:15 PM EST");
+    const userLabel = I18n.t("activerecord.attributes.test_run.user");
+    const expectedText = `${userLabel} c8mahler`;
+    expect(screen.getByText(expectedText)).toBeInTheDocument();
+  });
+
   it("displays complete matching status when run the autotest", async () => {
     const status = test_run_data[0]["test_runs.status"]; // "complete"
     const statusKey = I18n.t(`automated_tests.test_runs_statuses.${status}`);
@@ -64,11 +76,9 @@ describe("For the TestRunTable's display of complete status", () => {
     expect(marksElements.length).toBeGreaterThan(0);
   });
 
-  it("displays the username with the 'Run by' label", async () => {
+  it("does not display test run problems when they are not present", async () => {
     await screen.findByText("Thursday, November 13, 2025, 08:12:15 PM EST");
-    const userLabel = I18n.t("activerecord.attributes.test_run.user");
-    const expectedText = `${userLabel} c8mahler`;
-    expect(screen.getByText(expectedText)).toBeInTheDocument();
+    expect(screen.queryByText("Test runs problems")).not.toBeInTheDocument();
   });
 });
 
