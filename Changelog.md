@@ -19,6 +19,7 @@
 - Assign extra marks in test definition. (Currently limited to pytest files) (#7728)
 - Enable zip downloads of test results (#7733)
 - Create rake task to remove orphaned end users (#7741)
+- Enable scanned assignments the ability to add inactive students (#7737)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
