@@ -64,7 +64,6 @@ en:
       complete: complete
       failed: error
       in_progress: in progress
-      timeout: timeout
     tester:
       one: Tester
       other: Testers
