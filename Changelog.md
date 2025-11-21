@@ -16,7 +16,7 @@
 - Add API endpoint `add_test_run` that allows independent user submissions of test executions to MarkUs (#7730)
 - Display timeout status for autotest runs in the Test Results table. (#7734)
 - Assign extra marks in test definition. (Currently limited to pytest files) (#7728)
-- Enable zip downloads of graded assignments (#7733)
+- Enable zip downloads of test results (#7733)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
