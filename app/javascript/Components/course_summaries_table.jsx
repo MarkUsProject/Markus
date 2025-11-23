@@ -24,8 +24,8 @@ export class CourseSummaryTable extends React.Component {
       columnHelper.accessor("hidden", {
         id: "hidden",
         filterFn: (row, columnId, filterValue) => {
-          if (filterValue) return true; // If filterValue true, show all rows
-          return row.original.hidden === false; // Else only show non-hidden rows
+          // Show all rows if filter true, else only show non-hidden rows
+          return filterValue || !row.original.hidden;
         },
         enableColumnFilter: true,
         enableHiding: false,
@@ -55,13 +55,18 @@ export class CourseSummaryTable extends React.Component {
 
   updateShowHidden = event => {
     let showHidden = event.target.checked;
+    let columnFilters = [];
 
-    let columnFilters = this.state.columnFilters.filter(f => f.id !== "hidden");
+    for (let i = 0; i < this.state.columnFilters.length; i++) {
+      if (this.state.columnFilters[i].id !== "hidden") {
+        columnFilters.push(this.state.columnFilters[i]);
+      }
+    }
 
     if (!showHidden) {
       columnFilters.push({id: "hidden", value: false});
     }
-    this.setState({showHidden, columnFilters});
+    this.setState({columnFilters, showHidden});
   };
 
   dataColumns = () => {
