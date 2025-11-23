@@ -243,7 +243,17 @@ class TestGroupResultTable extends React.Component {
       Header: I18n.t("activerecord.attributes.test_result.status"),
       accessor: "test_results_status",
       width: 80,
-      aggregate: _ => "",
+      aggregate: (vals, rows) => {
+        const hasTimeout = rows.some(
+          row => row._original["test_group_results.error_type"] === "timeout"
+        );
+        return hasTimeout ? "timeout" : "";
+      },
+      Aggregated: row => {
+        return row.value === "timeout"
+          ? I18n.t("activerecord.attributes.test_group_result.timeout")
+          : "";
+      },
       filterable: true,
       Filter: selectFilter,
       filterOptions: ["pass", "partial", "fail", "error", "error_all"].map(status => ({
