@@ -21,6 +21,13 @@ class ExtraMark < ApplicationRecord
 
   validates :extra_mark, numericality: true
 
+  # TODO: Fix idemptoence
+  # Related: https://github.com/MarkUsProject/Markus/pull/7728#discussion_r2488229722
+  # validates :description, uniqueness: {
+  #   scope: [:result_id, :extra_mark, :unit],
+  #   message: 'a mark, unit, description already exist to this result'
+  # }
+
   belongs_to :result
 
   has_one :course, through: :result
