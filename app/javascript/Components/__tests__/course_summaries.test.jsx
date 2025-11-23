@@ -49,6 +49,12 @@ describe("For CourseSummaryTable nameColumns,", () => {
 
     expect(filterFn(hiddenRow, "hidden", true)).toBe(true); // filterValue = true, show all rows
   });
+
+  it("does not render the hidden column in the table", async () => {
+    render(<CourseSummaryTable />);
+
+    expect(screen.queryByText("hidden")).not.toBeInTheDocument();
+  });
 });
 
 describe("CourseSummaryTable dataColumns", () => {
