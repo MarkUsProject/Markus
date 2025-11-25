@@ -201,12 +201,14 @@ class GroupsController < ApplicationController
       if params[:s_id].present?
         student = current_course.students.find(params[:s_id])
       end
+      student_name = params[:names].gsub('(inactive)', '').strip
+
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
-      if student.nil? || ("#{student.first_name} #{student.last_name}" != params[:names] && student.hidden == false)
+      if student.nil? || "#{student.first_name} #{student.last_name}" != student_name
         student = current_course.students.joins(:user).where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-          ApplicationRecord.sanitize_sql_like(params[:names].downcase),
-          ApplicationRecord.sanitize_sql_like(params[:names].downcase)
+          ApplicationRecord.sanitize_sql_like(student_name.downcase),
+          ApplicationRecord.sanitize_sql_like(student_name.downcase)
         ).first
       end
       if student.nil?
