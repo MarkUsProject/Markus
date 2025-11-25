@@ -70,4 +70,24 @@ namespace :db do
       student.update(grace_credits: 5)
     end
   end
+
+  desc 'Remove EndUser records that have no associated roles'
+  # Rake task to remove EndUser records that have no associated roles.
+  task prune_orphaned_end_users: :environment do
+    puts 'Pruning database from orphaned end users...'
+    orphaned_end_users = EndUser.get_orphaned_users
+    count = orphaned_end_users.count
+    if count > 0
+      puts "Found #{count} orphaned EndUser records. Deleting..."
+      puts '--- Users to be removed ---'
+      orphaned_end_users.each do |user|
+        puts user.user_name
+      end
+      puts '---------------------------'
+      orphaned_end_users.destroy_all
+      puts 'Pruning complete.'
+    else
+      puts 'No orphaned EndUser records found.'
+    end
+  end
 end
