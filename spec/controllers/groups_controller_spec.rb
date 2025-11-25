@@ -996,6 +996,59 @@ describe GroupsController do
           expect(grouping1.memberships.first.role).to eq inactive_student
         end
       end
+
+      context 'testing student selection logic when s_id and names may differ' do
+        let!(:student2) do
+          create(:student,
+                 user: create(:end_user,
+                              user_name: 'c9test2',
+                              first_name: 'Different',
+                              last_name: 'Person',
+                              id_number: '67890'))
+        end
+
+        before do
+          grouping2 = create(:grouping, assignment: assignment)
+          create(:version_used_submission, grouping: grouping2)
+        end
+
+        it 'uses name lookup when no dropdown selection is made (student.nil?)' do
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{student1.first_name} #{student1.last_name}",
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq student1
+        end
+
+        it 'prioritizes typed name over dropdown selection when they differ' do
+          # Simulates: user typed "first last", then selected student2 from dropdown, but text still shows "first last"
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{student1.first_name} #{student1.last_name}",
+                            s_id: student2.id,
+                            g_id: grouping1.id,
+                            format: :json }
+          # Should assign student1 (from typed name), not student2 (from s_id)
+          expect(grouping1.memberships.first.role).to eq student1
+        end
+
+        it 'uses dropdown selection when it matches typed name' do
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{student2.first_name} #{student2.last_name}",
+                            s_id: student2.id,
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq student2
+        end
+      end
     end
   end
 
