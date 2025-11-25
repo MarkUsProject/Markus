@@ -287,6 +287,22 @@ class AssignmentsController < ApplicationController
                   type: 'text/csv',
                   filename: filename
       end
+      format.zip do
+        data = @assignment.summary_test_result_json
+        zip_name = "#{@assignment.short_identifier}_test_results.zip"
+
+        zip_path = File.join('tmp', zip_name)
+        json_filename = "#{@assignment.short_identifier}_test_results.json"
+
+        FileUtils.rm_f(zip_path)
+
+        Zip::File.open(zip_path, create: true) do |zip_file|
+          zip_file.get_output_stream(json_filename) do |f|
+            f.write(data)
+          end
+        end
+        send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
+      end
     end
   end
 
