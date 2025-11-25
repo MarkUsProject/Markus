@@ -18,6 +18,7 @@
 - Display timeout status for autotest runs in the Test Results table. (#7734)
 - Assign extra marks in test definition. (Currently limited to pytest files) (#7728)
 - Enable zip downloads of test results (#7733)
+- Create rake task to remove orphaned end users (#7741)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
