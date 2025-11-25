@@ -35,6 +35,7 @@
 - Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
 - Refactored MarksPanel child components and converted the components into hook-based function components
 - Refactored jQuery active marks panel component tracking logic into React
+- Refactored `test_run_table.jsx` by extracting nested components into separate files (#7739)
 
 ## [v2.8.2]
 
