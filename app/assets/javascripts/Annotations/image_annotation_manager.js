@@ -177,35 +177,41 @@ class ImageAnnotationManager extends AnnotationManager {
     this.sel_box.style.display = "block";
     this.sel_box.style.left = xy_coords[0] + "px";
     this.sel_box.style.top = xy_coords[1] + "px";
-    this.sel_box.onmousemove = this.mouse_move.bind(this);
-    this.sel_box.onmouseup = this.stop_select_box.bind(this);
 
-    this.image_preview.onmousemove = this.mouse_move.bind(this);
-    this.image_preview.onmouseup = this.stop_select_box.bind(this);
+    // Bind handlers for tracking mouse movement
+    this.bound_mouse_move = this.mouse_move.bind(this);
+    this.bound_stop_select_box = this.stop_select_box.bind(this);
+
+    this.sel_box.addEventListener("mousemove", this.bound_mouse_move);
+    this.sel_box.addEventListener("mouseup", this.bound_stop_select_box);
+    this.image_preview.addEventListener("mousemove", this.bound_mouse_move);
+    this.image_preview.addEventListener("mouseup", this.bound_stop_select_box);
 
     for (let annotation_id in this.annotations) {
       let holder = document.getElementById("annotation_holder_" + annotation_id);
-      holder.onmousemove = this.mouse_move.bind(this);
-      holder.onmouseup = this.stop_select_box.bind(this);
-      holder.onmousedown = null;
+      holder.removeEventListener("mousedown", this.bound_start_select_box);
+      holder.addEventListener("mousemove", this.bound_mouse_move);
+      holder.addEventListener("mouseup", this.bound_stop_select_box);
     }
   }
 
   // Stop tracking the mouse and open up modal to create an image annotation.
   stop_select_box() {
-    this.image_preview.onmousemove = this.check_for_annotations.bind(this);
-    this.image_preview.onmouseup = null;
-    this.image_preview.onmousemove = null;
-
-    this.sel_box.onmousemove = null;
-    this.sel_box.onmouseup = null;
+    this.sel_box.removeEventListener("mousemove", this.bound_mouse_move);
+    this.sel_box.removeEventListener("mouseup", this.bound_stop_select_box);
+    this.image_preview.removeEventListener("mousemove", this.bound_mouse_move);
+    this.image_preview.removeEventListener("mouseup", this.bound_stop_select_box);
 
     for (let annotation_id in this.annotations) {
       let holder = document.getElementById("annotation_holder_" + annotation_id);
-      holder.onmousemove = this.check_for_annotations.bind(this);
-      holder.onmousedown = this.start_select_box.bind(this);
-      holder.onmouseup = null;
-      holder.onmouseleave = this.check_for_annotations.bind(this);
+      holder.removeEventListener("mousemove", this.bound_mouse_move);
+      holder.removeEventListener("mouseup", this.bound_stop_select_box);
+
+      // Re-bind the start handler
+      if (!this.bound_start_select_box) {
+        this.bound_start_select_box = this.start_select_box.bind(this);
+      }
+      holder.addEventListener("mousedown", this.bound_start_select_box);
     }
   }
 
@@ -244,33 +250,41 @@ class ImageAnnotationManager extends AnnotationManager {
     this.sel_box.style.display = "block";
     this.sel_box.style.left = xy_coords[0] + "px";
     this.sel_box.style.top = xy_coords[1] + "px";
-    this.sel_box.ontouchmove = this.touch_move.bind(this);
-    this.sel_box.ontouchend = this.stop_select_box_touch.bind(this);
 
-    this.image_preview.ontouchmove = this.touch_move.bind(this);
-    this.image_preview.ontouchend = this.stop_select_box_touch.bind(this);
+    // Bind handlers for tracking touch movement
+    this.bound_touch_move = this.touch_move.bind(this);
+    this.bound_stop_select_box_touch = this.stop_select_box_touch.bind(this);
+
+    this.sel_box.addEventListener("touchmove", this.bound_touch_move);
+    this.sel_box.addEventListener("touchend", this.bound_stop_select_box_touch);
+    this.image_preview.addEventListener("touchmove", this.bound_touch_move);
+    this.image_preview.addEventListener("touchend", this.bound_stop_select_box_touch);
 
     for (let annotation_id in this.annotations) {
       let holder = document.getElementById("annotation_holder_" + annotation_id);
-      holder.ontouchmove = this.touch_move.bind(this);
-      holder.ontouchend = this.stop_select_box_touch.bind(this);
-      holder.ontouchstart = null;
+      holder.removeEventListener("touchstart", this.bound_start_select_box_touch);
+      holder.addEventListener("touchmove", this.bound_touch_move);
+      holder.addEventListener("touchend", this.bound_stop_select_box_touch);
     }
   }
 
   // Stop tracking the touch and open up modal to create an image annotation.
   stop_select_box_touch() {
-    this.image_preview.ontouchmove = null;
-    this.image_preview.ontouchend = null;
-
-    this.sel_box.ontouchmove = null;
-    this.sel_box.ontouchend = null;
+    this.sel_box.removeEventListener("touchmove", this.bound_touch_move);
+    this.sel_box.removeEventListener("touchend", this.bound_stop_select_box_touch);
+    this.image_preview.removeEventListener("touchmove", this.bound_touch_move);
+    this.image_preview.removeEventListener("touchend", this.bound_stop_select_box_touch);
 
     for (let annotation_id in this.annotations) {
       let holder = document.getElementById("annotation_holder_" + annotation_id);
-      holder.ontouchmove = null;
-      holder.ontouchstart = this.start_select_box_touch.bind(this);
-      holder.ontouchend = null;
+      holder.removeEventListener("touchmove", this.bound_touch_move);
+      holder.removeEventListener("touchend", this.bound_stop_select_box_touch);
+
+      // Re-bind the start handler
+      if (!this.bound_start_select_box_touch) {
+        this.bound_start_select_box_touch = this.start_select_box_touch.bind(this);
+      }
+      holder.addEventListener("touchstart", this.bound_start_select_box_touch);
     }
   }
 
