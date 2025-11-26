@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added touch event support for PDF and image annotations in grading view (#7736)
 - Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added frontend UI for assignment visibility scheduling with three visibility options and section-specific overrides (#7717)
 - Added new loading spinner icon for tables (#7602)
