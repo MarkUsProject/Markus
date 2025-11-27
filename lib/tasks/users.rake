@@ -74,7 +74,7 @@ namespace :db do
   desc 'Remove EndUser records that have no associated roles'
   # Rake task to remove EndUser records that have no associated roles.
   task prune_orphaned_end_users: :environment do
-    puts 'Pruning database from orphaned end users...'
+    puts 'Pruning orphaned end users from database...'
     orphaned_end_users = EndUser.get_orphaned_users
     count = orphaned_end_users.count
     if count > 0
