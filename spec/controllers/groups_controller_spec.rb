@@ -1023,8 +1023,8 @@ describe GroupsController do
           expect(grouping1.memberships.first.role).to eq student1
         end
 
-        it 'prioritizes typed name over dropdown selection when they differ' do
-          # Simulates: user typed "first last", then selected student2 from dropdown, but text still shows "first last"
+        it 'prioritizes manually edited name over dropdown selection when they differ' do
+          # Simulates: user selected student2 from dropdown, then manually edited the text to student1's name
           post_as instructor, :assign_student_and_next,
                   params: { course_id: course.id,
                             assignment_id: assignment.id,
@@ -1033,8 +1033,8 @@ describe GroupsController do
                             s_id: student2.id,
                             g_id: grouping1.id,
                             format: :json }
-          # Should assign student1 (from typed name), not student2 (from s_id)
           expect(grouping1.memberships.first.role).to eq student1
+          expect(grouping1.memberships.map(&:role)).not_to include(student2)
         end
 
         it 'uses dropdown selection when it matches typed name' do
