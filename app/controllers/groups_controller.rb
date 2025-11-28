@@ -183,11 +183,13 @@ class GroupsController < ApplicationController
                                            .where(groupings: { assessment_id: params[:assignment_id] }))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
                                          'users.first_name', 'users.last_name', 'roles.hidden')
+
     names = names.map do |h|
+      inactive = h['roles.hidden'] ? I18n.t('student.inactive') : ''
       { id: h[:id],
         id_number: h['users.id_number'],
         user_name: h['users.user_name'],
-        value: "#{h['users.first_name']} #{h['users.last_name']}#{h['roles.hidden'] ? ' (inactive)' : ''}" }
+        value: "#{h['users.first_name']} #{h['users.last_name']}#{inactive}" }
     end
     render json: names
   end
@@ -201,7 +203,8 @@ class GroupsController < ApplicationController
       if params[:s_id].present?
         student = current_course.students.find(params[:s_id])
       end
-      student_name = params[:names].gsub('(inactive)', '').strip
+      replace_pattern = /#{Regexp.escape(I18n.t('student.inactive'))}\s*$/
+      student_name = params[:names].sub(replace_pattern, '').strip
 
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
       if student.nil? || "#{student.first_name} #{student.last_name}" != student_name
