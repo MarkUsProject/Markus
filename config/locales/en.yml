@@ -29,6 +29,7 @@ en:
       required_files: Update the list of required files for assignment %{assignment}
     timeout: Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.
   student:
+    inactive: " (inactive)"
     submission:
       all_files_submitted: Good job! All required files have been submitted.
       conflicts: Conflicts
