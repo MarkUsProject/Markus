@@ -5,6 +5,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added touch event support for PDF and image annotations in grading view (#7736)
 - Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added frontend UI for assignment visibility scheduling with three visibility options and section-specific overrides (#7717)
 - Added new loading spinner icon for tables (#7602)
@@ -16,6 +17,8 @@
 - Add API endpoint `add_test_run` that allows independent user submissions of test executions to MarkUs (#7730)
 - Display timeout status for autotest runs in the Test Results table. (#7734)
 - Assign extra marks in test definition. (Currently limited to pytest files) (#7728)
+- Enable zip downloads of test results (#7733)
+- Create rake task to remove orphaned end users (#7741)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
@@ -36,6 +39,8 @@
 - Refactored MarksPanel child components and converted the components into hook-based function components
 - Refactored jQuery active marks panel component tracking logic into React
 - Updated the course summary table to use `@tanstack/react-table` v8 (#7732)
+- Refactored `test_run_table.jsx` by extracting nested components into separate files (#7739)
+
 
 ## [v2.8.2]
 

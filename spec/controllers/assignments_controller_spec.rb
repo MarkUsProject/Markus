@@ -243,6 +243,80 @@ describe AssignmentsController do
     end
   end
 
+  context 'download the most recent test results as ZIP' do
+    let(:user) { create(:instructor) }
+    let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+
+    it 'responds with the appropriate status' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+      expect(response).to have_http_status :success
+    end
+
+    it 'responds with the appropriate header' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+      expect(response.header['Content-Type']).to eq('application/zip')
+    end
+
+    it 'sets disposition as attachment' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment;'
+    end
+
+    it 'responds with the appropriate filename' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+      filename = response.header['Content-Disposition'].split[1].split('"').second
+      expect(filename).to eq("#{assignment.short_identifier}_test_results.zip")
+    end
+
+    it 'returns application/zip type' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+      expect(response.media_type).to eq 'application/zip'
+    end
+
+    it 'contains a JSON file with the correct filename' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+
+      Tempfile.open(['test_results', '.zip']) do |temp_file|
+        temp_file.binmode
+        temp_file.write(response.body)
+        temp_file.rewind
+
+        Zip::File.open(temp_file.path) do |zip_file|
+          expected_json_filename = "#{assignment.short_identifier}_test_results.json"
+          expect(zip_file.entries.map(&:name)).to include(expected_json_filename)
+        end
+      end
+    end
+
+    it 'contains valid JSON data inside the zip' do
+      get_as user, :download_test_results, params: { course_id: user.course.id, id: assignment.id }, format: 'zip'
+
+      Tempfile.open(['test_results', '.zip']) do |temp_file|
+        temp_file.binmode
+        temp_file.write(response.body)
+        temp_file.rewind
+
+        Zip::File.open(temp_file.path) do |zip_file|
+          json_filename = "#{assignment.short_identifier}_test_results.json"
+          json_content = zip_file.read(json_filename)
+          parsed_json = JSON.parse(json_content)
+
+          # Verify the JSON structure matches what we expect
+          parsed_json.each do |group_name, group|
+            group.each do |test_group_name, test_group|
+              test_group.each do |test_result|
+                expect(test_result.fetch('name')).to eq test_group_name
+                expect(test_result.fetch('group_name')).to eq group_name
+                expect(test_result.key?('status')).to be true
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   describe '#index' do
     let(:course) { role.course }
 
