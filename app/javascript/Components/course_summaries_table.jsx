@@ -76,6 +76,13 @@ export class CourseSummaryTable extends React.Component {
     this.props.assessments.forEach(data => {
       columns.push(
         columnHelper.accessor(`assessment_marks.${data.id}.mark`, {
+          // Custom filter function for numeric columns
+          filterFn: (row, columnId, filterValue) => {
+            const cellValue = row.getValue(columnId);
+            if (cellValue == null) return false;
+            return cellValue.toString().includes(filterValue);
+          },
+          enableColumnFilter: true,
           header: () => data.name,
           cell: info => info.getValue(),
           meta: {
@@ -88,6 +95,13 @@ export class CourseSummaryTable extends React.Component {
     this.props.marking_schemes.forEach(data => {
       columns.push(
         columnHelper.accessor(`weighted_marks.${data.id}.mark`, {
+          // Custom filter function for numeric columns
+          filterFn: (row, columnId, filterValue) => {
+            const cellValue = row.getValue(columnId);
+            if (cellValue == null) return false;
+            return cellValue.toString().includes(filterValue);
+          },
+          enableColumnFilter: true,
           header: () => data.name,
           cell: info => info.getValue(),
           meta: {
@@ -124,7 +138,15 @@ export class CourseSummaryTable extends React.Component {
           data={this.props.data}
           columns={columns}
           columnFilters={this.state.columnFilters}
-          onColumnFiltersChange={columnFilters => this.setState({columnFilters})}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              const newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
           initialState={{sorting: [{id: "user_name", desc: false}]}}
           loading={this.props.loading}
           className={"auto-overflow"}
