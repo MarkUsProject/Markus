@@ -230,7 +230,7 @@
 
       let annotation_text_displayer = this.annotation_text_displayer;
       $control.onmousemove = function (ev) {
-        let point = getRelativePointForMouseEvent(ev, $page, -1);
+        let point = getRelativePointForEvent(ev, $page, -1);
 
         annotation_text_displayer.setDisplayNodeParent($page[0]);
         annotation_text_displayer.displayCollection(
@@ -278,15 +278,9 @@
         y: 0,
       };
 
-      // Press down, activate the selection box
-      $pages.mousedown(ev => {
-        if (ev.which !== 1 && ev.target.id === "sel_box") {
-          return;
-        }
-
-        let point = getRelativePointForMouseEvent(ev);
-
-        this.setSelectionBox($(ev.delegateTarget), {
+      // Helper: Start selection box
+      const startSelection = (point, $target) => {
+        this.setSelectionBox($target, {
           x: point.x,
           y: point.y,
           width: 0,
@@ -296,25 +290,24 @@
 
         start = point;
         selectionBoxActive = true;
-      });
+      };
 
-      // Change the selection box
-      $pages.mousemove(ev => {
+      // Helper: Update selection box dimensions
+      const updateSelection = (point, $target) => {
         if (!selectionBoxActive) {
           return;
         }
 
-        let point = getRelativePointForMouseEvent(ev); // Mouse position
-        this.setSelectionBox($(ev.delegateTarget), {
+        this.setSelectionBox($target, {
           x: Math.min(start.x, point.x),
           y: Math.min(start.y, point.y),
           width: Math.abs(start.x - point.x),
           height: Math.abs(start.y - point.y),
         });
-      });
+      };
 
-      // Finish the selection box
-      $pages.mouseup(() => {
+      // Helper: End selection box
+      const endSelection = () => {
         let size = this.selectionBoxSize();
 
         // If the box is REALLY small then hide it
@@ -323,28 +316,69 @@
         }
 
         selectionBoxActive = false;
+      };
+
+      // Mouse event handlers
+      $pages.mousedown(ev => {
+        if (ev.which !== 1 && ev.target.id === "sel_box") {
+          return;
+        }
+
+        let point = getRelativePointForEvent(ev);
+        startSelection(point, $(ev.delegateTarget));
+      });
+
+      $pages.mousemove(ev => {
+        let point = getRelativePointForEvent(ev);
+        updateSelection(point, $(ev.delegateTarget));
+      });
+
+      $pages.mouseup(() => {
+        endSelection();
+      });
+
+      // Touch event handlers
+      $pages.on("touchstart", ev => {
+        // Prevent default to avoid scrolling while annotating
+        ev.preventDefault();
+
+        let touch = ev.originalEvent.touches[0];
+        let point = getRelativePointForEvent(touch, ev.delegateTarget, undefined);
+        startSelection(point, $(ev.delegateTarget));
+      });
+
+      $pages.on("touchmove", ev => {
+        // Prevent default to avoid scrolling while annotating
+        ev.preventDefault();
+
+        let touch = ev.originalEvent.touches[0];
+        let point = getRelativePointForEvent(touch, ev.delegateTarget, undefined);
+        updateSelection(point, $(ev.delegateTarget));
+      });
+
+      $pages.on("touchend", () => {
+        endSelection();
       });
     }
   }
 
   /**
-   * Returns the selection point in percentage units for an event on
-   * a element.
+   * Returns the selection point in percentage units for a mouse or touch event.
    *
-   * @param {Event}                 ev          The event that occurred.
-   * @param {String|DOMNode|jQuery} relativeTo  The element to calculate the offset for.
-   * @param {number}                mouseOffset Custom mouse offset value.
+   * @param {Event|Touch}           eventOrTouch The event or touch object.
+   * @param {String|DOMNode|jQuery} relativeTo   The element to calculate the offset for.
+   * @param {number}                mouseOffset  Custom mouse offset value.
    * @return {{x: number, y:number}}  The relative point in the element the event occurred in.
    */
-  function getRelativePointForMouseEvent(ev, relativeTo, mouseOffset) {
-    let $elem = relativeTo ? $(relativeTo) : $(ev.delegateTarget);
+  function getRelativePointForEvent(eventOrTouch, relativeTo, mouseOffset) {
+    let $elem = relativeTo ? $(relativeTo) : $(eventOrTouch.delegateTarget);
     let offset = $elem.offset();
 
     let width = $elem.width();
     let height = $elem.height();
 
-    let x = ev.pageX - offset.left - (mouseOffset || MOUSE_OFFSET);
-    let y = ev.pageY - offset.top - (mouseOffset || MOUSE_OFFSET);
+    let x = eventOrTouch.pageX - offset.left - (mouseOffset || MOUSE_OFFSET);
+    let y = eventOrTouch.pageY - offset.top - (mouseOffset || MOUSE_OFFSET);
 
     return {
       x: 1 - (width - x) / width,
