@@ -41,7 +41,6 @@
 - Updated the course summary table to use `@tanstack/react-table` v8 (#7732)
 - Refactored `test_run_table.jsx` by extracting nested components into separate files (#7739)
 
-
 ## [v2.8.2]
 
 ### ✨ New features and improvements

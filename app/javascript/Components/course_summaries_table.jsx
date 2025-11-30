@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "./table/table";
-import {createColumnHelper} from "@tanstack/react-table";
+import {createColumnHelper, filterFns} from "@tanstack/react-table";
 
 export class CourseSummaryTable extends React.Component {
   constructor(props) {
@@ -76,12 +76,7 @@ export class CourseSummaryTable extends React.Component {
     this.props.assessments.forEach(data => {
       columns.push(
         columnHelper.accessor(`assessment_marks.${data.id}.mark`, {
-          // Custom filter function for numeric columns
-          filterFn: (row, columnId, filterValue) => {
-            const cellValue = row.getValue(columnId);
-            if (cellValue == null) return false;
-            return cellValue.toString().includes(filterValue);
-          },
+          filterFn: filterFns.equalsString,
           enableColumnFilter: true,
           header: () => data.name,
           cell: info => info.getValue(),
@@ -95,12 +90,7 @@ export class CourseSummaryTable extends React.Component {
     this.props.marking_schemes.forEach(data => {
       columns.push(
         columnHelper.accessor(`weighted_marks.${data.id}.mark`, {
-          // Custom filter function for numeric columns
-          filterFn: (row, columnId, filterValue) => {
-            const cellValue = row.getValue(columnId);
-            if (cellValue == null) return false;
-            return cellValue.toString().includes(filterValue);
-          },
+          filterFn: filterFns.equalsString,
           enableColumnFilter: true,
           header: () => data.name,
           cell: info => info.getValue(),

@@ -193,12 +193,11 @@ describe("CourseSummaryTable manual filtering", () => {
       getValue: () => 15,
     };
 
-    // Should match when filter value is contained in the mark
+    // Should only match when filter value equals mark
     expect(filterFn(mockRow, "assessment_marks.1.mark", "15")).toBe(true);
-    expect(filterFn(mockRow, "assessment_marks.1.mark", "1")).toBe(true);
-    expect(filterFn(mockRow, "assessment_marks.1.mark", "5")).toBe(true);
 
-    // Should not match when filter value is not contained
+    expect(filterFn(mockRow, "assessment_marks.1.mark", "1")).toBe(false);
+    expect(filterFn(mockRow, "assessment_marks.1.mark", "5")).toBe(false);
     expect(filterFn(mockRow, "assessment_marks.1.mark", "7")).toBe(false);
     expect(filterFn(mockRow, "assessment_marks.1.mark", "20")).toBe(false);
   });
@@ -216,11 +215,11 @@ describe("CourseSummaryTable manual filtering", () => {
       getValue: () => 85,
     };
 
-    // Should match
+    // Should only match when filter value equals mark
     expect(filterFn(mockRow, "weighted_marks.1.mark", "85")).toBe(true);
-    expect(filterFn(mockRow, "weighted_marks.1.mark", "8")).toBe(true);
 
-    // Should not match
+    expect(filterFn(mockRow, "weighted_marks.1.mark", "8")).toBe(false);
+    expect(filterFn(mockRow, "weighted_marks.1.mark", "5")).toBe(false);
     expect(filterFn(mockRow, "weighted_marks.1.mark", "7")).toBe(false);
 
     // Null handling
@@ -228,5 +227,26 @@ describe("CourseSummaryTable manual filtering", () => {
       getValue: () => null,
     };
     expect(filterFn(mockRowWithNull, "weighted_marks.1.mark", "5")).toBe(false);
+  });
+
+  it("filterFn returns false for null marks", () => {
+    const assessments = [{id: 1, name: "A1"}];
+    const marking_schemes = [];
+    const table = new CourseSummaryTable({assessments, marking_schemes});
+    const columns = table.dataColumns();
+
+    const assessmentColumn = columns[0];
+    const filterFn = assessmentColumn.filterFn;
+
+    const mockRowWithNull = {
+      getValue: () => null,
+    };
+
+    // Should return false & not show rows with null
+    expect(() => filterFn(mockRowWithNull, "assessment_marks.1.mark", "5")).not.toThrow();
+    expect(filterFn(mockRowWithNull, "assessment_marks.1.mark", "5")).toBe(false);
+
+    // Also check empty string filter returns false
+    expect(filterFn(mockRowWithNull, "assessment_marks.1.mark", "")).toBe(false);
   });
 });
