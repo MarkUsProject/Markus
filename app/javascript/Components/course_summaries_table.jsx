@@ -1,13 +1,16 @@
 import React from "react";
-import ReactTable from "react-table";
+import Table from "./table/table";
+import {createColumnHelper, filterFns} from "@tanstack/react-table";
 
 export class CourseSummaryTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showHidden: false,
-      filtered: [{id: "hidden", value: false}],
+      columnFilters: [{id: "inactive", value: false}],
     };
+
+    this.columnHelper = createColumnHelper();
   }
 
   static defaultProps = {
@@ -15,107 +18,133 @@ export class CourseSummaryTable extends React.Component {
     marking_schemes: [],
     data: [],
   };
-
-  nameColumns = [
-    {
-      id: "hidden",
-      accessor: "hidden",
-      filterMethod: (filter, row) => {
-        return filter.value || !row.hidden;
-      },
-      className: "rt-hidden",
-      headerClassName: "rt-hidden",
-      resizable: false,
-      width: 0,
-    },
-    {
-      Header: I18n.t("activerecord.attributes.user.user_name"),
-      accessor: "user_name",
-      filterable: true,
-    },
-    {
-      Header: I18n.t("activerecord.attributes.user.first_name"),
-      accessor: "first_name",
-      filterable: true,
-    },
-    {
-      Header: I18n.t("activerecord.attributes.user.last_name"),
-      accessor: "last_name",
-      filterable: true,
-    },
-  ];
+  nameColumns = () => {
+    const columnHelper = this.columnHelper;
+    return [
+      columnHelper.accessor("hidden", {
+        id: "inactive",
+        filterFn: (row, columnId, filterValue) => {
+          // Show all rows if filter true, else only show non-hidden rows
+          return filterValue || !row.original.hidden;
+        },
+        enableColumnFilter: true,
+        enableHiding: false,
+        meta: {
+          className: "rt-hidden",
+          headerClassName: "rt-hidden",
+        },
+        cell: () => null,
+        header: () => null,
+        size: 0,
+      }),
+      columnHelper.accessor("user_name", {
+        id: "user_name",
+        header: () => I18n.t("activerecord.attributes.user.user_name"),
+        enableColumnFilter: true,
+      }),
+      columnHelper.accessor("first_name", {
+        header: () => I18n.t("activerecord.attributes.user.first_name"),
+        enableColumnFilter: true,
+      }),
+      columnHelper.accessor("last_name", {
+        header: () => I18n.t("activerecord.attributes.user.last_name"),
+        enableColumnFilter: true,
+      }),
+    ];
+  };
 
   updateShowHidden = event => {
     let showHidden = event.target.checked;
-    let filtered = [];
-    for (let i = 0; i < this.state.filtered.length; i++) {
-      if (this.state.filtered[i].id !== "hidden") {
-        filtered.push(this.state.filtered[i]);
+    let columnFilters = [];
+
+    for (let i = 0; i < this.state.columnFilters.length; i++) {
+      if (this.state.columnFilters[i].id !== "inactive") {
+        columnFilters.push(this.state.columnFilters[i]);
       }
     }
+
     if (!showHidden) {
-      filtered.push({id: "hidden", value: false});
+      columnFilters.push({id: "inactive", value: false});
     }
-    this.setState({filtered, showHidden});
+    this.setState({columnFilters, showHidden});
   };
 
   dataColumns = () => {
-    let columns = [];
-    this.props.assessments.map(data => {
-      columns.push({
-        accessor: `assessment_marks.${data["id"]}.mark`,
-        Header: data["name"],
-        minWidth: 50,
-        className: "number",
-        headerStyle: {textAlign: "right"},
-      });
+    const columnHelper = this.columnHelper;
+    const columns = [];
+
+    this.props.assessments.forEach(data => {
+      columns.push(
+        columnHelper.accessor(`assessment_marks.${data.id}.mark`, {
+          filterFn: filterFns.equalsString,
+          enableColumnFilter: true,
+          header: () => data.name,
+          cell: info => info.getValue(),
+          meta: {
+            className: "number",
+            headerStyle: {textAlign: "right"},
+          },
+        })
+      );
     });
-    this.props.marking_schemes.map(data => {
-      columns.push({
-        accessor: `weighted_marks.${data["id"]}.mark`,
-        Header: data["name"],
-        minWidth: 50,
-        className: "number",
-        headerStyle: {textAlign: "right"},
-      });
+    this.props.marking_schemes.forEach(data => {
+      columns.push(
+        columnHelper.accessor(`weighted_marks.${data.id}.mark`, {
+          filterFn: filterFns.equalsString,
+          enableColumnFilter: true,
+          header: () => data.name,
+          cell: info => info.getValue(),
+          meta: {
+            className: "number",
+            headerStyle: {textAlign: "right"},
+          },
+        })
+      );
     });
     return columns;
   };
 
   render() {
-    return [
-      !this.props.student && (
-        <div key="show-hidden" style={{height: "2em"}}>
-          <input
-            id="show_hidden"
-            name="show_hidden"
-            type="checkbox"
-            checked={this.state.showHidden}
-            onChange={this.updateShowHidden}
-            style={{marginLeft: "5px", marginRight: "5px"}}
-          />
-          <label htmlFor="show_hidden">{I18n.t("students.display_inactive")}</label>
-        </div>
-      ),
-      <ReactTable
-        key="course-summary-table"
-        data={this.props.data}
-        columns={
-          this.props.student ? this.dataColumns() : this.nameColumns.concat(this.dataColumns())
-        }
-        defaultSorted={[
-          {
-            id: "user_name",
-          },
-        ]}
-        loading={this.props.loading}
-        filtered={this.state.filtered}
-        onFilteredChange={filtered => this.setState({filtered})}
-        className={"auto-overflow"}
-        getNoDataProps={() => ({
-          loading: this.props.loading,
-        })}
-      />,
-    ];
+    const columns = this.props.student
+      ? this.dataColumns()
+      : [...this.nameColumns(), ...this.dataColumns()];
+
+    return (
+      <>
+        {!this.props.student && (
+          <div key="show-hidden" style={{height: "2em"}}>
+            <input
+              id="show_hidden"
+              name="show_hidden"
+              type="checkbox"
+              checked={this.state.showHidden}
+              onChange={this.updateShowHidden}
+              style={{marginLeft: "5px", marginRight: "5px"}}
+            />
+            <label htmlFor="show_hidden">{I18n.t("students.display_inactive")}</label>
+          </div>
+        )}
+        <Table
+          data={this.props.data}
+          columns={columns}
+          columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              const newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
+          initialState={{sorting: [{id: "user_name", desc: false}]}}
+          loading={this.props.loading}
+          className={"auto-overflow"}
+          getNoDataProps={() => ({
+            loading: this.props.loading,
+          })}
+        />
+      </>
+    );
   }
 }

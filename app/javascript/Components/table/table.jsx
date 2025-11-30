@@ -47,17 +47,20 @@ export default function Table({
   renderSubComponent,
   getRowCanExpand,
   columnFilters: externalColumnFilters,
+  onColumnFiltersChange: externalOnColumnFiltersChange,
 }) {
-  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState({inactive: false});
   const [expanded, setExpanded] = React.useState({});
 
-  React.useEffect(() => {
-    if (externalColumnFilters !== undefined) {
-      setColumnFilters(externalColumnFilters);
-    }
-  }, [externalColumnFilters]);
+  const columnFilters =
+    externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters;
+
+  const handleColumnFiltersChange =
+    externalOnColumnFiltersChange !== undefined
+      ? externalOnColumnFiltersChange
+      : setInternalColumnFilters;
 
   const finalColumns = renderSubComponent ? [expanderColumn, ...columns] : columns;
 
@@ -71,7 +74,7 @@ export default function Table({
       expanded,
     },
     initialState: initialState,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: setExpanded,
