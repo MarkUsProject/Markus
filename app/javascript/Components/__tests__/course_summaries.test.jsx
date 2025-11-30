@@ -43,7 +43,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
 
     // Initial state
     expect(table.state.showHidden).toBe(false);
-    expect(table.state.columnFilters).toEqual([{id: "hidden", value: false}]);
+    expect(table.state.columnFilters).toEqual([{id: "inactive", value: false}]);
 
     // Check the checkbox (show hidden = true)
     const event1 = {target: {checked: true}};
@@ -64,7 +64,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
 
     expect(setStateSpy).toHaveBeenCalledWith({
       showHidden: false,
-      columnFilters: [{id: "hidden", value: false}], // Hidden filter added back
+      columnFilters: [{id: "inactive", value: false}], // Hidden filter added back
     });
   });
 
@@ -74,7 +74,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
 
     // Set up state with multiple filters
     table.state.columnFilters = [
-      {id: "hidden", value: false},
+      {id: "inactive", value: false},
       {id: "user_name", value: "test"},
     ];
 
@@ -101,7 +101,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
       showHidden: false,
       columnFilters: [
         {id: "user_name", value: "test"},
-        {id: "hidden", value: false},
+        {id: "inactive", value: false},
       ],
     });
   });
