@@ -956,6 +956,99 @@ describe GroupsController do
                                                                 format: :json }
         expect(response).to have_http_status(:not_found)
       end
+
+      context 'when assigning inactive students' do
+        let!(:inactive_student) do
+          create(:student,
+                 hidden: true,
+                 user: create(:end_user,
+                              user_name: 'inactive_student',
+                              first_name: 'Inactive',
+                              last_name: 'Student',
+                              id_number: '99999'))
+        end
+
+        before do
+          grouping2 = create(:grouping, assignment: assignment)
+          create(:version_used_submission, grouping: grouping2)
+        end
+
+        it 'assigns an inactive student to the grouping when s_id is provided' do
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{inactive_student.first_name} #{inactive_student.last_name}",
+                            s_id: inactive_student.id,
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq inactive_student
+        end
+
+        it 'assigns an inactive student to the grouping by name only' do
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{inactive_student.first_name} #{inactive_student.last_name}",
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq inactive_student
+        end
+      end
+
+      context 'testing student selection logic when s_id and names may differ' do
+        let!(:student2) do
+          create(:student,
+                 user: create(:end_user,
+                              user_name: 'c9test2',
+                              first_name: 'Different',
+                              last_name: 'Person',
+                              id_number: '67890'))
+        end
+
+        before do
+          grouping2 = create(:grouping, assignment: assignment)
+          create(:version_used_submission, grouping: grouping2)
+        end
+
+        it 'uses name lookup when no dropdown selection is made (student.nil?)' do
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{student1.first_name} #{student1.last_name}",
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq student1
+        end
+
+        it 'prioritizes manually edited name over dropdown selection when they differ' do
+          # Simulates: user selected student2 from dropdown, then manually edited the text to student1's name
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{student1.first_name} #{student1.last_name}",
+                            s_id: student2.id,
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq student1
+          expect(grouping1.memberships.map(&:role)).not_to include(student2)
+        end
+
+        it 'uses dropdown selection when it matches typed name' do
+          post_as instructor, :assign_student_and_next,
+                  params: { course_id: course.id,
+                            assignment_id: assignment.id,
+                            assignment: assignment.id,
+                            names: "#{student2.first_name} #{student2.last_name}",
+                            s_id: student2.id,
+                            g_id: grouping1.id,
+                            format: :json }
+          expect(grouping1.memberships.first.role).to eq student2
+        end
+      end
     end
   end
 
