@@ -1310,9 +1310,12 @@ describe Api::GroupsController do
     context 'GET test_results' do
       let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       let(:test_group) { create(:test_group, assignment: assignment) }
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
 
       context 'when the group has test results' do
-        let!(:test_run) { create(:test_run, grouping: grouping, role: instructor, status: :complete) }
+        let!(:test_run) do
+          create(:test_run, grouping: grouping, role: instructor, status: :complete, submission: submission)
+        end
         let!(:test_group_result) do
           create(:test_group_result, test_run: test_run, test_group: test_group,
                                      marks_earned: 5.0, marks_total: 10.0, time: 1000)
@@ -1333,21 +1336,19 @@ describe Api::GroupsController do
             expect(response).to have_http_status(:ok)
           end
 
-          it 'should return test run data' do
-            expect(response.parsed_body.first['id']).to eq(test_run.id)
-            expect(response.parsed_body.first['status']).to eq('complete')
+          it 'should return data grouped by test group name' do
+            expect(response.parsed_body).to have_key(test_group.name)
           end
 
-          it 'should return test group data' do
-            test_group_data = response.parsed_body.first['test_groups'].first
-            expect(test_group_data['name']).to eq(test_group.name)
-            expect(test_group_data['marks_earned']).to eq(5.0)
-          end
-
-          it 'should return individual test data' do
-            test_data = response.parsed_body.first['test_groups'].first['tests'].first
-            expect(test_data['name']).to eq('Test 1')
-            expect(test_data['status']).to eq('pass')
+          it 'should return test results for the group' do
+            test_results = response.parsed_body[test_group.name]
+            expect(test_results).to be_an(Array)
+            expect(test_results.first).to include(
+              'test_result_name' => 'Test 1',
+              'status' => 'pass',
+              'marks_earned' => 3.0,
+              'marks_total' => 5.0
+            )
           end
         end
 
@@ -1363,7 +1364,34 @@ describe Api::GroupsController do
 
           it 'should return xml content' do
             xml_data = Hash.from_xml(response.body)
-            expect(xml_data).to have_key('test_runs')
+            expect(xml_data).to have_key('test_results')
+          end
+        end
+
+        context 'with multiple test groups' do
+          let(:test_group_two) { create(:test_group, assignment: assignment, name: 'Group B') }
+          let!(:test_group_result_two) do
+            create(:test_group_result, test_run: test_run, test_group: test_group_two)
+          end
+
+          before do
+            create(:test_result, test_group_result: test_group_result_two, name: 'Test B1',
+                                 status: 'pass', marks_earned: 2.0, marks_total: 5.0, position: 1)
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_results, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return results keyed by each test group name' do
+            expect(response.parsed_body.keys).to contain_exactly(test_group.name, test_group_two.name)
+          end
+
+          it 'should return correct test results for each group' do
+            expect(response.parsed_body[test_group.name].first['test_result_name']).to eq('Test 1')
+            expect(response.parsed_body[test_group_two.name].first['test_result_name']).to eq('Test B1')
           end
         end
       end
@@ -1388,18 +1416,47 @@ describe Api::GroupsController do
         end
       end
 
+      context 'when the group does not exist' do
+        before do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_results, params: { id: 999_999, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return 404 status' do
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
       context 'when multiple test runs exist' do
-        let!(:older_test_run) { create(:test_run, grouping: grouping, role: instructor, created_at: 2.days.ago) }
-        let!(:newer_test_run) { create(:test_run, grouping: grouping, role: instructor, created_at: 1.hour.ago) }
+        let!(:older_test_run) do
+          create(:test_run, grouping: grouping, role: instructor, created_at: 2.days.ago, status: :complete,
+                            submission: submission)
+        end
+        let!(:newer_test_run) do
+          create(:test_run, grouping: grouping, role: instructor, created_at: 1.hour.ago, status: :complete,
+                            submission: submission)
+        end
+        let!(:older_test_group_result) do
+          create(:test_group_result, test_run: older_test_run, test_group: test_group)
+        end
+        let!(:newer_test_group_result) do
+          create(:test_group_result, test_run: newer_test_run, test_group: test_group)
+        end
 
         before do
+          create(:test_result, test_group_result: older_test_group_result, name: 'Old Test',
+                               marks_earned: 1.0, marks_total: 5.0, status: 'pass', position: 1)
+          create(:test_result, test_group_result: newer_test_group_result, name: 'New Test',
+                               marks_earned: 4.0, marks_total: 5.0, status: 'pass', position: 1)
           request.env['HTTP_ACCEPT'] = 'application/json'
           get :test_results, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
         end
 
-        it 'should return newest first' do
-          test_run_ids = response.parsed_body.pluck('id')
-          expect(test_run_ids).to eq([newer_test_run.id, older_test_run.id])
+        it 'should return only the latest test run results' do
+          test_results = response.parsed_body[test_group.name]
+          expect(test_results.length).to eq(1)
+          expect(test_results.first['test_result_name']).to eq('New Test')
+          expect(test_results.first['marks_earned']).to eq(4.0)
         end
       end
     end

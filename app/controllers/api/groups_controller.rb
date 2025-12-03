@@ -204,46 +204,28 @@ module Api
     end
 
     def test_results
-      test_runs = grouping&.test_runs&.includes(test_group_results: [:test_group,
-                                                                     :test_results])&.order(created_at: :desc)
+      return render_no_grouping_error unless grouping
 
-      if test_runs.blank?
-        return render 'shared/http_status',
-                      locals: { code: '404', message: 'No test results found for this group' },
-                      status: :not_found
-      end
+      # Use the existing Assignment#summary_test_results method filtered for this specific group
+      # This ensures format consistency with the UI download (summary_test_result_json)
+      group_name = grouping.group.group_name
+      results = assignment.summary_test_results([group_name])
 
-      results_data = test_runs.map do |test_run|
-        {
-          id: test_run.id,
-          status: test_run.status,
-          created_at: test_run.created_at,
-          problems: test_run.problems,
-          test_groups: test_run.test_group_results.map do |test_group_result|
-            {
-              name: test_group_result.test_group.name,
-              marks_earned: test_group_result.marks_earned,
-              marks_total: test_group_result.marks_total,
-              time: test_group_result.time,
-              tests: test_group_result.test_results.order(:position).map do |test|
-                {
-                  name: test.name,
-                  status: test.status,
-                  marks_earned: test.marks_earned,
-                  marks_total: test.marks_total,
-                  output: test.output,
-                  time: test.time
-                }
-              end
-            }
-          end
-        }
-      end
+      return render_no_grouping_error if results.blank?
+
+      # Group by test_group name to match the summary_test_result_json format
+      results_by_test_group = results.group_by(&:name)
 
       respond_to do |format|
-        format.xml { render xml: results_data.to_xml(root: 'test_runs', skip_types: 'true') }
-        format.json { render json: results_data }
+        format.xml { render xml: results_by_test_group.to_xml(root: 'test_results', skip_types: 'true') }
+        format.json { render json: results_by_test_group }
       end
+    end
+
+    def render_no_grouping_error
+      render 'shared/http_status',
+             locals: { code: '404', message: 'No test results found for this group' },
+             status: :not_found
     end
 
     def add_annotations

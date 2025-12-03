@@ -668,7 +668,7 @@ class Assignment < Assessment
   end
 
   # Generates the summary of the most test results associated with an assignment.
-  def summary_test_results
+  def summary_test_results(group_names = nil)
     latest_test_run_by_grouping = TestRun.group('grouping_id').select('MAX(created_at) as test_runs_created_at',
                                                                       'grouping_id')
                                          .where.not(submission_id: nil)
@@ -682,17 +682,21 @@ class Assignment < Assessment
                        .select('id', 'test_runs.grouping_id', 'groups.group_name')
                        .to_sql
 
-    self.test_groups.joins(test_group_results: :test_results)
-        .joins("INNER JOIN (#{latest_test_runs}) latest_test_runs \
+    query = self.test_groups.joins(test_group_results: :test_results)
+                .joins("INNER JOIN (#{latest_test_runs}) latest_test_runs \
               ON test_group_results.test_run_id = latest_test_runs.id")
-        .select('test_groups.name',
-                'test_groups.id as test_groups_id',
-                'latest_test_runs.group_name',
-                'test_results.name as test_result_name',
-                'test_results.status',
-                'test_results.marks_earned',
-                'test_results.marks_total',
-                :output, :extra_info, :error_type)
+
+    # Optionally - filters specific groups if provided
+    query = query.where('latest_test_runs.group_name': group_names) if group_names.present?
+
+    query.select('test_groups.name',
+                 'test_groups.id as test_groups_id',
+                 'latest_test_runs.group_name',
+                 'test_results.name as test_result_name',
+                 'test_results.status',
+                 'test_results.marks_earned',
+                 'test_results.marks_total',
+                 :output, :extra_info, :error_type)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
