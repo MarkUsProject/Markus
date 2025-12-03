@@ -203,6 +203,49 @@ module Api
       end
     end
 
+    def test_results
+      test_runs = grouping&.test_runs&.includes(test_group_results: [:test_group,
+                                                                     :test_results])&.order(created_at: :desc)
+
+      if test_runs.blank?
+        return render 'shared/http_status',
+                      locals: { code: '404', message: 'No test results found for this group' },
+                      status: :not_found
+      end
+
+      results_data = test_runs.map do |test_run|
+        {
+          id: test_run.id,
+          status: test_run.status,
+          created_at: test_run.created_at,
+          problems: test_run.problems,
+          test_groups: test_run.test_group_results.map do |test_group_result|
+            {
+              name: test_group_result.test_group.name,
+              marks_earned: test_group_result.marks_earned,
+              marks_total: test_group_result.marks_total,
+              time: test_group_result.time,
+              tests: test_group_result.test_results.order(:position).map do |test|
+                {
+                  name: test.name,
+                  status: test.status,
+                  marks_earned: test.marks_earned,
+                  marks_total: test.marks_total,
+                  output: test.output,
+                  time: test.time
+                }
+              end
+            }
+          end
+        }
+      end
+
+      respond_to do |format|
+        format.xml { render xml: results_data.to_xml(root: 'test_runs', skip_types: 'true') }
+        format.json { render json: results_data }
+      end
+    end
+
     def add_annotations
       result = self.grouping&.current_result
       return page_not_found('No submission exists for that group') if result.nil?
