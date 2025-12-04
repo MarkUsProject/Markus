@@ -45,14 +45,17 @@ describe Grouping do
     context 'hidden students' do
       let(:hidden) { create(:student, hidden: true) }
 
-      it 'cannot be invited' do
-        grouping.invite(hidden.user.user_name)
-        expect(grouping.memberships.count).to eq(0)
+      it 'can be invited (ISSUE-7743)' do
+        grouping.invite(hidden.user.user_name, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+        expect(grouping.memberships.count).to eq(1)
+        expect(grouping.memberships.first.role).to eq(hidden)
       end
 
-      it 'cannot be added' do
-        grouping.add_member(hidden)
-        expect(grouping.memberships.count).to eq(0)
+      it 'can be added (ISSUE-7743)' do
+        result = grouping.add_member(hidden)
+        expect(result).not_to be_nil
+        expect(grouping.memberships.count).to eq(1)
+        expect(grouping.memberships.first.role).to eq(hidden)
       end
     end
 

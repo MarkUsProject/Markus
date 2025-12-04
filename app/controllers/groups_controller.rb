@@ -306,9 +306,16 @@ class GroupsController < ApplicationController
 
         group_rows << row.compact_blank
       end
+
       if result[:invalid_lines].empty?
-        @current_job = CreateGroupsJob.perform_later assignment, group_rows
-        session[:job_id] = @current_job.job_id
+        group_size_error = validate_group_sizes(group_rows, assignment)
+
+        if group_size_error.nil?
+          @current_job = CreateGroupsJob.perform_later assignment, group_rows
+          session[:job_id] = @current_job.job_id
+        else
+          flash_message(:error, group_size_error)
+        end
       else
         flash_message(:error, result[:invalid_lines])
       end
@@ -699,9 +706,6 @@ class GroupsController < ApplicationController
                             end
     @bad_user_names = []
 
-    if student.hidden
-      raise I18n.t('groups.invite_member.errors.not_found', user_name: student.user_name)
-    end
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
@@ -763,5 +767,24 @@ class GroupsController < ApplicationController
   # TODO: move all grouping methods into their own controller and remove this
   def record
     @record ||= Grouping.find_by(id: request.path_parameters[:id]) if request.path_parameters[:id]
+  end
+
+  # Validates that all groups in group_rows do not exceed the assignment's maximum group size.
+  # Returns nil if all groups are valid, or an error message string if any groups are oversized.
+  def validate_group_sizes(group_rows, assignment)
+    oversized_groups = group_rows.select { |row| row.length - 1 > assignment.group_max }
+    return if oversized_groups.empty?
+
+    max_display = 3
+    error_messages = oversized_groups.take(max_display).map do |row|
+      "#{row[0]} (#{row.length - 1} students, max: #{assignment.group_max})"
+    end
+
+    if oversized_groups.length > max_display
+      "#{oversized_groups.length} groups exceed the maximum group size. " \
+        "First #{max_display} Groups -> #{error_messages.join(', ')}"
+    else
+      "The following groups exceed the maximum group size: #{error_messages.join(', ')}"
+    end
   end
 end
