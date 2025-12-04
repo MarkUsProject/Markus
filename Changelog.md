@@ -30,6 +30,7 @@
 - Enable zip downloads of test results (#7733)
 - Create rake task to remove orphaned end users (#7741)
 - Enable scanned assignments the ability to add inactive students (#7737)
+- Allow inactive students to join groups (#7757)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
