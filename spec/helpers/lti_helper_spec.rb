@@ -496,6 +496,49 @@ describe LtiHelper do
         expect(get_assignment_marks(lti_deployment, assessment)).not_to be_empty
       end
     end
+
+    context 'when some students are inactive (hidden)' do
+      let(:student1) { create(:student, course: course) }
+      let(:student2) { create(:student, course: course) }
+      let(:assignment) { create(:assignment, course: course) }
+
+      let!(:grouping) do
+        create(:grouping, assignment: assignment).tap do |g|
+          create(:student_membership,
+                 grouping: g,
+                 role: student1,
+                 membership_status: StudentMembership::STATUSES[:accepted])
+
+          create(:student_membership,
+                 grouping: g,
+                 role: student2,
+                 membership_status: StudentMembership::STATUSES[:accepted])
+        end
+      end
+
+      before do
+        create(:result,
+               grouping: grouping,
+               released_to_students: true,
+               marking_state: Result::MARKING_STATES[:complete])
+
+        student2.update!(hidden: true)
+
+        [student1.user, student2.user].each do |usr|
+          create(:lti_user, user: usr, lti_client: lti_deployment.lti_client)
+        end
+      end
+
+      it 'does not include hidden students in the marks hash' do
+        marks = get_assignment_marks(lti_deployment, assignment)
+
+        id1 = student1.user.lti_users.first.lti_user_id
+        id2 = student2.user.lti_users.first.lti_user_id
+
+        expect(marks.keys).to include(id1)
+        expect(marks.keys).not_to include(id2)
+      end
+    end
   end
 
   describe '#get_grade_entry_form_marks' do
