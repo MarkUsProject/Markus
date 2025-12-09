@@ -1,0 +1,42 @@
+// OCR Suggestions Styles
+// Used in assign_scans view for displaying OCR match data and student suggestions
+
+@import 'constants';
+
+.ocr-suggestions-container {
+  margin: 1em 0;
+  padding: 1em;
+  background-color: $background-support;
+  border: 1px solid $gridline;
+  border-radius: var(--radius);
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  code {
+    background-color: $disabled-area;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+
+  .no-match {
+    color: $disabled-text;
+    font-style: italic;
+  }
+}
+
+.ocr-suggestions-list {
+  margin-top: 0.5em;
+  position: static;
+
+  .ui-menu-item div:hover {
+    background-color: $primary-three;
+    color: $sharp-line;
+  }
+
+  .student-info {
+    font-size: 1.1em;
+    color: $sharp-line;
+    font-weight: 500;
+  }
+}

@@ -147,12 +147,31 @@ class GroupsController < ApplicationController
     if num_valid == num_total
       flash_message(:success, t('exam_templates.assign_scans.done'))
     end
+    # Get OCR match data and suggestions if available
+    exam_template = @assignment.exam_templates.first
+    ocr_match = exam_template ? OcrMatchService.get_match(next_grouping.id, exam_template.id) : nil
+    ocr_suggestions = if ocr_match && exam_template
+                        OcrMatchService.get_suggestions(next_grouping.id, exam_template.id, current_course.id)
+                      else
+                        []
+                      end
+
     @data = {
       group_name: next_grouping.group.group_name,
       grouping_id: next_grouping.id,
       students: names,
       num_total: num_total,
-      num_valid: num_valid
+      num_valid: num_valid,
+      ocr_match: ocr_match,
+      ocr_suggestions: ocr_suggestions.map do |s|
+        {
+          id: s[:student].id,
+          user_name: s[:student].user.user_name,
+          id_number: s[:student].user.id_number,
+          display_name: s[:student].user.display_name,
+          similarity: (s[:similarity] * 100).round(1) # Convert to percentage
+        }
+      end
     }
     next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
     if next_file.nil?
