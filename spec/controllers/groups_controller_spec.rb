@@ -286,7 +286,9 @@ describe GroupsController do
               grouping_id: grouping.id,
               students: names,
               num_total: 1,
-              num_valid: 1
+              num_valid: 1,
+              ocr_match: nil,
+              ocr_suggestions: []
             }
 
             get_as instructor, :assign_scans, params: { course_id: course.id,
@@ -350,6 +352,79 @@ describe GroupsController do
               expect(flash[:warning]).to be_nil
             end
           end
+
+          context 'when OCR match data exists' do
+            let!(:exam_template) { create(:exam_template_midterm, assignment: assignment) }
+            let!(:student1) { create(:student, course: course) }
+            let!(:student2) { create(:student, course: course) }
+
+            before do
+              student1.user.update!(id_number: '1234567890', user_name: 'student1')
+              student2.user.update!(id_number: '1234567891', user_name: 'student2')
+
+              # Store OCR match data for unmatched grouping
+              OcrMatchService.store_match(
+                grouping.id,
+                exam_template.id,
+                '1234567890',
+                'id_number',
+                matched: false,
+                student_id: nil
+              )
+            end
+
+            it 'includes OCR match data in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_match]).not_to be_nil
+              expect(data[:ocr_match][:parsed_value]).to eq '1234567890'
+              expect(data[:ocr_match][:field_type]).to eq 'id_number'
+              expect(data[:ocr_match][:matched]).to be false
+            end
+
+            it 'includes OCR suggestions in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_suggestions]).not_to be_empty
+              expect(data[:ocr_suggestions].first[:id]).to eq student1.id
+              expect(data[:ocr_suggestions].first[:id_number]).to eq '1234567890'
+              expect(data[:ocr_suggestions].first[:similarity]).to be > 90.0
+            end
+          end
+
+          context 'when no OCR match data exists' do
+            let(:exam_template) { create(:exam_template_midterm, assignment: assignment) }
+
+            before { exam_template }
+
+            it 'includes nil ocr_match in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_match]).to be_nil
+              expect(data[:ocr_suggestions]).to be_empty
+            end
+          end
+
+          context 'when assignment has no exam template' do
+            it 'includes nil ocr_match in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_match]).to be_nil
+              expect(data[:ocr_suggestions]).to be_empty
+            end
+          end
         end
       end
 
@@ -407,7 +482,9 @@ describe GroupsController do
               grouping_id: grouping.id,
               students: names,
               num_total: 1,
-              num_valid: 0
+              num_valid: 0,
+              ocr_match: nil,
+              ocr_suggestions: []
             }
 
             get_as instructor, :assign_scans, params: { course_id: course.id,

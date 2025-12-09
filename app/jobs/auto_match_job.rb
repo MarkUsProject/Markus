@@ -50,6 +50,17 @@ class AutoMatchJob < ApplicationJob
         next unless status.success? && parsed.length == 1
 
         student = match_student(parsed[0], exam_template)
+
+        # Store OCR match result in Redis for later suggestions
+        OcrMatchService.store_match(
+          grouping.id,
+          exam_template.id,
+          parsed[0],
+          exam_template.cover_fields,
+          matched: !student.nil?,
+          student_id: student&.id
+        )
+
         unless student.nil?
           StudentMembership.find_or_create_by(role: student,
                                               grouping: grouping,
