@@ -21,6 +21,7 @@
 - Create rake task to remove orphaned end users (#7741)
 - Enable scanned assignments the ability to add inactive students (#7737)
 - Enable test results downloads through the API (#7754)
+- Provide suggestions for partial student matching scans (#7760)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
