@@ -117,6 +117,7 @@ module LtiHelper
     released_results = assignment.released_marks
                                  .joins(grouping: [{ accepted_student_memberships: { role: { user: :lti_users } } }])
                                  .where('lti_users.lti_client': lti_deployment.lti_client)
+                                 .where(roles: { hidden: false })
                                  .pluck('lti_users.lti_user_id', 'results.id')
     result_ids = released_results.pluck(1)
     grades = Result.get_total_marks(result_ids)
