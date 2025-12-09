@@ -25,36 +25,30 @@ export function updateOcrSuggestions(ocrMatch, suggestions) {
   // Display suggestions if available
   if (suggestions && suggestions.length > 0) {
     container.append("<p><strong>Suggested Students:</strong></p>");
-    const list = $('<ul class="ocr-suggestions-list"></ul>');
+    const list = $('<ul class="ui-menu ocr-suggestions-list"></ul>');
 
     suggestions.forEach(function (suggestion) {
       const similarity = suggestion.similarity;
-      const colorClass =
-        similarity >= 90 ? "high-match" : similarity >= 70 ? "medium-match" : "low-match";
-      const item = $('<li class="ocr-suggestion-item"></li>');
-      const link = $(`<a href="#" class="ocr-suggestion-link ${colorClass}"></a>`);
+      const item = $('<li class="ui-menu-item"></li>');
+      const content = $("<div></div>");
 
-      link.html(`
-        <span class="student-name">${suggestion.display_name}</span>
-        <span class="student-details">${suggestion.user_name} | ${suggestion.id_number || "No ID"}</span>
-        <span class="similarity-badge">${similarity}% match</span>
+      content.html(`
+        <strong>${suggestion.display_name}</strong> (${similarity}%)<br>
+        <span class="student-info">${suggestion.id_number || "No ID"} | ${suggestion.user_name}</span>
       `);
 
-      link.on("click", function (e) {
-        e.preventDefault();
+      content.on("click", function () {
         $("#student_id").val(suggestion.id);
         $("#names").val(suggestion.display_name);
         $("#names").focus();
       });
 
-      item.append(link);
+      item.append(content);
       list.append(item);
     });
 
     container.append(list);
   } else if (!ocrMatch.matched) {
-    container.append(
-      '<p class="no-suggestions">No similar students found. Please assign manually.</p>'
-    );
+    container.append('<p class="no-match">No similar students found. Please assign manually.</p>');
   }
 }
