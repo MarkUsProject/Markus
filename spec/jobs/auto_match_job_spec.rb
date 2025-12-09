@@ -43,6 +43,21 @@ describe AutoMatchJob do
         it 'assigns the paper to the correct student in the correct group' do
           expect(grouping.accepted_students.first.id_number).to eq '0123456789'
         end
+
+        it 'stores OCR match data in Redis with matched status' do
+          ocr_data = OcrMatchService.get_match(grouping.id, exam_template.id)
+          expect(ocr_data).not_to be_nil
+          expect(ocr_data[:parsed_value]).to eq '0123456789'
+          expect(ocr_data[:field_type]).to eq 'id_number'
+          expect(ocr_data[:matched]).to be true
+          expect(ocr_data[:matched_student_id]).to eq grouping.accepted_students.first.id
+        end
+
+        it 'does not add matched grouping to unmatched set' do
+          redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
+          unmatched_set = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+          expect(unmatched_set).not_to include(grouping.id.to_s)
+        end
       end
 
       context 'when there is no text to parse' do
@@ -51,6 +66,47 @@ describe AutoMatchJob do
 
         it 'does not assign a student to that group' do
           expect(grouping.accepted_students.size).to eq 0
+        end
+
+        it 'stores OCR match data with parsed value "None"' do
+          ocr_data = OcrMatchService.get_match(grouping.id, exam_template.id)
+          # OCR returns "None" for blank scans
+          expect(ocr_data).not_to be_nil
+          expect(ocr_data[:parsed_value]).to eq 'None'
+          expect(ocr_data[:matched]).to be false
+        end
+      end
+
+      context 'when OCR parsing succeeds but no student match found' do
+        # Use a different PDF file to avoid conflict with parent context's student creation
+        # Override the subject to not create a student
+        subject do
+          FileUtils.cp "db/data/scanned_exams/#{filename}",
+                       File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+          SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor, user)
+          AutoMatchJob.perform_now([grouping], exam_template)
+        end
+
+        let(:filename) { 'test-auto-parse-scan-success.pdf' }
+        let(:group_name) { 'test-auto-parse_paper_1' }
+
+        it 'does not assign a student to the group' do
+          expect(grouping.accepted_students.size).to eq 0
+        end
+
+        it 'stores OCR match data in Redis with unmatched status' do
+          ocr_data = OcrMatchService.get_match(grouping.id, exam_template.id)
+          expect(ocr_data).not_to be_nil
+          expect(ocr_data[:parsed_value]).to eq '0123456789'
+          expect(ocr_data[:field_type]).to eq 'id_number'
+          expect(ocr_data[:matched]).to be false
+          expect(ocr_data[:matched_student_id]).to be_nil
+        end
+
+        it 'adds unmatched grouping to unmatched set' do
+          redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
+          unmatched_set = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+          expect(unmatched_set).to include(grouping.id.to_s)
         end
       end
     end
