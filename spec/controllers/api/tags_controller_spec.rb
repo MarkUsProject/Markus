@@ -96,13 +96,13 @@ describe Api::TagsController do
       it 'should throw a 422 error if the grouping id is not valid' do
         post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id,
                                 grouping_id: grouping.id + 1 }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'should throw a 422 error if the assignment id is not valid' do
         post :create, params: { course_id: course.id, name: 'new_tag', assignment_id: assignment.id + 1,
                                 grouping_id: grouping.id }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

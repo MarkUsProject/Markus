@@ -386,7 +386,7 @@ describe Api::CoursesController do
       context 'there is no autotest_setting set' do
         it 'should return unprocessable_entity' do
           subject
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
 
@@ -432,7 +432,7 @@ describe Api::CoursesController do
       context 'there is no autotest_setting set' do
         it 'should return unprocessable_entity' do
           subject
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
 

@@ -79,7 +79,7 @@ class CoursesController < ApplicationController
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
              locals: { error: I18n.t('main.cannot_role_switch_to_self') },
-             status: :unprocessable_entity
+             status: :unprocessable_content
       return
     end
 
@@ -88,7 +88,7 @@ class CoursesController < ApplicationController
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
              locals: { error: I18n.t('main.cannot_role_switch') },
-             status: :unprocessable_entity
+             status: :unprocessable_content
       return
     end
 

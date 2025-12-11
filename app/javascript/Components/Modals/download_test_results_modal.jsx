@@ -53,6 +53,23 @@ class DownloadTestResultsModal extends React.Component {
               {I18n.t("download_csv")}
             </button>
           </a>
+          <a
+            href={Routes.download_test_results_course_assignment_path({
+              course_id: this.props.course_id,
+              id: this.props.assignment_id,
+              format: "zip",
+              _options: true,
+            })}
+          >
+            <button
+              type="submit"
+              name="download-test-results-zip"
+              onClick={this.props.onRequestClose}
+            >
+              <i className="fa-solid fa-download" aria-hidden="true" />
+              {I18n.t("download_zip")}
+            </button>
+          </a>
           <section className="dialog-actions">
             <input
               onClick={this.props.onRequestClose}

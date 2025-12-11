@@ -56,7 +56,8 @@ class InstructorTable extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchData().then(data => this.setState({data: this.processData(data)}));
+    this.setState({loading: true});
+    this.fetchData().then(data => this.setState({data: this.processData(data), loading: false}));
   }
 
   fetchData() {
@@ -102,6 +103,7 @@ class InstructorTable extends React.Component {
         data={this.state.data}
         columns={this.columns}
         noDataText={I18n.t("instructors.empty_table")}
+        loading={this.state.loading}
       />
     );
   }

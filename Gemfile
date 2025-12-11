@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 8.0.2.1'
+gem 'rails', '~> 8.0.3'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -37,7 +37,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 8.0.1'
+gem 'rails-i18n', '~> 8.0.2'
 
 # Redis
 gem 'redis', '~> 5.4.1'
@@ -46,7 +46,7 @@ gem 'redis', '~> 5.4.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.1.2'
+gem 'rmagick', '~> 6.1.4'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -85,6 +85,10 @@ group :development do
   gem 'listen' # to listen for changes in i18n-js files
 end
 
+group :development_extra, optional: true do
+  gem 'ruby-lsp', require: false
+end
+
 group :test do
   gem 'factory_bot_rails'
   gem 'fuubar'
@@ -106,7 +110,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'rspec-rails', '~> 8.0.1'
+  gem 'rspec-rails', '~> 8.0.2'
   gem 'selenium-webdriver'
 end
 

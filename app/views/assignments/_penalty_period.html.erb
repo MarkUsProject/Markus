@@ -25,7 +25,8 @@
       </span>
     </td>
     <td>
-      <%= f.number_field :deduction, min: 0, step: :any, required: true %> %
+      <%= f.number_field :deduction, min: 0, step: :any, required: true %>
+      <span class="deduction-unit">%</span>
     </td>
     <td>
       <% if !f.object.nil? && !f.object.new_record? %>

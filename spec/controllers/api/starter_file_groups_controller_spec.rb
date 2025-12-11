@@ -348,7 +348,7 @@ describe Api::StarterFileGroupsController do
       end
 
       it 'returns a 422 status code' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'does not create the file' do
@@ -411,7 +411,7 @@ describe Api::StarterFileGroupsController do
       end
 
       it 'returns a 422 status code' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'does not create the folder' do
@@ -474,7 +474,7 @@ describe Api::StarterFileGroupsController do
       end
 
       it 'returns a 422 status code' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'does not delete the file' do
@@ -540,7 +540,7 @@ describe Api::StarterFileGroupsController do
       end
 
       it 'returns a 422 status code' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'does not delete the folder' do

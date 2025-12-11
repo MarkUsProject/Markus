@@ -1,5 +1,6 @@
 describe MainController do
   include SessionHandler
+
   let(:student) { create(:student) }
   let(:ta) { create(:ta) }
   let(:instructor) { create(:instructor) }

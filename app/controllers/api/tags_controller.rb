@@ -36,7 +36,7 @@ module Api
         grouping.tags << new_tag
       end
     rescue StandardError => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     else
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
@@ -50,7 +50,7 @@ module Api
         begin
           tag.update!(**self.tag_params)
         rescue StandardError => e
-          render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+          render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
         else
           render 'shared/http_status',
                  locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok

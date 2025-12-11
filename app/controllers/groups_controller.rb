@@ -117,7 +117,9 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: @assignment.all_grouping_data
+        render json: @assignment.all_grouping_data.merge(
+          clone_assignments: @clone_assignments.as_json(only: [:id, :short_identifier])
+        )
       end
     end
   end
@@ -181,11 +183,13 @@ class GroupsController < ApplicationController
                                            .where(groupings: { assessment_id: params[:assignment_id] }))
                           .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
                                          'users.first_name', 'users.last_name', 'roles.hidden')
+
     names = names.map do |h|
+      inactive = h['roles.hidden'] ? I18n.t('student.inactive') : ''
       { id: h[:id],
         id_number: h['users.id_number'],
         user_name: h['users.user_name'],
-        value: "#{h['users.first_name']} #{h['users.last_name']}#{h['roles.hidden'] ? ' (inactive)' : ''}" }
+        value: "#{h['users.first_name']} #{h['users.last_name']}#{inactive}" }
     end
     render json: names
   end
@@ -199,12 +203,15 @@ class GroupsController < ApplicationController
       if params[:s_id].present?
         student = current_course.students.find(params[:s_id])
       end
+      replace_pattern = /#{Regexp.escape(I18n.t('student.inactive'))}\s*$/
+      student_name = params[:names].sub(replace_pattern, '').strip
+
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
-      if student.nil? || "#{student.first_name} #{student.last_name}" != params[:names]
+      if student.nil? || "#{student.first_name} #{student.last_name}" != student_name
         student = current_course.students.joins(:user).where(
           'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-          ApplicationRecord.sanitize_sql_like(params[:names].downcase),
-          ApplicationRecord.sanitize_sql_like(params[:names].downcase)
+          ApplicationRecord.sanitize_sql_like(student_name.downcase),
+          ApplicationRecord.sanitize_sql_like(student_name.downcase)
         ).first
       end
       if student.nil?
@@ -346,7 +353,7 @@ class GroupsController < ApplicationController
     target_assignment = Assignment.find(params[:assignment_id])
     source_assignment = Assignment.find(params[:clone_assignment_id])
 
-    return head :unprocessable_entity if target_assignment.course != source_assignment.course
+    return head :unprocessable_content if target_assignment.course != source_assignment.course
 
     if source_assignment.nil?
       flash_message(:warning, t('groups.clone_warning.could_not_find_source'))
@@ -371,7 +378,7 @@ class GroupsController < ApplicationController
       current_role.join(@grouping)
     rescue ActiveRecord::RecordInvalid, RuntimeError => e
       flash_message(:error, e.message)
-      status = :unprocessable_entity
+      status = :unprocessable_content
     else
       m_logger = MarkusLogger.instance
       m_logger.log("Student '#{current_role.user_name}' joined group " \
@@ -389,7 +396,7 @@ class GroupsController < ApplicationController
       @grouping.decline_invitation(current_role)
     rescue RuntimeError => e
       flash_message(:error, e.message)
-      status = :unprocessable_entity
+      status = :unprocessable_content
     else
       m_logger = MarkusLogger.instance
       m_logger.log("Student '#{current_role.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")

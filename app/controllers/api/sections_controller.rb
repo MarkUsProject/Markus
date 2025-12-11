@@ -35,7 +35,7 @@ module Api
                locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       else
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
       end
     end
 

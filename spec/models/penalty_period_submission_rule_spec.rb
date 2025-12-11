@@ -9,7 +9,8 @@ describe PenaltyPeriodSubmissionRule do
       Timecop.freeze(due_date + submission_time_offset) do
         apply_rule
         rule_overtime_message = rule.overtime_message(grouping)
-        expected_overtime_message = I18n.t 'penalty_decay_period_submission_rules.overtime_message',
+        penalty_suffix = rule.penalty_type || ExtraMark::PERCENTAGE
+        expected_overtime_message = I18n.t "penalty_period_submission_rules.overtime_message_#{penalty_suffix}",
                                            potential_penalty: potential_penalty
         expect(rule_overtime_message).to eq expected_overtime_message
       end
@@ -63,5 +64,61 @@ describe PenaltyPeriodSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', 2.0, 25.hours
+  end
+
+  context 'when penalty_type is percentage_of_mark' do
+    before { rule.update!(penalty_type: ExtraMark::PERCENTAGE_OF_MARK) }
+
+    context 'when the group submitted during the first penalty period' do
+      include_context 'submission_rule_during_first'
+
+      it 'creates a percentage_of_mark penalty' do
+        apply_rule
+        expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE_OF_MARK
+        expect(result.extra_marks.first.extra_mark).to eq(-1.0)
+      end
+
+      it_behaves_like 'valid overtime message', 1.0, 10.hours
+    end
+
+    context 'when the group submitted during the second penalty period' do
+      include_context 'submission_rule_during_second'
+
+      it 'creates a percentage_of_mark penalty' do
+        apply_rule
+        expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE_OF_MARK
+        expect(result.extra_marks.first.extra_mark).to eq(-2.0)
+      end
+
+      it_behaves_like 'valid overtime message', 2.0, 25.hours
+    end
+  end
+
+  context 'when penalty_type is points' do
+    before { rule.update!(penalty_type: ExtraMark::POINTS) }
+
+    context 'when the group submitted during the first penalty period' do
+      include_context 'submission_rule_during_first'
+
+      it 'creates a points penalty' do
+        apply_rule
+        expect(result.extra_marks.first.unit).to eq ExtraMark::POINTS
+        expect(result.extra_marks.first.extra_mark).to eq(-1.0)
+      end
+
+      it_behaves_like 'valid overtime message', 1.0, 10.hours
+    end
+
+    context 'when the group submitted during the second penalty period' do
+      include_context 'submission_rule_during_second'
+
+      it 'creates a points penalty' do
+        apply_rule
+        expect(result.extra_marks.first.unit).to eq ExtraMark::POINTS
+        expect(result.extra_marks.first.extra_mark).to eq(-2.0)
+      end
+
+      it_behaves_like 'valid overtime message', 2.0, 25.hours
+    end
   end
 end

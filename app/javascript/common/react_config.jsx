@@ -1,11 +1,17 @@
-import {ReactTableDefaults} from "react-table";
 import {I18n} from "i18n-js";
 import translations from "translations.json";
+import React from "react";
+import {ReactTableDefaults} from "react-table";
+import {faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 import {
   defaultSort,
   stringFilterMethod,
   textFilter,
   customNoDataComponent,
+  customLoadingProp,
+  customNoDataProps,
 } from "../Components/Helpers/table_helpers";
 
 const i18n = new I18n(translations);
@@ -14,6 +20,24 @@ Object.assign(ReactTableDefaults, {
   defaultPageSize: 10000,
   minRows: 0,
   className: "-highlight",
+  column: {
+    ...ReactTableDefaults.column,
+    Expander: ({isExpanded}) => {
+      if (isExpanded) {
+        return (
+          <span className="rt-expander-custom">
+            <FontAwesomeIcon icon={faChevronUp} title={i18n.t("table.hide_details")} />
+          </span>
+        );
+      } else {
+        return (
+          <span className="rt-expander-custom">
+            <FontAwesomeIcon icon={faChevronDown} title={i18n.t("table.show_details")} />
+          </span>
+        );
+      }
+    },
+  },
   showPagination: false,
   showPageSizeOptions: false,
   style: {maxHeight: "500px"},
@@ -21,6 +45,8 @@ Object.assign(ReactTableDefaults, {
   defaultFilterMethod: stringFilterMethod,
   FilterComponent: textFilter,
   NoDataComponent: customNoDataComponent,
+  noDataProps: customNoDataProps,
+  LoadingComponent: customLoadingProp,
 });
 
 Object.assign(ReactTableDefaults.column, {
