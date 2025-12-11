@@ -3,6 +3,7 @@
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
   include RoutingHelper
+
   before_action { authorize! }
   layout 'assignment_content'
 

@@ -93,12 +93,13 @@
             </li>
           <% end %>
         <% elsif @assignment.submission_rule.type == "PenaltyDecayPeriodSubmissionRule" %>
+          <% suffix = @assignment.submission_rule.penalty_type || ExtraMark::PERCENTAGE %>
           <% @assignment.submission_rule.periods.each do |p| %>
             <% if p == @assignment.submission_rule.periods.first %>
-              <li><%= t('penalty_decay_period_submission_rules.details_message_first',
+              <li><%= t("penalty_decay_period_submission_rules.details_message_first_#{suffix}",
                         deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% else %>
-              <li><%= t('penalty_decay_period_submission_rules.details_message_other',
+              <li><%= t("penalty_decay_period_submission_rules.details_message_other_#{suffix}",
                         deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% end %>
           <% end %>
@@ -107,7 +108,8 @@
           <% @assignment.submission_rule.periods.each do |p| %>
             <% deduction += p.deduction %>
             <% hours += p.hours %>
-            <li><%= t('penalty_period_submission_rules.details_message',
+            <% suffix = @assignment.submission_rule.penalty_type || ExtraMark::PERCENTAGE %>
+            <li><%= t("penalty_period_submission_rules.details_message_#{suffix}" ,
                       hours: hours, deduction: deduction) %> </li>
           <% end %>
         <% end %>

@@ -102,7 +102,7 @@ class ExamTemplatesController < ApplicationController
     exam_template = record
     path = FileHelper.checked_join(exam_template.tmp_path, params[:file_name])
     if path.nil?
-      head :unprocessable_entity
+      head :unprocessable_content
     else
       send_file(path,
                 filename: params[:file_name],
@@ -264,7 +264,7 @@ class ExamTemplatesController < ApplicationController
     @assignment = record.assignment
     path = FileHelper.checked_join(exam_template.base_path, 'error', params[:file_name])
     if path.nil?
-      head :unprocessable_entity
+      head :unprocessable_content
     else
       send_file(path,
                 filename: params[:file_name],

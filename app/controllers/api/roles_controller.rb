@@ -129,7 +129,7 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
       end
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
@@ -151,7 +151,7 @@ module Api
       render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
@@ -161,7 +161,7 @@ module Api
       if has_missing_params?([:user_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -181,7 +181,7 @@ module Api
         if filter_params.empty?
           render 'shared/http_status',
                  locals: { code: '422', message: 'Invalid or malformed parameter values' },
-                 status: :unprocessable_entity
+                 status: :unprocessable_content
           return false
         else
           return collection.where(**filter_params)

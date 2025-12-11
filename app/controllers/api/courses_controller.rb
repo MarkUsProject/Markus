@@ -2,6 +2,7 @@ module Api
   # API controller for Courses
   class CoursesController < MainApiController
     include AutomatedTestsHelper::AutotestApi
+
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
 
     def index
@@ -27,7 +28,7 @@ module Api
     def create
       Course.create!(params.permit(:name, :is_hidden, :display_name))
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
         HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
@@ -39,7 +40,7 @@ module Api
     def update
       current_course.update!(params.permit(:name, :is_hidden, :display_name))
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
         HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
@@ -51,7 +52,7 @@ module Api
     def update_autotest_url
       AutotestResetUrlJob.perform_now(current_course, params[:url], request.protocol + request.host_with_port)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
         HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
@@ -83,7 +84,7 @@ module Api
         end
       else
         render 'shared/http_status', locals: { code: '422', message:
-          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_entity
+          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_content
       end
     end
 
@@ -100,7 +101,7 @@ module Api
         end
       else
         render 'shared/http_status', locals: { code: '422', message:
-          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_entity
+          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_content
       end
     end
 

@@ -133,9 +133,10 @@
   font-weight: bold;
   padding-bottom: 5px;
 
-  .arrow-down,
-  .arrow-up {
+  .chevron-expandable {
+    float: left;
     margin-right: 5px;
+    margin-top: 2px;
   }
 }
 

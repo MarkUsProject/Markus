@@ -121,6 +121,7 @@ module AutomatedTestsHelper
   # Sends RESTful api requests to the autotester
   module AutotestApi
     include AutomatedTestsHelper
+
     AUTOTEST_USERNAME = "markus_#{Rails.application.config.relative_url_root}".freeze
 
     class LimitExceededException < StandardError; end

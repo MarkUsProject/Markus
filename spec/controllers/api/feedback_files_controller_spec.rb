@@ -192,7 +192,7 @@ describe Api::FeedbackFilesController do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                   filename: filename, mime_type: 'text/plain',
                                   file_content: file_content, course_id: course.id }
-          expect(response).to have_http_status :payload_too_large
+          expect(response).to have_http_status :content_too_large
         end
       end
     end

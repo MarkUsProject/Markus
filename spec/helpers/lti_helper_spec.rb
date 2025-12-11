@@ -39,7 +39,10 @@ describe LtiHelper do
          roles:
            [
              LtiDeployment::LTI_ROLES[:learner]
-           ] },
+           ],
+         message: [{
+           LtiDeployment::LTI_CLAIMS[:custom] => { 'student_number' => '999123456' }
+         }] },
        { status: 'Active', name: 'second user',
          picture: 'http://example.com/picture.png',
          given_name: 'student.first_name',
@@ -51,7 +54,10 @@ describe LtiHelper do
          roles:
            [
              LtiDeployment::LTI_ROLES[:learner]
-           ] },
+           ],
+         message: [{
+           LtiDeployment::LTI_CLAIMS[:custom] => { 'student_number' => '999654321' }
+         }] },
        { status: 'Active', name: 'third user',
          picture: 'http://example.com/picture.png',
          given_name: 'student.first_name',
@@ -158,6 +164,62 @@ describe LtiHelper do
             subject
             expect(LtiUser.count).to eq(2)
           end
+        end
+      end
+
+      context 'when handling student ID numbers' do
+        subject do
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:ta], LtiDeployment::LTI_ROLES[:learner]],
+                      can_create_users: true, can_create_roles: true
+        end
+
+        let(:placeholder_student_number) { '999111222' }
+        let(:memberships_with_placeholder) do
+          [
+            { status: 'Active',
+              name: student.user.display_name,
+              given_name: student.user.first_name,
+              family_name: student.user.last_name,
+              lis_person_sourcedid: student.user.user_name,
+              email: student.user.email,
+              user_id: 'lti_user_id',
+              roles: [LtiDeployment::LTI_ROLES[:learner]],
+              message: [{
+                LtiDeployment::LTI_CLAIMS[:custom] => { 'student_number' => placeholder_student_number }
+              }] },
+            memberships[1].merge(message: [{
+              LtiDeployment::LTI_CLAIMS[:custom] => { 'student_number' => '$Canvas.user.sisIntegrationId' }
+            }]),
+            memberships[2].dup.except(:message)
+          ]
+        end
+
+        before do
+          lti_students_placeholder = { id: '...', context: { id: '...', label: 'tst1', title: 'test course' },
+                                       members: memberships_with_placeholder }.to_json
+          allow_any_instance_of(LtiDeployment).to(
+            receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_students_placeholder))
+          )
+        end
+
+        it 'correctly saves the student number for a valid user' do
+          student.destroy!
+          student.user.destroy!
+          subject
+          user = EndUser.find_by(user_name: student.user_name)
+          expect(user.id_number).to eq(placeholder_student_number)
+        end
+
+        it 'sets the id_number to NULL for the Canvas placeholder' do
+          subject
+          user = EndUser.find_by(user_name: 'second_username')
+          expect(user.id_number).to be_nil
+        end
+
+        it 'sets the id_number to NULL when the custom claim is missing' do
+          subject
+          user = EndUser.find_by(user_name: 'third_username')
+          expect(user.id_number).to be_nil
         end
       end
     end
@@ -432,6 +494,49 @@ describe LtiHelper do
 
       it 'does get grades for a user with an lti id' do
         expect(get_assignment_marks(lti_deployment, assessment)).not_to be_empty
+      end
+    end
+
+    context 'when some students are inactive (hidden)' do
+      let(:student1) { create(:student, course: course) }
+      let(:student2) { create(:student, course: course) }
+      let(:assignment) { create(:assignment, course: course) }
+
+      let!(:grouping) do
+        create(:grouping, assignment: assignment).tap do |g|
+          create(:student_membership,
+                 grouping: g,
+                 role: student1,
+                 membership_status: StudentMembership::STATUSES[:accepted])
+
+          create(:student_membership,
+                 grouping: g,
+                 role: student2,
+                 membership_status: StudentMembership::STATUSES[:accepted])
+        end
+      end
+
+      before do
+        create(:result,
+               grouping: grouping,
+               released_to_students: true,
+               marking_state: Result::MARKING_STATES[:complete])
+
+        student2.update!(hidden: true)
+
+        [student1.user, student2.user].each do |usr|
+          create(:lti_user, user: usr, lti_client: lti_deployment.lti_client)
+        end
+      end
+
+      it 'does not include hidden students in the marks hash' do
+        marks = get_assignment_marks(lti_deployment, assignment)
+
+        id1 = student1.user.lti_users.first.lti_user_id
+        id2 = student2.user.lti_users.first.lti_user_id
+
+        expect(marks.keys).to include(id1)
+        expect(marks.keys).not_to include(id2)
       end
     end
   end

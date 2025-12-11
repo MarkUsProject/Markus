@@ -194,7 +194,7 @@ describe SubmissionsController do
       post_as @student, :update_files,
               params: { course_id: course.id, assignment_id: @assignment.id, new_folders: [dir], path: '/' }
 
-      expect(response).to have_http_status :unprocessable_entity
+      expect(response).to have_http_status :unprocessable_content
       expect(Dir).not_to exist(File.join(@grouping.group.repo_path, @grouping.assignment.repository_folder,
                                          dir))
     end
@@ -204,7 +204,7 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id,
                         delete_files: ['../../../../../LICENSE'], path: '/' }
 
-      expect(response).to have_http_status :unprocessable_entity
+      expect(response).to have_http_status :unprocessable_content
       expect(File).to exist(
         File.expand_path(File.join(@grouping.group.repo_path, '../../../../../LICENSE'))
       )
@@ -215,7 +215,7 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id,
                         delete_folders: ['../../../../../doc'], path: '/' }
 
-      expect(response).to have_http_status :unprocessable_entity
+      expect(response).to have_http_status :unprocessable_content
       expect(Dir).to exist(
         File.expand_path(File.join(@grouping.group.repo_path, '../../../../../doc'))
       )
@@ -380,7 +380,7 @@ describe SubmissionsController do
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id, new_files: [file1, file2] }
 
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
 
         # Check to see if the file was added
         @grouping.group.access_repo do |repo|
@@ -456,7 +456,7 @@ describe SubmissionsController do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             new_folders: ['bad_folder'] }
-          expect(response).to have_http_status :unprocessable_entity
+          expect(response).to have_http_status :unprocessable_content
         end
 
         it 'does not commit the non required directory' do
@@ -470,7 +470,7 @@ describe SubmissionsController do
           post_as @student, :update_files,
                   params: { course_id: course.id, assignment_id: @assignment.id,
                             new_folders: ['bad_folder/bad_subdirectory'] }
-          expect(response).to have_http_status :unprocessable_entity
+          expect(response).to have_http_status :unprocessable_content
         end
 
         it 'does not commit a non required subdirectory' do
@@ -532,14 +532,14 @@ describe SubmissionsController do
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           new_files: ['.git'] }
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
       end
 
       it 'should not be allowed in a zip file' do
         zip_file = fixture_file_upload('test_zip_git_file.zip', 'application/zip')
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
       end
 
       it 'should not create a .git file in the repo' do
@@ -561,14 +561,14 @@ describe SubmissionsController do
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id,
                           new_folders: ['.git'] }
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
       end
 
       it 'should not be allowed in a zip file' do
         zip_file = fixture_file_upload('test_zip_git_folder.zip', 'application/zip')
         post_as @student, :update_files,
                 params: { course_id: course.id, assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
-        expect(response).to have_http_status :unprocessable_entity
+        expect(response).to have_http_status :unprocessable_content
       end
 
       it 'should not create a .git directory in the repo' do
@@ -2066,7 +2066,7 @@ describe SubmissionsController do
                                         max_content_size: SAMPLE_FILE_CONTENT.size - 1 }
         end
 
-        it { expect(response).to have_http_status(:payload_too_large) }
+        it { expect(response).to have_http_status(:content_too_large) }
 
         it 'should have an empty response body' do
           expect(response.body).to be_empty

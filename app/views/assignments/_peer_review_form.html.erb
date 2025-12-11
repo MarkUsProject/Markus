@@ -114,12 +114,20 @@
                                                        l(obj.due_date, format: :flatpickr) %>
                   </td>
                   <td>
-                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>
-                    <%= due_date_f.radio_button :is_hidden, '' %>
-                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
-                    <%= due_date_f.radio_button :is_hidden, false %>
-                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
-                    <%= due_date_f.radio_button :is_hidden, true %>
+                    <div class="section-visibility-options">
+                      <div class="section-visibility-option">
+                        <%= due_date_f.radio_button :is_hidden, '' %>
+                        <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>
+                      </div>
+                      <div class="section-visibility-option">
+                        <%= due_date_f.radio_button :is_hidden, false %>
+                        <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
+                      </div>
+                      <div class="section-visibility-option">
+                        <%= due_date_f.radio_button :is_hidden, true %>
+                        <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               <% end %>

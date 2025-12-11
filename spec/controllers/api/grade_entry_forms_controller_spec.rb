@@ -268,7 +268,7 @@ describe Api::GradeEntryFormsController do
         context 'missing short_id' do
           it 'should respond with 422' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'should not create an assignment' do
@@ -280,7 +280,7 @@ describe Api::GradeEntryFormsController do
         context 'missing description' do
           it 'should respond with 422' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'should not create an assignment' do
@@ -301,7 +301,7 @@ describe Api::GradeEntryFormsController do
       context 'where due_date is invalid' do
         it 'should respond with 422' do
           post :create, params: { **params, due_date: 'not a real date' }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
     end

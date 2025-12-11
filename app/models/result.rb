@@ -73,9 +73,9 @@ class Result < ApplicationRecord
   end
 
   # Return a hash mapping each id in +result_ids+ to the total mark for the result with that id.
-  def self.get_total_marks(result_ids, user_visibility: :ta_visible)
-    subtotals = Result.get_subtotals(result_ids, user_visibility: user_visibility)
-    extra_marks = Result.get_total_extra_marks(result_ids, user_visibility: user_visibility)
+  def self.get_total_marks(result_ids, user_visibility: :ta_visible, subtotals: nil, extra_marks: nil)
+    subtotals ||= Result.get_subtotals(result_ids, user_visibility: user_visibility)
+    extra_marks ||= Result.get_total_extra_marks(result_ids, user_visibility: user_visibility, subtotals: subtotals)
     subtotals.map { |r_id, subtotal| [r_id, [0, (subtotal || 0) + (extra_marks[r_id] || 0)].max] }.to_h
   end
 
@@ -110,19 +110,20 @@ class Result < ApplicationRecord
   #
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
-  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible)
+  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible, subtotals: nil)
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
+    subtotals ||= Result.get_subtotals(result_ids, user_visibility: user_visibility)
     extra_marks_hash = Hash.new { |h, k| h[k] = nil }
     max_mark_hash = {}
     result_data.each do |id, extra_mark, unit, assessment_id|
       if extra_marks_hash[id].nil?
         extra_marks_hash[id] = 0
       end
-      if unit == 'points'
+      if unit == ExtraMark::POINTS
         extra_marks_hash[id] += extra_mark.round(2)
-      elsif unit == 'percentage'
+      elsif unit == ExtraMark::PERCENTAGE
         if max_mark
           assignment_max_mark = max_mark
         else
@@ -130,6 +131,9 @@ class Result < ApplicationRecord
           assignment_max_mark = max_mark_hash[assessment_id]
         end
         extra_marks_hash[id] += (extra_mark * assignment_max_mark / 100).round(2)
+      elsif unit == ExtraMark::PERCENTAGE_OF_MARK
+        marks_earned = subtotals[id] || 0
+        extra_marks_hash[id] += (extra_mark * marks_earned / 100).round(2)
       end
     end
     extra_marks_hash

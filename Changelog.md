@@ -1,5 +1,46 @@
 # Changelog
 
+## [v2.9.0]
+
+### ✨ New features and improvements
+- Added touch event support for PDF and image annotations in grading view (#7736)
+- Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
+- Added frontend UI for assignment visibility scheduling with three visibility options and section-specific overrides (#7717)
+- Added new loading spinner icon for tables (#7602)
+- Added functionality to apply bonuses and penalties as a percentage of the student's earned marks to ExtraMark model (#7702)
+- Switched to consistent Font Awesome chevrons for expander icons (#7713)
+- Install Ruby-LSP to allow development inside different IDEs such as VSCode (#7718)
+- Ensure only instructors and admins can link course, as LMS launch MarkUs button made available for all users (#7714)
+- Include student number in roster sync from Canvas (#7731)
+- Add API endpoint `add_test_run` that allows independent user submissions of test executions to MarkUs (#7730)
+- Display timeout status for autotest runs in the Test Results table. (#7734)
+- Assign extra marks in test definition. (Currently limited to pytest files) (#7728)
+- Enable zip downloads of test results (#7733)
+- Create rake task to remove orphaned end users (#7741)
+- Enable scanned assignments the ability to add inactive students (#7737)
+
+### 🐛 Bug fixes
+- Fix name column search in graders table (#7693)
+- Check against mtime instead of atime for clean up of git repo directories in tmp folder (#7706)
+- Update Model: Fix level validation checks through use of a custom validator (#7696)
+- Fixed test group results table to display `extra_info` field from all test groups (#7710)
+- Fixed syncing grades with Canvas to not include inactive students (#7759)
+
+### 🔧 Internal changes
+- Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
+- Converted "Create Group" functionality to React modal (#7663)
+- Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
+- Added tests to the Criteria Controller class to achieve full test coverage
+- Refactored Criterion subclasses to remove redundant code
+- Converted "Rename Group" functionality to React modal (#7673)
+- Fixed Rack deprecation warnings by updating HTTP status code symbols (#7675)
+- Refactored "Reuse Groups" functionality to use React modal and relocated button to action box row (#7688)
+- Updated pre-commit `rubocop-rails` version to 2.33.4 (#7691)
+- Refactored MarksPanel child components and converted the components into hook-based function components
+- Refactored jQuery active marks panel component tracking logic into React
+- Updated the course summary table to use `@tanstack/react-table` v8 (#7732)
+- Refactored `test_run_table.jsx` by extracting nested components into separate files (#7739)
+
 ## [v2.8.2]
 
 ### ✨ New features and improvements
@@ -27,10 +68,9 @@
 
 ### 🔧 Internal changes
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
+- Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
 
 ## [v2.8.0]
-
-### 🚨 Breaking changes
 
 ### ✨ New features and improvements
 - Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)

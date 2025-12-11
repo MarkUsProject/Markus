@@ -2,6 +2,7 @@ class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
   include AutomatedTestsHelper
+
   responders :flash
   before_action { authorize! }
 
@@ -286,6 +287,22 @@ class AssignmentsController < ApplicationController
                   type: 'text/csv',
                   filename: filename
       end
+      format.zip do
+        data = @assignment.summary_test_result_json
+        zip_name = "#{@assignment.short_identifier}_test_results.zip"
+
+        zip_path = File.join('tmp', zip_name)
+        json_filename = "#{@assignment.short_identifier}_test_results.json"
+
+        FileUtils.rm_f(zip_path)
+
+        Zip::File.open(zip_path, create: true) do |zip_file|
+          zip_file.get_output_stream(json_filename) do |f|
+            f.write(data)
+          end
+        end
+        send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
+      end
     end
   end
 
@@ -534,7 +551,7 @@ class AssignmentsController < ApplicationController
 
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
-      head :unprocessable_entity
+      head :unprocessable_content
       return
     end
     head :ok
@@ -831,7 +848,30 @@ class AssignmentsController < ApplicationController
       periods = period_attrs.to_h.values.map { |h| h[:id].presence }
       assignment.submission_rule.periods.where.not(id: periods).find_each(&:destroy)
     end
-    assignment.assign_attributes(assignment_params)
+
+    # Handle "scheduled" visibility option
+    # When is_hidden="scheduled", convert to is_hidden=false with datetime values
+    params_copy = assignment_params.deep_dup
+    if params_copy[:is_hidden] == Assessment::SCHEDULED_VISIBILITY
+      params_copy[:is_hidden] = false
+    elsif params_copy[:is_hidden].present?
+      # Clear datetime fields when switching to "Hidden" or "Visible"
+      params_copy[:visible_on] = nil
+      params_copy[:visible_until] = nil
+    end
+
+    # Handle section-specific "scheduled" visibility
+    params_copy[:assessment_section_properties_attributes]&.each_value do |section_props|
+      if section_props[:is_hidden] == Assessment::SCHEDULED_VISIBILITY
+        section_props[:is_hidden] = false
+      elsif section_props[:is_hidden].present?
+        # Clear datetime fields when switching to "Hidden", "Visible", or "Default"
+        section_props[:visible_on] = nil
+        section_props[:visible_until] = nil
+      end
+    end
+
+    assignment.assign_attributes(params_copy)
     SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).find_each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier
@@ -906,6 +946,8 @@ class AssignmentsController < ApplicationController
       :message,
       :due_date,
       :is_hidden,
+      :visible_on,
+      :visible_until,
       :parent_assessment_id,
       assignment_properties_attributes: [
         :id,
@@ -941,7 +983,9 @@ class AssignmentsController < ApplicationController
         :section_id,
         :due_date,
         :start_time,
-        :is_hidden
+        :is_hidden,
+        :visible_on,
+        :visible_until
       ],
       assignment_files_attributes: [
         :_destroy,
@@ -952,6 +996,7 @@ class AssignmentsController < ApplicationController
         :_destroy,
         :id,
         :type,
+        :penalty_type,
         { periods_attributes: [
           :id,
           :deduction,
@@ -980,6 +1025,7 @@ class AssignmentsController < ApplicationController
             :_destroy,
             :id,
             :type,
+            :penalty_type,
             { periods_attributes: [
               :id,
               :deduction,

@@ -57,7 +57,7 @@ module SubmissionsHelper
     if has_missing_params?([:filename, :mime_type, :file_content])
       # incomplete/invalid HTTP params
       render 'shared/http_status', locals: { code: '422', message:
-        HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+        HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
       return
     end
 
@@ -66,7 +66,7 @@ module SubmissionsHelper
 
     if FileHelper.checked_join(path.to_s, filename).nil?
       message = I18n.t('errors.invalid_path')
-      render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_content
       return
     end
 
@@ -75,7 +75,7 @@ module SubmissionsHelper
     if only_required_files && required_files.exclude?(filename)
       message = t('assignments.upload_file_requirement', file_name: params[:filename]) +
         "\n#{Assignment.human_attribute_name(:assignment_files)}: #{required_files.join(', ')}"
-      render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: message }, status: :unprocessable_content
       return
     end
 

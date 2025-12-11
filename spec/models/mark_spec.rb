@@ -58,9 +58,9 @@ describe Mark do
       create(:rubric_mark, mark: 4)
     end
 
-    it 'equals to mark times weight' do
+    it 'equals to mark times max mark' do
       related_rubric = rubric_mark.criterion
-      expect(rubric_mark.mark).to eq(related_rubric.weight)
+      expect(rubric_mark.mark).to eq(related_rubric.max_mark)
     end
   end
 

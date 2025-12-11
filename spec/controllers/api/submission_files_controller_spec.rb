@@ -288,7 +288,7 @@ describe Api::SubmissionFilesController do
         let(:file_name) { file_names.map { |f| File.basename f }.join }
 
         it 'should return a 422 error' do
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
 

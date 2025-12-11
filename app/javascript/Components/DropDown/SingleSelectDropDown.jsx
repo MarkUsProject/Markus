@@ -57,9 +57,11 @@ export class SingleSelectDropDown extends React.Component {
 
   renderArrow = () => {
     if (this.state.expanded !== false) {
-      return <span className="arrow-up" data-testid={"arrow-up"} />;
+      return <FontAwesomeIcon className="arrow-up" icon="fa-chevron-up" data-testid={"arrow-up"} />;
     } else {
-      return <span className="arrow-down" data-testid={"arrow-down"} />;
+      return (
+        <FontAwesomeIcon className="arrow-down" icon="fa-chevron-down" data-testid={"arrow-down"} />
+      );
     }
   };
 

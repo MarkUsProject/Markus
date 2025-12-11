@@ -49,7 +49,7 @@ describe Api::SectionsController do
 
       it 'should throw a 422 error and not create a section with when given an invalid param' do
         post :create, params: { course_id: course.id, section: { name: '' } }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(course.sections.find_by(name: '')).to be_nil
       end
     end

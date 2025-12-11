@@ -449,7 +449,7 @@ describe AutomatedTestsController do
         end
 
         it 'should return a not_modified http status' do
-          expect(response).to have_http_status :unprocessable_entity
+          expect(response).to have_http_status :unprocessable_content
         end
       end
 
@@ -465,7 +465,7 @@ describe AutomatedTestsController do
         end
 
         it 'should return a not_modified http status' do
-          expect(response).to have_http_status :unprocessable_entity
+          expect(response).to have_http_status :unprocessable_content
         end
       end
     end

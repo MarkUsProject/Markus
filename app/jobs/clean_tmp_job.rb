@@ -8,7 +8,7 @@ class CleanTmpJob < ApplicationJob
     stale_time = repository_stale_limit.seconds.ago
     Dir.glob('tmp/git_repo*').each do |d|
       stat = File::Stat.new(d)
-      if stat.atime < stale_time
+      if stat.mtime < stale_time
         FileUtils.rm_rf(d)
       end
     end

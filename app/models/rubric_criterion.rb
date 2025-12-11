@@ -152,10 +152,6 @@ class RubricCriterion < Criterion
     levels_to_yml
   end
 
-  def weight
-    self.max_mark
-  end
-
   def round_max_mark
     # (this was being done in a weird way, leaving the original in case there are problems)
     # factor = 10.0 ** 3

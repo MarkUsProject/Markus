@@ -20,7 +20,7 @@ module Api
         end
       rescue StandardError => e
         render 'shared/http_status', locals: { code: '422', message:
-          e.message }, status: :unprocessable_entity
+          e.message }, status: :unprocessable_content
       end
     end
 
@@ -68,7 +68,7 @@ module Api
       if self.grouping.nil?
         # The group doesn't have a grouping associated with that assignment
         render 'shared/http_status', locals: { code: '422', message:
-          'The group is not involved with that assignment' }, status: :unprocessable_entity
+          'The group is not involved with that assignment' }, status: :unprocessable_content
         return
       end
 
@@ -281,7 +281,7 @@ module Api
       if has_missing_params?([:marking_state])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
       result = self.grouping&.current_submission_used&.get_latest_result
@@ -336,7 +336,7 @@ module Api
         else
           # cannot delete a non existent extension; render failure
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         end
       when 'POST'
         if grouping.extension.nil?
@@ -349,7 +349,7 @@ module Api
         else
           # cannot create extension as it already exists; render failure
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         end
       when 'PATCH'
         if grouping.extension.present?
@@ -362,11 +362,11 @@ module Api
         else
           # cannot update extension as it does not exists; render failure
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         end
       end
     rescue ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_entity
+      render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     end
 
     def collect_submission
@@ -375,7 +375,7 @@ module Api
         released = @grouping.current_submission_used.results.exists?(released_to_students: true)
         if released
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
           return
         end
       end
@@ -401,10 +401,52 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201'] }, status: :created
     end
 
+    def add_test_run
+      m_logger = MarkusLogger.instance
+      # Validate test results against contract schema
+      validation = TestResultsContract.new.call(params[:test_results].as_json)
+
+      if validation.failure?
+        return render json: { errors: validation.errors.to_hash }, status: :unprocessable_content
+      end
+
+      # Verify grouping exists and is authorized (grouping helper method handles this)
+      if grouping.nil?
+        return render json: { errors: 'Group not found for this assignment' }, status: :not_found
+      end
+
+      # Verify submission exists before attempting to create test run
+      submission = grouping.current_submission_used
+      if submission.nil?
+        return render json: { errors: 'No submission exists for this grouping' }, status: :unprocessable_content
+      end
+
+      begin
+        ActiveRecord::Base.transaction do
+          test_run = TestRun.create!(
+            status: :in_progress,
+            role: current_role,
+            grouping: grouping,
+            submission: submission
+          )
+
+          test_run.update_results!(JSON.parse(params[:test_results].to_json))
+          render json: { status: 'success', test_run_id: test_run.id }, status: :created
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
+      rescue StandardError => e
+        m_logger.log("Test results processing failed: #{e.message}\n#{e.backtrace.join("\n")}")
+        render json: { errors: 'Failed to process test results' }, status: :internal_server_error
+      end
+    end
+
     private
 
     def assignment
-      @assignment ||= Assignment.find_by(id: params[:assignment_id])
+      return @assignment if defined?(@assignment)
+
+      @assignment = Assignment.find_by(id: params[:assignment_id])
     end
 
     def grouping

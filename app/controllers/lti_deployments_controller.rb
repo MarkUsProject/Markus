@@ -12,7 +12,7 @@ class LtiDeploymentsController < ApplicationController
   def launch
     if params[:client_id].blank? || params[:login_hint].blank? ||
       params[:target_link_uri].blank? || params[:lti_message_hint].blank?
-      head :unprocessable_entity
+      head :unprocessable_content
       return
     end
     nonce = rand(10 ** 30).to_s.rjust(30, '0')
@@ -91,7 +91,12 @@ class LtiDeploymentsController < ApplicationController
                    deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
                    lms_course_name: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title'],
                    lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
-                   lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'] }
+                   lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
+                   user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]] }
+      if lti_params.key?(LtiDeployment::LTI_CLAIMS[:rlid])
+        rlid = lti_params[LtiDeployment::LTI_CLAIMS[:rlid]]['id']
+        lti_data[:resource_link_id] = rlid
+      end
       if lti_params.key?(LtiDeployment::LTI_CLAIMS[:names_role])
         name_and_roles_endpoint = lti_params[LtiDeployment::LTI_CLAIMS[:names_role]]['context_memberships_url']
         lti_data[:names_role_service] = name_and_roles_endpoint
@@ -122,7 +127,10 @@ class LtiDeploymentsController < ApplicationController
     lti_deployment = LtiDeployment.find_or_initialize_by(lti_client: lti_client,
                                                          external_deployment_id: lti_data[:deployment_id],
                                                          lms_course_id: lti_data[:lms_course_id])
-    lti_deployment.update!(lms_course_name: lti_data[:lms_course_name])
+    lti_deployment.update!(
+      lms_course_name: lti_data[:lms_course_name],
+      resource_link_id: lti_data[:resource_link_id]
+    )
     session[:lti_course_label] = lti_data[:lms_course_label]
     if lti_data.key?(:names_role_service)
       names_service = LtiService.find_or_initialize_by(lti_deployment: lti_deployment, service_type: 'namesrole')
@@ -135,9 +143,18 @@ class LtiDeploymentsController < ApplicationController
     LtiUser.find_or_create_by(user: @real_user, lti_client: lti_client,
                               lti_user_id: lti_data[:lti_user_id])
     if lti_deployment.course.nil?
-      # Redirect to course picker page
-      redirect_to choose_course_lti_deployment_path(lti_deployment)
+      # Check if the user has any of the privileged roles
+      has_privileged_role = lti_data[:user_roles].any? do |role_uri|
+        LtiDeployment::LTI_PRIVILEGED_ROLES.include?(role_uri)
+      end
+      has_ta_role = lti_data[:user_roles].include?(LtiDeployment::LTI_ROLES[:ta])
+      if has_privileged_role && !has_ta_role
+        redirect_to choose_course_lti_deployment_path(lti_deployment)
+      else
+        redirect_to course_not_set_up_lti_deployment_path(lti_deployment)
+      end
     else
+      # Course is linked, proceed to the course path
       redirect_to course_path(lti_deployment.course)
     end
   ensure
@@ -148,6 +165,10 @@ class LtiDeploymentsController < ApplicationController
     key = OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH)
     jwk = JWT::JWK.new(key)
     render json: { keys: [jwk.export] }
+  end
+
+  def course_not_set_up
+    render 'course_not_set_up', status: :not_found
   end
 
   def choose_course
@@ -176,7 +197,7 @@ class LtiDeploymentsController < ApplicationController
     known_lti_hosts << URI(root_url).host
     if known_lti_hosts.exclude?(URI(request.referer).host)
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
-                                   status: :unprocessable_entity, layout: false
+                                   status: :unprocessable_content, layout: false
       nil
     end
   end

@@ -51,18 +51,18 @@ describe CoursesController do
 
         it 'fails the switch to the current instructor' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: instructor.user_name }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it 'fails the switch to another instructor' do
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: second_instructor.user_name }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it 'fails to switch to an admin' do
           admin = create(:admin_role, course: course)
           post_as instructor, :switch_role, params: { id: course.id, effective_user_login: admin.user_name }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         context 'when the current user is an admin' do
@@ -70,7 +70,7 @@ describe CoursesController do
 
           it 'fails the switch to the current admin' do
             post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin_role.user_name }
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'switches to another instructor' do
@@ -81,7 +81,7 @@ describe CoursesController do
           it 'fails to switch to another admin' do
             admin = create(:admin_role, course: course)
             post_as admin_role, :switch_role, params: { id: course.id, effective_user_login: admin.user_name }
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
         end
       end

@@ -1,6 +1,7 @@
 module Admin
   class CoursesController < ApplicationController
     include AutomatedTestsHelper::AutotestApi
+
     DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
     before_action { authorize! }
 
@@ -36,7 +37,7 @@ module Admin
 
     def test_autotest_connection
       settings = current_course.autotest_setting
-      return head :unprocessable_entity unless settings&.url
+      return head :unprocessable_content unless settings&.url
       begin
         get_schema(current_course.autotest_setting)
         flash_now(:success, I18n.t('automated_tests.manage_connection.test_success', url: settings.url))
@@ -50,7 +51,7 @@ module Admin
 
     def reset_autotest_connection
       settings = current_course.autotest_setting
-      return head :unprocessable_entity unless settings&.url
+      return head :unprocessable_content unless settings&.url
       @current_job = AutotestResetUrlJob.perform_later(current_course,
                                                        settings.url,
                                                        request.protocol + request.host_with_port,

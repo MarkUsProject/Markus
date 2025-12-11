@@ -17,7 +17,7 @@ module Api
     before_action { authorize! }
 
     AUTHTYPE = 'MarkUsAuth'.freeze
-    AUTH_TOKEN_REGEX = /#{AUTHTYPE} ([^\s,]+)/.freeze
+    AUTH_TOKEN_REGEX = /#{AUTHTYPE} ([^\s,]+)/
 
     def page_not_found(message = HttpStatusHelper::ERROR_CODE['message']['404'])
       render 'shared/http_status',
@@ -70,12 +70,12 @@ module Api
       filter_params = params[:filter] ? params[:filter].permit(self.class::DEFAULT_FIELDS) : {}
       if params[:filter].present? && filter_params.empty?
         render 'shared/http_status', locals: { code: '422', message:
-          'Invalid or malformed parameter values' }, status: :unprocessable_entity
+          'Invalid or malformed parameter values' }, status: :unprocessable_content
         false
       elsif filter_params.empty?
-        collection.order('id')
+        collection.order(:id)
       else
-        collection.order('id').where(**filter_params)
+        collection.order(:id).where(**filter_params)
       end
     end
 

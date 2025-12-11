@@ -190,12 +190,45 @@ describe RubricCriterion do
     end
 
     context 'has basic levels functionality' do
+      describe 'uniqueness validations' do
+        it 'raise error on duplicate mark' do
+          @criterion.levels.create(name: 'A', description: 'A', mark: 5)
+          expect do
+            @criterion.levels.create!(name: 'B', description: 'B', mark: 5)
+          end.to raise_error(ActiveRecord::RecordInvalid, /Mark has already been taken/)
+        end
+
+        it 'raise error on duplicate name' do
+          @criterion.levels.create(name: 'A', description: 'A', mark: 5)
+          expect do
+            @criterion.levels.create!(name: 'A', description: 'B', mark: 6)
+          end.to raise_error(ActiveRecord::RecordInvalid, /Name has already been taken/)
+        end
+      end
+
       describe 'can add levels' do
         it 'not raise error' do
           expect(@criterion.levels.length).to eq(5)
           @criterion.levels.create(name: 'New level', description: 'Description for level', mark: '5')
           @criterion.levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
           expect(@criterion.levels.length).to eq(7)
+        end
+      end
+
+      describe 'can swap values in a single transaction' do
+        it 'not raise error' do
+          # Create records
+          a = @criterion.levels.create(name: 'testname', description: 'Description for level', mark: '5')
+          b = @criterion.levels.create(name: 'sillyname', description: 'Description for level 2', mark: '6')
+
+          @criterion.update!(
+            levels_attributes: [
+              { id: a.id, name: 'placeholder' },
+              { id: b.id, name: 'testname' }
+            ]
+          )
+          expect(@criterion.levels.find(a.id).name).to eq 'placeholder'
+          expect(@criterion.levels.find(b.id).name).to eq 'testname'
         end
       end
 

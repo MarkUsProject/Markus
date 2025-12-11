@@ -42,7 +42,7 @@ class CriteriaController < ApplicationController
       @criterion.errors.full_messages.each do |message|
         flash_message(:error, message)
       end
-      head :unprocessable_entity
+      head :unprocessable_content
     end
   end
 
@@ -107,7 +107,7 @@ class CriteriaController < ApplicationController
       @criterion.errors.full_messages.each do |message|
         flash_message(:error, message)
       end
-      head :unprocessable_entity
+      head :unprocessable_content
     end
   end
 

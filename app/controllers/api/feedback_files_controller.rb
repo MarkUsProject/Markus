@@ -56,7 +56,7 @@ module Api
       if has_missing_params?([:filename, :mime_type, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -85,7 +85,7 @@ module Api
                          message: I18n.t('oversize_feedback_file',
                                          file_size: ActiveSupport::NumberHelper.number_to_human_size(size_diff),
                                          max_file_size: submission.course.max_file_size / 1_000_000) },
-               status: :payload_too_large
+               status: :content_too_large
         return
       end
       if submission.feedback_files.create(filename: params[:filename],

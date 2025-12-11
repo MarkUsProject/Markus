@@ -60,6 +60,7 @@ def test_with_partial_credit(request):
 
 
 def test_with_bonus(request):
-    """This test gives the student a score of 3/2."""
+    """This test gives the student a score of 3/2 and assigns an extra mark"""
     request.node.add_marker(pytest.mark.markus_marks_earned(3))
     request.node.add_marker(pytest.mark.markus_marks_total(2))
+    request.node.add_marker(pytest.mark.markus_extra_marks(1, "This is an extra mark", "points"))

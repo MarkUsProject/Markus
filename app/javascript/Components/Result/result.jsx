@@ -208,6 +208,8 @@ class Result extends React.Component {
     result_data.extra_marks.forEach(data => {
       if (data.unit === "points") {
         extraMarkSubtotal += data.extra_mark;
+      } else if (data.unit === "percentage_of_mark") {
+        extraMarkSubtotal += (data.extra_mark * subtotal) / 100;
       } else {
         // Percentage
         extraMarkSubtotal += (data.extra_mark * result_data.assignment_max_mark) / 100;

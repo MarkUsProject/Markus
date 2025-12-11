@@ -5,6 +5,7 @@
 import {StudentTable} from "../student_table";
 import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import {CourseSummaryTable} from "../course_summaries_table";
 
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
@@ -317,5 +318,24 @@ describe("For the StudentTable's display of students", () => {
         );
       });
     });
+  });
+});
+
+describe("For each StudentTable's loading status", () => {
+  let mock_course_id = 1;
+
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() => new Promise(() => {}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("shows loading spinner when data is being fetched", async () => {
+    render(<StudentTable course_id={mock_course_id} />);
+
+    const spinner = await screen.findByLabelText("grid-loading");
+    expect(spinner).toBeInTheDocument();
   });
 });

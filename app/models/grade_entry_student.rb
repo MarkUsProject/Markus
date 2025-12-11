@@ -82,7 +82,7 @@ class GradeEntryStudent < ApplicationRecord
   #
   # Instances of the join model GradeEntryStudent are created if they do not
   # exist.
-  def self.assign_tas(student_ids, ta_ids, form, &block)
+  def self.assign_tas(student_ids, ta_ids, form, &)
     # Create non-existing grade entry students.
     merge_non_existing(student_ids, form.id) do |sids, form_ids|
       # Pair a single form ID with each student ID.
@@ -91,7 +91,7 @@ class GradeEntryStudent < ApplicationRecord
 
     # Create non-existing grade entry student TA associations.
     ges_ids = form.grade_entry_students.where(role_id: student_ids).ids
-    GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
+    GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &)
   end
 
   def self.unassign_tas(student_ids, grader_ids, form)

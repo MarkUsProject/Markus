@@ -1,6 +1,9 @@
 # Assessment is an abstract model used for single-table-inheritance with Assignment and GradeEntryForm
 # It can represent any form of graded work (assignment, test, lab, exam...etc.)
 class Assessment < ApplicationRecord
+  # Constant for scheduled visibility option used in forms and controller
+  SCHEDULED_VISIBILITY = 'scheduled'.freeze
+
   scope :assignments, -> { where(type: 'Assignment') }
   scope :grade_entry_forms, -> { where(type: 'GradeEntryForm') }
 
@@ -20,10 +23,13 @@ class Assessment < ApplicationRecord
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
   validates :due_date, date: true
+  validates :visible_on, date: true, allow_nil: true
+  validates :visible_until, date: true, allow_nil: true
 
   validates :short_identifier, uniqueness: { scope: :course_id }
   validates :short_identifier, presence: true
   validate :short_identifier_unchanged, on: :update
+  validate :visible_dates_are_valid
   validates :description, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
   validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/ }
@@ -36,6 +42,13 @@ class Assessment < ApplicationRecord
     return unless short_identifier_changed?
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
+  end
+
+  def visible_dates_are_valid
+    return if visible_on.nil? || visible_until.nil?
+    if visible_on >= visible_until
+      errors.add(:visible_until, 'must be after visible_on')
+    end
   end
 
   def upcoming(*)

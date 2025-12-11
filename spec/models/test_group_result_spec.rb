@@ -95,5 +95,21 @@ describe TestGroupResult do
         expect(@test_group_result).not_to be_valid
       end
     end
+
+    context 'test group result with timeout error' do
+      it 'has timeout status displayed in the test run table' do
+        @test_group_result.error_type = :timeout
+        expect(@test_group_result).to be_valid
+        expect(@test_group_result.save).to be true
+        expect(@test_group_result.error_type).to eq('timeout')
+      end
+
+      it 'has no status displayed in the test run table' do
+        @test_group_result.error_type = nil
+        expect(@test_group_result).to be_valid
+        expect(@test_group_result.save).to be true
+        expect(@test_group_result.error_type).to be_nil
+      end
+    end
   end
 end

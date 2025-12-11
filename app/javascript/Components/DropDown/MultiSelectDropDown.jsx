@@ -64,9 +64,9 @@ export class MultiSelectDropdown extends React.Component {
     let expanded = this.state.expanded;
     let arrow;
     if (expanded !== false) {
-      arrow = <span className="arrow-up" />;
+      arrow = <FontAwesomeIcon className="arrow-up" icon="fa-chevron-up" />;
     } else {
-      arrow = <span className="arrow-down" />;
+      arrow = <FontAwesomeIcon className="arrow-down" icon="fa-chevron-down" />;
     }
 
     return (

@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 import {AnnotationManager} from "./annotation_manager";
 import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
@@ -321,10 +323,10 @@ export class FileSelector extends React.Component {
     const fileSelector = this.hashToHTMLList(this.props.fileData, this.state.expanded);
     let arrow, expand;
     if (this.state.expanded !== null) {
-      arrow = <span className="arrow-up" />;
+      arrow = <FontAwesomeIcon className="arrow-up" icon="fa-chevron-up" />;
       expand = null;
     } else {
-      arrow = <span className="arrow-down" />;
+      arrow = <FontAwesomeIcon className="arrow-down" icon="fa-chevron-down" />;
       expand = [];
     }
     let selectorLabel;

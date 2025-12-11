@@ -3,7 +3,6 @@ en:
   groups:
     add_all_groups: Create all groups
     add_to_group: Add student(s) to group
-    another_assignment_group: Use another assignment's groups
     assign_over_limit: You have assigned more than the maximum number of students to group %{group}.
     assigned_students: Assigned
     assignment_to_use: Which assignments groups would you like to use?

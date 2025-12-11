@@ -32,7 +32,7 @@ class Submission < ApplicationRecord
 
   has_many :submission_files, dependent: :destroy
   has_many :annotations, through: :submission_files
-  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :nullify, inverse_of: :submission
+  has_many :test_runs, -> { order(created_at: :desc) }, dependent: :nullify, inverse_of: :submission
   has_many :test_group_results, through: :test_runs
   has_many :feedback_files, dependent: :destroy
 

@@ -347,7 +347,7 @@ describe Api::AssignmentsController do
         context 'missing short_id' do
           it 'should respond with 422' do
             post :create, params: params.slice(:description, :due_date, :course_id)
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'should not create an assignment' do
@@ -359,7 +359,7 @@ describe Api::AssignmentsController do
         context 'missing description' do
           it 'should respond with 404' do
             post :create, params: params.slice(:short_identifier, :due_date, :course_id)
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'should not create an assignment' do
@@ -371,7 +371,7 @@ describe Api::AssignmentsController do
         context 'missing due_date' do
           it 'should respond with 404' do
             post :create, params: params.slice(:short_identifier, :description, :course_id)
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'should not create an assignment' do
@@ -545,7 +545,7 @@ describe Api::AssignmentsController do
           expect(autotest_settings_for(assignment)).to eq({})
         end
 
-        it('should not be successful') { expect(response).to have_http_status :unprocessable_entity }
+        it('should not be successful') { expect(response).to have_http_status :unprocessable_content }
       end
 
       it 'should fail if the assignment does not exist' do
@@ -757,7 +757,7 @@ describe Api::AssignmentsController do
 
             it 'responds with 422' do
               subject
-              expect(response).to have_http_status(:unprocessable_entity)
+              expect(response).to have_http_status(:unprocessable_content)
             end
 
             it_behaves_like 'does not submit'
@@ -775,7 +775,7 @@ describe Api::AssignmentsController do
 
           it 'responds with 422' do
             subject
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'does not create a temporary file' do
