@@ -79,24 +79,6 @@ class InstructorTable extends React.Component {
     return data;
   }
 
-  removeTA = ta_id => {
-    fetch(Routes.course_ta_path(this.props.course_id, ta_id), {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          this.fetchData();
-        }
-      })
-      .catch(error => {
-        console.error("Error deleting TA:", error);
-      });
-  };
-
   render() {
     return (
       <Table

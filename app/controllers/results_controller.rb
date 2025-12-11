@@ -284,6 +284,7 @@ class ResultsController < ApplicationController
 
   def run_tests
     submission = record.submission
+
     assignment = Grouping.find(submission.grouping_id).assignment
     # If no test groups can be run by instructors, flash appropriate message and return early
     test_group_categories = assignment.test_groups.pluck(:autotest_settings).pluck('category')
@@ -292,6 +293,7 @@ class ResultsController < ApplicationController
       flash_now(:info, I18n.t('automated_tests.no_instructor_runnable_tests'))
       return
     end
+
     flash_message(:notice, I18n.t('automated_tests.autotest_run_job.status.in_progress'))
     AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                  current_role.id,
