@@ -354,18 +354,19 @@ describe GroupsController do
           end
 
           context 'when OCR match data exists' do
-            let!(:exam_template) { create(:exam_template_midterm, assignment: assignment) }
             let!(:student1) { create(:student, course: course) }
             let!(:student2) { create(:student, course: course) }
 
             before do
+              # Create exam template (required for assignment)
+              create(:exam_template_midterm, assignment: assignment)
+
               student1.user.update!(id_number: '1234567890', user_name: 'student1')
               student2.user.update!(id_number: '1234567891', user_name: 'student2')
 
               # Store OCR match data for unmatched grouping
               OcrMatchService.store_match(
                 grouping.id,
-                exam_template.id,
                 '1234567890',
                 'id_number',
                 matched: false,

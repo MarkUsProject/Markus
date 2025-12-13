@@ -1,7 +1,6 @@
 describe OcrMatchService do
   let(:course) { create(:course) }
   let(:assignment) { create(:assignment, course: course) }
-  let(:exam_template) { create(:exam_template_midterm, assignment: assignment) }
   let(:grouping) { create(:grouping, assignment: assignment) }
 
   # Create students with known attributes for testing
@@ -18,14 +17,14 @@ describe OcrMatchService do
 
   before do
     # Clear Redis before each test
-    redis.del("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
-    redis.del("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+    redis.del("ocr_matches:grouping:#{grouping.id}")
+    redis.del('ocr_matches:unmatched')
   end
 
   after do
     # Clean up Redis after each test
-    redis.del("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
-    redis.del("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+    redis.del("ocr_matches:grouping:#{grouping.id}")
+    redis.del('ocr_matches:unmatched')
   end
 
   describe '.store_match' do
@@ -33,14 +32,13 @@ describe OcrMatchService do
       it 'stores the OCR match data in Redis' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           '1234567',
           'id_number',
           matched: true,
           student_id: student1.id
         )
 
-        stored_data = redis.get("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
+        stored_data = redis.get("ocr_matches:grouping:#{grouping.id}")
         expect(stored_data).not_to be_nil
 
         parsed_data = JSON.parse(stored_data, symbolize_names: true)
@@ -54,14 +52,13 @@ describe OcrMatchService do
       it 'sets the TTL on the Redis key' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           '1234567',
           'id_number',
           matched: true,
           student_id: student1.id
         )
 
-        ttl = redis.ttl("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
+        ttl = redis.ttl("ocr_matches:grouping:#{grouping.id}")
         expect(ttl).to be > 0
         expect(ttl).to be <= OcrMatchService::TTL
       end
@@ -69,14 +66,13 @@ describe OcrMatchService do
       it 'does not add grouping to unmatched set' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           '1234567',
           'id_number',
           matched: true,
           student_id: student1.id
         )
 
-        unmatched = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+        unmatched = redis.smembers('ocr_matches:unmatched')
         expect(unmatched).not_to include(grouping.id.to_s)
       end
     end
@@ -85,13 +81,12 @@ describe OcrMatchService do
       it 'stores the OCR match data with matched=false' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           'invalid123',
           'id_number',
           matched: false
         )
 
-        stored_data = redis.get("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
+        stored_data = redis.get("ocr_matches:grouping:#{grouping.id}")
         parsed_data = JSON.parse(stored_data, symbolize_names: true)
 
         expect(parsed_data[:parsed_value]).to eq('invalid123')
@@ -102,26 +97,24 @@ describe OcrMatchService do
       it 'adds grouping to unmatched set' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           'invalid123',
           'id_number',
           matched: false
         )
 
-        unmatched = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+        unmatched = redis.smembers('ocr_matches:unmatched')
         expect(unmatched).to include(grouping.id.to_s)
       end
 
       it 'sets TTL on the unmatched set' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           'invalid123',
           'id_number',
           matched: false
         )
 
-        ttl = redis.ttl("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+        ttl = redis.ttl('ocr_matches:unmatched')
         expect(ttl).to be > 0
         expect(ttl).to be <= OcrMatchService::TTL
       end
@@ -131,14 +124,13 @@ describe OcrMatchService do
       it 'stores match data with user_name field type' do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           'student001',
           'user_name',
           matched: true,
           student_id: student1.id
         )
 
-        stored_data = redis.get("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
+        stored_data = redis.get("ocr_matches:grouping:#{grouping.id}")
         parsed_data = JSON.parse(stored_data, symbolize_names: true)
 
         expect(parsed_data[:field_type]).to eq('user_name')
@@ -152,7 +144,6 @@ describe OcrMatchService do
       before do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           '1234567',
           'id_number',
           matched: true,
@@ -161,7 +152,7 @@ describe OcrMatchService do
       end
 
       it 'retrieves the stored OCR match data' do
-        result = OcrMatchService.get_match(grouping.id, exam_template.id)
+        result = OcrMatchService.get_match(grouping.id)
 
         expect(result).to be_a(Hash)
         expect(result[:parsed_value]).to eq('1234567')
@@ -171,7 +162,7 @@ describe OcrMatchService do
       end
 
       it 'returns symbolized keys' do
-        result = OcrMatchService.get_match(grouping.id, exam_template.id)
+        result = OcrMatchService.get_match(grouping.id)
 
         expect(result.keys).to all(be_a(Symbol))
       end
@@ -179,7 +170,7 @@ describe OcrMatchService do
 
     context 'when match data does not exist' do
       it 'returns nil' do
-        result = OcrMatchService.get_match(grouping.id, exam_template.id)
+        result = OcrMatchService.get_match(grouping.id)
         expect(result).to be_nil
       end
     end
@@ -190,7 +181,6 @@ describe OcrMatchService do
       before do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           'student001',
           'user_name',
           matched: false
@@ -198,7 +188,7 @@ describe OcrMatchService do
       end
 
       it 'returns student suggestions sorted by similarity' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         expect(suggestions).to be_an(Array)
         expect(suggestions).not_to be_empty
@@ -207,7 +197,7 @@ describe OcrMatchService do
       end
 
       it 'returns exact match with similarity 1.0' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         exact_match = suggestions.find { |s| s[:student].user.user_name == 'student001' }
         expect(exact_match).to be_present
@@ -215,14 +205,14 @@ describe OcrMatchService do
       end
 
       it 'returns suggestions sorted by similarity (highest first)' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         similarities = suggestions.pluck(:similarity)
         expect(similarities).to eq(similarities.sort.reverse)
       end
 
       it 'limits results to the specified limit' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id, limit: 2)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id, limit: 2)
 
         expect(suggestions.length).to be <= 2
       end
@@ -230,7 +220,7 @@ describe OcrMatchService do
       it 'includes close matches with high similarity' do
         # 'studen001' should be similar to 'student001'
         student3 # Ensure student3 is created
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         similar_match = suggestions.find { |s| s[:student].user.user_name == 'studen001' }
         expect(similar_match).to be_present
@@ -243,7 +233,7 @@ describe OcrMatchService do
           create(:student, user: create(:end_user, user_name: "student#{100 + i}"), course: course)
         end
 
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
         expect(suggestions.length).to be <= 5
       end
     end
@@ -252,7 +242,6 @@ describe OcrMatchService do
       before do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           '1234567',
           'id_number',
           matched: false
@@ -260,7 +249,7 @@ describe OcrMatchService do
       end
 
       it 'matches students by id_number' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         exact_match = suggestions.find { |s| s[:student].user.id_number == '1234567' }
         expect(exact_match).to be_present
@@ -269,7 +258,7 @@ describe OcrMatchService do
 
       it 'finds similar id_numbers' do
         student2 # Ensure student2 is created
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         # '1234568' is very similar to '1234567'
         similar_match = suggestions.find { |s| s[:student].user.id_number == '1234568' }
@@ -280,7 +269,7 @@ describe OcrMatchService do
 
     context 'when OCR match data does not exist' do
       it 'returns empty array' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
         expect(suggestions).to eq([])
       end
     end
@@ -293,7 +282,6 @@ describe OcrMatchService do
       before do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           '1234567',
           'id_number',
           matched: false
@@ -301,7 +289,7 @@ describe OcrMatchService do
       end
 
       it 'excludes students with blank match values' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         student_ids = suggestions.map { |s| s[:student].id }
         expect(student_ids).not_to include(student_no_id.id)
@@ -312,7 +300,6 @@ describe OcrMatchService do
       before do
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           'STUDENT001',
           'user_name',
           matched: false
@@ -320,7 +307,7 @@ describe OcrMatchService do
       end
 
       it 'matches case-insensitively' do
-        suggestions = OcrMatchService.get_suggestions(grouping.id, exam_template.id, course.id)
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
 
         exact_match = suggestions.find { |s| s[:student].user.user_name == 'student001' }
         expect(exact_match).to be_present
@@ -333,7 +320,6 @@ describe OcrMatchService do
     before do
       OcrMatchService.store_match(
         grouping.id,
-        exam_template.id,
         'student001',
         'user_name',
         matched: false
@@ -341,16 +327,16 @@ describe OcrMatchService do
     end
 
     it 'removes the match data from Redis' do
-      OcrMatchService.clear_match(grouping.id, exam_template.id)
+      OcrMatchService.clear_match(grouping.id)
 
-      stored_data = redis.get("ocr_matches:exam_template:#{exam_template.id}:grouping:#{grouping.id}")
+      stored_data = redis.get("ocr_matches:grouping:#{grouping.id}")
       expect(stored_data).to be_nil
     end
 
     it 'removes grouping from unmatched set' do
-      OcrMatchService.clear_match(grouping.id, exam_template.id)
+      OcrMatchService.clear_match(grouping.id)
 
-      unmatched = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+      unmatched = redis.smembers('ocr_matches:unmatched')
       expect(unmatched).not_to include(grouping.id.to_s)
     end
 
@@ -359,7 +345,7 @@ describe OcrMatchService do
         another_grouping = create(:grouping, assignment: assignment)
 
         expect do
-          OcrMatchService.clear_match(another_grouping.id, exam_template.id)
+          OcrMatchService.clear_match(another_grouping.id)
         end.not_to raise_error
       end
     end

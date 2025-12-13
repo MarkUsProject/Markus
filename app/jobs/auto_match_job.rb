@@ -54,7 +54,6 @@ class AutoMatchJob < ApplicationJob
         # Store OCR match result in Redis for later suggestions
         OcrMatchService.store_match(
           grouping.id,
-          exam_template.id,
           parsed[0],
           exam_template.cover_fields,
           matched: !student.nil?,

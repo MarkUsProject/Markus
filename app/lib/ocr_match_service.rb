@@ -7,7 +7,7 @@ class OcrMatchService
 
   class << self
     # Store an OCR match result in Redis
-    def store_match(grouping_id, exam_template_id, parsed_value, field_type, matched: false, student_id: nil)
+    def store_match(grouping_id, parsed_value, field_type, matched: false, student_id: nil)
       data = {
         parsed_value: parsed_value,
         field_type: field_type,
@@ -16,25 +16,24 @@ class OcrMatchService
         matched_student_id: student_id
       }
 
-      redis.setex(match_key(exam_template_id, grouping_id), TTL, data.to_json)
+      redis.setex(match_key(grouping_id), TTL, data.to_json)
 
       # Add to unmatched set if not auto-matched
       unless matched
-        unmatched_key = unmatched_set_key(exam_template_id)
-        redis.sadd(unmatched_key, grouping_id)
-        redis.expire(unmatched_key, TTL)
+        redis.sadd(unmatched_set_key, grouping_id)
+        redis.expire(unmatched_set_key, TTL)
       end
     end
 
     # Retrieve stored OCR match data for a grouping
-    def get_match(grouping_id, exam_template_id)
-      data = redis.get(match_key(exam_template_id, grouping_id))
+    def get_match(grouping_id)
+      data = redis.get(match_key(grouping_id))
       data ? JSON.parse(data, symbolize_names: true) : nil
     end
 
     # Get student suggestions based on stored OCR match using fuzzy matching
-    def get_suggestions(grouping_id, exam_template_id, course_id, limit: 5)
-      match_data = get_match(grouping_id, exam_template_id)
+    def get_suggestions(grouping_id, course_id, limit: 5)
+      match_data = get_match(grouping_id)
       return [] if match_data.nil?
 
       course = Course.find(course_id)
@@ -54,19 +53,19 @@ class OcrMatchService
     end
 
     # Clear OCR match data after manual assignment
-    def clear_match(grouping_id, exam_template_id)
-      redis.del(match_key(exam_template_id, grouping_id))
-      redis.srem(unmatched_set_key(exam_template_id), grouping_id)
+    def clear_match(grouping_id)
+      redis.del(match_key(grouping_id))
+      redis.srem(unmatched_set_key, grouping_id)
     end
 
     private
 
-    def match_key(exam_template_id, grouping_id)
-      "ocr_matches:exam_template:#{exam_template_id}:grouping:#{grouping_id}"
+    def match_key(grouping_id)
+      "ocr_matches:grouping:#{grouping_id}"
     end
 
-    def unmatched_set_key(exam_template_id)
-      "ocr_matches:exam_template:#{exam_template_id}:unmatched"
+    def unmatched_set_key
+      'ocr_matches:unmatched'
     end
 
     def redis

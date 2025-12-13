@@ -148,10 +148,9 @@ class GroupsController < ApplicationController
       flash_message(:success, t('exam_templates.assign_scans.done'))
     end
     # Get OCR match data and suggestions if available
-    exam_template = @assignment.exam_templates.first
-    ocr_match = exam_template ? OcrMatchService.get_match(next_grouping.id, exam_template.id) : nil
-    ocr_suggestions = if ocr_match && exam_template
-                        OcrMatchService.get_suggestions(next_grouping.id, exam_template.id, current_course.id)
+    ocr_match = OcrMatchService.get_match(next_grouping.id)
+    ocr_suggestions = if ocr_match
+                        OcrMatchService.get_suggestions(next_grouping.id, current_course.id)
                       else
                         []
                       end
