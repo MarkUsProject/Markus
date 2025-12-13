@@ -203,6 +203,31 @@ module Api
       end
     end
 
+    def test_results
+      return render_no_grouping_error unless grouping
+
+      # Use the existing Assignment#summary_test_results method filtered for this specific group
+      # This ensures format consistency with the UI download (summary_test_result_json)
+      group_name = grouping.group.group_name
+      results = assignment.summary_test_results([group_name])
+
+      return render_no_grouping_error if results.blank?
+
+      # Group by test_group name to match the summary_test_result_json format
+      results_by_test_group = results.group_by(&:name)
+
+      respond_to do |format|
+        format.xml { render xml: results_by_test_group.to_xml(root: 'test_results', skip_types: 'true') }
+        format.json { render json: results_by_test_group }
+      end
+    end
+
+    def render_no_grouping_error
+      render 'shared/http_status',
+             locals: { code: '404', message: 'No test results found for this group' },
+             status: :not_found
+    end
+
     def add_annotations
       result = self.grouping&.current_result
       return page_not_found('No submission exists for that group') if result.nil?
