@@ -18,9 +18,11 @@ export function updateOcrSuggestions(ocrMatch, suggestions) {
   // Display the parsed OCR value
   const parsedValue = ocrMatch.parsed_value;
   const fieldType = ocrMatch.field_type === "id_number" ? "ID Number" : "Username";
-  container.append(
-    `<p><strong>OCR Detected ${fieldType}:</strong> <code>${parsedValue}</code></p>`
-  );
+  const ocrDisplay = $("<p></p>");
+  ocrDisplay.append(`<strong>OCR Detected ${fieldType}:</strong> `);
+  const codeElem = $("<code></code>").text(parsedValue);
+  ocrDisplay.append(codeElem);
+  container.append(ocrDisplay);
 
   // Display suggestions if available
   if (suggestions && suggestions.length > 0) {
@@ -32,10 +34,15 @@ export function updateOcrSuggestions(ocrMatch, suggestions) {
       const item = $('<li class="ui-menu-item"></li>');
       const content = $("<div></div>");
 
-      content.html(`
-        <strong>${suggestion.display_name}</strong> (${similarity}%)<br>
-        <span class="student-info">${suggestion.id_number || "No ID"} | ${suggestion.user_name}</span>
-      `);
+      // Use .text() to safely insert user-supplied data and prevent XSS
+      const nameElem = $("<strong></strong>").text(suggestion.display_name);
+      const infoText = `${suggestion.id_number || "No ID"} | ${suggestion.user_name}`;
+      const infoElem = $('<span class="student-info"></span>').text(infoText);
+
+      content.append(nameElem);
+      content.append(` (${similarity}%)`);
+      content.append("<br>");
+      content.append(infoElem);
 
       content.on("click", function () {
         $("#student_id").val(suggestion.id);

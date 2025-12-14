@@ -45,7 +45,7 @@ describe AutoMatchJob do
         end
 
         it 'stores OCR match data in Redis with matched status' do
-          ocr_data = OcrMatchService.get_match(grouping.id, exam_template.id)
+          ocr_data = OcrMatchService.get_match(grouping.id)
           expect(ocr_data).not_to be_nil
           expect(ocr_data[:parsed_value]).to eq '0123456789'
           expect(ocr_data[:field_type]).to eq 'id_number'
@@ -55,7 +55,7 @@ describe AutoMatchJob do
 
         it 'does not add matched grouping to unmatched set' do
           redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
-          unmatched_set = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+          unmatched_set = redis.smembers('ocr_matches:unmatched')
           expect(unmatched_set).not_to include(grouping.id.to_s)
         end
       end
@@ -69,7 +69,7 @@ describe AutoMatchJob do
         end
 
         it 'stores OCR match data with parsed value "None"' do
-          ocr_data = OcrMatchService.get_match(grouping.id, exam_template.id)
+          ocr_data = OcrMatchService.get_match(grouping.id)
           # OCR returns "None" for blank scans
           expect(ocr_data).not_to be_nil
           expect(ocr_data[:parsed_value]).to eq 'None'
@@ -95,7 +95,7 @@ describe AutoMatchJob do
         end
 
         it 'stores OCR match data in Redis with unmatched status' do
-          ocr_data = OcrMatchService.get_match(grouping.id, exam_template.id)
+          ocr_data = OcrMatchService.get_match(grouping.id)
           expect(ocr_data).not_to be_nil
           expect(ocr_data[:parsed_value]).to eq '0123456789'
           expect(ocr_data[:field_type]).to eq 'id_number'
@@ -105,7 +105,7 @@ describe AutoMatchJob do
 
         it 'adds unmatched grouping to unmatched set' do
           redis = Redis::Namespace.new(Rails.root.to_s, redis: Resque.redis)
-          unmatched_set = redis.smembers("ocr_matches:exam_template:#{exam_template.id}:unmatched")
+          unmatched_set = redis.smembers('ocr_matches:unmatched')
           expect(unmatched_set).to include(grouping.id.to_s)
         end
       end

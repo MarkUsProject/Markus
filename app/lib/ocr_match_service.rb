@@ -32,12 +32,21 @@ class OcrMatchService
     end
 
     # Get student suggestions based on stored OCR match using fuzzy matching
-    def get_suggestions(grouping_id, course_id, limit: 5)
+    # Only considers students not already assigned to a grouping for this assignment
+    # Returns students meeting the similarity threshold (default 80%), limited to top matches (default 5)
+    def get_suggestions(grouping_id, course_id, threshold: 0.8, limit: 5)
       match_data = get_match(grouping_id)
       return [] if match_data.nil?
 
+      grouping = Grouping.find(grouping_id)
+      assignment = grouping.assignment
       course = Course.find(course_id)
-      students = course.students.joins(:user)
+
+      # Get students who are not assigned to any grouping for this assignment
+      assigned_student_ids = assignment.groupings
+                                       .joins(:student_memberships)
+                                       .pluck('memberships.role_id')
+      students = course.students.includes(:user).where.not(id: assigned_student_ids)
 
       # Calculate similarity scores for each student
       suggestions = students.filter_map do |student|
@@ -45,6 +54,8 @@ class OcrMatchService
         next if value_to_match.blank?
 
         similarity = string_similarity(match_data[:parsed_value], value_to_match)
+        next if similarity < threshold
+
         { student: student, similarity: similarity }
       end
 

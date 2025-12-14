@@ -211,7 +211,16 @@ describe OcrMatchService do
         expect(similarities).to eq(similarities.sort.reverse)
       end
 
-      it 'limits results to the specified limit' do
+      it 'filters results by similarity threshold' do
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id, threshold: 0.95)
+
+        # All returned suggestions should meet the threshold
+        suggestions.each do |suggestion|
+          expect(suggestion[:similarity]).to be >= 0.95
+        end
+      end
+
+      it 'respects custom limit parameter' do
         suggestions = OcrMatchService.get_suggestions(grouping.id, course.id, limit: 2)
 
         expect(suggestions.length).to be <= 2
@@ -227,14 +236,34 @@ describe OcrMatchService do
         expect(similar_match[:similarity]).to be > 0.8
       end
 
-      it 'defaults to limit of 5' do
-        # Create more students to test default limit
+      it 'uses default threshold of 0.8 and limit of 5' do
+        # Create more students to test both threshold and limit
         6.times do |i|
           create(:student, user: create(:end_user, user_name: "student#{100 + i}"), course: course)
         end
 
         suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
+
+        # All returned suggestions should meet the default 0.8 threshold
+        suggestions.each do |suggestion|
+          expect(suggestion[:similarity]).to be >= 0.8
+        end
+
+        # Should not exceed default limit of 5
         expect(suggestions.length).to be <= 5
+      end
+
+      it 'excludes students already assigned to groupings for this assignment' do
+        # Assign student1 to a grouping
+        other_grouping = create(:grouping, assignment: assignment)
+        create(:student_membership, role: student1, grouping: other_grouping,
+                                    membership_status: StudentMembership::STATUSES[:inviter])
+
+        suggestions = OcrMatchService.get_suggestions(grouping.id, course.id)
+
+        # student1 should not appear in suggestions
+        student_ids = suggestions.map { |s| s[:student].id }
+        expect(student_ids).not_to include(student1.id)
       end
     end
 

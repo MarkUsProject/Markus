@@ -77,7 +77,7 @@ class AutoMatchJob < ApplicationJob
   def match_student(parsed, exam_template)
     case exam_template.cover_fields
     when 'id_number'
-      Student.joins(:user).find_by('user.id_number': parsed)
+      Student.joins(:user).find_by('users.id_number': parsed)
     when 'user_name'
       Student.joins(:user).find_by(User.arel_table[:user_name].matches(parsed))
     end
