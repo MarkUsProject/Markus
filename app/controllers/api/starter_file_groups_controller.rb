@@ -61,7 +61,7 @@ module Api
       if has_missing_params?([:filename, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
@@ -73,7 +73,7 @@ module Api
       file_path = FileHelper.checked_join(starter_file_group.path, params[:filename])
       if file_path.nil?
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
       else
         File.write(file_path, content, mode: 'wb')
         update_entries_and_warn(starter_file_group)
@@ -91,14 +91,14 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
       folder_path = FileHelper.checked_join(starter_file_group.path, params[:folder_path])
       if folder_path.nil?
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
       else
         FileUtils.mkdir_p(folder_path)
         update_entries_and_warn(starter_file_group)
@@ -116,13 +116,13 @@ module Api
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
       file_path = FileHelper.checked_join(starter_file_group.path, params[:filename])
       if file_path.nil?
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
       else
         File.delete(file_path)
         update_entries_and_warn(starter_file_group)
@@ -140,14 +140,14 @@ module Api
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
 
       folder_path = FileHelper.checked_join(starter_file_group.path, params[:folder_path])
       if folder_path.nil?
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_entity
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
       else
         FileUtils.rm_rf(folder_path)
         update_entries_and_warn(starter_file_group)

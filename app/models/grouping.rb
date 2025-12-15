@@ -11,7 +11,7 @@ class Grouping < ApplicationRecord
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
-  has_many :student_memberships, -> { order('id') }, inverse_of: :grouping
+  has_many :student_memberships, -> { order(:id) }, inverse_of: :grouping
   has_many :non_rejected_student_memberships,
            -> { where.not(memberships: { membership_status: StudentMembership::STATUSES[:rejected] }) },
            class_name: 'StudentMembership',
@@ -627,7 +627,7 @@ class Grouping < ApplicationRecord
     fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'test_runs.status',
               'roles.type', 'users.user_name',
               'test_groups.id', 'test_groups.name', 'test_groups.position', 'test_groups.display_output',
-              'test_group_results.time',
+              'test_group_results.time', 'test_group_results.error_type',
               'test_results.name', 'test_results.status as test_results_status', 'test_results.marks_earned',
               'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_results.position']
     fields << 'test_group_results.extra_info' if include_extra_info

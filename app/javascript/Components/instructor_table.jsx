@@ -56,7 +56,8 @@ class InstructorTable extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchData().then(data => this.setState({data: this.processData(data)}));
+    this.setState({loading: true});
+    this.fetchData().then(data => this.setState({data: this.processData(data), loading: false}));
   }
 
   fetchData() {
@@ -78,30 +79,13 @@ class InstructorTable extends React.Component {
     return data;
   }
 
-  removeTA = ta_id => {
-    fetch(Routes.course_ta_path(this.props.course_id, ta_id), {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          this.fetchData();
-        }
-      })
-      .catch(error => {
-        console.error("Error deleting TA:", error);
-      });
-  };
-
   render() {
     return (
       <Table
         data={this.state.data}
         columns={this.columns}
         noDataText={I18n.t("instructors.empty_table")}
+        loading={this.state.loading}
       />
     );
   }

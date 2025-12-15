@@ -26,7 +26,9 @@ en:
     course_exists: A course with this name already exists on MarkUs. Please select a course to link to.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
     course_link_success: Success. %{markus_course_name} is now linked with your LMS.
+    course_not_found: Course Not Found
     course_not_linked: This course has not been linked with an external course. To link this course with an external course, launch MarkUs from the external LMS.
+    course_not_set_up: This course has not been linked to MarkUs yet.
     course_select_instructions: Match your course with a MarkUs course.
     create_course: Create New Course
     create_line_item_checkbox: Create gradebook item?
@@ -75,8 +77,10 @@ en:
   select_filename: Select Filename
   skip: Skip
   table:
+    hide_details: Hide details
     no_data: No rows found
     search: Search
+    show_details: Show details
   to: to
   working: Loading
   write: Write

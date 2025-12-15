@@ -6,18 +6,36 @@ class Level < ApplicationRecord
   attr_accessor :skip_uniqueness_validation
 
   validates :name, presence: true
-  validates :name, uniqueness: { scope: :criterion_id }, unless: :skip_uniqueness_validation
 
   validates :description, exclusion: { in: [nil] }
 
   validates :mark, presence: true
-  validates :mark, uniqueness: { scope: :criterion_id }, unless: :skip_uniqueness_validation
   validates :mark, numericality: { greater_than_or_equal_to: 0 }
 
   validate :only_update_if_results_unreleased
+  validate -> { unique_within_criterion(:name) }, unless: :skip_uniqueness_validation
+  validate -> { unique_within_criterion(:mark) }, unless: :skip_uniqueness_validation
 
   before_update :update_associated_marks
   before_destroy :destroy_associated_marks
+
+  # Validates that an attr (i.e. name, or mark) is unique
+  #
+  # Custom validators have access to in memory data and can be used to validate final state changes.
+  # By contrast, built-in rails uniqueness validators query the database,
+  # their information limited, to pre-updated records
+  #
+  # Built in validators run into the issue of constraint infractions.
+  # This happens when an attempt is made to swap two values within the same transaction.
+  # Each record is compared against the database before the second has had a chance to update.
+  def unique_within_criterion(attr)
+    return unless criterion
+    return unless new_record? || public_send(:"will_save_change_to_#{attr}?")
+
+    siblings = criterion.levels.reject { |level| level.id == id || level.marked_for_destruction? }
+    duplicate = siblings.find { |level| level.public_send(attr) == public_send(attr) }
+    errors.add(attr, :taken) if duplicate
+  end
 
   def only_update_if_results_unreleased
     return if self.criterion.nil? # When the level is first being created

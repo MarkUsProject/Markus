@@ -1,12 +1,13 @@
 class MarkingScheme < ApplicationRecord
   include CourseSummariesHelper
+
   has_many :marking_weights, dependent: :destroy
   accepts_nested_attributes_for :marking_weights
   validates :name, uniqueness: { scope: :course_id }
 
   belongs_to :course
 
-  default_scope { order('id ASC') }
+  default_scope { order(:id) }
 
   # Returns an array of all students' weighted grades that are not nil
   def students_weighted_grades_array(current_role)

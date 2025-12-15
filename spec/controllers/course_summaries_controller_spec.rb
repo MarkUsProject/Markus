@@ -1,6 +1,7 @@
 describe CourseSummariesController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   include CourseSummariesHelper
+
   context 'An instructor' do
     let(:instructor) { create(:instructor) }
     let(:course) { instructor.course }

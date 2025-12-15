@@ -1,10 +1,10 @@
 require:
-  - rubocop-rails
   - rubocop-performance
   - rubocop-factory_bot
   - rubocop-rspec_rails
   - rubocop-capybara
 plugins:
+  - rubocop-rails
   - rubocop-rspec
 
 AllCops:
@@ -15,7 +15,7 @@ AllCops:
     - 'Vagrantfile'
   NewCops: enable
   SuggestExtensions: false
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.1
 
 Capybara/ClickLinkOrButtonStyle:  # TODO: Enable and fix errors after reviewing system tests
   Enabled: false
@@ -185,6 +185,9 @@ Rails/RequireDependency:
   Enabled: true
 
 Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/StrongParametersExpect:  # TODO: Enable this one and fix all issues
   Enabled: false
 
 Rails/UniqueValidationWithoutIndex:

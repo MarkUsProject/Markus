@@ -10,6 +10,15 @@ module LtiHelper
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:names_role]])
     names_service = lti_deployment.lti_services.find_by!(service_type: 'namesrole')
     membership_uri = URI(names_service.url)
+    if lti_deployment.resource_link_id.present?
+      query = begin
+        URI.decode_www_form(String(membership_uri.query))
+      rescue StandardError
+        []
+      end
+      query << ['rlid', lti_deployment.resource_link_id]
+      membership_uri.query = URI.encode_www_form(query)
+    end
     member_info, follow = get_member_data(lti_deployment, membership_uri, auth_data)
     while follow != false
       additional_data, follow = get_member_data(lti_deployment, follow, auth_data)
@@ -18,11 +27,18 @@ module LtiHelper
     user_data = member_info.filter_map do |user|
       unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
         role_types.none? { |role| user['roles'].include?(role) }
+        student_number = user.dig('message', 0, LtiDeployment::LTI_CLAIMS[:custom], 'student_number')
+        id_number_value = if student_number.blank? || student_number == '$Canvas.user.sisIntegrationId'
+                            nil
+                          else
+                            student_number
+                          end
         { user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
           first_name: user['given_name'],
           last_name: user['family_name'],
           display_name: user['name'],
           email: user['email'],
+          id_number: id_number_value,
           lti_user_id: user['user_id'],
           roles: user['roles'] }
       end
@@ -101,6 +117,7 @@ module LtiHelper
     released_results = assignment.released_marks
                                  .joins(grouping: [{ accepted_student_memberships: { role: { user: :lti_users } } }])
                                  .where('lti_users.lti_client': lti_deployment.lti_client)
+                                 .where(roles: { hidden: false })
                                  .pluck('lti_users.lti_user_id', 'results.id')
     result_ids = released_results.pluck(1)
     grades = Result.get_total_marks(result_ids)

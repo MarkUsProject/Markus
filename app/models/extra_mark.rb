@@ -7,17 +7,26 @@ class ExtraMark < ApplicationRecord
   # When you want to avoid allocating strings...
   PERCENTAGE = 'percentage'.freeze
   POINTS = 'points'.freeze
+  PERCENTAGE_OF_MARK = 'percentage_of_mark'.freeze
 
   scope :percentage, -> { where(unit: ExtraMark::PERCENTAGE) }
   scope :points, -> { where(unit: ExtraMark::POINTS) }
+  scope :percentage_of_mark, -> { where(unit: ExtraMark::PERCENTAGE_OF_MARK) }
 
   validates :unit, presence: true
-  validates :unit, format: { with: /\Apercentage|points\z/ }
+  validates :unit, format: { with: /\Apercentage|points|percentage_of_mark\z/ }
 
   scope :positive, -> { where('extra_mark > 0') }
   scope :negative, -> { where('extra_mark < 0') }
 
   validates :extra_mark, numericality: true
+
+  # TODO: Fix idemptoence
+  # Related: https://github.com/MarkUsProject/Markus/pull/7728#discussion_r2488229722
+  # validates :description, uniqueness: {
+  #   scope: [:result_id, :extra_mark, :unit],
+  #   message: 'a mark, unit, description already exist to this result'
+  # }
 
   belongs_to :result
 

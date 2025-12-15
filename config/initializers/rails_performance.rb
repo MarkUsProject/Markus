@@ -4,6 +4,7 @@ Rails.application.config.after_initialize do
   if Settings.rails_performance.enabled
     RailsPerformance::RailsPerformanceController.class_eval do
       include SessionHandler
+
       before_action :check_user_not_authorized
 
       # Modify CSP for Performance Gem

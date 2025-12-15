@@ -2,6 +2,7 @@ namespace :db do
   desc 'Sets up environment to test the autotester'
   task autotest: :environment do
     include AutomatedTestsHelper
+
     puts 'Set up testing environment for autotest'
     markus_url = ENV.fetch('MARKUS_URL', nil) || raise('no MARKUS_URL environment variable is set')
     autotest_url = ENV.fetch('AUTOTEST_URL', nil)

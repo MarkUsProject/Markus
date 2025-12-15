@@ -1,5 +1,6 @@
 describe AutomatedTestsHelper do
   include ApplicationHelper
+
   describe '.update_test_groups_from_specs' do
     subject { update_test_groups_from_specs assignment, specs }
 

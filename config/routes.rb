@@ -41,6 +41,7 @@ Rails.application.routes.draw do
             put 'add_tag'
             put 'remove_tag'
             post 'collect_submission'
+            post 'add_test_run'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
@@ -526,6 +527,7 @@ Rails.application.routes.draw do
     member do
       get 'choose_course'
       post 'choose_course'
+      get 'course_not_set_up'
       post 'create_course'
     end
   end

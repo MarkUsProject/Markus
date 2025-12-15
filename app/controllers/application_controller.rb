@@ -56,8 +56,8 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def use_time_zone(&block)
-    Time.use_zone(current_user.time_zone, &block)
+  def use_time_zone(&)
+    Time.use_zone(current_user.time_zone, &)
   end
 
   # Set locale according to URL parameter. If unknown parameter is
