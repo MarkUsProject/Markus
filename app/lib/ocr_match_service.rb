@@ -59,8 +59,8 @@ class OcrMatchService
         { student: student, similarity: similarity }
       end
 
-      # Sort by similarity (highest first) and limit results
-      suggestions.sort_by { |s| -s[:similarity] }.take(limit)
+      # Return top matches by similarity (highest first)
+      suggestions.max_by(limit) { |s| s[:similarity] }
     end
 
     # Clear OCR match data after manual assignment
