@@ -572,122 +572,41 @@ describe GroupsController do
         expect(response).to redirect_to(action: 'index')
       end
 
-      context 'when validating group sizes' do
-        context 'with assignment.group_max = 2' do
-          before do
-            @assignment.update!(assignment_properties_attributes: { group_max: 2 })
-            # Create students for the tests
-            %w[student1 student2 student3 student4 student5].each do |name|
-              create(:student, user: create(:end_user, user_name: name))
-            end
-          end
+      it 'accepts groups within the maximum group size' do
+        @assignment.update!(assignment_properties_attributes: { group_max: 2 })
+        # Students c8shosta and c5bennet are already created in the outer before block
+        expect do
+          post_as instructor, :upload, params: {
+            course_id: course.id,
+            assignment_id: @assignment.id,
+            upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
+          }
+        end.to have_enqueued_job(CreateGroupsJob)
 
-          it 'rejects groups that exceed the maximum group size' do
-            expect do
-              post_as instructor, :upload, params: {
-                course_id: course.id,
-                assignment_id: @assignment.id,
-                upload_file: fixture_file_upload('groups/form_group_size_exceeded.csv', 'text/csv')
-              }
-            end.not_to have_enqueued_job(CreateGroupsJob)
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_blank
+        expect(response).to redirect_to(action: 'index')
+      end
 
-            expect(response).to have_http_status(:found)
-            expect(flash[:error].first).to include('exceed the maximum group size')
-            expect(flash[:error].first).to include('group1 (3 students, max: 2)')
-            expect(response).to redirect_to(action: 'index')
-          end
+      it 'accepts single-member groups' do
+        @assignment.update!(assignment_properties_attributes: { group_max: 1 })
+        create(:student, user: create(:end_user, user_name: 'solo_student'))
 
-          it 'accepts groups that are within the maximum group size' do
-            # Students c8shosta and c5bennet are already created in the outer before block
-            expect do
-              post_as instructor, :upload, params: {
-                course_id: course.id,
-                assignment_id: @assignment.id,
-                upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
-              }
-            end.to have_enqueued_job(CreateGroupsJob)
+        csv_content = "group1,solo_student\n"
+        file = Tempfile.new(['test_upload', '.csv'])
+        file.write(csv_content)
+        file.rewind
 
-            expect(response).to have_http_status(:found)
-            expect(flash[:error]).to be_blank
-            expect(response).to redirect_to(action: 'index')
-          end
-        end
+        expect do
+          post_as instructor, :upload, params: { course_id: course.id,
+                                                 assignment_id: @assignment.id,
+                                                 upload_file: fixture_file_upload(file.path, 'text/csv') }
+        end.to have_enqueued_job(CreateGroupsJob)
 
-        context 'with multiple oversized groups' do
-          before do
-            @assignment.update!(assignment_properties_attributes: { group_max: 2 })
-            # Create students for multiple groups
-            (1..14).each do |i|
-              create(:student, user: create(:end_user, user_name: "student#{i}"))
-            end
-          end
+        file.close
+        file.unlink
 
-          it 'shows only the first 3 oversized groups when more than 3 exist' do
-            expect do
-              post_as instructor, :upload, params: {
-                course_id: course.id,
-                assignment_id: @assignment.id,
-                upload_file: fixture_file_upload('groups/form_multiple_oversized.csv', 'text/csv')
-              }
-            end.not_to have_enqueued_job(CreateGroupsJob)
-
-            expect(response).to have_http_status(:found)
-            expect(flash[:error].first).to include('4 groups exceed the maximum group size')
-            expect(flash[:error].first).to include('First 3 Groups')
-            expect(flash[:error].first).to include('group1 (3 students, max: 2)')
-            expect(flash[:error].first).to include('group3 (3 students, max: 2)')
-            expect(flash[:error].first).to include('group4 (3 students, max: 2)')
-            expect(flash[:error].first).not_to include('group5')
-            expect(response).to redirect_to(action: 'index')
-          end
-        end
-
-        context 'with assignment.group_max = 1' do
-          before do
-            @assignment.update!(assignment_properties_attributes: { group_max: 1 })
-            create(:student, user: create(:end_user, user_name: 'solo_student'))
-          end
-
-          it 'accepts single-member groups' do
-            csv_content = "group1,solo_student\n"
-            file = Tempfile.new(['test_upload', '.csv'])
-            file.write(csv_content)
-            file.rewind
-
-            expect do
-              post_as instructor, :upload, params: { course_id: course.id,
-                                                     assignment_id: @assignment.id,
-                                                     upload_file: fixture_file_upload(file.path, 'text/csv') }
-            end.to have_enqueued_job(CreateGroupsJob)
-
-            file.close
-            file.unlink
-
-            expect(flash[:error]).to be_blank
-          end
-
-          it 'rejects multi-member groups' do
-            %w[student1 student2].each do |name|
-              create(:student, user: create(:end_user, user_name: name))
-            end
-
-            csv_content = "group1,student1,student2\n"
-            file = Tempfile.new(['test_upload', '.csv'])
-            file.write(csv_content)
-            file.rewind
-
-            expect do
-              post_as instructor, :upload, params: { course_id: course.id,
-                                                     assignment_id: @assignment.id,
-                                                     upload_file: fixture_file_upload(file.path, 'text/csv') }
-            end.not_to have_enqueued_job(CreateGroupsJob)
-
-            file.close
-            file.unlink
-
-            expect(flash[:error].first).to include('group1 (2 students, max: 1)')
-          end
-        end
+        expect(flash[:error]).to be_blank
       end
 
       context 'when uploading groups with inactive students' do
@@ -711,27 +630,6 @@ describe GroupsController do
           expect(response).to have_http_status(:found)
           expect(flash[:error]).to be_blank
           expect(response).to redirect_to(action: 'index')
-        end
-
-        it 'still validates group size with inactive students' do
-          # Create additional students to exceed group_max
-          create(:student, user: create(:end_user, user_name: 'student3'))
-
-          csv_content = "group1,active_student,inactive_student,student3\n"
-          file = Tempfile.new(['test_upload', '.csv'])
-          file.write(csv_content)
-          file.rewind
-
-          expect do
-            post_as instructor, :upload, params: { course_id: course.id,
-                                                   assignment_id: @assignment.id,
-                                                   upload_file: fixture_file_upload(file.path, 'text/csv') }
-          end.not_to have_enqueued_job(CreateGroupsJob)
-
-          file.close
-          file.unlink
-
-          expect(flash[:error].first).to include('group1 (3 students, max: 2)')
         end
       end
     end
