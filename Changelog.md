@@ -6,6 +6,7 @@
 
 ### ✨ New features and improvements
 - Enable test results downloads through the API (#7754)
+- Provide suggestions for partial student matching scans (#7760)
 
 ### 🐛 Bug fixes
 
