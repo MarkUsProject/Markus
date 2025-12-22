@@ -5,6 +5,16 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Enable test results downloads through the API (#7754)
+- Provide suggestions for partial student matching scans (#7760)
+
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.9.0]
+
+### ✨ New features and improvements
 - Added touch event support for PDF and image annotations in grading view (#7736)
 - Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added frontend UI for assignment visibility scheduling with three visibility options and section-specific overrides (#7717)
@@ -20,8 +30,6 @@
 - Enable zip downloads of test results (#7733)
 - Create rake task to remove orphaned end users (#7741)
 - Enable scanned assignments the ability to add inactive students (#7737)
-- Enable test results downloads through the API (#7754)
-- Provide suggestions for partial student matching scans (#7760)
 
 ### 🐛 Bug fixes
 - Fix name column search in graders table (#7693)
