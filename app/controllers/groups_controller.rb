@@ -496,8 +496,8 @@ class GroupsController < ApplicationController
       if errors.blank?
         to_invite.each do |i|
           i = i.strip
-          invited_user = current_course.students.joins(:user).where(hidden: false).find_by('users.user_name': i)
-          if invited_user.receives_invite_emails?
+          invited_user = current_course.students.joins(:user).find_by('users.user_name': i)
+          if invited_user&.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
                                     grouping: @grouping).grouping_invite_email.deliver_later

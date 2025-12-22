@@ -329,6 +329,8 @@ class Grouping < ApplicationRecord
   def can_invite?(role)
     if self.inviter == role
       raise I18n.t('groups.invite_member.errors.inviting_self')
+    elsif role.hidden
+      raise I18n.t('groups.invite_member.errors.inactive_student', user_name: role.user_name)
     elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max

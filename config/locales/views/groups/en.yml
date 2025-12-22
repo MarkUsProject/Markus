@@ -42,6 +42,7 @@ en:
         extension_exists: You cannot modify a group with an extension to the due date. Please contact your instructor if you wish to make changes.
         group_max_reached: 'Could not invite %{user_name}: group maximum has been reached.'
         inactive_grader: Cannot assign inactive grader(s) %{user_names}.
+        inactive_student: 'Could not invite %{user_name}: this student is inactive.'
         inviting_self: You cannot invite yourself to your own group.
         need_to_create_group: You must create a group before you can invite members.
         not_found: No student '%{user_name}' could be found.
