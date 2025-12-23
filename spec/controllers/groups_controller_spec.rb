@@ -532,7 +532,8 @@ describe GroupsController do
         # Setup for Git Repository
         allow(Settings.repository).to receive(:type).and_return('git')
 
-        @assignment = create(:assignment)
+        # Create assignment with group_max of 3 to accommodate test files
+        @assignment = create(:assignment, assignment_properties_attributes: { group_max: 3 })
 
         # Create students corresponding to the file_good
         @student_user_names = %w[c8shosta c5bennet]
@@ -569,6 +570,67 @@ describe GroupsController do
         expect(response).to have_http_status(:found)
         expect(flash[:error]).not_to be_blank
         expect(response).to redirect_to(action: 'index')
+      end
+
+      it 'accepts groups within the maximum group size' do
+        @assignment.update!(assignment_properties_attributes: { group_max: 2 })
+        # Students c8shosta and c5bennet are already created in the outer before block
+        expect do
+          post_as instructor, :upload, params: {
+            course_id: course.id,
+            assignment_id: @assignment.id,
+            upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
+          }
+        end.to have_enqueued_job(CreateGroupsJob)
+
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_blank
+        expect(response).to redirect_to(action: 'index')
+      end
+
+      it 'accepts single-member groups' do
+        @assignment.update!(assignment_properties_attributes: { group_max: 1 })
+        create(:student, user: create(:end_user, user_name: 'solo_student'))
+
+        csv_content = "group1,solo_student\n"
+        file = Tempfile.new(['test_upload', '.csv'])
+        file.write(csv_content)
+        file.rewind
+
+        expect do
+          post_as instructor, :upload, params: { course_id: course.id,
+                                                 assignment_id: @assignment.id,
+                                                 upload_file: fixture_file_upload(file.path, 'text/csv') }
+        end.to have_enqueued_job(CreateGroupsJob)
+
+        file.close
+        file.unlink
+
+        expect(flash[:error]).to be_blank
+      end
+
+      context 'when uploading groups with inactive students' do
+        before do
+          @assignment.update!(assignment_properties_attributes: { group_max: 2 })
+          # Create an active student
+          @active_student = create(:student, user: create(:end_user, user_name: 'active_student'))
+          # Create an inactive student (hidden: true)
+          @inactive_student = create(:student, hidden: true, user: create(:end_user, user_name: 'inactive_student'))
+        end
+
+        it 'allows importing groups with inactive students (ISSUE-7743)' do
+          expect do
+            post_as instructor, :upload, params: {
+              course_id: course.id,
+              assignment_id: @assignment.id,
+              upload_file: fixture_file_upload('groups/form_with_inactive_students.csv', 'text/csv')
+            }
+          end.to have_enqueued_job(CreateGroupsJob)
+
+          expect(response).to have_http_status(:found)
+          expect(flash[:error]).to be_blank
+          expect(response).to redirect_to(action: 'index')
+        end
       end
     end
 

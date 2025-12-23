@@ -288,7 +288,7 @@ class Grouping < ApplicationRecord
     all_errors = []
     members.each do |m|
       m = m.strip
-      user = course.students.joins(:user).where(hidden: false).find_by('users.user_name': m)
+      user = course.students.joins(:user).find_by('users.user_name': m)
       begin
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
@@ -305,7 +305,7 @@ class Grouping < ApplicationRecord
 
   # Add a new member to base
   def add_member(role, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if role.has_accepted_grouping_for?(self.assessment_id) || role.hidden
+    if role.has_accepted_grouping_for?(self.assessment_id)
       nil
     else
       member = StudentMembership.new(role: role, membership_status:
@@ -329,6 +329,8 @@ class Grouping < ApplicationRecord
   def can_invite?(role)
     if self.inviter == role
       raise I18n.t('groups.invite_member.errors.inviting_self')
+    elsif role.hidden
+      raise I18n.t('groups.invite_member.errors.inactive_student', user_name: role.user_name)
     elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max

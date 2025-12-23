@@ -306,6 +306,7 @@ class GroupsController < ApplicationController
 
         group_rows << row.compact_blank
       end
+
       if result[:invalid_lines].empty?
         @current_job = CreateGroupsJob.perform_later assignment, group_rows
         session[:job_id] = @current_job.job_id
@@ -489,8 +490,8 @@ class GroupsController < ApplicationController
       if errors.blank?
         to_invite.each do |i|
           i = i.strip
-          invited_user = current_course.students.joins(:user).where(hidden: false).find_by('users.user_name': i)
-          if invited_user.receives_invite_emails?
+          invited_user = current_course.students.joins(:user).find_by('users.user_name': i)
+          if invited_user&.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
                                     grouping: @grouping).grouping_invite_email.deliver_later
@@ -699,9 +700,6 @@ class GroupsController < ApplicationController
                             end
     @bad_user_names = []
 
-    if student.hidden
-      raise I18n.t('groups.invite_member.errors.not_found', user_name: student.user_name)
-    end
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
