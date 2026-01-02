@@ -13,6 +13,8 @@
 
 ### 🔧 Internal changes
 
+- Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
+
 ## [v2.9.0]
 
 ### ✨ New features and improvements

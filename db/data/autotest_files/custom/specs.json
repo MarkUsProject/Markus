@@ -13,6 +13,7 @@
           "timeout": 30,
           "extra_info": {
             "criterion": "criterion",
+            "display_output": "instructors",
             "name": "Custom Test Group"
           }
         }
