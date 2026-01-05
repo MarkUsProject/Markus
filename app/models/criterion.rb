@@ -129,7 +129,7 @@ class Criterion < ApplicationRecord
     records = assignment.criteria
                         .pluck_to_hash
                         .map do |h|
-      { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
+                          { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 
     Criterion.upsert_all(records) unless records.empty?
@@ -251,7 +251,7 @@ class Criterion < ApplicationRecord
     Result.joins(submission: :grouping)
           .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)
           .find_each do |result|
-      result.update(marking_state: Result::MARKING_STATES[:incomplete])
+            result.update(marking_state: Result::MARKING_STATES[:incomplete])
     end
   end
 

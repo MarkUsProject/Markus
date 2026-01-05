@@ -70,10 +70,10 @@ class AutotestResetUrlJob < ApplicationJob
               .joins(:assignment_properties)
               .where.not('assignment_properties.autotest_settings': nil)
               .find_each do |assignment|
-          AutotestSpecsJob.perform_now(host_with_port, assignment, autotest_settings_for(assignment))
-        rescue StandardError => e
-          errors << I18n.t('automated_tests.job_messages.resetting_test_settings_error',
-                           short_identifier: assignment.short_identifier, error: e.to_s)
+                AutotestSpecsJob.perform_now(host_with_port, assignment, autotest_settings_for(assignment))
+              rescue StandardError => e
+                errors << I18n.t('automated_tests.job_messages.resetting_test_settings_error',
+                                 short_identifier: assignment.short_identifier, error: e.to_s)
         end
         raise errors.join("\n") unless errors.empty?
       end

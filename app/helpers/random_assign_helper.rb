@@ -62,19 +62,19 @@ module RandomAssignHelper
                         { result: { submission: :grouping } })
               .where(reviewer_id: reviewer_ids, 'groupings.id': reviewee_ids)
               .find_each do |peer_review|
-      reviewer_id = peer_review.reviewer_id
-      reviewee_id = peer_review.reviewee.id
+                reviewer_id = peer_review.reviewer_id
+                reviewee_id = peer_review.reviewee.id
 
-      @reviewer_to_reviewee_sets[reviewer_id].add(reviewee_id)
+                @reviewer_to_reviewee_sets[reviewer_id].add(reviewee_id)
 
-      index = @reviewers.find_index(reviewer_id)
-      unless index.nil?
-        @reviewers.delete_at(index)
-      end
-      index = @reviewees.find_index(reviewee_id)
-      unless index.nil?
-        @reviewees.delete_at(index)
-      end
+                index = @reviewers.find_index(reviewer_id)
+                unless index.nil?
+                  @reviewers.delete_at(index)
+                end
+                index = @reviewees.find_index(reviewee_id)
+                unless index.nil?
+                  @reviewees.delete_at(index)
+                end
     end
   end
 

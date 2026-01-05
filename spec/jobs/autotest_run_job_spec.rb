@@ -50,7 +50,7 @@ describe AutotestRunJob do
                                     .where(group_id: group.id)
                                     .pluck('starter_file_entries.path', 'starter_file_groups.name')
                                     .filter_map do |v|
-            { starter_file_group: v.second, starter_file_path: v.first } if v.first
+                                      { starter_file_group: v.second, starter_file_path: v.first } if v.first
           end
           starter_files.sort_by! { |x| [x[:starter_file_group], x[:starter_file_path]] }
 
