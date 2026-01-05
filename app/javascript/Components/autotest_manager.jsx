@@ -45,7 +45,7 @@ class AutotestManager extends React.Component {
               items: {
                 "ui:placeholder": I18n.t("automated_tests.test_group", {count: 1}),
                 "ui:title": I18n.t("automated_tests.test_group", {count: 1}),
-                "ui:order": ["extra_info", "*"],
+                "ui:order": ["extra_info", "*", "feedback_file_names"],
                 "ui:options": {label: false},
                 category: {
                   "ui:title": I18n.t("automated_tests.category"),
@@ -76,6 +76,7 @@ class AutotestManager extends React.Component {
               },
             },
             "ui:options": {label: false},
+            "ui:order": ["tester_type", "env_data", "test_data", "*"],
           },
         },
       },
@@ -558,14 +559,13 @@ function AddButton(props) {
   if (label) {
     label = `${I18n.t("add")} ${label}`;
   }
-  console.log(props);
   return (
     <div className="row">
       <p className={`col-xs-3 col-xs-offset-9 text-right`}>
         <button
           type="button"
           className={`btn btn-info btn-add col-xs-12`}
-          title={translateString(TranslatableString.AddButton)}
+          title={label || translateString(TranslatableString.AddButton)}
           {...btnProps}
         >
           {label || <FontAwesomeIcon icon="fa-solid fa-add" />}
