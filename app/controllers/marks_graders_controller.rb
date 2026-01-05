@@ -22,13 +22,13 @@ class MarksGradersController < ApplicationController
                                 .joins(:user)
                                 .pluck('roles.id', :user_name, :first_name, :last_name)
                                 .map do |ta_data|
-          {
-            _id: ta_data[0],
-            user_name: ta_data[1],
-            first_name: ta_data[2],
-            last_name: ta_data[3],
-            students: counts[ta_data[0]] || 0
-          }
+                                  {
+                                    _id: ta_data[0],
+                                    user_name: ta_data[1],
+                                    first_name: ta_data[2],
+                                    last_name: ta_data[3],
+                                    students: counts[ta_data[0]] || 0
+                                  }
         end
 
         # Student information

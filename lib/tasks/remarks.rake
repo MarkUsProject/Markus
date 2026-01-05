@@ -7,30 +7,30 @@ namespace :db do
     Assignment.joins(:assignment_properties)
               .where(assignment_properties: { allow_remarks: true })
               .find_each do |assignment|
-      # Create remark request for first two groups in each assignment
-      Grouping.where(assessment_id: assignment.id).first(2).each do |grouping|
-        submission = Submission.find_by(grouping_id: grouping.id)
+                # Create remark request for first two groups in each assignment
+                Grouping.where(assessment_id: assignment.id).first(2).each do |grouping|
+                  submission = Submission.find_by(grouping_id: grouping.id)
 
-        original_result = Result.find_by(submission_id: submission.id)
-        original_result.released_to_students = false
-        original_result.save
+                  original_result = Result.find_by(submission_id: submission.id)
+                  original_result.released_to_students = false
+                  original_result.save
 
-        # Create new entry in results table for the remark
-        remark = Result.new(
-          marking_state: Result::MARKING_STATES[:incomplete],
-          submission_id: submission.id,
-          remark_request_submitted_at: Time.current
-        )
-        remark.save
+                  # Create new entry in results table for the remark
+                  remark = Result.new(
+                    marking_state: Result::MARKING_STATES[:incomplete],
+                    submission_id: submission.id,
+                    remark_request_submitted_at: Time.current
+                  )
+                  remark.save
 
-        # Update subission
-        submission.update(
-          remark_request: 'Please remark my assignment.',
-          remark_request_timestamp: Time.current
-        )
+                  # Update subission
+                  submission.update(
+                    remark_request: 'Please remark my assignment.',
+                    remark_request_timestamp: Time.current
+                  )
 
-        submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
-      end
+                  submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+                end
     end
 
     # Remark one of the remark requests and release it to students

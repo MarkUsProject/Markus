@@ -101,94 +101,94 @@ namespace :db do
 
     groupings.joins(:current_result).pluck('groupings.assessment_id', 'results.id', 'results.submission_id')
              .each_with_index do |data, i|
-      assignment_id, result_id, submission_id = data
+               assignment_id, result_id, submission_id = data
 
-      texts = annotation_text_ids[assignment_id]
-      cat1, cat2 = deductive_categories[assignment_id]
+               texts = annotation_text_ids[assignment_id]
+               cat1, cat2 = deductive_categories[assignment_id]
 
-      # Image annotation (from category)
-      annotations << {
-        result_id: result_id,
-        submission_file_id: submission_file_ids[[submission_id, 'deferred-process.jpg']],
-        annotation_text_id: texts.sample,
-        annotation_number: 1,
-        **image_annotation_attributes
-      }
+               # Image annotation (from category)
+               annotations << {
+                 result_id: result_id,
+                 submission_file_id: submission_file_ids[[submission_id, 'deferred-process.jpg']],
+                 annotation_text_id: texts.sample,
+                 annotation_number: 1,
+                 **image_annotation_attributes
+               }
 
-      # PDF annotation (from category)
-      annotations << {
-        result_id: result_id,
-        submission_file_id: submission_file_ids[[submission_id, 'pdf.pdf']],
-        annotation_text_id: texts.sample,
-        annotation_number: 2,
-        **pdf_annotation_attributes
-      }
+               # PDF annotation (from category)
+               annotations << {
+                 result_id: result_id,
+                 submission_file_id: submission_file_ids[[submission_id, 'pdf.pdf']],
+                 annotation_text_id: texts.sample,
+                 annotation_number: 2,
+                 **pdf_annotation_attributes
+               }
 
-      # PDF annotation (one-time-only)
-      annotations << {
-        result_id: result_id,
-        submission_file_id: submission_file_ids[[submission_id, 'pdf.pdf']],
-        annotation_text_id: one_time_ids[i],
-        annotation_number: 3,
-        type: 'PdfAnnotation', x1: 52_444, y1: 20_703, x2: 88_008, y2: 35_185, page: 2, **annotation_attributes
-      }
+               # PDF annotation (one-time-only)
+               annotations << {
+                 result_id: result_id,
+                 submission_file_id: submission_file_ids[[submission_id, 'pdf.pdf']],
+                 annotation_text_id: one_time_ids[i],
+                 annotation_number: 3,
+                 type: 'PdfAnnotation', x1: 52_444, y1: 20_703, x2: 88_008, y2: 35_185, page: 2, **annotation_attributes
+               }
 
-      # Text file annotation (from category)
-      annotations << {
-        result_id: result_id,
-        submission_file_id: submission_file_ids[[submission_id, 'hello.py']],
-        annotation_text_id: texts.sample,
-        annotation_number: 4,
-        **text_annotation_attributes
-      }
+               # Text file annotation (from category)
+               annotations << {
+                 result_id: result_id,
+                 submission_file_id: submission_file_ids[[submission_id, 'hello.py']],
+                 annotation_text_id: texts.sample,
+                 annotation_number: 4,
+                 **text_annotation_attributes
+               }
 
-      # Deductive annotations (two per submission)
-      annotations << {
-        result_id: result_id,
-        submission_file_id: submission_file_ids[[submission_id, 'hello.py']],
-        annotation_text_id: cat1[:text_ids].sample,
-        annotation_number: 5,
-        **text_annotation_attributes2
-      }
+               # Deductive annotations (two per submission)
+               annotations << {
+                 result_id: result_id,
+                 submission_file_id: submission_file_ids[[submission_id, 'hello.py']],
+                 annotation_text_id: cat1[:text_ids].sample,
+                 annotation_number: 5,
+                 **text_annotation_attributes2
+               }
 
-      annotations << {
-        result_id: result_id,
-        submission_file_id: submission_file_ids[[submission_id, 'hello.py']],
-        annotation_text_id: cat2[:text_ids].sample,
-        annotation_number: 6,
-        **text_annotation_attributes3
-      }
+               annotations << {
+                 result_id: result_id,
+                 submission_file_id: submission_file_ids[[submission_id, 'hello.py']],
+                 annotation_text_id: cat2[:text_ids].sample,
+                 annotation_number: 6,
+                 **text_annotation_attributes3
+               }
 
-      # Generate grades for the submission
-      criteria[assignment_id].each do |criterion|
-        override = false
-        if criterion[:type] == 'RubricCriterion'
-          random_mark = criterion[:max_mark] / 4 * rand(0..4)
-        elsif criterion[:type] == 'CheckboxCriterion'
-          random_mark = rand(0..1)
-        elsif criterion[:id] == cat1[:criterion_id] # FlexibleCriterion, which may involve a deductive annotation
-          random_mark = 0 # Deductive annotation causes mark of 0
-        elsif criterion[:id] == cat2[:criterion_id] # Deductive annotation is overridden
-          override = true
-          random_mark = criterion[:max_mark]
-        else
-          random_mark = rand(0..criterion[:max_mark])
-        end
-        marks << {
-          result_id: result_id,
-          criterion_id: criterion[:id],
-          mark: random_mark,
-          override: override,
-          created_at: now,
-          updated_at: now
-        }
-      end
-      results << {
-        id: result_id,
-        marking_state: Result::MARKING_STATES[:complete],
-        released_to_students: true,
-        view_token: Result.generate_unique_secure_token
-      }
+               # Generate grades for the submission
+               criteria[assignment_id].each do |criterion|
+                 override = false
+                 if criterion[:type] == 'RubricCriterion'
+                   random_mark = criterion[:max_mark] / 4 * rand(0..4)
+                 elsif criterion[:type] == 'CheckboxCriterion'
+                   random_mark = rand(0..1)
+                 elsif criterion[:id] == cat1[:criterion_id] # FlexibleCriterion, which may involve a deductive annotation
+                   random_mark = 0 # Deductive annotation causes mark of 0
+                 elsif criterion[:id] == cat2[:criterion_id] # Deductive annotation is overridden
+                   override = true
+                   random_mark = criterion[:max_mark]
+                 else
+                   random_mark = rand(0..criterion[:max_mark])
+                 end
+                 marks << {
+                   result_id: result_id,
+                   criterion_id: criterion[:id],
+                   mark: random_mark,
+                   override: override,
+                   created_at: now,
+                   updated_at: now
+                 }
+               end
+               results << {
+                 id: result_id,
+                 marking_state: Result::MARKING_STATES[:complete],
+                 released_to_students: true,
+                 view_token: Result.generate_unique_secure_token
+               }
     end
     Annotation.insert_all annotations
 

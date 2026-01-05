@@ -56,8 +56,8 @@ describe TasController do
         end.join("\n") + "\n"
         expect(@controller).to receive(:send_data)
           .with(csv_data, csv_options) {
-                                 # to prevent a 'missing template' error
-                                 @controller.head :ok
+            # to prevent a 'missing template' error
+            @controller.head :ok
                                }
         subject
       end

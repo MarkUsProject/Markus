@@ -630,7 +630,7 @@ class Assignment < Assessment
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
                                .map do |s|
-          [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
+                                 [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
         end
       end
 
