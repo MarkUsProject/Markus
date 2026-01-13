@@ -20,6 +20,8 @@ describe Course do
     it { is_expected.to allow_value(false).for(:is_hidden) }
     it { is_expected.not_to allow_value(nil).for(:is_hidden) }
     it { is_expected.to validate_numericality_of(:max_file_size).is_greater_than_or_equal_to(0) }
+    it { is_expected.to allow_value(nil).for(:start_at) }
+    it { is_expected.to allow_value(nil).for(:end_at) }
 
     it 'fail with error message when invalid name format' do
       course.name = 'Invalid!@'

@@ -183,6 +183,20 @@ describe Api::CoursesController do
       get :update_autotest_url, params: { id: course.id }
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'does not update course start_at/end_at date as an instructor' do
+      old_start_at = course.start_at
+      old_end_at = course.end_at
+
+      put :update, params: { id: course.id,
+                             start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-04-05') }
+
+      expect(response).to have_http_status(:forbidden)
+
+      course.reload
+      expect(course.start_at).to eq(old_start_at)
+      expect(course.end_at).to eq(old_end_at)
+    end
   end
 
   context 'An authenticated student request' do
@@ -194,6 +208,20 @@ describe Api::CoursesController do
     end
 
     it_behaves_like 'Get #index', :student
+
+    it 'does not update course start_at/end_at date as a student' do
+      old_start_at = course.start_at
+      old_end_at = course.end_at
+
+      put :update, params: { id: course.id,
+                             start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-04-05') }
+
+      expect(response).to have_http_status(:forbidden)
+
+      course.reload
+      expect(course.start_at).to eq(old_start_at)
+      expect(course.end_at).to eq(old_end_at)
+    end
   end
 
   context 'An authenticated TA request' do
@@ -205,6 +233,20 @@ describe Api::CoursesController do
     end
 
     it_behaves_like 'Get #index', :ta
+
+    it 'does not update course start_at/end_at date as a TA' do
+      old_start_at = course.start_at
+      old_end_at = course.end_at
+
+      put :update, params: { id: course.id,
+                             start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-04-05') }
+
+      expect(response).to have_http_status(:forbidden)
+
+      course.reload
+      expect(course.start_at).to eq(old_start_at)
+      expect(course.end_at).to eq(old_end_at)
+    end
   end
 
   context 'an admin user' do
@@ -347,12 +389,22 @@ describe Api::CoursesController do
 
     describe '#update' do
       let(:course) { create(:course) }
-      let(:params) { { id: course.id, name: 'test', display_name: 'test', is_hidden: true } }
+      let(:start_time) { Time.zone.parse('2026-01-05') }
+      let(:end_time) { Time.zone.parse('2026-04-05') }
+      let(:params) do
+        { id: course.id, name: 'test', display_name: 'test', is_hidden: true, start_at: start_time, end_at: end_time }
+      end
 
       before { put :update, params: params }
 
       it 'updates the course with the right attributes' do
         expect(course.reload.attributes.slice(*params.keys.map(&:to_s))).to eq params.stringify_keys
+      end
+
+      it 'does update course start_at/end_at date as an admin' do
+        course.reload
+        expect(course.start_at).to be_within(1.second).of(start_time)
+        expect(course.end_at).to be_within(1.second).of(end_time)
       end
     end
 

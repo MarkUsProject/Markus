@@ -497,7 +497,9 @@ CREATE TABLE public.courses (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     autotest_setting_id bigint,
-    max_file_size bigint DEFAULT 5000000 NOT NULL
+    max_file_size bigint DEFAULT 5000000 NOT NULL,
+    start_at timestamp(6) without time zone DEFAULT NULL::timestamp without time zone,
+    end_at timestamp(6) without time zone DEFAULT NULL::timestamp without time zone
 );
 
 
@@ -4410,6 +4412,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260112023937'),
 ('20251113015424'),
 ('20251023030630'),
 ('20251010150001'),
