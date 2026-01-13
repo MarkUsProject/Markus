@@ -275,11 +275,11 @@ describe CoursesController do
           old_start_at = course.start_at
           old_end_at = course.end_at
 
-          put_as instructor :update,
-                            params: { id: course.id, course: {
-                              start_at: Time.zone.parse('2026-01-05'),
-                              end_at: Time.zone.parse('2026-04-05')
-                            } }
+          put_as instructor, :update,
+                 params: { id: course.id, course: {
+                   start_at: Time.zone.parse('2026-01-05'),
+                   end_at: Time.zone.parse('2026-04-05')
+                 } }
 
           course.reload
           expect(course.start_at).to eq(old_start_at)
