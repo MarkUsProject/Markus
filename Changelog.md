@@ -9,6 +9,7 @@
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
+- Store start and end date for courses (#7783)
 
 ### 🐛 Bug fixes
 
