@@ -7,6 +7,8 @@ en:
         is_hidden: Course Visibility
         max_file_size: Maximum File Size (bytes)
         name: Name
+        start_at: Start Date
+        end_at: End Date
     errors:
       models:
         course:
