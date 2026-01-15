@@ -12,6 +12,8 @@
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
+- Update batch test runs table UI (#7790)
+- Implement assignment caching (#7787)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
