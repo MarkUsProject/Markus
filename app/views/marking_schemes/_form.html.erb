@@ -19,12 +19,13 @@
           <td><%= f.text_field :name %></td>
         </tr>
 
-        <% @marking_scheme.marking_weights.each_with_index do |marking_weight, index| %>
+        <% @all_gradable_items.each do |assessment| %>
+          <% marking_weight = @marking_scheme.marking_weights.find { |mw| mw.assessment_id == assessment.id } || @marking_scheme.marking_weights.build(assessment_id: assessment.id, weight: 0) %>
           <%= f.fields_for :marking_weights, marking_weight do |builder| %>
             <tr>
-              <%= builder.hidden_field :type, value: (@all_gradable_items[index].is_a?(Assignment)) ? 'Assignment' : 'GEF' %>
-              <%= builder.hidden_field :id, value: @all_gradable_items[index].id %>
-              <td><%= builder.label "#{MarkingScheme.human_attribute_name(:weight)} #{@all_gradable_items[index].short_identifier}" %></td>
+              <%= builder.hidden_field :type, value: (assessment.is_a?(Assignment)) ? 'Assignment' : 'GEF' %>
+              <%= builder.hidden_field :id, value: assessment.id %>
+              <td><%= builder.label "#{MarkingScheme.human_attribute_name(:weight)} #{assessment.short_identifier}" %></td>
               <td><%= builder.text_field :weight %></td>
             </tr>
           <% end %>
