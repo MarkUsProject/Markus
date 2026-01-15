@@ -35,9 +35,9 @@
       <%= f.label :is_hidden, I18n.t('courses.visible'),  value: 'false' %>
       <%= f.radio_button :is_hidden, false %>
     </span>
-    <%= f.label :start_at, Course.human_attribute_name(:start_date) %>
+    <%= f.label :start_at, Course.human_attribute_name(:start_at) %>
     <%= f.datetime_field :start_at, disabled: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
-    <%= f.label :end_at, Course.human_attribute_name(:end_date) %>
+    <%= f.label :end_at, Course.human_attribute_name(:end_at) %>
     <%= f.datetime_field :end_at, disabled: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
   </div>
   <p>
