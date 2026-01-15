@@ -183,8 +183,8 @@ describe Api::CoursesController do
         get :show, params: { id: course.id }
         expect(response).to have_http_status(:ok)
 
-        expect(response.parsed_body['start_at']).to be_present
-        expect(response.parsed_body['end_at']).to be_present
+        expect(Time.zone.parse(response.parsed_body['start_at'])).to be_within(1.second).of(start_time)
+        expect(Time.zone.parse(response.parsed_body['end_at'])).to be_within(1.second).of(end_time)
       end
     end
 
