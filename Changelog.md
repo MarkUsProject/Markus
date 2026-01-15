@@ -11,6 +11,7 @@
 - Update autotest settings form UI (#7777)
 
 ### 🐛 Bug fixes
+- Fixed the editing form of marking schemes to include newly added assessments (#7788)
 
 ### 🔧 Internal changes
 
