@@ -30,6 +30,12 @@ describe Course do
       expect(course).not_to be_valid
       expect(course.errors[:name]).to include(expected_error)
     end
+
+    it 'is invalid when start date is later than the end date' do
+      course = build(:course, start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-01-04'))
+      expect(course).not_to be_valid
+      expect(course.errors[:start_at]).to include('must be before or equal to end date')
+    end
   end
 
   context 'callbacks' do

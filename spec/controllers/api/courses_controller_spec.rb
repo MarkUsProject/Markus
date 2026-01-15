@@ -169,6 +169,25 @@ describe Api::CoursesController do
 
     it_behaves_like 'Get #index', :instructor
 
+    describe '#show' do
+      let(:start_time) { Time.zone.parse('2026-01-05') }
+      let(:end_time) { Time.zone.parse('2026-04-05') }
+      let(:course) { create(:course, start_at: start_time, end_at: end_time) }
+
+      before do
+        request.env['HTTP_ACCEPT'] = 'application/json'
+        create(:instructor, user: user, course: course)
+      end
+
+      it 'returns course start_at and end_at dates' do
+        get :show, params: { id: course.id }
+        expect(response).to have_http_status(:ok)
+
+        expect(response.parsed_body['start_at']).to be_present
+        expect(response.parsed_body['end_at']).to be_present
+      end
+    end
+
     it 'should fail to authenticate a POST create request' do
       get :create
       expect(response).to have_http_status(:forbidden)

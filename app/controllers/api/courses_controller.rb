@@ -113,7 +113,10 @@ module Api
 
     def course_params
       fields = [:name, :is_hidden, :display_name]
-      fields += [:start_at, :end_at] if current_user.admin_user?
+      if allowed_to?(:edit?, with: Admin::CoursePolicy)
+        fields << :start_at
+        fields << :end_at
+      end
       params.permit(*fields)
     end
 
