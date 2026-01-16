@@ -498,6 +498,37 @@ describe GradeEntryFormsController do
                  params: { course_id: course.id, id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
         expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
       end
+
+      it 'deletes items with empty name and out_of' do
+        patch_as user, :update,
+                 params: { course_id: course.id, id: grade_entry_form.id,
+                           grade_entry_form: {
+                             grade_entry_items_attributes: {
+                               '0' => { name: 'Assignment 1', out_of: '10' },
+                               '1' => { name: '', out_of: '' }
+                             }
+                           } }
+
+        expect(grade_entry_form.reload.grade_entry_items.count).to eq 1
+      end
+
+      it 'assigns sequential positions after deleting empty items' do
+        patch_as user, :update,
+                 params: { course_id: course.id, id: grade_entry_form.id,
+                           grade_entry_form: {
+                             grade_entry_items_attributes: {
+                               '0' => { name: 'Assignment 1', out_of: '10' },
+                               '1' => { name: '', out_of: '' },
+                               '2' => { name: '', out_of: '' },
+                               '3' => { name: 'Assignment 2', out_of: '20' },
+                               '4' => { name: '', out_of: '' }
+                             }
+                           } }
+        items = grade_entry_form.reload.grade_entry_items.order(:position)
+        expect(items.count).to eq 2
+        expect(items.first.name).to eq 'Assignment 1'
+        expect(items.second.name).to eq 'Assignment 2'
+      end
     end
   end
 
