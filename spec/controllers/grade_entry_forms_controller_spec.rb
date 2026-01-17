@@ -499,7 +499,7 @@ describe GradeEntryFormsController do
         expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
       end
 
-      it 'deletes items with empty name and out_of' do
+      it 'ignores items with empty name and out_of' do
         patch_as user, :update,
                  params: { course_id: course.id, id: grade_entry_form.id,
                            grade_entry_form: {
@@ -508,11 +508,12 @@ describe GradeEntryFormsController do
                                '1' => { name: '', out_of: '' }
                              }
                            } }
-
-        expect(grade_entry_form.reload.grade_entry_items.count).to eq 1
+        items = grade_entry_form.reload.grade_entry_items
+        expect(items.count).to eq 1
+        expect(items.first).to have_attributes(name: 'Assignment 1', out_of: 10.0, position: 1)
       end
 
-      it 'assigns sequential positions after deleting empty items' do
+      it 'assigns sequential positions after ignoring empty items' do
         patch_as user, :update,
                  params: { course_id: course.id, id: grade_entry_form.id,
                            grade_entry_form: {
@@ -524,10 +525,10 @@ describe GradeEntryFormsController do
                                '4' => { name: '', out_of: '' }
                              }
                            } }
-        items = grade_entry_form.reload.grade_entry_items.order(:position)
+        items = grade_entry_form.reload.grade_entry_items
         expect(items.count).to eq 2
-        expect(items.first.name).to eq 'Assignment 1'
-        expect(items.second.name).to eq 'Assignment 2'
+        expect(items.first).to have_attributes(name: 'Assignment 1', out_of: 10.0, position: 1)
+        expect(items.second).to have_attributes(name: 'Assignment 2', out_of: 20.0, position: 2)
       end
     end
   end
