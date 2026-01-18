@@ -90,8 +90,10 @@ class MarkingSchemesController < ApplicationController
     @marking_scheme = record
 
     # Get all assignments available in the course (to be rendered in the edit form)
-    @assignments = current_course.assignments
-    @grade_entry_forms = current_course.grade_entry_forms
+    @assignments = current_course.assignments.includes(:marking_weights)
+    @grade_entry_forms = current_course.grade_entry_forms.includes(:marking_weights)
+    # @assignments = current_course.assignments
+    # @grade_entry_forms = current_course.grade_entry_forms
     @all_gradable_items = @assignments + @grade_entry_forms
   end
 
