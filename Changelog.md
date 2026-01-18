@@ -16,6 +16,8 @@
 ### 🔧 Internal changes
 
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
+- Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
+- Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
 
 ## [v2.9.0]
 
