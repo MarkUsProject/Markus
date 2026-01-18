@@ -504,13 +504,13 @@ describe GradeEntryFormsController do
                  params: { course_id: course.id, id: grade_entry_form.id,
                            grade_entry_form: {
                              grade_entry_items_attributes: {
-                               '0' => { name: 'Assignment 1', out_of: '10' },
+                               '0' => { name: 'Assignment 1', out_of: 10 },
                                '1' => { name: '', out_of: '' }
                              }
                            } }
         items = grade_entry_form.reload.grade_entry_items
         expect(items.count).to eq 1
-        expect(items.first).to have_attributes(name: 'Assignment 1', out_of: 10.0, position: 1)
+        expect(items.first).to have_attributes(name: 'Assignment 1', out_of: 10, position: 1)
       end
 
       it 'assigns sequential positions after ignoring empty items' do
@@ -518,17 +518,17 @@ describe GradeEntryFormsController do
                  params: { course_id: course.id, id: grade_entry_form.id,
                            grade_entry_form: {
                              grade_entry_items_attributes: {
-                               '0' => { name: 'Assignment 1', out_of: '10' },
+                               '0' => { name: 'Assignment 1', out_of: 10 },
                                '1' => { name: '', out_of: '' },
                                '2' => { name: '', out_of: '' },
-                               '3' => { name: 'Assignment 2', out_of: '20' },
+                               '3' => { name: 'Assignment 2', out_of: 20 },
                                '4' => { name: '', out_of: '' }
                              }
                            } }
         items = grade_entry_form.reload.grade_entry_items
         expect(items.count).to eq 2
-        expect(items.first).to have_attributes(name: 'Assignment 1', out_of: 10.0, position: 1)
-        expect(items.second).to have_attributes(name: 'Assignment 2', out_of: 20.0, position: 2)
+        expect(items.first).to have_attributes(name: 'Assignment 1', out_of: 10, position: 1)
+        expect(items.second).to have_attributes(name: 'Assignment 2', out_of: 20, position: 2)
       end
     end
   end
