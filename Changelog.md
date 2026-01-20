@@ -12,6 +12,7 @@
 - Update batch test runs table UI (#7790)
 
 ### 🐛 Bug fixes
+- Fixed the editing form of marking schemes to include newly added assessments (#7788)
 
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
