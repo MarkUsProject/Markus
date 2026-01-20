@@ -4,6 +4,7 @@
 
 ### ✨ New features and improvements
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
+- Update batch test runs table UI (#7790)
 
 ## [v2.9.0]
 
