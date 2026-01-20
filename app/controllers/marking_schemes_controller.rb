@@ -59,10 +59,11 @@ class MarkingSchemesController < ApplicationController
 
       # save marking weights
       params['marking_scheme']['marking_weights_attributes']&.each_value do |obj|
-        marking_weight = MarkingWeight.where(
+        # Find existing weight for this assessment or create one if it doesn't exist
+        marking_weight = MarkingWeight.find_or_initialize_by(
           assessment_id: obj['id'],
           marking_scheme_id: marking_scheme.id
-        ).first
+        )
 
         marking_weight.weight = obj['weight']
         marking_weight.save!
@@ -88,11 +89,10 @@ class MarkingSchemesController < ApplicationController
   def edit
     @marking_scheme = record
 
-    @all_gradable_items = []
-
-    MarkingWeight.where(marking_scheme_id: @marking_scheme.id).find_each do |mw|
-      @all_gradable_items << mw.assessment
-    end
+    # Get all assignments available in the course (to be rendered in the edit form)
+    @assignments = current_course.assignments.includes(:marking_weights)
+    @grade_entry_forms = current_course.grade_entry_forms.includes(:marking_weights)
+    @all_gradable_items = @assignments + @grade_entry_forms
   end
 
   def destroy
