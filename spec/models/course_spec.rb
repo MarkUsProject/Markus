@@ -737,9 +737,8 @@ def create_assignment_csv_string(assignment)
 end
 
 def create_assignment_symbol_to_value_map(assignment)
-  # returns a mapping of attribute symbols present in Assignment::ASSESSMENT_FIELDS (root level) and
-  # Assignment::ASSIGNMENT_PROPERTIES_FIELDS (nested) to their associated value in the variable a where a is an
-  # assignment.
+  # returns a mapping of attribute symbols present in Assignment::DEFAULT_FIELDS to
+  # their associated value in the variable a where a is an assignment.
   { short_identifier: assignment.short_identifier,
     description: assignment.description,
     due_date: assignment.due_date,

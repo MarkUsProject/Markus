@@ -12,6 +12,8 @@
 
 ### 🐛 Bug fixes
 
+- Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
+
 ### 🔧 Internal changes
 
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
