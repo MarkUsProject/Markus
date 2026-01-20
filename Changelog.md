@@ -10,12 +10,18 @@
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
+- Update batch test runs table UI (#7790)
 
 ### 🐛 Bug fixes
+- Fixed the editing form of marking schemes to include newly added assessments (#7788)
+
+- Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 ### 🔧 Internal changes
 
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
+- Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
+- Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
 
 ## [v2.9.0]
 

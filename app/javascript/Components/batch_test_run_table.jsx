@@ -1,7 +1,7 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import ReactTable from "react-table";
-import {dateSort} from "./Helpers/table_helpers";
+import {dateSort, selectFilter} from "./Helpers/table_helpers";
 
 const makeDefaultState = () => ({
   data: [],
@@ -82,12 +82,21 @@ class BatchTestRunTable extends React.Component {
         <ReactTable
           data={this.state.data}
           columns={[
+            // The rows needs to be grouped by created_at timestamp, but we use a duplicate of the
+            // "created_at" column to show the expander icon by itself
+            {
+              Header: "",
+              id: "hidden_created_at",
+              accessor: "created_at",
+              maxWidth: 30,
+              PivotValue: () => "",
+            },
             {
               Header: I18n.t("activerecord.attributes.test_batch.created_at"),
               accessor: "created_at",
               minWidth: 120,
               sortMethod: dateSort,
-              PivotValue: ({value}) => value,
+              aggregate: vals => vals[0],
             },
             {
               Header: I18n.t("activerecord.attributes.group.group_name"),
@@ -107,6 +116,7 @@ class BatchTestRunTable extends React.Component {
               Header: I18n.t("activerecord.attributes.test_run.status"),
               accessor: "status",
               minWidth: 70,
+              Cell: ({value}) => I18n.t(`automated_tests.test_runs_statuses.${value}`),
               aggregate: (vals, pivots) => {
                 const batch = this.state.statuses[pivots[0].test_batch_id];
                 if (pivots[0].test_batch_id === null) {
@@ -118,6 +128,35 @@ class BatchTestRunTable extends React.Component {
                 }
               },
               sortable: false,
+              filterable: true,
+              Filter: selectFilter,
+              filterMethod: (filter, row) => {
+                // Skip filter if value is "all" or the row is a pivoted row (in the latter case,
+                // react-table will automatically apply the filter to the subrows
+                if (filter.value === "all" || !!row._pivotID) {
+                  return true;
+                } else {
+                  return row[filter.id] === filter.value;
+                }
+              },
+              filterOptions: [
+                {
+                  value: "cancelled",
+                  text: I18n.t("automated_tests.test_runs_statuses.cancelled"),
+                },
+                {
+                  value: "complete",
+                  text: I18n.t("automated_tests.test_runs_statuses.complete"),
+                },
+                {
+                  value: "failed",
+                  text: I18n.t("automated_tests.test_runs_statuses.failed"),
+                },
+                {
+                  value: "in_progress",
+                  text: I18n.t("automated_tests.test_runs_statuses.in_progress"),
+                },
+              ],
               Aggregated: row => <span>{row.value}</span>,
             },
             {
@@ -161,8 +200,11 @@ class BatchTestRunTable extends React.Component {
               show: false,
             },
           ]}
-          pivotBy={["created_at"]}
-          defaultSorted={[{id: "created_at", desc: true}]}
+          pivotBy={["hidden_created_at"]}
+          defaultSorted={[
+            {id: "created_at", desc: true},
+            {id: "group_name", desc: false},
+          ]}
           loading={this.state.loading}
         />
       </div>
