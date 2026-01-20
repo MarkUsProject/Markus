@@ -9,8 +9,12 @@
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
+- Update batch test runs table UI (#7790)
 
 ### 🐛 Bug fixes
+- Fixed the editing form of marking schemes to include newly added assessments (#7788)
+
+- Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 - Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
 

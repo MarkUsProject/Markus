@@ -259,7 +259,7 @@ export function customNoDataComponent({children, loading}) {
   return <p className="rt-no-data">{children}</p>;
 }
 
-export function customNoDataProps({state}) {
+export function customGetNoDataProps(state) {
   return {loading: state.loading, data: state.data};
 }
 
