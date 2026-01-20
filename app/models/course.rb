@@ -41,7 +41,7 @@ class Course < ApplicationRecord
         end
         # Add assignment_properties fields (nested)
         m[:assignment_properties_attributes] = {}
-        Assignment::ASSIGMNENT_PROPERTIES_FIELDS.each do |f|
+        Assignment::ASSIGNMENT_PROPERTIES_FIELDS.each do |f|
           m[:assignment_properties_attributes][f] = assignment.public_send(f)
         end
         m
