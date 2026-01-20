@@ -142,6 +142,36 @@ describe MarkingSchemesController do
         expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
         expect(marking_weights.size).to eq 0
       end
+
+      it 'should save weights for newly added assessments' do
+        marking_scheme = create(
+          :marking_scheme,
+          assessments: [assignment]
+        )
+
+        new_assignment = create(:assignment, course: course)
+
+        params = {
+          course_id: course.id,
+          id: marking_scheme.id,
+          marking_scheme: {
+            name: 'Updated Scheme',
+            marking_weights_attributes: {
+              '0': { id: assignment.id, weight: 10 },
+              '1': { id: new_assignment.id, weight: 15 }
+            }
+          }
+        }
+
+        post_as instructor, :update, params: params
+
+        marking_scheme.reload
+        expect(marking_scheme.marking_weights.count).to eq 2
+
+        new_weight = marking_scheme.marking_weights.find_by(assessment_id: new_assignment.id)
+        expect(new_weight).not_to be_nil
+        expect(new_weight.weight).to eq 15
+      end
     end
 
     describe '#new' do
@@ -182,6 +212,52 @@ describe MarkingSchemesController do
 
       it 'should respond with success' do
         expect(subject).to respond_with(:success)
+      end
+
+      context 'when new assessments are added after marking scheme is created' do
+        it 'should include new assessments in the edit form' do
+          marking_scheme = create(
+            :marking_scheme,
+            assessments: [assignment, grade_entry_form]
+          )
+
+          new_assignment = create(:assignment, course: course)
+          new_grade_entry_form = create(:grade_entry_form, course: course)
+
+          get_as instructor,
+                 :edit,
+                 params: { course_id: course.id, id: marking_scheme.id },
+                 format: :js
+
+          # Check @all_gradable_items includes the new assessments
+          expect(assigns(:all_gradable_items)).to include(new_assignment, new_grade_entry_form)
+        end
+
+        it 'should display correct marking weights for each assessment' do
+          marking_scheme = create(
+            :marking_scheme,
+            assessments: [assignment, grade_entry_form]
+          )
+
+          new_assignment = create(:assignment, course: course)
+
+          get_as instructor,
+                 :edit,
+                 params: { course_id: course.id, id: marking_scheme.id },
+                 format: :js
+
+          # Check all current assessments in @all_gradable_items
+          all_assessments = assigns(:all_gradable_items)
+          expect(all_assessments).to include(assignment, grade_entry_form, new_assignment)
+
+          # Check existing marking weights still present
+          marking_weights = assigns(:marking_scheme).marking_weights
+          expect(marking_weights.find { |mw| mw.assessment_id == assignment.id }).not_to be_nil
+          expect(marking_weights.find { |mw| mw.assessment_id == grade_entry_form.id }).not_to be_nil
+
+          # Check new assignment in @all_gradable_items
+          expect(all_assessments).to include(new_assignment)
+        end
       end
     end
 
