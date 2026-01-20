@@ -127,7 +127,7 @@ class Assignment < Assessment
                        :visible_until].freeze
 
   # Fields from the assignment_properties table (used for assignment list config YML file)
-  ASSIGMNENT_PROPERTIES_FIELDS = [:group_min, :group_max, :tokens_per_period,
+  ASSIGNMENT_PROPERTIES_FIELDS = [:group_min, :group_max, :tokens_per_period,
                                   :allow_web_submits, :student_form_groups, :remark_due_date,
                                   :remark_message, :assign_graders_to_criteria, :enable_test,
                                   :enable_student_tests, :allow_remarks,
