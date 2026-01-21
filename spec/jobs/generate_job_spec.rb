@@ -85,6 +85,20 @@ describe GenerateJob do
 
       expect(pdf_mock.pages.length).to eq 18
     end
+
+    context 'with a long exam template name' do
+      let(:exam_template) do
+        create(:exam_template_midterm, name: 'Test_Midterm_Exam_Template_V2')
+      end
+
+      it 'should generate QR codes without overflow errors' do
+        expect { GenerateJob.perform_now(exam_template, 1, 0, user) }.not_to raise_error
+      end
+
+      it 'should generate QR codes for high exam numbers without overflow errors' do
+        expect { GenerateJob.perform_now(exam_template, 1, 999, user) }.not_to raise_error
+      end
+    end
   end
 end
 
