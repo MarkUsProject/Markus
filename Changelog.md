@@ -6,6 +6,9 @@
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
 - Update batch test runs table UI (#7790)
 
+### 🐛 Bug fixes
+- Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
+
 ## [v2.9.0]
 
 ### ✨ New features and improvements
