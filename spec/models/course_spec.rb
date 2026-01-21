@@ -20,6 +20,8 @@ describe Course do
     it { is_expected.to allow_value(false).for(:is_hidden) }
     it { is_expected.not_to allow_value(nil).for(:is_hidden) }
     it { is_expected.to validate_numericality_of(:max_file_size).is_greater_than_or_equal_to(0) }
+    it { is_expected.to allow_value(nil).for(:start_at) }
+    it { is_expected.to allow_value(nil).for(:end_at) }
 
     it 'fail with error message when invalid name format' do
       course.name = 'Invalid!@'
@@ -27,6 +29,29 @@ describe Course do
       expected_error = I18n.t(error_key, attribute: 'Name')
       expect(course).not_to be_valid
       expect(course.errors[:name]).to include(expected_error)
+    end
+
+    describe 'start and end date' do
+      it 'is valid when both start_at and end_at are nil' do
+        course = build(:course, start_at: nil, end_at: nil)
+        expect(course).to be_valid
+      end
+
+      it 'is valid when start_at is earlier than end_at' do
+        course = build(:course, start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-04-05'))
+        expect(course).to be_valid
+      end
+
+      it 'is valid when start_at equals end_at' do
+        course = build(:course, start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-01-05'))
+        expect(course).to be_valid
+      end
+
+      it 'is invalid when start_at is later than end_at' do
+        course = build(:course, start_at: Time.zone.parse('2026-01-05'), end_at: Time.zone.parse('2026-01-04'))
+        expect(course).not_to be_valid
+        expect(course.errors[:start_at]).to include('must be before or equal to end date')
+      end
     end
   end
 

@@ -35,6 +35,18 @@
       <%= f.label :is_hidden, I18n.t('courses.visible'),  value: 'false' %>
       <%= f.radio_button :is_hidden, false %>
     </span>
+    <%= f.label :start_at, Course.human_attribute_name(:start_at) %>
+    <%= f.text_field :start_at,
+                     value: @current_course.start_at.nil? ? '' : l(@current_course.start_at, format: :flatpickr),
+                     size: 35,
+                     placeholder: t('time.format_string.placeholder'),
+                     readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
+    <%= f.label :end_at, Course.human_attribute_name(:end_at) %>
+    <%= f.text_field :end_at,
+                     value: @current_course.end_at.nil? ? '' : l(@current_course.end_at, format: :flatpickr),
+                     size: 35,
+                     placeholder: t('time.format_string.placeholder'),
+                     readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
   </div>
   <p>
     <%= f.submit t(:save),
@@ -70,4 +82,14 @@
       </div>
     </div>
   </fieldset>
+<% end %>
+
+<%= javascript_tag nonce: true do %>
+  document.addEventListener("DOMContentLoaded", function() {
+    const start_date = document.querySelector("#course_start_at");
+    const end_date = document.querySelector("#course_end_at");
+
+    if (start_date && !start_date.readOnly) flatpickr(start_date);
+    if (end_date && !end_date.readOnly) flatpickr(end_date);
+  });
 <% end %>
