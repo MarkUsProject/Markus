@@ -13,9 +13,7 @@
 
 ### 🐛 Bug fixes
 - Fixed the editing form of marking schemes to include newly added assessments (#7788)
-
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
-
 - Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
 
 ### 🔧 Internal changes
