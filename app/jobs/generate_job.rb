@@ -11,7 +11,7 @@ class GenerateJob < ApplicationJob
           # Start a new page with the same size and layout as the current page
           start_new_page(size: page.page_size[2..4], layout: page.orientation)
           qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
-          qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
+          qrcode = RQRCode::QRCode.new qrcode_content, level: :l
           alignment = page_num.even? ? :right : :left
           render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false)
           draw_text(qrcode_content,
