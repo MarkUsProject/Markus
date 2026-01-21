@@ -73,7 +73,7 @@ module Admin
     end
 
     def course_update_params
-      params.require(:course).permit(:is_hidden, :display_name, :max_file_size)
+      params.require(:course).permit(:is_hidden, :display_name, :max_file_size, :start_at, :end_at)
     end
 
     def update_autotest_url

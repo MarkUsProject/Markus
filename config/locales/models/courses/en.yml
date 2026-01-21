@@ -4,9 +4,11 @@ en:
     attributes:
       course:
         display_name: Display Name
+        end_at: End Date
         is_hidden: Course Visibility
         max_file_size: Maximum File Size (bytes)
         name: Name
+        start_at: Start Date
     errors:
       models:
         course:
