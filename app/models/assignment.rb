@@ -940,6 +940,65 @@ class Assignment < Assessment
     end
   end
 
+  # Batch load TA stats for multiple assignments to avoid N+1 queries.
+  # Returns { assignment_id => { num_assigned: Integer, num_marked: Integer } }
+  def self.batch_ta_stats(assignments, ta_id)
+    return {} if ta_id.nil? || assignments.empty?
+
+    assignment_ids = assignments.map(&:id)
+
+    # Query 1: Count assigned groupings per assignment
+    assigned_counts = TaMembership
+                      .joins(:grouping)
+                      .where(role_id: ta_id, groupings: { assessment_id: assignment_ids })
+                      .group('groupings.assessment_id')
+                      .count
+
+    # Identify criteria-based assignments for this TA
+    criteria_assignment_ids = CriterionTaAssociation
+                              .joins(:criterion)
+                              .where(ta_id: ta_id, criteria: { assessment_id: assignment_ids })
+                              .distinct
+                              .pluck('criteria.assessment_id')
+
+    criteria_based_ids = assignments
+                         .select { |a| a.assign_graders_to_criteria && criteria_assignment_ids.include?(a.id) }
+                         .map(&:id)
+
+    regular_ids = assignment_ids - criteria_based_ids
+
+    # Query 2: Count marked results for non-criteria-based assignments
+    marked_counts = if regular_ids.any?
+                      Result
+                        .joins(submission: { grouping: :ta_memberships })
+                        .where(
+                          submissions: { submission_version_used: true },
+                          memberships: { role_id: ta_id },
+                          groupings: { assessment_id: regular_ids },
+                          marking_state: Result::MARKING_STATES[:complete]
+                        )
+                        .group('groupings.assessment_id')
+                        .count
+                    else
+                      {}
+                    end
+
+    # Build result hash
+    result = {}
+    assignments.each do |a|
+      num_marked = if criteria_based_ids.include?(a.id)
+                     a.get_num_marked(ta_id) # Fall back for criteria-based
+                   else
+                     marked_counts[a.id] || 0
+                   end
+      result[a.id] = {
+        num_assigned: assigned_counts[a.id] || 0,
+        num_marked: num_marked
+      }
+    end
+    result
+  end
+
   def get_num_annotations(ta_id = nil)
     if ta_id.nil?
       num_annotations_all
