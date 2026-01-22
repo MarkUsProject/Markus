@@ -22,6 +22,24 @@ describe ExamTemplatesController do
       it('should respond with 302') { expect(response).to have_http_status :found }
     end
 
+    describe '#create with a name that is too long' do
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf', 'application/pdf') }
+      let(:params) do
+        { create_template: { file_io: file_io, name: 'Test_Midterm_Exam_Template_V2' },
+          assignment_id: exam_template.assignment.id, course_id: course.id }
+      end
+
+      before { post_as user, :create, params: params }
+
+      it 'does not create an ExamTemplate' do
+        expect(ExamTemplate.find_by(name: 'Test_Midterm_Exam_Template_V2')).to be_nil
+      end
+
+      it 'displays a flash error about name length' do
+        expect(flash[:error].first).to include('Name must be at most 20 characters to fit in the QR code')
+      end
+    end
+
     describe '#create with empty filename' do
       let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf', 'application/pdf') }
       let(:params) do
@@ -77,6 +95,26 @@ describe ExamTemplatesController do
 
         it 'updates the exam template name' do
           expect(exam_template.reload.name).to eq 'test-template'
+        end
+
+        it 'responds with 302' do
+          expect(response).to have_http_status :found
+        end
+      end
+
+      context 'when updating with a name that is too long' do
+        let(:params) do
+          { exam_template: { name: 'Test_Midterm_Exam_Template_V2' },
+            id: exam_template.id, course_id: course.id }
+        end
+
+        it 'does not update the exam template name' do
+          original_name = exam_template.name
+          expect(exam_template.reload.name).to eq original_name
+        end
+
+        it 'displays a flash error about name length' do
+          expect(flash[:error].first).to include('Name must be at most 20 characters to fit in the QR code')
         end
 
         it 'responds with 302' do

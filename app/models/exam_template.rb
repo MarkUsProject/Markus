@@ -8,7 +8,8 @@ class ExamTemplate < ApplicationRecord
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
   validates :name,
-            uniqueness: { scope: :assignment }
+            uniqueness: { scope: :assignment },
+            length: { maximum: 20, message: 'must be at most 20 characters to fit in the QR code' }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
