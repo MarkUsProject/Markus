@@ -2,9 +2,12 @@ import React from "react";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "../Helpers/chart_helpers";
 import Table from "./Table";
+import {createColumnHelper} from "@tanstack/react-table";
 import PropTypes from "prop-types";
 import {CoreStatistics} from "./core_statistics";
 import {FractionStat} from "./fraction_stat";
+
+const columnHelper = createColumnHelper();
 
 export class GradeBreakdownChart extends React.Component {
   render() {
@@ -20,7 +23,7 @@ export class GradeBreakdownChart extends React.Component {
         enableSorting: false,
         enableColumnFilter: false,
         cell: info => (
-          <FractionStat numerator={row.original.average} denominator={row.original.max_mark} />
+          <FractionStat numerator={info.original.average} denominator={info.original.max_mark} />
         ),
       }),
     ];
@@ -32,8 +35,8 @@ export class GradeBreakdownChart extends React.Component {
             <Table
               data={this.props.summary}
               columns={columns}
-              intialState={{
-                sorting: [{id: "position"}],
+              initialState={{
+                sorting: [{id: "position", desc: false}],
               }}
               getRowCanExpand={() => true}
               renderSubComponent={({row}) => (
