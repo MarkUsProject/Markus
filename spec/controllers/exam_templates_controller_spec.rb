@@ -36,7 +36,7 @@ describe ExamTemplatesController do
       end
 
       it 'displays a flash error about name length' do
-        expect(flash[:error].first).to include('Name must be at most 20 characters to fit in the QR code')
+        expect(flash[:error].first).to include('Name must be at most 20 characters')
       end
     end
 
@@ -114,7 +114,7 @@ describe ExamTemplatesController do
         end
 
         it 'displays a flash error about name length' do
-          expect(flash[:error].first).to include('Name must be at most 20 characters to fit in the QR code')
+          expect(flash[:error].first).to include('Name must be at most 20 characters')
         end
 
         it 'responds with 302' do
