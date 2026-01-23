@@ -183,6 +183,46 @@ describe GradersController do
         expect(response).to be_redirect
         expect(@grouping4.tas.count).to eq 0
       end
+
+      it 'and uploading the same mappings twice does not create duplicates' do
+        @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
+        @grouping1 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'test_group'))
+        @grouping2 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
+        @grouping3 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 3'))
+
+        # First upload
+        post_as @instructor,
+                :upload,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          upload_file: @group_grader_map_file, groupings: true }
+
+        expect(response).to be_redirect
+        expect(@grouping1.tas.count).to eq 2
+
+        # Second upload of the same file without removing existing mappings
+        post_as @instructor,
+                :upload,
+                params: { course_id: course.id, assignment_id: @assignment.id,
+                          upload_file: @group_grader_map_file, groupings: true }
+
+        expect(response).to be_redirect
+        # Should still have the same count, no duplicates
+        expect(@grouping1.tas.count).to eq 2
+        expect(@grouping1.tas).to include(@ta1)
+        expect(@grouping1.tas).to include(@ta2)
+        expect(@grouping2.tas.count).to eq 1
+        expect(@grouping2.tas).to include(@ta1)
+        expect(@grouping3.tas.count).to eq 1
+        expect(@grouping3.tas).to include(@ta3)
+      end
     end
 
     context 'doing a POST on :upload (assigning to criteria)' do
