@@ -18,6 +18,7 @@ export class GradeBreakdownChart extends React.Component {
         cell: () => null,
         size: 0,
         enableSorting: true,
+        enableColumnFilter: false,
         meta: {
           className: "rt-hidden",
           headerClassName: "rt-hidden",
