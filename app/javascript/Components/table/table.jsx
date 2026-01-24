@@ -51,7 +51,10 @@ export default function Table({
 }) {
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState({inactive: false});
+  const [columnVisibility, setColumnVisibility] = React.useState({
+    inactive: false,
+    ...initialState?.columnVisibility,
+  });
   const [expanded, setExpanded] = React.useState({});
 
   const columnFilters =
