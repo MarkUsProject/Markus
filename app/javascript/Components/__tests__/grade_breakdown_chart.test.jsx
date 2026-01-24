@@ -2,20 +2,42 @@ import React from "react";
 import {render, screen} from "@testing-library/react";
 import {GradeBreakdownChart} from "../Assessment_Chart/grade_breakdown_chart";
 
+jest.mock("react-chartjs-2", () => ({
+  Bar: () => <div data-testid="bar-chart">Bar Chart</div>,
+}));
+
+jest.mock("../Assessment_Chart/fraction_stat", () => ({
+  FractionStat: ({numerator, denominator}) => (
+    <div data-testid="fraction-stat">
+      {numerator}/{denominator}
+    </div>
+  ),
+}));
+
+jest.mock("../Assessment_Chart/core_statistics", () => ({
+  CoreStatistics: () => <div data-testid="core-statistics" />,
+}));
+
 jest.mock("../table/table", () => {
   return function MockTable(props) {
+    const firstRow = props.data[0];
+    const averageColumn = props.columns.find(
+      // find the "average" column
+      col => col.id === "average" || col.accessorKey === "average"
+    );
+
     return (
       <div data-testid="mock-table">
         <div data-testid="table-columns">{props.columns.length} columns</div>
         <div data-testid="table-data">{props.data.length} rows</div>
+        {averageColumn?.cell?.({
+          row: {original: firstRow},
+        })}
+        {props.renderSubComponent && props.renderSubComponent({row: {original: firstRow}})}
       </div>
     );
   };
 });
-
-jest.mock("react-chartjs-2", () => ({
-  Bar: () => <div data-testid="bar-chart">Bar Chart</div>,
-}));
 
 describe("GradeBreakdownChart when summary data exists", () => {
   const defaultProps = {
@@ -74,6 +96,16 @@ describe("GradeBreakdownChart when summary data exists", () => {
   it("passes summary data to table", () => {
     render(<GradeBreakdownChart {...defaultProps} />);
     expect(screen.getByTestId("table-data")).toHaveTextContent("2 rows");
+  });
+
+  it("renders FractionStat for average column", () => {
+    render(<GradeBreakdownChart {...defaultProps} />);
+    expect(screen.getByTestId("fraction-stat")).toHaveTextContent("85/100");
+  });
+
+  it("renders CoreStatistics when row is expanded", () => {
+    render(<GradeBreakdownChart {...defaultProps} />);
+    expect(screen.getByTestId("core-statistics")).toBeInTheDocument();
   });
 });
 
