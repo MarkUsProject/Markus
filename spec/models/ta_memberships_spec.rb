@@ -29,4 +29,25 @@ describe TaMembership do
       membership.destroy
     end
   end
+
+  describe '.from_csv' do
+    let(:assignment) { create(:assignment) }
+    let(:ta) { create(:ta, course: assignment.course) }
+    let(:grouping) { create(:grouping, assignment: assignment) }
+
+    it 'does not create duplicate memberships when same grader-group pair exists' do
+      create(:ta_membership, role: ta, grouping: grouping)
+      csv_data = "#{grouping.group.group_name},#{ta.user.user_name}"
+
+      expect { TaMembership.from_csv(assignment, csv_data, false) }
+        .not_to(change { TaMembership.count })
+    end
+
+    it 'handles duplicate entries within the same CSV' do
+      csv_data = "#{grouping.group.group_name},#{ta.user.user_name}\n#{grouping.group.group_name},#{ta.user.user_name}"
+
+      expect { TaMembership.from_csv(assignment, csv_data, false) }
+        .to change { TaMembership.count }.by(1)
+    end
+  end
 end

@@ -1,5 +1,10 @@
 # Changelog
 
+## [v2.9.1]
+
+### ✨ New features and improvements
+- Prevent adding duplicate grader group mappings on CSV upload (#7786)
+
 ## [v2.9.0]
 
 ### ✨ New features and improvements
