@@ -73,41 +73,37 @@ class CourseList extends React.Component {
     return (
       <div className="course-list">
         {currentCourses.length > 0 && (
-          <div className="course-group">
+          <>
             <h2>{I18n.t("courses.current_courses")}</h2>
-            <div className="course-current-section">
-              {currentCourses.map(course => {
-                return (
-                  <CourseCard
-                    key={course["courses.id"]}
-                    course_id={course["courses.id"]}
-                    course_name={course["courses.name"]}
-                    course_display_name={course["courses.display_name"]}
-                    role_type={course["roles.type"]}
-                  />
-                );
-              })}
-            </div>
-          </div>
+            {currentCourses.map(course => {
+              return (
+                <CourseCard
+                  key={course["courses.id"]}
+                  course_id={course["courses.id"]}
+                  course_name={course["courses.name"]}
+                  course_display_name={course["courses.display_name"]}
+                  role_type={course["roles.type"]}
+                />
+              );
+            })}
+          </>
         )}
 
         {pastCourses.length > 0 && (
-          <div className="course-group">
+          <>
             <h2>{I18n.t("courses.past_courses")}</h2>
-            <div className="course-past-section">
-              {pastCourses.map(course => {
-                return (
-                  <CourseCard
-                    key={course["courses.id"]}
-                    course_id={course["courses.id"]}
-                    course_name={course["courses.name"]}
-                    course_display_name={course["courses.display_name"]}
-                    role_type={course["roles.type"]}
-                  />
-                );
-              })}
-            </div>
-          </div>
+            {pastCourses.map(course => {
+              return (
+                <CourseCard
+                  key={course["courses.id"]}
+                  course_id={course["courses.id"]}
+                  course_name={course["courses.name"]}
+                  course_display_name={course["courses.display_name"]}
+                  role_type={course["roles.type"]}
+                />
+              );
+            })}
+          </>
         )}
       </div>
     );
