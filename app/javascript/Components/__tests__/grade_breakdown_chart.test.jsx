@@ -21,18 +21,31 @@ jest.mock("../Assessment_Chart/core_statistics", () => ({
 jest.mock("../table/table", () => {
   return function MockTable(props) {
     const firstRow = props.data[0];
-    const averageColumn = props.columns.find(
-      // find the "average" column
-      col => col.id === "average" || col.accessorKey === "average"
-    );
+
+    // Execute getRowCanExpand
+    if (props.getRowCanExpand) {
+      props.getRowCanExpand();
+    }
+
+    // Execute hidden column callbacks (header & cell)
+    const renderedCells = props.columns.map(col => {
+      if (typeof col.header === "function") {
+        col.header();
+      }
+
+      if (typeof col.cell === "function") {
+        return <div key={col.id || col.accessor}>{col.cell({row: {original: firstRow}})}</div>;
+      }
+
+      return null;
+    });
 
     return (
       <div data-testid="mock-table">
         <div data-testid="table-columns">{props.columns.length} columns</div>
         <div data-testid="table-data">{props.data.length} rows</div>
-        {averageColumn?.cell?.({
-          row: {original: firstRow},
-        })}
+        {renderedCells}
+
         {props.renderSubComponent && props.renderSubComponent({row: {original: firstRow}})}
       </div>
     );
