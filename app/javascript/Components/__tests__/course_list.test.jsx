@@ -1,0 +1,141 @@
+import React from "react";
+import {render, screen, waitFor} from "@testing-library/react";
+import CourseList from "../course_list.jsx";
+import fetchMock from "jest-fetch-mock";
+
+jest.mock("../course_cards", () => {
+  return function MockCourseCard(props) {
+    return <div>{props.course_name}</div>;
+  };
+});
+
+describe("CourseList", () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-01-01T00:00:00-04:00"));
+    fetchMock.enableMocks();
+  });
+
+  beforeEach(() => {
+    global.Routes = {courses_path: () => "/courses"};
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  afterEach(() => {
+    fetchMock.resetMocks();
+  });
+
+  const createCourse = ({id, name, role, endAt}) => ({
+    "courses.id": id,
+    "courses.name": name,
+    "roles.type": role,
+    "courses.end_at": endAt,
+  });
+
+  it("renders no courses message when no course related to the user", async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({data: []}));
+    render(<CourseList />);
+
+    await waitFor(() => {
+      expect(screen.getByText(I18n.t("courses.no_courses"))).toBeInTheDocument();
+    });
+  });
+
+  describe("in students view", () => {
+    it("shows both Current Courses and Past Courses titles when both exist", async () => {
+      const courses = [
+        createCourse({id: 1, name: "csc108", role: "Student", endAt: "2026-04-27T00:00:00-04:00"}),
+        createCourse({id: 2, name: "csc110", role: "Student", endAt: "2025-04-27T00:00:00-04:00"}),
+      ];
+
+      fetchMock.mockResponseOnce(JSON.stringify({data: courses}));
+      render(<CourseList />);
+
+      await waitFor(() => {
+        expect(screen.getByText(I18n.t("courses.current_courses"))).toBeInTheDocument();
+        expect(screen.getByText(I18n.t("courses.past_courses"))).toBeInTheDocument();
+        expect(screen.getByText("csc108")).toBeInTheDocument();
+        expect(screen.getByText("csc110")).toBeInTheDocument();
+      });
+    });
+
+    it("does not show Past Courses titles if there are no past courses", async () => {
+      const courses = [
+        createCourse({id: 1, name: "csc108", role: "Student", endAt: "2026-04-27T00:00:00-04:00"}),
+      ];
+
+      fetchMock.mockResponseOnce(JSON.stringify({data: courses}));
+      render(<CourseList />);
+
+      await waitFor(() => {
+        expect(screen.getByText(I18n.t("courses.current_courses"))).toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("courses.past_courses"))).not.toBeInTheDocument();
+        expect(screen.getByText("csc108")).toBeInTheDocument();
+      });
+    });
+
+    it("does not show Current Courses titles if there are no current courses", async () => {
+      const courses = [
+        createCourse({id: 1, name: "csc108", role: "Student", endAt: "2025-04-27T00:00:00-04:00"}),
+      ];
+
+      fetchMock.mockResponseOnce(JSON.stringify({data: courses}));
+      render(<CourseList />);
+
+      await waitFor(() => {
+        expect(screen.getByText(I18n.t("courses.past_courses"))).toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("courses.current_courses"))).not.toBeInTheDocument();
+        expect(screen.getByText("csc108")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("in non-students view", () => {
+    it("does not show Current Courses or Past Courses titles for instructors", async () => {
+      const courses = [
+        createCourse({
+          id: 1,
+          name: "csc108",
+          role: "Instructor",
+          endAt: "2026-04-27T00:00:00-04:00",
+        }),
+        createCourse({
+          id: 2,
+          name: "csc110",
+          role: "Instructor",
+          endAt: "2025-04-27T00:00:00-04:00",
+        }),
+      ];
+
+      fetchMock.mockResponseOnce(JSON.stringify({data: courses}));
+      render(<CourseList />);
+
+      await waitFor(() => {
+        expect(screen.queryByText(I18n.t("courses.current_courses"))).not.toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("courses.past_courses"))).not.toBeInTheDocument();
+        expect(screen.getByText("csc108")).toBeInTheDocument();
+        expect(screen.getByText("csc110")).toBeInTheDocument();
+      });
+    });
+
+    it("does not show Current Courses or Past Courses titles for TAs", async () => {
+      const courses = [
+        createCourse({id: 1, name: "csc108", role: "Ta", endAt: "2026-04-27T00:00:00-04:00"}),
+        createCourse({id: 2, name: "csc110", role: "Ta", endAt: "2025-04-27T00:00:00-04:00"}),
+      ];
+
+      fetchMock.mockResponseOnce(JSON.stringify({data: courses}));
+      render(<CourseList />);
+
+      await waitFor(() => {
+        expect(screen.queryByText(I18n.t("courses.current_courses"))).not.toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("courses.past_courses"))).not.toBeInTheDocument();
+        expect(screen.getByText("csc108")).toBeInTheDocument();
+        expect(screen.getByText("csc110")).toBeInTheDocument();
+      });
+    });
+  });
+});
