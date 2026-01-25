@@ -3,7 +3,7 @@ import {render, screen} from "@testing-library/react";
 import {GradeBreakdownChart} from "../Assessment_Chart/grade_breakdown_chart";
 
 jest.mock("react-chartjs-2", () => ({
-  Bar: () => <div data-testid="bar-chart">Bar Chart</div>,
+  Bar: jest.fn(() => <div data-testid="bar-chart">Bar Chart</div>),
 }));
 
 jest.mock("../Assessment_Chart/fraction_stat", () => ({
@@ -106,6 +106,22 @@ describe("GradeBreakdownChart when summary data exists", () => {
   it("renders CoreStatistics when row is expanded", () => {
     render(<GradeBreakdownChart {...defaultProps} />);
     expect(screen.getByTestId("core-statistics")).toBeInTheDocument();
+  });
+
+  it("sorts legend labels and tables rows by position", () => {
+    render(<GradeBreakdownChart {...defaultProps} />);
+
+    const BarMock = require("react-chartjs-2").Bar;
+    const barProps = BarMock.mock.calls[0][0];
+    const sortFn = barProps.options.plugins.legend.labels.sort;
+
+    const a = {text: "Quiz 2"};
+    const b = {text: "Quiz 1"};
+    expect(sortFn(a, b)).toBeGreaterThan(0);
+
+    const table = screen.getByTestId("mock-table");
+    expect(table).toBeInTheDocument();
+    expect(screen.getByTestId("table-columns")).toHaveTextContent("3 columns");
   });
 });
 
