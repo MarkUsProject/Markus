@@ -162,5 +162,8 @@ describe("makeCourseList", () => {
 
     const root = createRoot.mock.results[0].value;
     expect(root.render).toHaveBeenCalledTimes(1);
+
+    const element = root.render.mock.calls[0][0];
+    expect(element.type).toBe(CourseList);
   });
 });
