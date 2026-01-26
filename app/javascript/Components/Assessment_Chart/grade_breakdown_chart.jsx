@@ -14,25 +14,15 @@ export class GradeBreakdownChart extends React.Component {
     const columns = [
       columnHelper.accessor("position", {
         id: "position",
-        header: () => null,
-        cell: () => null,
-        size: 0,
-        enableSorting: true,
         enableColumnFilter: false,
-        meta: {
-          className: "rt-hidden",
-          headerClassName: "rt-hidden",
-        },
       }),
       columnHelper.accessor("name", {
         header: this.props.item_name,
         minSize: 150,
-        enableSorting: true,
         enableColumnFilter: false,
       }),
       columnHelper.accessor("average", {
         header: I18n.t("average"),
-        enableSorting: false,
         enableColumnFilter: false,
         cell: info => (
           <FractionStat
@@ -51,7 +41,6 @@ export class GradeBreakdownChart extends React.Component {
               data={this.props.summary}
               columns={columns}
               initialState={{
-                sorting: [{id: "position"}],
                 columnVisibility: {position: false},
               }}
               getRowCanExpand={() => true}
