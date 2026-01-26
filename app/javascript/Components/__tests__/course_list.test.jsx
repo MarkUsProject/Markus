@@ -1,13 +1,20 @@
 import React from "react";
 import {render, screen, waitFor} from "@testing-library/react";
-import CourseList from "../course_list.jsx";
+import CourseList, {makeCourseList} from "../course_list.jsx";
 import fetchMock from "jest-fetch-mock";
+import {createRoot} from "react-dom/client";
 
 jest.mock("../course_cards", () => {
   return function MockCourseCard(props) {
     return <div>{props.course_name}</div>;
   };
 });
+
+jest.mock("react-dom/client", () => ({
+  createRoot: jest.fn(() => ({
+    render: jest.fn(),
+  })),
+}));
 
 describe("CourseList", () => {
   beforeAll(() => {
@@ -137,5 +144,23 @@ describe("CourseList", () => {
         expect(screen.getByText("csc110")).toBeInTheDocument();
       });
     });
+  });
+});
+
+describe("makeCourseList", () => {
+  beforeEach(() => {
+    createRoot.mockClear();
+  });
+
+  it("calls createRoot and renders CourseList", () => {
+    const container = document.createElement("div");
+    const props = {foo: "bar"};
+
+    makeCourseList(container, props);
+
+    expect(createRoot).toHaveBeenCalledWith(container);
+
+    const root = createRoot.mock.results[0].value;
+    expect(root.render).toHaveBeenCalledTimes(1);
   });
 });
