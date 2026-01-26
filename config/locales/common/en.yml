@@ -22,7 +22,6 @@ en:
   help: Help
   lti:
     config_error: Error configuring LTI.
-    connection_error: Could not connect to the LMS. Please try again later.
     course_creation_denied: Course Creation Not Allowed
     course_exists: A course with this name already exists on MarkUs. Please select a course to link to.
     course_link_error: Unsuccessful. Please relaunch MarkUs from your LMS.
@@ -46,6 +45,7 @@ en:
     no_courses: No courses available for matching.
     no_grades: No grades to sync
     no_platform: No platforms selected
+    no_users: No user data returned from LMS
     roster_sync: Sync Roster
     roster_sync_complete: Roster Sync Complete
     roster_sync_errors: Some students could not be synced.
