@@ -1,41 +1,50 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "../Helpers/chart_helpers";
-import ReactTable from "react-table";
+import Table from "../table/table";
+import {createColumnHelper} from "@tanstack/react-table";
 import PropTypes from "prop-types";
 import {CoreStatistics} from "./core_statistics";
 import {FractionStat} from "./fraction_stat";
 
+const columnHelper = createColumnHelper();
+
 export class GradeBreakdownChart extends React.Component {
   render() {
+    const columns = [
+      columnHelper.accessor("position", {
+        id: "position",
+        enableColumnFilter: false,
+      }),
+      columnHelper.accessor("name", {
+        header: this.props.item_name,
+        minSize: 150,
+        enableColumnFilter: false,
+      }),
+      columnHelper.accessor("average", {
+        header: I18n.t("average"),
+        enableColumnFilter: false,
+        cell: info => (
+          <FractionStat
+            numerator={info.row.original.average}
+            denominator={info.row.original.max_mark}
+          />
+        ),
+      }),
+    ];
     let summary_table = "";
     if (this.props.show_stats) {
       summary_table = (
         <div className="flex-row-expand">
           <div className="grade-breakdown-summary-table">
-            <ReactTable
+            <Table
               data={this.props.summary}
-              columns={[
-                {
-                  Header: this.props.item_name,
-                  accessor: "name",
-                  minWidth: 150,
-                },
-                {
-                  Header: I18n.t("average"),
-                  accessor: "average",
-                  sortable: false,
-                  filterable: false,
-                  Cell: row => (
-                    <FractionStat
-                      numerator={row.original.average}
-                      denominator={row.original.max_mark}
-                    />
-                  ),
-                },
-              ]}
-              defaultSorted={[{id: "position"}]}
-              SubComponent={row => (
+              columns={columns}
+              initialState={{
+                columnVisibility: {position: false},
+              }}
+              getRowCanExpand={() => true}
+              renderSubComponent={({row}) => (
                 <div className="grade-stats-breakdown grid-2-col">
                   <CoreStatistics
                     average={row.original.average}
