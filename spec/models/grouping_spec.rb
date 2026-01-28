@@ -131,7 +131,6 @@ describe Grouping do
         end
         grouping1 = groupings.select { |grouping| grouping.tas.first == tas.first }
         grouping2 = groupings.select { |grouping| grouping.tas.first == tas.last }
-        print(grouping2.length, grouping1.length)
         expect(grouping1.length > grouping2.length).to be(true)
       end
 

@@ -29,6 +29,9 @@ FactoryBot/ConsistentParenthesesStyle:
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
+Layout/IndentationWidth:
+  Enabled: false
+
 Layout/LineEndStringConcatenationIndentation:
   Enabled: true
 
