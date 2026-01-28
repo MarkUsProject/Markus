@@ -2,6 +2,8 @@
 en:
   date_validator:
     invalid_date: is not a valid date
+  files:
+    cannot_preview: This file type cannot be previewed. Please download it to view its contents.
   poll_job:
     auto_match_job: "%{progress}/%{total} groups processed"
     autotest_run_job_enqueuing: Enqueuing tests
@@ -43,5 +45,3 @@ en:
       missing_file: Could not download %{file_name}.  File may be missing.
       missing_files: 'You still need to submit %{file} required file(s) for this assignment:'
       no_action_detected: No actions were detected in the last submit.  Nothing was changed.
-  files:
-    cannot_preview: "This file type cannot be previewed. Please download it to view its contents."
