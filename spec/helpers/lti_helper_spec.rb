@@ -181,7 +181,7 @@ describe LtiHelper do
             [
               # User 1: active
               {
-                status: 'Active',
+                status: LtiDeployment::LTI_STATUSES[:active],
                 user_id: active_lti_user_id,
                 lis_person_sourcedid: active_student.user_name,
                 name: 'Active Student',
@@ -189,7 +189,7 @@ describe LtiHelper do
               },
               # User 2: inactive
               {
-                status: 'Inactive',
+                status: LtiDeployment::LTI_STATUSES[:inactive],
                 user_id: inactive_lti_user_id,
                 lis_person_sourcedid: inactive_student.user_name,
                 name: 'Inactive Student',
@@ -219,12 +219,12 @@ describe LtiHelper do
             expect(active_student.reload.hidden).to be false
           end
 
-          it 'hides the student marked as Inactive in Canvas' do
+          it 'hides the student marked as Inactive in LMS' do
             subject
             expect(inactive_student.reload.hidden).to be true
           end
 
-          it 'hides the student missing from the Canvas payload' do
+          it 'hides the student missing from the LMS payload' do
             subject
             expect(missing_student.reload.hidden).to be true
           end
@@ -253,7 +253,7 @@ describe LtiHelper do
         let(:placeholder_student_number) { '999111222' }
         let(:memberships_with_placeholder) do
           [
-            { status: 'Active',
+            { status: LtiDeployment::LTI_STATUSES[:active],
               name: student.user.display_name,
               given_name: student.user.first_name,
               family_name: student.user.last_name,
@@ -287,7 +287,7 @@ describe LtiHelper do
           expect(user.id_number).to eq(placeholder_student_number)
         end
 
-        it 'sets the id_number to NULL for the Canvas placeholder' do
+        it 'sets the id_number to NULL for the LMS placeholder' do
           subject
           user = EndUser.find_by(user_name: 'second_username')
           expect(user.id_number).to be_nil

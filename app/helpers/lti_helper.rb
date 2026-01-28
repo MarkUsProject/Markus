@@ -81,12 +81,10 @@ module LtiHelper
         end
       end
       next if course_role.nil?
-      if course_role
-        course_role.update!(hidden: false) if course_role.is_a?(Student)
-        lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
-        lti_user.update!(lti_user_id: lms_user[:lti_user_id])
-        processed_lti_ids << lms_user[:lti_user_id]
-      end
+      course_role.update!(hidden: false) if course_role.is_a?(Student)
+      lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
+      lti_user.update!(lti_user_id: lms_user[:lti_user_id])
+      processed_lti_ids << lms_user[:lti_user_id]
     end
 
     # Handle inactive and missing students
