@@ -11,7 +11,7 @@
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
 - Update batch test runs table UI (#7790)
-- Separate courses into Current and Past sections in Student view (#7801)
+- Split courses into Current and Past sections for all users (#7801)
 
 ### 🐛 Bug fixes
 - Fixed the editing form of marking schemes to include newly added assessments (#7788)
