@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### 🛡️ Security
+
+- Verify zip entry names in assignment configuration zip upload
+
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
