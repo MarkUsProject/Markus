@@ -5,6 +5,10 @@
   width: 100%;
 }
 
+.course-list > h2 {
+  flex-basis: 100%;
+}
+
 .course-card {
   border: 2px solid $sub-menu;
   border-radius: 5px;

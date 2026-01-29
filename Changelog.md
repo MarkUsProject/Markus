@@ -11,6 +11,7 @@
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
 - Update batch test runs table UI (#7790)
+- Split courses into Current and Past sections for all users (#7801)
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
 
 ### 🐛 Bug fixes
