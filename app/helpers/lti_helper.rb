@@ -24,29 +24,41 @@ module LtiHelper
       additional_data, follow = get_member_data(lti_deployment, follow, auth_data)
       member_info.concat(additional_data)
     end
-    user_data = member_info.filter_map do |user|
-      unless user['status'] == 'Inactive' || user['roles'].include?(LtiDeployment::LTI_ROLES['test_user']) ||
-        role_types.none? { |role| user['roles'].include?(role) }
+    if member_info.blank?
+      raise I18n.t('lti.no_users')
+    end
+
+    # Separate users into active and inactive based on LMS status
+    lms_active_data = []
+    lms_inactive_ids = []
+    member_info.each do |user|
+      next if user['roles'].include?(LtiDeployment::LTI_ROLES['test_user'])
+      next if role_types.none? { |role| user['roles'].include?(role) }
+      if user['status'] == LtiDeployment::LTI_STATUSES[:inactive]
+        lms_inactive_ids << user['user_id']
+      else
         student_number = user.dig('message', 0, LtiDeployment::LTI_CLAIMS[:custom], 'student_number')
         id_number_value = if student_number.blank? || student_number == '$Canvas.user.sisIntegrationId'
                             nil
                           else
                             student_number
                           end
-        { user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
+        lms_active_data << {
+          user_name: user['lis_person_sourcedid'].nil? ? user['name'].delete(' ') : user['lis_person_sourcedid'],
           first_name: user['given_name'],
           last_name: user['family_name'],
           display_name: user['name'],
           email: user['email'],
           id_number: id_number_value,
           lti_user_id: user['user_id'],
-          roles: user['roles'] }
+          roles: user['roles']
+        }
       end
     end
-    if user_data.empty?
-      raise I18n.t('lti.no_users')
-    end
-    user_data.each do |lms_user|
+
+    # Process active users
+    processed_lti_ids = []
+    lms_active_data.each do |lms_user|
       markus_user = EndUser.find_by(user_name: lms_user[:user_name])
       if markus_user.nil? && can_create_users
         markus_user = EndUser.create(lms_user.except(:lti_user_id, :roles))
@@ -69,8 +81,24 @@ module LtiHelper
         end
       end
       next if course_role.nil?
+      course_role.update!(hidden: false) if course_role.is_a?(Student)
       lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
       lti_user.update!(lti_user_id: lms_user[:lti_user_id])
+      processed_lti_ids << lms_user[:lti_user_id]
+    end
+
+    # Handle inactive and missing students
+    all_linked_lti_ids = LtiUser.where(lti_client: lti_deployment.lti_client)
+                                .where(user_id: course.students.select(:user_id))
+                                .pluck(:lti_user_id)
+    missing_ids = all_linked_lti_ids - processed_lti_ids
+    ids_to_hide = (lms_inactive_ids + missing_ids).uniq
+    if ids_to_hide.any?
+      Student.joins(user: :lti_users)
+             .where(course: course,
+                    'lti_users.lti_client_id': lti_deployment.lti_client_id,
+                    'lti_users.lti_user_id': ids_to_hide)
+             .update_all(hidden: true)
     end
     error
   end

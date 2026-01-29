@@ -18,6 +18,7 @@
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
 - Prevent ZIP files from being previewed in the assignment file viewer (#7802)
+- Hide deactivated/missing students and restore re-enrolled students during roster sync (#7799)
 
 ### 🔧 Internal changes
 
