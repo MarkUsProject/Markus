@@ -2,6 +2,10 @@
 
 ## [v2.9.1]
 
+### 🛡️ Security
+- Removed insecure html_content route
+- Verify zip entry names in assignment configuration zip upload
+
 ### ✨ New features and improvements
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
 - Update batch test runs table UI (#7790)

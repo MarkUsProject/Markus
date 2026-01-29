@@ -718,13 +718,18 @@ class AssignmentsController < ApplicationController
       zip_file.glob(test_file_glob_pattern) do |entry|
         zip_file_path = Pathname.new(entry.name)
         filename = zip_file_path.relative_path_from(CONFIG_FILES[:automated_tests_dir_entry])
-        file_path = File.join(assignment.autotest_files_dir, filename.to_s)
+        file_path = File.expand_path(File.join(assignment.autotest_files_dir, filename.to_s))
+
+        unless file_path.start_with?(File.expand_path(assignment.autotest_files_dir))
+          raise I18n.t('errors.invalid_zip_entry', entry_name: filename.to_s)
+        end
+
         if entry.directory?
           FileUtils.mkdir_p(file_path)
         else
           FileUtils.mkdir_p(File.dirname(file_path))
-          test_file_content = entry.get_input_stream.read
-          File.write(file_path, test_file_content, mode: 'wb')
+          # Extract the entry to file_path. destination_directory is '/' because file_path is an absolute path
+          entry.extract(file_path, destination_directory: '/')
         end
       end
     end
@@ -736,6 +741,11 @@ class AssignmentsController < ApplicationController
     starter_group_mappings = {}
     starter_file_settings[:starter_file_groups].each do |group|
       group = group.symbolize_keys
+      dirname = group[:directory_name]
+      if dirname != File.basename(dirname) || dirname == '..' || dirname == '.'
+        raise I18n.t('assignments.upload_config_files.errors.invalid_starter_file_group_dirname',
+                     directory_name: dirname)
+      end
       file_group = StarterFileGroup.create!(name: group[:name],
                                             use_rename: group[:use_rename],
                                             entry_rename: group[:entry_rename],
@@ -753,6 +763,11 @@ class AssignmentsController < ApplicationController
       # Set working directory to the location of all the starter file content, then find
       # directory for a starter group and add the file found in that directory to group
       zip_file_path = Pathname.new(entry.name)
+
+      unless File.expand_path(zip_file_path).start_with?(File.expand_path(zip_starter_dir))
+        raise I18n.t('errors.invalid_zip_entry', entry_name: zip_file_path)
+      end
+
       starter_base_dir = zip_file_path.relative_path_from(zip_starter_dir)
       grouping_dir = starter_base_dir.descend.first.to_s
       starter_file_group = starter_group_mappings[grouping_dir]
@@ -763,8 +778,9 @@ class AssignmentsController < ApplicationController
         FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
       else
         FileUtils.mkdir_p(starter_file_dir_path)
-        starter_file_content = entry.get_input_stream.read
-        File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
+        # Extract the entry to file_path. destination_directory is '/' because extract is called on an absolute path
+        entry.extract(File.expand_path(File.join(starter_file_dir_path, starter_file_name)),
+                      destination_directory: '/')
       end
     end
     assignment.starter_file_groups.find_each(&:update_entries)

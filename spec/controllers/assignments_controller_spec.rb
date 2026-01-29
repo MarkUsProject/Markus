@@ -1902,54 +1902,55 @@ describe AssignmentsController do
                                                     course_id: user.course.id }
     end
 
-    before do
-      uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-      # Clear uploaded autotest files to prepare for next test
-      unless uploaded_assignment.nil?
-        FileUtils.rm_rf(uploaded_assignment.autotest_files_dir)
-      end
-
-      # Build sample assignment zip file
-      base_dir = File.join('assignments', 'sample-timed-assessment-good')
-      properties_good = fixture_file_upload(File.join(base_dir, 'properties.yml'), 'text/yaml')
-      tags_good = fixture_file_upload(File.join(base_dir, 'tags.yml'), 'text/yaml')
-      criteria_good = fixture_file_upload(File.join(base_dir, 'criteria.yml'), 'text/yaml')
-      annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
-      test_file_path = File.join('assignments', 'sample-timed-assessment-good',
-                                 'automated-test-config-files')
-      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-specs.json'),
-                                            'text/json')
-      test_file1_good = fixture_file_upload(File.join(test_file_path,
-                                                      'automated-test-files', 'tests.py'), 'text/py')
-      test_file2_good = fixture_file_upload(File.join(test_file_path,
-                                                      'automated-test-files', 'Helpers', 'test_helpers.py'), 'text/py')
-      starter_settings_good = fixture_file_upload(File.join(base_dir,
-                                                            'starter-file-config-files',
-                                                            'starter-file-rules.yml'), 'text/yaml')
-      starter_file_dir = File.join(base_dir, 'starter-file-config-files', 'sample_starter_group')
-      starter_file1 = fixture_file_upload(File.join(starter_file_dir, 'c_file.c'), 'text/c')
-      starter_file2 = fixture_file_upload(File.join(starter_file_dir, 'Helpers', 'template.tex'), 'text/tex')
-
-      zip_name = 'mtt_ex_1-config-files.zip'
-      zip_path = File.join('tmp', zip_name)
-      FileUtils.rm_f(zip_path)
-      Zip::File.open(zip_path, create: true) do |zip_file|
-        zip_file.add('properties.yml', properties_good.path)
-        zip_file.add('tags.yml', tags_good.path)
-        zip_file.add('criteria.yml', criteria_good.path)
-        zip_file.add('annotations.yml', annotations_good.path)
-        zip_file.add('starter-file-config-files/starter-file-rules.yml', starter_settings_good.path)
-        zip_file.add('starter-file-config-files/sample_starter_group/c_file.c', starter_file1.path)
-        zip_file.mkdir(File.join(starter_file_dir, 'Helpers'))
-        zip_file.add('starter-file-config-files/sample_starter_group/Helpers/template.tex', starter_file2.path)
-        zip_file.add('automated-test-config-files/automated-test-specs.json', test_specs_good.path)
-        zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
-        zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
-      end
-      @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
-    end
-
     shared_examples 'check valid assignment config files' do
+      before do
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        # Clear uploaded autotest files to prepare for next test
+        unless uploaded_assignment.nil?
+          FileUtils.rm_rf(uploaded_assignment.autotest_files_dir)
+        end
+
+        # Build sample assignment zip file
+        base_dir = File.join('assignments', 'sample-timed-assessment-good')
+        properties_good = fixture_file_upload(File.join(base_dir, 'properties.yml'), 'text/yaml')
+        tags_good = fixture_file_upload(File.join(base_dir, 'tags.yml'), 'text/yaml')
+        criteria_good = fixture_file_upload(File.join(base_dir, 'criteria.yml'), 'text/yaml')
+        annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
+        test_file_path = File.join('assignments', 'sample-timed-assessment-good',
+                                   'automated-test-config-files')
+        test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-specs.json'),
+                                              'text/json')
+        test_file1_good = fixture_file_upload(File.join(test_file_path,
+                                                        'automated-test-files', 'tests.py'), 'text/py')
+        test_file2_good = fixture_file_upload(File.join(test_file_path,
+                                                        'automated-test-files', 'Helpers', 'test_helpers.py'),
+                                              'text/py')
+        starter_settings_good = fixture_file_upload(File.join(base_dir,
+                                                              'starter-file-config-files',
+                                                              'starter-file-rules.yml'), 'text/yaml')
+        starter_file_dir = File.join(base_dir, 'starter-file-config-files', 'sample_starter_group')
+        starter_file1 = fixture_file_upload(File.join(starter_file_dir, 'c_file.c'), 'text/c')
+        starter_file2 = fixture_file_upload(File.join(starter_file_dir, 'Helpers', 'template.tex'), 'text/tex')
+
+        zip_name = 'mtt_ex_1-config-files.zip'
+        zip_path = File.join('tmp', zip_name)
+        FileUtils.rm_f(zip_path)
+        Zip::File.open(zip_path, create: true) do |zip_file|
+          zip_file.add('properties.yml', properties_good.path)
+          zip_file.add('tags.yml', tags_good.path)
+          zip_file.add('criteria.yml', criteria_good.path)
+          zip_file.add('annotations.yml', annotations_good.path)
+          zip_file.add('starter-file-config-files/starter-file-rules.yml', starter_settings_good.path)
+          zip_file.add('starter-file-config-files/sample_starter_group/c_file.c', starter_file1.path)
+          zip_file.mkdir(File.join(starter_file_dir, 'Helpers'))
+          zip_file.add('starter-file-config-files/sample_starter_group/Helpers/template.tex', starter_file2.path)
+          zip_file.add('automated-test-config-files/automated-test-specs.json', test_specs_good.path)
+          zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
+          zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
+        end
+        @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
+      end
+
       it 'gives the appropriate response status' do
         subject
         expect(response).to have_http_status(:found)
@@ -2096,6 +2097,60 @@ describe AssignmentsController do
       let(:user) { create(:instructor) }
 
       it_behaves_like 'check valid assignment config files'
+
+      it 'reports an error when given a config zip file with a bad autotest file zip entry' do
+        params = {
+          upload_files_for_config: fixture_file_upload(
+            'assignments/upload-config-files/assignment-config-invalid-autotest-file-entry.zip',
+            'application/zip'
+          ),
+          course_id: user.course.id
+        }
+
+        expect do
+          post_as user, :upload_config_files, params: params
+        end.not_to(change { Assignment.count })
+
+        expect(flash[:error]).to have_message(I18n.t('errors.invalid_zip_entry', entry_name: '../../evil.txt'))
+      end
+
+      it 'reports an error when given a config zip file with a bad starter file zip entry' do
+        params = {
+          upload_files_for_config: fixture_file_upload(
+            'assignments/upload-config-files/assignment-config-invalid-starter-file-entry.zip',
+            'application/zip'
+          ),
+          course_id: user.course.id
+        }
+
+        expect do
+          post_as user, :upload_config_files, params: params
+        end.not_to(change { Assignment.count })
+
+        expect(flash[:error]).to have_message(
+          I18n.t('errors.invalid_zip_entry',
+                 entry_name: 'starter-file-config-files/New Starter File Group/../../evil.txt')
+        )
+      end
+
+      it 'reports an error when given a config zip file with a bad starter file group dirname' do
+        params = {
+          upload_files_for_config: fixture_file_upload(
+            'assignments/upload-config-files/assignment-config-invalid-starter-file-group-dirname.zip',
+            'application/zip'
+          ),
+          course_id: user.course.id
+        }
+
+        expect do
+          post_as user, :upload_config_files, params: params
+        end.not_to(change { Assignment.count })
+
+        expect(flash[:error]).to have_message(
+          I18n.t('assignments.upload_config_files.errors.invalid_starter_file_group_dirname',
+                 directory_name: '..')
+        )
+      end
     end
   end
 
