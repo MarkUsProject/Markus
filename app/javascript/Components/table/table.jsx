@@ -51,7 +51,10 @@ export default function Table({
 }) {
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState({inactive: false});
+  const [columnVisibility, setColumnVisibility] = React.useState({
+    inactive: false,
+    ...initialState?.columnVisibility,
+  });
   const [expanded, setExpanded] = React.useState({});
 
   const columnFilters =
@@ -138,28 +141,30 @@ export default function Table({
             </div>
           ))}
         </div>
-        <div className="rt-thead -filters" style={{minWidth: table.getCenterTotalSize()}}>
-          {table.getHeaderGroups().map(headerGroup => (
-            <div className="rt-tr" role="row" key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                return (
-                  <div
-                    className={`rt-th ${header.column.columnDef.meta?.headerClassName || ""}`}
-                    key={header.id}
-                    role="columnheader"
-                    tabIndex="-1"
-                    style={{
-                      width: header.getSize(),
-                      maxWidth: header.column.columnDef.maxSize || "none",
-                    }}
-                  >
-                    {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-        </div>
+        {table.getAllColumns().some(column => column.getCanFilter()) && (
+          <div className="rt-thead -filters" style={{minWidth: table.getCenterTotalSize()}}>
+            {table.getHeaderGroups().map(headerGroup => (
+              <div className="rt-tr" role="row" key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
+                  return (
+                    <div
+                      className={`rt-th ${header.column.columnDef.meta?.headerClassName || ""}`}
+                      key={header.id}
+                      role="columnheader"
+                      tabIndex="-1"
+                      style={{
+                        width: header.getSize(),
+                        maxWidth: header.column.columnDef.maxSize || "none",
+                      }}
+                    >
+                      {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        )}
         <div className="rt-tbody" style={{minWidth: table.getCenterTotalSize()}}>
           {table.getRowModel().rows.map(row => {
             return (
