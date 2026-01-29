@@ -8,6 +8,7 @@
 
 ### 🐛 Bug fixes
 - Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
+- Hide deactivated/missing students and restore re-enrolled students during roster sync (#7799)
 
 ## [v2.9.0]
 
