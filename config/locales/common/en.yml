@@ -16,6 +16,7 @@ en:
   encoding: Encoding
   errors:
     invalid_path: Invalid path provided.
+    invalid_zip_entry: 'Invalid zip entry name: %{entry_name}'
   file: File
   filter_by: Filter by %{name}
   forbidden: Forbidden

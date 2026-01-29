@@ -330,7 +330,6 @@ Rails.application.routes.draw do
           get 'download'
           post 'zip_groupings_files'
           get 'download_zipped_file'
-          get 'html_content'
           get 'download_summary'
           get 'repo_browser'
           post 'repo_browser'

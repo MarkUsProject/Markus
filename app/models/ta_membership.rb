@@ -37,6 +37,17 @@ class TaMembership < Membership
       end
     end
 
+    # Dedupe within the CSV and remove already-existing memberships
+    new_ta_memberships.uniq!
+    unless new_ta_memberships.empty?
+      existing_pairs = TaMembership
+                       .where(grouping_id: new_ta_memberships.pluck(:grouping_id),
+                              role_id: new_ta_memberships.pluck(:role_id))
+                       .pluck(:grouping_id, :role_id)
+                       .to_set
+      new_ta_memberships.reject! { |m| existing_pairs.include?([m[:grouping_id], m[:role_id]]) }
+    end
+
     Repository.get_class.update_permissions_after do
       unless new_ta_memberships.empty?
         TaMembership.insert_all(new_ta_memberships)

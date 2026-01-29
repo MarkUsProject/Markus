@@ -25,6 +25,8 @@ class LtiDeployment < ApplicationRecord
                 admin: 'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator',
                 sysadmin: 'http://purl.imsglobal.org/vocab/lis/v2/system/person#SysAdmin',
                 account_admin: 'http://purl.imsglobal.org/vocab/lis/v2/system/person#AccountAdmin' }.freeze
+  LTI_STATUSES = { active: 'Active',
+                   inactive: 'Inactive' }.freeze
   LTI_PRIVILEGED_ROLES = [LTI_ROLES[:instructor],
                           LTI_ROLES[:admin],
                           LTI_ROLES[:sysadmin],

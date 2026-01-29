@@ -35,8 +35,14 @@ class Course < ApplicationRecord
       map = {}
       map[:assignments] = assignments.map do |assignment|
         m = {}
-        Assignment::DEFAULT_FIELDS.each do |f|
+        # Add assessment fields (root level)
+        Assignment::ASSESSMENT_FIELDS.each do |f|
           m[f] = assignment.public_send(f)
+        end
+        # Add assignment_properties fields (nested)
+        m[:assignment_properties_attributes] = {}
+        Assignment::ASSIGNMENT_PROPERTIES_FIELDS.each do |f|
+          m[:assignment_properties_attributes][f] = assignment.public_send(f)
         end
         m
       end
