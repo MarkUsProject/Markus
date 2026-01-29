@@ -4,8 +4,6 @@
 
 ### 🛡️ Security
 
-- Verify zip entry names in assignment configuration zip upload
-
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
@@ -14,21 +12,30 @@
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
-- Update batch test runs table UI (#7790)
-- Prevent adding duplicate grader group mappings on CSV upload (#7786)
 
 ### 🐛 Bug fixes
-- Fixed the editing form of marking schemes to include newly added assessments (#7788)
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
-- Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
-- Hide deactivated/missing students and restore re-enrolled students during roster sync (#7799)
 
 ### 🔧 Internal changes
-
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
 - Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
 - Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
+
+## [v2.9.1]
+
+### 🛡️ Security
+- Removed insecure html_content route
+- Verify zip entry names in assignment configuration zip upload
+
+### ✨ New features and improvements
+- Prevent adding duplicate grader group mappings on CSV upload (#7786)
+- Update batch test runs table UI (#7790)
+
+### 🐛 Bug fixes
+- Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
+- Hide deactivated/missing students and restore re-enrolled students during roster sync (#7799)
+- Fixed the editing form of marking schemes to include newly added assessments (#7788)
 
 ## [v2.9.0]
 
