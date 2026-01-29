@@ -1,11 +1,11 @@
 module SubmissionsHelper
   include RepositoryHelper
 
-  def find_appropriate_grouping(assignment_id, params)
+  def find_appropriate_grouping(assignment, params)
     if current_role.instructor? || current_role.ta?
-      Grouping.find(params[:grouping_id])
+      assignment.groupings.find_by(id: params[:grouping_id])
     else
-      current_role.accepted_grouping_for(assignment_id)
+      current_role.accepted_grouping_for(assignment.id)
     end
   end
 
