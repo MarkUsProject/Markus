@@ -49,43 +49,39 @@ class CourseList extends React.Component {
 
     return (
       <div className="course-list">
-        <>
-          <h2>{I18n.t("courses.current_courses")}</h2>
-          {currentCourses.length === 0 ? (
-            <div className="no-courses">{I18n.t("courses.no_courses")}</div>
-          ) : (
-            currentCourses.map(course => {
-              return (
-                <CourseCard
-                  key={course["courses.id"]}
-                  course_id={course["courses.id"]}
-                  course_name={course["courses.name"]}
-                  course_display_name={course["courses.display_name"]}
-                  role_type={course["roles.type"]}
-                />
-              );
-            })
-          )}
-        </>
+        <h2>{I18n.t("courses.current_courses")}</h2>
+        {currentCourses.length === 0 ? (
+          <div className="no-courses">{I18n.t("courses.no_courses")}</div>
+        ) : (
+          currentCourses.map(course => {
+            return (
+              <CourseCard
+                key={course["courses.id"]}
+                course_id={course["courses.id"]}
+                course_name={course["courses.name"]}
+                course_display_name={course["courses.display_name"]}
+                role_type={course["roles.type"]}
+              />
+            );
+          })
+        )}
 
-        <>
-          <h2>{I18n.t("courses.past_courses")}</h2>
-          {pastCourses.length === 0 ? (
-            <div className="no-courses">{I18n.t("courses.no_courses")}</div>
-          ) : (
-            pastCourses.map(course => {
-              return (
-                <CourseCard
-                  key={course["courses.id"]}
-                  course_id={course["courses.id"]}
-                  course_name={course["courses.name"]}
-                  course_display_name={course["courses.display_name"]}
-                  role_type={course["roles.type"]}
-                />
-              );
-            })
-          )}
-        </>
+        <h2>{I18n.t("courses.past_courses")}</h2>
+        {pastCourses.length === 0 ? (
+          <div className="no-courses">{I18n.t("courses.no_courses")}</div>
+        ) : (
+          pastCourses.map(course => {
+            return (
+              <CourseCard
+                key={course["courses.id"]}
+                course_id={course["courses.id"]}
+                course_name={course["courses.name"]}
+                course_display_name={course["courses.display_name"]}
+                role_type={course["roles.type"]}
+              />
+            );
+          })
+        )}
       </div>
     );
   }
