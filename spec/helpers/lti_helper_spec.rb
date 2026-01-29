@@ -165,6 +165,83 @@ describe LtiHelper do
             expect(LtiUser.count).to eq(2)
           end
         end
+
+        context 'when handling user deactivation' do
+          subject { roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true, can_create_roles: true }
+
+          let(:active_lti_user_id) { 'lti_user_id' }
+          let(:inactive_lti_user_id) { 'inactive_user_id' }
+          let(:missing_lti_user_id) { 'missing_user_id' }
+
+          let!(:active_student) { create(:student, course: course) }
+          let!(:inactive_student) { create(:student, course: course) }
+          let!(:missing_student) { create(:student, course: course) }
+
+          let(:memberships_with_inactives) do
+            [
+              # User 1: active
+              {
+                status: LtiDeployment::LTI_STATUSES[:active],
+                user_id: active_lti_user_id,
+                lis_person_sourcedid: active_student.user_name,
+                name: 'Active Student',
+                roles: [LtiDeployment::LTI_ROLES[:learner]]
+              },
+              # User 2: inactive
+              {
+                status: LtiDeployment::LTI_STATUSES[:inactive],
+                user_id: inactive_lti_user_id,
+                lis_person_sourcedid: inactive_student.user_name,
+                name: 'Inactive Student',
+                roles: [LtiDeployment::LTI_ROLES[:learner]]
+              }
+              # User 3: missing
+            ]
+          end
+
+          before do
+            create(:lti_user, user: active_student.user, lti_client: lti_deployment.lti_client,
+                              lti_user_id: active_lti_user_id)
+            create(:lti_user, user: inactive_student.user, lti_client: lti_deployment.lti_client,
+                              lti_user_id: inactive_lti_user_id)
+            create(:lti_user, user: missing_student.user, lti_client: lti_deployment.lti_client,
+                              lti_user_id: missing_lti_user_id)
+
+            lti_payload = { id: '...', context: { id: '...', label: 'tst', title: 'test' },
+                            members: memberships_with_inactives }.to_json
+            allow_any_instance_of(LtiDeployment).to(
+              receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_payload))
+            )
+          end
+
+          it 'keeps the active student visible' do
+            subject
+            expect(active_student.reload.hidden).to be false
+          end
+
+          it 'hides the student marked as Inactive in LMS' do
+            subject
+            expect(inactive_student.reload.hidden).to be true
+          end
+
+          it 'hides the student missing from the LMS payload' do
+            subject
+            expect(missing_student.reload.hidden).to be true
+          end
+
+          it 'unhides a previously hidden student who becomes active again' do
+            active_student.update!(hidden: true)
+            subject
+            expect(active_student.reload.hidden).to be false
+          end
+
+          it 'does not hide users who are not students (e.g., TAs) even if missing' do
+            ta = create(:ta, course: course)
+            create(:lti_user, user: ta.user, lti_client: lti_deployment.lti_client, lti_user_id: 'ta_lti_id')
+            subject
+            expect(Role.find(ta.id).hidden).to be false
+          end
+        end
       end
 
       context 'when handling student ID numbers' do
@@ -176,7 +253,7 @@ describe LtiHelper do
         let(:placeholder_student_number) { '999111222' }
         let(:memberships_with_placeholder) do
           [
-            { status: 'Active',
+            { status: LtiDeployment::LTI_STATUSES[:active],
               name: student.user.display_name,
               given_name: student.user.first_name,
               family_name: student.user.last_name,
@@ -210,7 +287,7 @@ describe LtiHelper do
           expect(user.id_number).to eq(placeholder_student_number)
         end
 
-        it 'sets the id_number to NULL for the Canvas placeholder' do
+        it 'sets the id_number to NULL for the LMS placeholder' do
           subject
           user = EndUser.find_by(user_name: 'second_username')
           expect(user.id_number).to be_nil
