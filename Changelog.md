@@ -16,6 +16,7 @@
 - Store start and end date for courses (#7783)
 - Update batch test runs table UI (#7790)
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
+- Improve git repo access time, by reducing db queries(#7791)
 
 ### 🐛 Bug fixes
 - Fixed the editing form of marking schemes to include newly added assessments (#7788)
