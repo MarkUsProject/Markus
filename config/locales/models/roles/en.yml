@@ -4,4 +4,4 @@ en:
     errors:
       models:
         role:
-          invalid_assignment: "non end users cannot be assigned the %{self.model_name.human} role"
+          invalid_assignment: "non end users cannot be assigned the %{role_name} role"
