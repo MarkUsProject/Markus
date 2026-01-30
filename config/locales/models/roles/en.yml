@@ -1,6 +1,7 @@
 ---
 en:
-  errors:
-    models:
-      role:
-        invalid_assignment: "non end users cannot be assigned the %{self.model_name.human} role"
+  activerecord:
+    errors:
+      models:
+        role:
+          invalid_assignment: "non end users cannot be assigned the %{self.model_name.human} role"

@@ -4,4 +4,6 @@ en:
     errors:
       models:
         assessment_section_properties:
-          before_visible_on: must be after visible_on
+          attributes:
+            visible_until:
+              before_visible_on: must be after visible_on

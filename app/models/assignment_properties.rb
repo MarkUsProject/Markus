@@ -123,7 +123,8 @@ class AssignmentProperties < ApplicationRecord
   # are both true.
   def not_timed_and_scanned
     I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
-    errors.add(:base, :not_scanned) if is_timed && scanned_exam
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
+    errors.add(:base, msg) if is_timed && scanned_exam
   end
 
   # Ensure remote_autotest_settings_id is unique for a given autotester
@@ -132,6 +133,7 @@ class AssignmentProperties < ApplicationRecord
       remote_autotest_settings_id: self.remote_autotest_settings_id,
       course: { autotest_setting_id: self.assignment.course.autotest_setting_id }
     ).where.not(id: self.id).exists?
-    errors.add(:remote_autotest_settings_id, :taken) if remote_autotest_settings_id_is_taken
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.remote_autotest_settings_id.taken')
+    errors.add(:remote_autotest_settings_id, msg) if remote_autotest_settings_id_is_taken
   end
 end

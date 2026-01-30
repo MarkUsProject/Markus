@@ -9,7 +9,7 @@ en:
       test_run:
         one: Test Run
         other: Test Runs
-  errors:
-    models:
-      test_run:
-        invalid_test_id: autotest_test_id must be unique scoped to autotest settings
+    errors:
+      models:
+        test_run:
+          invalid_test_id: autotest_test_id must be unique scoped to autotest settings

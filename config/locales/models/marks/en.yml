@@ -5,7 +5,7 @@ en:
       mark:
         one: Mark
         other: Marks
-  errors:
-    models:
-      mark:
-        not_in_same_assignment: result and criterion must all belong to the same assignment
+    errors:
+      models:
+        mark:
+          not_in_same_assignment: result and criterion must all belong to the same assignment
