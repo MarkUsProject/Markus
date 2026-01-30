@@ -27,20 +27,4 @@ describe("FileViewer", () => {
       await screen.findByText(I18n.t("submissions.oversize_submission_file"))
     ).toBeInTheDocument();
   });
-
-  it("should not preview zip files", async () => {
-    const props = {
-      course_id: 0,
-      submission_id: 0,
-      result_id: 1,
-      selectedFile: "archive.zip",
-      selectedFileType: "text",
-      selectedFileURL: "/archive.zip",
-      mime_type: "application/zip",
-    };
-
-    render(<FileViewer {...props} />);
-
-    expect(await screen.findByText(I18n.t("files.cannot_preview"))).toBeInTheDocument();
-  });
 });

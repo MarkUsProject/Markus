@@ -2,8 +2,6 @@
 en:
   date_validator:
     invalid_date: is not a valid date
-  files:
-    cannot_preview: This file type cannot be previewed. Please download it to view its contents.
   poll_job:
     auto_match_job: "%{progress}/%{total} groups processed"
     autotest_run_job_enqueuing: Enqueuing tests

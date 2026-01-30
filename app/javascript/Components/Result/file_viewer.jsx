@@ -57,10 +57,7 @@ export class FileViewer extends React.Component {
       setErrorMessageCallback: this.setErrorMessage,
     };
 
-    if (this.props.mime_type === "application/zip") {
-      // Prevent previewing zip files
-      return <p>{I18n.t("files.cannot_preview")}</p>;
-    } else if (this.props.selectedFileType === "image") {
+    if (this.props.selectedFileType === "image") {
       return <ImageViewer mime_type={this.props.mime_type} {...commonProps} />;
     } else if (this.props.selectedFileType === "pdf") {
       return <PDFViewer annotationFocus={this.props.annotationFocus} {...commonProps} />;
