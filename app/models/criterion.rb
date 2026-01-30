@@ -262,7 +262,7 @@ class Criterion < ApplicationRecord
     if ta_visible || peer_visible
       true
     else
-      errors.add(:base, :visibility_error)
+      errors.add(:base, I18n.t('activerecord.errors.models.criterion.visibility_error'))
       false
     end
   end

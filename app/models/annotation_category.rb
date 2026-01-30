@@ -113,7 +113,7 @@ class AnnotationCategory < ApplicationRecord
 
   def check_if_marks_released
     if marks_released?
-      errors.add(:base, :cannot_update_flex)
+      errors.add(:base, I18n.t('activerecord.errors.models.annotation_category.cannot_update_flex'))
       throw(:abort)
     end
   end
