@@ -103,6 +103,9 @@ en:
       started_on: 'You started on:'
       starter_file_prompt: Click below to download the starter files for this assessment.
       time_until_due_warning: This assessment is due before %{due_date} without penalty.
+    upload_config_files:
+      errors:
+        invalid_starter_file_group_dirname: 'Invalid directory_name for starter file group: %{directory_name}'
     upload_config_help_html: "<p>This zip file will configure and create this assignment.</p><p>This does not configure student or grader settings.<br>For more information please visit <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Importing-and-Exporting-Data.md#%{section_id}>this page</a>.</p>"
     upload_file_requirement: Filename %{file_name} is not allowed for this assignment.
     upload_file_requirement_in_folder: Filename %{file_name} in %{file_path} is not allowed for this assignment.
