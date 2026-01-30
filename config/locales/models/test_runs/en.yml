@@ -5,11 +5,11 @@ en:
       test_run:
         status: Status
         user: Run by
-    models:
-      test_run:
-        one: Test Run
-        other: Test Runs
     errors:
       models:
         test_run:
           invalid_test_id: autotest_test_id must be unique scoped to autotest settings
+    models:
+      test_run:
+        one: Test Run
+        other: Test Runs

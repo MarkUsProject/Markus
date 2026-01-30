@@ -5,12 +5,12 @@ en:
       peer_review:
         reviewee: Reviewee
         reviewer: Reviewer
+    errors:
+      models:
+        peer_review:
+          not_in_same_assignment: result and reviewer must all belong to the same assignment
     models:
       peer_review:
         one: Peer Review
         other: Peer Reviews
         reviewer_assigned_to_reviewee: "%{reviewer_group_name} (assigned to review %{reviewee_group_name})"
-    errors:
-      models:
-        peer_review:
-          not_in_same_assignment: result and reviewer must all belong to the same assignment

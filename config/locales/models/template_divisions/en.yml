@@ -6,13 +6,13 @@ en:
         end: End
         label: Label
         start: Start
-    models:
-      template_division:
-        one: Template Division
-        other: Template Divisions
     errors:
       models:
         template_division:
           attributes:
             end:
               more_than_num_pages: should be less than or equal to num_pages
+    models:
+      template_division:
+        one: Template Division
+        other: Template Divisions

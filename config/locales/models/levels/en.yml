@@ -6,11 +6,11 @@ en:
         description: Description
         mark: Mark
         name: Name
-    models:
-      level:
-        one: Level
-        other: Levels
     errors:
       models:
         level:
           cannot_update_level: Cannot update level once results are released.
+    models:
+      level:
+        one: Level
+        other: Levels
