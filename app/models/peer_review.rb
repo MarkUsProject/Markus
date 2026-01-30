@@ -149,7 +149,7 @@ class PeerReview < ApplicationRecord
   def assignments_should_match
     return if result.nil? || reviewer.nil?
     unless result.submission.grouping.assignment == reviewer.assignment.parent_assignment
-      errors.add(:base, 'result and reviewer must all belong to the same assignment')
+      errors.add(:base, :not_in_same_assignment)
     end
   end
 end

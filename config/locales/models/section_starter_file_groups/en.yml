@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        section_starter_file_group:
+          more_than_one: Only one allowed per assessment

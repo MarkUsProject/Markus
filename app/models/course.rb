@@ -176,7 +176,7 @@ class Course < ApplicationRecord
   def start_at_before_or_equal_to_end_at
     return if start_at.nil? || end_at.nil?
     if start_at > end_at
-      errors.add(:start_at, 'must be before or equal to end date')
+      errors.add(:start_at, :after_end_date)
     end
   end
 end

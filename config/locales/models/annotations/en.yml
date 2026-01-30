@@ -4,6 +4,10 @@ en:
     attributes:
       annotation:
         creator: Created By
+    errors:
+      models:
+        annotation:
+          results_already_released: Cannot create/destroy annotation once results are released.
     models:
       annotation:
         one: Annotation

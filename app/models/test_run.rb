@@ -243,6 +243,6 @@ class TestRun < ApplicationRecord
                                     autotest_test_id: self.autotest_test_id)
                              .where.not(id: self.id)
                              .exists?
-    errors.add(:base, 'autotest_test_id must be unique scoped to autotest settings') if other_test_runs
+    errors.add(:base, :invalid_test_id) if other_test_runs
   end
 end

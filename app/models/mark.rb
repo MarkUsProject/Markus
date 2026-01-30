@@ -99,7 +99,7 @@ class Mark < ApplicationRecord
       assignment = result.submission.grouping.assignment
     end
     unless assignment == criterion.assignment
-      errors.add(:base, 'result and criterion must all belong to the same assignment')
+      errors.add(:base, :not_in_same_assignment)
     end
   end
 end

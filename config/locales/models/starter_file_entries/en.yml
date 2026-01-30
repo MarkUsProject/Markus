@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        starter_file_entry:
+          entry_does_not_exist: entry does not exist

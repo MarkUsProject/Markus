@@ -100,13 +100,13 @@ class AssignmentProperties < ApplicationRecord
 
   def minimum_number_of_groups
     return unless group_max && group_min && group_max < group_min
-    errors.add(:group_max, 'must be greater than the minimum number of groups')
+    errors.add(:group_max, :not_enough_groups)
     false
   end
 
   def repository_folder_unchanged
     return unless repository_folder_changed?
-    errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
+    errors.add(:repo_folder_change, :repository_folder_unchanged)
     false
   end
 
@@ -123,6 +123,7 @@ class AssignmentProperties < ApplicationRecord
   # Add an error if the is_timed and scanned_exam attributes for this assignment
   # are both true.
   def not_timed_and_scanned
+    I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
     errors.add(:base, msg) if is_timed && scanned_exam
   end

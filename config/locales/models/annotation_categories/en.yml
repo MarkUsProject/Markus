@@ -11,6 +11,7 @@ en:
           attributes:
             flexible_criterion_id:
               inclusion: "%{value} is an invalid criterion for this assignment."
+          cannot_delete_annotation: Cannot delete annotation category once deductions have been applied
           cannot_update_flex: Cannot update annotation category flexible criterion once results are released
     models:
       annotation_category:

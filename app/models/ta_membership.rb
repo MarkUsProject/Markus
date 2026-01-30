@@ -6,7 +6,7 @@ class TaMembership < Membership
 
   def must_be_a_ta
     if role && !role.is_a?(Ta)
-      errors.add('base', 'User must be a ta')
+      errors.add(:base, :not_ta)
       false
     end
   end

@@ -65,6 +65,6 @@ class StarterFileEntry < ApplicationRecord
   private
 
   def entry_exists
-    errors.add(:base, 'entry does not exist') unless File.exist?(full_path)
+    errors.add(:base, :entry_does_not_exist) unless File.exist?(full_path)
   end
 end

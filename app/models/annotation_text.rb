@@ -47,7 +47,7 @@ class AnnotationText < ApplicationRecord
               Result.where(submission_id: annotation_results.pluck('submissions.id'))
                     .where.not(remark_request_submitted_at: nil)
                     .empty?
-    errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
+    errors.add(:base, :results_already_released)
     throw(:abort)
   end
 

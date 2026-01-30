@@ -5,6 +5,10 @@ en:
       peer_review:
         reviewee: Reviewee
         reviewer: Reviewer
+    errors:
+      models:
+        peer_review:
+          not_in_same_assignment: result and reviewer must all belong to the same assignment
     models:
       peer_review:
         one: Peer Review
