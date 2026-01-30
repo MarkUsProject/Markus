@@ -1,0 +1,6 @@
+---
+en:
+  errors:
+    models:
+      ta_membership:
+        not_ta: User must be a ta
