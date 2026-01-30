@@ -40,7 +40,7 @@ class Assessment < ApplicationRecord
 
   def short_identifier_unchanged
     return unless short_identifier_changed?
-    errors.add(:short_id_change, :short_identifier_changed)
+    errors.add(:short_identifier, :short_identifier_changed)
     false
   end
 

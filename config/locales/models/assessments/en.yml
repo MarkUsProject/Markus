@@ -8,10 +8,9 @@ en:
       models:
         assessment:
           attributes:
-            short_id_change:
-              short_identifier_changed: short identifier should not be changed once an assessment has been created
             short_identifier:
               invalid: "%{attribute} must only contain alphanumeric, hyphen, or underscore characters"
+              short_identifier_changed: short identifier should not be changed once an assessment has been created
             visible_until:
               before_visible_on: must be after visible_on
     models:
