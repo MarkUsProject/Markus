@@ -34,6 +34,8 @@ en:
     commit_date_filter:
       collected: Has files collected
       not_collected: No files collected
+    download:
+      group_not_found: No group found
     download_zipped_file:
       file_missing: No file named %{zip_file} found. Please try preparing this file for download again.
     errors:

@@ -61,6 +61,46 @@ describe SubmissionsController do
     end
   end
 
+  shared_examples 'html content types' do
+    shared_examples 'html content' do
+      it 'is successful' do
+        subject
+        expect(response).to have_http_status(:success)
+      end
+
+      it 'renders the correct template' do
+        expect(subject).to render_template('html_content')
+      end
+    end
+
+    context 'a jupyter-notebook file',
+            skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+      let(:filename) { 'example.ipynb' }
+
+      it_behaves_like 'html content'
+    end
+
+    context 'a jupyter-notebook file with widgets',
+            skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+      render_views
+      let(:filename) { 'example_widgets.ipynb' }
+
+      it 'renders without widgets' do
+        subject
+        expect(response.body).not_to include("KeyError: 'state'")
+      end
+
+      it_behaves_like 'html content'
+    end
+
+    context 'an rmarkdown file',
+            skip: Rails.application.config.rmd_convert_enabled ? false : 'rmd_convert_enabled not set to true' do
+      let(:filename) { 'example.Rmd' }
+
+      it_behaves_like 'html content'
+    end
+  end
+
   before do
     stub_const('SAMPLE_FILE_CONTENT', 'sample file content'.freeze)
     stub_const('SAMPLE_ERROR_MESSAGE', 'sample error message'.freeze)
@@ -1589,26 +1629,18 @@ describe SubmissionsController do
                                                   grouping_id: grouping.id }
         end
 
-        let(:redirect_location) do
-          html_content_course_assignment_submissions_url(course_id: course.id,
-                                                         assignment_id: assignment.id,
-                                                         file_name: 'example.ipynb',
-                                                         grouping_id: grouping.id)
-        end
-
         context 'and the python dependencies are installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
 
-          it 'should redirect to "html_content"' do
-            expect(subject).to redirect_to(redirect_location)
-          end
+          it_behaves_like 'html content types'
         end
 
         context 'and the python dependencies are not installed' do
           before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
 
-          it 'should redirect to "html_content"' do
-            expect(subject).not_to redirect_to(redirect_location)
+          it 'should respond with the raw file contents' do
+            subject
+            expect(response.body).to eq(File.read(file3))
           end
         end
       end
@@ -1622,26 +1654,18 @@ describe SubmissionsController do
                                                   grouping_id: grouping.id }
         end
 
-        let(:redirect_location) do
-          html_content_course_assignment_submissions_url(course_id: course.id,
-                                                         assignment_id: assignment.id,
-                                                         file_name: 'example.Rmd',
-                                                         grouping_id: grouping.id)
-        end
-
         context 'and the rmd_convert_enabled flag is true' do
           before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
 
-          it 'should redirect to "html_content"' do
-            expect(subject).to redirect_to(redirect_location)
-          end
+          it_behaves_like 'html content types'
         end
 
         context 'and the rmd_convert_enabled flag is false' do
           before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
 
-          it 'should not redirect to "html_content"' do
-            expect(subject).not_to redirect_to(redirect_location)
+          it 'should respond with the raw file contents' do
+            subject
+            expect(response.body).to eq(File.read(file5))
           end
         end
       end
@@ -1731,127 +1755,82 @@ describe SubmissionsController do
         end
       end
     end
-  end
 
-  describe '#html_content' do
-    let(:assignment) { create(:assignment) }
-    let(:instructor) { create(:instructor) }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file) { fixture_file_upload(filename) }
-    let(:submission) { submit_file(assignment, grouping, file.original_filename, file.read) }
+    context 'when the file is rendered as HTML' do
+      let(:assignment) { create(:assignment) }
+      let(:instructor) { create(:instructor) }
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+      let(:file) { fixture_file_upload(filename) }
+      let(:submission) { submit_file(assignment, grouping, file.original_filename, file.read) }
 
-    shared_examples 'html content types' do
-      shared_examples 'html content' do
-        it 'is successful' do
-          subject
-          expect(response).to have_http_status(:success)
+      context 'when called with a revision identifier' do
+        subject do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: filename,
+                                                  preview: true,
+                                                  grouping_id: grouping.id,
+                                                  revision_identifier: submission.revision_identifier }
         end
 
-        it 'renders the correct template' do
-          expect(subject).to render_template('html_content')
+        it_behaves_like 'html content types'
+      end
+
+      context 'when called with an invalid path for multiple file types' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
+
+        ['example.ipynb', 'example.Rmd'].each do |test_filename|
+          context "when the file is #{test_filename}" do
+            subject do
+              get_as instructor, :download, params: { course_id: course.id,
+                                                      assignment_id: assignment.id,
+                                                      file_name: filename,
+                                                      preview: true,
+                                                      grouping_id: grouping.id,
+                                                      revision_identifier: submission.revision_identifier,
+                                                      path: '../..' }
+            end
+
+            let(:filename) { test_filename }
+
+            it 'flashes an error message' do
+              subject
+              expect(flash[:error]).to have_message(I18n.t('errors.invalid_path'))
+            end
+          end
         end
       end
 
-      context 'a jupyter-notebook file',
-              skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
-        let(:filename) { 'example.ipynb' }
-
-        it_behaves_like 'html content'
-      end
-
-      context 'a jupyter-notebook file with widgets',
-              skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+      context 'where there is an invalid Jupyter notebook content' do
         render_views
-        let(:filename) { 'example_widgets.ipynb' }
+        let(:filename) { 'pdf_with_ipynb_extension.ipynb' }
 
-        it 'renders without widgets' do
-          subject
-          expect(response.body).not_to include("KeyError: 'state'")
-        end
-
-        it_behaves_like 'html content'
-      end
-
-      context 'an rmarkdown file',
-              skip: Rails.application.config.rmd_convert_enabled ? false : 'rmd_convert_enabled not set to true' do
-        let(:filename) { 'example.Rmd' }
-
-        it_behaves_like 'html content'
-      end
-    end
-
-    context 'called with a collected submission' do
-      subject do
-        get_as instructor, :html_content,
-               params: { course_id: course.id, assignment_id: assignment.id, select_file_id: submission_file.id }
-      end
-
-      let(:submission_file) { create(:submission_file, submission: submission, filename: filename) }
-
-      it_behaves_like 'html content types'
-    end
-
-    context 'called with a revision identifier' do
-      subject do
-        get_as instructor, :html_content, params: { course_id: course.id,
-                                                    assignment_id: assignment.id,
-                                                    file_name: filename,
-                                                    grouping_id: grouping.id,
-                                                    revision_identifier: submission.revision_identifier }
-      end
-
-      it_behaves_like 'html content types'
-    end
-
-    context 'called with an invalid path for multiple file types' do
-      ['example.ipynb', 'example.Rmd'].each do |test_filename|
-        context "when the file is #{test_filename}" do
-          subject do
-            get_as instructor, :html_content, params: { course_id: course.id,
-                                                        assignment_id: assignment.id,
-                                                        file_name: filename,
-                                                        grouping_id: grouping.id,
-                                                        revision_identifier: submission.revision_identifier,
-                                                        path: '../..' }
-          end
-
-          let(:filename) { test_filename }
-
-          it 'flashes an error message' do
-            subject
-            expect(flash[:error]).to have_message(I18n.t('errors.invalid_path'))
-          end
+        it 'should display an invalid Jupyter notebook content error message' do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: filename,
+                                                  preview: true,
+                                                  grouping_id: grouping.id,
+                                                  revision_identifier: submission.revision_identifier }
+          expect(response.body).to include(I18n.t('submissions.invalid_jupyter_notebook_content'))
         end
       end
-    end
 
-    context 'where there is an invalid Jupyter notebook content' do
-      render_views
-      let(:filename) { 'pdf_with_ipynb_extension.ipynb' }
+      context 'where there is an invalid rmarkdown content' do
+        before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
 
-      it 'should display an invalid Jupyter notebook content error message' do
-        get_as instructor, :html_content, params: { course_id: course.id,
-                                                    assignment_id: assignment.id,
-                                                    file_name: filename,
-                                                    preview: true,
-                                                    grouping_id: grouping.id,
-                                                    revision_identifier: submission.revision_identifier }
-        expect(response.body).to include(I18n.t('submissions.invalid_jupyter_notebook_content'))
-      end
-    end
+        render_views
+        let(:filename) { 'pdf_with_rmd_extension.Rmd' }
 
-    context 'where there is an invalid rmarkdown content' do
-      render_views
-      let(:filename) { 'pdf_with_rmd_extension.Rmd' }
-
-      it 'should display a cannot display content error message' do
-        get_as instructor, :html_content, params: { course_id: course.id,
-                                                    assignment_id: assignment.id,
-                                                    file_name: filename,
-                                                    preview: true,
-                                                    grouping_id: grouping.id,
-                                                    revision_identifier: submission.revision_identifier }
-        expect(response.body).to include(I18n.t('submissions.invalid_rmd_content'))
+        it 'should display a cannot display content error message' do
+          get_as instructor, :download, params: { course_id: course.id,
+                                                  assignment_id: assignment.id,
+                                                  file_name: filename,
+                                                  preview: true,
+                                                  grouping_id: grouping.id,
+                                                  revision_identifier: submission.revision_identifier }
+          expect(response.body).to include(I18n.t('submissions.invalid_rmd_content'))
+        end
       end
     end
   end
@@ -2122,54 +2101,66 @@ describe SubmissionsController do
                                         show_in_browser: true }
         end
 
+        before do
+          allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+        end
+
         let(:submission_file) { create(:submission_file, filename: filename, submission: submission) }
 
         context 'file is a jupyter-notebook file' do
           let(:filename) { 'example.ipynb' }
-          let(:redirect_location) do
-            html_content_course_assignment_submissions_path(course,
-                                                            assignment,
-                                                            select_file_id: submission_file.id)
-          end
 
           context 'and the python dependencies are installed' do
+            subject do
+              get_as instructor, :download_file,
+                     params: { course_id: course.id, assignment_id: assignment.id, select_file_id: submission_file.id,
+                               id: submission.id,
+                               show_in_browser: true }
+            end
+
             before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true) }
 
-            it 'should redirect to "html_content"' do
-              expect(subject).to(redirect_to(redirect_location))
-            end
+            it_behaves_like 'html content types'
           end
 
           context 'and the python dependencies are not installed' do
-            before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+            before do
+              allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false)
+              allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+            end
 
-            it 'should not redirect to "html_content"' do
-              expect(subject).not_to(redirect_to(redirect_location))
+            it 'should respond with the raw file contents' do
+              subject
+              expect(response.body).to eq SAMPLE_FILE_CONTENT
             end
           end
         end
 
         context 'file is a RMarkdown file' do
           let(:filename) { 'example.Rmd' }
-          let(:redirect_location) do
-            html_content_course_assignment_submissions_path(course,
-                                                            assignment,
-                                                            select_file_id: submission_file.id)
-          end
 
           context 'and the rmd_convert_enabled flag is true' do
+            subject do
+              get_as instructor, :download_file,
+                     params: { course_id: course.id, assignment_id: assignment.id, select_file_id: submission_file.id,
+                               id: submission.id,
+                               show_in_browser: true }
+            end
+
             before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true) }
 
-            it 'should redirect to "html_content"' do
-              expect(subject).to redirect_to(redirect_location)
-            end
+            it_behaves_like 'html content types'
           end
 
           context 'and the rmd_convert_enabled flag is false' do
-            before { allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false) }
+            before do
+              allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false)
+              allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
+            end
 
-            it 'should not redirect to "html_content"' do
-              expect(subject).not_to redirect_to(redirect_location)
+            it 'should respond with the raw file contents' do
+              subject
+              expect(response.body).to eq SAMPLE_FILE_CONTENT
             end
           end
         end
