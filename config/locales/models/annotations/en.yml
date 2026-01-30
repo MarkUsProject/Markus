@@ -8,3 +8,7 @@ en:
       annotation:
         one: Annotation
         other: Annotations
+    errors:
+      models:
+        annotation:
+          results_already_released: Cannot create/destroy annotation once results are released.

@@ -49,6 +49,10 @@ en:
               taken: remote_autotest_settings_id has already been taken by the same autotester.
             start_time:
               before_due_date: must be before due date
+            group_max:
+              not_enough_groups: must be greater than the minimum number of groups
+            repo_folder_change:
+              repository_folder_unchanged: repository folder should not be changed once an assignment has been created
     models:
       assignment:
         one: Assignment

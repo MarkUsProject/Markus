@@ -40,14 +40,14 @@ class Assessment < ApplicationRecord
 
   def short_identifier_unchanged
     return unless short_identifier_changed?
-    errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
+    errors.add(:short_id_change, :short_identifier_changed)
     false
   end
 
   def visible_dates_are_valid
     return if visible_on.nil? || visible_until.nil?
     if visible_on >= visible_until
-      errors.add(:visible_until, 'must be after visible_on')
+      errors.add(:visible_until, :before_visible_on)
     end
   end
 

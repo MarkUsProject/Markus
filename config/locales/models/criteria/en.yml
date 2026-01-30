@@ -31,6 +31,7 @@ en:
       models:
         criterion:
           visibility_error: Select at least one box in the visibility section
+          cannot_update_criterion: Cannot update criterion once results are released.
     models:
       checkbox_criterion:
         one: Checkbox Criterion

@@ -106,14 +106,14 @@ class AnnotationCategory < ApplicationRecord
 
   def delete_allowed?
     if marks_released? && deductive_annotations_exist?
-      errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
+      errors.add(:base, :cannot_delete_annotation)
       throw(:abort)
     end
   end
 
   def check_if_marks_released
     if marks_released?
-      errors.add(:base, I18n.t('activerecord.errors.models.annotation_category.cannot_update_flex'))
+      errors.add(:base, :cannot_update_flex)
       throw(:abort)
     end
   end
