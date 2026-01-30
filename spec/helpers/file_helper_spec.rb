@@ -116,6 +116,16 @@ describe FileHelper do
     end
   end
 
+  context 'A .zip Submission file' do
+    it 'return binary' do
+      expect(FileHelper.get_file_type('filename.zip')).to eq('binary')
+    end
+
+    it 'return a binary comment' do
+      expect(FileHelper.get_comment_syntax('filename.zip')).to eq(%w[## ##])
+    end
+  end
+
   context 'A no extension Submission file' do
     it 'return a unknown file extension' do
       expect(FileHelper.get_file_type('filename')).to eq('unknown')
