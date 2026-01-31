@@ -124,10 +124,10 @@
     <% if allowed_to?(:access_repo?, @grouping) %>
       <h3><%= t('groups.student_interface.url_repository') %></h3>
       <div class='sub_block'>
-        HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
+        HTTPS: <span><%= @grouping.group.repository_external_access_url %></span>
         <% if allowed_to?(:view?, with: KeyPairPolicy) %>
           <br>
-          SSH: <a href='#'><%= @grouping.group.repository_ssh_access_url %></a>
+          SSH: <span><%= @grouping.group.repository_ssh_access_url %></span>
         <% end %>
       </div>
     <% end %>
