@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
-import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class InstructorTable extends React.Component {
@@ -43,13 +43,28 @@ class InstructorTable extends React.Component {
         enableColumnFilter: false,
         header: () => I18n.t("actions"),
         cell: props => (
-          <a
-            href={Routes.edit_course_instructor_path(this.props.course_id, props.getValue())}
-            aria-label={I18n.t("edit")}
-            title={I18n.t("edit")}
-          >
-            <FontAwesomeIcon icon={faPencil} />
-          </a>
+          <span>
+            <a
+              href={Routes.edit_course_instructor_path(this.props.course_id, props.getValue())}
+              aria-label={I18n.t("edit")}
+              title={I18n.t("edit")}
+            >
+              <FontAwesomeIcon icon={faPencil} />
+            </a>
+            {this.props.is_admin && (
+              <>
+                &nbsp;|&nbsp;
+                <a
+                  href="#"
+                  onClick={() => this.removeInstructor(props.getValue())}
+                  aria-label={I18n.t("remove")}
+                  title={I18n.t("remove")}
+                >
+                  <FontAwesomeIcon icon={faTrashCan} />
+                </a>
+              </>
+            )}
+          </span>
         ),
       }),
     ];
@@ -59,6 +74,26 @@ class InstructorTable extends React.Component {
     this.setState({loading: true});
     this.fetchData().then(data => this.setState({data: this.processData(data), loading: false}));
   }
+
+  removeInstructor = instructor_id => {
+    fetch(Routes.course_instructor_path(this.props.course_id, instructor_id), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          this.fetchData().then(data =>
+            this.setState({data: this.processData(data), loading: false})
+          );
+        }
+      })
+      .catch(error => {
+        console.error("Error removing instructor:", error);
+      });
+  };
 
   fetchData() {
     return fetch(Routes.course_instructors_path(this.props.course_id), {
@@ -93,6 +128,7 @@ class InstructorTable extends React.Component {
 
 InstructorTable.propTypes = {
   course_id: PropTypes.number,
+  is_admin: PropTypes.bool,
 };
 
 function makeInstructorTable(elem, props) {

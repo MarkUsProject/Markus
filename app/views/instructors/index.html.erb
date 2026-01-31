@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeInstructorTable(document.getElementById('instructors_table'), {course_id: <%= @current_course.id %>});
+      makeInstructorTable(document.getElementById('instructors_table'), {course_id: <%= @current_course.id %>, is_admin: <%= @current_user.admin_user? %>});
     })
   <% end %>
 <% end %>
