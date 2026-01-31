@@ -125,6 +125,89 @@ describe InstructorsController do
       end
     end
 
+    describe '#destroy' do
+      context 'when not an admin' do
+        let(:other_instructor) { create(:instructor, course: course) }
+
+        before do
+          delete_as instructor, :destroy, params: { course_id: course.id, id: other_instructor.id }
+        end
+
+        it 'does not delete instructor and gets 403 response' do
+          expect(Instructor.exists?(other_instructor.id)).to be(true)
+          expect(flash.now[:success]).to be_nil
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      context 'when admin but destroy fails' do
+        let(:admin) { create(:admin_user) }
+        let(:target_instructor) { create(:instructor, course: course) }
+
+        before do
+          allow_any_instance_of(Role).to receive(:destroy).and_return(false)
+          delete_as admin, :destroy, params: { course_id: course.id, id: target_instructor.id }
+        end
+
+        it 'does not delete the instructor, shows an error message, and gets a bad request response' do
+          expect(Instructor.exists?(target_instructor.id)).to be(true)
+          expect(flash.now[:success]).to be_nil
+          expect(flash[:error]).to contain_message(
+            I18n.t('flash.instructors.destroy.error', user_name: target_instructor.user_name, message: '')
+          )
+          expect(response).to have_http_status(:bad_request)
+        end
+      end
+
+      context 'when instructor has created a note' do
+        let(:admin) { create(:admin_user) }
+        let(:target_instructor) { create(:instructor, course: course) }
+
+        before do
+          create(:note, role: target_instructor)
+          delete_as admin, :destroy, params: { course_id: course.id, id: target_instructor.id }
+        end
+
+        it 'does not delete the instructor, shows an error message, and gets a conflict response' do
+          expect(Instructor.exists?(target_instructor.id)).to be(true)
+          expect(flash.now[:success]).to be_nil
+          expect(flash[:error]).to contain_message(
+            I18n.t('flash.instructors.destroy.restricted', user_name: target_instructor.user_name, message: '')
+          )
+          expect(response).to have_http_status(:conflict)
+        end
+      end
+
+      context 'succeeds for instructor deletion' do
+        let(:admin) { create(:admin_user) }
+        let!(:target_instructor) { create(:instructor, course: course) }
+        let!(:annotation) { create(:text_annotation, creator: target_instructor) }
+        let!(:tag) { create(:tag, role: target_instructor) }
+
+        before do
+          delete_as admin, :destroy, params: { course_id: course.id, id: target_instructor.id }
+        end
+
+        it 'deletes instructor, flashes success, and gets a no_content response' do
+          expect(Instructor.exists?(target_instructor.id)).to be(false)
+          expect(flash.now[:success]).to contain_message(
+            I18n.t('flash.instructors.destroy.success', user_name: target_instructor.user_name)
+          )
+          expect(response).to have_http_status(:no_content)
+        end
+
+        it 'nullifies creator id in associated annotation' do
+          annotation.reload
+          expect(annotation.creator_id).to be_nil
+          expect(Annotation.exists?(annotation.id)).to be(true)
+        end
+
+        it 'deletes associated tags' do
+          expect(Tag.exists?(tag.id)).to be(false)
+        end
+      end
+    end
+
     describe '#update' do
       subject do
         post_as instructor, :update,
