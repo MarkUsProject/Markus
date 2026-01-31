@@ -423,7 +423,7 @@ class Result < ApplicationRecord
   # Do not allow the marking state to be changed to incomplete if the result is released
   def check_for_released
     if released_to_students && marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
-      errors.add(:base, I18n.t('results.marks_released'))
+      errors.add(:base, :marks_released)
       throw(:abort)
     end
     true
@@ -459,7 +459,7 @@ class Result < ApplicationRecord
     end
 
     if nil_marks || num_marks < criteria.count
-      errors.add(:base, I18n.t('results.criterion_incomplete_error'))
+      errors.add(:base, :criterion_incomplete_error)
       throw(:abort)
     end
     true

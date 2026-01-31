@@ -23,7 +23,6 @@ en:
     cant_display_image: Image cannot be displayed. Click on the Download button to download the file instead.
     collapse_all: Collapse All
     copy_text: copy text to clipboard
-    criterion_incomplete_error: Unable to change marking status to complete because not every criterion has been given a mark.
     current_mark: Current mark
     current_rotation: Current rotation (Clockwise) = %{rotation}°
     current_zoom_level: 'Current Zoom Level: %{level} %'

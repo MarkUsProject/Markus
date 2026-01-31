@@ -116,15 +116,13 @@ class AssignmentProperties < ApplicationRecord
   # those values are checked by other validations and so should not be checked twice.
   def start_before_due
     return if start_time.nil? || duration.nil?
-    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.start_time.before_due_date')
-    errors.add(:start_time, msg) if start_time > assignment.due_date
+    errors.add(:start_time, :before_due_date) if start_time > assignment.due_date
   end
 
   # Add an error if the is_timed and scanned_exam attributes for this assignment
   # are both true.
   def not_timed_and_scanned
-    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
-    errors.add(:base, msg) if is_timed && scanned_exam
+    errors.add(:is_timed, :not_scanned) if is_timed && scanned_exam
   end
 
   # Ensure remote_autotest_settings_id is unique for a given autotester
@@ -133,7 +131,6 @@ class AssignmentProperties < ApplicationRecord
       remote_autotest_settings_id: self.remote_autotest_settings_id,
       course: { autotest_setting_id: self.assignment.course.autotest_setting_id }
     ).where.not(id: self.id).exists?
-    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.remote_autotest_settings_id.taken')
-    errors.add(:remote_autotest_settings_id, msg) if remote_autotest_settings_id_is_taken
+    errors.add(:remote_autotest_settings_id, :taken) if remote_autotest_settings_id_is_taken
   end
 end

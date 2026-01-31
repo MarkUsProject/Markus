@@ -8,7 +8,6 @@ en:
     assign: Assign Reviewers
     assigned_reviewers_header: Reviewers
     errors:
-      cannot_allow_reviewer_to_be_reviewee: A student cannot be a reviewer and reviewee
       cannot_unassign_all_reviewers: 'Successfully unassigned %{deleted_count} peer reviewer(s), but could not unassign the following due to existing marks or annotations: %{undeleted_reviews}.'
       cannot_unassign_any_reviewers: Cannot unassign peer reviewer(s) because marks or annotations exist.
       collect_submissions_first: Submissions for original assignment need to be collected before you can assign reviewers.
