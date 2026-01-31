@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Allow administrators to remove instructors from a course (#7808)
 - Enable test results downloads through the API (#7754)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
