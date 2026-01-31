@@ -1,0 +1,9 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        key_pair:
+          attributes:
+            public_key:
+              invalid_key: "Upload failed: Invalid key"
