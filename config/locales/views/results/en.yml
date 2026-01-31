@@ -56,6 +56,7 @@ en:
       when_rubric: "(When on rubric) "
     late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
     marks_chart: Marks Chart
+    marks_released: The marks have been released. You cannot change the grades.
     next_submission: Next Submission
     no_feedback_files: "[No feedback files available]"
     no_incomplete_submission: There are no other incomplete submissions!
