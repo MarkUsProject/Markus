@@ -5,11 +5,11 @@ en:
       result:
         marking_state: Marking State
         overall_comment: Overall Comments
-    models:
-      result:
-        one: Result
-        other: Results
     errors:
       models:
         result:
           marks_released: The marks have been released. You cannot change the grades.
+    models:
+      result:
+        one: Result
+        other: Results

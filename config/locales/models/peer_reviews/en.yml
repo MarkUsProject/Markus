@@ -5,14 +5,14 @@ en:
       peer_review:
         reviewee: Reviewee
         reviewer: Reviewer
-    models:
-      peer_review:
-        one: Peer Review
-        other: Peer Reviews
-        reviewer_assigned_to_reviewee: "%{reviewer_group_name} (assigned to review %{reviewee_group_name})"
     errors:
       models:
         peer_review:
           attributes:
             reviewer_id:
               cannot_allow_reviewer_to_be_reviewee: A student cannot be a reviewer and reviewee
+    models:
+      peer_review:
+        one: Peer Review
+        other: Peer Reviews
+        reviewer_assigned_to_reviewee: "%{reviewer_group_name} (assigned to review %{reviewee_group_name})"

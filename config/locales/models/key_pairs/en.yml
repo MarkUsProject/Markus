@@ -6,4 +6,4 @@ en:
         key_pair:
           attributes:
             public_key:
-              invalid_key: "Upload failed: Invalid key"
+              invalid_key: 'Upload failed: Invalid key'
