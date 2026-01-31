@@ -29,6 +29,10 @@ en:
     instructors:
       create:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      destroy:
+        error: 'Error removing instructor (%{user_name}): %{message}'
+        restricted: 'Cannot remove instructor (%{user_name}): %{message}'
+        success: Successfully removed instructor (%{user_name}) from course.
       update:
         error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
     students:
