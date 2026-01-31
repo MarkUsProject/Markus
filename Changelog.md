@@ -14,10 +14,10 @@
 - Store start and end date for courses (#7783)
 - Update batch test runs table UI (#7790)
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
-- Remove QR code name size limit (#7796)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Display descriptive error message when scanned exam template name exceeds the 20-character limit (#7796)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
