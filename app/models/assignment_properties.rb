@@ -122,7 +122,7 @@ class AssignmentProperties < ApplicationRecord
   # Add an error if the is_timed and scanned_exam attributes for this assignment
   # are both true.
   def not_timed_and_scanned
-    errors.add(:base, :not_scanned) if is_timed && scanned_exam
+    errors.add(:is_timed, :not_scanned) if is_timed && scanned_exam
   end
 
   # Ensure remote_autotest_settings_id is unique for a given autotester
