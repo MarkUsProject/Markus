@@ -49,7 +49,8 @@ module FileHelper
                   '.xls' => 'binary',
                   '.xlsx' => 'binary',
                   '.ppt' => 'binary',
-                  '.pptx' => 'binary' }.freeze
+                  '.pptx' => 'binary',
+                  '.zip' => 'binary' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
                         '.js' => %w[/* */],

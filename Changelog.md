@@ -15,6 +15,7 @@
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Prevent ZIP files from being previewed in the assignment file viewer (#7802)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
