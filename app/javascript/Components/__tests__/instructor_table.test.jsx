@@ -1,4 +1,4 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 import {InstructorTable} from "../instructor_table";
 
@@ -88,6 +88,73 @@ describe("For the InstructorTable's display of instructors", () => {
 
     it("No rows found is shown", async () => {
       await screen.findByText(I18n.t("instructors.empty_table"));
+    });
+  });
+});
+
+describe("For the InstructorTable's admin remove button", () => {
+  let mock_course_id = 1;
+  let mock_instructor_id = 42;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(global, "fetch").mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        data: [
+          {
+            id: mock_instructor_id,
+            user_name: "testinstructor",
+            first_name: "Test",
+            last_name: "Instructor",
+            email: "test@test.com",
+            hidden: false,
+          },
+        ],
+        counts: {all: 1, active: 1, inactive: 0},
+      }),
+    });
+
+    document.querySelector = jest.fn().mockReturnValue({
+      content: "mocked-csrf-token",
+    });
+  });
+
+  it("shows remove button when is_admin is true", async () => {
+    render(<InstructorTable course_id={mock_course_id} is_admin={true} />);
+    await screen.findByText("testinstructor");
+    expect(screen.getByLabelText(I18n.t("remove"))).toBeInTheDocument();
+  });
+
+  it("does not show remove button when is_admin is false", async () => {
+    render(<InstructorTable course_id={mock_course_id} is_admin={false} />);
+    await screen.findByText("testinstructor");
+    expect(screen.queryByLabelText(I18n.t("remove"))).not.toBeInTheDocument();
+  });
+
+  it("does not show remove button when is_admin is not set", async () => {
+    render(<InstructorTable course_id={mock_course_id} />);
+    await screen.findByText("testinstructor");
+    expect(screen.queryByLabelText(I18n.t("remove"))).not.toBeInTheDocument();
+  });
+
+  it("calls the correct endpoint when remove is triggered", async () => {
+    render(<InstructorTable course_id={mock_course_id} is_admin={true} />);
+    await screen.findByText("testinstructor");
+
+    fireEvent.click(screen.getByLabelText(I18n.t("remove")));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        Routes.course_instructor_path(mock_course_id, mock_instructor_id),
+        expect.objectContaining({
+          method: "DELETE",
+          headers: expect.objectContaining({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": expect.any(String),
+          }),
+        })
+      );
     });
   });
 });
