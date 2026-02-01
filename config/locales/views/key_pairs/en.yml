@@ -5,7 +5,6 @@ en:
     back: Back
     copy_paste_key: Copy and paste your public key
     create:
-      invalid_key: 'Upload failed: Invalid key'
       success: SSH Key was uploaded successfully
     create_key_pair: Upload SSH Key
     delete:
