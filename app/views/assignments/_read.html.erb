@@ -125,9 +125,15 @@
       <h3><%= t('groups.student_interface.url_repository') %></h3>
       <div class='sub_block'>
         HTTPS: <span><%= @grouping.group.repository_external_access_url %></span>
+        <button class="copy-url-button" data-clipboard-text="<%= @grouping.group.repository_external_access_url %>">
+          <i class="fa-solid fa-copy"></i>
+        </button>
         <% if allowed_to?(:view?, with: KeyPairPolicy) %>
           <br>
           SSH: <span><%= @grouping.group.repository_ssh_access_url %></span>
+          <button class="copy-url-button" data-clipboard-text="<%= @grouping.group.repository_ssh_access_url %>">
+            <i class="fa-solid fa-copy"></i>
+          </button>
         <% end %>
       </div>
     <% end %>
@@ -201,3 +207,13 @@
     <% end %>
 <% end %>
 </div>
+
+<%= javascript_tag nonce: true do %>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.copy-url-button').forEach(function(button) {
+      button.addEventListener('click', function() {
+        navigator.clipboard.writeText(this.dataset.clipboardText);
+      });
+    });
+  });
+<% end %>
