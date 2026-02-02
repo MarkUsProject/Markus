@@ -138,13 +138,15 @@ describe("For the InstructorTable's admin remove button", () => {
     expect(screen.queryByLabelText(I18n.t("remove"))).not.toBeInTheDocument();
   });
 
-  it("calls the correct endpoint when remove is triggered", async () => {
+  it("calls the correct endpoint when remove is confirmed", async () => {
+    jest.spyOn(global, "confirm").mockReturnValue(true);
     render(<InstructorTable course_id={mock_course_id} is_admin={true} />);
     await screen.findByText("testinstructor");
 
     fireEvent.click(screen.getByLabelText(I18n.t("remove")));
 
     await waitFor(() => {
+      expect(global.confirm).toHaveBeenCalledWith(I18n.t("instructors.delete_confirm"));
       expect(fetch).toHaveBeenCalledWith(
         Routes.course_instructor_path(mock_course_id, mock_instructor_id),
         expect.objectContaining({
@@ -156,6 +158,20 @@ describe("For the InstructorTable's admin remove button", () => {
         })
       );
     });
+    global.confirm.mockRestore();
+  });
+
+  it("does not call the endpoint when remove is cancelled", async () => {
+    jest.spyOn(global, "confirm").mockReturnValue(false);
+    render(<InstructorTable course_id={mock_course_id} is_admin={true} />);
+    await screen.findByText("testinstructor");
+
+    const initialFetchCount = fetch.mock.calls.length;
+    fireEvent.click(screen.getByLabelText(I18n.t("remove")));
+
+    expect(global.confirm).toHaveBeenCalledWith(I18n.t("instructors.delete_confirm"));
+    expect(fetch.mock.calls.length).toBe(initialFetchCount);
+    global.confirm.mockRestore();
   });
 });
 
