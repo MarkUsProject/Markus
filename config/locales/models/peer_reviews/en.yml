@@ -5,6 +5,12 @@ en:
       peer_review:
         reviewee: Reviewee
         reviewer: Reviewer
+    errors:
+      models:
+        peer_review:
+          attributes:
+            reviewer_id:
+              cannot_allow_reviewer_to_be_reviewee: A student cannot be a reviewer and reviewee
     models:
       peer_review:
         one: Peer Review
