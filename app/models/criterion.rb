@@ -161,7 +161,7 @@ class Criterion < ApplicationRecord
   def results_unreleased?
     return true if self.assignment&.released_marks.blank?
 
-    errors.add(:base, :cannot_update_criterion)
+    errors.add(:base, :results_already_released)
     false
   end
 

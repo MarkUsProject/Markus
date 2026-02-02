@@ -9,7 +9,7 @@ en:
     errors:
       models:
         level:
-          cannot_update_level: Cannot update level once results are released.
+          results_already_released: Cannot update level once results are released.
     models:
       level:
         one: Level
