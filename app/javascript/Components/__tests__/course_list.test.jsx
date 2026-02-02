@@ -1,6 +1,6 @@
 import React from "react";
 import {render, screen, waitFor} from "@testing-library/react";
-import CourseList, {makeCourseList} from "../course_list.jsx";
+import {CourseList, makeCourseList} from "../course_list.jsx";
 import fetchMock from "jest-fetch-mock";
 import {createRoot} from "react-dom/client";
 

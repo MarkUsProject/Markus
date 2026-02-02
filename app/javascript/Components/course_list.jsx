@@ -2,7 +2,7 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import CourseCard from "./course_cards";
 
-class CourseList extends React.Component {
+export class CourseList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -86,8 +86,6 @@ class CourseList extends React.Component {
     );
   }
 }
-
-export default CourseList;
 
 export function makeCourseList(elem, props) {
   const root = createRoot(elem);
