@@ -76,6 +76,9 @@ class InstructorTable extends React.Component {
   }
 
   removeInstructor = instructor_id => {
+    if (!confirm(I18n.t("instructors.delete_confirm"))) {
+      return;
+    }
     fetch(Routes.course_instructor_path(this.props.course_id, instructor_id), {
       method: "DELETE",
       headers: {
