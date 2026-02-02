@@ -15,12 +15,14 @@
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Prevent ZIP files from being previewed in the assignment file viewer (#7802)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
 - Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
 - Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
+- Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
 - Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7793)
 
 ## [v2.9.1]

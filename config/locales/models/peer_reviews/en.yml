@@ -9,6 +9,9 @@ en:
       models:
         peer_review:
           not_in_same_assignment: result and reviewer must all belong to the same assignment
+          attributes:
+            reviewer_id:
+              cannot_allow_reviewer_to_be_reviewee: A student cannot be a reviewer and reviewee
     models:
       peer_review:
         one: Peer Review
