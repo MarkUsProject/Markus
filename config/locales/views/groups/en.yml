@@ -92,6 +92,7 @@ en:
       not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
       section_groups_only: You can only form a group with students in your section.
       students_work_alone: You must complete this assignment individually.
+      copied_to_clipboard: Successfully copied to clipboard.
       url_repository: Repository URL
       work_alone: Work alone
       working_alone: You have indicated you are working individually on this assignment. If you change your mind and want to create or join a group, first delete your group using the button below.

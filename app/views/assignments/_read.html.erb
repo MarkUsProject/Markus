@@ -212,7 +212,12 @@
   document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.copy-url-button').forEach(function(button) {
       button.addEventListener('click', function() {
-        navigator.clipboard.writeText(this.dataset.clipboardText);
+        navigator.clipboard.writeText(this.dataset.clipboardText).then(() => {
+          var flashDiv = document.getElementsByClassName("success")[0];
+          var contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
+          contents.innerHTML = "<p><%= j t('groups.student_interface.copied_to_clipboard') %></p>";
+          flashDiv.style.display = "block";
+        });
       });
     });
   });
