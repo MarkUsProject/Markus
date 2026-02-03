@@ -1,6 +1,8 @@
 ---
 en:
   courses:
-    no_courses: No courses found.
+    current_courses: Current Courses
+    no_courses: No courses to display.
+    past_courses: Past Courses
     settings: Course Settings
     view_courses: Courses
