@@ -1,5 +1,10 @@
 # Changelog
 
+## [v2.9.2]
+
+### 🐛 Bug fixes
+- Fixed display of inline images in notebook HTML rendering (#7816)
+
 ## [v2.9.1]
 
 ### 🛡️ Security
