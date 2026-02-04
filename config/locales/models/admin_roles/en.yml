@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        admin_role:
+          must_be_admin: only admin users can be assigned the admin role

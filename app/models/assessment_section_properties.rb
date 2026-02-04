@@ -22,7 +22,7 @@ class AssessmentSectionProperties < ApplicationRecord
   def visible_dates_are_valid
     return if visible_on.nil? || visible_until.nil?
     if visible_on >= visible_until
-      errors.add(:visible_until, 'must be after visible_on')
+      errors.add(:visible_until, :before_visible_on)
     end
   end
 end

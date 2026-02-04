@@ -14,7 +14,7 @@ class GroupingStarterFileEntry < ApplicationRecord
   def assignments_should_match
     return if starter_file_entry.nil? || grouping.nil?
     unless grouping.assignment == starter_file_entry.starter_file_group.assignment
-      errors.add(:base, 'starter_file_entry and grouping must all belong to the same assignment')
+      errors.add(:base, :not_in_same_assignment)
     end
   end
 end

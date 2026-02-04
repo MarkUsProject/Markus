@@ -6,6 +6,10 @@ en:
         description: Description
         mark: Mark
         name: Name
+    errors:
+      models:
+        level:
+          results_already_released: Cannot update level once results are released.
     models:
       level:
         one: Level
