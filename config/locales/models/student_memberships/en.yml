@@ -4,4 +4,6 @@ en:
     errors:
       models:
         student_membership:
+          invalid_membership: Invalid membership status
           memberships_not_unique: The student already belongs to a different group for the current assignment.
+          not_student: User must be a student

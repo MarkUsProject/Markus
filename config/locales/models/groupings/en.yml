@@ -12,3 +12,7 @@ en:
           other: "%{count} inactive students"
           zero: 0 inactive students
         test_tokens: Tokens available
+    errors:
+      models:
+        grouping:
+          different_assignment_grouping: tags must belong to the same assignment as this grouping

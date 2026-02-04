@@ -1,0 +1,9 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        assessment_section_properties:
+          attributes:
+            visible_until:
+              before_visible_on: must be after visible_on

@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        grouping_starter_file_entry:
+          not_in_same_assignment: starter_file_entry and grouping must all belong to the same assignment

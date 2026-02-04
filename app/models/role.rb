@@ -102,7 +102,7 @@ class Role < ApplicationRecord
   # is an end user
   def associated_user_is_an_end_user
     unless self.user.nil? || self.user.end_user?
-      errors.add(:base, "non end users cannot be assigned the #{self.model_name.human} role")
+      errors.add(:base, :invalid_assignment, role_name: self.model_name.human)
     end
   end
 

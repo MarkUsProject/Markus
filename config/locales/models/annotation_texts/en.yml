@@ -5,6 +5,10 @@ en:
       annotation_text:
         creator: Created By
         deduction: Deduction
+    errors:
+      models:
+        annotation_text:
+          results_already_released: Cannot update/destroy annotation_text once results are released.
     models:
       annotation_text:
         one: Annotation Text
