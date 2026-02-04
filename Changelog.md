@@ -13,6 +13,7 @@
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
 - Split courses into Current and Past sections for all users (#7801)
+- Batch the calculation of TA grading statistics on assignments index page (#7787)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)

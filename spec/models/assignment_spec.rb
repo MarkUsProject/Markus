@@ -2804,6 +2804,88 @@ describe Assignment do
     end
   end
 
+  describe '#get_num_assigned' do
+    let(:ta) { create(:ta) }
+    let(:assignment) { create(:assignment) }
+    let!(:grouping1) { create(:grouping_with_inviter, assignment: assignment) }
+    let!(:grouping2) { create(:grouping_with_inviter, assignment: assignment) }
+
+    before do
+      create(:grouping_with_inviter, assignment: assignment) # grouping3 - not assigned to TA
+      create(:ta_membership, role: ta, grouping: grouping1)
+      create(:ta_membership, role: ta, grouping: grouping2)
+    end
+
+    context 'when user is instructor' do
+      it 'returns total number of groupings' do
+        expect(assignment.get_num_assigned).to eq(3)
+      end
+    end
+
+    context 'when user is TA' do
+      it 'returns number of groupings assigned to them' do
+        expect(assignment.get_num_assigned(ta.id)).to eq(2)
+      end
+    end
+  end
+
+  describe '.batch_ta_stats' do
+    let(:ta) { create(:ta) }
+    let(:assignment1) { create(:assignment) }
+    let(:assignment2) { create(:assignment) }
+
+    let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment1, is_collected: true) }
+    let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment1, is_collected: true) }
+    let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment2, is_collected: true) }
+
+    before do
+      create(:complete_result, submission: grouping1.submissions.first)
+      create(:incomplete_result, submission: grouping2.submissions.first)
+      create(:complete_result, submission: grouping3.submissions.first)
+      create(:ta_membership, role: ta, grouping: grouping1)
+      create(:ta_membership, role: ta, grouping: grouping2)
+      create(:ta_membership, role: ta, grouping: grouping3)
+    end
+
+    it 'returns empty hash when ta_id is nil' do
+      expect(Assignment.batch_ta_stats([assignment1, assignment2], nil)).to eq({})
+    end
+
+    it 'returns empty hash when assignments is empty' do
+      expect(Assignment.batch_ta_stats([], ta.id)).to eq({})
+    end
+
+    it 'returns correct stats for multiple assignments' do
+      stats = Assignment.batch_ta_stats([assignment1, assignment2], ta.id)
+
+      expect(stats[assignment1.id][:num_assigned]).to eq(2)
+      expect(stats[assignment1.id][:num_marked]).to eq(1)
+      expect(stats[assignment2.id][:num_assigned]).to eq(1)
+      expect(stats[assignment2.id][:num_marked]).to eq(1)
+    end
+
+    context 'when assignment has criteria-based grading' do
+      let(:assignment3) do
+        create(:assignment_with_criteria_and_results_with_remark,
+               assignment_properties_attributes: { assign_graders_to_criteria: true })
+      end
+      let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment3) }
+
+      before do
+        create(:ta_membership, role: ta, grouping: assignment3.groupings.first)
+        create(:ta_membership, role: ta, grouping: grouping4)
+        create(:criterion_ta_association, ta: ta, criterion: assignment3.criteria.first)
+      end
+
+      it 'falls back to get_num_marked for criteria-based assignments' do
+        stats = Assignment.batch_ta_stats([assignment3], ta.id)
+
+        expect(stats[assignment3.id][:num_assigned]).to eq(2)
+        expect(stats[assignment3.id][:num_marked]).to eq(assignment3.get_num_marked(ta.id))
+      end
+    end
+  end
+
   describe '#completed_result_marks' do
     let(:assignment) { create(:assignment) }
     let!(:criteria) { create_list(:rubric_criterion, 2, assignment: assignment, max_mark: 4) }
