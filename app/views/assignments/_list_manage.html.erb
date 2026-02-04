@@ -2,6 +2,7 @@
                                 .includes(:submission_rule, :assessment_section_properties, :pr_assignment)
                                 .order(:due_date, :short_identifier) %>
 <% action = @current_role.instructor? ? 'edit' : 'summary' %>
+<% ta_stats = @current_role.ta? ? Assignment.batch_ta_stats(assignments, @current_role.id) : {} %>
 
 <% if assignments.empty? %>
   <p><%= t('assignments.none') %></p>
@@ -39,12 +40,17 @@
                 </span>
               <% end %>
               <% if assignment.submission_rule.can_collect_all_now? %>
-                <% ta_id = @current_role.instructor? ? nil : @current_role.id %>
                 <br>
                 <span>
-                  <%= t('submissions.how_many_marked',
-                        num_marked: assignment.get_num_marked(ta_id),
-                        num_assigned: assignment.get_num_assigned(ta_id)) %>
+                  <% if ta_stats[assignment.id] %>
+                    <%= t('submissions.how_many_marked',
+                          num_marked: ta_stats[assignment.id][:num_marked],
+                          num_assigned: ta_stats[assignment.id][:num_assigned]) %>
+                  <% else %>
+                    <%= t('submissions.how_many_marked',
+                          num_marked: assignment.get_num_marked,
+                          num_assigned: assignment.get_num_assigned) %>
+                  <% end %>
                 </span>
                 <br>
                 <%= link_to t('assignments.grades'),
