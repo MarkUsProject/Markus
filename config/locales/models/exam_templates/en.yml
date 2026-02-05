@@ -8,6 +8,12 @@ en:
         name: Name
         num_pages: pages
         template_divisions: Template Divisions
+    errors:
+      models:
+        exam_template:
+          attributes:
+            name:
+              too_long: must be at most %{count} characters
     models:
       exam_template:
         one: Exam Template
