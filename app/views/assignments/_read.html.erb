@@ -124,13 +124,13 @@
     <% if allowed_to?(:access_repo?, @grouping) %>
       <h3><%= t('groups.student_interface.url_repository') %></h3>
       <div class='sub_block'>
-        HTTPS: <span><%= @grouping.group.repository_external_access_url %></span>
+        HTTPS: <code><%= @grouping.group.repository_external_access_url %></code>
         <button class="copy-url-button" data-clipboard-text="<%= @grouping.group.repository_external_access_url %>">
           <i class="fa-solid fa-copy"></i>
         </button>
         <% if allowed_to?(:view?, with: KeyPairPolicy) %>
           <br>
-          SSH: <span><%= @grouping.group.repository_ssh_access_url %></span>
+          SSH: <code><%= @grouping.group.repository_ssh_access_url %></code>
           <button class="copy-url-button" data-clipboard-text="<%= @grouping.group.repository_ssh_access_url %>">
             <i class="fa-solid fa-copy"></i>
           </button>
@@ -209,13 +209,13 @@
 </div>
 
 <%= javascript_tag nonce: true do %>
-  document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll('.copy-url-button').forEach(function(button) {
-      button.addEventListener('click', function() {
-        navigator.clipboard.writeText(this.dataset.clipboardText).then(() => {
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.copy-url-button').forEach(button => {
+      button.addEventListener('click', () => {
+        navigator.clipboard.writeText(button.dataset.clipboardText).then(() => {
           var flashDiv = document.getElementsByClassName("success")[0];
           var contents = flashDiv.getElementsByClassName("flash-content")[0] || flashDiv;
-          contents.innerHTML = "<p><%= j t('groups.student_interface.copied_to_clipboard') %></p>";
+          contents.innerHTML = "<p><%= t('groups.student_interface.copied_to_clipboard') %></p>";
           flashDiv.style.display = "block";
         });
       });
