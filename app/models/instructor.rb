@@ -9,6 +9,6 @@ class Instructor < Role
   has_many :annotation_texts, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
   has_many :annotations, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
   has_many :notes, dependent: :restrict_with_exception, inverse_of: :role, foreign_key: :creator_id
-  has_many :tags, dependent: :destroy, foreign_key: :role_id, inverse_of: :role
-  has_many :split_pdf_logs, dependent: :destroy, foreign_key: :role_id, inverse_of: :role
+  has_many :tags, dependent: :restrict_with_exception, foreign_key: :role_id, inverse_of: :role
+  has_many :split_pdf_logs, dependent: :restrict_with_exception, foreign_key: :role_id, inverse_of: :role
 end

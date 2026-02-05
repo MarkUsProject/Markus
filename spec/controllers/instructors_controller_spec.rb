@@ -178,11 +178,46 @@ describe InstructorsController do
         end
       end
 
+      context 'when instructor has associated tags' do
+        let(:admin) { create(:admin_user) }
+        let(:target_instructor) { create(:instructor, course: course) }
+
+        before do
+          create(:tag, role: target_instructor)
+          delete_as admin, :destroy, params: { course_id: course.id, id: target_instructor.id }
+        end
+
+        it 'does not delete the instructor and returns a conflict response' do
+          expect(Instructor.exists?(target_instructor.id)).to be(true)
+          expect(flash[:error]).to contain_message(
+            I18n.t('flash.instructors.destroy.restricted', user_name: target_instructor.user_name, message: '')
+          )
+          expect(response).to have_http_status(:conflict)
+        end
+      end
+
+      context 'when instructor has associated split_pdf_logs' do
+        let(:admin) { create(:admin_user) }
+        let(:target_instructor) { create(:instructor, course: course) }
+
+        before do
+          create(:split_pdf_log, role: target_instructor)
+          delete_as admin, :destroy, params: { course_id: course.id, id: target_instructor.id }
+        end
+
+        it 'does not delete the instructor and returns a conflict response' do
+          expect(Instructor.exists?(target_instructor.id)).to be(true)
+          expect(flash[:error]).to contain_message(
+            I18n.t('flash.instructors.destroy.restricted', user_name: target_instructor.user_name, message: '')
+          )
+          expect(response).to have_http_status(:conflict)
+        end
+      end
+
       context 'succeeds for instructor deletion' do
         let(:admin) { create(:admin_user) }
         let!(:target_instructor) { create(:instructor, course: course) }
         let!(:annotation) { create(:text_annotation, creator: target_instructor) }
-        let!(:tag) { create(:tag, role: target_instructor) }
 
         before do
           delete_as admin, :destroy, params: { course_id: course.id, id: target_instructor.id }
@@ -200,10 +235,6 @@ describe InstructorsController do
           annotation.reload
           expect(annotation.creator_id).to be_nil
           expect(Annotation.exists?(annotation.id)).to be(true)
-        end
-
-        it 'deletes associated tags' do
-          expect(Tag.exists?(tag.id)).to be(false)
         end
       end
     end
