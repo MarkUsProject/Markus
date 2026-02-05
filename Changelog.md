@@ -12,6 +12,8 @@
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
+- Split courses into Current and Past sections for all users (#7801)
+- Batch the calculation of TA grading statistics on assignments index page (#7787)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
@@ -23,7 +25,13 @@
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
 - Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
 - Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
+- Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
+
+## [v2.9.2]
+
+### 🐛 Bug fixes
+- Fixed display of inline images in notebook HTML rendering (#7816)
 
 ## [v2.9.1]
 

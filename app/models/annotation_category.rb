@@ -106,7 +106,7 @@ class AnnotationCategory < ApplicationRecord
 
   def delete_allowed?
     if marks_released? && deductive_annotations_exist?
-      errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
+      errors.add(:base, :cannot_delete_annotation)
       throw(:abort)
     end
   end

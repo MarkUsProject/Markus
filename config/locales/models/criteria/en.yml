@@ -30,6 +30,7 @@ en:
     errors:
       models:
         criterion:
+          results_already_released: Cannot update criterion once results are released.
           visibility_error: Select at least one box in the visibility section
     models:
       checkbox_criterion:
