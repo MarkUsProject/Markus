@@ -25,7 +25,7 @@ en:
     create:
       add_division: Add Template Division
       add_new: Add Exam Template
-      failure: Exam Template not successfully created
+      failure: Exam Template not successfully created%{errors}
       success: Exam Template successfully created
       upload: Upload Template
     delete:
@@ -90,7 +90,7 @@ en:
       scan_error: Some files have not been scanned properly.
       submission_in_progress: Scanning QR codes done, now preparing PDF pages for grading
     update:
-      failure: Exam Template has not been successfully updated
+      failure: Exam Template has not been successfully updated%{errors}
       instruction: Replace template file
       success: Exam Template has been successfully updated
     upload_scans:

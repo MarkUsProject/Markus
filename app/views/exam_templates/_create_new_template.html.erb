@@ -8,7 +8,7 @@
       <%= f.label :file_io, t('exam_templates.create.upload'), class: "required" %>
       <%= f.file_field :file_io, required: true, accept: 'application/pdf' %>
       <%= f.label :name, ExamTemplate.human_attribute_name('name') %>
-      <%= f.text_field :name %>
+      <%= f.text_field :name, maxlength: 20 %>
     </div>
     <section class='dialog-actions'>
       <%= f.submit t(:save),
