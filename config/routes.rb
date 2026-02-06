@@ -125,7 +125,7 @@ Rails.application.routes.draw do
       get 'lti_settings'
     end
 
-    resources :instructors, only: [:index, :new, :create, :edit, :update]
+    resources :instructors, only: [:index, :new, :create, :edit, :update, :destroy]
 
     resources :starter_file_groups, only: [:destroy, :update] do
       member do
