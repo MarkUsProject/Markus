@@ -43,7 +43,6 @@ class RawStudentTable extends React.Component {
         this.setState({
           data: res,
           loading: false,
-          rowSelection: {},
         });
       });
   };
