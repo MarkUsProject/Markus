@@ -20,6 +20,7 @@
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Prevent ZIP files from being previewed in the assignment file viewer (#7802)
 - Display descriptive error message when scanned exam template name exceeds the 20-character limit (#7796)
+- Made repository URL not a link for student assignment view when version control is enabled (#7807)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
