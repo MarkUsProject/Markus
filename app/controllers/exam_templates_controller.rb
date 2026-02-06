@@ -35,7 +35,8 @@ class ExamTemplatesController < ApplicationController
         redirect_to edit_course_exam_template_path(current_course, exam_template)
         return
       else
-        flash_message(:error, t('exam_templates.create.failure'))
+        errors = exam_template&.errors&.full_messages&.join(', ')
+        flash_message(:error, t('exam_templates.create.failure', errors: errors.present? ? ": #{errors}" : ''))
       end
     end
     redirect_to course_assignment_exam_templates_path(current_course, assignment)
@@ -71,7 +72,8 @@ class ExamTemplatesController < ApplicationController
       if old_exam_template.update(exam_template_params)
         flash_message(:success, t('exam_templates.update.success'))
       else
-        flash_message(:error, t('exam_templates.update.failure'))
+        errors = old_exam_template.errors.full_messages.join(', ')
+        flash_message(:error, t('exam_templates.update.failure', errors: errors.present? ? ": #{errors}" : ''))
       end
     else
       new_template_filename = new_uploaded_io.original_filename
