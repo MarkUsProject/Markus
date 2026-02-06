@@ -5,4 +5,10 @@ class Instructor < Role
   validate :associated_user_is_an_end_user, unless: -> { self.admin_role? }
 
   has_many :memberships, dependent: :delete_all, foreign_key: 'role_id', inverse_of: :role
+
+  has_many :annotation_texts, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
+  has_many :annotations, dependent: :nullify, inverse_of: :creator, foreign_key: :creator_id
+  has_many :notes, dependent: :restrict_with_exception, inverse_of: :role, foreign_key: :creator_id
+  has_many :tags, dependent: :restrict_with_exception, foreign_key: :role_id, inverse_of: :role
+  has_many :split_pdf_logs, dependent: :restrict_with_exception, foreign_key: :role_id, inverse_of: :role
 end

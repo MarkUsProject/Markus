@@ -44,6 +44,24 @@ class InstructorsController < ApplicationController
     respond_with @role, location: course_instructors_path(current_course)
   end
 
+  def destroy
+    @role = record
+    begin
+      @role.destroy!
+    rescue ActiveRecord::DeleteRestrictionError => e
+      flash_message(:error,
+                    I18n.t('flash.instructors.destroy.restricted', user_name: @role.user_name, message: e.message))
+      head :conflict
+    rescue ActiveRecord::RecordNotDestroyed => e
+      flash_message(:error,
+                    I18n.t('flash.instructors.destroy.error', user_name: @role.user_name, message: e.message))
+      head :bad_request
+    else
+      flash_now(:success, I18n.t('flash.instructors.destroy.success', user_name: @role.user_name))
+      head :no_content
+    end
+  end
+
   private
 
   def create_update_params
