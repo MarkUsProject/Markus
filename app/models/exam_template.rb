@@ -8,7 +8,8 @@ class ExamTemplate < ApplicationRecord
   has_one :course, through: :assignment
   validates :filename, :num_pages, :name, presence: true
   validates :name,
-            uniqueness: { scope: :assignment }
+            uniqueness: { scope: :assignment },
+            length: { maximum: 20 }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
