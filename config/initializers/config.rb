@@ -141,6 +141,8 @@ Config.setup do |config|
         included_in?: %w[user_name last_name first_name id_number email]
       )
       required(:rmd_convert_enabled).filled(:bool)
+      required(:max_zip_file_entries).value(:integer, gt?: -1)
+      required(:max_zip_total_size).value(:integer, gt?: -1)
       required(:repository).hash do
         required(:url).filled(:string)
         optional(:ssh_url).filled(:string)
