@@ -21,10 +21,10 @@ en:
     invalid_rows: 'The following CSV rows were invalid: '
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
     syntax_error: 'There is an error in the file you uploaded: %{error}'
+    too_many_zip_entries: Zip file contains too many entries (maximum %{max} allowed).
     unparseable_csv: The selected file is not a CSV file (even though it may have a .csv extension).
-    too_many_zip_entries: "Zip file contains too many entries (maximum %{max} allowed)."
-    zip_entry_too_large: "Zip entry %{file_name} exceeds the maximum file size of %{max_size} MB."
-    zip_too_large_total: "Zip file uncompressed size exceeds the maximum of %{max_mb} MB."
+    zip_entry_too_large: Zip entry %{file_name} exceeds the maximum file size of %{max_size} MB.
+    zip_too_large_total: Zip file uncompressed size exceeds the maximum of %{max_mb} MB.
   upload_help_html: ' For information about the file format(s) supported, please visit <a href="https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Importing-and-Exporting-Data.md#%{section_id}">this page</a>.'
   upload_success:
     one: "%{count} object successfully uploaded."
