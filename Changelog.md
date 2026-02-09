@@ -1,5 +1,34 @@
 # Changelog
 
+## [unreleased]
+
+### 🛡️ Security
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.9.3]
+
+### ✨ New features and improvements
+- Allow administrators to remove instructors from a course (#7808)
+- Batch the calculation of TA grading statistics on assignments index page (#7787)
+- Improve git repo access time, by reducing db queries (#7791)
+- Updated to `markus_exam_matcher` v0.4.0, which corrects upside down scanned pages and improves OCR (#7823)
+
+### 🐛 Bug fixes
+- Prevent ZIP files from being previewed in the assignment file viewer (#7802)
+- Display descriptive error message when scanned exam template name exceeds the 20-character limit (#7796)
+- Made repository URL not a link for student assignment view when version control is enabled (#7807)
+
+### 🔧 Internal changes
+- Updated development environment to use Python 3.13 (#7823)
+- Switched development environment to install CPU-only version of pytorch (#7823)
+
 ## [v2.9.2]
 
 ### 🐛 Bug fixes

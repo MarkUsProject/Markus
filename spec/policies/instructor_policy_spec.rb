@@ -40,6 +40,16 @@ describe InstructorPolicy do
     succeed
   end
 
+  describe_rule :destroy? do
+    let(:context) { { role: role, real_user: role.user, user: role.user } }
+    failed 'user is an end user' do
+      let(:role) { create(:instructor) }
+    end
+    succeed 'user is an admin' do
+      let(:role) { create(:admin_role) }
+    end
+  end
+
   describe_rule :manage_role_status? do
     let(:context) { { role: role, real_user: role.user, user: role.user } }
     failed 'user is an end user' do
