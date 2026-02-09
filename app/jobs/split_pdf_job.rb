@@ -52,9 +52,16 @@ class SplitPdfJob < ApplicationJob
       qr_scan_results = {}
       if status.success?
         csv = CSV.parse(stdout, headers: false)
-        csv.each do |row|
+        csv.each_with_index do |row, i|
           next if row.empty?
           qr_scan_results[row[0]] = row.length >= 2 ? row[1] : ''
+          if row.length >= 3
+            orientation = row[2].to_i
+            if (-181..-179).cover?(orientation) || (179..181).cover?(orientation)
+              current_rotation = pdf.pages[i][:Rotate] || 0
+              pdf.pages[i][:Rotate] = (current_rotation + orientation) % 360
+            end
+          end
         end
       else
         raise "Error running markus-exam-matcher. Details:\n#{stdout}\n#{stderr}"

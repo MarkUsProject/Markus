@@ -100,13 +100,13 @@ class AssignmentProperties < ApplicationRecord
 
   def minimum_number_of_groups
     return unless group_max && group_min && group_max < group_min
-    errors.add(:group_max, 'must be greater than the minimum number of groups')
+    errors.add(:group_max, :less_than_group_min)
     false
   end
 
   def repository_folder_unchanged
     return unless repository_folder_changed?
-    errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
+    errors.add(:repo_folder_change, :repository_folder_unchanged)
     false
   end
 

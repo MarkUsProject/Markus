@@ -1,6 +1,7 @@
 ---
 en:
   instructors:
+    delete_confirm: Are you sure you want to remove this instructor from the course?
     edit: Edit an Instructor
     empty_table: No instructors found
     help:

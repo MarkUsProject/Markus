@@ -628,6 +628,13 @@ kbd {
         li {
           margin-bottom: 0.5em;
         }
+
+        .copy-url-button {
+          margin-left: 0.5em;
+          margin-bottom: 0.3em;
+          min-width: auto;
+          padding: 0.2em 0.1em 0.2em 0.4em;
+        }
       }
     }
   }

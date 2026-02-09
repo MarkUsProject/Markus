@@ -19,6 +19,21 @@ class SubmissionsController < ApplicationController
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end
 
+  # Support inline images in rendered notebooks
+  content_security_policy only: [:download_file] do |p|
+    file = select_file
+    if params[:show_in_browser] && render_as_html?(file: file)
+      p.img_src :self, :data
+    end
+  end
+
+  # Support inline images in rendered notebooks
+  content_security_policy only: [:download] do |p|
+    if params[:preview] == 'true' && render_as_html?(file_type: FileHelper.get_file_type(params[:file_name]))
+      p.img_src :self, :data
+    end
+  end
+
   def index
     respond_to do |format|
       format.json do
@@ -483,10 +498,7 @@ class SubmissionsController < ApplicationController
       return head :not_found
     end
 
-    nbconvert_enabled = Rails.application.config.nbconvert_enabled
-    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
-    if params[:show_in_browser] == 'true' &&
-      ((file.is_pynb? && nbconvert_enabled) || (file.is_rmd? && rmd_convert_enabled))
+    if params[:show_in_browser] == 'true' && render_as_html?(file: file)
       html_content file: file
       return
     end
@@ -560,8 +572,6 @@ class SubmissionsController < ApplicationController
 
   def download
     preview = params[:preview] == 'true'
-    nbconvert_enabled = Rails.application.config.nbconvert_enabled
-    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
     file_type = FileHelper.get_file_type(params[:file_name])
     @assignment = Assignment.find(params[:assignment_id])
     # find_appropriate_grouping can be found in SubmissionsHelper
@@ -576,8 +586,7 @@ class SubmissionsController < ApplicationController
     revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
 
-    if ((file_type == 'jupyter-notebook' && nbconvert_enabled) \
-     || (file_type == 'rmarkdown' && rmd_convert_enabled)) && preview
+    if preview && render_as_html?(file_type: file_type)
       html_content grouping: @grouping,
                    revision_identifier: revision_identifier,
                    file_dir: path,
@@ -1065,5 +1074,19 @@ class SubmissionsController < ApplicationController
 
   def from_codeviewer_param
     params[:from_codeviewer] == 'true'
+  end
+
+  def render_as_html?(file: nil, file_type: nil)
+    nbconvert_enabled = Rails.application.config.nbconvert_enabled
+    rmd_convert_enabled = Rails.application.config.rmd_convert_enabled
+
+    if file.present?
+      (file.is_pynb? && nbconvert_enabled) || (file.is_rmd? && rmd_convert_enabled)
+    elsif file_type.present?
+      (file_type == 'jupyter-notebook' && nbconvert_enabled) \
+        || (file_type == 'rmarkdown' && rmd_convert_enabled)
+    else
+      false
+    end
   end
 end

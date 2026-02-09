@@ -17,6 +17,10 @@ class InstructorPolicy < RolePolicy
     true
   end
 
+  def destroy?
+    user.admin_user?
+  end
+
   def manage_role_status?
     user.admin_user?
   end

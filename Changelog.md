@@ -7,22 +7,37 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Allow administrators to remove instructors from a course (#7808)
 - Enable test results downloads through the API (#7754)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
 - Store start and end date for courses (#7783)
+- Split courses into Current and Past sections for all users (#7801)
+- Batch the calculation of TA grading statistics on assignments index page (#7787)
+- Improve git repo access time, by reducing db queries (#7791)
+- Updated to `markus_exam_matcher` v0.4.0, which corrects upside down scanned pages and improves OCR (#7823)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Prevent ZIP files from being previewed in the assignment file viewer (#7802)
+- Display descriptive error message when scanned exam template name exceeds the 20-character limit (#7796)
+- Made repository URL not a link for student assignment view when version control is enabled (#7807)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
 - Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
 - Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
+- Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
+- Updated development environment to use Python 3.13 (#7823)
+- Switched development environment to install CPU-only version of pytorch (#7823)
+
+## [v2.9.2]
+
+### 🐛 Bug fixes
+- Fixed display of inline images in notebook HTML rendering (#7816)
 
 ## [v2.9.1]
 

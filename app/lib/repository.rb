@@ -224,28 +224,6 @@ module Repository
       nil
     end
 
-    # Returns the assignments for which students have repository access.
-    #
-    # Repository authentication subtleties:
-    # 1) a repository is associated with a Group, but..
-    # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
-    # That creates a problem since authentication in git is at the repository level, while Markus handles it at
-    # the assignment level, allowing the same Group repo to have different students according to the assignment.
-    # The two extremes to implement it are using the union of all students (permissive) or the intersection
-    # (restrictive). Instead, we are going to take a last-deadline approach, where we assume that the valid students at
-    # any point in time are the ones valid for the last assignment due. (Basically, it's nice for a group to share a
-    # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
-    # some students from it)
-    def self.get_repo_auth_records
-      records = Assignment.joins(:assignment_properties, :course)
-                          .includes(groupings: [:group, { accepted_students: :section }])
-                          .where(assignment_properties: { vcs_submit: true }, 'courses.is_hidden': false)
-                          .order(due_date: :desc)
-      records.where(assignment_properties: { is_timed: false })
-             .or(records.where.not(groupings: { start_time: nil }))
-             .or(records.where(groupings: { start_time: nil }, due_date: Time.utc(0)..Time.current))
-    end
-
     # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
     # is a boolean indicating whether the given assignment is visible to the given section.
     def self.visibility_hash
@@ -308,14 +286,13 @@ module Repository
       instructors.each do |course_name, instructor_names|
         permissions[File.join(course_name, '*')] = instructor_names
       end
-      self.get_repo_auth_records.each do |assignment|
-        assignment.valid_groupings.each do |valid_grouping|
-          next unless visibility[assignment.id][valid_grouping.inviter&.section&.id]
-          repo_name = valid_grouping.group.repository_relative_path
-          accepted_students = valid_grouping.accepted_students.where('roles.hidden': false).map(&:user_name)
-          permissions[repo_name] = accepted_students
-        end
+
+      # Bulk query for student permissions (optimized to avoid N+1)
+      student_permissions = get_student_permissions_bulk(visibility)
+      student_permissions.each do |repo_path, user_names|
+        permissions[repo_path] = user_names
       end
+
       # NOTE: this will allow graders to access the files in the entire repository
       # even if they are the grader for only a single assignment
       graders_info = TaMembership.joins(role: [:user, :course],
@@ -326,6 +303,94 @@ module Repository
         repo_path = File.join(course_name, repo_name) # NOTE: duplicates functionality of Group.repository_relative_path
         permissions[repo_path] << user_name
       end
+      permissions
+    end
+
+    # Bulk query to get student permissions without N+1 queries.
+    # Returns a hash of { repo_path => [user_names] }
+    def self.get_student_permissions_bulk(visibility)
+      current_time = Time.current
+      accepted_statuses = [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]
+      rejected_status = StudentMembership::STATUSES[:rejected]
+      inviter_status = StudentMembership::STATUSES[:inviter]
+
+      # Step 1: Get membership counts per grouping for is_valid? check
+      # (grouping is valid if instructor_approved OR non_rejected_count >= group_min)
+      membership_counts = StudentMembership
+                          .where.not(membership_status: rejected_status)
+                          .group(:grouping_id)
+                          .count
+
+      # Step 2: Get inviter section_id for each grouping (for visibility check)
+      inviter_sections = StudentMembership
+                         .joins(:role)
+                         .where(membership_status: inviter_status)
+                         .pluck(:grouping_id, 'roles.section_id')
+                         .to_h
+
+      # Step 3: Bulk query for all relevant data
+      # Timed assignment filter: non-timed OR started OR (not started AND past due date)
+      timed_filter = <<~SQL.squish
+        (assignment_properties.is_timed = false
+         OR groupings.start_time IS NOT NULL
+         OR (groupings.start_time IS NULL AND assessments.due_date <= :current_time))
+      SQL
+
+      raw_data = Assignment
+                 .joins(:assignment_properties, :course)
+                 .joins(groupings: [:group, { accepted_student_memberships: { role: :user } }])
+                 .where(assignment_properties: { vcs_submit: true })
+                 .where('courses.is_hidden': false)
+                 .where('roles.hidden': false)
+                 .where(memberships: { membership_status: accepted_statuses })
+                 .where(timed_filter, current_time: current_time)
+                 .order(due_date: :desc)
+                 .pluck(
+                   'assessments.id',
+                   'groupings.id',
+                   'groupings.instructor_approved',
+                   'assignment_properties.group_min',
+                   'courses.name',
+                   'groups.repo_name',
+                   'users.user_name'
+                 )
+
+      # Step 4: Process results in Ruby (now O(n) iteration, not O(n) DB queries)
+      # Group by assignment first to preserve due_date DESC ordering (last-deadline approach)
+      permissions = Hash.new { |h, k| h[k] = [] }
+      processed_repos = Set.new
+
+      # Group by assignment_id first (preserves due_date ordering), then by grouping_id
+      by_assignment = raw_data.group_by { |row| row[0] } # group by assignment_id
+
+      by_assignment.each do |assignment_id, assignment_rows|
+        by_grouping = assignment_rows.group_by { |row| row[1] } # group by grouping_id
+
+        by_grouping.each do |grouping_id, rows|
+          first_row = rows.first
+          instructor_approved = first_row[2]
+          group_min = first_row[3]
+          course_name = first_row[4]
+          repo_name = first_row[5]
+          repo_path = File.join(course_name, repo_name)
+
+          # Last-deadline approach: skip if repo already processed by earlier (later due_date) assignment
+          next if processed_repos.include?(repo_path)
+
+          # Check if grouping is valid (same logic as Grouping#is_valid?)
+          non_rejected_count = membership_counts[grouping_id] || 0
+          is_valid = instructor_approved || non_rejected_count >= group_min
+          next unless is_valid
+
+          # Check visibility based on inviter's section
+          inviter_section_id = inviter_sections[grouping_id]
+          next unless visibility[assignment_id][inviter_section_id]
+
+          processed_repos << repo_path
+          permissions[repo_path] = rows.map { |row| row[6] }.uniq
+        end
+      end
+
       permissions
     end
 

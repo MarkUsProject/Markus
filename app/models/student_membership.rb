@@ -31,11 +31,11 @@ class StudentMembership < Membership
 
   def must_be_valid_student
     if role && !role.is_a?(Student)
-      errors.add('base', 'User must be a student')
+      errors.add(:base, :not_student)
       return false
     end
     unless STATUSES.value?(membership_status)
-      errors.add('base', 'Invalid membership status')
+      errors.add(:base, :invalid_membership)
       false
     end
   end
