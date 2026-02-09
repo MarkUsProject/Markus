@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Added configuration settings for zip extraction limits
 
 ### 🚨 Breaking changes
 
