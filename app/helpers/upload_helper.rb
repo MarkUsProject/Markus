@@ -54,8 +54,11 @@ module UploadHelper
             entry_size = zf.size
             if entry_size && max_file_size && entry_size > max_file_size
               max_mb = (max_file_size / 1_000_000.0).round(2)
-              raise StandardError, I18n.t('upload_errors.zip_entry_too_large',
-                                          file_name: zf.name, max_size: max_mb)
+              raise StandardError, I18n.t(
+                'upload_errors.zip_entry_too_large',
+                file_name: zf.name,
+                max_size: max_mb
+              )
             end
             if entry_size && max_zip_total_size
               total_size += entry_size
@@ -77,8 +80,11 @@ module UploadHelper
                   streamed_size += chunk.bytesize
                   if max_file_size && streamed_size > max_file_size
                     max_mb = (max_file_size / 1_000_000.0).round(2)
-                    raise StandardError, I18n.t('upload_errors.zip_entry_too_large',
-                                                file_name: zf.name, max_size: max_mb)
+                    raise StandardError, I18n.t(
+                      'upload_errors.zip_entry_too_large',
+                      file_name: zf.name,
+                      max_size: max_mb
+                    )
                   end
                   if entry_size.nil? && max_zip_total_size && total_size + streamed_size > max_zip_total_size
                     max_mb = (max_zip_total_size / 1_000_000.0).round(2)

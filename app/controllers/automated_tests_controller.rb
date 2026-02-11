@@ -155,8 +155,10 @@ class AutomatedTestsController < ApplicationController
     end
 
     begin
-      upload_files_helper(new_folders, new_files, unzip: unzip,
-                                                  max_file_size: assignment.course.max_file_size) do |f|
+      upload_files_helper(new_folders,
+                          new_files,
+                          unzip: unzip,
+                          max_file_size: assignment.course.max_file_size) do |f|
         if f.is_a?(String) # is a directory
           folder_path = FileHelper.checked_join(autotest_files_path, f)
           if folder_path.nil?
