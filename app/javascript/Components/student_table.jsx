@@ -353,18 +353,12 @@ StudentsActionBox.propTypes = {
 
 RawStudentTable.propTypes = {
   course_id: PropTypes.number,
-  // selection: PropTypes.array.isRequired,   TODO: delete these?
   authenticity_token: PropTypes.string,
-  // getCheckboxProps: PropTypes.func.isRequired, TODO
 };
-
-// let StudentTable = withSelection(RawStudentTable); TODO
 
 function makeStudentTable(elem, props) {
   const root = createRoot(elem);
-  // root.render(<StudentTable {...props} />); TODO
   root.render(<RawStudentTable {...props} />);
 }
 
-// export {StudentTable, StudentsActionBox, makeStudentTable}; TODO
 export {RawStudentTable as StudentTable, StudentsActionBox, makeStudentTable};
