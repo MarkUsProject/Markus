@@ -223,6 +223,20 @@ export default function Table({
           </div>
         )}
         <div className="rt-tbody" style={{minWidth: table.getCenterTotalSize()}}>
+          {loading && table.getRowModel().rows.length > 0 && (
+            <div className="loading-spinner">
+              <Grid
+                visible={true}
+                height="25"
+                width="25"
+                color="#31649B"
+                ariaLabel="grid-loading"
+                radius="12.5"
+                wrapperStyle={{}}
+                wrapperClass="grid-wrapper"
+              />
+            </div>
+          )}
           {table.getRowModel().rows.map(row => {
             return (
               <div className="rt-tr-group" role="rowgroup" key={row.id}>
