@@ -44,6 +44,10 @@ en:
     no_instructor_runnable_tests: No tests are available for instructors to run.
     no_results: No test results to display
     no_student_runnable_tests: No tests are available for students to run.
+    refresh_autotest_schema:
+      bottom: Refresh autotest schema
+      confirm: Do you want to refresh autotest schema now?
+      success: Autotest schema refreshed.
     requirements_file: Package requirements file
     requirements_file_tooltip: Upload a requirements file along with the test files
     results:

@@ -42,4 +42,8 @@ class CoursePolicy < ApplicationPolicy
   def manage_lti_deployments?
     user.admin_user? || Instructor.exists?(user: user, course: record)
   end
+
+  def refresh_autotest_schema?
+    edit?
+  end
 end

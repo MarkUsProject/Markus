@@ -124,6 +124,7 @@ Rails.application.routes.draw do
       post 'sync_roster'
       get 'lti_deployments'
       get 'lti_settings'
+      post 'refresh_autotest_schema'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update, :destroy]
