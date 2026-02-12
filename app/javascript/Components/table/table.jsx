@@ -150,6 +150,21 @@ export default function Table({
     columnResizeMode: "onChange",
   });
 
+  const LoadingSpinner = () => (
+    <div className="loading-spinner">
+      <Grid
+        visible={true}
+        height="25"
+        width="25"
+        color="#31649B"
+        ariaLabel="grid-loading"
+        radius="12.5"
+        wrapperStyle={{}}
+        wrapperClass="grid-wrapper"
+      />
+    </div>
+  );
+
   return (
     <div className="Table -highlight" style={{maxHeight: "500px"}}>
       <div className="rt-table" role="grid">
@@ -223,20 +238,7 @@ export default function Table({
           </div>
         )}
         <div className="rt-tbody" style={{minWidth: table.getCenterTotalSize()}}>
-          {loading && table.getRowModel().rows.length > 0 && (
-            <div className="loading-spinner">
-              <Grid
-                visible={true}
-                height="25"
-                width="25"
-                color="#31649B"
-                ariaLabel="grid-loading"
-                radius="12.5"
-                wrapperStyle={{}}
-                wrapperClass="grid-wrapper"
-              />
-            </div>
-          )}
+          {loading && table.getRowModel().rows.length > 0 && <LoadingSpinner />}
           {table.getRowModel().rows.map(row => {
             return (
               <div className="rt-tr-group" role="rowgroup" key={row.id}>
@@ -265,18 +267,7 @@ export default function Table({
           })}
           {!table.getRowModel().rows.length &&
             (loading ? (
-              <div className="loading-spinner">
-                <Grid
-                  visible={true}
-                  height="25"
-                  width="25"
-                  color="#31649B"
-                  ariaLabel="grid-loading"
-                  radius="12.5"
-                  wrapperStyle={{}}
-                  wrapperClass="grid-wrapper"
-                />
-              </div>
+              <LoadingSpinner />
             ) : (
               <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
             ))}
