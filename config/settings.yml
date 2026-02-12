@@ -119,5 +119,10 @@ file_storage:
 
 rmd_convert_enabled: false
 
+# maximum number of entries allowed when extracting uploaded zip files
+max_zip_file_entries: 10000
+# maaximum total uncompressed size (in bytes) allowed when extracting an uploaded zip file
+max_zip_total_size: 500000000
+
 resque:
   permitted_hosts: [".localhost", ".internal"]

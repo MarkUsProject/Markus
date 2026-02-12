@@ -154,32 +154,41 @@ class AutomatedTestsController < ApplicationController
       return
     end
 
-    upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
-      if f.is_a?(String) # is a directory
-        folder_path = FileHelper.checked_join(autotest_files_path, f)
-        if folder_path.nil?
-          flash_now(:error, I18n.t('errors.invalid_path'))
+    begin
+      upload_files_helper(new_folders,
+                          new_files,
+                          unzip: unzip,
+                          max_file_size: assignment.course.max_file_size) do |f|
+        if f.is_a?(String) # is a directory
+          folder_path = FileHelper.checked_join(autotest_files_path, f)
+          if folder_path.nil?
+            flash_now(:error, I18n.t('errors.invalid_path'))
+          else
+            FileUtils.mkdir_p(folder_path)
+          end
         else
-          FileUtils.mkdir_p(folder_path)
-        end
-      else
-        if f.size > assignment.course.max_file_size
-          flash_now(:error, t('student.submission.file_too_large',
-                              file_name: f.original_filename,
-                              max_size: (assignment.course.max_file_size / 1_000_000.00).round(2)))
-          next
-        elsif f.size == 0
-          flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
-        end
-        file_path = FileHelper.checked_join(autotest_files_path, f.original_filename)
-        if file_path.nil?
-          flash_now(:error, I18n.t('errors.invalid_path'))
-        else
-          FileUtils.mkdir_p(File.dirname(file_path))
-          file_content = f.read
-          File.write(file_path, file_content, mode: 'wb')
+          if f.size > assignment.course.max_file_size
+            flash_now(:error, t('student.submission.file_too_large',
+                                file_name: f.original_filename,
+                                max_size: (assignment.course.max_file_size / 1_000_000.00).round(2)))
+            next
+          elsif f.size == 0
+            flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+          end
+          file_path = FileHelper.checked_join(autotest_files_path, f.original_filename)
+          if file_path.nil?
+            flash_now(:error, I18n.t('errors.invalid_path'))
+          else
+            FileUtils.mkdir_p(File.dirname(file_path))
+            file_content = f.read
+            File.write(file_path, file_content, mode: 'wb')
+          end
         end
       end
+    rescue StandardError => e
+      flash_now(:error, e.message)
+      render partial: 'update_files'
+      return
     end
     delete_folders.each do |f|
       folder_path = FileHelper.checked_join(assignment.autotest_files_dir, f)
