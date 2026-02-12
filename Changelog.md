@@ -25,6 +25,7 @@
 - Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
 - Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
+- Upgraded to Rails v8.1 (#7815)
 
 ## [v2.9.3]
 
