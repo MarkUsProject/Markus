@@ -17,7 +17,12 @@ ENV['SKIP_LOCAL_GIT_HOOKS'] = 'true'
 module Markus
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 8.0
+    config.load_defaults 8.1
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[jupyter-notebook repo tasks])
 
     # Change the format of the cache entry.
     #
@@ -56,16 +61,6 @@ module Markus
 
     # Set conservative Regexp.timeout (Rails default is 1s)
     Regexp.timeout = 10
-
-    ###
-    # Specifies whether `to_time` methods preserve the UTC offset of their receivers or preserves the timezone.
-    # If set to `:zone`, `to_time` methods will use the timezone of their receivers.
-    # If set to `:offset`, `to_time` methods will use the UTC offset.
-    # If `false`, `to_time` methods will convert to the local system UTC offset instead.
-    #
-    # Pre-Rails 8 the default was :offset; Rails 8 makes the default :zone.
-    #++
-    config.active_support.to_time_preserves_timezone = :offset
 
     # Settings below are configurable
 

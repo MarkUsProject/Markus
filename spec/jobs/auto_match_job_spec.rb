@@ -68,12 +68,9 @@ describe AutoMatchJob do
           expect(grouping.accepted_students.size).to eq 0
         end
 
-        it 'stores OCR match data with parsed value "None"' do
+        it 'does not store OCR match data' do
           ocr_data = OcrMatchService.get_match(grouping.id)
-          # OCR returns "None" for blank scans
-          expect(ocr_data).not_to be_nil
-          expect(ocr_data[:parsed_value]).to eq 'None'
-          expect(ocr_data[:matched]).to be false
+          expect(ocr_data).to be_nil
         end
       end
 
