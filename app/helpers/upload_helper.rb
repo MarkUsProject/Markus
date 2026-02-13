@@ -32,20 +32,77 @@ module UploadHelper
 
   # Unzip the file at +zip_file_path+ and yield the name of each directory and an
   # UploadedFile object for each file.
-  def upload_files_helper(new_folders, new_files, unzip: false, &block)
+  def upload_files_helper(new_folders, new_files, unzip: false,
+                          max_file_size: nil,
+                          max_zip_entries: Settings.max_zip_file_entries,
+                          max_zip_total_size: Settings.max_zip_total_size,
+                          &block)
     new_folders.each(&block)
     new_files.each do |f|
       if unzip && File.extname(f.path).casecmp?('.zip')
         Zip::File.open(f.path) do |zipfile|
+          total_size = 0
+          if max_zip_entries && zipfile.size > max_zip_entries
+            raise StandardError, I18n.t('upload_errors.too_many_zip_entries', max: max_zip_entries)
+          end
           zipfile.each do |zf|
-            yield zf.name if zf.directory?
-            if zf.file?
-              mime = Rack::Mime.mime_type(File.extname(zf.name))
-              tempfile = Tempfile.new.binmode
-              tempfile.write(zf.get_input_stream.read)
-              tempfile.rewind
-              yield ActionDispatch::Http::UploadedFile.new(filename: zf.name, tempfile: tempfile, type: mime)
+            if zf.directory?
+              yield zf.name
+              next
             end
+
+            entry_size = zf.size
+            if entry_size && max_file_size && entry_size > max_file_size
+              max_mb = (max_file_size / 1_000_000.0).round(2)
+              raise StandardError, I18n.t(
+                'upload_errors.zip_entry_too_large',
+                file_name: zf.name,
+                max_size: max_mb
+              )
+            end
+            if entry_size && max_zip_total_size
+              total_size += entry_size
+              if total_size > max_zip_total_size
+                max_mb = (max_zip_total_size / 1_000_000.0).round(2)
+                raise StandardError, I18n.t('upload_errors.zip_too_large_total', max_mb: max_mb)
+              end
+            end
+
+            next unless zf.file?
+
+            mime = Rack::Mime.mime_type(File.extname(zf.name))
+            tempfile = Tempfile.new.binmode
+            streamed_size = 0
+
+            begin
+              zf.get_input_stream do |io|
+                while (chunk = io.read(64 * 1024))
+                  streamed_size += chunk.bytesize
+                  if max_file_size && streamed_size > max_file_size
+                    max_mb = (max_file_size / 1_000_000.0).round(2)
+                    raise StandardError, I18n.t(
+                      'upload_errors.zip_entry_too_large',
+                      file_name: zf.name,
+                      max_size: max_mb
+                    )
+                  end
+                  if entry_size.nil? && max_zip_total_size && total_size + streamed_size > max_zip_total_size
+                    max_mb = (max_zip_total_size / 1_000_000.0).round(2)
+                    raise StandardError, I18n.t('upload_errors.zip_too_large_total', max_mb: max_mb)
+                  end
+                  tempfile.write(chunk)
+                end
+              end
+            rescue StandardError
+              tempfile.close!
+              raise
+            end
+
+            entry_total = entry_size || streamed_size
+            total_size += entry_total if entry_size.nil? && max_zip_total_size
+
+            tempfile.rewind
+            yield ActionDispatch::Http::UploadedFile.new(filename: zf.name, tempfile: tempfile, type: mime)
           end
         end
       else

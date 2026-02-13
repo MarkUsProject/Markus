@@ -77,10 +77,11 @@ ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 
 # install optional system dependencies
 RUN apt-get update -qq && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install software-properties-common && \
+    DEBIAN_FRONTEND=noninteractive add-apt-repository -y ppa:deadsnakes/ppa && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends openssh-server \
-                                                                               python3 \
-                                                                               python3-dev \
-                                                                               python3-venv \
+                                                                               python3.13 \
+                                                                               python3.13-venv \
                                                                                equivs \
                                                                                libjemalloc2
 

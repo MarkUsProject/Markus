@@ -101,7 +101,7 @@ jobs:
       - name: Install python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.13"
       - name: Get pip cache dir
         id: pip-cache
         run: |
@@ -122,8 +122,8 @@ jobs:
             ${{ runner.os }}-playwright-
       - name: Install python packages and playwright dependencies
         run: |
-          python3.10 -m venv venv
-          ./venv/bin/pip install -r requirements-jupyter.txt -r requirements-scanner.txt
+          python3.13 -m venv venv
+          ./venv/bin/pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-jupyter.txt -r requirements-scanner.txt
           ./venv/bin/playwright install chromium
       - name: Configure server
         run: |
