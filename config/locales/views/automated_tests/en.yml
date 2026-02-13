@@ -47,8 +47,8 @@ en:
     refresh_autotest_schema:
       bottom: Refresh autotest schema
       confirm: Do you want to refresh autotest schema now?
-      success: Refresh autotest schema was successful.
       failure: "Refresh autotest schema failed with the following error: %{error}."
+      success: Refresh autotest schema was successful.
     requirements_file: Package requirements file
     requirements_file_tooltip: Upload a requirements file along with the test files
     results:
