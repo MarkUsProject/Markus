@@ -16,7 +16,6 @@
 - Split courses into Current and Past sections for all users (#7801)
 - Batch the calculation of TA grading statistics on assignments index page (#7787)
 - Improve git repo access time, by reducing db queries (#7791)
-- Add an administrator action on the course settings page to refresh autotest schema (#7828)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
