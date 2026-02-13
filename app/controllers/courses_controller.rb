@@ -3,8 +3,6 @@
 class CoursesController < ApplicationController
   before_action { authorize! }
 
-  include AutomatedTestsHelper::AutotestApi
-
   respond_to :html
   layout 'assignment_content'
 
@@ -198,28 +196,6 @@ class CoursesController < ApplicationController
 
   def lti_deployments
     render json: @current_course.lti_deployments.to_json(include: :lti_client)
-  end
-
-  def refresh_autotest_schema
-    unless allowed_to?(:edit?, with: Admin::CoursePolicy)
-      return
-    end
-    autotest_setting = @current_course.autotest_setting
-    if autotest_setting.nil?
-       flash_message(:error, I18n.t('automated_tests.no_autotest_settings'))
-       redirect_back(fallback_location: edit_course_path(@current_course))
-       return
-    end
-
-    begin
-      schema_json = get_schema(autotest_setting)
-      autotest_setting.update!(schema: schema_json)
-      flash_message(:success, I18n.t('automated_tests.refresh_autotest_schema.success'))
-    rescue StandardError => e
-        flash_message(:error, e.message)
-    end
-
-    redirect_back(fallback_location: edit_course_path(@current_course))
   end
 
   private

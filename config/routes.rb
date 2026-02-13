@@ -104,6 +104,7 @@ Rails.application.routes.draw do
       member do
         get 'test_autotest_connection'
         put 'reset_autotest_connection'
+        post 'refresh_autotest_schema'
         delete 'destroy_lti_deployment'
       end
     end
@@ -124,7 +125,6 @@ Rails.application.routes.draw do
       post 'sync_roster'
       get 'lti_deployments'
       get 'lti_settings'
-      post 'refresh_autotest_schema'
     end
 
     resources :instructors, only: [:index, :new, :create, :edit, :update, :destroy]

@@ -60,6 +60,23 @@ module Admin
       respond_with current_course, location: -> { edit_admin_course_path(current_course) }
     end
 
+    def refresh_autotest_schema
+      settings = current_course.autotest_setting
+      if settings.nil?
+        flash_message(:error, I18n.t('automated_tests.no_autotest_settings'))
+        return respond_with current_course, location: -> { edit_admin_course_path(current_course) }
+      end
+
+      begin
+        schema_json = get_schema(settings)
+        settings.update!(schema: schema_json)
+        flash_message(:success, I18n.t('automated_tests.refresh_autotest_schema.success'))
+      rescue StandardError => e
+        flash_message(:error, I18n.t('automated_tests.refresh_autotest_schema.failure', error: e.message))
+      end
+      respond_with current_course, location: -> { edit_admin_course_path(current_course) }
+    end
+
     def destroy_lti_deployment
       deployment = LtiDeployment.find(params[:lti_deployment_id])
       deployment.destroy!

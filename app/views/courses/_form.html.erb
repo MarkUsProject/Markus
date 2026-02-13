@@ -48,10 +48,10 @@
                      placeholder: t('time.format_string.placeholder'),
                      readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
   </div>
-  <% if allowed_to?(:edit?, with: Admin::CoursePolicy) %>
+  <% if @current_course.persisted? && allowed_to?(:edit?, with: Admin::CoursePolicy) %>
     <p>
       <%= link_to t('automated_tests.refresh_autotest_schema.bottom'),
-                  refresh_autotest_schema_course_path(@current_course),
+                  refresh_autotest_schema_admin_course_path(@current_course),
                   method: :post,
                   class: 'button',
                   data: { confirm: I18n.t('automated_tests.refresh_autotest_schema.confirm') } %>
