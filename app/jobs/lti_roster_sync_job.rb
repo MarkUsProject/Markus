@@ -18,5 +18,6 @@ class LtiRosterSyncJob < ApplicationJob
     if roster_error
       status.update(warning_message: [status[:warning_message], I18n.t('lti.roster_sync_errors')].compact.join("\n"))
     end
+    Repository.get_class.update_permissions
   end
 end
