@@ -16,6 +16,7 @@
 - Split courses into Current and Past sections for all users (#7801)
 
 ### 🐛 Bug fixes
+- Trigger repository permissions update after LTI roster sync (#7831)
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 ### 🔧 Internal changes
