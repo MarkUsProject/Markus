@@ -57,7 +57,7 @@
   <fieldset id="manage-connection" class="<%= @current_course.autotest_setting_id ? '' : 'no-display' %>">
     <legend><span><%= t('automated_tests.manage_connection.title') %></span></legend>
     <div>
-      <%= link_to t('automated_tests.refresh_autotest_schema.bottom'),
+      <%= link_to t('automated_tests.manage_connection.refresh_schema_bottom'),
                   refresh_autotest_schema_admin_course_path(@current_course),
                   method: :post,
                   class: 'button',
