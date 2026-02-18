@@ -48,15 +48,6 @@
                      placeholder: t('time.format_string.placeholder'),
                      readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
   </div>
-  <% if @current_course.persisted? && allowed_to?(:edit?, with: Admin::CoursePolicy) %>
-    <p>
-      <%= link_to t('automated_tests.refresh_autotest_schema.bottom'),
-                  refresh_autotest_schema_admin_course_path(@current_course),
-                  method: :post,
-                  class: 'button',
-                  data: { confirm: I18n.t('automated_tests.refresh_autotest_schema.confirm') } %>
-    </p>
-  <% end %>
   <p>
     <%= f.submit t(:save),
                  data: { disable_with: t('working') } %>
@@ -65,6 +56,20 @@
 <% if @current_course.persisted? && allowed_to?(:edit?, with: Admin::CoursePolicy) %>
   <fieldset id="manage-connection" class="<%= @current_course.autotest_setting_id ? '' : 'no-display' %>">
     <legend><span><%= t('automated_tests.manage_connection.title') %></span></legend>
+    <div>
+      <%= link_to t('automated_tests.refresh_autotest_schema.bottom'),
+                  refresh_autotest_schema_admin_course_path(@current_course),
+                  method: :post,
+                  class: 'button',
+                  data: { confirm: I18n.t('automated_tests.manage_connection.refresh_schema_confirm') } %>
+      <div class='inline-help'>
+        <p>
+          <%= I18n.t('automated_tests.manage_connection.refresh_schema_tooltip',
+                     url: @current_course.autotest_setting&.url) %>
+        </p>
+      </div>
+    </div>
+    <br>
     <div>
       <%= link_to I18n.t('automated_tests.manage_connection.test'),
                   test_autotest_connection_admin_course_path(@current_course),

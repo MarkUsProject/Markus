@@ -27,6 +27,8 @@ en:
         Please try saving the settings again from the Automated Testing page.
     manage_connection:
       refresh: Refresh Settings
+      refresh_schema_confirm: Do you want to refresh autotest schema now?
+      refresh_schema_tooltip: Fetch the latest autotest schema from %{url}.
       refresh_tooltip: Resend all test settings to the automated tester at %{url}. This should be used when the automated tester has been reset.
       test: Test Connection
       test_failure: 'Connection to %{url} failed with the following error: %{error}'
@@ -46,7 +48,6 @@ en:
     no_student_runnable_tests: No tests are available for students to run.
     refresh_autotest_schema:
       bottom: Refresh autotest schema
-      confirm: Do you want to refresh autotest schema now?
       failure: 'Refresh autotest schema failed with the following error: %{error}.'
       success: Refresh autotest schema was successful.
     requirements_file: Package requirements file
