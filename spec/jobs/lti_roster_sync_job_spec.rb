@@ -36,4 +36,20 @@ describe LtiRosterSyncJob do
 
     it_behaves_like 'background job'
   end
+
+  context 'when roster sync completes' do
+    let(:job_args) do
+      { deployment_id: lti_deployment.id,
+        role_types: [LtiDeployment::LTI_ROLES[:learner]],
+        can_create_users: false,
+        can_create_roles: false }
+    end
+
+    it 'triggers an update to repository permissions' do
+      job = LtiRosterSyncJob.new
+      allow(job).to receive(:roster_sync).and_return(false)
+      expect(Repository.get_class).to receive(:update_permissions)
+      job.perform(job_args)
+    end
+  end
 end

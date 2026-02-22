@@ -17,6 +17,7 @@
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
 
 ### 🐛 Bug fixes
+- Trigger repository permissions update after LTI roster sync (#7831)
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 ### 🔧 Internal changes
