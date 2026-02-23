@@ -155,6 +155,12 @@ class ResultsController < ApplicationController
         else
           criteria_query[:ta_visible] = true
         end
+        # Pre-fetch all rubric levels in one query to avoid N+1
+        rubric_criteria_ids = RubricCriterion.where(**criteria_query).pluck(:id)
+        all_levels = Level.where(criterion_id: rubric_criteria_ids)
+                          .order(:mark)
+                          .group_by(&:criterion_id)
+
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           criteria = klass.where(**criteria_query)
           criteria_info = criteria.pluck_to_hash(*fields)
@@ -169,11 +175,11 @@ class ResultsController < ApplicationController
           criteria_info.map do |cr|
             info = marks_info[cr[:id]]&.first || cr.merge(mark: nil)
 
-            # adds a levels field to the marks info hash with the same rubric criterion id
+            # Use pre-fetched levels instead of querying per criterion
             if klass == RubricCriterion
-              info[:levels] = Level.where(criterion_id: cr[:id])
-                                   .order(:mark)
-                                   .pluck_to_hash(:name, :description, :mark)
+              info[:levels] = (all_levels[cr[:id]] || []).map do |l|
+                { name: l.name, description: l.description, mark: l.mark }
+              end
             end
             info.merge(criterion_type: klass.name)
           end
