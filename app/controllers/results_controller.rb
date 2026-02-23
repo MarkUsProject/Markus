@@ -353,6 +353,25 @@ class ResultsController < ApplicationController
     render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
+  def get_filtered_grouping_ids
+    filter_data = params[:filterData] || {}
+    result = record
+    grouping = result.submission.grouping
+    assignment = grouping.assignment
+
+    if result.is_a_review? && current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+      # For peer reviewers, return the ordered list of peer review result IDs
+      assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
+      data = assigned_prs.includes(:result).order(id: :asc).map do |pr|
+        { result_id: pr.result_id, grouping_id: pr.reviewer_id, submission_id: pr.result&.submission_id }
+      end
+      render json: data
+    else
+      data = grouping.get_filtered_ordered_ids(current_role, filter_data)
+      render json: data
+    end
+  end
+
   def random_incomplete_submission
     result = record
     grouping = result.submission.grouping

@@ -741,6 +741,46 @@ class Grouping < ApplicationRecord
     order_and_get_next_grouping(results, filter_data, reversed)
   end
 
+  # Returns an ordered array of { result_id:, grouping_id: } hashes for all
+  # groupings matching the current filters and ordering. Used by the frontend
+  # to prefetch the navigation list and avoid per-click next_grouping requests.
+  def get_filtered_ordered_ids(current_role, filter_data = nil)
+    if current_role.ta?
+      results = self.assignment.current_results.joins(grouping: :tas).where(
+        'roles.id': current_role.id
+      )
+    else
+      results = self.assignment.current_results
+    end
+    results = results.joins(grouping: :group)
+    filter_data = {} if filter_data.nil?
+    results = filter_results(current_role, results, filter_data)
+
+    asc_str = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
+
+    case filter_data['orderBy']
+    when 'submission_date'
+      results = results.joins(:submission)
+                       .group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name', 'submissions.revision_timestamp'])
+                       .order(Arel.sql("submissions.revision_timestamp #{asc_str}, groups.group_name #{asc_str}"))
+    when 'total_mark'
+      # total_mark ordering requires Ruby computation (same as next_grouping_ordered_total_mark)
+      result_data = results.group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name'])
+                           .pluck('results.id', 'groupings.id', 'results.submission_id', 'groups.group_name')
+                           .uniq { |id, _, _, _| id }
+      total_marks = Result.get_total_marks(result_data.map { |id, _, _, _| id })
+      sorted = result_data.sort_by { |id, _, _, group_name| [total_marks[id] || 0, group_name] }
+      sorted.reverse! if asc_str == 'DESC'
+      return sorted.map { |id, gid, sid, _| { result_id: id, grouping_id: gid, submission_id: sid } }
+    else
+      results = results.group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name'])
+                       .order(Arel.sql("groups.group_name #{asc_str}"))
+    end
+
+    results.pluck('results.id', 'groupings.id', 'results.submission_id').uniq { |id, _, _| id }
+           .map { |id, gid, sid| { result_id: id, grouping_id: gid, submission_id: sid } }
+  end
+
   def get_random_incomplete(current_role)
     if current_role.ta? && self.assignment.assign_graders_to_criteria
       assigned_criteria = self.assignment.criteria.joins(:criterion_ta_associations)
