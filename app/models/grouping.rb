@@ -761,7 +761,8 @@ class Grouping < ApplicationRecord
     case filter_data['orderBy']
     when 'submission_date'
       results = results.joins(:submission)
-                       .group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name', 'submissions.revision_timestamp'])
+                       .group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name',
+                               'submissions.revision_timestamp'])
                        .order(Arel.sql("submissions.revision_timestamp #{asc_str}, groups.group_name #{asc_str}"))
     when 'total_mark'
       # total_mark ordering requires Ruby computation (same as next_grouping_ordered_total_mark)
@@ -778,7 +779,11 @@ class Grouping < ApplicationRecord
     end
 
     results.pluck('results.id', 'groupings.id', 'results.submission_id').uniq { |id, _, _| id }
-           .map { |id, gid, sid| { result_id: id, grouping_id: gid, submission_id: sid } }
+                                                                        .map do |id, gid, sid|
+      {
+        result_id: id, grouping_id: gid, submission_id: sid
+      }
+    end
   end
 
   def get_random_incomplete(current_role)
@@ -877,7 +882,7 @@ class Grouping < ApplicationRecord
       # extra marks require Ruby computation).
       mark_subquery = Mark.joins(:criterion)
                           .where('criteria.ta_visible': true)
-                          .where('marks.result_id IN (?)', results.select(:id))
+                          .where(marks: { result_id: results.select(:id) })
                           .group(:result_id)
                           .select('marks.result_id')
       conditions = []
@@ -909,7 +914,7 @@ class Grouping < ApplicationRecord
     unless filter_data.dig('totalExtraMarkRange', 'max').blank? && filter_data.dig('totalExtraMarkRange', 'min').blank?
       # Extra marks have percentage-based units that require Ruby computation,
       # so we keep the Ruby path but avoid breaking the AR chain unnecessarily.
-      result_ids = results.pluck(:id)
+      result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
       if filter_data.dig('totalExtraMarkRange', 'max').present?
         total_marks_hash.select! { |_, value| value <= filter_data['totalExtraMarkRange']['max'].to_f }

@@ -160,7 +160,7 @@ class ResultsController < ApplicationController
           criteria_query[:ta_visible] = true
         end
         # Pre-fetch all rubric levels in one query to avoid N+1
-        rubric_criteria_ids = RubricCriterion.where(**criteria_query).pluck(:id)
+        rubric_criteria_ids = RubricCriterion.where(**criteria_query).ids
         all_levels = Level.where(criterion_id: rubric_criteria_ids)
                           .order(:mark)
                           .group_by(&:criterion_id)
@@ -227,14 +227,14 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: [role: :user])
+                      .joins(membership: [{ role: :user }])
                       .where('users.user_name': current_user.user_name)
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         else
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: [role: :user])
+                      .joins(membership: [{ role: :user }])
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         end
 
@@ -365,11 +365,10 @@ class ResultsController < ApplicationController
       data = assigned_prs.includes(:result).order(id: :asc).map do |pr|
         { result_id: pr.result_id, grouping_id: pr.reviewer_id, submission_id: pr.result&.submission_id }
       end
-      render json: data
     else
       data = grouping.get_filtered_ordered_ids(current_role, filter_data)
-      render json: data
     end
+    render json: data
   end
 
   def random_incomplete_submission
@@ -444,7 +443,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
+    mark_value = params[:mark].presence&.to_f
 
     is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 
@@ -660,7 +659,7 @@ class ResultsController < ApplicationController
 
   # Download a csv containing view token and grouping information for the results whose ids are given
   def download_view_tokens
-    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
+    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [{ role: :user }] }])
                             .order('groups.group_name')
                             .pluck('groups.group_name',
                                    'users.user_name',
