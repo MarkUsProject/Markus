@@ -20,6 +20,7 @@
 ### 🐛 Bug fixes
 - Trigger repository permissions update after LTI roster sync (#7831)
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Improve assignment loading time on grading page (#7836)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)

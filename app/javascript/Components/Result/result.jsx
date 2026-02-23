@@ -768,9 +768,7 @@ class Result extends React.Component {
       })
       .then(data => {
         if (!data || !Array.isArray(data)) return;
-        const currentIndex = data.findIndex(
-          entry => entry.result_id === this.state.result_id
-        );
+        const currentIndex = data.findIndex(entry => entry.result_id === this.state.result_id);
         this.setState({
           prefetchedIds: data,
           prefetchedIndex: currentIndex,
@@ -816,10 +814,7 @@ class Result extends React.Component {
             loading: true,
           }),
           () => {
-            let new_url = Routes.edit_course_result_path(
-              this.props.course_id,
-              nextEntry.result_id
-            );
+            let new_url = Routes.edit_course_result_path(this.props.course_id, nextEntry.result_id);
             history.pushState({}, document.title, new_url);
             // Refetch IDs in the background if stale
             if (this.shouldRefetchIds()) {

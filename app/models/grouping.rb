@@ -779,7 +779,7 @@ class Grouping < ApplicationRecord
     end
 
     results.pluck('results.id', 'groupings.id', 'results.submission_id').uniq { |id, _, _| id }
-                                                                        .map do |id, gid, sid|
+           .map do |id, gid, sid|
       {
         result_id: id, grouping_id: gid, submission_id: sid
       }
