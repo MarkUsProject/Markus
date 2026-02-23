@@ -61,7 +61,6 @@ class Result extends React.Component {
       can_release: false,
       filterData: INITIAL_FILTER_MODAL_STATE,
       isCreateTagModalOpen: false,
-      // Prefetched navigation IDs (Phase 4 optimization)
       prefetchedIds: null, // Array of { result_id, grouping_id }
       prefetchedIndex: -1, // Current position in prefetched list
       prefetchClickCount: 0, // Clicks since last refetch
@@ -775,9 +774,6 @@ class Result extends React.Component {
           prefetchClickCount: 0,
           prefetchTimestamp: Date.now(),
         });
-      })
-      .catch(() => {
-        // Silently fail — will fall back to server-side navigation
       });
   };
 

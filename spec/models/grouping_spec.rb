@@ -1810,4 +1810,93 @@ describe Grouping do
       it_behaves_like 'role is an instructor or ta'
     end
   end
+
+  describe '#get_filtered_ordered_ids' do
+    let!(:grouping1) { create(:grouping_with_inviter_and_submission) }
+    let!(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+    let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+    let(:assignment) { grouping1.assignment }
+
+    context 'when role is an instructor' do
+      let(:role) { create(:instructor) }
+
+      it 'returns all groupings ordered by group name ascending with correct keys' do
+        result = grouping1.get_filtered_ordered_ids(role)
+        expect(result).to all(include(:result_id, :grouping_id, :submission_id))
+        expected_ids = [grouping1, grouping2, grouping3].sort_by { |g| g.group.group_name }
+                                                        .map { |g| g.current_result.id }
+        expect(result.pluck(:result_id)).to eq(expected_ids)
+      end
+
+      it 'returns results in descending order when ascending is false' do
+        result = grouping1.get_filtered_ordered_ids(role, { 'ascending' => 'false' })
+        expected_ids = [grouping1, grouping2, grouping3].sort_by { |g| g.group.group_name }.reverse
+                                                        .map { |g| g.current_result.id }
+        expect(result.pluck(:result_id)).to eq(expected_ids)
+      end
+
+      it 'orders by submission_date when specified' do
+        grouping1.current_submission_used.update!(revision_timestamp: 3.days.ago)
+        grouping2.current_submission_used.update!(revision_timestamp: 1.day.ago)
+        grouping3.current_submission_used.update!(revision_timestamp: 2.days.ago)
+
+        result = grouping1.get_filtered_ordered_ids(role, { 'orderBy' => 'submission_date' })
+        expect(result.pluck(:result_id)).to eq(
+          [grouping1.current_result.id, grouping3.current_result.id, grouping2.current_result.id]
+        )
+      end
+
+      it 'orders by total_mark when specified' do
+        mark1 = create(:flexible_criterion, assignment: assignment, max_mark: 10.0)
+        create(:flexible_mark, result: grouping1.current_result, criterion: mark1, mark: 3.0)
+        create(:flexible_mark, result: grouping2.current_result, criterion: mark1, mark: 1.0)
+        create(:flexible_mark, result: grouping3.current_result, criterion: mark1, mark: 2.0)
+
+        result = grouping1.get_filtered_ordered_ids(role, { 'orderBy' => 'total_mark' })
+        expect(result.pluck(:result_id)).to eq(
+          [grouping2.current_result.id, grouping3.current_result.id, grouping1.current_result.id]
+        )
+      end
+
+      it 'filters by totalMarkRange using the SQL path' do
+        criterion = create(:flexible_criterion, assignment: assignment, max_mark: 10.0)
+        create(:flexible_mark, result: grouping1.current_result, criterion: criterion, mark: 3.0)
+        create(:flexible_mark, result: grouping2.current_result, criterion: criterion, mark: 7.0)
+        create(:flexible_mark, result: grouping3.current_result, criterion: criterion, mark: 5.0)
+
+        result = grouping1.get_filtered_ordered_ids(role, { 'totalMarkRange' => { 'min' => '4', 'max' => '6' } })
+        expect(result.pluck(:result_id)).to eq([grouping3.current_result.id])
+      end
+
+      it 'filters by totalMarkRange with extra marks using the hybrid path' do
+        criterion = create(:flexible_criterion, assignment: assignment, max_mark: 10.0)
+        create(:flexible_mark, result: grouping1.current_result, criterion: criterion, mark: 3.0)
+        create(:flexible_mark, result: grouping2.current_result, criterion: criterion, mark: 7.0)
+        create(:flexible_mark, result: grouping3.current_result, criterion: criterion, mark: 5.0)
+        # Add an extra mark to grouping2 — triggers the hybrid Ruby+SQL filter path
+        create(:extra_mark_points, result: grouping2.current_result, extra_mark: -2.0)
+
+        result = grouping1.get_filtered_ordered_ids(role, { 'totalMarkRange' => { 'min' => '4', 'max' => '6' } })
+        returned_ids = result.pluck(:result_id)
+        expect(returned_ids).to include(grouping2.current_result.id, grouping3.current_result.id)
+        expect(returned_ids).not_to include(grouping1.current_result.id)
+      end
+    end
+
+    context 'when role is a ta' do
+      let(:role) { create(:ta) }
+
+      before do
+        create(:ta_membership, grouping: grouping1, role: role)
+        create(:ta_membership, grouping: grouping3, role: role)
+      end
+
+      it 'returns only groupings assigned to the TA' do
+        result = grouping1.get_filtered_ordered_ids(role)
+        returned_grouping_ids = result.pluck(:grouping_id)
+        expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+        expect(returned_grouping_ids).not_to include(grouping2.id)
+      end
+    end
+  end
 end
