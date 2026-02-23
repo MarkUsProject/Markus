@@ -126,7 +126,11 @@ class ResultsController < ApplicationController
         if current_role.instructor? || current_role.ta?
           data[:sections] = course.sections.pluck(:name)
           data[:notes_count] = submission.grouping.notes.count
-          data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
+          if current_role.ta?
+            data[:num_marked] = assignment.get_num_marked(current_role.id, bulk: true)
+          else
+            data[:num_marked] = assignment.get_num_marked(nil)
+          end
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
           if current_role.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
