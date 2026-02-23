@@ -830,30 +830,54 @@ class Grouping < ApplicationRecord
       results = results.joins(grouping: :tags).where('tags.name': filter_data['tags'])
     end
     unless filter_data.dig('totalMarkRange', 'max').blank? && filter_data.dig('totalMarkRange', 'min').blank?
-      result_ids = results.ids
-      total_marks_hash = Result.get_total_marks(result_ids)
-      if filter_data.dig('totalMarkRange', 'max').present?
-        total_marks_hash.select! { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+      max_val = filter_data.dig('totalMarkRange', 'max')&.to_f
+      min_val = filter_data.dig('totalMarkRange', 'min')&.to_f
+      # Use SQL subquery for the mark subtotal to avoid loading all IDs into Ruby.
+      # Only fall back to Ruby for results that have extra marks (percentage-based
+      # extra marks require Ruby computation).
+      mark_subquery = Mark.joins(:criterion)
+                          .where('criteria.ta_visible': true)
+                          .where('marks.result_id IN (?)', results.select(:id))
+                          .group(:result_id)
+                          .select('marks.result_id')
+      conditions = []
+      conditions << 'COALESCE(SUM(marks.mark), 0) <= ?' if max_val
+      conditions << 'COALESCE(SUM(marks.mark), 0) >= ?' if min_val
+      bind_values = [max_val, min_val].compact
+      mark_subquery = mark_subquery.having(conditions.join(' AND '), *bind_values)
+
+      # Check if any results have extra marks — if so, fall back to Ruby for those
+      result_ids_with_extra = ExtraMark.where(result_id: results.select(:id)).distinct.pluck(:result_id)
+      if result_ids_with_extra.empty?
+        # Pure SQL path — no extra marks to worry about
+        results = results.where(id: mark_subquery)
+      else
+        # Hybrid: SQL-filter results without extra marks, Ruby-filter those with extra marks
+        sql_filtered_ids = Mark.joins(:criterion)
+                               .where('criteria.ta_visible': true)
+                               .where(result_id: results.where.not(id: result_ids_with_extra).select(:id))
+                               .group(:result_id)
+                               .having(conditions.join(' AND '), *bind_values)
+                               .pluck(:result_id)
+        # Ruby path for results with extra marks (uses existing logic for percentage computation)
+        total_marks_hash = Result.get_total_marks(result_ids_with_extra)
+        total_marks_hash.select! { |_, v| v <= max_val } if max_val
+        total_marks_hash.select! { |_, v| v >= min_val } if min_val
+        results = results.where(id: sql_filtered_ids + total_marks_hash.keys)
       end
-      if filter_data.dig('totalMarkRange', 'min').present?
-        total_marks_hash.select! { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
-      end
-      results = Result.where('results.id': total_marks_hash.keys)
     end
     unless filter_data.dig('totalExtraMarkRange', 'max').blank? && filter_data.dig('totalExtraMarkRange', 'min').blank?
-      result_ids = results.ids
+      # Extra marks have percentage-based units that require Ruby computation,
+      # so we keep the Ruby path but avoid breaking the AR chain unnecessarily.
+      result_ids = results.pluck(:id)
       total_marks_hash = Result.get_total_extra_marks(result_ids)
       if filter_data.dig('totalExtraMarkRange', 'max').present?
-        total_marks_hash.select! do |_, value|
-          value <= filter_data['totalExtraMarkRange']['max'].to_f
-        end
+        total_marks_hash.select! { |_, value| value <= filter_data['totalExtraMarkRange']['max'].to_f }
       end
       if filter_data.dig('totalExtraMarkRange', 'min').present?
-        total_marks_hash.select! do |_, value|
-          value >= filter_data['totalExtraMarkRange']['min'].to_f
-        end
+        total_marks_hash.select! { |_, value| value >= filter_data['totalExtraMarkRange']['min'].to_f }
       end
-      results = Result.where('results.id': total_marks_hash.keys)
+      results = results.where(id: total_marks_hash.keys)
     end
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)
