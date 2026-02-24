@@ -15,6 +15,7 @@ Alex Krassikov
 Alex Shih
 Alysha Kwok
 Amanda Manarin
+Amin Amir
 Amr Sharaf
 Andrew Hernandez
 Andrew Louis
@@ -93,6 +94,7 @@ Horatiu Halmaghi
 Huiyu Sun
 Ian Smith
 Ibrahim Shahin
+Ibrahim Siddique
 Ido Ben Haim
 Ignas Panero Armoska
 Irene Fung
@@ -100,6 +102,7 @@ Isabelle Chan
 Ishan Thukral
 Ivan Chepelev
 Jackson Lee
+Jacky Yang
 Jakub Subczynski
 James Han
 Jason Mai

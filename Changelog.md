@@ -4,6 +4,7 @@
 
 ### 🛡️ Security
 - Added configuration settings for zip extraction limits
+- Added limit to uploaded YML file size and number of nodes
 
 ### 🚨 Breaking changes
 
