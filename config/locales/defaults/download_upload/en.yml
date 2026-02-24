@@ -21,6 +21,7 @@ en:
     invalid_rows: 'The following CSV rows were invalid: '
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
     syntax_error: 'There is an error in the file you uploaded: %{error}'
+    too_complex_yaml: The selected YAML file is malformed or too complex to process safely.
     too_many_zip_entries: Zip file contains too many entries (maximum %{max} allowed).
     unparseable_csv: The selected file is not a CSV file (even though it may have a .csv extension).
     zip_entry_too_large: Zip entry %{file_name} exceeds the maximum file size of %{max_size} MB.

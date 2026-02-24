@@ -1,5 +1,12 @@
+require 'set'
+
 # Helpers for handling uploading data files for various models.
 module UploadHelper
+  # max yaml text size in bytes.
+  YAML_MAX_BYTES = 2_000_000
+  # max estimated size after alias expansion.
+  YAML_MAX_EXPANDED_NODES = 200_000
+
   def process_file_upload(allowed_filetypes = %w[.csv .yml])
     encoding = params[:encoding] || 'UTF-8'
     upload_file = params.require(:upload_file)
@@ -113,11 +120,99 @@ module UploadHelper
 
   # Parse the +yaml_string+ and return the data as a hash.
   def parse_yaml_content(yaml_string)
+    validate_yaml_alias_safety!(yaml_string)
+
     YAML.safe_load(yaml_string,
                    permitted_classes: [
                      Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
                      ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess
                    ],
                    aliases: true)
+  end
+
+  # keep normal aliases, but block alias bombs.
+  def validate_yaml_alias_safety!(yaml_string)
+    # Block very large yaml text before parsing.
+    raise_yaml_complexity_error! if yaml_string.bytesize > YAML_MAX_BYTES
+
+    # parse yaml into an ast so we can inspect structure safely.
+    yaml_ast = Psych.parse_stream(yaml_string)
+    anchors = scan_yaml_ast(yaml_ast)
+
+    raise_yaml_complexity_error! if verify_expanded_size!(yaml_ast, anchors) > YAML_MAX_EXPANDED_NODES
+  end
+
+  def scan_yaml_ast(yaml_ast)
+    # count shape info while walking nodes.
+    num_nodes = 0
+    anchors = {}
+    stack = [yaml_ast]
+
+    until stack.empty?
+      node = stack.pop
+      next if node.nil?
+
+      num_nodes += 1
+      # stop if ast is too large.
+      raise_yaml_complexity_error! if num_nodes > YAML_MAX_EXPANDED_NODES
+
+      if node.respond_to?(:anchor) && !node.anchor.nil? && !node.is_a?(Psych::Nodes::Alias)
+        # duplicate anchor names are not allowed.
+        raise_yaml_complexity_error! if anchors.key?(node.anchor)
+        anchors[node.anchor] = node
+      end
+
+      yaml_node_children(node).each { |child| stack << child }
+    end
+
+    anchors
+  end
+
+  def verify_expanded_size!(node, anchors, cache: nil, visiting: nil, total: nil)
+    return 0 if node.nil?
+
+    total = 0 if total.nil?
+    cache = {}.compare_by_identity if cache.nil?
+    visiting = Set.new.compare_by_identity if visiting.nil?
+
+    # Raise an error if cyclic alias reference is detected
+    raise_yaml_complexity_error! if visiting.include?(node)
+
+    return total + cache[node] if cache.key?(node)
+
+    visiting.add(node)
+    total += 1
+
+    if node.is_a?(Psych::Nodes::Alias)
+      # Follow alias to its target anchor. Raise an error if the anchor is not found.
+      target = anchors[node.anchor]
+      raise_yaml_complexity_error! if target.nil?
+      total = verify_expanded_size!(target, anchors, cache: cache, visiting: visiting, total: total)
+    else
+      yaml_node_children(node).each do |child|
+        total = verify_expanded_size!(child, anchors, cache: cache, visiting: visiting, total: total)
+        raise_yaml_complexity_error! if total > YAML_MAX_EXPANDED_NODES
+      end
+    end
+
+    visiting.delete(node)
+    cache[node] = total
+    total = [total, YAML_MAX_EXPANDED_NODES + 1].min
+    raise_yaml_complexity_error! if total > YAML_MAX_EXPANDED_NODES
+    total
+  end
+
+  def yaml_node_children(node)
+    case node
+    when Psych::Nodes::Stream, Psych::Nodes::Document, Psych::Nodes::Mapping, Psych::Nodes::Sequence
+      node.children
+    else
+      []
+    end
+  end
+
+  def raise_yaml_complexity_error!
+    # use one clear user-facing error message.
+    raise StandardError, I18n.t('upload_errors.too_complex_yaml')
   end
 end
