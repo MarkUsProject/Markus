@@ -739,6 +739,66 @@ class Grouping < ApplicationRecord
     order_and_get_next_grouping(results, filter_data, reversed)
   end
 
+  # Returns an ordered array of { result_id:, grouping_id: } hashes for all
+  # groupings matching the current filters and ordering.
+  def get_filtered_ordered_ids(current_role, filter_data = nil, limit: nil)
+    if current_role.ta?
+      results = self.assignment.current_results.joins(grouping: :tas).where(
+        'roles.id': current_role.id
+      )
+    else
+      results = self.assignment.current_results
+    end
+    results = results.joins(grouping: :group)
+    filter_data = {} if filter_data.nil?
+    results = filter_results(current_role, results, filter_data)
+
+    dir = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? :asc : :desc
+
+    case filter_data['orderBy']
+    when 'submission_date'
+      results = results.joins(:submission)
+                       .group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name',
+                               'submissions.revision_timestamp'])
+                       .order(submissions: { revision_timestamp: dir }, groups: { group_name: dir })
+    when 'total_mark'
+      # total_mark ordering requires Ruby computation (same as next_grouping_ordered_total_mark)
+      result_data = results.group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name'])
+                           .pluck('results.id', 'groupings.id', 'results.submission_id', 'groups.group_name')
+                           .uniq { |id, _, _, _| id }
+      total_marks = Result.get_total_marks(result_data.map { |id, _, _, _| id })
+      sorted = result_data.sort_by { |id, _, _, group_name| [total_marks[id] || 0, group_name] }
+      sorted.reverse! if dir == :desc
+      all_ids = sorted.map { |id, gid, sid, _| { result_id: id, grouping_id: gid, submission_id: sid } }
+      if limit
+        current_index = all_ids.index { |entry| entry[:result_id] == self.current_result.id }
+        if current_index
+          start_idx = [current_index - limit, 0].max
+          end_idx = [current_index + limit, all_ids.length - 1].min
+          return all_ids[start_idx..end_idx]
+        end
+      end
+      return all_ids
+    else
+      results = results.group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name'])
+                       .order(groups: { group_name: dir })
+    end
+
+    all_ids = results.pluck('results.id', 'groupings.id', 'results.submission_id')
+                     .uniq { |id, _, _| id }
+                     .map { |id, gid, sid| { result_id: id, grouping_id: gid, submission_id: sid } }
+
+    if limit
+      current_index = all_ids.index { |entry| entry[:result_id] == self.current_result.id }
+      if current_index
+        start_idx = [current_index - limit, 0].max
+        end_idx = [current_index + limit, all_ids.length - 1].min
+        return all_ids[start_idx..end_idx]
+      end
+    end
+    all_ids
+  end
+
   def get_random_incomplete(current_role)
     if current_role.ta? && self.assignment.assign_graders_to_criteria
       assigned_criteria = self.assignment.criteria.joins(:criterion_ta_associations)
@@ -828,17 +888,44 @@ class Grouping < ApplicationRecord
       results = results.joins(grouping: :tags).where('tags.name': filter_data['tags'])
     end
     unless filter_data.dig('totalMarkRange', 'max').blank? && filter_data.dig('totalMarkRange', 'min').blank?
-      result_ids = results.ids
-      total_marks_hash = Result.get_total_marks(result_ids)
-      if filter_data.dig('totalMarkRange', 'max').present?
-        total_marks_hash.select! { |_, value| value <= filter_data['totalMarkRange']['max'].to_f }
+      max_val = filter_data.dig('totalMarkRange', 'max')&.to_f
+      min_val = filter_data.dig('totalMarkRange', 'min')&.to_f
+      # Use SQL subquery for the mark subtotal to avoid loading all IDs into Ruby.
+      # Only fall back to Ruby for results that have extra marks (percentage-based
+      # extra marks require Ruby computation).
+      mark_subquery = Mark.joins(:criterion)
+                          .where('criteria.ta_visible': true)
+                          .where(marks: { result_id: results.select(:id) })
+                          .group(:result_id)
+                          .select('marks.result_id')
+      conditions = []
+      conditions << 'COALESCE(SUM(marks.mark), 0) <= ?' if max_val
+      conditions << 'COALESCE(SUM(marks.mark), 0) >= ?' if min_val
+      bind_values = [max_val, min_val].compact
+      mark_subquery = mark_subquery.having(conditions.join(' AND '), *bind_values)
+
+      # Check if any results have extra marks — if so, fall back to Ruby for those
+      result_ids_with_extra = ExtraMark.where(result_id: results.select(:id)).distinct.pluck(:result_id)
+      if result_ids_with_extra.empty?
+        # Pure SQL path — no extra marks to worry about
+        results = results.where(id: mark_subquery)
+      else
+        # Hybrid: SQL-filter results without extra marks, Ruby-filter those with extra marks
+        sql_filtered_ids = Mark.joins(:criterion)
+                               .where('criteria.ta_visible': true)
+                               .where(result_id: results.where.not(id: result_ids_with_extra).select(:id))
+                               .group(:result_id)
+                               .having(conditions.join(' AND '), *bind_values)
+                               .pluck(:result_id)
+        # Ruby path for results with extra marks (uses existing logic for percentage computation)
+        total_marks_hash = Result.get_total_marks(result_ids_with_extra)
+        total_marks_hash.select! { |_, v| v <= max_val } if max_val
+        total_marks_hash.select! { |_, v| v >= min_val } if min_val
+        results = results.where(id: sql_filtered_ids + total_marks_hash.keys)
       end
-      if filter_data.dig('totalMarkRange', 'min').present?
-        total_marks_hash.select! { |_, value| value >= filter_data['totalMarkRange']['min'].to_f }
-      end
-      results = Result.where('results.id': total_marks_hash.keys)
     end
     unless filter_data.dig('totalExtraMarkRange', 'max').blank? && filter_data.dig('totalExtraMarkRange', 'min').blank?
+      # Extra marks have percentage-based units that require Ruby computation
       result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
       if filter_data.dig('totalExtraMarkRange', 'max').present?
