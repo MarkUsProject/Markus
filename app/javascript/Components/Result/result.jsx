@@ -757,7 +757,7 @@ class Result extends React.Component {
     const url = Routes.get_filtered_grouping_ids_course_result_path(
       this.props.course_id,
       this.state.result_id,
-      {filterData: this.state.filterData}
+      {filterData: this.state.filterData, limit: 10}
     );
 
     fetch(url)
@@ -780,48 +780,17 @@ class Result extends React.Component {
   // Check if prefetched IDs need refreshing (every 10 clicks or 2 minutes)
   shouldRefetchIds = () => {
     const {prefetchedIds, prefetchClickCount, prefetchTimestamp} = this.state;
-    if (!prefetchedIds) return true;
-    if (prefetchClickCount >= 10) return true;
-    if (prefetchTimestamp && Date.now() - prefetchTimestamp > 2 * 60 * 1000) return true;
-    return false;
+    return (
+      !prefetchedIds ||
+      prefetchClickCount >= 10 ||
+      (prefetchTimestamp && Date.now() - prefetchTimestamp > 2 * 60 * 1000)
+    );
   };
 
   nextSubmission = direction => {
     return () => {
       const {prefetchedIds, prefetchedIndex} = this.state;
 
-      // Try client-side navigation using prefetched IDs
-      if (prefetchedIds && prefetchedIndex >= 0) {
-        const nextIndex = prefetchedIndex + direction;
-        if (nextIndex < 0 || nextIndex >= prefetchedIds.length) {
-          alert(I18n.t("results.no_results_in_direction"));
-          return;
-        }
-
-        const nextEntry = prefetchedIds[nextIndex];
-        this.setState(
-          prevState => ({
-            ...prevState,
-            result_id: nextEntry.result_id,
-            grouping_id: nextEntry.grouping_id,
-            submission_id: nextEntry.submission_id,
-            prefetchedIndex: nextIndex,
-            prefetchClickCount: prevState.prefetchClickCount + 1,
-            loading: true,
-          }),
-          () => {
-            let new_url = Routes.edit_course_result_path(this.props.course_id, nextEntry.result_id);
-            history.pushState({}, document.title, new_url);
-            // Refetch IDs in the background if stale
-            if (this.shouldRefetchIds()) {
-              this.fetchGroupingIds();
-            }
-          }
-        );
-        return;
-      }
-
-      // Fallback: server-side navigation (original behavior)
       let data = {direction: direction};
       if (this.props.role !== "Student") {
         data["filterData"] = this.state.filterData;
@@ -834,31 +803,48 @@ class Result extends React.Component {
       );
 
       this.setState({loading: true}, () => {
-        fetch(url)
-          .then(response => {
-            if (response.ok) {
-              return response.json();
-            }
-          })
-          .then(result => {
-            if (!result.next_result || !result.next_grouping) {
-              alert(I18n.t("results.no_results_in_direction"));
-              this.setState({loading: false});
-              return;
-            }
+        let getNext;
+        if (prefetchedIds && prefetchedIndex >= 0) {
+          const nextIndex = prefetchedIndex + direction;
+          if (nextIndex >= 0 && nextIndex < prefetchedIds.length) {
+            const nextEntry = prefetchedIds[nextIndex];
+            getNext = Promise.resolve({
+              next_result: {id: nextEntry.result_id, submission_id: nextEntry.submission_id},
+              next_grouping: {id: nextEntry.grouping_id},
+            });
+          } else {
+            getNext = fetch(url).then(response => (response.ok ? response.json() : null));
+          }
+        } else {
+          getNext = fetch(url).then(response => (response.ok ? response.json() : null));
+        }
 
-            const result_obj = {
-              result_id: result.next_result.id,
-              submission_id: result.next_result.submission_id,
-              grouping_id: result.next_grouping.id,
-            };
-            this.setState(prevState => ({...prevState, ...result_obj}));
-            let new_url = Routes.edit_course_result_path(
-              this.props.course_id,
-              this.state.result_id
+        getNext.then(result => {
+          if (!result || !result.next_result || !result.next_grouping) {
+            alert(I18n.t("results.no_results_in_direction"));
+            this.setState({loading: false});
+            return;
+          }
+          let newIndex = -1;
+          if (this.state.prefetchedIds) {
+            newIndex = this.state.prefetchedIds.findIndex(
+              e => e.result_id === result.next_result.id
             );
-            history.pushState({}, document.title, new_url);
-          });
+          }
+          this.setState(prevState => ({
+            ...prevState,
+            result_id: result.next_result.id,
+            submission_id: result.next_result.submission_id,
+            grouping_id: result.next_grouping.id,
+            prefetchedIndex: newIndex >= 0 ? newIndex : prevState.prefetchedIndex,
+            prefetchClickCount: prevState.prefetchClickCount + 1,
+          }));
+          let new_url = Routes.edit_course_result_path(this.props.course_id, result.next_result.id);
+          history.pushState({}, document.title, new_url);
+          if (this.shouldRefetchIds()) {
+            this.fetchGroupingIds();
+          }
+        });
       });
     };
   };

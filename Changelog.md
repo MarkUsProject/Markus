@@ -16,11 +16,11 @@
 - Store start and end date for courses (#7783)
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Improve assignment loading time on grading page (#7836)
 
 ### 🐛 Bug fixes
 - Trigger repository permissions update after LTI roster sync (#7831)
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
-- Improve assignment loading time on grading page (#7836)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)

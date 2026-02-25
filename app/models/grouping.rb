@@ -742,9 +742,8 @@ class Grouping < ApplicationRecord
   end
 
   # Returns an ordered array of { result_id:, grouping_id: } hashes for all
-  # groupings matching the current filters and ordering. Used by the frontend
-  # to prefetch the navigation list and avoid per-click next_grouping requests.
-  def get_filtered_ordered_ids(current_role, filter_data = nil)
+  # groupings matching the current filters and ordering.
+  def get_filtered_ordered_ids(current_role, filter_data = nil, limit: nil)
     if current_role.ta?
       results = self.assignment.current_results.joins(grouping: :tas).where(
         'roles.id': current_role.id
@@ -756,14 +755,14 @@ class Grouping < ApplicationRecord
     filter_data = {} if filter_data.nil?
     results = filter_results(current_role, results, filter_data)
 
-    asc_str = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? 'ASC' : 'DESC'
+    dir = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? :asc : :desc
 
     case filter_data['orderBy']
     when 'submission_date'
       results = results.joins(:submission)
                        .group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name',
                                'submissions.revision_timestamp'])
-                       .order(Arel.sql("submissions.revision_timestamp #{asc_str}, groups.group_name #{asc_str}"))
+                       .order(submissions: { revision_timestamp: dir }, groups: { group_name: dir })
     when 'total_mark'
       # total_mark ordering requires Ruby computation (same as next_grouping_ordered_total_mark)
       result_data = results.group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name'])
@@ -771,19 +770,35 @@ class Grouping < ApplicationRecord
                            .uniq { |id, _, _, _| id }
       total_marks = Result.get_total_marks(result_data.map { |id, _, _, _| id })
       sorted = result_data.sort_by { |id, _, _, group_name| [total_marks[id] || 0, group_name] }
-      sorted.reverse! if asc_str == 'DESC'
-      return sorted.map { |id, gid, sid, _| { result_id: id, grouping_id: gid, submission_id: sid } }
+      sorted.reverse! if dir == :desc
+      all_ids = sorted.map { |id, gid, sid, _| { result_id: id, grouping_id: gid, submission_id: sid } }
+      if limit
+        current_index = all_ids.index { |entry| entry[:result_id] == self.current_result.id }
+        if current_index
+          start_idx = [current_index - limit, 0].max
+          end_idx = [current_index + limit, all_ids.length - 1].min
+          return all_ids[start_idx..end_idx]
+        end
+      end
+      return all_ids
     else
       results = results.group(['results.id', 'groupings.id', 'results.submission_id', 'groups.group_name'])
-                       .order(Arel.sql("groups.group_name #{asc_str}"))
+                       .order(groups: { group_name: dir })
     end
 
-    results.pluck('results.id', 'groupings.id', 'results.submission_id').uniq { |id, _, _| id }
-           .map do |id, gid, sid|
-      {
-        result_id: id, grouping_id: gid, submission_id: sid
-      }
+    all_ids = results.pluck('results.id', 'groupings.id', 'results.submission_id')
+                     .uniq { |id, _, _| id }
+                     .map { |id, gid, sid| { result_id: id, grouping_id: gid, submission_id: sid } }
+
+    if limit
+      current_index = all_ids.index { |entry| entry[:result_id] == self.current_result.id }
+      if current_index
+        start_idx = [current_index - limit, 0].max
+        end_idx = [current_index + limit, all_ids.length - 1].min
+        return all_ids[start_idx..end_idx]
+      end
     end
+    all_ids
   end
 
   def get_random_incomplete(current_role)
@@ -912,17 +927,20 @@ class Grouping < ApplicationRecord
       end
     end
     unless filter_data.dig('totalExtraMarkRange', 'max').blank? && filter_data.dig('totalExtraMarkRange', 'min').blank?
-      # Extra marks have percentage-based units that require Ruby computation,
-      # so we keep the Ruby path but avoid breaking the AR chain unnecessarily.
+      # Extra marks have percentage-based units that require Ruby computation
       result_ids = results.ids
       total_marks_hash = Result.get_total_extra_marks(result_ids)
       if filter_data.dig('totalExtraMarkRange', 'max').present?
-        total_marks_hash.select! { |_, value| value <= filter_data['totalExtraMarkRange']['max'].to_f }
+        total_marks_hash.select! do |_, value|
+          value <= filter_data['totalExtraMarkRange']['max'].to_f
+        end
       end
       if filter_data.dig('totalExtraMarkRange', 'min').present?
-        total_marks_hash.select! { |_, value| value >= filter_data['totalExtraMarkRange']['min'].to_f }
+        total_marks_hash.select! do |_, value|
+          value >= filter_data['totalExtraMarkRange']['min'].to_f
+        end
       end
-      results = results.where(id: total_marks_hash.keys)
+      results = Result.where('results.id': total_marks_hash.keys)
     end
     if filter_data['criteria'].present?
       results = results.joins(marks: :criterion)

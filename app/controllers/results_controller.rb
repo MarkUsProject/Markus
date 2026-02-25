@@ -126,11 +126,7 @@ class ResultsController < ApplicationController
         if current_role.instructor? || current_role.ta?
           data[:sections] = course.sections.pluck(:name)
           data[:notes_count] = submission.grouping.notes.count
-          if current_role.ta?
-            data[:num_marked] = assignment.get_num_marked(current_role.id, bulk: true)
-          else
-            data[:num_marked] = assignment.get_num_marked(nil)
-          end
+          data[:num_marked] = assignment.get_num_marked(current_role.instructor? ? nil : current_role.id)
           data[:num_collected] = assignment.get_num_collected(current_role.instructor? ? nil : current_role.id)
           if current_role.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
@@ -163,7 +159,8 @@ class ResultsController < ApplicationController
         rubric_criteria_ids = RubricCriterion.where(**criteria_query).ids
         all_levels = Level.where(criterion_id: rubric_criteria_ids)
                           .order(:mark)
-                          .group_by(&:criterion_id)
+                          .pluck_to_hash(:criterion_id, :name, :description, :mark)
+                          .group_by { |h| h[:criterion_id] }
 
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           criteria = klass.where(**criteria_query)
@@ -182,7 +179,7 @@ class ResultsController < ApplicationController
             # Use pre-fetched levels instead of querying per criterion
             if klass == RubricCriterion
               info[:levels] = (all_levels[cr[:id]] || []).map do |l|
-                { name: l.name, description: l.description, mark: l.mark }
+                l.except(:criterion_id)
               end
             end
             info.merge(criterion_type: klass.name)
@@ -227,14 +224,14 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: [{ role: :user }])
+                      .joins(membership: [role: :user])
                       .where('users.user_name': current_user.user_name)
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         else
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: [{ role: :user }])
+                      .joins(membership: [role: :user])
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         end
 
@@ -355,6 +352,7 @@ class ResultsController < ApplicationController
 
   def get_filtered_grouping_ids
     filter_data = params[:filterData] || {}
+    limit = params[:limit]&.to_i
     result = record
     grouping = result.submission.grouping
     assignment = grouping.assignment
@@ -365,9 +363,10 @@ class ResultsController < ApplicationController
       data = assigned_prs.includes(:result).order(id: :asc).map do |pr|
         { result_id: pr.result_id, grouping_id: pr.reviewer_id, submission_id: pr.result&.submission_id }
       end
-    else
-      data = grouping.get_filtered_ordered_ids(current_role, filter_data)
+      return render json: data
     end
+
+    data = grouping.get_filtered_ordered_ids(current_role, filter_data, limit: limit)
     render json: data
   end
 
@@ -443,7 +442,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].presence&.to_f
+    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
     is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 
@@ -659,7 +658,7 @@ class ResultsController < ApplicationController
 
   # Download a csv containing view token and grouping information for the results whose ids are given
   def download_view_tokens
-    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [{ role: :user }] }])
+    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
                             .order('groups.group_name')
                             .pluck('groups.group_name',
                                    'users.user_name',
