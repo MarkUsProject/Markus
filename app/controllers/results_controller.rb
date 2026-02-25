@@ -155,6 +155,13 @@ class ResultsController < ApplicationController
         else
           criteria_query[:ta_visible] = true
         end
+        # Pre-fetch all rubric levels in one query to avoid N+1
+        rubric_criteria_ids = RubricCriterion.where(**criteria_query).ids
+        all_levels = Level.where(criterion_id: rubric_criteria_ids)
+                          .order(:mark)
+                          .pluck_to_hash(:criterion_id, :name, :description, :mark)
+                          .group_by { |h| h[:criterion_id] }
+
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           criteria = klass.where(**criteria_query)
           criteria_info = criteria.pluck_to_hash(*fields)
@@ -169,11 +176,11 @@ class ResultsController < ApplicationController
           criteria_info.map do |cr|
             info = marks_info[cr[:id]]&.first || cr.merge(mark: nil)
 
-            # adds a levels field to the marks info hash with the same rubric criterion id
+            # Use pre-fetched levels instead of querying per criterion
             if klass == RubricCriterion
-              info[:levels] = Level.where(criterion_id: cr[:id])
-                                   .order(:mark)
-                                   .pluck_to_hash(:name, :description, :mark)
+              info[:levels] = (all_levels[cr[:id]] || []).map do |l|
+                l.except(:criterion_id)
+              end
             end
             info.merge(criterion_type: klass.name)
           end
@@ -341,6 +348,26 @@ class ResultsController < ApplicationController
     end
 
     render json: { next_result: next_result, next_grouping: next_grouping }
+  end
+
+  def get_filtered_grouping_ids
+    filter_data = params[:filterData] || {}
+    limit = params[:limit]&.to_i
+    result = record
+    grouping = result.submission.grouping
+    assignment = grouping.assignment
+
+    if result.is_a_review? && current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+      # For peer reviewers, return the ordered list of peer review result IDs
+      assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
+      data = assigned_prs.includes(:result).order(id: :asc).map do |pr|
+        { result_id: pr.result_id, grouping_id: pr.reviewer_id, submission_id: pr.result&.submission_id }
+      end
+      return render json: data
+    end
+
+    data = grouping.get_filtered_ordered_ids(current_role, filter_data, limit: limit)
+    render json: data
   end
 
   def random_incomplete_submission

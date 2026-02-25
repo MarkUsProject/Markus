@@ -27,6 +27,7 @@ describe ResultsController do
       add_extra_mark: :post,
       delete_grace_period_deduction: :delete,
       next_grouping: :get,
+      get_filtered_grouping_ids: :get,
       random_incomplete_submission: :get,
       remove_extra_mark: :post,
       revert_to_automatic_deductions: :patch,
@@ -1397,6 +1398,7 @@ describe ResultsController do
 
     [:edit,
      :next_grouping,
+     :get_filtered_grouping_ids,
      :random_incomplete_submission,
      :set_released_to_students,
      :toggle_marking_state,
@@ -2035,6 +2037,39 @@ describe ResultsController do
       end
     end
 
+    context 'accessing get_filtered_grouping_ids' do
+      let(:grouping1) { create(:grouping_with_inviter_and_submission) }
+      let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+      let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: grouping1.assignment) }
+      let(:groupings) { [grouping1, grouping2, grouping3] }
+
+      before { groupings }
+
+      it 'returns results ordered by group name by default' do
+        get :get_filtered_grouping_ids, params: { course_id: course.id, id: grouping1.current_result.id }
+        data = response.parsed_body
+        returned_grouping_ids = data.pluck('grouping_id')
+        expected_order = groupings.sort_by { |g| g.group.group_name }.map(&:id)
+        expect(returned_grouping_ids).to eq(expected_order)
+      end
+
+      it 'applies filters to the result set' do
+        section = create(:section)
+        grouping1.inviter.update(section: section)
+        grouping2.inviter.update(section: nil)
+        grouping3.inviter.update(section: section)
+
+        get :get_filtered_grouping_ids, params: {
+          course_id: course.id, id: grouping1.current_result.id,
+          filterData: { section: section.name }
+        }
+        data = response.parsed_body
+        returned_grouping_ids = data.pluck('grouping_id')
+        expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+        expect(returned_grouping_ids).not_to include(grouping2.id)
+      end
+    end
+
     describe '#random_incomplete_submission' do
       it 'should receive 200 when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
@@ -2505,6 +2540,16 @@ describe ResultsController do
               expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
             end
           end
+        end
+      end
+
+      context 'accessing get_filtered_grouping_ids' do
+        it 'returns only groupings assigned to the TA' do
+          get :get_filtered_grouping_ids, params: { course_id: course.id, id: grouping1.current_result.id }
+          data = response.parsed_body
+          returned_grouping_ids = data.pluck('grouping_id')
+          expect(returned_grouping_ids).not_to include(grouping4.id)
+          expect(returned_grouping_ids.length).to eq(3)
         end
       end
     end

@@ -184,6 +184,7 @@ Rails.application.routes.draw do
         post 'add_extra_mark'
         delete 'delete_grace_period_deduction'
         get 'next_grouping'
+        get 'get_filtered_grouping_ids'
         get 'print'
         delete 'remove_extra_mark'
         patch 'revert_to_automatic_deductions'

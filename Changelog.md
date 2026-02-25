@@ -16,6 +16,7 @@
 - Store start and end date for courses (#7783)
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Improve assignment loading time on grading page (#7836)
 
 ### 🐛 Bug fixes
 - Trigger repository permissions update after LTI roster sync (#7831)
