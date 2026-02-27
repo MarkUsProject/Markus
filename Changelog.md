@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Escape raw HTML syntax in RMarkdown conversion to HTML
 
 ### 🚨 Breaking changes
 
