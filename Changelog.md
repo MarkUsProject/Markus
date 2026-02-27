@@ -3,32 +3,32 @@
 ## [unreleased]
 
 ### 🛡️ Security
-- Added configuration settings for zip extraction limits
-- Added limit to uploaded YML file size and number of nodes
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+
+## [v2.9.4]
+
+### 🛡️ Security
+- Added limit to uploaded YML file size and number of nodes
+- Added configuration settings for zip extraction limits
+
+### ✨ New features and improvements
 - Enable test results downloads through the API (#7754)
-- Provide suggestions for partial student matching scans (#7760)
-- Allow inactive students to join groups (#7757)
-- Update autotest settings form UI (#7777)
-- Store start and end date for courses (#7783)
-- Split courses into Current and Past sections for all users (#7801)
-- Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Improve assignment loading time on grading page (#7836)
 
 ### 🐛 Bug fixes
 - Trigger repository permissions update after LTI roster sync (#7831)
-- Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 ### 🔧 Internal changes
-- Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
-- Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
-- Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
-- Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
-- Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
-- Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
-- Upgraded to Rails v8.1 (#7815)
+- Bumped nokogiri from 1.19.0 to 1.19.1 (#7834)
+- Bumped rack from 3.2.4 to 3.2.5 (#7832)
+- Bumped ajv from 8.17.1 to 8.18.0 (#7835)
 
 ## [v2.9.3]
 
@@ -262,6 +262,79 @@
 
 ### ✨ New features and improvements
 
+- Fix front-end content shift when an input element is focused (#7384)
+- Tooltip text for Package requirements file for Python autotester settings (#7383)
+- Pass back tags and overall comments from Autotester to MarkUs (#7387)
+- Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
+- Group test results by Test Groups id (#7422)
+- Display HTML previews of RMarkdown files (#7394)
+- Allow instructors to assign scans to inactive students (#7482)
+- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
+- Modified add_group_api to use username as group name for individual assignments (#7481)
+- Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
+- Allow creating image annotations from a test run's outputs (#7486)
+- Added an API that collects a single submission (#7494)
+- Enable removal of a student from a course (#7480)
+
+### 🐛 Bug fixes
+
+- Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
+- Ensures mark levels on a rubric criterion are properly scaled when its max mark is updated (#7311)
+- Refactor contributors list in About section to read from markus-contributors.txt (#7374)
+- Optimized the querying of submissions when assigning graders (#7381)
+- Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
+- Fix tag creation failing in tags table (#7426)
+- Ensure tag names are unique within an assignment (#7430)
+- Update flash style to "notice" for "setting up test env" message (#7445)
+- Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
+- Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
+- Ensured annotations appear in results view when in fullscreen mode (#7487)
+- Fixed bug in `ImageViewer` where annotations did not always appear on initial image load (#7487)
+
+### 🔧 Internal changes
+
+- Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
+- Replace moment.js dependency with much smaller dayjs (#7346)
+- Refactor `FileViewer`, `TextViewer`, `BinaryViewer` and `ImageViewer` components (#7270)
+- Pin `mistune` Python dependency to preserve compatibility with `nbconvert` (#7371)
+- Cache playwright's chromium installation on GitHub Actions (#7372)
+- Fix broken link to the Vagrant installation guide in `README.md` (#7349)
+- Fix `extra_hosts` configuration in `compose.yaml` (#7375)
+- Add unit tests for `marks_graders_controller` (#7382)
+- Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
+- Refactor the `Result` component and its children to use React context API (#7380)
+- Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
+- Update Python version to 3.13 in seed autotest schemas (#7388)
+- Rename jupyter notebook content functions and files to generalize to html content (#7391)
+- Update to React v18 (#7392)
+- Remove unused Javascript files (#7442)
+- Refactor scanned test generation and test splitting from polling to websockets (#7428)
+- Move Docker dependency updates into separate service (#7451)
+- Fixed flaky test due to daylight savings time issue (#7452)
+- Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
+- Updated to react-flatpickr v4.0.0 (#7478)
+- Remove `mistune` Python explicit dependency (#7483)
+- Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
+- Added explicit permissions to GitHub Actions workflow configuration (#7495)
+
+## [v2.6.1]
+
+### ✨ New features and improvements
+
+- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
+- Added zoom and rotate functionality to PDF viewer (#7306)
+
+### 🐛 Bug fixes
+
+- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
+- Fixed bug in grading context menu for editing/deleting annotations (#7314)
+- Fixed bug in grading annotations table when deleting annotations (#7314)
+- Ensure correct LTI version of lti_user_id is used on launch (#7335)
+
+## [v2.6.0]
+
+### ✨ New features and improvements
+
 - Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
@@ -297,7 +370,6 @@
 ## [v2.5.3]
 
 ### 🐛 Bug fixes
-
 - Fix Marks Spreadsheet csv bug of showing incorrect marks (#7257)
 - Fix incorrect inclusion of course parameter in LtiSyncJob (#7258)
 - Fix Google Colab Jupyter Notebooks rendering by excluding widgets (#7271)
@@ -522,6 +594,9 @@
 ## [v2.2.4]
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 
+
+## [v2.2.4]
+- Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
