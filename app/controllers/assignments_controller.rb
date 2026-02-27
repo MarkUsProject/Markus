@@ -633,6 +633,7 @@ class AssignmentsController < ApplicationController
     raise I18n.t('upload_errors.invalid_file_type', type: 'zip') unless File.extname(upload_file.path).casecmp?('.zip')
 
     Zip::File.open(upload_file.path) do |zipfile|
+      validate_config_zip!(zipfile)
       ApplicationRecord.transaction do
         # Build assignment from properties
         prop_file = zipfile.get_entry(CONFIG_FILES[:properties])
@@ -784,6 +785,52 @@ class AssignmentsController < ApplicationController
       end
     end
     assignment.starter_file_groups.find_each(&:update_entries)
+  end
+
+  def validate_config_zip!(zip_file)
+    max_entries = Settings.max_zip_file_entries
+    if max_entries && zip_file.size > max_entries
+      raise I18n.t('upload_errors.too_many_zip_entries', max: max_entries)
+    end
+
+    max_total_size = Settings.max_zip_total_size
+    running_total = 0
+
+    max_file_size = current_course.max_file_size
+    zip_file.each do |entry|
+      next if entry.directory?
+
+      entry_size = entry.size
+
+      if entry_size.nil?
+        entry_size = 0
+        entry.get_input_stream do |io|
+          while (chunk = io.read(64 * 1024))
+            entry_size += chunk.bytesize
+            if max_file_size && entry_size > max_file_size
+              max_mb = (max_file_size / 1_000_000.0).round(2)
+              raise I18n.t('upload_errors.zip_entry_too_large', file_name: entry.name, max_size: max_mb)
+            end
+            if max_total_size && running_total + entry_size > max_total_size
+              max_mb = (max_total_size / 1_000_000.0).round(2)
+              raise I18n.t('upload_errors.zip_too_large_total', max_mb: max_mb)
+            end
+          end
+        end
+      end
+
+      if entry_size
+        if max_total_size && running_total + entry_size > max_total_size
+          max_mb = (max_total_size / 1_000_000.0).round(2)
+          raise I18n.t('upload_errors.zip_too_large_total', max_mb: max_mb)
+        end
+        running_total += entry_size if max_total_size
+        if max_file_size && entry_size > max_file_size
+          max_mb = (max_file_size / 1_000_000.0).round(2)
+          raise I18n.t('upload_errors.zip_entry_too_large', file_name: entry.name, max_size: max_mb)
+        end
+      end
+    end
   end
 
   # Build the tag/criteria/starter file settings file specified by +hash_to_build+ found in +zip_file+

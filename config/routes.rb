@@ -42,6 +42,7 @@ Rails.application.routes.draw do
             put 'remove_tag'
             post 'collect_submission'
             post 'add_test_run'
+            get 'test_results'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
@@ -182,6 +183,7 @@ Rails.application.routes.draw do
         post 'add_extra_mark'
         delete 'delete_grace_period_deduction'
         get 'next_grouping'
+        get 'get_filtered_grouping_ids'
         get 'print'
         delete 'remove_extra_mark'
         patch 'revert_to_automatic_deductions'

@@ -441,7 +441,8 @@ class SubmissionsController < ApplicationController
           messages.concat msgs
         end
 
-        upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
+        upload_files_helper(new_folders, new_files, unzip: unzip,
+                                                    max_file_size: @assignment.course.max_file_size) do |f|
           if f.is_a?(String) # is a directory
             authorize! to: :manage_subdirectories? # ensure user is authorized for directories in zip files
             success, msgs = add_folder(f, current_role, repo, path: path, txn: txn, required_files: required_files)

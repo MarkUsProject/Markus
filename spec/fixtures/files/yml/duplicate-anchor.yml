@@ -1,0 +1,3 @@
+a: &anchor 1
+b: &anchor 2
+c: *anchor

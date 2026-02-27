@@ -61,6 +61,10 @@ class Result extends React.Component {
       can_release: false,
       filterData: INITIAL_FILTER_MODAL_STATE,
       isCreateTagModalOpen: false,
+      prefetchedIds: null, // Array of { result_id, grouping_id }
+      prefetchedIndex: -1, // Current position in prefetched list
+      prefetchClickCount: 0, // Clicks since last refetch
+      prefetchTimestamp: null, // Time of last prefetch
     };
 
     this.leftPane = React.createRef();
@@ -79,6 +83,10 @@ class Result extends React.Component {
     document.getSelection().removeAllRanges();
 
     this.refreshFilterData();
+    // Prefetch grouping IDs for client-side navigation (skip if already valid)
+    if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
+      this.fetchGroupingIds();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -742,8 +750,47 @@ class Result extends React.Component {
     });
   };
 
+  // Prefetch all filtered grouping IDs for client-side navigation
+  fetchGroupingIds = () => {
+    if (this.props.role === "Student") return;
+
+    const url = Routes.get_filtered_grouping_ids_course_result_path(
+      this.props.course_id,
+      this.state.result_id,
+      {filterData: this.state.filterData, limit: 10}
+    );
+
+    fetch(url)
+      .then(response => {
+        if (response.ok) return response.json();
+        return null;
+      })
+      .then(data => {
+        if (!data || !Array.isArray(data)) return;
+        const currentIndex = data.findIndex(entry => entry.result_id === this.state.result_id);
+        this.setState({
+          prefetchedIds: data,
+          prefetchedIndex: currentIndex,
+          prefetchClickCount: 0,
+          prefetchTimestamp: Date.now(),
+        });
+      });
+  };
+
+  // Check if prefetched IDs need refreshing (every 10 clicks or 2 minutes)
+  shouldRefetchIds = () => {
+    const {prefetchedIds, prefetchClickCount, prefetchTimestamp} = this.state;
+    return (
+      !prefetchedIds ||
+      prefetchClickCount >= 10 ||
+      (prefetchTimestamp && Date.now() - prefetchTimestamp > 2 * 60 * 1000)
+    );
+  };
+
   nextSubmission = direction => {
     return () => {
+      const {prefetchedIds, prefetchedIndex} = this.state;
+
       let data = {direction: direction};
       if (this.props.role !== "Student") {
         data["filterData"] = this.state.filterData;
@@ -756,31 +803,48 @@ class Result extends React.Component {
       );
 
       this.setState({loading: true}, () => {
-        fetch(url)
-          .then(response => {
-            if (response.ok) {
-              return response.json();
-            }
-          })
-          .then(result => {
-            if (!result.next_result || !result.next_grouping) {
-              alert(I18n.t("results.no_results_in_direction"));
-              this.setState({loading: false});
-              return;
-            }
+        let getNext;
+        if (prefetchedIds && prefetchedIndex >= 0) {
+          const nextIndex = prefetchedIndex + direction;
+          if (nextIndex >= 0 && nextIndex < prefetchedIds.length) {
+            const nextEntry = prefetchedIds[nextIndex];
+            getNext = Promise.resolve({
+              next_result: {id: nextEntry.result_id, submission_id: nextEntry.submission_id},
+              next_grouping: {id: nextEntry.grouping_id},
+            });
+          } else {
+            getNext = fetch(url).then(response => (response.ok ? response.json() : null));
+          }
+        } else {
+          getNext = fetch(url).then(response => (response.ok ? response.json() : null));
+        }
 
-            const result_obj = {
-              result_id: result.next_result.id,
-              submission_id: result.next_result.submission_id,
-              grouping_id: result.next_grouping.id,
-            };
-            this.setState(prevState => ({...prevState, ...result_obj}));
-            let new_url = Routes.edit_course_result_path(
-              this.props.course_id,
-              this.state.result_id
+        getNext.then(result => {
+          if (!result || !result.next_result || !result.next_grouping) {
+            alert(I18n.t("results.no_results_in_direction"));
+            this.setState({loading: false});
+            return;
+          }
+          let newIndex = -1;
+          if (this.state.prefetchedIds) {
+            newIndex = this.state.prefetchedIds.findIndex(
+              e => e.result_id === result.next_result.id
             );
-            history.pushState({}, document.title, new_url);
-          });
+          }
+          this.setState(prevState => ({
+            ...prevState,
+            result_id: result.next_result.id,
+            submission_id: result.next_result.submission_id,
+            grouping_id: result.next_grouping.id,
+            prefetchedIndex: newIndex >= 0 ? newIndex : prevState.prefetchedIndex,
+            prefetchClickCount: prevState.prefetchClickCount + 1,
+          }));
+          let new_url = Routes.edit_course_result_path(this.props.course_id, result.next_result.id);
+          history.pushState({}, document.title, new_url);
+          if (this.shouldRefetchIds()) {
+            this.fetchGroupingIds();
+          }
+        });
       });
     };
   };
@@ -853,7 +917,9 @@ class Result extends React.Component {
 
   updateFilterData = new_filters => {
     const filters = {...this.state.filterData, ...new_filters};
-    this.setState({filterData: filters});
+    this.setState({filterData: filters, prefetchedIds: null, prefetchedIndex: -1}, () => {
+      this.fetchGroupingIds();
+    });
     localStorage.setItem(
       `${this.props.user_id}_${this.state.assignment_id}_filterData`,
       JSON.stringify(filters)
@@ -861,7 +927,12 @@ class Result extends React.Component {
   };
 
   resetFilterData = () => {
-    this.setState({filterData: INITIAL_FILTER_MODAL_STATE});
+    this.setState(
+      {filterData: INITIAL_FILTER_MODAL_STATE, prefetchedIds: null, prefetchedIndex: -1},
+      () => {
+        this.fetchGroupingIds();
+      }
+    );
     localStorage.setItem(
       `${this.props.user_id}_${this.state.assignment_id}_filterData`,
       JSON.stringify(INITIAL_FILTER_MODAL_STATE)

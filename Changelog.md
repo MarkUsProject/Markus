@@ -12,6 +12,24 @@
 
 ### 🔧 Internal changes
 
+## [v2.9.4]
+
+### 🛡️ Security
+- Added limit to uploaded YML file size and number of nodes
+- Added configuration settings for zip extraction limits
+
+### ✨ New features and improvements
+- Enable test results downloads through the API (#7754)
+- Improve assignment loading time on grading page (#7836)
+
+### 🐛 Bug fixes
+- Trigger repository permissions update after LTI roster sync (#7831)
+
+### 🔧 Internal changes
+- Bumped nokogiri from 1.19.0 to 1.19.1 (#7834)
+- Bumped rack from 3.2.4 to 3.2.5 (#7832)
+- Bumped ajv from 8.17.1 to 8.18.0 (#7835)
+
 ## [v2.9.3]
 
 ### ✨ New features and improvements
