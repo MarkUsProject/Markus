@@ -150,21 +150,6 @@ export default function Table({
     columnResizeMode: "onChange",
   });
 
-  const LoadingSpinner = () => (
-    <div className="loading-spinner">
-      <Grid
-        visible={true}
-        height="25"
-        width="25"
-        color="#31649B"
-        ariaLabel="grid-loading"
-        radius="12.5"
-        wrapperStyle={{}}
-        wrapperClass="grid-wrapper"
-      />
-    </div>
-  );
-
   return (
     <div className="Table -highlight" style={{maxHeight: "500px"}}>
       <div className="rt-table" role="grid">
@@ -238,7 +223,6 @@ export default function Table({
           </div>
         )}
         <div className="rt-tbody" style={{minWidth: table.getCenterTotalSize()}}>
-          {loading && table.getRowModel().rows.length > 0 && <LoadingSpinner />}
           {table.getRowModel().rows.map(row => {
             return (
               <div className="rt-tr-group" role="rowgroup" key={row.id}>
@@ -265,9 +249,46 @@ export default function Table({
               </div>
             );
           })}
+          {loading && table.getRowModel().rows.length > 0 && (
+            <div
+              className="loading-spinner"
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "auto",
+                backgroundColor: "#fff",
+                zIndex: 10,
+                border: "solid 1px rgba(0, 0, 0, 0.05)",
+              }}
+            >
+              <Grid
+                visible={true}
+                height="25"
+                width="25"
+                color="#31649B"
+                ariaLabel="grid-loading"
+                radius="12.5"
+                wrapperStyle={{}}
+                wrapperClass="grid-wrapper"
+              />
+            </div>
+          )}
           {!table.getRowModel().rows.length &&
             (loading ? (
-              <LoadingSpinner />
+              <div className="loading-spinner">
+                <Grid
+                  visible={true}
+                  height="25"
+                  width="25"
+                  color="#31649B"
+                  ariaLabel="grid-loading"
+                  radius="12.5"
+                  wrapperStyle={{}}
+                  wrapperClass="grid-wrapper"
+                />
+              </div>
             ) : (
               <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
             ))}
