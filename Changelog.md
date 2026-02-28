@@ -4,6 +4,7 @@
 
 ### 🛡️ Security
 - Escape raw HTML syntax in RMarkdown conversion to HTML
+- Sanitize content when rendering submission files as HTML
 
 ### 🚨 Breaking changes
 
