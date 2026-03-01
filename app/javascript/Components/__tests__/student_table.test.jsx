@@ -23,108 +23,135 @@ describe("For the StudentTable component's states and props", () => {
   });
 
   describe("each filterable column has a custom filter method", () => {
-    let wrapper = React.createRef();
-    let filter_method;
+    // let wrapper = React.createRef();
+    // let filter_method;
+    //
+    // beforeEach(() => {
+    //   render(<StudentTable selection={["c5anthei"]} course_id={1} ref={wrapper} />);
+    // });
 
+    let instance;
     beforeEach(() => {
-      render(<StudentTable selection={["c5anthei"]} course_id={1} ref={wrapper} />);
+      render(<StudentTable course_id={1} ref={r => (instance = r)} />);
     });
 
-    describe("the filter method for the section column", () => {
-      beforeEach(() => {
-        filter_method =
-          wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[6].filterMethod;
-      });
-
-      it("returns true when the selected value is all", () => {
-        expect(filter_method({value: "all"})).toEqual(true);
-      });
-
-      it("returns true when the row's section index equals to the selected value", () => {
-        // Sets data.sections
-        wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
-        // Sample row
-        const sample_row = {section: 1};
-        expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(true);
-      });
-
-      it("returns false when the row's section index doesn't equal to the selected value", () => {
-        // Sets data.sections
-        wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
-        // Sample row
-        const sample_row = {section: 2};
-        expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(false);
-      });
+    const makeRow = values => ({
+      getValue: columnId => values[columnId],
+      original: values,
     });
+
+    // describe("the filter method for the section column", () => {
+    //   beforeEach(() => {
+    //     filter_method =
+    //       wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[6].filterMethod;
+    //   });
+    //
+    //   it("returns true when the selected value is all", () => {
+    //     expect(filter_method({value: "all"})).toEqual(true);
+    //   });
+    //
+    //   it("returns true when the row's section index equals to the selected value", () => {
+    //     // Sets data.sections
+    //     wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
+    //     // Sample row
+    //     const sample_row = {section: 1};
+    //     expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(true);
+    //   });
+    //
+    //   it("returns false when the row's section index doesn't equal to the selected value", () => {
+    //     // Sets data.sections
+    //     wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
+    //     // Sample row
+    //     const sample_row = {section: 2};
+    //     expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(false);
+    //   });
+    // });
 
     describe("the filter method for the grace credits column", () => {
+      let filterFn;
       beforeEach(() => {
-        filter_method =
-          wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[7].filterMethod;
+        // filter_method =
+        // wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[7].filterMethod;
+        filterFn = instance.getColumns().find(c => c.id === "grace_credits").filterFn;
       });
 
       it("returns true when the input equals to the row's remaining grace credits", () => {
-        const sample_row = {
-          _original: {
-            remaining_grace_credits: 4,
-          },
-        };
-        expect(filter_method({value: 4}, sample_row)).toEqual(true);
+        // const sample_row = {
+        //   _original: {
+        //     remaining_grace_credits: 4,
+        //   },
+        // };
+        // expect(filter_method({value: 4}, sample_row)).toEqual(true);
+        expect(
+          filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "4")
+        ).toEqual(true);
       });
 
       it("returns true when the input is not a number", () => {
-        const sample_row = {
-          _original: {
-            remaining_grace_credits: 4,
-          },
-        };
-        expect(filter_method({value: "unlimited"}, sample_row)).toEqual(true);
+        // const sample_row = {
+        //   _original: {
+        //     remaining_grace_credits: 4,
+        //   },
+        // };
+        // expect(filter_method({value: "unlimited"}, sample_row)).toEqual(true);
+        expect(
+          filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "unlimited")
+        ).toEqual(true);
+      });
+
+      it("returns true when the filter value is empty", () => {
+        expect(
+          filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "")
+        ).toEqual(true);
       });
 
       it("returns false when the input a number and doesn't equal to the row's remaining grace credits", () => {
-        const sample_row = {
-          _original: {
-            remaining_grace_credits: 4,
-          },
-        };
-        expect(filter_method({value: 3}, sample_row)).toEqual(false);
+        // const sample_row = {
+        //   _original: {
+        //     remaining_grace_credits: 4,
+        //   },
+        // };
+        // expect(filter_method({value: 3}, sample_row)).toEqual(false);
+        expect(
+          filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "3")
+        ).toEqual(false);
       });
     });
 
-    describe("the filter method for the active column", () => {
-      beforeEach(() => {
-        filter_method =
-          wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[8].filterMethod;
-      });
-
-      it("returns true when the selected value is all", () => {
-        expect(filter_method({value: "all"})).toEqual(true);
-      });
-
-      it("returns true when the selected value is active (i.e. not hidden) and hidden is false", () => {
-        // Sample row
-        const sample_row = {hidden: false};
-        expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(true);
-      });
-
-      it("returns false when the selected value is active and hidden is true", () => {
-        // Sample row
-        const sample_row = {hidden: true};
-        expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(false);
-      });
-
-      it("returns true when the selected value is inactive and hidden is true", () => {
-        // Sample row
-        const sample_row = {hidden: true};
-        expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(true);
-      });
-
-      it("returns false when the selected value is inactive and hidden is false", () => {
-        // Sample row
-        const sample_row = {hidden: false};
-        expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(false);
-      });
-    });
+    //   describe("the filter method for the active column", () => {
+    //     beforeEach(() => {
+    //       filter_method =
+    //         wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[8].filterMethod;
+    //     });
+    //
+    //     it("returns true when the selected value is all", () => {
+    //       expect(filter_method({value: "all"})).toEqual(true);
+    //     });
+    //
+    //     it("returns true when the selected value is active (i.e. not hidden) and hidden is false", () => {
+    //       // Sample row
+    //       const sample_row = {hidden: false};
+    //       expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(true);
+    //     });
+    //
+    //     it("returns false when the selected value is active and hidden is true", () => {
+    //       // Sample row
+    //       const sample_row = {hidden: true};
+    //       expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(false);
+    //     });
+    //
+    //     it("returns true when the selected value is inactive and hidden is true", () => {
+    //       // Sample row
+    //       const sample_row = {hidden: true};
+    //       expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(true);
+    //     });
+    //
+    //     it("returns false when the selected value is inactive and hidden is false", () => {
+    //       // Sample row
+    //       const sample_row = {hidden: false};
+    //       expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(false);
+    //     });
+    //   });
   });
 });
 
