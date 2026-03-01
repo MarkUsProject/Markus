@@ -61,6 +61,7 @@ export const selectionColumn = columnHelper.display({
   },
   size: 30,
   maxSize: 30,
+  enableResizing: false,
   cell: ({row}) => (
     <input
       type="checkbox"
