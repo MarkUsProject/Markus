@@ -4,7 +4,9 @@ export default function SelectFilter({column}) {
   const uniqueValuesMap = column.getFacetedUniqueValues();
 
   const sortedUniqueValues = React.useMemo(() => {
-    return Array.from(uniqueValuesMap.keys()).sort();
+    return Array.from(uniqueValuesMap.keys())
+      .filter(value => value !== "")
+      .sort();
   }, [uniqueValuesMap]);
 
   const totalRowCount = React.useMemo(() => {

@@ -116,18 +116,15 @@ class StudentTable extends React.Component {
           className: "number",
         },
       }),
-      columnHelper.accessor(
-        row => data.sections[row.section] ?? I18n.t("students.instructor_actions.no_section"),
-        {
-          header: I18n.t("activerecord.models.section", {count: 1}),
-          id: "section",
-          enableColumnFilter: Boolean(Object.keys(data.sections).length),
-          filterFn: "equals",
-          meta: {
-            filterVariant: "select",
-          },
-        }
-      ),
+      columnHelper.accessor(row => data.sections[row.section] || "", {
+        header: I18n.t("activerecord.models.section", {count: 1}),
+        id: "section",
+        enableColumnFilter: Boolean(Object.keys(data.sections).length),
+        filterFn: "equals",
+        meta: {
+          filterVariant: "select",
+        },
+      }),
       columnHelper.accessor("remaining_grace_credits", {
         header: I18n.t("activerecord.attributes.user.grace_credits"),
         id: "grace_credits",
