@@ -38,6 +38,40 @@ export const expanderColumn = columnHelper.display({
   },
 });
 
+export const selectionColumn = columnHelper.display({
+  id: "select",
+  header: ({table}) => {
+    const checkboxRef = React.useRef(null);
+
+    React.useEffect(() => {
+      if (checkboxRef.current) {
+        checkboxRef.current.indeterminate =
+          table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected();
+      }
+    }, [table.getIsSomeRowsSelected(), table.getIsAllRowsSelected()]);
+
+    return (
+      <input
+        ref={checkboxRef}
+        type="checkbox"
+        checked={table.getIsAllRowsSelected()}
+        onChange={table.getToggleAllRowsSelectedHandler()}
+      />
+    );
+  },
+  size: 30,
+  maxSize: 30,
+  enableResizing: false,
+  cell: ({row}) => (
+    <input
+      type="checkbox"
+      checked={row.getIsSelected()}
+      disabled={!row.getCanSelect()}
+      onChange={row.getToggleSelectedHandler()}
+    />
+  ),
+});
+
 export default function Table({
   columns,
   data,
@@ -46,8 +80,12 @@ export default function Table({
   loading,
   renderSubComponent,
   getRowCanExpand,
+  getRowId,
+  enableRowSelection,
+  rowSelection: externalRowSelection,
   columnFilters: externalColumnFilters,
   onColumnFiltersChange: externalOnColumnFiltersChange,
+  onRowSelectionChange,
 }) {
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
@@ -56,6 +94,7 @@ export default function Table({
     ...initialState?.columnVisibility,
   });
   const [expanded, setExpanded] = React.useState({});
+  const [internalRowSelection, setInternalRowSelection] = React.useState({});
 
   const columnFilters =
     externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters;
@@ -65,7 +104,22 @@ export default function Table({
       ? externalOnColumnFiltersChange
       : setInternalColumnFilters;
 
-  const finalColumns = renderSubComponent ? [expanderColumn, ...columns] : columns;
+  const rowSelection =
+    externalRowSelection !== undefined ? externalRowSelection : internalRowSelection;
+
+  const handleRowSelectionChange =
+    onRowSelectionChange !== undefined ? onRowSelectionChange : setInternalRowSelection;
+
+  const finalColumns = React.useMemo(() => {
+    let cols = [...columns];
+    if (enableRowSelection) {
+      cols = [selectionColumn, ...cols];
+    }
+    if (renderSubComponent) {
+      cols = [expanderColumn, ...cols];
+    }
+    return cols;
+  }, [columns, enableRowSelection, renderSubComponent]);
 
   const table = useReactTable({
     data,
@@ -75,12 +129,14 @@ export default function Table({
       columnSizing,
       columnVisibility,
       expanded,
+      rowSelection,
     },
     initialState: initialState,
     onColumnFiltersChange: handleColumnFiltersChange,
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: setExpanded,
+    onRowSelectionChange: handleRowSelectionChange,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -88,8 +144,10 @@ export default function Table({
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
     getRowCanExpand,
+    getRowId,
     enableSortingRemoval: false,
     enableColumnResizing: true,
+    enableRowSelection: enableRowSelection,
     columnResizeMode: "onChange",
   });
 
@@ -192,6 +250,32 @@ export default function Table({
               </div>
             );
           })}
+          {loading && table.getRowModel().rows.length > 0 && (
+            <div
+              className="loading-spinner"
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "auto",
+                backgroundColor: "#fff",
+                zIndex: 10,
+                border: "solid 1px rgba(0, 0, 0, 0.05)",
+              }}
+            >
+              <Grid
+                visible={true}
+                height="25"
+                width="25"
+                color="#31649B"
+                ariaLabel="grid-loading"
+                radius="12.5"
+                wrapperStyle={{}}
+                wrapperClass="grid-wrapper"
+              />
+            </div>
+          )}
           {!table.getRowModel().rows.length &&
             (loading ? (
               <div className="loading-spinner">

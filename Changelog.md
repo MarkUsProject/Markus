@@ -25,6 +25,7 @@
 - Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
 - Upgraded to Rails v8.1 (#7815)
+- Updated the student table to use `@tanstack/react-table` v8 (#7826)
 
 ## [v2.9.4]
 
