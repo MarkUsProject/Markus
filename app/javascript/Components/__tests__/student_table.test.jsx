@@ -2,10 +2,9 @@
  * Tests for the StudentTable component
  */
 
-import {StudentTable} from "../student_table";
+import {StudentTable, StudentsActionBox} from "../student_table";
 import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {CourseSummaryTable} from "../course_summaries_table";
 
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
@@ -23,13 +22,6 @@ describe("For the StudentTable component's states and props", () => {
   });
 
   describe("each filterable column has a custom filter method", () => {
-    // let wrapper = React.createRef();
-    // let filter_method;
-    //
-    // beforeEach(() => {
-    //   render(<StudentTable selection={["c5anthei"]} course_id={1} ref={wrapper} />);
-    // });
-
     let instance;
     beforeEach(() => {
       render(<StudentTable course_id={1} ref={r => (instance = r)} />);
@@ -40,60 +32,19 @@ describe("For the StudentTable component's states and props", () => {
       original: values,
     });
 
-    // describe("the filter method for the section column", () => {
-    //   beforeEach(() => {
-    //     filter_method =
-    //       wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[6].filterMethod;
-    //   });
-    //
-    //   it("returns true when the selected value is all", () => {
-    //     expect(filter_method({value: "all"})).toEqual(true);
-    //   });
-    //
-    //   it("returns true when the row's section index equals to the selected value", () => {
-    //     // Sets data.sections
-    //     wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
-    //     // Sample row
-    //     const sample_row = {section: 1};
-    //     expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(true);
-    //   });
-    //
-    //   it("returns false when the row's section index doesn't equal to the selected value", () => {
-    //     // Sets data.sections
-    //     wrapper.current.wrapped.state.data.sections = {1: "LEC0101", 2: "LEC0201"};
-    //     // Sample row
-    //     const sample_row = {section: 2};
-    //     expect(filter_method({id: "section", value: "LEC0101"}, sample_row)).toEqual(false);
-    //   });
-    // });
-
     describe("the filter method for the grace credits column", () => {
       let filterFn;
       beforeEach(() => {
-        // filter_method =
-        // wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[7].filterMethod;
         filterFn = instance.getColumns().find(c => c.id === "grace_credits").filterFn;
       });
 
       it("returns true when the input equals to the row's remaining grace credits", () => {
-        // const sample_row = {
-        //   _original: {
-        //     remaining_grace_credits: 4,
-        //   },
-        // };
-        // expect(filter_method({value: 4}, sample_row)).toEqual(true);
         expect(
           filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "4")
         ).toEqual(true);
       });
 
       it("returns true when the input is not a number", () => {
-        // const sample_row = {
-        //   _original: {
-        //     remaining_grace_credits: 4,
-        //   },
-        // };
-        // expect(filter_method({value: "unlimited"}, sample_row)).toEqual(true);
         expect(
           filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "unlimited")
         ).toEqual(true);
@@ -106,52 +57,11 @@ describe("For the StudentTable component's states and props", () => {
       });
 
       it("returns false when the input a number and doesn't equal to the row's remaining grace credits", () => {
-        // const sample_row = {
-        //   _original: {
-        //     remaining_grace_credits: 4,
-        //   },
-        // };
-        // expect(filter_method({value: 3}, sample_row)).toEqual(false);
         expect(
           filterFn(makeRow({remaining_grace_credits: 4}), "remaining_grace_credits", "3")
         ).toEqual(false);
       });
     });
-
-    //   describe("the filter method for the active column", () => {
-    //     beforeEach(() => {
-    //       filter_method =
-    //         wrapper.current.wrapped.checkboxTable.wrappedInstance.props.columns[8].filterMethod;
-    //     });
-    //
-    //     it("returns true when the selected value is all", () => {
-    //       expect(filter_method({value: "all"})).toEqual(true);
-    //     });
-    //
-    //     it("returns true when the selected value is active (i.e. not hidden) and hidden is false", () => {
-    //       // Sample row
-    //       const sample_row = {hidden: false};
-    //       expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(true);
-    //     });
-    //
-    //     it("returns false when the selected value is active and hidden is true", () => {
-    //       // Sample row
-    //       const sample_row = {hidden: true};
-    //       expect(filter_method({id: "hidden", value: "active"}, sample_row)).toEqual(false);
-    //     });
-    //
-    //     it("returns true when the selected value is inactive and hidden is true", () => {
-    //       // Sample row
-    //       const sample_row = {hidden: true};
-    //       expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(true);
-    //     });
-    //
-    //     it("returns false when the selected value is inactive and hidden is false", () => {
-    //       // Sample row
-    //       const sample_row = {hidden: false};
-    //       expect(filter_method({id: "hidden", value: "inactive"}, sample_row)).toEqual(false);
-    //     });
-    //   });
   });
 });
 
@@ -364,5 +274,58 @@ describe("For each StudentTable's loading status", () => {
 
     const spinner = await screen.findByLabelText("grid-loading");
     expect(spinner).toBeInTheDocument();
+  });
+});
+
+describe("For the StudentTable onSubmit", () => {
+  beforeEach(() => {
+    global.$ = {
+      ajax: jest.fn(() => ({then: jest.fn()})),
+    };
+    render(<StudentTable course_id={1} />);
+  });
+  it("calls $.ajax with bulk_modify path on submit", async () => {
+    fireEvent.submit(screen.getByTestId("student_action_box"));
+    expect($.ajax).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "patch",
+        url: Routes.bulk_modify_course_students_path(1),
+      })
+    );
+  });
+});
+
+describe("For the StudentsActionBox", () => {
+  it("renders grace credits input by default", () => {
+    render(<StudentsActionBox sections={{}} onSubmit={() => {}} disabled={false} />);
+    expect(screen.getByRole("spinbutton")).toBeInTheDocument();
+  });
+
+  it("updates grace_credits state when input changes", async () => {
+    render(<StudentsActionBox sections={{}} onSubmit={() => {}} disabled={false} />);
+    const input = screen.getByRole("spinbutton");
+    await userEvent.clear(input);
+    await userEvent.type(input, "3");
+    expect(input.value).toBe("3");
+  });
+
+  it("renders section select when update_section action is chosen and sections exist", async () => {
+    render(
+      <StudentsActionBox
+        sections={{1: "LEC0101", 2: "LEC0201"}}
+        onSubmit={() => {}}
+        disabled={false}
+      />
+    );
+    const actionSelect = screen.getByTestId("student_action_box_select");
+    await userEvent.selectOptions(actionSelect, "update_section");
+    expect(screen.getByTestId("student_action_box_update_section")).toBeInTheDocument();
+  });
+
+  it("renders no section message when update_section is chosen but no sections exist", async () => {
+    render(<StudentsActionBox sections={{}} onSubmit={() => {}} disabled={false} />);
+    const actionSelect = screen.getByTestId("student_action_box_select");
+    await userEvent.selectOptions(actionSelect, "update_section");
+    expect(screen.getByText(I18n.t("sections.none"))).toBeInTheDocument();
   });
 });
