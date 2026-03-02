@@ -1,5 +1,6 @@
 import React from "react";
 import {markupTextInRange} from "../Helpers/range_selector";
+import {renderMathInElement} from "../../common/math_helper";
 
 export class HTMLViewer extends React.PureComponent {
   constructor(props) {
@@ -43,6 +44,8 @@ export class HTMLViewer extends React.PureComponent {
           console.error(error);
         }
       });
+
+    renderMathInElement(this.iframe.current.contentDocument.body);
   };
 
   componentDidUpdate(prevProps) {
@@ -67,7 +70,7 @@ export class HTMLViewer extends React.PureComponent {
           onLoad={this.renderAnnotations}
           src={this.props.url + "&preview=true"}
           ref={this.iframe}
-          sandbox="allow-same-origin allow-scripts"
+          sandbox="allow-same-origin"
         />
       </div>
     );

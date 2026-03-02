@@ -2,21 +2,25 @@ import React from "react";
 import {TextForm} from "./autosave_text_form";
 import {ResultContext} from "./result_context";
 
+import {renderMathInElement} from "../../common/math_helper";
+
 export class RemarkPanel extends React.Component {
   static contextType = ResultContext;
 
   componentDidMount() {
     if (this.props.released_to_students) {
       const comment = this.props.overallComment;
-      let target_id = "overall_remark_comment";
-      document.getElementById(target_id).innerHTML = safe_marked(comment);
-      MathJax.typeset([`#${target_id}`]);
+      const target_id = "overall_remark_comment";
+      const target = document.getElementById(target_id);
+      target.innerHTML = safe_marked(comment);
+      renderMathInElement(target);
     }
 
     if (this.props.remarkSubmitted) {
       const target_id = "remark_request_text";
-      document.getElementById(target_id).innerHTML = safe_marked(this.props.remarkRequestText);
-      MathJax.typeset(["#submitted_remark_request_text"]);
+      const target = document.getElementById(target_id);
+      target.innerHTML = safe_marked(this.props.remarkRequestText);
+      renderMathInElement(target);
     }
   }
 
@@ -124,9 +128,10 @@ class RemarkRequestForm extends React.Component {
   }
 
   renderPreview = () => {
-    let target_id = "remark-request-preview";
-    document.getElementById(target_id).innerHTML = safe_marked(this.state.value);
-    MathJax.typeset([`#${target_id}`]);
+    const target_id = "remark-request-preview";
+    const target = document.getElementById(target_id);
+    target.innerHTML = safe_marked(this.state.value);
+    renderMathInElement(target);
   };
 
   updateValue = event => {

@@ -3,4 +3,4 @@ $('#annotation_list_holder').replaceWith(
                                 locals: { annotation_texts: @annotation_texts,
                                           annotation_category: @annotation_category }).html_safe %>");
 
-MathJax.typeset(['#annotation_list_holder']);
+window.renderMathInElement(document.getElementById('annotation_list_holder'));
