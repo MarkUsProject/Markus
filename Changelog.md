@@ -3,9 +3,10 @@
 ## [unreleased]
 
 ### 🛡️ Security
-- Escape raw HTML syntax in RMarkdown conversion to HTML
-- Sanitize content when rendering submission files as HTML
-- Added iframe `sandbox` attribute to `HTMLViewer` component
+- Escape raw HTML syntax in RMarkdown conversion to HTML (#7841)
+- Sanitize content when rendering submission files as HTML (#7841)
+- Added iframe `sandbox` attribute to `HTMLViewer` component (#7841)
+- Removed `allow-scripts` from `sandbox` attribute to `HTMLViewer` component (#7848)
 
 ### 🚨 Breaking changes
 
@@ -28,6 +29,7 @@
 - Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
 - Upgraded to Rails v8.1 (#7815)
+- Replaced MathJax with KateX (#7847)
 
 ## [v2.9.4]
 

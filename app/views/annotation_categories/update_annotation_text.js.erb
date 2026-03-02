@@ -1,5 +1,11 @@
-let target_id = '#annotation_text_' + <%= @text['id'] %>;
-$(target_id).replaceWith(
-  "<%= escape_javascript(render partial: 'annotation_text',
-                                locals: { annotation_text: @text }).html_safe %>");
-MathJax.typeset([target_id]);
+(function () {
+  const target_id = 'annotation_text_' + <%= @text['id'] %>;
+  $('#' + target_id).replaceWith(
+    "<%= escape_javascript(render partial: 'annotation_text',
+                                    locals: { annotation_text: @text }).html_safe %>");
+
+  const target = document.getElementById(target_id);
+  if (target !== null) {
+    window.renderMathInElement(target);
+  }
+})();
