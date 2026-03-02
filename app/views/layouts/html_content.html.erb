@@ -8,14 +8,12 @@
       <% else %>
         <%= stylesheet_link_tag 'notebook_light' %>
       <% end %>
-      <%= javascript_include_tag 'plotly', nonce: true %>
     <% elsif @file_type == 'rmarkdown' %>
       <%= stylesheet_link_tag 'rmd' %>
       <% if @current_user&.theme == 'dark' %>
         <%= stylesheet_link_tag 'rmd_dark' %>
       <% end %>
     <% end %>
-    <%= javascript_include_tag 'require', nonce: true %>
     <%= javascript_tag nonce: true do %>
       // Same as mathjax_config.js except startup.typeset is true
       window.MathJax = {

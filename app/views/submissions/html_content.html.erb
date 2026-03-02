@@ -1,1 +1,1 @@
-<%= @html_content.html_safe %>
+<%= sanitize(@html_content, scrubber: Rails::HTML::TargetScrubber.new(prune: true)) %>
