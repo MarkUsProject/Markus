@@ -973,7 +973,7 @@ class SubmissionsController < ApplicationController
           'pandoc',
           '-o', Rails.root.join(cache_file).to_s,
           '--to=html',
-          '--standalone'
+          '-f', 'markdown-raw_html'  # Escape raw HTML
         ]
         _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
         return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?

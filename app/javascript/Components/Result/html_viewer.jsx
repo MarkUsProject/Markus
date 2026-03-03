@@ -67,6 +67,7 @@ export class HTMLViewer extends React.PureComponent {
           onLoad={this.renderAnnotations}
           src={this.props.url + "&preview=true"}
           ref={this.iframe}
+          sandbox="allow-same-origin allow-scripts"
         />
       </div>
     );
