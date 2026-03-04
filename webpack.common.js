@@ -7,7 +7,6 @@ module.exports = {
     application_webpack: "./app/javascript/application_webpack.js",
     dark_theme: "./app/javascript/dark_theme.js",
     light_theme: "./app/javascript/light_theme.js",
-    markus_notebook: "./app/javascript/markus_notebook.js",
     "pdf.worker": "pdfjs-dist/build/pdf.worker.mjs",
   },
   module: {
