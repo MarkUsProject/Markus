@@ -10,9 +10,6 @@ class ResultsController < ApplicationController
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
-    # required because MathJax dynamically changes
-    # style. # TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
     p.frame_src(*SubmissionsController::PERMITTED_IFRAME_SRC)
   end
 

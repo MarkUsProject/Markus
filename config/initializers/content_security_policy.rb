@@ -42,7 +42,6 @@ end
 
 # TODO: - at the moment, the following dependencies require unsafe configurations:
 #          heic2any: requires script-src 'unsafe-eval'
-#          MathJax: requires style-src 'unsafe-inline' and worker-src blob
 #          bullet: requires style-src 'unsafe-inline'
 #          react-jsonschema-form: required script-src 'unsafe-eval'
 #       - These are set as needed in controllers. Eventually we should update
