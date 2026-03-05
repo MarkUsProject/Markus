@@ -6,7 +6,10 @@
 //
 // To reference this file, add <%= javascript_include_tag 'application_webpack' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
-import "mathjax/es5/tex-svg";
+
+import "katex/dist/katex.css";
+import {renderMathInElement} from "./common/math_helper";
+window.renderMathInElement = renderMathInElement;
 
 // jquery (should be the first to be loaded, as many other libs depend on it)
 import $ from "jquery";

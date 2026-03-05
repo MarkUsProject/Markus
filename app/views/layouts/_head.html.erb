@@ -18,6 +18,3 @@
   const MARKUS_VERSION = '<%= Rails.configuration.markus_version %>';
   const I18N_LOCALE = '<%= I18n.locale %>';
 <% end %>
-<%= javascript_tag nonce: true do %>
-  <%= render partial: 'layouts/mathjax_config', formats: :js %>
-<% end %>
