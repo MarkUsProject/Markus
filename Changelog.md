@@ -20,6 +20,7 @@
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Add index to `results` - `submission_id` column (#7851)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
