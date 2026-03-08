@@ -674,7 +674,7 @@ class SubmissionsController < ApplicationController
     zip_path = zipped_grouping_file_name(assignment)
 
     if current_role.ta?
-      groupings = groupings.joins(:ta_memberships).where('memberships.role_id': current_role.id)
+      groupings = groupings.joins(:memberships).where('memberships.role_id': current_role.id)
     end
 
     @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id,
