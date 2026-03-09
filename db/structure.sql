@@ -3642,6 +3642,13 @@ CREATE INDEX index_periods_on_submission_rule_id ON public.periods USING btree (
 
 
 --
+-- Name: index_results_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_results_on_submission_id ON public.results USING btree (submission_id);
+
+
+--
 -- Name: index_results_on_view_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4412,6 +4419,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260304000000'),
 ('20260112023937'),
 ('20251113015424'),
 ('20251023030630'),
