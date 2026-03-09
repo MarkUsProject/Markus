@@ -71,7 +71,13 @@ describe LtiDeploymentsController do
 
   describe '#create_course' do
     let(:test_rlid) { 'another-unique-rlid-67890' }
-    let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108', resource_link_id: test_rlid) }
+    let!(:lti_deployment) do
+      create(:lti_deployment,
+             lms_course_name: 'csc108',
+             resource_link_id: test_rlid,
+             course_offering_sourcedid: 'LSM999Y1-Y-LEC0101-20259')
+    end
+    let(:expected_name) { 'csc108-2025-09' }
     let(:course_params) do
       { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
     end
@@ -82,16 +88,18 @@ describe LtiDeploymentsController do
         post_as instructor, :create_course, params: course_params
       end
 
-      it 'creates a course' do
-        expect(Course.find_by(name: 'csc108')).not_to be_nil
+      it 'creates the course with the session suffix' do
+        expect(Course.find_by(name: expected_name)).to be_present
       end
 
       it 'sets the course display name' do
-        expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
+        course = Course.find_by(name: expected_name)
+        expect(course.display_name).to eq('Introduction to Computer Science')
       end
 
-      it 'creates an instructor role for the user' do
-        expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+      it 'assigns the instructor role to the current user' do
+        created_course = Course.find_by(name: expected_name)
+        expect(instructor.user.roles.exists?(course: created_course, type: 'Instructor')).to be true
       end
 
       it 'retains the resource_link_id after course creation' do
@@ -106,22 +114,26 @@ describe LtiDeploymentsController do
         post_as admin_user, :create_course, params: course_params
       end
 
-      it 'creates a course' do
-        expect(Course.find_by(name: 'csc108')).not_to be_nil
+      it 'creates a course with the session suffix' do
+        expect(Course.find_by(name: expected_name)).not_to be_nil
       end
 
       it 'sets the course display name' do
-        expect(Course.find_by(display_name: 'Introduction to Computer Science')).not_to be_nil
+        course = Course.find_by(name: expected_name)
+        expect(course.display_name).to eq('Introduction to Computer Science')
       end
 
       it 'creates an admin role for the user' do
-        expect(Role.find_by(user: admin_user, course: Course.find_by(name: 'csc108'), type: 'AdminRole')).not_to be_nil
+        course = Course.find_by(name: expected_name)
+        expect(Role.find_by(user: admin_user, course: course, type: 'AdminRole')).not_to be_nil
       end
     end
 
     context 'when a course already exists' do
+      let(:expected_name) { 'csc108-2025-09' }
+
       before do
-        create(:course, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name)
+        create(:course, display_name: 'Introduction to Computer Science', name: expected_name)
         session[:lti_deployment_id] = lti_deployment.id
       end
 
