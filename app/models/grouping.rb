@@ -679,9 +679,9 @@ class Grouping < ApplicationRecord
                                         .group_by { |h| h['test_groups.id'] }
                                         .values
                                         .filter_map do |v|
-                                          v.max_by do |h|
-                                            h['test_group_results.created_at']
-                                          end['test_group_results.id']
+      v.max_by do |h|
+        h['test_group_results.created_at']
+      end['test_group_results.id']
     end
     plucked = Grouping.pluck_test_runs(
       filtered.where('test_group_results.id': latest_test_group_results),

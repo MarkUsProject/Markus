@@ -642,7 +642,7 @@ class Assignment < Assessment
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
                                .map do |s|
-                                 [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
+          [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
         end
       end
 
@@ -657,7 +657,7 @@ class Assignment < Assessment
         members: group_members,
         tags: tag_info,
         graders: graders.fetch(g.id, [])
-                 .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
