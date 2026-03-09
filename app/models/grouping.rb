@@ -726,10 +726,9 @@ class Grouping < ApplicationRecord
 
   def get_next_grouping(current_role, reversed, filter_data = nil)
     if current_role.ta?
-      results = self.assignment.current_results.joins(grouping: :tas).where(
-        'roles.id': current_role.id
+      results = self.assignment.current_results.joins(grouping: :memberships).where(
+        'memberships.role_id': current_role.id
       )
-
     else
       results = self.assignment.current_results
     end
@@ -745,13 +744,12 @@ class Grouping < ApplicationRecord
   # groupings matching the current filters and ordering.
   def get_filtered_ordered_ids(current_role, filter_data = nil, limit: nil)
     if current_role.ta?
-      results = self.assignment.current_results.joins(grouping: :tas).where(
-        'roles.id': current_role.id
+      results = self.assignment.current_results.joins(grouping: :memberships).where(
+        'memberships.role_id': current_role.id
       )
     else
       results = self.assignment.current_results
     end
-    results = results.joins(grouping: :group)
     filter_data = {} if filter_data.nil?
     results = filter_results(current_role, results, filter_data)
 
@@ -806,13 +804,13 @@ class Grouping < ApplicationRecord
       assigned_criteria = self.assignment.criteria.joins(:criterion_ta_associations)
                               .where(criterion_ta_associations: { ta_id: current_role.id })
 
-      results = self.assignment.current_results.joins(:marks, grouping: :ta_memberships)
+      results = self.assignment.current_results.joins(:marks, grouping: :memberships)
                     .where('memberships.role_id': current_role.id, 'marks.criterion_id': assigned_criteria.ids)
                     .where('marks.mark': nil)
     elsif current_role.ta?
-      results = self.assignment.current_results.joins(grouping: :tas).where(
+      results = self.assignment.current_results.joins(grouping: :memberships).where(
         marking_state: Result::MARKING_STATES[:incomplete],
-        'roles.id': current_role.id
+        'memberships.role_id': current_role.id
       )
     else
       results = self.assignment.current_results.where(

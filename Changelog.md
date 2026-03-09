@@ -32,6 +32,7 @@
 - Upgraded to Rails v8.1 (#7815)
 - Replaced MathJax with KateX (#7847)
 - Updated the student table to use `@tanstack/react-table` v8 (#7826)
+- Refactored TA membership queries to leverage existing `role_id` index on `memberhips` table (#7858)
 
 ## [v2.9.4]
 
