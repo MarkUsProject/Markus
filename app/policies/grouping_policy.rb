@@ -7,7 +7,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def assigned_grader?
-    role.ta? && record.tas.exists?(role.id)
+    role.ta? && record.memberships.exists?(role_id: role.id)
   end
 
   def not_in_progress?
