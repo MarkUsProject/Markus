@@ -86,13 +86,16 @@ class LtiDeploymentsController < ApplicationController
         return
       end
 
-      lti_data = { host: construct_redirect_with_port(request.referer).to_s,
-                   client_id: lti_launch_data[:client_id],
-                   deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
-                   lms_course_name: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title'],
-                   lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
-                   lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
-                   user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]] }
+      lti_data = {
+        host: construct_redirect_with_port(request.referer).to_s,
+        client_id: lti_launch_data[:client_id],
+        deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
+        lms_course_name: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title'],
+        lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
+        lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
+        user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]],
+        course_offering_sourcedid: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_offering_sourcedid']
+      }
       if lti_params.key?(LtiDeployment::LTI_CLAIMS[:rlid])
         rlid = lti_params[LtiDeployment::LTI_CLAIMS[:rlid]]['id']
         lti_data[:resource_link_id] = rlid
@@ -129,7 +132,8 @@ class LtiDeploymentsController < ApplicationController
                                                          lms_course_id: lti_data[:lms_course_id])
     lti_deployment.update!(
       lms_course_name: lti_data[:lms_course_name],
-      resource_link_id: lti_data[:resource_link_id]
+      resource_link_id: lti_data[:resource_link_id],
+      course_offering_sourcedid: lti_data[:course_offering_sourcedid]
     )
     session[:lti_course_label] = lti_data[:lms_course_label]
     if lti_data.key?(:names_role_service)
@@ -212,9 +216,23 @@ class LtiDeploymentsController < ApplicationController
       render 'message', status: :forbidden
       return
     end
-
-    name = params['name'].gsub(/[^a-zA-Z0-9\-_]/, '-')  # Sanitize name to comply with Course name validation
-    new_course = Course.find_or_initialize_by(name: name)
+    sourcedid = record.course_offering_sourcedid
+    raw_session = sourcedid.to_s.split('-').last # "20259"
+    if raw_session.present? && raw_session.length >= 5
+      year = raw_session[0..3]
+      month = case raw_session[4]
+              when '9' then '09'
+              when '1' then '01'
+              when '5' then '05'
+              else '00'
+              end
+      session_part = "#{year}-#{month}" # "2025-09"
+    else
+      session_part = Time.current.strftime('%Y-%m')
+    end
+    base_name = params['name'].gsub(/[^a-zA-Z0-9\-_]/, '-')  # Sanitize name to comply with Course name validation
+    full_course_name = "#{base_name}-#{session_part}"
+    new_course = Course.find_or_initialize_by(name: full_course_name)
     unless new_course.new_record?
       flash_message(:error, I18n.t('lti.course_exists'))
       redirect_to choose_course_lti_deployment_path
