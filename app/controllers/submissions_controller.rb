@@ -672,7 +672,7 @@ class SubmissionsController < ApplicationController
     zip_path = zipped_grouping_file_name(assignment)
 
     if current_role.ta?
-      groupings = groupings.joins(:ta_memberships).where('memberships.role_id': current_role.id)
+      groupings = groupings.joins(:memberships).where('memberships.role_id': current_role.id)
     end
 
     @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id,
@@ -692,7 +692,7 @@ class SubmissionsController < ApplicationController
       send_file zip_path, disposition: 'inline', filename: zip_file
     rescue ActionController::MissingFile
       flash_message(:error, I18n.t('submissions.download_zipped_file.file_missing', zip_file: zip_file))
-      redirect_back(fallback_location: root_path)
+      redirect_back_or_to(root_path)
     end
   end
 
@@ -716,7 +716,7 @@ class SubmissionsController < ApplicationController
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
           flash_message(:error, t('submissions.student.no_revision_available'))
-          redirect_back(fallback_location: root_path)
+          redirect_back_or_to(root_path)
           return
         end
       end
@@ -724,7 +724,7 @@ class SubmissionsController < ApplicationController
       files = revision.files_at_path(assignment.repository_folder)
       if files.empty?
         flash_message(:error, t('submissions.no_files_available'))
-        redirect_back(fallback_location: root_path)
+        redirect_back_or_to(root_path)
         return
       end
 
@@ -971,7 +971,7 @@ class SubmissionsController < ApplicationController
           'pandoc',
           '-o', Rails.root.join(cache_file).to_s,
           '--to=html',
-          '--standalone'
+          '-f', 'markdown-raw_html'  # Escape raw HTML
         ]
         _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
         return "#{I18n.t('submissions.cannot_display')}<br/><br/>#{stderr.lines.last}" unless status.exitstatus.zero?

@@ -7,12 +7,6 @@ class AnnotationCategoriesController < ApplicationController
 
   responders :flash
 
-  content_security_policy only: :index do |p|
-    # required because MathJax dynamically changes
-    # style. # TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
-  end
-
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_role)

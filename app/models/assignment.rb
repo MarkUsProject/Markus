@@ -78,6 +78,7 @@ class Assignment < Assessment
   has_many :current_submissions_used, through: :groupings,
                                       source: :current_submission_used
 
+  has_many :memberships, through: :groupings
   has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
 
@@ -221,7 +222,7 @@ class Assignment < Assessment
 
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
-    section_due_dates = groupings.joins(inviter: [section: :assessment_section_properties])
+    section_due_dates = groupings.joins(inviter: [{ section: :assessment_section_properties }])
                                  .where('assessment_section_properties.assessment_id': id)
                                  .pluck('groupings.id', 'assessment_section_properties.due_date')
 
@@ -330,7 +331,7 @@ class Assignment < Assessment
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: [role: :user])
+                    .left_outer_joins(non_rejected_student_memberships: [{ role: :user }])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.instructor_approved',
@@ -849,7 +850,7 @@ class Assignment < Assessment
     elsif bulk
       cache_ta_results.dig(ta_id, :total_results)&.size || 0
     else
-      ta_memberships.where(role_id: ta_id).size
+      memberships.where(role_id: ta_id).size
     end
   end
 
@@ -857,7 +858,7 @@ class Assignment < Assessment
     if ta_id.nil?
       groupings.where(is_collected: true).count
     else
-      groupings.joins(:ta_memberships)
+      groupings.joins(:memberships)
                .where('groupings.is_collected': true)
                .where('memberships.role_id': ta_id).count
     end
@@ -876,7 +877,8 @@ class Assignment < Assessment
   def cache_ta_results
     return @cache_ta_results if defined? @cache_ta_results
 
-    data = current_results.joins(grouping: :tas).pluck('tas.id', 'results.id', 'results.marking_state')
+    data = current_results.joins(grouping: :ta_memberships).pluck('memberships.role_id', 'results.id',
+                                                                  'results.marking_state')
     # Group results by TA ID
     grouped_data = data.group_by { |ta_id, _result_id, _marking_state| ta_id }
     # map ta_ids to criteria_ids
@@ -927,14 +929,14 @@ class Assignment < Assessment
       assigned_criteria = self.criteria.joins(:criterion_ta_associations)
                               .where(criterion_ta_associations: { ta_id: ta_id })
 
-      self.current_results.joins(:marks, grouping: :ta_memberships)
+      self.current_results.joins(:marks, grouping: :memberships)
           .where('memberships.role_id': ta_id, 'marks.criterion_id': assigned_criteria.ids)
           .where.not('marks.mark': nil)
           .group('results.id')
           .having('count(*) = ?', assigned_criteria.count)
           .length
     else
-      self.current_results.joins(grouping: :ta_memberships)
+      self.current_results.joins(grouping: :memberships)
           .where('memberships.role_id': ta_id, 'results.marking_state': 'complete')
           .count
     end
@@ -948,7 +950,7 @@ class Assignment < Assessment
     assignment_ids = assignments.map(&:id)
 
     # Query 1: Count assigned groupings per assignment
-    assigned_counts = TaMembership
+    assigned_counts = Membership
                       .joins(:grouping)
                       .where(role_id: ta_id, groupings: { assessment_id: assignment_ids })
                       .group('groupings.assessment_id')
@@ -970,7 +972,7 @@ class Assignment < Assessment
     # Query 2: Count marked results for non-criteria-based assignments
     marked_counts = if regular_ids.any?
                       Result
-                        .joins(submission: { grouping: :ta_memberships })
+                        .joins(submission: { grouping: :memberships })
                         .where(
                           submissions: { submission_version_used: true },
                           memberships: { role_id: ta_id },
@@ -1004,7 +1006,7 @@ class Assignment < Assessment
       num_annotations_all
     else
       # uniq is required since entries are doubled if there is a remark request
-      Submission.joins(:annotations, :current_result, grouping: :ta_memberships)
+      Submission.joins(:annotations, :current_result, grouping: :memberships)
                 .where(submissions: { submission_version_used: true },
                        memberships: { role_id: ta_id },
                        results: { marking_state: Result::MARKING_STATES[:complete] },
@@ -1130,7 +1132,7 @@ class Assignment < Assessment
   end
 
   def starter_file_mappings
-    groupings.joins(:group, grouping_starter_file_entries: [starter_file_entry: :starter_file_group])
+    groupings.joins(:group, grouping_starter_file_entries: [{ starter_file_entry: :starter_file_group }])
              .pluck_to_hash('groups.group_name as group_name',
                             'starter_file_groups.name as starter_file_group_name',
                             'starter_file_entries.path as starter_file_entry_path')
@@ -1286,9 +1288,9 @@ class Assignment < Assessment
     if current_role.instructor?
       groupings = self.groupings
     elsif current_role.ta?
-      groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
-                                                         .where('memberships.role_id': current_role.id)
-                                                         .select(:'groupings.id'))
+      groupings = self.groupings.where(id: self.groupings.joins(:memberships)
+                                           .where('memberships.role_id': current_role.id)
+                                           .select(:'groupings.id'))
     else
       return []
     end

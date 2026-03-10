@@ -17,7 +17,8 @@ class CoursesController < ApplicationController
         courses = current_user.visible_courses
                               .order('courses.name')
                               .pluck_to_hash('courses.id', 'courses.name',
-                                             'courses.display_name', 'roles.type')
+                                             'courses.display_name', 'roles.type',
+                                             'courses.start_at', 'courses.end_at')
         render json: { data: courses }
       end
     end
@@ -128,7 +129,7 @@ class CoursesController < ApplicationController
                 disposition: 'attachment')
     else
       flash[:error] = t('download_errors.unrecognized_format', format: format)
-      redirect_back(fallback_location: course_assignments_path(current_course))
+      redirect_back_or_to(course_assignments_path(current_course))
     end
   end
 
@@ -150,7 +151,7 @@ class CoursesController < ApplicationController
         end
       end
     end
-    redirect_back(fallback_location: course_assignments_path(current_course))
+    redirect_back_or_to(course_assignments_path(current_course))
   end
 
   def destroy_lti_deployment
@@ -215,7 +216,11 @@ class CoursesController < ApplicationController
 
   def course_params
     fields = [:is_hidden, :display_name]
-    fields << :max_file_size if allowed_to?(:edit?, with: Admin::CoursePolicy)
+    if allowed_to?(:edit?, with: Admin::CoursePolicy)
+      fields << :max_file_size
+      fields << :start_at
+      fields << :end_at
+    end
     params.require(:course).permit(*fields)
   end
 

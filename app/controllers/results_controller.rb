@@ -10,9 +10,6 @@ class ResultsController < ApplicationController
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
     p.img_src :self, :blob
-    # required because MathJax dynamically changes
-    # style. # TODO: remove this when possible
-    p.style_src :self, "'unsafe-inline'"
     p.frame_src(*SubmissionsController::PERMITTED_IFRAME_SRC)
   end
 
@@ -224,14 +221,14 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: [role: :user])
+                      .joins(membership: [{ role: :user }])
                       .where('users.user_name': current_user.user_name)
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         else
           data[:grace_token_deductions] =
             submission.grouping
                       .grace_period_deductions
-                      .joins(membership: [role: :user])
+                      .joins(membership: [{ role: :user }])
                       .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         end
 
@@ -442,7 +439,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
+    mark_value = params[:mark].presence&.to_f
 
     is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 
@@ -658,7 +655,7 @@ class ResultsController < ApplicationController
 
   # Download a csv containing view token and grouping information for the results whose ids are given
   def download_view_tokens
-    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [role: :user] }])
+    data = requested_results.left_outer_joins(grouping: [:group, { accepted_student_memberships: [{ role: :user }] }])
                             .order('groups.group_name')
                             .pluck('groups.group_name',
                                    'users.user_name',

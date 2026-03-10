@@ -497,7 +497,9 @@ CREATE TABLE public.courses (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     autotest_setting_id bigint,
-    max_file_size bigint DEFAULT 5000000 NOT NULL
+    max_file_size bigint DEFAULT 5000000 NOT NULL,
+    start_at timestamp(6) without time zone DEFAULT NULL::timestamp without time zone,
+    end_at timestamp(6) without time zone DEFAULT NULL::timestamp without time zone
 );
 
 
@@ -3640,6 +3642,13 @@ CREATE INDEX index_periods_on_submission_rule_id ON public.periods USING btree (
 
 
 --
+-- Name: index_results_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_results_on_submission_id ON public.results USING btree (submission_id);
+
+
+--
 -- Name: index_results_on_view_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4410,6 +4419,8 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260304000000'),
+('20260112023937'),
 ('20251113015424'),
 ('20251023030630'),
 ('20251010150001'),

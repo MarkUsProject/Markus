@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      MathJax.typeset(["#remark_request_text"]);
+      window.renderMathInElement(document.getElementById("remark_request_text"));
     });
   <% end %>
 <% end %>

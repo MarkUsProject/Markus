@@ -3,7 +3,7 @@ module Api
   class CoursesController < MainApiController
     include AutomatedTestsHelper::AutotestApi
 
-    DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name].freeze
+    DEFAULT_FIELDS = [:id, :name, :is_hidden, :display_name, :start_at, :end_at].freeze
 
     def index
       if current_user.admin_user?
@@ -26,7 +26,7 @@ module Api
     end
 
     def create
-      Course.create!(params.permit(:name, :is_hidden, :display_name))
+      Course.create!(course_params)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
@@ -38,7 +38,7 @@ module Api
     end
 
     def update
-      current_course.update!(params.permit(:name, :is_hidden, :display_name))
+      current_course.update!(course_params)
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
@@ -109,6 +109,15 @@ module Api
 
     def check_course
       super unless action_name == 'index'
+    end
+
+    def course_params
+      fields = [:name, :is_hidden, :display_name]
+      if allowed_to?(:edit?, with: Admin::CoursePolicy)
+        fields << :start_at
+        fields << :end_at
+      end
+      params.permit(*fields)
     end
 
     protected

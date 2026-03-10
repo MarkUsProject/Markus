@@ -23,6 +23,7 @@ class Course < ApplicationRecord
   validates :display_name, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
   validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
+  validate :start_at_before_or_equal_to_end_at
 
   after_save_commit :update_repo_max_file_size
   after_update_commit :update_repo_permissions
@@ -170,5 +171,12 @@ class Course < ApplicationRecord
 
   def update_repo_permissions
     Repository.get_class.update_permissions if saved_change_to_is_hidden?
+  end
+
+  def start_at_before_or_equal_to_end_at
+    return if start_at.nil? || end_at.nil?
+    if start_at > end_at
+      errors.add(:start_at, 'must be before or equal to end date')
+    end
   end
 end

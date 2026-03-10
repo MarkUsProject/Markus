@@ -38,6 +38,22 @@ describe Admin::CoursesController do
                  params: { id: course.id, course: { name: 'CS101', display_name: 'Intro to CS', is_hidden: true } }
           expect(response).to have_http_status(:forbidden)
         end
+
+        it 'does not update course start_at/end_at date' do
+          old_start_at = course.start_at
+          old_end_at = course.end_at
+
+          put_as user, :update,
+                 params: { id: course.id, course: {
+                   start_at: Time.zone.parse('2026-01-05'),
+                   end_at: Time.zone.parse('2026-04-05')
+                 } }
+
+          expect(response).to have_http_status(:forbidden)
+          course.reload
+          expect(course.start_at).to eq(old_start_at)
+          expect(course.end_at).to eq(old_end_at)
+        end
       end
 
       describe '#test_autotest_connection' do
@@ -237,6 +253,19 @@ describe Admin::CoursesController do
         put_as admin, :update, params: { id: course.id, course: { name: 'CSC2000' } }
         updated_course = Course.find(course.id)
         expect(updated_course.name).not_to eq('CSC2000')
+      end
+
+      it 'does update course start_at/end_at date as an admin' do
+        new_start_at = Time.zone.parse('2026-01-05')
+        new_end_at = Time.zone.parse('2026-04-05')
+
+        put_as create(:admin_role, course: course), :update, params: { id: course.id, course: {
+          start_at: new_start_at, end_at: new_end_at
+        } }
+
+        course.reload
+        expect(course.start_at).to be_within(1.second).of(new_start_at)
+        expect(course.end_at).to be_within(1.second).of(new_end_at)
       end
 
       context 'updating the autotest_url' do
