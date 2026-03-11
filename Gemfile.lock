@@ -49,6 +49,8 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_record_doctor (2.0.1)
+      activerecord (>= 7.0.0)
     activejob (8.1.2)
       activesupport (= 8.1.2)
       globalid (>= 0.3.6)
@@ -517,6 +519,7 @@ PLATFORMS
 
 DEPENDENCIES
   action_policy
+  active_record_doctor
   activejob-status
   activemodel-serializers-xml
   autoprefixer-rails

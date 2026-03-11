@@ -106,6 +106,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
+  gem 'active_record_doctor', require: false
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'

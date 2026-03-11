@@ -25,6 +25,7 @@
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
 - Upgraded to Rails v8.1 (#7815)
 - Updated the student table to use `@tanstack/react-table` v8 (#7826)
+- Added `active_record_doctor` development gem (#7861)
 
 ## [v2.9.5]
 
