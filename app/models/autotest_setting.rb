@@ -1,3 +1,14 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: autotest_settings
+#
+#  id      :bigint           not null, primary key
+#  api_key :string           not null
+#  schema  :string           not null
+#  url     :string           not null
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AutotestSetting < ApplicationRecord
   include AutomatedTestsHelper::AutotestApi
 

@@ -1,3 +1,27 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: marks
+#
+#  id           :integer          not null, primary key
+#  mark         :float
+#  override     :boolean          default(FALSE), not null
+#  created_at   :datetime
+#  updated_at   :datetime
+#  criterion_id :integer
+#  result_id    :integer
+#
+# Indexes
+#
+#  index_marks_on_criterion_id  (criterion_id)
+#  index_marks_on_result_id     (result_id)
+#
+# Foreign Keys
+#
+#  fk_marks_results  (result_id => results.id) ON DELETE => cascade
+#  fk_rails_...      (criterion_id => criteria.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Mark < ApplicationRecord
   # When a mark is saved, we need to make sure that that
   # Result has not been released to students

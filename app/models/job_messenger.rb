@@ -1,3 +1,20 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: job_messengers
+#
+#  id         :integer          not null, primary key
+#  message    :string
+#  status     :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  job_id     :string
+#
+# Indexes
+#
+#  index_job_messengers_on_job_id  (job_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class JobMessenger < ApplicationRecord
   def message_for_user
     case status

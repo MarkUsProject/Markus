@@ -1,3 +1,19 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: key_pairs
+#
+#  id         :integer          not null, primary key
+#  public_key :string
+#  created_at :datetime
+#  updated_at :datetime
+#  user_id    :integer
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class KeyPair < ApplicationRecord
   belongs_to :user
 

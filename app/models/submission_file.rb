@@ -1,3 +1,25 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: submission_files
+#
+#  id               :integer          not null, primary key
+#  error_converting :boolean          default(FALSE), not null
+#  filename         :string
+#  is_converted     :boolean          default(FALSE), not null
+#  path             :string           default("/"), not null
+#  submission_id    :integer
+#
+# Indexes
+#
+#  index_submission_files_on_filename       (filename)
+#  index_submission_files_on_submission_id  (submission_id)
+#
+# Foreign Keys
+#
+#  fk_submission_files_submissions  (submission_id => submissions.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class SubmissionFile < ApplicationRecord
   belongs_to :submission
   validates_associated :submission

@@ -1,3 +1,26 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: peer_reviews
+#
+#  id          :integer          not null, primary key
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  result_id   :integer          not null
+#  reviewer_id :integer          not null
+#
+# Indexes
+#
+#  index_peer_reviews_on_result_id                  (result_id)
+#  index_peer_reviews_on_result_id_and_reviewer_id  (result_id,reviewer_id) UNIQUE
+#  index_peer_reviews_on_reviewer_id                (reviewer_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (result_id => results.id)
+#  fk_rails_...  (reviewer_id => groupings.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'set'
 
 class PeerReview < ApplicationRecord

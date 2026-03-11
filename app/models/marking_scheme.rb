@@ -1,3 +1,24 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: marking_schemes
+#
+#  id         :integer          not null, primary key
+#  name       :string
+#  created_at :datetime
+#  updated_at :datetime
+#  course_id  :bigint           not null
+#
+# Indexes
+#
+#  index_marking_schemes_on_course_id           (course_id)
+#  index_marking_schemes_on_course_id_and_name  (course_id,name) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class MarkingScheme < ApplicationRecord
   include CourseSummariesHelper
 

@@ -1,3 +1,21 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: notes
+#
+#  id            :integer          not null, primary key
+#  noteable_type :string           not null
+#  notes_message :text             not null
+#  created_at    :datetime
+#  updated_at    :datetime
+#  creator_id    :integer          not null
+#  noteable_id   :integer          not null
+#
+# Indexes
+#
+#  index_notes_on_creator_id  (creator_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Note < ApplicationRecord
   belongs_to :noteable, polymorphic: true
 

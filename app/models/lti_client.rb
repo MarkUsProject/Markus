@@ -1,3 +1,20 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: lti_clients
+#
+#  id         :bigint           not null, primary key
+#  host       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  client_id  :string           not null
+#  course_id  :bigint
+#
+# Indexes
+#
+#  index_lti_clients_on_course_id  (course_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiClient < ApplicationRecord
   has_many :lti_deployments
   has_many :lti_users

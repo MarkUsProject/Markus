@@ -1,5 +1,24 @@
 # GradeEntryItem represents column names (i.e. question names and totals)
 # in a grade entry form.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: grade_entry_items
+#
+#  id            :integer          not null, primary key
+#  bonus         :boolean          default(FALSE), not null
+#  name          :string           not null
+#  out_of        :float
+#  position      :integer
+#  created_at    :datetime
+#  updated_at    :datetime
+#  assessment_id :bigint
+#
+# Indexes
+#
+#  index_grade_entry_items_on_assessment_id_and_name  (assessment_id,name) UNIQUE
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GradeEntryItem < ApplicationRecord
   belongs_to :grade_entry_form, inverse_of: :grade_entry_items, foreign_key: :assessment_id
 

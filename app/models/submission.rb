@@ -1,3 +1,24 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: submissions
+#
+#  id                       :integer          not null, primary key
+#  is_empty                 :boolean          default(TRUE), not null
+#  remark_request           :text
+#  remark_request_timestamp :datetime
+#  revision_identifier      :text
+#  revision_timestamp       :datetime
+#  submission_version       :integer
+#  submission_version_used  :boolean          default(FALSE), not null
+#  created_at               :datetime
+#  grouping_id              :integer
+#
+# Indexes
+#
+#  index_submissions_on_grouping_id  (grouping_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'fileutils' # FileUtils used here
 
 # Handle for getting student submissions.  Actual instance depend

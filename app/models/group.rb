@@ -1,4 +1,24 @@
 # Represents groupings of students working on one or more assignments, within a shared repository.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: groups
+#
+#  id         :integer          not null, primary key
+#  group_name :string
+#  repo_name  :string
+#  course_id  :bigint           not null
+#
+# Indexes
+#
+#  index_groups_on_course_id                 (course_id)
+#  index_groups_on_group_name_and_course_id  (group_name,course_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Group < ApplicationRecord
   after_create :set_repo_name, :check_repo_uniqueness, :build_repository
 

@@ -1,4 +1,32 @@
 # Represents a flexible criterion used to mark an assignment.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: criteria
+#
+#  id                    :bigint           not null, primary key
+#  assigned_groups_count :integer          default(0), not null
+#  bonus                 :boolean          default(FALSE), not null
+#  description           :text             default(""), not null
+#  max_mark              :decimal(10, 1)   not null
+#  name                  :string           not null
+#  peer_visible          :boolean          default(FALSE), not null
+#  position              :integer          not null
+#  ta_visible            :boolean          default(TRUE), not null
+#  type                  :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  assessment_id         :bigint           not null
+#
+# Indexes
+#
+#  index_criteria_on_assessment_id  (assessment_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class FlexibleCriterion < Criterion
   has_many :annotation_categories
 
