@@ -1,3 +1,34 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: assessments
+#
+#  id                   :integer          not null, primary key
+#  description          :string           not null
+#  due_date             :datetime
+#  is_hidden            :boolean          default(TRUE), not null
+#  message              :text             default(""), not null
+#  short_identifier     :string           not null
+#  show_total           :boolean          default(FALSE), not null
+#  type                 :string           not null
+#  visible_on           :datetime
+#  visible_until        :datetime
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  course_id            :bigint           not null
+#  parent_assessment_id :integer
+#
+# Indexes
+#
+#  index_assessments_on_course_id                       (course_id)
+#  index_assessments_on_short_identifier_and_course_id  (short_identifier,course_id) UNIQUE
+#  index_assessments_on_type_and_short_identifier       (type,short_identifier)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'csv'
 
 # Represents an assignment where students submit work to be graded

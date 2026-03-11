@@ -77,6 +77,7 @@ gem 'pg'
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
 group :development do
+  gem 'annotaterb', require: false
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller' # supplement for better_errors

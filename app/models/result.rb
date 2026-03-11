@@ -1,3 +1,29 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: results
+#
+#  id                          :integer          not null, primary key
+#  marking_state               :string
+#  overall_comment             :text
+#  released_to_students        :boolean          default(FALSE), not null
+#  remark_request_submitted_at :datetime
+#  view_token                  :string           not null
+#  view_token_expiry           :datetime
+#  created_at                  :datetime
+#  updated_at                  :datetime
+#  submission_id               :integer
+#
+# Indexes
+#
+#  index_results_on_submission_id  (submission_id)
+#  index_results_on_view_token     (view_token) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_results_submissions  (submission_id => submissions.id) ON DELETE => cascade
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Result < ApplicationRecord
   MARKING_STATES = {
     complete: 'complete',

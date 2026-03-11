@@ -1,3 +1,28 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: test_groups
+#
+#  id                :integer          not null, primary key
+#  autotest_settings :json             not null
+#  display_output    :integer          default("instructors"), not null
+#  name              :text             not null
+#  position          :integer          not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  assessment_id     :bigint           not null
+#  criterion_id      :bigint
+#
+# Indexes
+#
+#  index_test_groups_on_assessment_id  (assessment_id)
+#  index_test_groups_on_criterion_id   (criterion_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TestGroup < ApplicationRecord
   enum :display_output,
        { instructors: 0, instructors_and_student_tests: 1, instructors_and_students: 2 },

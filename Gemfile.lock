@@ -88,6 +88,9 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    annotaterb (4.22.0)
+      activerecord (>= 6.0.0)
+      activesupport (>= 6.0.0)
     ast (2.4.3)
     autoprefixer-rails (10.4.21.0)
       execjs (~> 2)
@@ -522,6 +525,7 @@ DEPENDENCIES
   active_record_doctor
   activejob-status
   activemodel-serializers-xml
+  annotaterb
   autoprefixer-rails
   awesome_print
   better_errors

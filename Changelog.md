@@ -26,6 +26,7 @@
 - Upgraded to Rails v8.1 (#7815)
 - Updated the student table to use `@tanstack/react-table` v8 (#7826)
 - Added `active_record_doctor` development gem (#7861)
+- Added `annotaterb` development gem and added model and route annotations (#7861)
 
 ## [v2.9.5]
 

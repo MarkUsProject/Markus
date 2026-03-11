@@ -1,3 +1,21 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: criterion_ta_associations
+#
+#  id            :integer          not null, primary key
+#  created_at    :datetime
+#  updated_at    :datetime
+#  assessment_id :bigint
+#  criterion_id  :integer
+#  ta_id         :integer
+#
+# Indexes
+#
+#  index_criterion_ta_associations_on_criterion_id  (criterion_id)
+#  index_criterion_ta_associations_on_ta_id         (ta_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class CriterionTaAssociation < ApplicationRecord
   belongs_to :ta
   validates_associated :ta

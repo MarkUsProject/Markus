@@ -1,5 +1,26 @@
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: grade_entry_students
+#
+#  id                  :integer          not null, primary key
+#  released_to_student :boolean          default(FALSE), not null
+#  created_at          :datetime
+#  updated_at          :datetime
+#  assessment_id       :bigint
+#  role_id             :bigint           not null
+#
+# Indexes
+#
+#  index_grade_entry_students_on_role_id_and_assessment_id  (role_id,assessment_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (role_id => roles.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GradeEntryStudent < ApplicationRecord
   belongs_to :role
   validates_associated :role, on: :create

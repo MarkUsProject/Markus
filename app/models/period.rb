@@ -1,3 +1,22 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: periods
+#
+#  id                   :integer          not null, primary key
+#  deduction            :float
+#  hours                :float
+#  interval             :float
+#  submission_rule_type :string
+#  created_at           :datetime
+#  updated_at           :datetime
+#  submission_rule_id   :integer
+#
+# Indexes
+#
+#  index_periods_on_submission_rule_id  (submission_rule_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Period < ApplicationRecord
   belongs_to :submission_rule, polymorphic: true
 
