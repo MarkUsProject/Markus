@@ -293,6 +293,8 @@ GEM
       racc
     pdf-core (0.10.0)
     pg (1.6.2)
+    pghero (3.7.0)
+      activerecord (>= 7.1)
     pkg-config (1.6.5)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
@@ -559,6 +561,7 @@ DEPENDENCIES
   marcel
   mini_mime
   pg
+  pghero
   pluck_to_hash
   prawn
   prawn-qrcode

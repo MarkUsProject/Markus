@@ -64,6 +64,7 @@ gem 'cookies_eu'
 gem 'dry-validation'  # For settings schema validation
 gem 'exception_notification'
 gem 'marcel'
+gem 'pghero'
 gem 'rails-html-sanitizer'
 gem 'rails_performance'
 gem 'responders'
