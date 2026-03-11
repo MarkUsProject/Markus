@@ -3,10 +3,6 @@
 ## [unreleased]
 
 ### 🛡️ Security
-- Escape raw HTML syntax in RMarkdown conversion to HTML (#7841)
-- Sanitize content when rendering submission files as HTML (#7841)
-- Added iframe `sandbox` attribute to `HTMLViewer` component (#7841)
-- Removed `allow-scripts` from `sandbox` attribute to `HTMLViewer` component (#7848)
 
 ### 🚨 Breaking changes
 
@@ -14,13 +10,11 @@
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
-- Store start and end date for courses (#7783)
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
-- Add index to `results` - `submission_id` column (#7851)
 
 ### 🔧 Internal changes
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
@@ -30,9 +24,28 @@
 - Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
 - Upgraded to Rails v8.1 (#7815)
-- Replaced MathJax with KateX (#7847)
 - Updated the student table to use `@tanstack/react-table` v8 (#7826)
-- Refactored TA membership queries to leverage existing `role_id` index on `memberhips` table (#7858)
+
+## [v2.9.5]
+
+### 🛡️ Security
+- Escape raw HTML syntax in RMarkdown conversion to HTML (#7841)
+- Sanitize content when rendering submission files as HTML (#7841)
+- Added iframe `sandbox` attribute to `HTMLViewer` component (#7841)
+- Removed `allow-scripts` from `sandbox` attribute to `HTMLViewer` component (#7848)
+
+### ✨ New features and improvements
+- Store start and end date for courses (#7783)
+
+### 🐛 Bug fixes
+- Add index to `results` - `submission_id` column (#7851)
+
+### 🔧 Internal changes
+- Replaced MathJax with KaTeX (#7848)
+- Refactored TA membership queries to leverage existing `role_id` index on `memberships` table (#7858)
+- Bumped dompurify from 3.2.6 to 3.3.2 (#7857)
+- Bumped immutable from 5.0.3 to 5.1.5 (#7856)
+- Bumped minimatch from 3.1.2 to 3.1.5 (#7840)
 
 ## [v2.9.4]
 
