@@ -184,6 +184,9 @@ describe LtiHelper do
                 status: LtiDeployment::LTI_STATUSES[:active],
                 user_id: active_lti_user_id,
                 lis_person_sourcedid: active_student.user_name,
+                given_name: active_student.first_name,
+                family_name: active_student.last_name,
+                email: active_student.email,
                 name: 'Active Student',
                 roles: [LtiDeployment::LTI_ROLES[:learner]]
               },
@@ -192,6 +195,9 @@ describe LtiHelper do
                 status: LtiDeployment::LTI_STATUSES[:inactive],
                 user_id: inactive_lti_user_id,
                 lis_person_sourcedid: inactive_student.user_name,
+                given_name: inactive_student.first_name,
+                family_name: inactive_student.last_name,
+                email: inactive_student.email,
                 name: 'Inactive Student',
                 roles: [LtiDeployment::LTI_ROLES[:learner]]
               }
@@ -240,6 +246,76 @@ describe LtiHelper do
             create(:lti_user, user: ta.user, lti_client: lti_deployment.lti_client, lti_user_id: 'ta_lti_id')
             subject
             expect(Role.find(ta.id).hidden).to be false
+          end
+        end
+      end
+
+      context 'when updating existing users' do
+        subject do
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]],
+                      can_create_users: true,
+                      can_create_roles: true
+        end
+
+        let(:new_email) { 'updated_email@example.com' }
+        let(:new_first) { 'UpdatedFirst' }
+        let(:existing_id) { 'OLD_ID_123' }
+
+        let(:memberships_with_updates) do
+          [
+            memberships[0].merge(
+              email: new_email,
+              given_name: new_first,
+              message: [{
+                LtiDeployment::LTI_CLAIMS[:custom] => { 'student_number' => '$Canvas.user.sisIntegrationId' }
+              }]
+            )
+          ]
+        end
+
+        before do
+          student.user.update!(id_number: existing_id)
+          lti_payload = {
+            id: '...',
+            context: { id: '...', label: 'tst', title: 'test' },
+            members: memberships_with_updates
+          }.to_json
+
+          allow_any_instance_of(LtiDeployment).to(
+            receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_payload))
+          )
+        end
+
+        it 'updates the first name of an existing user' do
+          subject
+          expect(student.user.reload.first_name).to eq(new_first)
+        end
+
+        it 'updates the email of an existing user' do
+          subject
+          expect(student.user.reload.email).to eq(new_email)
+        end
+
+        it 'does not overwrite an existing id_number with a Canvas placeholder' do
+          subject
+          expect(student.user.reload.id_number).to eq(existing_id)
+        end
+
+        context 'when the LMS provides a new valid id_number' do
+          let(:new_valid_id) { 'NEW_ID_999' }
+          let(:memberships_with_updates) do
+            [
+              memberships[0].merge(
+                message: [{
+                  LtiDeployment::LTI_CLAIMS[:custom] => { 'student_number' => new_valid_id }
+                }]
+              )
+            ]
+          end
+
+          it 'updates the id_number with the new value' do
+            subject
+            expect(student.user.reload.id_number).to eq(new_valid_id)
           end
         end
       end
