@@ -15,6 +15,9 @@ namespace :db do
     end
 
     Repository.get_class.update_permissions_after do
+      TaMembership.joins(:grouping)
+                  .where(groupings: { assessment_id: assignment.id })
+                  .delete_all
       TaMembership.insert_all(ta_memberships) unless ta_memberships.empty?
     end
 
@@ -26,6 +29,7 @@ namespace :db do
       { criterion_id: criterion.id, ta_id: tas[i % tas.size].id, assessment_id: assignment.id }
     end
 
+    CriterionTaAssociation.where(assessment_id: assignment.id).delete_all
     CriterionTaAssociation.insert_all(criteria_mappings) unless criteria_mappings.empty?
 
     Grouping.update_criteria_coverage_counts(assignment)
