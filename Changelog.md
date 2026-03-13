@@ -17,6 +17,7 @@
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 ### 🔧 Internal changes
+- Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
 - Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
