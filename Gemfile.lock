@@ -3,7 +3,7 @@ GEM
   specs:
     action_policy (0.7.5)
       ruby-next-core (>= 1.0)
-    action_text-trix (2.1.16)
+    action_text-trix (2.1.17)
       railties
     actioncable (8.1.2)
       actionpack (= 8.1.2)
