@@ -1,0 +1,19 @@
+{
+  "testers": [
+    {
+      "tester_type": "js",
+      "test_data": [
+        {
+          "script_files": ["test.js"],
+          "category": ["instructor"],
+          "timeout": 30,
+          "extra_info": {
+            "criterion": "criterion",
+            "display_output": "instructors",
+            "name": "JavaScript Test Group"
+          }
+        }
+      ]
+    }
+  ]
+}
