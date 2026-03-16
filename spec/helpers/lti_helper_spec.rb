@@ -450,6 +450,15 @@ describe LtiHelper do
             expect(LtiUser.count).to eq(3)
           end
         end
+
+        context 'when an enduser already exists' do
+          let!(:existing_user) { create(:end_user, user_name: 'second_username', first_name: 'OldName') }
+
+          it 'updates the existing user attributes' do
+            subject
+            expect(existing_user.reload.first_name).to eq('student.first_name')
+          end
+        end
       end
     end
 

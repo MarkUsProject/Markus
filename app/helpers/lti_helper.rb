@@ -61,47 +61,43 @@ module LtiHelper
     # Process active users
     processed_lti_ids = []
     lms_active_data.each do |lms_user|
-        markus_user = EndUser.find_by(user_name: lms_user[:user_name])
+      markus_user = EndUser.find_by(user_name: lms_user[:user_name])
+      if markus_user.nil? && can_create_users
+        markus_user = EndUser.create(lms_user.except(:lti_user_id, :roles))
+        unless markus_user.persisted?
+          error = true
+          next
+        end
+      elsif markus_user.nil? && !can_create_users
+        error = true
+        next
+      else
         user_attributes = {}
         USER_SYNC_ATTRIBUTES.each do |attr|
           user_attributes[attr] = lms_user[attr] if lms_user[attr].present?
         end
         user_attributes[:id_number] = lms_user[:id_number] if lms_user[:id_number].present?
-        if markus_user.nil?
-          if can_create_users
-            markus_user = EndUser.create(lms_user.except(:lti_user_id, :roles))
-            unless markus_user.persisted?
-              error = true
-              next
-            end
-          else
-            error = true
-            next
-          end
-        else
-          markus_user.update!(user_attributes) unless user_attributes.empty?
+        markus_user.update!(user_attributes) unless user_attributes.empty?
+      end
+      course_role = Role.find_by(user: markus_user, course: course)
+      if course_role.nil? && can_create_roles
+        if lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:ta])
+          course_role = Ta.create!(user: markus_user, course: lti_deployment.course)
+        elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:instructor])
+          course_role = Instructor.create!(user: markus_user, course: lti_deployment.course)
+        elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:learner])
+          course_role = Student.create!(user: markus_user, course: lti_deployment.course)
         end
-        course_role = Role.find_by(user: markus_user, course: course)
-        if course_role.nil? && can_create_roles
-          if lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:ta])
-            course_role = Ta.create!(user: markus_user, course: lti_deployment.course)
-          elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:instructor])
-            course_role = Instructor.create!(user: markus_user, course: lti_deployment.course)
-          elsif lms_user[:roles].include?(LtiDeployment::LTI_ROLES[:learner])
-            course_role = Student.create!(user: markus_user, course: lti_deployment.course)
-          end
-        end
-        next if course_role.nil?
-        course_role.update!(hidden: false) if course_role.is_a?(Student)
-        lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
-        lti_user.update!(lti_user_id: lms_user[:lti_user_id])
-        processed_lti_ids << lms_user[:lti_user_id]
+      end
+      next if course_role.nil?
+      course_role.update!(hidden: false) if course_role.is_a?(Student)
+      lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
+      lti_user.update!(lti_user_id: lms_user[:lti_user_id])
+      processed_lti_ids << lms_user[:lti_user_id]
     rescue ActiveRecord::RecordInvalid => e
-        Rails.logger.error I18n.t('lti.sync_failed_log',
-                                  user: lms_user[:user_name],
-                                  message: e.message)
-        error = true
-        next
+      Rails.logger.error I18n.t('lti.sync_failed_log', user: lms_user[:user_name], message: e.message)
+      error = true
+      next
     end
 
     # Handle inactive and missing students
