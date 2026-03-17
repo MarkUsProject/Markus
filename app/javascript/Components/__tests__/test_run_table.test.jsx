@@ -232,7 +232,7 @@ describe("For the TestRunTable's display of in_progress status", () => {
   });
 
   it("displays in progress status when a test is running", async () => {
-    const status = test_run_data[0]["test_runs.status"]; // "in progress"
+    const status = test_run_data[0]["test_runs.status"]; // "in_progress"
     const statusKey = I18n.t(`automated_tests.test_runs_statuses.${status}`);
 
     expect(statusKey).toEqual(I18n.t("automated_tests.test_runs_statuses.in_progress"));
