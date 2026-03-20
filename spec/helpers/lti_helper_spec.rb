@@ -887,6 +887,15 @@ describe LtiHelper do
       expect(LtiLineItem.count).to eq(1)
     end
 
+    it 'includes dueAt in the request payload' do
+      allow(lti_deployment).to receive(:send_lti_request!) do |req, *|
+        body = URI.decode_www_form(req.body).to_h
+        expect(body).to include('dueAt' => assessment.due_date.iso8601)
+        OpenStruct.new(body: { id: 'https://test.example.com/lineitems/1' }.to_json)
+      end
+      subject
+    end
+
     context 'when a line item already exists' do
       before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
 
