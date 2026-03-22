@@ -232,7 +232,7 @@ class Assignment < Assessment
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
-    due_dates = assessment_section_properties.map(&:due_date) << due_date
+    due_dates = assessment_section_properties.pluck(:due_date) << due_date
     due_dates.compact.max
   end
 
@@ -973,12 +973,40 @@ class Assignment < Assessment
     end
   end
 
-  # Batch load TA stats for multiple assignments to avoid N+1 queries.
+  # Batch load grading statistics for multiple assignments to avoid N+1 queries.
+  # +assignments+ is an +ActiveRecord::Relation+ of Assignments.
+  def self.batch_stats(assignments, role)
+    if role.ta?
+      self.batch_ta_stats(assignments, role.id)
+    elsif role.instructor? || role.admin_role?
+      # Ensure only assignments for the instructor's course are included
+      assignments = assignments.where(course_id: role.course_id)
+      self.batch_instructor_stats(assignments)
+    else
+      {}
+    end
+  end
+
+  # Returns { assignment_id => { num_assigned: Integer, num_groupings: Integer, num_marked: Integer } }
+  def self.batch_instructor_stats(assignments)
+    assignment_ids = assignments.ids
+    num_marked = Assignment.current_results(assignment_ids)
+                           .where('results.marking_state': Result::MARKING_STATES[:complete])
+                           .group('groupings.assessment_id').count
+    num_groupings = assignments.joins(:groupings).group(:id).count
+    num_assigned = assignments.joins(:groupings).where('groupings.is_collected': true).group(:id).count
+    assignment_ids.index_with do |aid|
+      {
+        num_marked: num_marked[aid] || 0,
+        num_assigned: num_assigned[aid] || 0,
+        num_groupings: num_groupings[aid] || 0
+      }
+    end
+  end
+
   # Returns { assignment_id => { num_assigned: Integer, num_marked: Integer } }
   def self.batch_ta_stats(assignments, ta_id)
-    return {} if ta_id.nil? || assignments.empty?
-
-    assignment_ids = assignments.map(&:id)
+    assignment_ids = assignments.ids
 
     # Query 1: Count assigned groupings per assignment
     assigned_counts = Membership
@@ -994,10 +1022,9 @@ class Assignment < Assessment
                               .distinct
                               .pluck('criteria.assessment_id')
 
-    criteria_based_ids = assignments
-                         .select { |a| a.assign_graders_to_criteria && criteria_assignment_ids.include?(a.id) }
-                         .map(&:id)
-
+    criteria_based_ids = assignments.where(assignment_properties: { assign_graders_to_criteria: true },
+                                           id: criteria_assignment_ids)
+                                    .ids
     regular_ids = assignment_ids - criteria_based_ids
 
     # Query 2: Count marked results for non-criteria-based assignments
@@ -1092,11 +1119,15 @@ class Assignment < Assessment
 
   # Query for all current results for this assignment
   def current_results
+    Assignment.current_results([self.id])
+  end
+
+  def self.current_results(assessment_ids)
     # The timestamps of all current results. This duplicates #non_pr_results,
     # except it renames the groupings table to avoid a name conflict with the second query below.
     subquery = Result.joins('INNER JOIN submissions AS _submissions ON results.submission_id = _submissions.id ' \
                             'INNER JOIN groupings AS _groupings ON _submissions.grouping_id = _groupings.id')
-                     .where('_groupings.assessment_id': id, '_submissions.submission_version_used': true)
+                     .where('_groupings.assessment_id': assessment_ids, '_submissions.submission_version_used': true)
                      .where.missing(:peer_reviews)
                      .group('_groupings.id')
                      .select('_groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
