@@ -1,8 +1,8 @@
 <% assignments = @current_course.assignments
-                                .includes(:submission_rule, :assessment_section_properties, :pr_assignment)
+                                .includes(:submission_rule, :assessment_section_properties)
                                 .order(:due_date, :short_identifier) %>
 <% action = @current_role.instructor? ? 'edit' : 'summary' %>
-<% ta_stats = @current_role.ta? ? Assignment.batch_ta_stats(assignments, @current_role.id) : {} %>
+<% assignment_stats = Assignment.batch_stats(assignments, @current_role) %>
 
 <% if assignments.empty? %>
   <p><%= t('assignments.none') %></p>
@@ -31,26 +31,20 @@
             </td>
 
             <td>
-              <% if @current_role.instructor? && assignment.submission_rule.can_collect_all_now? %>
-                <span>
-                  <%= link_to t('submissions.collect.progress',
-                                count: assignment.current_submissions_used.size,
-                                size: assignment.groupings.size),
-                              browse_course_assignment_submissions_path(@current_course, assignment) %>
-                </span>
-              <% end %>
               <% if assignment.submission_rule.can_collect_all_now? %>
-                <br>
+                <% if @current_role.instructor? %>
+                  <span>
+                    <%= link_to t('submissions.collect.progress',
+                                  count: assignment_stats[assignment.id][:num_assigned],
+                                  size: assignment_stats[assignment.id][:num_groupings]),
+                                browse_course_assignment_submissions_path(@current_course, assignment) %>
+                  </span>
+                  <br>
+                <% end %>
                 <span>
-                  <% if ta_stats[assignment.id] %>
-                    <%= t('submissions.how_many_marked',
-                          num_marked: ta_stats[assignment.id][:num_marked],
-                          num_assigned: ta_stats[assignment.id][:num_assigned]) %>
-                  <% else %>
-                    <%= t('submissions.how_many_marked',
-                          num_marked: assignment.get_num_marked,
-                          num_assigned: assignment.get_num_assigned) %>
-                  <% end %>
+                  <%= t('submissions.how_many_marked',
+                        num_marked: assignment_stats[assignment.id][:num_marked],
+                        num_assigned: assignment_stats[assignment.id][:num_assigned]) %>
                 </span>
                 <br>
                 <%= link_to t('assignments.grades'),

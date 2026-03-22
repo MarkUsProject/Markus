@@ -2829,8 +2829,9 @@ describe Assignment do
     end
   end
 
-  describe '.batch_ta_stats' do
+  describe '.batch_stats' do
     let(:ta) { create(:ta) }
+    let(:instructor) { create(:instructor) }
     let(:assignment1) { create(:assignment) }
     let(:assignment2) { create(:assignment) }
 
@@ -2845,43 +2846,68 @@ describe Assignment do
       create(:ta_membership, role: ta, grouping: grouping1)
       create(:ta_membership, role: ta, grouping: grouping2)
       create(:ta_membership, role: ta, grouping: grouping3)
+      create(:grouping, assignment: assignment1, is_collected: false)
     end
 
-    it 'returns empty hash when ta_id is nil' do
-      expect(Assignment.batch_ta_stats([assignment1, assignment2], nil)).to eq({})
-    end
-
-    it 'returns empty hash when assignments is empty' do
-      expect(Assignment.batch_ta_stats([], ta.id)).to eq({})
-    end
-
-    it 'returns correct stats for multiple assignments' do
-      stats = Assignment.batch_ta_stats([assignment1, assignment2], ta.id)
-
-      expect(stats[assignment1.id][:num_assigned]).to eq(2)
-      expect(stats[assignment1.id][:num_marked]).to eq(1)
-      expect(stats[assignment2.id][:num_assigned]).to eq(1)
-      expect(stats[assignment2.id][:num_marked]).to eq(1)
-    end
-
-    context 'when assignment has criteria-based grading' do
-      let(:assignment3) do
-        create(:assignment_with_criteria_and_results_with_remark,
-               assignment_properties_attributes: { assign_graders_to_criteria: true })
-      end
-      let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment3) }
-
-      before do
-        create(:ta_membership, role: ta, grouping: assignment3.groupings.first)
-        create(:ta_membership, role: ta, grouping: grouping4)
-        create(:criterion_ta_association, ta: ta, criterion: assignment3.criteria.first)
+    context 'for an instructor' do
+      it 'returns empty hash when assignments is empty' do
+        expect(Assignment.batch_stats(Assignment.none, instructor)).to eq({})
       end
 
-      it 'falls back to get_num_marked for criteria-based assignments' do
-        stats = Assignment.batch_ta_stats([assignment3], ta.id)
+      it 'returns correct stats for multiple assignments' do
+        stats = Assignment.batch_stats(Assignment.where(id: [assignment1.id, assignment2.id]), instructor)
 
-        expect(stats[assignment3.id][:num_assigned]).to eq(2)
-        expect(stats[assignment3.id][:num_marked]).to eq(assignment3.get_num_marked(ta.id))
+        expect(stats[assignment1.id][:num_assigned]).to eq(2)
+        expect(stats[assignment1.id][:num_marked]).to eq(1)
+        expect(stats[assignment1.id][:num_groupings]).to eq(3)
+        expect(stats[assignment2.id][:num_assigned]).to eq(1)
+        expect(stats[assignment2.id][:num_marked]).to eq(1)
+        expect(stats[assignment2.id][:num_groupings]).to eq(1)
+      end
+    end
+
+    context 'for a TA' do
+      it 'returns empty hash when assignments is empty' do
+        expect(Assignment.batch_stats(Assignment.none, ta)).to eq({})
+      end
+
+      it 'returns correct stats for multiple assignments' do
+        stats = Assignment.batch_stats(Assignment.where(id: [assignment1.id, assignment2.id]), ta)
+
+        expect(stats[assignment1.id][:num_assigned]).to eq(2)
+        expect(stats[assignment1.id][:num_marked]).to eq(1)
+        expect(stats[assignment2.id][:num_assigned]).to eq(1)
+        expect(stats[assignment2.id][:num_marked]).to eq(1)
+      end
+
+      context 'when assignment has criteria-based grading' do
+        let(:assignment3) do
+          create(:assignment_with_criteria_and_results_with_remark,
+                 assignment_properties_attributes: { assign_graders_to_criteria: true })
+        end
+        let(:grouping5) { create(:grouping_with_inviter_and_submission, assignment: assignment3) }
+
+        before do
+          create(:ta_membership, role: ta, grouping: assignment3.groupings.first)
+          create(:ta_membership, role: ta, grouping: grouping5)
+          create(:criterion_ta_association, ta: ta, criterion: assignment3.criteria.first)
+        end
+
+        it 'falls back to get_num_marked for criteria-based assignments' do
+          stats = Assignment.batch_stats(Assignment.where(id: [assignment3.id]), ta)
+
+          expect(stats[assignment3.id][:num_assigned]).to eq(2)
+          expect(stats[assignment3.id][:num_marked]).to eq(assignment3.get_num_marked(ta.id))
+        end
+      end
+    end
+
+    context 'for a student' do
+      let(:student) { create(:student) }
+
+      it 'returns an empty hash' do
+        stats = Assignment.batch_stats(Assignment.where(id: [assignment1.id, assignment2.id]), student)
+        expect(stats).to eq({})
       end
     end
   end
