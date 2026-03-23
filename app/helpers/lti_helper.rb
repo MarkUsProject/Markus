@@ -1,6 +1,6 @@
 require 'net/http'
 module LtiHelper
-  USER_SYNC_ATTRIBUTES = %i[first_name last_name email].freeze
+  USER_SYNC_ATTRIBUTES = %i[first_name last_name email id_number].freeze
 
   # Synchronize LMS user with MarkUs users.
   # if role is not nil, attempt to create users
@@ -76,7 +76,6 @@ module LtiHelper
         USER_SYNC_ATTRIBUTES.each do |attr|
           user_attributes[attr] = lms_user[attr] if lms_user[attr].present?
         end
-        user_attributes[:id_number] = lms_user[:id_number] if lms_user[:id_number].present?
         markus_user.update!(user_attributes) unless user_attributes.empty?
       end
       course_role = Role.find_by(user: markus_user, course: course)
