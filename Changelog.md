@@ -13,6 +13,7 @@
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
 - Improve assignment list loading time (#7868)
+- Update user info during roster sync (#7865)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
