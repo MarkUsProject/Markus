@@ -16,6 +16,7 @@
 - Update user info during roster sync (#7865)
 
 ### 🐛 Bug fixes
+- Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 
 ### 🔧 Internal changes
