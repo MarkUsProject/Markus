@@ -1,4 +1,21 @@
 # Grade represents an entry in a grade entry form.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: grades
+#
+#  id                     :integer          not null, primary key
+#  grade                  :float
+#  created_at             :datetime
+#  updated_at             :datetime
+#  grade_entry_item_id    :integer
+#  grade_entry_student_id :integer
+#
+# Indexes
+#
+#  index_grades_on_grade_entry_item_id_and_grade_entry_student_id  (grade_entry_item_id,grade_entry_student_id) UNIQUE
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Grade < ApplicationRecord
   belongs_to :grade_entry_item
   belongs_to :grade_entry_student

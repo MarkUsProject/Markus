@@ -1,3 +1,35 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: test_runs
+#
+#  id                  :integer          not null, primary key
+#  problems            :text
+#  revision_identifier :text
+#  status              :integer          not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  autotest_test_id    :integer
+#  grouping_id         :integer          not null
+#  role_id             :bigint           not null
+#  submission_id       :integer
+#  test_batch_id       :integer
+#
+# Indexes
+#
+#  index_test_runs_on_grouping_id    (grouping_id)
+#  index_test_runs_on_role_id        (role_id)
+#  index_test_runs_on_submission_id  (submission_id)
+#  index_test_runs_on_test_batch_id  (test_batch_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (grouping_id => groupings.id)
+#  fk_rails_...  (role_id => roles.id)
+#  fk_rails_...  (submission_id => submissions.id)
+#  fk_rails_...  (test_batch_id => test_batches.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TestRun < ApplicationRecord
   enum :status, { in_progress: 0, complete: 1, cancelled: 2, failed: 3 }
   has_many :test_group_results, dependent: :destroy

@@ -1,3 +1,25 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: tags
+#
+#  id            :integer          not null, primary key
+#  description   :string
+#  name          :string           not null
+#  assessment_id :bigint
+#  role_id       :bigint           not null
+#
+# Indexes
+#
+#  index_tags_on_assessment_id  (assessment_id)
+#  index_tags_on_role_id        (role_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (role_id => roles.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Tag < ApplicationRecord
   has_and_belongs_to_many :groupings
   belongs_to :role

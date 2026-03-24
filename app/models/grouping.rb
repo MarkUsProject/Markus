@@ -1,3 +1,30 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: groupings
+#
+#  id                      :integer          not null, primary key
+#  criteria_coverage_count :integer          default(0)
+#  instructor_approved     :boolean          default(FALSE), not null
+#  is_collected            :boolean          default(FALSE), not null
+#  start_time              :datetime
+#  starter_file_changed    :boolean          default(FALSE), not null
+#  test_tokens             :integer          default(0), not null
+#  created_at              :datetime
+#  updated_at              :datetime
+#  assessment_id           :bigint           not null
+#  group_id                :integer          not null
+#
+# Indexes
+#
+#  groupings_u1  (assessment_id,group_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_groupings_assignments  (assessment_id => assessments.id)
+#  fk_groupings_groups       (group_id => groups.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'set'
 
 # Represents a grouping of students working together on a single assignment. This model manages various aspects of the

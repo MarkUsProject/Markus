@@ -1,3 +1,25 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: extra_marks
+#
+#  id          :integer          not null, primary key
+#  description :string
+#  extra_mark  :float
+#  unit        :string
+#  created_at  :datetime
+#  updated_at  :datetime
+#  result_id   :integer
+#
+# Indexes
+#
+#  index_extra_marks_on_result_id  (result_id)
+#
+# Foreign Keys
+#
+#  fk_extra_marks_results  (result_id => results.id) ON DELETE => cascade
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class ExtraMark < ApplicationRecord
   # When a mark is created, or updated, we need to make sure that that
   # Result that it belongs to has a marking_state of "partial".

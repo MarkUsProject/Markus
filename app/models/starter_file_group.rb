@@ -1,4 +1,24 @@
 # Class describing a group of starter files
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: starter_file_groups
+#
+#  id            :bigint           not null, primary key
+#  entry_rename  :string           default(""), not null
+#  name          :string           not null
+#  use_rename    :boolean          default(FALSE), not null
+#  assessment_id :bigint           not null
+#
+# Indexes
+#
+#  index_starter_file_groups_on_assessment_id  (assessment_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class StarterFileGroup < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id, inverse_of: :starter_file_groups
   has_many :section_starter_file_groups, dependent: :destroy

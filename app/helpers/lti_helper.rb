@@ -1,5 +1,7 @@
 require 'net/http'
 module LtiHelper
+  USER_SYNC_ATTRIBUTES = %i[first_name last_name email id_number].freeze
+
   # Synchronize LMS user with MarkUs users.
   # if role is not nil, attempt to create users
   # based on the values of can_create_users and
@@ -62,13 +64,19 @@ module LtiHelper
       markus_user = EndUser.find_by(user_name: lms_user[:user_name])
       if markus_user.nil? && can_create_users
         markus_user = EndUser.create(lms_user.except(:lti_user_id, :roles))
-        if markus_user.nil?
+        unless markus_user.persisted?
           error = true
           next
         end
       elsif markus_user.nil? && !can_create_users
         error = true
         next
+      else
+        user_attributes = {}
+        USER_SYNC_ATTRIBUTES.each do |attr|
+          user_attributes[attr] = lms_user[attr] if lms_user[attr].present?
+        end
+        markus_user.update!(user_attributes) unless user_attributes.empty?
       end
       course_role = Role.find_by(user: markus_user, course: course)
       if course_role.nil? && can_create_roles
@@ -85,6 +93,10 @@ module LtiHelper
       lti_user = LtiUser.find_or_initialize_by(user: markus_user, lti_client: lti_deployment.lti_client)
       lti_user.update!(lti_user_id: lms_user[:lti_user_id])
       processed_lti_ids << lms_user[:lti_user_id]
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error I18n.t('lti.sync_failed_log', user: lms_user[:user_name], message: e.message)
+      error = true
+      next
     end
 
     # Handle inactive and missing students
