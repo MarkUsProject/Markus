@@ -9,6 +9,10 @@ describe("submission", () => {
     it("adds negative numbers", () => {
       expect(add(-1, -2)).toBe(-3);
     });
+
+    it("adds numeric strings as numbers", () => {
+      expect(add(1, "2")).toBe(3);
+    });
   });
 
   describe("isEven", () => {
@@ -20,6 +24,12 @@ describe("submission", () => {
     it("returns false for odd numbers", () => {
       expect(isEven(1)).toBe(false);
       expect(isEven(3)).toBe(false);
+    });
+  });
+
+  describe("error example", () => {
+    it("raises an error during test execution", () => {
+      throw new Error("Intentional error example for JS autotester output");
     });
   });
 });
