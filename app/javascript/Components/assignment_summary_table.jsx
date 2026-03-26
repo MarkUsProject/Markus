@@ -427,6 +427,15 @@ export class AssignmentSummaryTable extends React.Component {
             sorting: [{id: "group_name"}],
           }}
           columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              const newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
           getRowCanExpand={() => true}
           renderSubComponent={renderSubComponent}
           loading={this.state.loading}
