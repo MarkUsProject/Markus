@@ -82,7 +82,9 @@ export class AssignmentSummaryTable extends React.Component {
             }
 
             // Check grader user names
-            return row.original.graders.some(grader => grader.toLowerCase().includes(filterValue));
+            return row.original.graders.some(grader =>
+              grader.some(name => name.toLowerCase().includes(filterValue))
+            );
           } else {
             return true;
           }
