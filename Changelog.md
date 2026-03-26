@@ -19,6 +19,7 @@
 - Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Fixed search box in the grades view being unresponsive to user input (#7880)
+- Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
 
 ### 🔧 Internal changes
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
