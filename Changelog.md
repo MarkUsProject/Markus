@@ -12,6 +12,7 @@
 - Update autotest settings form UI (#7777)
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Add JS autotester example (#7866)
 - Improve assignment list loading time (#7868)
 - Update user info during roster sync (#7865)
 
