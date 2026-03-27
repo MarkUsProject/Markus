@@ -90,6 +90,7 @@ class LtiDeploymentsController < ApplicationController
                    client_id: lti_launch_data[:client_id],
                    deployment_id: lti_params[LtiDeployment::LTI_CLAIMS[:deployment_id]],
                    lms_course_name: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['title'],
+                   lms_term_name: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['term_name'],
                    lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
                    lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
                    user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]] }
@@ -129,6 +130,7 @@ class LtiDeploymentsController < ApplicationController
                                                          lms_course_id: lti_data[:lms_course_id])
     lti_deployment.update!(
       lms_course_name: lti_data[:lms_course_name],
+      lms_term_name: lti_data[:lms_term_name],
       resource_link_id: lti_data[:resource_link_id]
     )
     session[:lti_course_label] = lti_data[:lms_course_label]
@@ -212,9 +214,11 @@ class LtiDeploymentsController < ApplicationController
       render 'message', status: :forbidden
       return
     end
-
     name = params['name'].gsub(/[^a-zA-Z0-9\-_]/, '-')  # Sanitize name to comply with Course name validation
-    new_course = Course.find_or_initialize_by(name: name)
+    canvas_term = record.lms_term_name.presence || 'default'
+    suffix = get_course_suffix(canvas_term)
+    full_name = "#{name}-#{suffix}".squeeze('-').chomp('-')
+    new_course = Course.find_or_initialize_by(name: full_name)
     unless new_course.new_record?
       flash_message(:error, I18n.t('lti.course_exists'))
       redirect_to choose_course_lti_deployment_path
@@ -235,6 +239,13 @@ class LtiDeploymentsController < ApplicationController
     raise NotImplementedError
   end
 
+  # Define default URL options to not include locale
+  def default_url_options(_options = {})
+    {}
+  end
+
+  private
+
   # Takes a string and returns a URI corresponding to the redirect
   # endpoint for the lms
   def construct_redirect_with_port(url, endpoint: nil)
@@ -245,8 +256,24 @@ class LtiDeploymentsController < ApplicationController
     URI("#{referer_host}#{endpoint}")
   end
 
-  # Define default URL options to not include locale
-  def default_url_options(_options = {})
-    {}
+  def get_course_suffix(term_string)
+    clean_term = term_string.to_s.strip
+    is_scs = clean_term.downcase.include?('scs')
+
+    # Regex: find 4 digits (2024) or 2 digits (24)
+    year_match = clean_term.match(/\d{4}|\d{2}/).to_s
+    month = case clean_term
+            when /Fall/i then '09'
+            when /Summer|Spring/i then '05'
+            when /Winter/i then '01'
+            end
+
+    if !year_match.empty? && month
+      year = year_match.length == 2 ? "20#{year_match}" : year_match
+      suffix = "#{year}-#{month}"
+      return is_scs ? "scs-#{suffix}" : suffix
+    end
+
+    clean_term.downcase.gsub(/[^a-z0-9]+/, '-').chomp('-').delete_prefix('-')
   end
 end

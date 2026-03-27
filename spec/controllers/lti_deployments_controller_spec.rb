@@ -71,19 +71,22 @@ describe LtiDeploymentsController do
 
   describe '#create_course' do
     let(:test_rlid) { 'another-unique-rlid-67890' }
-    let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108', resource_link_id: test_rlid) }
+    let(:expected_name) { 'csc108-2026-09' }
+    let!(:lti_deployment) do
+ create(:lti_deployment, lms_course_name: 'csc108', lms_term_name: 'Fall 2026', resource_link_id: test_rlid)
+    end
     let(:course_params) do
       { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
     end
 
-    context 'as an instructor' do
+    context 'as an instructor with a standard term' do
       before do
         session[:lti_deployment_id] = lti_deployment.id
         post_as instructor, :create_course, params: course_params
       end
 
-      it 'creates a course' do
-        expect(Course.find_by(name: 'csc108')).not_to be_nil
+      it 'creates a course with the standardized year-month suffix' do
+        expect(Course.find_by(name: expected_name)).not_to be_nil
       end
 
       it 'sets the course display name' do
@@ -91,12 +94,41 @@ describe LtiDeploymentsController do
       end
 
       it 'creates an instructor role for the user' do
-        expect(Role.find_by(user: instructor.user, course: Course.find_by(name: 'csc108'))).not_to be_nil
+        course = Course.find_by(name: expected_name)
+        expect(Role.find_by(user: instructor.user, course: course)).not_to be_nil
       end
 
       it 'retains the resource_link_id after course creation' do
         lti_deployment.reload
         expect(lti_deployment.resource_link_id).to eq(test_rlid)
+      end
+    end
+
+    context 'with an SCS term' do
+      let!(:lti_deployment) { create(:lti_deployment, :scs_winter, lms_course_name: 'csc108') }
+
+      it 'creates a course with the scs-YYYY-MM suffix' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.find_by(name: 'csc108-scs-2026-01')).not_to be_nil
+      end
+    end
+
+    context 'when the term is non-standard (Catch-all)' do
+      let!(:lti_deployment) do
+ create(:lti_deployment, lms_term_name: 'Special Workshop 2026', lms_course_name: 'csc108')
+      end
+
+      before do
+        session[:lti_deployment_id] = lti_deployment.id
+      end
+
+      it 'slugifies the term name as the suffix' do
+        post_as instructor, :create_course, params: {
+          id: lti_deployment.id,
+          name: 'csc108',
+          display_name: 'Workshop'
+        }
+        expect(Course.find_by(name: 'csc108-special-workshop-2026')).not_to be_nil
       end
     end
 
@@ -107,7 +139,7 @@ describe LtiDeploymentsController do
       end
 
       it 'creates a course' do
-        expect(Course.find_by(name: 'csc108')).not_to be_nil
+        expect(Course.find_by(name: expected_name)).not_to be_nil
       end
 
       it 'sets the course display name' do
@@ -115,13 +147,14 @@ describe LtiDeploymentsController do
       end
 
       it 'creates an admin role for the user' do
-        expect(Role.find_by(user: admin_user, course: Course.find_by(name: 'csc108'), type: 'AdminRole')).not_to be_nil
+        course = Course.find_by(name: expected_name)
+        expect(Role.find_by(user: admin_user, course: course, type: 'AdminRole')).not_to be_nil
       end
     end
 
     context 'when a course already exists' do
       before do
-        create(:course, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name)
+        create(:course, name: expected_name)
         session[:lti_deployment_id] = lti_deployment.id
       end
 
@@ -137,21 +170,23 @@ describe LtiDeploymentsController do
     end
 
     context 'when the LTI deployment course name has invalid characters' do
-      let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'csc108 fall 3000!') }
+      let!(:lti_deployment) do
+ create(:lti_deployment, lms_course_name: 'csc108 fall 3000!', lms_term_name: 'Fall 2026')
+      end
 
       before do
         session[:lti_deployment_id] = lti_deployment.id
       end
 
-      it 'creates a new course with a sanitized name' do
+      it 'creates a new course with a sanitized name and appends suffix' do
         post_as instructor, :create_course, params: course_params
-        expect(Course.exists?(name: 'csc108-fall-3000-')).not_to be_nil
+        expect(Course.exists?(name: 'csc108-fall-3000-2026-09')).not_to be_nil
       end
     end
 
     context 'when the course is rejected by the filter' do
       # NOTE: the default filter in config/dummy_lti_config.rb only accepts course names starting with 'csc'
-      let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'sta130') }
+      let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'sta130', lms_term_name: 'Fall 2026') }
 
       before do
         session[:lti_deployment_id] = lti_deployment.id
