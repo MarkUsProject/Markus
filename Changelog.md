@@ -12,12 +12,15 @@
 - Update autotest settings form UI (#7777)
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Add JS autotester example (#7866)
 - Improve assignment list loading time (#7868)
 - Update user info during roster sync (#7865)
 
 ### 🐛 Bug fixes
 - Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Fixed search box in the grades view being unresponsive to user input (#7880)
+- Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
 
 ### 🔧 Internal changes
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
