@@ -47,6 +47,10 @@ class Role < ApplicationRecord
   has_many :split_pdf_logs
   has_many :assessments, through: :course
   has_many :tags
+  has_many :last_updated_marks, class_name: 'Mark', foreign_key: 'last_updated_by_id', inverse_of: :last_updated_by,
+                                dependent: :nullify
+  has_many :last_updated_grades, class_name: 'Grade', foreign_key: 'last_updated_by_id', inverse_of: :last_updated_by,
+                                 dependent: :nullify
 
   validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
   validates :user_id, uniqueness: { scope: :course_id }
