@@ -190,7 +190,7 @@ module LtiHelper
       resourceId: assessment.short_identifier,
       scoreMaximum: assessment.max_mark.to_f
     }
-    payload[:dueAt] = assessment.due_date.iso8601 if assessment.due_date.present?
+    payload[:endDateTime] = assessment.due_date.iso8601 if assessment.due_date.present?
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:ags_lineitem]])
     lineitem_service = lti_deployment.lti_services.find_by!(service_type: 'agslineitem')
     lineitem_uri = URI(lineitem_service.url)
@@ -200,7 +200,8 @@ module LtiHelper
     else
       req = Net::HTTP::Post.new(lineitem_uri)
     end
-    req.set_form_data(payload)
+    req.content_type = 'application/vnd.ims.lis.v2.lineitem+json'
+    req.body = payload.to_json
     res = lti_deployment.send_lti_request!(req, lineitem_uri, auth_data, [LtiDeployment::LTI_SCOPES[:ags_lineitem]])
     line_item_data = JSON.parse(res.body)
     line_item.update!(lti_line_item_id: line_item_data['id'])
