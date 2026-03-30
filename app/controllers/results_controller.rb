@@ -454,7 +454,8 @@ class ResultsController < ApplicationController
 
     m_logger = MarkusLogger.instance
 
-    if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?))
+    if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?),
+                          last_updated_by: current_role)
 
       m_logger.log("User '#{current_role.user_name}' updated mark for " \
                    "submission (id: #{submission.id}) of " \
