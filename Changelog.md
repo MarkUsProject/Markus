@@ -36,6 +36,7 @@
 - Added `annotaterb` development gem and added model and route annotations (#7861)
 - Added `pghero` gem and added PgHero admin dashboard (#7861)
 - Add nullable last_updated_by foreign key (to roles) to marks and grades tables to track who assigned which grade (#7878)
+- Updates ResultsController#update_mark to set the last_updated_by field when marks are modified (#7885)
 
 ## [v2.9.5]
 
