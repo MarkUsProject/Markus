@@ -887,13 +887,40 @@ describe LtiHelper do
       expect(LtiLineItem.count).to eq(1)
     end
 
-    it 'includes dueAt in the request payload' do
+    it 'sends JSON body with correct LTI AGS Content-Type' do
       allow(lti_deployment).to receive(:send_lti_request!) do |req, *|
-        body = URI.decode_www_form(req.body).to_h
-        expect(body).to include('dueAt' => assessment.due_date.iso8601)
+        expect(req.content_type).to eq('application/vnd.ims.lis.v2.lineitem+json')
+        body = JSON.parse(req.body)
+        expect(body).to include(
+          'label' => assessment.description,
+          'resourceId' => assessment.short_identifier,
+          'scoreMaximum' => assessment.max_mark.to_f
+        )
         OpenStruct.new(body: { id: 'https://test.example.com/lineitems/1' }.to_json)
       end
       subject
+    end
+
+    it 'includes endDateTime in the request payload' do
+      allow(lti_deployment).to receive(:send_lti_request!) do |req, *|
+        body = JSON.parse(req.body)
+        expect(body).to include('endDateTime' => assessment.due_date.iso8601)
+        OpenStruct.new(body: { id: 'https://test.example.com/lineitems/1' }.to_json)
+      end
+      subject
+    end
+
+    context 'when the assessment has no due date' do
+      let(:assessment) { create(:grade_entry_form, due_date: nil) }
+
+      it 'does not include endDateTime in the payload' do
+        allow(lti_deployment).to receive(:send_lti_request!) do |req, *|
+          body = JSON.parse(req.body)
+          expect(body).not_to have_key('endDateTime')
+          OpenStruct.new(body: { id: 'https://test.example.com/lineitems/1' }.to_json)
+        end
+        subject
+      end
     end
 
     context 'when a line item already exists' do
@@ -906,6 +933,33 @@ describe LtiHelper do
       it 'does update the line item id' do
         subject
         expect(LtiLineItem.first.lti_line_item_id).to eq('https://test.example.com/lineitems/1')
+      end
+
+      it 'sends a PUT request with JSON body and endDateTime' do
+        allow(lti_deployment).to receive(:send_lti_request!) do |req, *|
+          expect(req).to be_a(Net::HTTP::Put)
+          expect(req.content_type).to eq('application/vnd.ims.lis.v2.lineitem+json')
+          body = JSON.parse(req.body)
+          expect(body).to include('endDateTime' => assessment.due_date.iso8601)
+          OpenStruct.new(body: { id: 'https://test.example.com/lineitems/1' }.to_json)
+        end
+        subject
+      end
+    end
+
+    context 'when updating a line item without a due date' do
+      let(:assessment) { create(:grade_entry_form, due_date: nil) }
+
+      before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
+
+      it 'sends a PUT request without endDateTime' do
+        allow(lti_deployment).to receive(:send_lti_request!) do |req, *|
+          expect(req).to be_a(Net::HTTP::Put)
+          body = JSON.parse(req.body)
+          expect(body).not_to have_key('endDateTime')
+          OpenStruct.new(body: { id: 'https://test.example.com/lineitems/1' }.to_json)
+        end
+        subject
       end
     end
   end
