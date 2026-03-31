@@ -1,17 +1,16 @@
 import React from "react";
 
 class CourseCard extends React.Component {
-  onClick = () => {
+  coursePath = () => {
     if (this.props.role_type === "Instructor") {
-      window.location = Routes.course_path(this.props.course_id);
-    } else {
-      window.location = Routes.course_assignments_path(this.props.course_id);
+      return Routes.course_path(this.props.course_id);
     }
+    return Routes.course_assignments_path(this.props.course_id);
   };
 
   render() {
     return (
-      <div className="course-card" onClick={this.onClick}>
+      <a className="course-card" href={this.coursePath()}>
         <div className="course-info">
           <div className="course-role" align="right">
             {I18n.t(`activerecord.models.${this.props.role_type.toLowerCase()}.one`)}
@@ -21,7 +20,7 @@ class CourseCard extends React.Component {
         <div className="course-name">
           <span>{this.props.course_display_name}</span>
         </div>
-      </div>
+      </a>
     );
   }
 }
