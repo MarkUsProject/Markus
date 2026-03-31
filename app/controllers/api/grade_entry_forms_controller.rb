@@ -2,10 +2,13 @@ module Api
   class GradeEntryFormsController < MainApiController
     DEFAULT_FIELDS = [:id, :short_identifier, :description, :due_date, :is_hidden, :visible_on, :visible_until,
                       :show_total].freeze
+    STUDENT_FIELDS = [:user_name, :last_name, :first_name, :id_number, :email].freeze
 
-    # Returns the specified grade entry form with all grade data
+    # Returns the specified grade entry form
     # Requires: id
-    # Optional: user_name (filter to a single student), download=csv (export as CSV)
+    # Default: returns CSV export (backward compatible)
+    # Optional: .json extension or Accept: application/json header for structured JSON with student grades
+    #           user_name (filter to a single student, JSON only)
     def show
       grade_entry_form = record
       if grade_entry_form.nil?
@@ -14,61 +17,15 @@ module Api
         return
       end
 
-      if params[:download] == 'csv'
-        send_data grade_entry_form.export_as_csv(current_role),
-                  type: 'text/csv',
-                  filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
-                  disposition: 'inline'
+      if request.format.json?
+        render_json_show(grade_entry_form)
         return
       end
 
-      grade_entry_items = grade_entry_form.grade_entry_items.order(:position)
-
-      students_query = Student.left_outer_joins(:grade_entry_students, :user, :section)
-                              .where(hidden: false, 'grade_entry_students.assessment_id': grade_entry_form.id)
-      students_query = students_query.where('users.user_name': params[:user_name]) if params[:user_name].present?
-      students = students_query.order(:user_name)
-                               .pluck_to_hash(:user_name, :last_name, :first_name, 'sections.name as section_name',
-                                              :id_number, :email, 'grade_entry_students.id as ges_id')
-
-      if params[:user_name].present? && students.empty?
-        render 'shared/http_status', locals: { code: '422', message:
-          'No student with that user_name' }, status: :unprocessable_content
-        return
-      end
-
-      grades_query = grade_entry_form.grades
-                                     .joins(:grade_entry_item, grade_entry_student: :user)
-      grades_query = grades_query.where('users.user_name': params[:user_name]) if params[:user_name].present?
-      grade_data = grades_query.pluck('users.user_name', 'grade_entry_items.name', :grade)
-                               .group_by { |g| g[0] }
-
-      total_grades = GradeEntryStudent.get_total_grades(students.pluck(:ges_id))
-
-      student_data = students.map do |student|
-        grades_hash = {}
-        grade_data[student[:user_name]]&.each { |g| grades_hash[g[1]] = g[2] }
-        entry = {
-          user_name: student[:user_name],
-          first_name: student[:first_name],
-          last_name: student[:last_name],
-          id_number: student[:id_number],
-          email: student[:email],
-          section_name: student[:section_name],
-          grades: grades_hash
-        }
-        entry[:total_grade] = total_grades[student[:ges_id]] if grade_entry_form.show_total
-        entry
-      end
-
-      form_data = grade_entry_form.as_json(only: DEFAULT_FIELDS)
-      form_data['grade_entry_items'] = grade_entry_items.as_json(only: [:id, :name, :out_of, :bonus])
-      form_data['students'] = student_data
-
-      respond_to do |format|
-        format.xml { render xml: form_data.to_xml(root: 'grade_entry_form', skip_types: 'true') }
-        format.json { render json: form_data }
-      end
+      send_data grade_entry_form.export_as_csv(current_role),
+                type: 'text/csv',
+                filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
+                disposition: 'inline'
     end
 
     def index
@@ -254,6 +211,58 @@ module Api
         render 'shared/http_status',
                locals: { code: :conflict,
                          message: 'Grade Entry Form contains non-nil grades' }, status: :conflict
+      end
+    end
+
+    private
+
+    def render_json_show(grade_entry_form)
+      filter_user = params[:user_name].presence
+
+      students = fetch_students(grade_entry_form, filter_user)
+      if filter_user && students.empty?
+        render 'shared/http_status', locals: { code: '422', message:
+          'No student with that user_name' }, status: :unprocessable_content
+        return
+      end
+
+      grades_by_user = fetch_grades_by_user(grade_entry_form, filter_user)
+      total_grades = grade_entry_form.show_total ? GradeEntryStudent.get_total_grades(students.pluck(:ges_id)) : {}
+
+      form_data = grade_entry_form.as_json(only: DEFAULT_FIELDS)
+      form_data['grade_entry_items'] = grade_entry_form.grade_entry_items.order(:position)
+                                                       .as_json(only: [:id, :name, :out_of, :bonus])
+      form_data['students'] = build_student_data(students, grades_by_user, total_grades,
+                                                 include_total: grade_entry_form.show_total)
+
+      render json: form_data
+    end
+
+    def fetch_students(grade_entry_form, filter_user)
+      query = Student.left_outer_joins(:grade_entry_students, :user, :section)
+                     .where(hidden: false, 'grade_entry_students.assessment_id': grade_entry_form.id)
+      query = query.where('users.user_name': filter_user) if filter_user
+      query.order(:user_name)
+           .pluck_to_hash(:user_name, :last_name, :first_name, 'sections.name as section_name',
+                          :id_number, :email, 'grade_entry_students.id as ges_id')
+    end
+
+    def fetch_grades_by_user(grade_entry_form, filter_user)
+      query = grade_entry_form.grades.joins(:grade_entry_item, grade_entry_student: :user)
+      query = query.where('users.user_name': filter_user) if filter_user
+      query.pluck('users.user_name', 'grade_entry_items.name', :grade)
+           .group_by { |user_name, _item, _grade| user_name }
+           .transform_values { |rows| rows.to_h { |_user, item, grade| [item, grade] } }
+    end
+
+    def build_student_data(students, grades_by_user, total_grades, include_total:)
+      students.map do |student|
+        entry = student.slice(*STUDENT_FIELDS).merge(
+          section_name: student[:section_name],
+          grades: grades_by_user.fetch(student[:user_name], {})
+        )
+        entry[:total_grade] = total_grades[student[:ges_id]] if include_total
+        entry
       end
     end
   end

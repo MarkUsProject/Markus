@@ -279,18 +279,8 @@ describe Api::GradeEntryFormsController do
         end
       end
 
-      context 'expecting an xml response' do
-        before { request.env['HTTP_ACCEPT'] = 'application/xml' }
-
-        it 'returns xml with grade_entry_form root' do
-          get :show, params: { id: grade_entry_form.id, course_id: course.id }
-          expect(response).to have_http_status(:ok)
-          expect(Hash.from_xml(response.body)).to have_key('grade_entry_form')
-        end
-      end
-
-      it 'returns CSV when download=csv' do
-        get :show, params: { id: grade_entry_form.id, course_id: course.id, download: 'csv' }
+      it 'returns CSV by default' do
+        get :show, params: { id: grade_entry_form.id, course_id: course.id }
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('text/csv')
       end
