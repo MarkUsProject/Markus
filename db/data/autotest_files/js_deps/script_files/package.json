@@ -1,0 +1,11 @@
+{
+  "name": "autotest-js-deps",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

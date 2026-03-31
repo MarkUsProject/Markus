@@ -12,11 +12,18 @@
 - Update autotest settings form UI (#7777)
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Add JS autotester example (#7866)
+- Improve assignment list loading time (#7868)
+- Update user info during roster sync (#7865)
 
 ### 🐛 Bug fixes
+- Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Fixed search box in the grades view being unresponsive to user input (#7880)
+- Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
 
 ### 🔧 Internal changes
+- Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
 - Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
@@ -25,6 +32,10 @@
 - Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
 - Upgraded to Rails v8.1 (#7815)
 - Updated the student table to use `@tanstack/react-table` v8 (#7826)
+- Added `active_record_doctor` development gem (#7861)
+- Added `annotaterb` development gem and added model and route annotations (#7861)
+- Added `pghero` gem and added PgHero admin dashboard (#7861)
+- Add nullable last_updated_by foreign key (to roles) to marks and grades tables to track who assigned which grade (#7878)
 
 ## [v2.9.5]
 
