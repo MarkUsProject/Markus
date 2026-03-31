@@ -1,3 +1,28 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: feedback_files
+#
+#  id                   :integer          not null, primary key
+#  file_content         :binary           not null
+#  filename             :string           not null
+#  mime_type            :string           not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  submission_id        :integer
+#  test_group_result_id :bigint
+#
+# Indexes
+#
+#  index_feedback_files_on_submission_id         (submission_id)
+#  index_feedback_files_on_test_group_result_id  (test_group_result_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (submission_id => submissions.id)
+#  fk_rails_...  (test_group_result_id => test_group_results.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class FeedbackFile < ApplicationRecord
   belongs_to :submission, optional: true
   belongs_to :test_group_result, optional: true

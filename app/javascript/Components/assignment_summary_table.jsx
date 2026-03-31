@@ -82,7 +82,9 @@ export class AssignmentSummaryTable extends React.Component {
             }
 
             // Check grader user names
-            return row.original.graders.some(grader => grader.toLowerCase().includes(filterValue));
+            return row.original.graders.some(grader =>
+              grader.some(name => name.toLowerCase().includes(filterValue))
+            );
           } else {
             return true;
           }
@@ -427,6 +429,15 @@ export class AssignmentSummaryTable extends React.Component {
             sorting: [{id: "group_name"}],
           }}
           columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              const newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
           getRowCanExpand={() => true}
           renderSubComponent={renderSubComponent}
           loading={this.state.loading}

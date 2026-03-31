@@ -5,6 +5,7 @@
 import {AssignmentSummaryTable} from "../assignment_summary_table";
 import {render, screen, fireEvent, waitFor, act} from "@testing-library/react";
 import {expect} from "@jest/globals";
+import {defaultSearchPlaceholderText} from "../table/search_filter";
 
 describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   let groups_sample;
@@ -170,6 +171,90 @@ describe("For the AssignmentSummaryTable's display of an assignment without auto
         )
       ).not.toBeInTheDocument();
     });
+  });
+});
+
+describe("For the AssignmentSummaryTable's search filter", () => {
+  beforeEach(async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        data: [
+          {
+            group_name: "group_0001",
+            section: null,
+            members: [["c8debuss", "Debussy", "Claude", false]],
+            tags: [],
+            graders: [["c9varoqu", "Nelle", "Varoquaux"]],
+            marking_state: "complete",
+            final_grade: 9.0,
+            criteria: {},
+            max_mark: "21.0",
+            result_id: 1,
+            submission_id: 1,
+            total_extra_marks: null,
+          },
+          {
+            group_name: "group_0002",
+            section: null,
+            members: [["c8holstg", "Holst", "Gustav", false]],
+            tags: [],
+            graders: [["c9varoqu", "Nelle", "Varoquaux"]],
+            marking_state: "complete",
+            final_grade: 6.0,
+            criteria: {},
+            max_mark: "21.0",
+            result_id: 2,
+            submission_id: 2,
+            total_extra_marks: null,
+          },
+        ],
+        criteriaColumns: [],
+        numAssigned: 2,
+        numMarked: 2,
+        ltiDeployments: [],
+      }),
+    });
+
+    await act(async () => {
+      render(
+        <AssignmentSummaryTable
+          assignment_id={1}
+          course_id={1}
+          is_instructor={false}
+          lti_deployments={[]}
+        />
+      );
+    });
+    await screen.findByText("group_0001", {exact: false});
+  });
+
+  it("filters rows as the user types in the search box", () => {
+    fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0], {
+      target: {value: "0001"},
+    });
+
+    expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
+    expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
+  });
+
+  it("restores all rows when the search query is cleared", () => {
+    const searchInput = screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0];
+    fireEvent.change(searchInput, {target: {value: "0001"}});
+    fireEvent.change(searchInput, {target: {value: ""}});
+
+    expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
+    expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
+  });
+
+  it("shows no rows when the search query matches nothing", () => {
+    fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0], {
+      target: {value: "zzznomatch"},
+    });
+
+    expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
   });
 });
 

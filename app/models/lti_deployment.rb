@@ -1,3 +1,24 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: lti_deployments
+#
+#  id                     :bigint           not null, primary key
+#  lms_course_name        :string           not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  course_id              :bigint
+#  external_deployment_id :string           not null
+#  lms_course_id          :integer          not null
+#  lti_client_id          :bigint           not null
+#  resource_link_id       :string
+#
+# Indexes
+#
+#  index_lti_deployments_on_course_id      (course_id)
+#  index_lti_deployments_on_lti_client_id  (lti_client_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiDeployment < ApplicationRecord
   belongs_to :course, optional: true
   belongs_to :lti_client

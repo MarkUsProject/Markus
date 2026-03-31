@@ -1,6 +1,7 @@
 describe Mark do
   it { is_expected.to belong_to(:criterion) }
   it { is_expected.to belong_to(:result) }
+  it { is_expected.to belong_to(:last_updated_by).class_name('Role').optional }
 
   it { is_expected.to allow_value(false).for(:override) }
   it { is_expected.to allow_value(true).for(:override) }

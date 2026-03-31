@@ -64,6 +64,7 @@ gem 'cookies_eu'
 gem 'dry-validation'  # For settings schema validation
 gem 'exception_notification'
 gem 'marcel'
+gem 'pghero'
 gem 'rails-html-sanitizer'
 gem 'rails_performance'
 gem 'responders'
@@ -77,6 +78,7 @@ gem 'pg'
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
 group :development do
+  gem 'annotaterb', require: false
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller' # supplement for better_errors
@@ -106,6 +108,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
+  gem 'active_record_doctor', require: false
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
