@@ -1,3 +1,25 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: extensions
+#
+#  id            :bigint           not null, primary key
+#  apply_penalty :boolean          default(FALSE), not null
+#  note          :string
+#  time_delta    :interval         not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  grouping_id   :bigint           not null
+#
+# Indexes
+#
+#  index_extensions_on_grouping_id  (grouping_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (grouping_id => groupings.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Extension < ApplicationRecord
   belongs_to :grouping
 

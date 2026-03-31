@@ -14,31 +14,6 @@
         <%= stylesheet_link_tag 'rmd_dark' %>
       <% end %>
     <% end %>
-    <%= javascript_tag nonce: true do %>
-      // Same as mathjax_config.js except startup.typeset is true
-      window.MathJax = {
-        startup: {
-          typeset: true
-        },
-        tex: {
-          // Allow inline single dollar sign notation
-          inlineMath: [
-            ["$", "$"],
-            ["\\(", "\\)"]
-          ],
-          processEnvironments: true,
-          processRefs: false
-        },
-        options: {
-          ignoreHtmlClass: "tex2jax_ignore",
-          processHtmlClass: "tex2jax_process"
-          },
-        svg: {
-          fontCache: "global"
-        }
-      };
-    <% end %>
-    <%= javascript_include_tag 'markus_notebook', nonce: true %>
   </head>
   <body>
     <%= yield :layout %>

@@ -2,12 +2,14 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import PropTypes from "prop-types";
 
-import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
-import {selectFilter} from "./Helpers/table_helpers";
+import Table from "./table/table";
+import {createColumnHelper} from "@tanstack/react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 
-class RawStudentTable extends React.Component {
+const columnHelper = createColumnHelper();
+
+class StudentTable extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -17,6 +19,7 @@ class RawStudentTable extends React.Component {
         counts: {all: 0, active: 0, inactive: 0},
       },
       loading: true,
+      rowSelection: {},
     };
   }
 
@@ -39,8 +42,6 @@ class RawStudentTable extends React.Component {
         this.setState({
           data: res,
           loading: false,
-          selection: [],
-          selectAll: false,
         });
       });
   };
@@ -49,8 +50,13 @@ class RawStudentTable extends React.Component {
   onSubmit = event => {
     event.preventDefault();
 
+    // Convert rowSelection object to array of student IDs
+    const selectedIds = Object.keys(this.state.rowSelection).filter(
+      key => this.state.rowSelection[key]
+    );
+
     const data = {
-      student_ids: this.props.selection,
+      student_ids: selectedIds,
       bulk_action: this.actionBox.state.action,
       grace_credits: this.actionBox.state.grace_credits,
       section: this.actionBox.state.section,
@@ -82,162 +88,142 @@ class RawStudentTable extends React.Component {
       });
   };
 
+  getColumns = () => {
+    const {data} = this.state;
+
+    return [
+      columnHelper.accessor("user_name", {
+        header: I18n.t("activerecord.attributes.user.user_name"),
+        id: "user_name",
+        minSize: 120,
+      }),
+      columnHelper.accessor("first_name", {
+        header: I18n.t("activerecord.attributes.user.first_name"),
+        minSize: 120,
+      }),
+      columnHelper.accessor("last_name", {
+        header: I18n.t("activerecord.attributes.user.last_name"),
+        minSize: 120,
+      }),
+      columnHelper.accessor("email", {
+        header: I18n.t("activerecord.attributes.user.email"),
+        minSize: 150,
+      }),
+      columnHelper.accessor("id_number", {
+        header: I18n.t("activerecord.attributes.user.id_number"),
+        minSize: 90,
+        meta: {
+          className: "number",
+        },
+      }),
+      columnHelper.accessor(row => data.sections[row.section] || "", {
+        header: I18n.t("activerecord.models.section", {count: 1}),
+        id: "section",
+        enableColumnFilter: Boolean(Object.keys(data.sections).length),
+        filterFn: "equals",
+        meta: {
+          filterVariant: "select",
+        },
+      }),
+      columnHelper.accessor("remaining_grace_credits", {
+        header: I18n.t("activerecord.attributes.user.grace_credits"),
+        id: "grace_credits",
+        cell: ({getValue, row}) => {
+          return `${getValue()} / ${row.original.grace_credits}`;
+        },
+        minSize: 90,
+        filterFn: (row, columnId, filterValue) => {
+          if (filterValue === "" || isNaN(filterValue)) {
+            return true;
+          }
+          return row.getValue(columnId) === Number(filterValue);
+        },
+        meta: {
+          className: "number",
+          filterVariant: "number",
+        },
+      }),
+      columnHelper.accessor(
+        row => (row.hidden ? I18n.t("roles.inactive") : I18n.t("roles.active")),
+        {
+          header: I18n.t("roles.active") + "?",
+          id: "hidden",
+          filterFn: "equals",
+          meta: {
+            filterVariant: "select",
+          },
+        }
+      ),
+      columnHelper.accessor("_id", {
+        header: I18n.t("actions"),
+        cell: ({getValue}) => {
+          const id = getValue();
+
+          return (
+            <>
+              <span>
+                <a
+                  href={Routes.edit_course_student_path(this.props.course_id, id)}
+                  aria-label={I18n.t("edit")}
+                  title={I18n.t("edit")}
+                >
+                  <FontAwesomeIcon icon={faPencil} />
+                </a>
+              </span>
+              &nbsp;|&nbsp;
+              <span>
+                <a
+                  href="#"
+                  onClick={() => this.removeStudent(id)}
+                  aria-label={I18n.t("remove")}
+                  title={I18n.t("remove")}
+                >
+                  <FontAwesomeIcon icon={faTrashCan} />
+                </a>
+              </span>
+            </>
+          );
+        },
+        enableSorting: false,
+        enableColumnFilter: false,
+      }),
+    ];
+  };
+
   render() {
-    const {data, loading} = this.state;
+    const {data, loading, rowSelection} = this.state;
+    const selectedCount = Object.keys(rowSelection).filter(key => rowSelection[key]).length;
 
     return (
       <div data-testid={"raw_student_table"}>
         <StudentsActionBox
           ref={r => (this.actionBox = r)}
           sections={data.sections}
-          disabled={this.props.selection.length === 0}
+          disabled={selectedCount === 0}
           onSubmit={this.onSubmit}
           authenticity_token={this.props.authenticity_token}
         />
-        <CheckboxTable
-          loading={this.state.loading}
-          ref={r => (this.checkboxTable = r)}
+        <Table
+          loading={loading}
           data={data.students}
-          columns={[
-            {
-              Header: I18n.t("activerecord.attributes.user.user_name"),
-              accessor: "user_name",
-              id: "user_name",
-              minWidth: 120,
-            },
-            {
-              Header: I18n.t("activerecord.attributes.user.first_name"),
-              accessor: "first_name",
-              minWidth: 120,
-            },
-            {
-              Header: I18n.t("activerecord.attributes.user.last_name"),
-              accessor: "last_name",
-              minWidth: 120,
-            },
-            {
-              Header: I18n.t("activerecord.attributes.user.email"),
-              accessor: "email",
-              minWidth: 150,
-            },
-            {
-              Header: I18n.t("activerecord.attributes.user.id_number"),
-              accessor: "id_number",
-              minWidth: 90,
-              className: "number",
-            },
-            {
-              Header: I18n.t("activerecord.models.section", {count: 1}),
-              accessor: "section",
-              id: "section",
-              Cell: ({value}) => {
-                return data.sections[value] || "";
+          columns={this.getColumns()}
+          enableRowSelection={true}
+          rowSelection={rowSelection}
+          onRowSelectionChange={updater => {
+            this.setState(prevState => ({
+              rowSelection:
+                typeof updater === "function" ? updater(prevState.rowSelection) : updater,
+            }));
+          }}
+          getRowId={row => row._id}
+          initialState={{
+            sorting: [
+              {
+                id: "user_name",
               },
-              show: Boolean(data.sections),
-              filterMethod: (filter, row) => {
-                if (filter.value === "all") {
-                  return true;
-                } else {
-                  return data.sections[row[filter.id]] === filter.value;
-                }
-              },
-              Filter: selectFilter,
-              filterOptions: Object.entries(data.sections).map(kv => ({
-                value: kv[1],
-                text: kv[1],
-              })),
-            },
-            {
-              Header: I18n.t("activerecord.attributes.user.grace_credits"),
-              id: "grace_credits",
-              accessor: "remaining_grace_credits",
-              className: "number",
-              Cell: row => `${row.value} / ${row.original.grace_credits}`,
-              minWidth: 90,
-              Filter: ({filter, onChange}) => (
-                <input
-                  onChange={event => onChange(event.target.valueAsNumber)}
-                  type="number"
-                  min={0}
-                  value={filter ? filter.value : ""}
-                />
-              ),
-              filterMethod: (filter, row) => {
-                return (
-                  isNaN(filter.value) || filter.value === row._original.remaining_grace_credits
-                );
-              },
-            },
-            {
-              Header: I18n.t("roles.active") + "?",
-              accessor: "hidden",
-              Cell: ({value}) => (value ? I18n.t("roles.inactive") : I18n.t("roles.active")),
-              filterMethod: (filter, row) => {
-                if (filter.value === "all") {
-                  return true;
-                } else {
-                  return (
-                    (filter.value === "active" && !row[filter.id]) ||
-                    (filter.value === "inactive" && row[filter.id])
-                  );
-                }
-              },
-              Filter: selectFilter,
-              filterOptions: [
-                {
-                  value: "active",
-                  text: `${I18n.t("roles.active")} (${this.state.data.counts.active})`,
-                },
-                {
-                  value: "inactive",
-                  text: `${I18n.t("roles.inactive")} (${this.state.data.counts.inactive})`,
-                },
-              ],
-              filterAllOptionText: `${I18n.t("all")} (${this.state.data.counts.all})`,
-            },
-            {
-              Header: I18n.t("actions"),
-              accessor: "_id",
-              Cell: data => (
-                <>
-                  <span>
-                    <a
-                      href={Routes.edit_course_student_path(this.props.course_id, data.value)}
-                      aria-label={I18n.t("edit")}
-                      title={I18n.t("edit")}
-                    >
-                      <FontAwesomeIcon icon={faPencil} />
-                    </a>
-                  </span>
-                  &nbsp;|&nbsp;
-                  <span>
-                    <a
-                      href="#"
-                      onClick={() => this.removeStudent(data.value)}
-                      aria-label={I18n.t("remove")}
-                      title={I18n.t("remove")}
-                    >
-                      <FontAwesomeIcon icon={faTrashCan} />
-                    </a>
-                  </span>
-                </>
-              ),
-              sortable: false,
-              filterable: false,
-            },
-          ]}
-          getNoDataProps={() => ({
-            loading,
-            data,
-          })}
-          defaultSorted={[
-            {
-              id: "user_name",
-            },
-          ]}
-          filterable
+            ],
+          }}
           noDataText={I18n.t("students.empty_table")}
-          {...this.props.getCheckboxProps()}
         />
       </div>
     );
@@ -330,14 +316,10 @@ StudentsActionBox.propTypes = {
   sections: PropTypes.object,
 };
 
-RawStudentTable.propTypes = {
+StudentTable.propTypes = {
   course_id: PropTypes.number,
-  selection: PropTypes.array.isRequired,
   authenticity_token: PropTypes.string,
-  getCheckboxProps: PropTypes.func.isRequired,
 };
-
-let StudentTable = withSelection(RawStudentTable);
 
 function makeStudentTable(elem, props) {
   const root = createRoot(elem);

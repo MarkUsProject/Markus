@@ -2,11 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import safe_marked from "../common/safe_marked";
+import {renderMathInElement} from "../common/math_helper";
 
 export default class MarkdownPreview extends React.Component {
   componentDidMount = () => {
-    const target_id = "#annotation-preview";
-    MathJax.typeset([target_id]);
+    const target_id = "annotation-preview";
+    renderMathInElement(document.getElementById(target_id));
   };
 
   render() {

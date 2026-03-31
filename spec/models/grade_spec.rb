@@ -7,6 +7,7 @@ describe Grade do
 
   it { is_expected.to belong_to(:grade_entry_item) }
   it { is_expected.to belong_to(:grade_entry_student) }
+  it { is_expected.to belong_to(:last_updated_by).class_name('Role').optional }
   it { is_expected.to have_one(:course) }
 
   it_behaves_like 'course associations'

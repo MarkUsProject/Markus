@@ -6,4 +6,4 @@ $('#annotation_category_' + <%= @annotation_category.id %>).replaceWith(
   "<%= escape_javascript(render partial: 'annotation_category',
                                 locals: { annotation_category: @annotation_category }).html_safe %>");
 
-MathJax.typeset(['#annotation_text_<%= @text[:id] %>']);
+window.renderMathInElement(document.getElementById('annotation_text_<%= @text[:id] %>'));

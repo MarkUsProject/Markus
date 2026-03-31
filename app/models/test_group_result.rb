@@ -1,3 +1,30 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: test_group_results
+#
+#  id            :integer          not null, primary key
+#  error_type    :string
+#  extra_info    :text
+#  marks_earned  :float            default(0.0), not null
+#  marks_total   :float            default(0.0), not null
+#  time          :bigint           not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  test_group_id :integer          not null
+#  test_run_id   :integer          not null
+#
+# Indexes
+#
+#  index_test_group_results_on_test_group_id  (test_group_id)
+#  index_test_group_results_on_test_run_id    (test_run_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (test_group_id => test_groups.id)
+#  fk_rails_...  (test_run_id => test_runs.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TestGroupResult < ApplicationRecord
   has_many :test_results, dependent: :destroy
   belongs_to :test_group

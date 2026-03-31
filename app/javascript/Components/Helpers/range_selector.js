@@ -94,9 +94,9 @@ function addMouseOverToNode(node, content) {
   content_container.className = "markus-annotation-content";
   node.ownerDocument.body.appendChild(content_container);
   node.addEventListener("mouseenter", e => {
-    // We make MathJax typesetting lazy to avoid rendering issues when editing an annotation
+    // We make math typesetting lazy to avoid rendering issues when editing an annotation
     // from the "Annotations" tab, where the HTMLViewer component is updated before being visible.
-    node.ownerDocument.defaultView.MathJax.typeset([content_container]);
+    window.renderMathInElement(content_container);
     let offset_height = 0;
     for (let elem of node.ownerDocument.getElementsByClassName("markus-annotation-content")) {
       if (getComputedStyle(elem).display !== "none") {

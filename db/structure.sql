@@ -951,7 +951,8 @@ CREATE TABLE public.grades (
     grade_entry_student_id integer,
     grade double precision,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    last_updated_by_id bigint
 );
 
 
@@ -1433,7 +1434,8 @@ CREATE TABLE public.marks (
     mark double precision,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    override boolean DEFAULT false NOT NULL
+    override boolean DEFAULT false NOT NULL,
+    last_updated_by_id bigint
 );
 
 
@@ -3439,6 +3441,13 @@ CREATE UNIQUE INDEX index_grades_on_grade_entry_item_id_and_grade_entry_student_
 
 
 --
+-- Name: index_grades_on_last_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_grades_on_last_updated_by_id ON public.grades USING btree (last_updated_by_id);
+
+
+--
 -- Name: index_grouping_starter_file_entries_on_grouping_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3593,6 +3602,13 @@ CREATE INDEX index_marks_on_criterion_id ON public.marks USING btree (criterion_
 
 
 --
+-- Name: index_marks_on_last_updated_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_marks_on_last_updated_by_id ON public.marks USING btree (last_updated_by_id);
+
+
+--
 -- Name: index_marks_on_result_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3639,6 +3655,13 @@ CREATE INDEX index_peer_reviews_on_reviewer_id ON public.peer_reviews USING btre
 --
 
 CREATE INDEX index_periods_on_submission_rule_id ON public.periods USING btree (submission_rule_id);
+
+
+--
+-- Name: index_results_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_results_on_submission_id ON public.results USING btree (submission_id);
 
 
 --
@@ -4198,6 +4221,14 @@ ALTER TABLE ONLY public.test_runs
 
 
 --
+-- Name: marks fk_rails_91ca4ab40c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.marks
+    ADD CONSTRAINT fk_rails_91ca4ab40c FOREIGN KEY (last_updated_by_id) REFERENCES public.roles(id);
+
+
+--
 -- Name: starter_file_entries fk_rails_93b2f88720; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4342,6 +4373,14 @@ ALTER TABLE ONLY public.split_pdf_logs
 
 
 --
+-- Name: grades fk_rails_e487def1ef; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grades
+    ADD CONSTRAINT fk_rails_e487def1ef FOREIGN KEY (last_updated_by_id) REFERENCES public.roles(id);
+
+
+--
 -- Name: grade_entry_students fk_rails_ec5b13f7ac; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4412,6 +4451,8 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260325180720'),
+('20260304000000'),
 ('20260112023937'),
 ('20251113015424'),
 ('20251023030630'),

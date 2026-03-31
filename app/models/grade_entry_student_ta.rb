@@ -1,4 +1,18 @@
 # Join model that associates a grade entry student and a TA.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: grade_entry_students_tas
+#
+#  id                     :integer          not null, primary key
+#  grade_entry_student_id :integer
+#  ta_id                  :integer
+#
+# Indexes
+#
+#  index_grade_entry_students_tas  (grade_entry_student_id,ta_id) UNIQUE
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GradeEntryStudentTa < ApplicationRecord
   self.table_name = 'grade_entry_students_tas'
 

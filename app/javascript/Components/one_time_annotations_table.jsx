@@ -5,6 +5,8 @@ import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
+import {renderMathInElement} from "../common/math_helper";
+
 class OneTimeAnnotationsTable extends React.Component {
   constructor() {
     super();
@@ -75,6 +77,7 @@ class OneTimeAnnotationsTable extends React.Component {
         size: 600,
       }),
     ];
+    this.tableRef = React.createRef();
   }
 
   componentDidMount() {
@@ -82,37 +85,35 @@ class OneTimeAnnotationsTable extends React.Component {
   }
 
   fetchData = () => {
-    fetch(
-      Routes.uncategorized_annotations_course_assignment_annotation_categories_path(
-        this.props.course_id,
-        this.props.assignment_id
-      ),
-      {
-        headers: {
-          Accept: "application/json, text/javascript",
-        },
-      }
-    )
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then(res => {
-        this.setState(
-          {
-            data: res,
+    this.setState({loading: true}, () => {
+      fetch(
+        Routes.uncategorized_annotations_course_assignment_annotation_categories_path(
+          this.props.course_id,
+          this.props.assignment_id
+        ),
+        {
+          headers: {
+            Accept: "application/json, text/javascript",
           },
-          // A separate setState call seems to be required to get the MathJax.typeset
-          // call in componentDidUpdate to correctly transform the annotation texts.
-          () => this.setState({loading: false})
-        );
-      });
+        }
+      )
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+        })
+        .then(res => {
+          this.setState({
+            data: res,
+            loading: false,
+          });
+        });
+    });
   };
 
   componentDidUpdate(_prevProps, prevState) {
     if (prevState.loading && !this.state.loading) {
-      MathJax.typeset(["#one_time_annotations_table_wrapper"]);
+      renderMathInElement(this.tableRef.current);
     }
   }
 
@@ -144,7 +145,7 @@ class OneTimeAnnotationsTable extends React.Component {
 
   render() {
     return (
-      <div id="one_time_annotations_table_wrapper">
+      <div id="one_time_annotations_table_wrapper" ref={this.tableRef}>
         <Table
           key="one_time_annotations_table"
           data={this.state.data}

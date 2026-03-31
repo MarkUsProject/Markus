@@ -1,6 +1,7 @@
 import React from "react";
 import {AnnotationTable} from "./annotation_table";
 import {TextForm} from "./autosave_text_form";
+import {renderMathInElement} from "../../common/math_helper";
 
 export class AnnotationPanel extends React.Component {
   constructor(props) {
@@ -24,9 +25,10 @@ export class AnnotationPanel extends React.Component {
 
   renderReleasedComments() {
     if (this.props.released_to_students || this.props.remarkSubmitted) {
-      let target_id = "overall_comment_text";
-      document.getElementById(target_id).innerHTML = safe_marked(this.state.overallComment);
-      MathJax.typeset([`#${target_id}`]);
+      const target_id = "overall_comment_text";
+      const target = document.getElementById(target_id);
+      target.innerHTML = safe_marked(this.state.overallComment);
+      renderMathInElement(target);
     }
   }
 

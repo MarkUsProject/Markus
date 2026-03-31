@@ -1,3 +1,30 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: marks
+#
+#  id                 :integer          not null, primary key
+#  mark               :float
+#  override           :boolean          default(FALSE), not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#  criterion_id       :integer
+#  last_updated_by_id :bigint
+#  result_id          :integer
+#
+# Indexes
+#
+#  index_marks_on_criterion_id        (criterion_id)
+#  index_marks_on_last_updated_by_id  (last_updated_by_id)
+#  index_marks_on_result_id           (result_id)
+#
+# Foreign Keys
+#
+#  fk_marks_results  (result_id => results.id) ON DELETE => cascade
+#  fk_rails_...      (criterion_id => criteria.id)
+#  fk_rails_...      (last_updated_by_id => roles.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Mark < ApplicationRecord
   # When a mark is saved, we need to make sure that that
   # Result has not been released to students
@@ -23,6 +50,8 @@ class Mark < ApplicationRecord
   has_one :course, through: :criterion
 
   validate :assignments_should_match
+
+  belongs_to :last_updated_by, class_name: 'Role', optional: true
 
   # Calculate the deduction for this mark. If the mark belongs to a remark result and no deductive
   # annotations for this mark have been applied to the result, then the deductive annotations of

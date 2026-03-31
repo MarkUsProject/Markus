@@ -2,7 +2,14 @@ import React from "react";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
+import {renderMathInElement} from "../../common/math_helper";
+
 export class AnnotationTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.annotationTable = React.createRef();
+  }
+
   deductionFilter = (filter, row) => {
     return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
   };
@@ -162,11 +169,11 @@ export class AnnotationTable extends React.Component {
   };
 
   componentDidMount() {
-    MathJax.typeset(["#annotation_table"]);
+    renderMathInElement(this.annotationTable.current);
   }
 
   componentDidUpdate() {
-    MathJax.typeset(["#annotation_table"]);
+    renderMathInElement(this.annotationTable.current);
   }
 
   render() {
@@ -179,7 +186,7 @@ export class AnnotationTable extends React.Component {
     }
 
     return (
-      <div id={"annotation_table"}>
+      <div id={"annotation_table"} ref={this.annotationTable}>
         <ReactTable
           className="auto-overflow"
           data={this.props.annotations}
