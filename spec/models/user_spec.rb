@@ -112,7 +112,7 @@ describe User do
 
       context 'with a remote validation file' do
         before do
-          Rails.root.join('spec/fixtures/files/dummy_remote_validate.sh')
+          validate_file_path = Rails.root.join('spec/fixtures/files/dummy_remote_validate.sh')
           allow(Settings).to receive_messages(remote_validate_file: validate_file_path,
                                               validate_ip: true)
         end
