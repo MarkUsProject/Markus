@@ -117,7 +117,7 @@ rails_performance:
 file_storage:
   default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/
 
-rmd_convert_enabled: true
+rmd_convert_enabled: false
 
 # maximum number of entries allowed when extracting uploaded zip files
 max_zip_file_entries: 10000

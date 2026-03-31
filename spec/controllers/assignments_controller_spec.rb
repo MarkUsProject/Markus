@@ -1416,7 +1416,7 @@ describe AssignmentsController do
                      remark_requests_enabled: assignment.allow_remarks,
                      num_remark_requests: assignment_remark_requests.size,
                      num_remark_requests_completed: assignment_remark_requests.where('results.marking_state': :complete)
-                                                    .size }
+                                                                              .size }
         expect(summary).to eq expected.as_json
       end
     end
