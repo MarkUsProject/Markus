@@ -86,9 +86,11 @@ describe MainController do
 
       context 'when MarkUs is in restricted mode' do
         before do
-          allow(Settings).to receive_messages(remote_validate_file: Rails.root
-                                                     .join('spec/fixtures/files/dummy_remote_validate.sh'),
-                                              validate_ip: true)
+          allow(Settings).to receive_messages(
+            remote_validate_file: Rails.root
+                                  .join('spec/fixtures/files/dummy_remote_validate.sh'),
+            validate_ip: true
+          )
           allow_any_instance_of(ActionDispatch::Request).to receive(:remote_ip).and_return('192.168.0.1')
         end
 

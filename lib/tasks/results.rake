@@ -62,15 +62,15 @@ namespace :markus do
           file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'submission_files')
           Dir.foreach(file_dir) do |filename|
             unless File.directory?(File.join(file_dir, filename))
-              file_contents = File.open(File.join(file_dir, filename))
-              file_contents.rewind
-              grouping.access_repo do |repo|
-                txn = repo.get_transaction(student.user_name)
-                path = File.join(a1.repository_folder, filename)
-                txn.add(path, file_contents.read, '')
-                repo.commit(txn)
+              File.open(File.join(file_dir, filename)) do |file_contents|
+                file_contents.rewind
+                grouping.access_repo do |repo|
+                  txn = repo.get_transaction(student.user_name)
+                  path = File.join(a1.repository_folder, filename)
+                  txn.add(path, file_contents.read, '')
+                  repo.commit(txn)
+                end
               end
-              file_contents.close
             end
           end
           submission = Submission.create_by_timestamp(grouping, Time.current)

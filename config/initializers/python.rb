@@ -15,10 +15,12 @@ Rails.application.config.after_initialize do
   end
 
   def process_requirements(requirements_file)
-    File.open(requirements_file).each_line.filter_map do |line|
-      line.strip!
-      line.tr!('-_', '')
-      line.start_with?('#') || line.length.zero? ? nil : line
+    File.open(requirements_file) do |f|
+      f.each_line.filter_map do |line|
+        line.strip!
+        line.tr!('-_', '')
+        line.start_with?('#') || line.length.zero? ? nil : line
+      end
     end
   end
 
