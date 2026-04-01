@@ -292,7 +292,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pdf-core (0.10.0)
-    pg (1.6.2)
+    pg (1.6.3)
     pghero (3.7.0)
       activerecord (>= 7.1)
     pkg-config (1.6.5)
