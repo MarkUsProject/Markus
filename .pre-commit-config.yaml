@@ -75,10 +75,12 @@ repos:
           - erb_lint:0.9.0
       - id: i18n-tasks-health
         name: i18n-tasks health
-        entry: bundle exec i18n-tasks health
-        language: system
+        entry: i18n-tasks health
+        language: ruby
         files: config/locales/
         pass_filenames: false
+        additional_dependencies:
+          - i18n-tasks
 
 exclude: vendor
 
