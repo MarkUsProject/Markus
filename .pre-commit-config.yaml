@@ -81,6 +81,7 @@ repos:
         pass_filenames: false
         additional_dependencies:
           - i18n-tasks
+          - bundler
 
 exclude: vendor
 
