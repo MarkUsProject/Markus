@@ -688,7 +688,7 @@ class Assignment < Assessment
         members: group_members,
         tags: tag_info,
         graders: graders.fetch(g.id, [])
-                 .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
@@ -1350,11 +1350,9 @@ class Assignment < Assessment
     if current_role.instructor?
       groupings = self.groupings
     elsif current_role.ta?
-      groupings = self.groupings.where(id: self
-                                           .groupings
-                                           .joins(:memberships)
-                                           .where('memberships.role_id': current_role.id)
-                                           .select(:'groupings.id'))
+      groupings = self.groupings.where(id: self.groupings.joins(:memberships)
+                                                         .where('memberships.role_id': current_role.id)
+                                                         .select(:'groupings.id'))
     else
       return []
     end
