@@ -22,11 +22,12 @@ namespace :db do
 
     # For a description of the seed files, see db/data/scanned_exams/README.md.
     file_dir = File.join(File.dirname(__FILE__), '/../../db/data/scanned_exams')
-    f = File.open(File.join(file_dir, 'midterm1-v2-test.pdf'))
-    template = ExamTemplate.create_with_file(f.read, assessment_id: a.id, filename: 'midterm1-v2-test.pdf')
-    template.template_divisions.create(label: 'Q1', start: 3, end: 3)
-    template.template_divisions.create(label: 'Q2', start: 4, end: 4)
-    template.template_divisions.create(label: 'Q3', start: 5, end: 6)
+    File.open(File.join(file_dir, 'midterm1-v2-test.pdf')) do |f|
+      template = ExamTemplate.create_with_file(f.read, assessment_id: a.id, filename: 'midterm1-v2-test.pdf')
+      template.template_divisions.create(label: 'Q1', start: 3, end: 3)
+      template.template_divisions.create(label: 'Q2', start: 4, end: 4)
+      template.template_divisions.create(label: 'Q3', start: 5, end: 6)
+    end
 
     instructor = Instructor.first
 
