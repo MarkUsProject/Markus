@@ -9,7 +9,10 @@ module Admin
     def index
       respond_to do |format|
         format.html
-        format.json { render json: visible_users.order(:created_at).to_json(only: DEFAULT_FIELDS) }
+        format.json do
+          rows = visible_users.order(:created_at).pluck(*DEFAULT_FIELDS)
+          render json: rows.map { |r| DEFAULT_FIELDS.zip(r).to_h }
+        end
       end
     end
 
