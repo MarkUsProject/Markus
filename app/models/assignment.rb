@@ -253,7 +253,7 @@ class Assignment < Assessment
 
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
-    section_due_dates = groupings.joins(inviter: [section: :assessment_section_properties])
+    section_due_dates = groupings.joins(inviter: [{ section: :assessment_section_properties }])
                                  .where('assessment_section_properties.assessment_id': id)
                                  .pluck('groupings.id', 'assessment_section_properties.due_date')
 
@@ -362,7 +362,7 @@ class Assignment < Assessment
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: [role: :user])
+                    .left_outer_joins(non_rejected_student_memberships: [{ role: :user }])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.instructor_approved',
@@ -1194,7 +1194,7 @@ class Assignment < Assessment
   end
 
   def starter_file_mappings
-    groupings.joins(:group, grouping_starter_file_entries: [starter_file_entry: :starter_file_group])
+    groupings.joins(:group, grouping_starter_file_entries: [{ starter_file_entry: :starter_file_group }])
              .pluck_to_hash('groups.group_name as group_name',
                             'starter_file_groups.name as starter_file_group_name',
                             'starter_file_entries.path as starter_file_entry_path')
