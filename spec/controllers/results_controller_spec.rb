@@ -1004,6 +1004,14 @@ describe ResultsController do
         expect(rubric_mark.reload.override).to be true
       end
 
+      it 'sets last_updated_by to the current role when updating a mark' do
+        patch :update_mark, params: { course_id: course.id,
+                                      id: incomplete_result.id,
+                                      criterion_id: rubric_mark.criterion_id,
+                                      mark: 1 }, xhr: true
+        expect(rubric_mark.reload.last_updated_by).to eq(current_role)
+      end
+
       context 'setting override when annotations linked to criteria exist' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
         let(:result) { assignment.groupings.first.current_result }
