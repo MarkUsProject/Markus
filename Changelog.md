@@ -21,6 +21,7 @@
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Fixed search box in the grades view being unresponsive to user input (#7880)
 - Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
+- Fixed course card link behavior on the dashboard (#7887)
 
 ### 🔧 Internal changes
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
