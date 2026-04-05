@@ -86,7 +86,7 @@ class MarksGradersController < ApplicationController
   def grader_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
 
-    students = Student.left_outer_joins(:user, grade_entry_students: [tas: :user])
+    students = Student.left_outer_joins(:user, grade_entry_students: [{ tas: :user }])
                       .where('grade_entry_students.assessment_id': grade_entry_form.id)
                       .order('users.user_name', 'users_roles.user_name')
                       .pluck('users.user_name', 'users_roles.user_name')

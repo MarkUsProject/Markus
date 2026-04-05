@@ -137,7 +137,7 @@ class Result < ApplicationRecord
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
   def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible, subtotals: nil)
-    result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
+    result_data = Result.joins(:extra_marks, submission: [{ grouping: :assignment }])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
     subtotals ||= Result.get_subtotals(result_ids, user_visibility: user_visibility)
@@ -341,9 +341,7 @@ class Result < ApplicationRecord
       input_files.each do |sf|
         contents = sf.retrieve_file(repo: repo)
         FileUtils.mkdir_p(File.join(workdir, sf.path))
-        f = File.open(File.join(workdir, sf.path, sf.filename), 'wb')
-        f.write(contents)
-        f.close
+        File.binwrite(File.join(workdir, sf.path, sf.filename), contents)
       end
     end
 

@@ -6,7 +6,7 @@ class GradersController < ApplicationController
                     { ta_memberships: :role, inviter: :section }].freeze
   # The names of the associations of criteria required by the view, which
   # should be eagerly loaded.
-  CRITERION_ASSOC = [criterion_ta_associations: :ta].freeze
+  CRITERION_ASSOC = [{ criterion_ta_associations: :ta }].freeze
 
   before_action { authorize! }
 
