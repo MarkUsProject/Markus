@@ -15,6 +15,7 @@
 - Add JS autotester example (#7866)
 - Improve assignment list loading time (#7868)
 - Update user info during roster sync (#7865)
+- Improve assignment summary loading time (#7899)
 
 ### 🐛 Bug fixes
 - Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value
