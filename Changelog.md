@@ -22,6 +22,7 @@
 - Fixed search box in the grades view being unresponsive to user input (#7880)
 - Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
 - Fixed course card link behavior on the dashboard (#7887)
+- Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
 
 ### 🔧 Internal changes
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
@@ -38,6 +39,7 @@
 - Added `pghero` gem and added PgHero admin dashboard (#7861)
 - Add nullable last_updated_by foreign key (to roles) to marks and grades tables to track who assigned which grade (#7878)
 - Updates ResultsController#update_mark to set the last_updated_by field when marks are modified (#7885)
+- Added pre-commit hook to run `i18n-tasks health` when locale files are changed (#7894)
 
 ## [v2.9.5]
 
