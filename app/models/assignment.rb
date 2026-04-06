@@ -594,13 +594,15 @@ class Assignment < Assessment
   # for the current user. The user should be an instructor or TA.
   def summary_json(user)
     return {} unless user.instructor? || user.ta?
-    lti_deployments = []
+    is_instructor = user.instructor?
 
-    if user.instructor?
+    if is_instructor
       groupings = self.groupings
+      grader_data_agg = Arel.sql('json_agg(json_build_array(users.user_name, users.first_name, users.last_name))')
       graders = groupings.joins(tas: :user)
-                         .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
-                         .group_by { |x| x[:id] }
+                         .group(:id)
+                         .pluck(:id, grader_data_agg)
+                         .to_h
       assigned_criteria = nil
       lti_deployments = LtiLineItem.where(assessment_id: self.id)
                                    .joins(lti_deployment: :lti_client)
@@ -620,92 +622,111 @@ class Assignment < Assessment
       else
         assigned_criteria = nil
       end
+      lti_deployments = []
     end
     grouping_data = groupings.joins(:group)
                              .left_outer_joins(inviter: :section)
-                             .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
-                             .group_by { |x| x[:id] }
+                             .pluck(:id, 'groups.group_name', 'sections.name')
+    grouping_ids = grouping_data.pluck(0)
+    member_data_agg = Arel.sql('json_agg(json_build_array(users.user_name, users.first_name, users.last_name,' \
+                               'roles.hidden))')
     members = Grouping.joins(accepted_students: :user)
                       .where(id: groupings)
-                      .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name', 'roles.hidden')
-                      .group_by { |x| x[:id] }
+                      .group(:id)
+                      .pluck(:id, member_data_agg)
+                      .to_h
     tag_data = groupings
                .joins(:tags)
-               .pluck_to_hash(:id, 'tags.name')
-               .group_by { |h| h[:id] }
+               .group(:id)
+               .pluck(:id, Arel.sql('array_agg(tags.name)'))
+               .to_h
 
     collection_dates = all_grouping_collection_dates
-    all_results = current_results.where('groupings.id': groupings.ids).order(:id)
-    results_data = all_results.pluck('groupings.id').zip(all_results.includes(:marks)).to_h
-    result_ids = all_results.ids
-    extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
+    all_results = current_results.where('groupings.id': grouping_ids)
+    results_data = all_results.pluck('groupings.id',
+                                     :id,
+                                     :submission_id,
+                                     :marking_state,
+                                     :released_to_students,
+                                     :remark_request_submitted_at)
+                              .index_by { |x| x[0] }  # index by grouping_id
+    result_ids = results_data.values.pluck(1)
+    subtotals = Result.get_subtotals(result_ids)
+    extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark, subtotals: subtotals)
+    total_marks_hash = Result.get_total_marks(result_ids, subtotals: subtotals, extra_marks: extra_marks_hash)
 
-    hide_unassigned = user.ta? && hide_unassigned_criteria
+    hide_unassigned = !is_instructor && hide_unassigned_criteria
 
     criteria_shown = Set.new
     max_mark = 0
-
-    selected_criteria = user.instructor? ? self.criteria : self.ta_criteria
-    criteria_columns = selected_criteria.filter_map do |crit|
-      unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit.id)
+    selected_criteria = is_instructor ? self.criteria : self.ta_criteria
+    selected_criteria = selected_criteria.pluck(:id, :name, :max_mark, :bonus)
+    criteria_columns = selected_criteria.filter_map do |crit_id, crit_name, crit_max_mark, crit_bonus|
+      unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit_id)
       next if hide_unassigned && unassigned
 
-      max_mark += crit.max_mark unless crit.bonus?
-      accessor = crit.id
-      criteria_shown << accessor
+      max_mark += crit_max_mark unless crit_bonus
+      criteria_shown << crit_id
       {
-        Header: crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name,
-        accessor: "criteria.#{accessor}",
+        Header: crit_bonus ? "#{crit_name} (#{Criterion.human_attribute_name(:bonus)})" : crit_name,
+        accessor: "criteria.#{crit_id}",
         className: unassigned ? 'number unassigned' : 'number',
         headerClassName: unassigned ? 'unassigned' : ''
       }
     end
 
-    final_data = groupings.map do |g|
-      result = results_data[g.id]
-      has_remark = !result&.remark_request_submitted_at.nil?
-      if user.ta? && anonymize_groups
-        group_name = "#{Group.model_name.human} #{g.id}"
+    marks_data = all_results.joins(:marks)
+                            .where('marks.criterion_id': criteria_shown)
+                            .group(:id)
+                            .pluck(:id, Arel.sql('json_object_agg(marks.criterion_id, marks.mark)'))
+                            .to_h
+
+    anonymize = !is_instructor && anonymize_groups
+    num_complete = 0
+    final_data = grouping_data.map do |grouping_id, group_name, section|
+      if anonymize
+        group_name = "#{Group.model_name.human} #{grouping_id}"
         section = ''
         group_members = []
       else
-        group_name = grouping_data[g.id][0]['groups.group_name']
-        section = grouping_data[g.id][0]['sections.name']
-        group_members = members.fetch(g.id, [])
-                               .map do |s|
-          [s['users.user_name'], s['users.first_name'], s['users.last_name'], s['roles.hidden']]
-        end
+        group_members = members.fetch(grouping_id, [])
       end
 
-      tag_info = tag_data.fetch(g.id, [])
-                         .pluck('tags.name')
-      criteria = result.nil? ? {} : result.mark_hash.slice(*criteria_shown)
-      criteria.transform_values! { |data| data[:mark] }
-      extra_mark = extra_marks_hash[result&.id]
+      _,
+        result_id,
+        submission_id,
+        marking_state,
+        released_to_students,
+        remark_request_submitted_at = results_data.fetch(grouping_id, [])
+
+      num_complete += 1 if marking_state == Result::MARKING_STATES[:complete]
+
+      tag_info = tag_data.fetch(grouping_id, [])
+      criteria = marks_data.fetch(result_id, {})
+      extra_mark = extra_marks_hash[result_id]
       {
         group_name: group_name,
         section: section,
         members: group_members,
         tags: tag_info,
-        graders: graders.fetch(g.id, [])
-                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
-        marking_state: marking_state(has_remark,
-                                     result&.marking_state,
-                                     result&.released_to_students,
-                                     collection_dates[g.id]),
-        final_grade: [criteria.values.compact.sum + (extra_mark || 0), 0].max,
+        graders: graders.fetch(grouping_id, []),
+        marking_state: marking_state(remark_request_submitted_at.present?,
+                                     marking_state,
+                                     released_to_students,
+                                     collection_dates[grouping_id]),
+        final_grade: total_marks_hash[result_id],
         criteria: criteria,
         max_mark: max_mark,
-        result_id: result&.id,
-        submission_id: result&.submission_id,
+        result_id: result_id,
+        submission_id: submission_id,
         total_extra_marks: extra_mark
       }
     end
 
     { data: final_data,
       criteriaColumns: criteria_columns,
-      numAssigned: self.get_num_assigned(user.instructor? ? nil : user.id),
-      numMarked: self.get_num_marked(user.instructor? ? nil : user.id),
+      numAssigned: is_instructor ? grouping_data.size : self.get_num_assigned(user.id),
+      numMarked: is_instructor ? num_complete : self.get_num_marked(user.id),
       enableTest: self.enable_test,
       ltiDeployments: lti_deployments }
   end
