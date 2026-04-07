@@ -10,8 +10,7 @@ module Admin
       respond_to do |format|
         format.html
         format.json do
-          rows = visible_users.order(:created_at).pluck(*DEFAULT_FIELDS)
-          render json: rows.map { |r| DEFAULT_FIELDS.zip(r).to_h }
+          render json: visible_users.order(:created_at).pluck_to_hash(*DEFAULT_FIELDS)
         end
       end
     end

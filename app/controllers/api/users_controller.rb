@@ -13,8 +13,7 @@ module Api
       respond_to do |format|
         format.xml { render xml: users.to_xml(only: DEFAULT_FIELDS, root: :users, skip_types: true) }
         format.json do
-          rows = users.pluck(*DEFAULT_FIELDS)
-          render json: rows.map { |r| DEFAULT_FIELDS.zip(r).to_h }
+          render json: users.pluck_to_hash(*DEFAULT_FIELDS)
         end
       end
     end
