@@ -251,30 +251,44 @@ describe Api::GradeEntryFormsController do
           end
         end
 
-        context 'with user_name filter' do
+        context 'with user_names filter' do
           let!(:grade_entry_item) do
             create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, name: 'Q1')
           end
           let!(:student1) { create(:student, course: course) }
           let!(:student2) { create(:student, course: course) }
+          let!(:student3) { create(:student, course: course) }
 
           before do
             ges1 = grade_entry_form.grade_entry_students.find_by(role: student1)
             create(:grade, grade_entry_student: ges1, grade_entry_item: grade_entry_item, grade: 9.0)
             ges2 = grade_entry_form.grade_entry_students.find_by(role: student2)
             create(:grade, grade_entry_student: ges2, grade_entry_item: grade_entry_item, grade: 6.0)
+            ges3 = grade_entry_form.grade_entry_students.find_by(role: student3)
+            create(:grade, grade_entry_student: ges3, grade_entry_item: grade_entry_item, grade: 3.0)
           end
 
-          it 'returns only the matching student' do
-            get :show, params: { id: grade_entry_form.id, course_id: course.id, user_name: student1.user_name }
+          it 'returns only the matching student for a single user_name' do
+            get :show, params: { id: grade_entry_form.id, course_id: course.id,
+                                 user_names: [student1.user_name] }
             students = response.parsed_body['students']
             expect(students.length).to eq(1)
             expect(students.first['user_name']).to eq(student1.user_name)
           end
 
-          it 'returns 422 for nonexistent user_name' do
-            get :show, params: { id: grade_entry_form.id, course_id: course.id, user_name: 'nonexistent' }
-            expect(response).to have_http_status(:unprocessable_content)
+          it 'returns multiple matching students' do
+            get :show, params: { id: grade_entry_form.id, course_id: course.id,
+                                 user_names: [student1.user_name, student2.user_name] }
+            students = response.parsed_body['students']
+            expect(students.length).to eq(2)
+            expect(students.pluck('user_name')).to contain_exactly(student1.user_name, student2.user_name)
+          end
+
+          it 'returns empty students for nonexistent user_names' do
+            get :show, params: { id: grade_entry_form.id, course_id: course.id,
+                                 user_names: ['nonexistent'] }
+            expect(response).to have_http_status(:ok)
+            expect(response.parsed_body['students']).to eq([])
           end
         end
       end
