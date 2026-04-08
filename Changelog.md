@@ -12,6 +12,18 @@
 
 ### 🔧 Internal changes
 
+## [v2.9.6]
+
+### ✨ New features and improvements
+- Improve assignment list loading time (#7868)
+- Update user info during roster sync (#7865)
+- Improve assignment summary loading time (#7899)
+
+### 🐛 Bug fixes
+- Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value (#7869)
+- Fixed search box in the grades view being unresponsive to user input (#7880)
+- Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
+
 ## [v2.9.5]
 
 ### 🛡️ Security
