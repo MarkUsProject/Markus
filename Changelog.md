@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Improve admin user list loading time by replacing ActiveRecord instantiation with direct column extraction (#7897)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
 - Update autotest settings form UI (#7777)
