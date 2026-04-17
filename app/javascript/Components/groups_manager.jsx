@@ -424,202 +424,202 @@ class RawGroupsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
-    };
-  }
-
-  getColumns = () => [
-    {
-      accessor: "inactive",
-      id: "inactive",
-      width: 0,
-      className: "rt-hidden",
-      headerClassName: "rt-hidden",
-      resizable: false,
-    },
-    {
-      show: false,
-      accessor: "id",
-      id: "_id",
-    },
-    {
-      Header: I18n.t("activerecord.models.group.one"),
-      accessor: "group_name",
-      id: "group_name",
-      Cell: row => {
-        return (
-          <span>
-            <span>{row.value}</span>
-            <a
-              href="#"
-              onClick={() => this.props.renameGroup(row.original._id, row.value)}
-              title={I18n.t("groups.rename_group")}
-            >
-              <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-right" />
-            </a>
-          </span>
-        );
-      },
-    },
-    {
-      Header: I18n.t("activerecord.attributes.group.student_memberships"),
-      accessor: "members",
-      Cell: row => {
-        if (row.value.length > 0 || !this.props.scanned_exam) {
-          return row.value.map(member => {
-            let status;
-            if (member[1] === "pending") {
-              status = <strong>({member[1]})</strong>;
-            } else {
-              status = member.display_label;
-            }
+      columns: [
+        {
+          accessor: "inactive",
+          id: "inactive",
+          width: 0,
+          className: "rt-hidden",
+          headerClassName: "rt-hidden",
+          resizable: false,
+        },
+        {
+          show: false,
+          accessor: "id",
+          id: "_id",
+        },
+        {
+          Header: I18n.t("activerecord.models.group.one"),
+          accessor: "group_name",
+          id: "group_name",
+          Cell: row => {
             return (
-              <div key={`${row.original._id}-${member[0]}`}>
-                {member[0]} {status}
+              <span>
+                <span>{row.value}</span>
                 <a
                   href="#"
-                  onClick={() => this.props.unassign(row.original._id, member[0])}
-                  title={I18n.t("delete")}
+                  onClick={() => this.props.renameGroup(row.original._id, row.value)}
+                  title={I18n.t("groups.rename_group")}
                 >
-                  <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+                  <FontAwesomeIcon icon="fa-solid fa-pen" className="icon-right" />
                 </a>
-              </div>
+              </span>
             );
-          });
-        } else {
-          // Link to assigning a student to this scanned exam
-          const assign_url = Routes.assign_scans_course_assignment_groups_path(
-            this.props.course_id,
-            this.props.assignment_id,
-            {grouping_id: row.original._id}
-          );
-          return <a href={assign_url}>{I18n.t("exam_templates.assign_scans.title")}</a>;
-        }
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          return row._original.members.some(member => member[0].includes(filter.value));
-        } else {
-          return true;
-        }
-      },
-      sortable: false,
-    },
-    {
-      Header: I18n.t("groups.valid"),
-      Cell: row => {
-        let isValid =
-          row.original.instructor_approved || row.original.members.length >= this.props.groupMin;
-        if (isValid) {
-          return (
-            <a
-              href="#"
-              title={I18n.t("groups.is_valid")}
-              onClick={() => this.props.invalidate(row.original._id)}
-            >
-              ✔
-            </a>
-          );
-        } else {
-          return (
-            <a
-              href="#"
-              title={I18n.t("groups.is_not_valid")}
-              onClick={() => this.props.validate(row.original._id)}
-            >
-              <FontAwesomeIcon icon="fa-solid fa-close" />
-            </a>
-          );
-        }
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value === "all") {
-          return true;
-        } else {
-          // Either 'true' or 'false'
-          const val = filter.value === "true";
-          let isValid =
-            row._original.instructor_approved ||
-            row._original.members.length >= this.props.groupMin;
-          return isValid === val;
-        }
-      },
-      Filter: selectFilter,
-      filterOptions: [
-        {value: "true", text: I18n.t("groups.is_valid")},
-        {value: "false", text: I18n.t("groups.is_not_valid")},
-      ],
-      minWidth: 30,
-      sortable: false,
-    },
-    {
-      Header: this.props.extensionColumnHeader,
-      accessor: "extension",
-      show: !this.props.scanned_exam,
-      Cell: row => {
-        const timeExtension = getTimeExtension(row.original.extension, this.props.times);
-        const lateSubmissionText = row.original.extension.apply_penalty
-          ? `(${I18n.t("groups.late_submissions_accepted")})`
-          : "";
-        const extension = `${timeExtension} ${lateSubmissionText}`;
+          },
+        },
+        {
+          Header: I18n.t("activerecord.attributes.group.student_memberships"),
+          accessor: "members",
+          Cell: row => {
+            if (row.value.length > 0 || !this.props.scanned_exam) {
+              return row.value.map(member => {
+                let status;
+                if (member[1] === "pending") {
+                  status = <strong>({member[1]})</strong>;
+                } else {
+                  status = member.display_label;
+                }
+                return (
+                  <div key={`${row.original._id}-${member[0]}`}>
+                    {member[0]} {status}
+                    <a
+                      href="#"
+                      onClick={() => this.props.unassign(row.original._id, member[0])}
+                      title={I18n.t("delete")}
+                    >
+                      <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+                    </a>
+                  </div>
+                );
+              });
+            } else {
+              // Link to assigning a student to this scanned exam
+              const assign_url = Routes.assign_scans_course_assignment_groups_path(
+                this.props.course_id,
+                this.props.assignment_id,
+                {grouping_id: row.original._id}
+              );
+              return <a href={assign_url}>{I18n.t("exam_templates.assign_scans.title")}</a>;
+            }
+          },
+          filterMethod: (filter, row) => {
+            if (filter.value) {
+              return row._original.members.some(member => member[0].includes(filter.value));
+            } else {
+              return true;
+            }
+          },
+          sortable: false,
+        },
+        {
+          Header: I18n.t("groups.valid"),
+          Cell: row => {
+            let isValid =
+              row.original.instructor_approved ||
+              row.original.members.length >= this.props.groupMin;
+            if (isValid) {
+              return (
+                <a
+                  href="#"
+                  title={I18n.t("groups.is_valid")}
+                  onClick={() => this.props.invalidate(row.original._id)}
+                >
+                  ✔
+                </a>
+              );
+            } else {
+              return (
+                <a
+                  href="#"
+                  title={I18n.t("groups.is_not_valid")}
+                  onClick={() => this.props.validate(row.original._id)}
+                >
+                  <FontAwesomeIcon icon="fa-solid fa-close" />
+                </a>
+              );
+            }
+          },
+          filterMethod: (filter, row) => {
+            if (filter.value === "all") {
+              return true;
+            } else {
+              // Either 'true' or 'false'
+              const val = filter.value === "true";
+              let isValid =
+                row._original.instructor_approved ||
+                row._original.members.length >= this.props.groupMin;
+              return isValid === val;
+            }
+          },
+          Filter: selectFilter,
+          filterOptions: [
+            {value: "true", text: I18n.t("groups.is_valid")},
+            {value: "false", text: I18n.t("groups.is_not_valid")},
+          ],
+          minWidth: 30,
+          sortable: false,
+        },
+        {
+          Header: props.extensionColumnHeader,
+          accessor: "extension",
+          show: !props.scanned_exam,
+          Cell: row => {
+            const timeExtension = getTimeExtension(row.original.extension, this.props.times);
+            const lateSubmissionText = row.original.extension.apply_penalty
+              ? `(${I18n.t("groups.late_submissions_accepted")})`
+              : "";
+            const extension = `${timeExtension} ${lateSubmissionText}`;
 
-        if (!!timeExtension) {
-          return (
-            <div>
-              <a
-                href={"#"}
-                onClick={() => this.props.onExtensionModal(row.original.extension, true)}
-              >
-                {extension}
-              </a>
-            </div>
-          );
-        } else {
-          return (
-            <a
-              href="#"
-              onClick={() => this.props.onExtensionModal(row.original.extension, false)}
-              title={I18n.t("add")}
-            >
-              <FontAwesomeIcon icon="fa-solid fa-add" />
-            </a>
-          );
-        }
-      },
-      sortMethod: durationSort,
-      Filter: selectFilter,
-      filterMethod: (filter, row) => {
-        if (filter.value === "all") {
-          return true;
-        }
-        const applyPenalty = row._original.extension.apply_penalty;
-        const {withExtension, withLateSubmission} = JSON.parse(filter.value);
-        // If there is an extension applied, the extension object will contain a property called hours
-        const hasExtension = Object.hasOwn(row._original.extension, "hours");
+            if (!!timeExtension) {
+              return (
+                <div>
+                  <a
+                    href={"#"}
+                    onClick={() => this.props.onExtensionModal(row.original.extension, true)}
+                  >
+                    {extension}
+                  </a>
+                </div>
+              );
+            } else {
+              return (
+                <a
+                  href="#"
+                  onClick={() => this.props.onExtensionModal(row.original.extension, false)}
+                  title={I18n.t("add")}
+                >
+                  <FontAwesomeIcon icon="fa-solid fa-add" />
+                </a>
+              );
+            }
+          },
+          sortMethod: durationSort,
+          Filter: selectFilter,
+          filterMethod: (filter, row) => {
+            if (filter.value === "all") {
+              return true;
+            }
+            const applyPenalty = row._original.extension.apply_penalty;
+            const {withExtension, withLateSubmission} = JSON.parse(filter.value);
+            // If there is an extension applied, the extension object will contain a property called hours
+            const hasExtension = Object.hasOwn(row._original.extension, "hours");
 
-        if (!withExtension) {
-          return !hasExtension;
-        }
-        if (withLateSubmission) {
-          return hasExtension && applyPenalty;
-        }
-        return hasExtension && !applyPenalty;
-      },
-      filterOptions: [
-        {
-          value: JSON.stringify({withExtension: false}),
-          text: I18n.t("groups.groups_without_extension"),
-        },
-        {
-          value: JSON.stringify({withExtension: true, withLateSubmission: true}),
-          text: I18n.t("groups.groups_with_extension.with_late_submission"),
-        },
-        {
-          value: JSON.stringify({withExtension: true, withLateSubmission: false}),
-          text: I18n.t("groups.groups_with_extension.without_late_submission"),
+            if (!withExtension) {
+              return !hasExtension;
+            }
+            if (withLateSubmission) {
+              return hasExtension && applyPenalty;
+            }
+            return hasExtension && !applyPenalty;
+          },
+          filterOptions: [
+            {
+              value: JSON.stringify({withExtension: false}),
+              text: I18n.t("groups.groups_without_extension"),
+            },
+            {
+              value: JSON.stringify({withExtension: true, withLateSubmission: true}),
+              text: I18n.t("groups.groups_with_extension.with_late_submission"),
+            },
+            {
+              value: JSON.stringify({withExtension: true, withLateSubmission: false}),
+              text: I18n.t("groups.groups_with_extension.without_late_submission"),
+            },
+          ],
         },
       ],
-    },
-  ];
+    };
+  }
 
   static getDerivedStateFromProps(props, state) {
     let filtered = state.filtered.filter(group => group.id !== "inactive");
@@ -639,7 +639,7 @@ class RawGroupsTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={this.props.groups}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "group_name",
@@ -660,77 +660,74 @@ class RawStudentsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
+      columns: [
+        {
+          accessor: "hidden",
+          id: "hidden",
+          width: 0,
+          className: "rt-hidden",
+          headerClassName: "rt-hidden",
+          resizable: false,
+        },
+        {
+          show: false,
+          accessor: "_id",
+          id: "_id",
+        },
+        {
+          Header: I18n.t("activerecord.attributes.user.user_name"),
+          accessor: "user_name",
+          id: "user_name",
+          Cell: props =>
+            props.original.hidden
+              ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
+              : props.value,
+          filterMethod: (filter, row) => {
+            if (filter.value) {
+              return `${row._original.user_name}${
+                row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
+              }`.includes(filter.value);
+            } else {
+              return true;
+            }
+          },
+          sortable: true,
+          minWidth: 90,
+        },
+        {
+          Header: I18n.t("activerecord.attributes.user.last_name"),
+          accessor: "last_name",
+          id: "last_name",
+        },
+        {
+          Header: I18n.t("activerecord.attributes.user.first_name"),
+          accessor: "first_name",
+          id: "first_name",
+        },
+        {
+          Header: I18n.t("groups.assigned_students") + "?",
+          accessor: "assigned",
+          Cell: ({value}) => (value ? "✔" : ""),
+          sortable: false,
+          minWidth: 60,
+          filterMethod: (filter, row) => {
+            if (filter.value === "all") {
+              return true;
+            } else {
+              // Either 'true' or 'false'
+              const assigned = filter.value === "true";
+              return row._original.assigned === assigned;
+            }
+          },
+          Filter: selectFilter,
+          filterOptions: [
+            {value: "true", text: I18n.t("groups.assigned_students")},
+            {value: "false", text: I18n.t("groups.unassigned_students")},
+          ],
+        },
+      ],
     };
   }
-
-  getColumns = () => {
-    return [
-      {
-        accessor: "hidden",
-        id: "hidden",
-        width: 0,
-        className: "rt-hidden",
-        headerClassName: "rt-hidden",
-        resizable: false,
-      },
-      {
-        show: false,
-        accessor: "_id",
-        id: "_id",
-      },
-      {
-        Header: I18n.t("activerecord.attributes.user.user_name"),
-        accessor: "user_name",
-        id: "user_name",
-        Cell: props =>
-          props.original.hidden
-            ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
-            : props.value,
-        filterMethod: (filter, row) => {
-          if (filter.value) {
-            return `${row._original.user_name}${
-              row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
-            }`.includes(filter.value);
-          } else {
-            return true;
-          }
-        },
-        sortable: true,
-        minWidth: 90,
-      },
-      {
-        Header: I18n.t("activerecord.attributes.user.last_name"),
-        accessor: "last_name",
-        id: "last_name",
-      },
-      {
-        Header: I18n.t("activerecord.attributes.user.first_name"),
-        accessor: "first_name",
-        id: "first_name",
-      },
-      {
-        Header: I18n.t("groups.assigned_students") + "?",
-        accessor: "assigned",
-        Cell: ({value}) => (value ? "✔" : ""),
-        sortable: false,
-        minWidth: 60,
-        filterMethod: (filter, row) => {
-          if (filter.value === "all") {
-            return true;
-          } else {
-            // Either 'true' or 'false'
-            const assigned = filter.value === "true";
-            return row._original.assigned === assigned;
-          }
-        },
-        Filter: selectFilter,
-        filterOptions: [
-          {value: "true", text: I18n.t("groups.assigned_students")},
-          {value: "false", text: I18n.t("groups.unassigned_students")},
-        ],
-      },
-    ];
-  };
 
   static getDerivedStateFromProps(props, state) {
     let filtered = [];
@@ -754,7 +751,7 @@ class RawStudentsTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={this.props.students}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "user_name",

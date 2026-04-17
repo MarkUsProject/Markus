@@ -36,7 +36,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
   });
 
   it("updateShowHidden correctly updates state and columnFilters", () => {
-    const table = new CourseSummaryTable({});
+    const table = new CourseSummaryTable({assessments: [], marking_schemes: []});
 
     // Spy on setState
     const setStateSpy = jest.spyOn(table, "setState");
@@ -69,7 +69,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
   });
 
   it("updateShowHidden preserves other column filters", () => {
-    const table = new CourseSummaryTable({});
+    const table = new CourseSummaryTable({assessments: [], marking_schemes: []});
     const setStateSpy = jest.spyOn(table, "setState");
 
     // Set up state with multiple filters
@@ -109,7 +109,7 @@ describe("CourseSummaryTable show/hide inactive students", () => {
 
 describe("For CourseSummaryTable nameColumns,", () => {
   it("filterFn correctly hides rows when hidden=true", () => {
-    const table = new CourseSummaryTable({});
+    const table = new CourseSummaryTable({assessments: [], marking_schemes: []});
     const [hiddenColumn] = table.nameColumns();
 
     const filterFn = hiddenColumn.filterFn;
@@ -124,7 +124,7 @@ describe("For CourseSummaryTable nameColumns,", () => {
   });
 
   it("filterFn shows all rows when filterValue is true", () => {
-    const table = new CourseSummaryTable({});
+    const table = new CourseSummaryTable({assessments: [], marking_schemes: []});
     const [hiddenColumn] = table.nameColumns();
     const filterFn = hiddenColumn.filterFn;
 
@@ -159,7 +159,7 @@ describe("CourseSummaryTable dataColumns", () => {
     const marking_schemes = [{id: 2, name: "Scheme1"}];
 
     const table = new CourseSummaryTable({assessments, marking_schemes});
-    const columns = table.dataColumns();
+    const columns = table.dataColumns(assessments, marking_schemes);
 
     expect(columns.length).toBe(2);
   });
@@ -183,7 +183,7 @@ describe("CourseSummaryTable manual filtering", () => {
     const assessments = [{id: 1, name: "A1"}];
     const marking_schemes = [];
     const table = new CourseSummaryTable({assessments, marking_schemes});
-    const columns = table.dataColumns();
+    const columns = table.dataColumns(assessments, marking_schemes);
 
     const assessmentColumn = columns[0];
     const filterFn = assessmentColumn.filterFn;
@@ -206,7 +206,7 @@ describe("CourseSummaryTable manual filtering", () => {
     const assessments = [];
     const marking_schemes = [{id: 1, name: "Scheme1"}];
     const table = new CourseSummaryTable({assessments, marking_schemes});
-    const columns = table.dataColumns();
+    const columns = table.dataColumns(assessments, marking_schemes);
 
     const schemeColumn = columns[0];
     const filterFn = schemeColumn.filterFn;
@@ -233,7 +233,7 @@ describe("CourseSummaryTable manual filtering", () => {
     const assessments = [{id: 1, name: "A1"}];
     const marking_schemes = [];
     const table = new CourseSummaryTable({assessments, marking_schemes});
-    const columns = table.dataColumns();
+    const columns = table.dataColumns(assessments, marking_schemes);
 
     const assessmentColumn = columns[0];
     const filterFn = assessmentColumn.filterFn;

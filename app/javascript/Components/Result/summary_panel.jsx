@@ -38,7 +38,18 @@ export class SummaryPanel extends React.Component {
       datasets: [],
       labels: [],
       chartLegend: false,
+      criterionColumns: this.criterionColumns(props.remark_submitted),
+      extraMarksColumns: this.extraMarksColumns(props.released_to_students),
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.remark_submitted !== this.props.remark_submitted) {
+      this.setState({criterionColumns: this.criterionColumns(this.props.remark_submitted)});
+    }
+    if (prevProps.released_to_students !== this.props.released_to_students) {
+      this.setState({extraMarksColumns: this.extraMarksColumns(this.props.released_to_students)});
+    }
   }
 
   componentDidMount() {
@@ -76,7 +87,7 @@ export class SummaryPanel extends React.Component {
     this.marks_modal.open();
   };
 
-  criterionColumns = () => [
+  criterionColumns = remark_submitted => [
     {
       Header: I18n.t("activerecord.models.criterion.one"),
       accessor: "criterion",
@@ -86,7 +97,7 @@ export class SummaryPanel extends React.Component {
       Header: "Old Mark",
       accessor: "old_mark.mark",
       className: "number",
-      show: this.props.remark_submitted,
+      show: remark_submitted,
     },
     {
       Header: I18n.t("activerecord.models.mark.one"),
@@ -136,7 +147,7 @@ export class SummaryPanel extends React.Component {
     );
   };
 
-  extraMarksColumns = () => [
+  extraMarksColumns = released_to_students => [
     {
       Header: I18n.t("activerecord.attributes.extra_mark.description"),
       accessor: "description",
@@ -172,7 +183,7 @@ export class SummaryPanel extends React.Component {
     {
       Header: "",
       id: "action",
-      show: !this.props.released_to_students,
+      show: !released_to_students,
       Cell: row => {
         if (row.original._new) {
           return (
@@ -233,7 +244,7 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <h4>{I18n.t("activerecord.models.extra_mark.other")}</h4>
-        {data.length > 0 && <ReactTable columns={this.extraMarksColumns()} data={data} />}
+        {data.length > 0 && <ReactTable columns={this.state.extraMarksColumns} data={data} />}
         {!this.props.released_to_students && (
           <p>
             <button className="inline-button" onClick={this.newExtraMark}>
@@ -314,7 +325,7 @@ export class SummaryPanel extends React.Component {
           />
         </aside>
         <ReactTable
-          columns={this.criterionColumns()}
+          columns={this.state.criterionColumns}
           data={this.props.criterionSummaryData}
           className="auto-overflow"
         />

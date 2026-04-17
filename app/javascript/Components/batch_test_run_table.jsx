@@ -12,7 +12,128 @@ const makeDefaultState = () => ({
 class BatchTestRunTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = makeDefaultState();
+    this.state = {
+      ...makeDefaultState(),
+      columns: [
+        // The rows needs to be grouped by created_at timestamp, but we use a duplicate of the
+        // "created_at" column to show the expander icon by itself
+        {
+          Header: "",
+          id: "hidden_created_at",
+          accessor: "created_at",
+          maxWidth: 30,
+          PivotValue: () => "",
+        },
+        {
+          Header: I18n.t("activerecord.attributes.test_batch.created_at"),
+          accessor: "created_at",
+          minWidth: 120,
+          sortMethod: dateSort,
+          aggregate: vals => vals[0],
+        },
+        {
+          Header: I18n.t("activerecord.attributes.group.group_name"),
+          accessor: "group_name",
+          // If more than one value, show the total number of groups under this pivot
+          aggregate: vals => {
+            if (typeof vals[1] === "undefined") {
+              return vals[0];
+            } else {
+              const numGroups = Object.keys(vals).length;
+              return numGroups + " " + I18n.t("activerecord.models.group", {count: numGroups});
+            }
+          },
+          sortable: true,
+        },
+        {
+          Header: I18n.t("activerecord.attributes.test_run.status"),
+          accessor: "status",
+          minWidth: 70,
+          Cell: ({value}) => I18n.t(`automated_tests.test_runs_statuses.${value}`),
+          aggregate: (vals, pivots) => {
+            const batch = this.state.statuses[pivots[0].test_batch_id];
+            if (pivots[0].test_batch_id === null) {
+              return `${pivots[0].status}`;
+            } else {
+              const total = batch.total;
+              const complete = total - batch.in_progress;
+              return `${complete} / ${total} ${I18n.t("poll_job.completed")}`;
+            }
+          },
+          sortable: false,
+          filterable: true,
+          Filter: selectFilter,
+          filterMethod: (filter, row) => {
+            // Skip filter if value is "all" or the row is a pivoted row (in the latter case,
+            // react-table will automatically apply the filter to the subrows
+            if (filter.value === "all" || !!row._pivotID) {
+              return true;
+            } else {
+              return row[filter.id] === filter.value;
+            }
+          },
+          filterOptions: [
+            {
+              value: "cancelled",
+              text: I18n.t("automated_tests.test_runs_statuses.cancelled"),
+            },
+            {
+              value: "complete",
+              text: I18n.t("automated_tests.test_runs_statuses.complete"),
+            },
+            {
+              value: "failed",
+              text: I18n.t("automated_tests.test_runs_statuses.failed"),
+            },
+            {
+              value: "in_progress",
+              text: I18n.t("automated_tests.test_runs_statuses.in_progress"),
+            },
+          ],
+          Aggregated: row => <span>{row.value}</span>,
+        },
+        {
+          Header: I18n.t("actions"),
+          accessor: "action",
+          minWidth: 70,
+          sortable: false,
+          aggregate: (vals, pivots) => {
+            return [
+              pivots[0].test_batch_id,
+              this.state.statuses[pivots[0].test_batch_id],
+              pivots[0].action,
+            ];
+          },
+          Aggregated: row => {
+            if (row.value[1].in_progress > 0) {
+              if (row.value[0] === null) {
+                return row.value[2];
+              } else {
+                const stop_tests_url = Routes.stop_batch_tests_course_assignment_path(
+                  this.props.course_id,
+                  this.props.assignment_id
+                );
+                return (
+                  <span>
+                    <a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>
+                      {I18n.t("automated_tests.stop_batch")}
+                    </a>
+                  </span>
+                );
+              }
+            } else {
+              return "";
+            }
+          },
+        },
+        {
+          // Kept but hidden because status is using it
+          Header: "",
+          accessor: "test_batch_id",
+          show: false,
+        },
+      ],
+    };
     this.fetchData = this.fetchData.bind(this);
     this.processData = this.processData.bind(this);
   }
@@ -80,125 +201,7 @@ class BatchTestRunTable extends React.Component {
       <div>
         <ReactTable
           data={this.state.data}
-          columns={[
-            // The rows needs to be grouped by created_at timestamp, but we use a duplicate of the
-            // "created_at" column to show the expander icon by itself
-            {
-              Header: "",
-              id: "hidden_created_at",
-              accessor: "created_at",
-              maxWidth: 30,
-              PivotValue: () => "",
-            },
-            {
-              Header: I18n.t("activerecord.attributes.test_batch.created_at"),
-              accessor: "created_at",
-              minWidth: 120,
-              sortMethod: dateSort,
-              aggregate: vals => vals[0],
-            },
-            {
-              Header: I18n.t("activerecord.attributes.group.group_name"),
-              accessor: "group_name",
-              // If more than one value, show the total number of groups under this pivot
-              aggregate: vals => {
-                if (typeof vals[1] === "undefined") {
-                  return vals[0];
-                } else {
-                  const numGroups = Object.keys(vals).length;
-                  return numGroups + " " + I18n.t("activerecord.models.group", {count: numGroups});
-                }
-              },
-              sortable: true,
-            },
-            {
-              Header: I18n.t("activerecord.attributes.test_run.status"),
-              accessor: "status",
-              minWidth: 70,
-              Cell: ({value}) => I18n.t(`automated_tests.test_runs_statuses.${value}`),
-              aggregate: (vals, pivots) => {
-                const batch = this.state.statuses[pivots[0].test_batch_id];
-                if (pivots[0].test_batch_id === null) {
-                  return `${pivots[0].status}`;
-                } else {
-                  const total = batch.total;
-                  const complete = total - batch.in_progress;
-                  return `${complete} / ${total} ${I18n.t("poll_job.completed")}`;
-                }
-              },
-              sortable: false,
-              filterable: true,
-              Filter: selectFilter,
-              filterMethod: (filter, row) => {
-                // Skip filter if value is "all" or the row is a pivoted row (in the latter case,
-                // react-table will automatically apply the filter to the subrows
-                if (filter.value === "all" || !!row._pivotID) {
-                  return true;
-                } else {
-                  return row[filter.id] === filter.value;
-                }
-              },
-              filterOptions: [
-                {
-                  value: "cancelled",
-                  text: I18n.t("automated_tests.test_runs_statuses.cancelled"),
-                },
-                {
-                  value: "complete",
-                  text: I18n.t("automated_tests.test_runs_statuses.complete"),
-                },
-                {
-                  value: "failed",
-                  text: I18n.t("automated_tests.test_runs_statuses.failed"),
-                },
-                {
-                  value: "in_progress",
-                  text: I18n.t("automated_tests.test_runs_statuses.in_progress"),
-                },
-              ],
-              Aggregated: row => <span>{row.value}</span>,
-            },
-            {
-              Header: I18n.t("actions"),
-              accessor: "action",
-              minWidth: 70,
-              sortable: false,
-              aggregate: (vals, pivots) => {
-                return [
-                  pivots[0].test_batch_id,
-                  this.state.statuses[pivots[0].test_batch_id],
-                  pivots[0].action,
-                ];
-              },
-              Aggregated: row => {
-                if (row.value[1].in_progress > 0) {
-                  if (row.value[0] === null) {
-                    return row.value[2];
-                  } else {
-                    const stop_tests_url = Routes.stop_batch_tests_course_assignment_path(
-                      this.props.course_id,
-                      this.props.assignment_id
-                    );
-                    return (
-                      <span>
-                        <a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>
-                          {I18n.t("automated_tests.stop_batch")}
-                        </a>
-                      </span>
-                    );
-                  }
-                } else {
-                  return "";
-                }
-              },
-            },
-            {
-              // Kept but hidden because status is using it
-              Header: "",
-              accessor: "test_batch_id",
-              show: false,
-            },
-          ]}
+          columns={this.state.columns}
           pivotBy={["hidden_created_at"]}
           defaultSorted={[
             {id: "created_at", desc: true},

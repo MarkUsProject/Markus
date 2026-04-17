@@ -12,14 +12,12 @@ const columnHelper = createColumnHelper();
 class StudentTable extends React.Component {
   constructor() {
     super();
+    const initialData = {students: [], sections: {}, counts: {all: 0, active: 0, inactive: 0}};
     this.state = {
-      data: {
-        students: [],
-        sections: {},
-        counts: {all: 0, active: 0, inactive: 0},
-      },
+      data: initialData,
       loading: true,
       rowSelection: {},
+      columns: this.getColumns(initialData),
     };
   }
 
@@ -39,10 +37,7 @@ class StudentTable extends React.Component {
         }
       })
       .then(res => {
-        this.setState({
-          data: res,
-          loading: false,
-        });
+        this.setState({data: res, loading: false, columns: this.getColumns(res)});
       });
   };
 
@@ -88,9 +83,7 @@ class StudentTable extends React.Component {
       });
   };
 
-  getColumns = () => {
-    const {data} = this.state;
-
+  getColumns = data => {
     return [
       columnHelper.accessor("user_name", {
         header: I18n.t("activerecord.attributes.user.user_name"),
@@ -206,7 +199,7 @@ class StudentTable extends React.Component {
         <Table
           loading={loading}
           data={data.students}
-          columns={this.getColumns()}
+          columns={this.state.columns}
           enableRowSelection={true}
           rowSelection={rowSelection}
           onRowSelectionChange={updater => {
