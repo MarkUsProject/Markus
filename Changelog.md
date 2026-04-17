@@ -14,6 +14,7 @@
 - Split courses into Current and Past sections for all users (#7801)
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
 - Add JS autotester example (#7866)
+- Return structured JSON from grade entry forms API show endpoint with optional student filter and CSV export (#7886)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)

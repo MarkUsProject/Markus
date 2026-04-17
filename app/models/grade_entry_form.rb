@@ -114,25 +114,8 @@ class GradeEntryForm < Assessment
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
 
-  def export_as_csv(role)
-    if role.instructor?
-      students = Student.left_outer_joins(:grade_entry_students, :user, :section)
-                        .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
-                        .order(:user_name)
-                        .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
-                                       :id_number, :email, 'grade_entry_students.id')
-    elsif role.ta?
-
-      students = role.grade_entry_students
-                     .joins(:user)
-                     .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
-                     .where(grade_entry_form: self, 'roles.hidden': false,
-                            'grade_entry_students.assessment_id': self.id)
-                     .order(:user_name)
-                     .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
-                                    :id_number, :email, 'grade_entry_students.id')
-
-    end
+  def export_as_csv(role, user_names: nil)
+    students = students_for_export(role, user_names: user_names)
     headers = []
     titles = Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) } +
       self.grade_entry_items.pluck(:name)
@@ -146,21 +129,10 @@ class GradeEntryForm < Assessment
     totals << self.max_mark if self.show_total
     headers << totals
 
-    if role.instructor?
-      grade_data = self.grades
-                       .joins(:grade_entry_item, grade_entry_student: :user)
-                       .pluck('users.user_name', 'grade_entry_items.position', :grade)
-                       .group_by { |x| x[0] }
-      num_items = self.grade_entry_items.count
-    elsif role.ta?
-      grade_data = self.grades
-                       .joins(:grade_entry_item, grade_entry_student: :user)
-                       .joins(grade_entry_student: :grade_entry_student_tas)
-                       .where('grade_entry_student_tas.ta_id': role.id)
-                       .pluck('users.user_name', 'grade_entry_items.position', 'grades.grade')
-                       .group_by { |x| x[0] }
-      num_items = self.grade_entry_items.count
-    end
+    grade_data = grades_for_export(role, user_names: user_names)
+                 .pluck('users.user_name', 'grade_entry_items.position', :grade)
+                 .group_by { |x| x[0] }
+    num_items = self.grade_entry_items.count
 
     total_grades = GradeEntryStudent.get_total_grades(students.pluck('grade_entry_students.id'))
 
@@ -181,6 +153,32 @@ class GradeEntryForm < Assessment
       end
       row
     end
+  end
+
+  def export_as_json(role, user_names: nil)
+    students = students_for_export(role, user_names: user_names)
+    grade_data = grades_for_export(role, user_names: user_names)
+                 .pluck('users.user_name', 'grade_entry_items.name', :grade)
+                 .group_by { |x| x[0] }
+                 .transform_values { |rows| rows.to_h { |_user, item, grade| [item, grade] } }
+
+    total_grades = self.show_total ? GradeEntryStudent.get_total_grades(students.pluck('grade_entry_students.id')) : {}
+
+    student_data = students.map do |student|
+      entry = student.slice(:user_name, :last_name, :first_name, :id_number, :email).merge(
+        section_name: student[:section_name],
+        grades: grade_data.fetch(student[:user_name], {})
+      )
+      entry[:total_grade] = total_grades[student['grade_entry_students.id']] if self.show_total
+      entry
+    end
+
+    items = self.grade_entry_items.order(:position).as_json(only: [:id, :name, :out_of, :bonus])
+    self.attributes.slice('id', 'short_identifier', 'description', 'due_date',
+                          'is_hidden', 'visible_on', 'visible_until', 'show_total').merge(
+                            'grade_entry_items' => items,
+                            'students' => student_data
+                          )
   end
 
   def from_csv(grades_data, overwrite)
@@ -273,5 +271,37 @@ class GradeEntryForm < Assessment
 
   def display_median_to_students
     false
+  end
+
+  private
+
+  def students_for_export(role, user_names: nil)
+    if role.instructor?
+      query = Student.left_outer_joins(:grade_entry_students, :user, :section)
+                     .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
+    elsif role.ta?
+      query = role.grade_entry_students
+                  .joins(:user)
+                  .joins('LEFT OUTER JOIN sections ON sections.id = roles.section_id')
+                  .where(grade_entry_form: self, 'roles.hidden': false,
+                         'grade_entry_students.assessment_id': self.id)
+    end
+    query = query.where('users.user_name': user_names) if user_names.present?
+    query.order(:user_name)
+         .pluck_to_hash(:user_name, :last_name, :first_name, 'name as section_name',
+                        :id_number, :email, 'grade_entry_students.id')
+  end
+
+  def grades_for_export(role, user_names: nil)
+    if role.instructor?
+      query = self.grades.joins(:grade_entry_item, grade_entry_student: :user)
+    elsif role.ta?
+      query = self.grades
+                  .joins(:grade_entry_item, grade_entry_student: :user)
+                  .joins(grade_entry_student: :grade_entry_student_tas)
+                  .where('grade_entry_student_tas.ta_id': role.id)
+    end
+    query = query.where('users.user_name': user_names) if user_names.present?
+    query
   end
 end
