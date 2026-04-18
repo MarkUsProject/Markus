@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
       target: dev
-    image: markus-dev:1.2.0
+    image: markus-dev:1.3.0
     tmpfs:
       - /tmp
     stdin_open: true
@@ -37,7 +37,7 @@ services:
 
   rails: &rails
     <<: *app
-    image: markus-dev-rails:1.2.0
+    image: markus-dev-rails:1.3.0
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
     command: bundle exec rails server -b 0.0.0.0
     environment:
@@ -72,7 +72,7 @@ services:
 
   ssh:
     <<: *rails
-    image: markus-dev-ssh:1.2.0
+    image: markus-dev-ssh:1.3.0
     volumes:
       - log:/home/markus/log
       - repos:/home/markus/csc108
@@ -90,7 +90,7 @@ services:
 
   resque: &resque
     <<: *rails
-    image: markus-dev-resque:1.2.0
+    image: markus-dev-resque:1.3.0
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
@@ -98,18 +98,17 @@ services:
 
   resque-scheduler:
     <<: *resque
-    image: markus-dev-resque-scheduler:1.2.0
+    image: markus-dev-resque-scheduler:1.3.0
     command: bundle exec rails resque:scheduler
 
   postgres:
-    image: postgres:14
+    image: postgres:17
     volumes:
       - postgres:/var/lib/postgresql/data
       - log:/root/log:cached
       - tmp:/app/tmp
     environment:
       - POSTGRES_PASSWORD=docker
-      - POSTGRES_INITDB_ARGS="-A md5"
     ports:
       - '35432:5432'
 
@@ -122,7 +121,7 @@ services:
 
   webpack:
     <<: *app
-    image: markus-dev-webpack:1.2.0
+    image: markus-dev-webpack:1.3.0
     command: npm run build-dev
     volumes:
       - bundle:/bundle
