@@ -11,6 +11,90 @@ export class TestGroupResultTable extends React.Component {
       expanded: this.computeExpanded(props.data),
       filtered: [],
       filteredData: props.data,
+      columns: [
+        {
+          id: "test_group_id",
+          Header: "",
+          accessor: row => row["test_groups.id"],
+          maxWidth: 30,
+        },
+        {
+          id: "test_group_name",
+          Header: "",
+          accessor: row => row["test_groups.name"],
+          maxWidth: 30,
+          show: false,
+        },
+        {
+          id: "name",
+          Header: I18n.t("activerecord.attributes.test_result.name"),
+          accessor: row => row["test_results.name"],
+          aggregate: (_vals, rows) => {
+            if (rows.length === 0) {
+              return "";
+            } else {
+              return rows[0]["test_group_name"];
+            }
+          },
+          minWidth: 200,
+        },
+        {
+          id: "test_status",
+          Header: I18n.t("activerecord.attributes.test_result.status"),
+          accessor: "test_results_status",
+          width: 80,
+          aggregate: (_vals, rows) => {
+            const hasTimeout = rows.some(
+              row => row._original["test_group_results.error_type"] === "timeout"
+            );
+            return hasTimeout ? "timeout" : "";
+          },
+          Aggregated: row => {
+            return row.value === "timeout"
+              ? I18n.t("activerecord.attributes.test_group_result.timeout")
+              : "";
+          },
+          filterable: true,
+          Filter: selectFilter,
+          filterOptions: ["pass", "partial", "fail", "error", "error_all"].map(status => ({
+            value: status,
+            text: status,
+          })),
+          // Disable the default filter method because this is a controlled component
+          filterMethod: () => true,
+        },
+        {
+          id: "marks_earned",
+          Header: I18n.t("activerecord.attributes.test_result.marks_earned"),
+          accessor: row => row["test_results.marks_earned"],
+          Cell: row => {
+            const marksEarned = row.original["test_results.marks_earned"];
+            const marksTotal = row.original["test_results.marks_total"];
+            if (marksEarned !== null && marksTotal !== null) {
+              return `${marksEarned} / ${marksTotal}`;
+            } else {
+              return "";
+            }
+          },
+          width: 80,
+          className: "number",
+          aggregate: (vals, rows) =>
+            rows.reduce(
+              (acc, row) => [
+                acc[0] + (row._original["test_results.marks_earned"] || 0),
+                acc[1] + (row._original["test_results.marks_total"] || 0),
+              ],
+              [0, 0]
+            ),
+          Aggregated: row => {
+            const timeout_reached = row.value[0] === 0 && row.value[1] === 0;
+            const ret_val = timeout_reached
+              ? I18n.t("activerecord.attributes.test_group_result.no_test_results")
+              : `${row.value[0]} / ${row.value[1]}`;
+            return ret_val;
+          },
+        },
+      ],
     };
   }
 
@@ -45,91 +129,6 @@ export class TestGroupResultTable extends React.Component {
       return false;
     }
   };
-
-  columns = () => [
-    {
-      id: "test_group_id",
-      Header: "",
-      accessor: row => row["test_groups.id"],
-      maxWidth: 30,
-    },
-    {
-      id: "test_group_name",
-      Header: "",
-      accessor: row => row["test_groups.name"],
-      maxWidth: 30,
-      show: false,
-    },
-    {
-      id: "name",
-      Header: I18n.t("activerecord.attributes.test_result.name"),
-      accessor: row => row["test_results.name"],
-      aggregate: (values, rows) => {
-        if (rows.length === 0) {
-          return "";
-        } else {
-          return rows[0]["test_group_name"];
-        }
-      },
-      minWidth: 200,
-    },
-    {
-      id: "test_status",
-      Header: I18n.t("activerecord.attributes.test_result.status"),
-      accessor: "test_results_status",
-      width: 80,
-      aggregate: (vals, rows) => {
-        const hasTimeout = rows.some(
-          row => row._original["test_group_results.error_type"] === "timeout"
-        );
-        return hasTimeout ? "timeout" : "";
-      },
-      Aggregated: row => {
-        return row.value === "timeout"
-          ? I18n.t("activerecord.attributes.test_group_result.timeout")
-          : "";
-      },
-      filterable: true,
-      Filter: selectFilter,
-      filterOptions: ["pass", "partial", "fail", "error", "error_all"].map(status => ({
-        value: status,
-        text: status,
-      })),
-      // Disable the default filter method because this is a controlled component
-      filterMethod: () => true,
-    },
-    {
-      id: "marks_earned",
-      Header: I18n.t("activerecord.attributes.test_result.marks_earned"),
-      accessor: row => row["test_results.marks_earned"],
-      Cell: row => {
-        const marksEarned = row.original["test_results.marks_earned"];
-        const marksTotal = row.original["test_results.marks_total"];
-        if (marksEarned !== null && marksTotal !== null) {
-          return `${marksEarned} / ${marksTotal}`;
-        } else {
-          return "";
-        }
-      },
-      width: 80,
-      className: "number",
-      aggregate: (vals, rows) =>
-        rows.reduce(
-          (acc, row) => [
-            acc[0] + (row._original["test_results.marks_earned"] || 0),
-            acc[1] + (row._original["test_results.marks_total"] || 0),
-          ],
-          [0, 0]
-        ),
-      Aggregated: row => {
-        const timeout_reached = row.value[0] === 0 && row.value[1] === 0;
-        const ret_val = timeout_reached
-          ? I18n.t("activerecord.attributes.test_group_result.no_test_results")
-          : `${row.value[0]} / ${row.value[1]}`;
-        return ret_val;
-      },
-    },
-  ];
 
   filterByStatus = filtered => {
     let status;
@@ -202,7 +201,7 @@ export class TestGroupResultTable extends React.Component {
         <ReactTable
           className={this.state.loading ? "auto-overflow" : "auto-overflow display-block"}
           data={this.state.filteredData}
-          columns={this.columns()}
+          columns={this.state.columns}
           pivotBy={["test_group_id"]}
           getTdProps={(state, rowInfo) => {
             if (rowInfo) {

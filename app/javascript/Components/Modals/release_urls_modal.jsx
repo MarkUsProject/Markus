@@ -5,9 +5,70 @@ import Flatpickr from "react-flatpickr";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class ReleaseUrlsModal extends React.Component {
-  constructor() {
-    super();
-    this.state = {loading: false};
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      columns: [
+        {
+          show: false,
+          accessor: "_id",
+          id: "_id",
+        },
+        {
+          Header: I18n.t("activerecord.models.group.one"),
+          accessor: "group_name",
+          id: "group_name",
+          Cell: row => this.props.groupNameWithMembers(row),
+          minWidth: 250,
+          filterMethod: (filter, row) => this.props.groupNameFilter(filter, row),
+        },
+        {
+          Header: I18n.t("submissions.release_token"),
+          id: "result_view_token",
+          filterable: false,
+          sortable: false,
+          minWidth: 250,
+          Cell: row => {
+            return (
+              <div>
+                <a
+                  href="#"
+                  className="refresh"
+                  onClick={() => this.refreshViewTokens([row.original.result_id])}
+                  title={I18n.t("refresh")}
+                >
+                  <FontAwesomeIcon icon="fa-solid fa-refresh" className="icon-left" />
+                </a>
+                {row.original.result_view_token}
+              </div>
+            );
+          },
+        },
+        {
+          Header: I18n.t("submissions.release_token_expires"),
+          id: "result_view_token_expiry",
+          filterable: false,
+          sortable: false,
+          minWidth: 200,
+          Cell: row => {
+            return (
+              <Flatpickr
+                value={row.original.result_view_token_expiry}
+                onClose={selectedDates =>
+                  this.refreshViewTokenExpiry(selectedDates[0], [row.original.result_id])
+                }
+                options={{
+                  altInput: true,
+                  altFormat: I18n.t("time.format_string.flatpickr"),
+                  dateFormat: "Z",
+                }}
+              />
+            );
+          },
+        },
+      ],
+    };
   }
 
   componentDidMount() {
@@ -96,65 +157,7 @@ class ReleaseUrlsModal extends React.Component {
           filterable
           defaultSorted={[{id: "group_name"}]}
           loading={this.state.loading}
-          columns={[
-            {
-              show: false,
-              accessor: "_id",
-              id: "_id",
-            },
-            {
-              Header: I18n.t("activerecord.models.group.one"),
-              accessor: "group_name",
-              id: "group_name",
-              Cell: this.props.groupNameWithMembers,
-              minWidth: 250,
-              filterMethod: this.props.groupNameFilter,
-            },
-            {
-              Header: I18n.t("submissions.release_token"),
-              id: "result_view_token",
-              filterable: false,
-              sortable: false,
-              minWidth: 250,
-              Cell: row => {
-                return (
-                  <div>
-                    <a
-                      href="#"
-                      className="refresh"
-                      onClick={() => this.refreshViewTokens([row.original.result_id])}
-                      title={I18n.t("refresh")}
-                    >
-                      <FontAwesomeIcon icon="fa-solid fa-refresh" className="icon-left" />
-                    </a>
-                    {row.original.result_view_token}
-                  </div>
-                );
-              },
-            },
-            {
-              Header: I18n.t("submissions.release_token_expires"),
-              id: "result_view_token_expiry",
-              filterable: false,
-              sortable: false,
-              minWidth: 200,
-              Cell: row => {
-                return (
-                  <Flatpickr
-                    value={row.original.result_view_token_expiry}
-                    onClose={selectedDates =>
-                      this.refreshViewTokenExpiry(selectedDates[0], [row.original.result_id])
-                    }
-                    options={{
-                      altInput: true,
-                      altFormat: I18n.t("time.format_string.flatpickr"),
-                      dateFormat: "Z",
-                    }}
-                  />
-                );
-              },
-            },
-          ]}
+          columns={this.state.columns}
           SubComponent={row => {
             if (row.original.result_view_token) {
               const url = Routes.view_marks_course_result_url(

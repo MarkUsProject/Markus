@@ -35,7 +35,9 @@ describe("For the StudentTable component's states and props", () => {
     describe("the filter method for the grace credits column", () => {
       let filterFn;
       beforeEach(() => {
-        filterFn = instance.getColumns().find(c => c.id === "grace_credits").filterFn;
+        filterFn = instance
+          .getColumns(instance.state.data)
+          .find(c => c.id === "grace_credits").filterFn;
       });
 
       it("returns true when the input equals to the row's remaining grace credits", () => {

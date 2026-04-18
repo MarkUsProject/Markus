@@ -37,6 +37,7 @@
 - Add nullable last_updated_by foreign key (to roles) to marks and grades tables to track who assigned which grade (#7878)
 - Updates ResultsController#update_mark to set the last_updated_by field when marks are modified (#7885)
 - Added pre-commit hook to run `i18n-tasks health` when locale files are changed (#7894)
+- Refactored tables to avoid recreating column definitions on every render (#7910)
 
 ## [v2.9.6]
 

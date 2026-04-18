@@ -13,6 +13,7 @@ class RawMarksSpreadsheet extends React.Component {
       loading: true,
       show_hidden: false,
       filtered: [{id: "hidden", value: false}],
+      columns: this.getColumns([], {}),
     };
   }
 
@@ -52,7 +53,12 @@ class RawMarksSpreadsheet extends React.Component {
             defaultSortDesc: true,
           })
         );
-        this.setState({grade_columns});
+        this.setState(state => {
+          return {
+            grade_columns,
+            columns: this.getColumns(grade_columns, state.sections),
+          };
+        });
       });
 
     // Getting row data
@@ -75,14 +81,14 @@ class RawMarksSpreadsheet extends React.Component {
       .then(response => {
         this.props.resetSelection();
 
-        this.setState(
-          {
+        this.setState(state => {
+          return {
             data: response.data,
             loading: false,
             sections: response.sections,
-          },
-          () => this.forceUpdate()
-        );
+            columns: this.getColumns(state.grade_columns, response.sections),
+          };
+        });
       });
   };
 
@@ -104,7 +110,7 @@ class RawMarksSpreadsheet extends React.Component {
     }).then(this.fetchData);
   };
 
-  nameColumns = () => [
+  nameColumns = (sections, show_sections) => [
     {
       id: "hidden",
       accessor: "hidden",
@@ -126,7 +132,7 @@ class RawMarksSpreadsheet extends React.Component {
     {
       Header: I18n.t("activerecord.models.section", {count: 1}),
       accessor: "section_id",
-      show: this.props.show_sections || false,
+      show: show_sections || false,
       minWidth: 70,
       Cell: ({value}) => {
         return this.state.sections[value] || "";
@@ -139,7 +145,7 @@ class RawMarksSpreadsheet extends React.Component {
         }
       },
       Filter: selectFilter,
-      filterOptions: Object.entries(this.state.sections).map(kv => ({
+      filterOptions: Object.entries(sections).map(kv => ({
         value: kv[1],
         text: kv[1],
       })),
@@ -245,8 +251,8 @@ class RawMarksSpreadsheet extends React.Component {
     );
   }
 
-  getColumns = () => {
-    let columns = this.nameColumns().concat(this.state.grade_columns);
+  getColumns = (grade_columns, sections) => {
+    let columns = this.nameColumns(sections, this.props.show_sections).concat(grade_columns);
     if (this.props.show_total) {
       columns = columns.concat([this.totalColumn()]);
     }
@@ -309,7 +315,7 @@ class RawMarksSpreadsheet extends React.Component {
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
           data={data}
-          columns={this.getColumns()}
+          columns={this.state.columns}
           defaultSorted={[
             {
               id: "user_name",
