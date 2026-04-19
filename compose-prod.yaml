@@ -1,12 +1,10 @@
-version: '3.7'
-
 services:
   app: &app
     build:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
       target: prod
-    image: markus:1.0.1
+    image: markus:1.1.0
     tmpfs:
       - /tmp
     stdin_open: true
@@ -73,12 +71,11 @@ services:
     command: bundle exec rails resque:scheduler
 
   postgres:
-    image: postgres:14
+    image: postgres:17
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=docker  # change this to something secure and/or use a secret to set this
-      - POSTGRES_INITDB_ARGS="-A md5"
 
   redis:
     image: redis:7
