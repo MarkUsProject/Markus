@@ -1235,7 +1235,8 @@ CREATE TABLE public.lti_deployments (
     lms_course_id integer NOT NULL,
     lms_course_name character varying NOT NULL,
     resource_link_id character varying,
-    lms_term_name character varying
+    lms_term_name character varying,
+    lms_course_sourcedid character varying
 );
 
 
@@ -4452,6 +4453,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260415150142'),
 ('20260326174749'),
 ('20260325180720'),
 ('20260304000000'),

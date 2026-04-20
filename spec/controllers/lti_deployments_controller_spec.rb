@@ -71,9 +71,9 @@ describe LtiDeploymentsController do
 
   describe '#create_course' do
     let(:test_rlid) { 'another-unique-rlid-67890' }
-    let(:expected_name) { 'csc108-2026-09' }
+    let(:expected_name) { 'CSC108-20269' }
     let!(:lti_deployment) do
- create(:lti_deployment, lms_course_name: 'csc108', lms_term_name: 'Fall 2026', resource_link_id: test_rlid)
+      create(:lti_deployment, lms_course_name: 'csc108', lms_term_name: 'Fall 2026', resource_link_id: test_rlid)
     end
     let(:course_params) do
       { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
@@ -107,15 +107,15 @@ describe LtiDeploymentsController do
     context 'with an SCS term' do
       let!(:lti_deployment) { create(:lti_deployment, :scs_winter, lms_course_name: 'csc108') }
 
-      it 'creates a course with the scs-YYYY-MM suffix' do
+      it 'creates a course with the SCS-YYYYM suffix' do
         post_as instructor, :create_course, params: course_params
-        expect(Course.find_by(name: 'csc108-scs-2026-01')).not_to be_nil
+        expect(Course.find_by(name: 'CSC108-SCS-20261')).not_to be_nil
       end
     end
 
     context 'when the term is non-standard (Catch-all)' do
       let!(:lti_deployment) do
- create(:lti_deployment, lms_term_name: 'Special Workshop 2026', lms_course_name: 'csc108')
+        create(:lti_deployment, lms_term_name: 'Default Term', lms_course_name: 'csc108')
       end
 
       before do
@@ -126,9 +126,9 @@ describe LtiDeploymentsController do
         post_as instructor, :create_course, params: {
           id: lti_deployment.id,
           name: 'csc108',
-          display_name: 'Workshop'
+          display_name: 'CSC108'
         }
-        expect(Course.find_by(name: 'csc108-special-workshop-2026')).not_to be_nil
+        expect(Course.find_by(name: 'CSC108-DEFAULT-TERM')).not_to be_nil
       end
     end
 
@@ -171,7 +171,7 @@ describe LtiDeploymentsController do
 
     context 'when the LTI deployment course name has invalid characters' do
       let!(:lti_deployment) do
- create(:lti_deployment, lms_course_name: 'csc108 fall 3000!', lms_term_name: 'Fall 2026')
+        create(:lti_deployment, lms_course_name: 'csc108 fall 3000!', lms_term_name: 'Fall 2026')
       end
 
       before do
@@ -180,7 +180,7 @@ describe LtiDeploymentsController do
 
       it 'creates a new course with a sanitized name and appends suffix' do
         post_as instructor, :create_course, params: course_params
-        expect(Course.exists?(name: 'csc108-fall-3000-2026-09')).not_to be_nil
+        expect(Course.exists?(name: 'CSC108-FALL-3000-20269')).not_to be_nil
       end
     end
 

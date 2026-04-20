@@ -5,6 +5,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  lms_course_name        :string           not null
+#  lms_course_sourcedid   :string
 #  lms_term_name          :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
