@@ -216,6 +216,7 @@ class LtiDeploymentsController < ApplicationController
       render 'message', status: :forbidden
       return
     end
+
     course_code = params['name'].gsub(/[^a-zA-Z0-9\-_]/, '-') # Sanitize name to comply with Course name validation
     full_name = LtiConfig.get_course_name(record, course_code)
     new_course = Course.find_or_initialize_by(name: full_name)
