@@ -93,7 +93,7 @@ class LtiDeploymentsController < ApplicationController
                    lms_term_name: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['term_name'],
                    lms_course_label: lti_params[LtiDeployment::LTI_CLAIMS[:context]]['label'],
                    lms_course_id: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_id'],
-                   lms_course_sourcedid: lti_params[LtiDeployment::LTI_CLAIMS[:custom]]['course_offering_sourcedid'],
+                   lms_course_sourcedid: lti_params[LtiDeployment::LTI_CLAIMS[:lis]]['course_offering_sourcedid'],
                    user_roles: lti_params[LtiDeployment::LTI_CLAIMS[:roles]] }
       if lti_params.key?(LtiDeployment::LTI_CLAIMS[:rlid])
         rlid = lti_params[LtiDeployment::LTI_CLAIMS[:rlid]]['id']

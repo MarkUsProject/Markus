@@ -35,6 +35,7 @@ class LtiDeployment < ApplicationRecord
                  results: 'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly' }.freeze
   LTI_CLAIMS = { context: 'https://purl.imsglobal.org/spec/lti/claim/context',
                  custom: 'https://purl.imsglobal.org/spec/lti/claim/custom',
+                 lis: 'https://purl.imsglobal.org/spec/lti/claim/lis',
                  names_role: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
                  ags_lineitem: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
                  deployment_id: 'https://purl.imsglobal.org/spec/lti/claim/deployment_id',
