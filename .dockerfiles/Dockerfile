@@ -84,6 +84,7 @@ RUN apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive add-apt-repository -y ppa:deadsnakes/ppa && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends openssh-server \
                                                                                python3.13 \
+                                                                               python3.13-dev \
                                                                                python3.13-venv \
                                                                                equivs \
                                                                                libjemalloc2
