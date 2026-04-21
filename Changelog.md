@@ -15,6 +15,7 @@
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
 - Add JS autotester example (#7866)
 - Return structured JSON from grade entry forms API show endpoint with optional student filter and CSV export (#7886)
+- Update Dockerfile to include the python3.13-dev package which allows building c++ extensions from source (#7912)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
