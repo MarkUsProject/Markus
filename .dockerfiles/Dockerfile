@@ -19,7 +19,6 @@ RUN useradd -m -u $UID -s /bin/bash $USER
 # Set up the correct node version AND PostgreSQL repo for later installation
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends wget ca-certificates sudo gnupg lsb-release && \
-    # Add PostgreSQL key and repo
     install -m 0755 -d /etc/apt/keyrings && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
