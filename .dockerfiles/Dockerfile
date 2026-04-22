@@ -16,9 +16,13 @@ RUN userdel -r ubuntu
 # Create the user that runs the app
 RUN useradd -m -u $UID -s /bin/bash $USER
 
-# Set up the correct node version for later installation
+# Set up the correct node version AND PostgreSQL repo for later installation
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends wget ca-certificates sudo && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends wget ca-certificates sudo gnupg lsb-release && \
+    # Add PostgreSQL key and repo
+    install -m 0755 -d /etc/apt/keyrings && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/keyrings/postgresql.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     wget -O /tmp/setup_node.sh https://deb.nodesource.com/setup_$NODE_MAJOR.x && \
     sh /tmp/setup_node.sh && \
     rm /tmp/setup_node.sh
@@ -26,8 +30,11 @@ RUN apt-get update && \
 # Copy the debian package containing system dependencies
 COPY markus_1.0_all.deb /
 
-# Install basic system dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends /markus_1.0_all.deb && \
+# Install basic system dependencies and the specific PG client version
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+    /markus_1.0_all.deb \
+    postgresql-client-17 && \
     rm /markus_1.0_all.deb
 
 # Install Ruby from precompiled binaries.
