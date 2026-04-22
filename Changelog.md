@@ -25,6 +25,7 @@
 - Fixed filter Canvas Test Student from roster sync (#7926)
 
 ### 🔧 Internal changes
+- Add release automation scripts (#7914)
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
