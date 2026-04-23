@@ -40,6 +40,7 @@
 - Added pre-commit hook to run `i18n-tasks health` when locale files are changed (#7894)
 - Refactored tables to avoid recreating column definitions on every render (#7910)
 - Updated Docker configuration to use Ubuntu 24.04, Ruby 3.4.9, Bundler 4.0.10, Node 24, and Postgres 17 (#7911)
+- Update Dockerfile to include the python3.13-dev package which allows building c++ extensions from source (#7912)
 
 ## [v2.9.6]
 
