@@ -15,7 +15,7 @@
 - Add an administrator action on the course settings page to refresh autotest schema (#7828)
 - Add JS autotester example (#7866)
 - Return structured JSON from grade entry forms API show endpoint with optional student filter and CSV export (#7886)
-- Update Dockerfile to include the python3.13-dev package which allows building c++ extensions from source (#7912)
+- Added term-based suffixes to course names created via LTI to ensure uniqueness across academic years (#7881)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
@@ -40,6 +40,7 @@
 - Added pre-commit hook to run `i18n-tasks health` when locale files are changed (#7894)
 - Refactored tables to avoid recreating column definitions on every render (#7910)
 - Updated Docker configuration to use Ubuntu 24.04, Ruby 3.4.9, Bundler 4.0.10, Node 24, and Postgres 17 (#7911)
+- Update Dockerfile to include the python3.13-dev package which allows building c++ extensions from source (#7912)
 
 ## [v2.9.6]
 
