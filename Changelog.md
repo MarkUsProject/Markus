@@ -21,6 +21,7 @@
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Fixed course card link behavior on the dashboard (#7887)
 - Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
+- Fix version mismatch between container client and database server (#7916)
 
 ### 🔧 Internal changes
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
