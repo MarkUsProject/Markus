@@ -42,7 +42,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Add PostgreSQL apt repository
         run: |
           sudo apt-get install -y curl ca-certificates
@@ -101,14 +101,14 @@ jobs:
           ruby-version: ruby-3.4
           bundler-cache: true
       - name: Set up node and cache packages
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
       - name: Install npm packages
         run: npm ci
       - name: Install python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - name: Get pip cache dir
@@ -116,14 +116,14 @@ jobs:
         run: |
           echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements-jupyter.txt') }}-${{ hashFiles('requirements-scanner.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Cache playwright's installation of Chromium
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('requirements-jupyter.txt') }}
@@ -188,7 +188,7 @@ jobs:
       NODE_ENV: test
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
@@ -206,7 +206,7 @@ jobs:
         run: |
           bundle exec rake javascript:build
       - name: Set up node and cache packages
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
