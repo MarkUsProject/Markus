@@ -43,6 +43,7 @@
 - Updated Docker configuration to use Ubuntu 24.04, Ruby 3.4.9, Bundler 4.0.10, Node 24, and Postgres 17 (#7911)
 - Update Dockerfile to include the python3.13-dev package which allows building c++ extensions from source (#7912)
 - Improved performance of `Table` component (#7919)
+- Updated GitHub Actions dependencies and added Dependabot config for quarterly GitHub Actions updates (#7920)
 
 ## [v2.9.6]
 
