@@ -4,7 +4,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getFacetedRowModel,
@@ -13,7 +12,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Filter from "./filter";
+import FilterCell from "./filter";
+import TableHeaderCell from "./table_header_cell";
+import TableRow from "./table_row";
 
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
@@ -62,6 +63,7 @@ export const selectionColumn = columnHelper.display({
   size: 30,
   maxSize: 30,
   enableResizing: false,
+  enableSorting: false,
   cell: ({row}) => (
     <input
       type="checkbox"
@@ -96,19 +98,28 @@ export default function Table({
   const [expanded, setExpanded] = React.useState({});
   const [internalRowSelection, setInternalRowSelection] = React.useState({});
 
-  const columnFilters =
-    externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters;
+  const columnFilters = React.useMemo(
+    () => (externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters),
+    [externalColumnFilters, internalColumnFilters]
+  );
 
-  const handleColumnFiltersChange =
-    externalOnColumnFiltersChange !== undefined
-      ? externalOnColumnFiltersChange
-      : setInternalColumnFilters;
+  const handleColumnFiltersChange = React.useMemo(
+    () =>
+      externalOnColumnFiltersChange !== undefined
+        ? externalOnColumnFiltersChange
+        : setInternalColumnFilters,
+    [externalOnColumnFiltersChange]
+  );
 
-  const rowSelection =
-    externalRowSelection !== undefined ? externalRowSelection : internalRowSelection;
+  const rowSelection = React.useMemo(
+    () => (externalRowSelection !== undefined ? externalRowSelection : internalRowSelection),
+    [externalRowSelection, internalRowSelection]
+  );
 
-  const handleRowSelectionChange =
-    onRowSelectionChange !== undefined ? onRowSelectionChange : setInternalRowSelection;
+  const handleRowSelectionChange = React.useMemo(
+    () => (onRowSelectionChange !== undefined ? onRowSelectionChange : setInternalRowSelection),
+    [onRowSelectionChange]
+  );
 
   const finalColumns = React.useMemo(() => {
     let cols = [...columns];
@@ -151,105 +162,70 @@ export default function Table({
     columnResizeMode: "onChange",
   });
 
+  const centerTotalSize = table.getCenterTotalSize();
+
+  const tableHeaders = (
+    <div className="rt-thead -header" style={{minWidth: centerTotalSize}}>
+      {table.getHeaderGroups().map(headerGroup => (
+        <div className="rt-tr" role="row" key={headerGroup.id}>
+          {headerGroup.headers.map(header => (
+            <TableHeaderCell
+              key={header.id}
+              header={header}
+              size={header.getSize()}
+              isSorted={header.column.getIsSorted()}
+              isResizing={header.column.getIsResizing()}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
+  const showFilters = React.useMemo(
+    () => table.getAllColumns().some(column => column.getCanFilter()),
+    [table, finalColumns]
+  );
+  const tableFilters = showFilters && (
+    <div className="rt-thead -filters" style={{minWidth: centerTotalSize}}>
+      {table.getHeaderGroups().map(headerGroup => (
+        <div className="rt-tr" role="row" key={headerGroup.id}>
+          {headerGroup.headers.map(header => (
+            <FilterCell
+              key={header.id}
+              size={header.getSize()}
+              column={header.column}
+              filterValue={header.column.getFilterValue()}
+              facetedUniqueValues={
+                header.column.columnDef.meta?.filterVariant === "select"
+                  ? header.column.getFacetedUniqueValues()
+                  : null
+              }
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="Table -highlight" style={{maxHeight: "500px"}}>
       <div className="rt-table" role="grid">
-        <div className="rt-thead -header" style={{minWidth: table.getCenterTotalSize()}}>
-          {table.getHeaderGroups().map(headerGroup => (
-            <div className="rt-tr" role="row" key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                let class_name =
-                  "rt-th rt-resizable-header --cursor-pointer" +
-                  {
-                    asc: " rt-resizable-header-content -sort-asc",
-                    desc: " rt-resizable-header-content -sort-desc",
-                    false: "",
-                  }[header.column.getIsSorted()];
-                return (
-                  <div
-                    className={`${class_name} ${header.column.columnDef.meta?.headerClassName || ""}`}
-                    role="columnheader"
-                    tabIndex="-1"
-                    key={header.id}
-                    style={{
-                      width: header.getSize(),
-                      maxWidth: header.column.columnDef.maxSize || "none",
-                    }}
-                  >
-                    <div
-                      className="rt-resizable-header-content"
-                      {...{
-                        onClick: header.column.getToggleSortingHandler(),
-                      }}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </div>
-                    <div
-                      {...{
-                        onMouseDown: header.getResizeHandler(),
-                        onTouchStart: header.getResizeHandler(),
-                      }}
-                      className={`rt-resizer resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+        {tableHeaders}
+        {tableFilters}
+        <div className="rt-tbody" style={{minWidth: centerTotalSize}}>
+          {table.getRowModel().rows.map(row => (
+            <TableRow
+              row={row}
+              isExpanded={row.getIsExpanded()}
+              isSelected={row.getIsSelected()}
+              key={row.id}
+              renderSubComponent={renderSubComponent}
+              // columnSizing is not used directly in TableRow, but is passed to trigger
+              // re-render when column sizes change
+              columnSizing={columnSizing}
+            />
           ))}
-        </div>
-        {table.getAllColumns().some(column => column.getCanFilter()) && (
-          <div className="rt-thead -filters" style={{minWidth: table.getCenterTotalSize()}}>
-            {table.getHeaderGroups().map(headerGroup => (
-              <div className="rt-tr" role="row" key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <div
-                      className={`rt-th ${header.column.columnDef.meta?.headerClassName || ""}`}
-                      key={header.id}
-                      role="columnheader"
-                      tabIndex="-1"
-                      style={{
-                        width: header.getSize(),
-                        maxWidth: header.column.columnDef.maxSize || "none",
-                      }}
-                    >
-                      {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        )}
-        <div className="rt-tbody" style={{minWidth: table.getCenterTotalSize()}}>
-          {table.getRowModel().rows.map(row => {
-            return (
-              <div className="rt-tr-group" role="rowgroup" key={row.id}>
-                <div className="rt-tr -odd" role="row" key={row.id}>
-                  {row.getVisibleCells().map(cell => {
-                    const metaClass = cell.column.columnDef.meta?.className || "";
-                    return (
-                      <div
-                        className={`rt-td ${metaClass}`}
-                        role="gridcell"
-                        style={{
-                          flex: "100 0 auto",
-                          width: cell.column.getSize(),
-                          maxWidth: cell.column.columnDef.maxSize || "none",
-                        }}
-                        key={cell.id}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </div>
-                    );
-                  })}
-                </div>
-                {row.getIsExpanded() && <div>{renderSubComponent({row})}</div>}
-              </div>
-            );
-          })}
           {loading && table.getRowModel().rows.length > 0 && (
             <div
               className="loading-spinner"

@@ -227,6 +227,15 @@ textarea {
   }
 }
 
+input[type='checkbox'] {
+  cursor: pointer;
+
+  &[disabled],
+  &[readonly] {
+    cursor: default;
+  }
+}
+
 input {
   padding: 0.25em 0.75em;
 }
