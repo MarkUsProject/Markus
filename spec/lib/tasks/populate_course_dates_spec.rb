@@ -120,11 +120,31 @@ RSpec.describe 'db:populate_course_dates', type: :task do
       expect(c.end_at.to_date.iso8601).to eq('2024-12-31')
     end
 
-    it 'produces zero updates on a second run' do
-      make_course('csc110-2024-09')
+    it 'leaves dates unchanged on a second run' do
+      c = make_course('csc110-2024-09')
       task.invoke
+      c.reload
+      original_start, original_end = c.start_at, c.end_at
+
       task.reenable
-      expect { task.invoke }.to output(/updated: 0|tally:.*\n(?!.*updated:)/m).to_stdout
+      task.invoke
+      c.reload
+      expect(c.start_at).to eq(original_start)
+      expect(c.end_at).to eq(original_end)
+    end
+  end
+
+  describe 'validation failures' do
+    it 'skips and logs without raising when the existing date conflicts with the computed one' do
+      preset_start = Time.zone.parse('2099-01-01')
+      bad = make_course('csc110-2024-09', start_at: preset_start)
+      good = make_course('csc111-2026-01', 'Foundations II')
+
+      expect { task.invoke }.to output(/\[invalid\b/).to_stdout
+      bad.reload
+      expect(bad.start_at).to be_within(1.second).of(preset_start)
+      expect(bad.end_at).to be_nil
+      expect_dates(good, '2026-01-01', '2026-04-30')
     end
   end
 
