@@ -39,7 +39,7 @@ module PopulateCourseDates
   end
 
   def demo_or_sandbox?(course)
-    "#{course.name} #{course.display_name}" =~ DEMO_OR_SANDBOX
+    course.name.to_s.match?(DEMO_OR_SANDBOX) || course.display_name.to_s.match?(DEMO_OR_SANDBOX)
   end
 
   def parse(course)
@@ -53,7 +53,7 @@ module PopulateCourseDates
   def bucket_and_year(course)
     if (m = course.name.to_s.match(YEAR_MONTH_IN_NAME))
       [m[2], m[1].to_i]
-    elsif (m = (course.name.to_s + ' ' + course.display_name.to_s).match(UOFT_SESSION_CODE))
+    elsif (m = "#{course.name} #{course.display_name}".match(UOFT_SESSION_CODE))
       [format('%02d', m[2].to_i), m[1].to_i]
     end
   end
@@ -80,10 +80,10 @@ module PopulateCourseDates
   end
 
   def apply(course, start_at, end_at, dry_run:)
-    new_start = course.start_at || start_at
-    new_end = course.end_at || end_at
     return [:skipped_already_set, ''] if course.start_at && course.end_at
 
+    new_start = course.start_at || start_at
+    new_end = course.end_at || end_at
     detail = "start=#{new_start.to_date} end=#{new_end.to_date}"
     return [:would_update, detail] if dry_run
 
