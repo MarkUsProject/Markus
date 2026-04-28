@@ -201,6 +201,25 @@ describe Admin::CoursesController do
           }
         }
       end
+
+      it 'persists start_at and end_at when provided' do
+        new_start_at = Time.zone.parse('2026-01-01')
+        new_end_at = Time.zone.parse('2026-04-30')
+
+        post_as admin, :create, params: {
+          course: {
+            name: 'CSC207',
+            display_name: 'Software Design',
+            is_hidden: true,
+            start_at: new_start_at,
+            end_at: new_end_at
+          }
+        }
+
+        created_course = Course.find_by(name: 'CSC207')
+        expect(created_course.start_at).to be_within(1.second).of(new_start_at)
+        expect(created_course.end_at).to be_within(1.second).of(new_end_at)
+      end
     end
 
     describe '#edit' do
