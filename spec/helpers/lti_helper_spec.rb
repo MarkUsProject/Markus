@@ -375,6 +375,70 @@ describe LtiHelper do
           expect(user.id_number).to be_nil
         end
       end
+
+      context 'when the roster contains a Canvas Test Student' do
+        subject do
+          roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]],
+                      can_create_users: true,
+                      can_create_roles: true
+        end
+
+        let(:test_student_lti_id) { 'canvas-test-student-id' }
+        let(:memberships_with_test_student) do
+          [
+            {
+              status: 'Active',
+              name: 'Real Student',
+              user_id: 'real-id',
+              roles: [LtiDeployment::LTI_ROLES[:learner]],
+              lis_person_sourcedid: 'real_student',
+              given_name: 'Real',
+              family_name: 'Student',
+              email: 'real@example.com'
+            },
+            {
+              status: 'Active',
+              name: 'Test Student',
+              user_id: test_student_lti_id,
+              roles: [
+                'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner',
+                'http://purl.imsglobal.org/vocab/lti/system/person#TestUser'
+              ],
+              lis_person_sourcedid: 'test_student',
+              given_name: 'Test',
+              family_name: 'Student',
+              email: 'test@example.com'
+            }
+          ]
+        end
+
+        before do
+          lti_payload = {
+            id: '...',
+            context: { id: '...', label: 'tst', title: 'test' },
+            members: memberships_with_test_student
+          }.to_json
+
+          allow_any_instance_of(LtiDeployment).to(
+            receive(:send_lti_request!).and_return(OpenStruct.new(body: lti_payload))
+          )
+        end
+
+        it 'syncs the real student' do
+          subject
+          expect(EndUser.exists?(user_name: 'real_student')).to be true
+        end
+
+        it 'filters out the Test Student' do
+          subject
+          expect(EndUser.exists?(user_name: 'test_student')).to be false
+        end
+
+        it 'does not create an LtiUser for the test student' do
+          subject
+          expect(LtiUser.exists?(lti_user_id: test_student_lti_id)).to be false
+        end
+      end
     end
 
     context 'when syncing learners and TAs' do

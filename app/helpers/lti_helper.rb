@@ -34,7 +34,7 @@ module LtiHelper
     lms_active_data = []
     lms_inactive_ids = []
     member_info.each do |user|
-      next if user['roles'].include?(LtiDeployment::LTI_ROLES['test_user'])
+      next if user['roles'].include?(LtiDeployment::LTI_ROLES[:test_user])
       next if role_types.none? { |role| user['roles'].include?(role) }
       if user['status'] == LtiDeployment::LTI_STATUSES[:inactive]
         lms_inactive_ids << user['user_id']
