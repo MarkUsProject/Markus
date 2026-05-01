@@ -265,7 +265,7 @@ GEM
     matrix (0.4.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (6.0.3)
+    minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
     mono_logger (1.1.2)
@@ -460,8 +460,8 @@ GEM
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
     shoulda-context (3.0.0.rc1)
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (7.0.1)
+      activesupport (>= 7.1)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -588,7 +588,7 @@ DEPENDENCIES
   selenium-webdriver
   shoulda-callback-matchers (~> 1.1.1)
   shoulda-context (~> 3.0.0.rc1)
-  shoulda-matchers (~> 6.5)
+  shoulda-matchers (~> 7.0)
   simplecov
   simplecov-lcov
   sprockets

@@ -98,7 +98,7 @@ group :test do
   gem 'rails-controller-testing'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'shoulda-context', '~> 3.0.0.rc1'
-  gem 'shoulda-matchers', '~> 6.5'
+  gem 'shoulda-matchers', '~> 7.0'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'timecop'
