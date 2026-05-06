@@ -182,25 +182,35 @@ export class AssignmentSummaryTable extends React.Component {
           }
         },
       }),
-      columnHelper.accessor("final_grade", {
-        header: () => I18n.t("results.total_mark"),
-        size: 100,
-        enableResizing: true,
-        cell: props => {
-          if (props.row.original.final_grade || props.row.original.final_grade === 0) {
-            const max_mark = Math.round(props.row.original.max_mark * 100) / 100;
-            return props.row.original.final_grade + " / " + max_mark;
-          } else {
-            return "";
-          }
-        },
-        meta: {className: "number"},
-        enableColumnFilter: false,
-        sortDescFirst: true,
-      }),
     ];
 
-    const criteriaColumnDefs = criteriaColumns.map(col =>
+    // Add the Total Marks column ONLY if the user is an instructor
+    if (this.props.is_instructor) {
+      fixedColumns.push(
+        columnHelper.accessor("final_grade", {
+          header: () => I18n.t("results.total_mark"),
+          size: 100,
+          enableResizing: true,
+          cell: props => {
+            if (props.row.original.final_grade || props.row.original.final_grade === 0) {
+              const max_mark = Math.round(props.row.original.max_mark * 100) / 100;
+              return props.row.original.final_grade + " / " + max_mark;
+            } else {
+              return "";
+            }
+          },
+          meta: {className: "number"},
+          enableColumnFilter: false,
+          sortDescFirst: true,
+        })
+      );
+    }
+
+    const filteredCriteria = this.props.is_instructor
+      ? criteriaColumns
+      : criteriaColumns.filter(col => col.Header !== I18n.t("results.total_mark"));
+
+    const criteriaColumnDefs = filteredCriteria.map(col =>
       columnHelper.accessor(col.accessor, {
         id: col.id,
         header: () => col.Header,
