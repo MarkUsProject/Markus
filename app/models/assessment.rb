@@ -50,6 +50,8 @@ class Assessment < ApplicationRecord
 
   has_many :lti_line_items, dependent: :destroy
 
+  after_update_commit :sync_lti_line_items, if: :lti_sync_needed?
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
@@ -148,6 +150,18 @@ class Assessment < ApplicationRecord
   # Returns the number of grades equal to 0 for this assessment, using all grades in self.completed_result_marks.
   def results_zeros
     self.completed_result_marks.count(&:zero?)
+  end
+
+  # Re-pushes line item metadata to any LMS that already has this assessment linked,
+  # so changes in MarkUs (notably due_date) propagate without manual re-trigger.
+  def sync_lti_line_items
+    deployment_ids = lti_line_items.distinct.pluck(:lti_deployment_id)
+    LtiLineItemJob.perform_later(deployment_ids, self)
+  end
+
+  def lti_sync_needed?
+    return false unless lti_line_items.exists?
+    saved_change_to_due_date? || saved_change_to_description?
   end
 
   # Returns the standard deviation for this assessment, using all grades in self.completed_result_marks.
