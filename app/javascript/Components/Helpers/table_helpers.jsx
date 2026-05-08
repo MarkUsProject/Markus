@@ -111,6 +111,63 @@ export function textFilter({filter, onChange, column}) {
 }
 
 /**
+ * Locale-aware substring match with optional case sensitivity. Both arguments
+ * are coerced to strings, so callers do not have to guard against null/undefined.
+ */
+export function caseSensitiveIncludes(haystack, needle, caseSensitive) {
+  const a = String(haystack);
+  const b = String(needle);
+  if (caseSensitive) return a.includes(b);
+  return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
+}
+
+/**
+ * Builds a filterMethod that matches `row[filter.id]` against `filter.value`
+ * with the given case sensitivity. Empty filters match every row.
+ */
+export function caseSensitiveStringFilterMethod(caseSensitive) {
+  return (filter, row) => {
+    if (!filter.value) return true;
+    return caseSensitiveIncludes(row[filter.id], filter.value, caseSensitive);
+  };
+}
+
+/**
+ * Builds a Filter component that pairs a text input with an "Aa" checkbox
+ * toggle for case-sensitive matching. `getCaseSensitive` is read on every
+ * render so the checkbox reflects the latest value without rebuilding the
+ * Filter — this keeps the rendered <input> elements stable across re-renders.
+ */
+export function caseSensitiveTextFilter({getCaseSensitive, onToggle}) {
+  return ({filter, onChange, column}) => (
+    <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
+      <input
+        type="text"
+        style={{flex: 1, minWidth: 0}}
+        value={filter ? filter.value : ""}
+        aria-label={`${I18n.t("search")} ${column.Header || ""}`}
+        onChange={event => onChange(event.target.value)}
+      />
+      <label
+        title={I18n.t("table.case_sensitive_search")}
+        style={{display: "flex", alignItems: "center", cursor: "pointer"}}
+      >
+        <input
+          type="checkbox"
+          checked={getCaseSensitive()}
+          onChange={onToggle}
+          aria-label={I18n.t("table.case_sensitive_search")}
+          data-testid={`${column.id}_case_sensitive`}
+        />
+        <span style={{fontSize: "1.05em", marginLeft: "2px"}}>
+          {I18n.t("table.case_sensitive_indicator")}
+        </span>
+      </label>
+    </div>
+  );
+}
+
+/**
  * Select-based search filter. Options are generated from the custom column attribute
  * filterOptions, which is a list of objects with keys "value" and "text".
  * A default "all" option is prepended to the list of options; the text can be

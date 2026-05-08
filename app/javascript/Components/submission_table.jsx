@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {
+  caseSensitiveIncludes,
+  caseSensitiveTextFilter,
   dateSort,
   markingStateColumn,
   selectFilter,
@@ -28,6 +30,7 @@ class RawSubmissionTable extends React.Component {
       markingStateFilter: "all",
       inactiveGroupsCount: 0,
       filtered: [],
+      caseSensitive: true,
       columns: this.getColumns({}, markingStates, "all"),
     };
   }
@@ -36,6 +39,35 @@ class RawSubmissionTable extends React.Component {
     this.fetchData();
     this.createChannelSubscriptions();
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.caseSensitive !== this.state.caseSensitive) {
+      // Rebuild columns to invalidate react-table's cached filter results;
+      // groupNameFilter reads this.state.caseSensitive on every call.
+      this.setState(state => ({
+        columns: this.getColumns(state.sections, state.marking_states, state.markingStateFilter),
+      }));
+    }
+  }
+
+  toggleCaseSensitive = () => {
+    this.setState(state => ({caseSensitive: !state.caseSensitive}));
+  };
+
+  groupNameFilterComponent = caseSensitiveTextFilter({
+    getCaseSensitive: () => this.state.caseSensitive,
+    onToggle: this.toggleCaseSensitive,
+  });
+
+  groupNameFilter = (filter, row) => {
+    if (!filter.value) return true;
+    const {caseSensitive} = this.state;
+    if (caseSensitiveIncludes(row._original.group_name, filter.value, caseSensitive)) return true;
+    if (!row._original.members) return false;
+    return row._original.members.some(member =>
+      caseSensitiveIncludes(member[0], filter.value, caseSensitive)
+    );
+  };
 
   fetchData = () => {
     fetch(
@@ -111,21 +143,6 @@ class RawSubmissionTable extends React.Component {
     return row.value + members;
   };
 
-  groupNameFilter = (filter, row) => {
-    if (filter.value) {
-      // Check group name
-      if (row._original.group_name.includes(filter.value)) {
-        return true;
-      }
-      // Check member names
-      return (
-        row._original.members && row._original.members.some(name => name.includes(filter.value))
-      );
-    } else {
-      return true;
-    }
-  };
-
   getColumns = (sections, marking_states, markingStateFilter) => [
     {
       show: false,
@@ -154,6 +171,7 @@ class RawSubmissionTable extends React.Component {
         }
       },
       minWidth: 170,
+      Filter: this.groupNameFilterComponent,
       filterMethod: this.groupNameFilter,
     },
     {

@@ -94,3 +94,109 @@ describe("For the SubmissionTable's display of inactive groups", () => {
     expect(screen.queryByText("group_0001")).not.toBeInTheDocument();
   });
 });
+
+describe("For the SubmissionTable's group name search", () => {
+  beforeEach(async () => {
+    const groups_sample = [
+      {
+        _id: 1,
+        max_mark: 21.0,
+        group_name: "Alpha_group",
+        tags: [],
+        marking_state: "released",
+        submission_time: "Monday, March 25, 2024, 01:49:14 PM EDT",
+        result_id: 1,
+        final_grade: 12.0,
+        members: [["c1abc", false]],
+        grace_credits_used: 0,
+      },
+      {
+        _id: 2,
+        max_mark: 21.0,
+        group_name: "alpha_lower",
+        tags: [],
+        marking_state: "released",
+        submission_time: "Monday, March 25, 2024, 01:49:14 PM EDT",
+        result_id: 2,
+        final_grade: 12.0,
+        members: [["c2abc", false]],
+        grace_credits_used: 0,
+      },
+      {
+        _id: 3,
+        max_mark: 21.0,
+        group_name: "Beta_group",
+        tags: [],
+        marking_state: "released",
+        submission_time: "Monday, March 25, 2024, 01:49:14 PM EDT",
+        result_id: 3,
+        final_grade: 12.0,
+        members: [["c3abc", false]],
+        grace_credits_used: 0,
+      },
+    ];
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        groupings: groups_sample,
+        sections: {},
+      }),
+    });
+
+    render(
+      <SubmissionTable
+        assignment_id={1}
+        course_id={1}
+        show_grace_tokens={true}
+        show_sections={true}
+        is_timed={false}
+        is_scanned_exam={false}
+        release_with_urls={false}
+        can_collect={true}
+        can_run_tests={false}
+        defaultFiltered={[{id: "", value: ""}]}
+      />
+    );
+    await screen.findByText("Alpha_group");
+  });
+
+  it("is case-sensitive by default", () => {
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "Alpha"}});
+
+    expect(screen.getByText("Alpha_group")).toBeInTheDocument();
+    expect(screen.queryByText("alpha_lower")).not.toBeInTheDocument();
+    expect(screen.queryByText("Beta_group")).not.toBeInTheDocument();
+  });
+
+  it("becomes case-insensitive when the toggle is unchecked", () => {
+    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "alpha"}});
+
+    expect(screen.getByText("Alpha_group")).toBeInTheDocument();
+    expect(screen.getByText("alpha_lower")).toBeInTheDocument();
+    expect(screen.queryByText("Beta_group")).not.toBeInTheDocument();
+  });
+
+  it("returns to case-sensitive when toggled back", () => {
+    const toggle = screen.getByTestId("group_name_case_sensitive");
+    fireEvent.click(toggle); // off
+    fireEvent.click(toggle); // on again
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "alpha"}});
+
+    expect(screen.queryByText("Alpha_group")).not.toBeInTheDocument();
+    expect(screen.getByText("alpha_lower")).toBeInTheDocument();
+    expect(screen.queryByText("Beta_group")).not.toBeInTheDocument();
+  });
+});

@@ -4,7 +4,12 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
-import {selectFilter, textFilter} from "./Helpers/table_helpers";
+import {
+  caseSensitiveStringFilterMethod,
+  caseSensitiveTextFilter,
+  selectFilter,
+  textFilter,
+} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
 
@@ -575,27 +580,32 @@ class RawGroupsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
-      columns: this.getColumns(props.showSections, props.sections, props.showCoverage),
+      caseSensitive: true,
+      columns: this.getColumns(true),
     };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.showSections !== this.props.showSections ||
       prevProps.sections !== this.props.sections ||
-      prevProps.showCoverage !== this.props.showCoverage
+      prevProps.showCoverage !== this.props.showCoverage ||
+      prevState.caseSensitive !== this.state.caseSensitive
     ) {
-      this.setState({
-        columns: this.getColumns(
-          this.props.showSections,
-          this.props.sections,
-          this.props.showCoverage
-        ),
-      });
+      this.setState({columns: this.getColumns(this.state.caseSensitive)});
     }
   }
 
-  getColumns = (showSections, sections, showCoverage) => {
+  toggleCaseSensitive = () => {
+    this.setState(state => ({caseSensitive: !state.caseSensitive}));
+  };
+
+  groupNameFilter = caseSensitiveTextFilter({
+    getCaseSensitive: () => this.state.caseSensitive,
+    onToggle: this.toggleCaseSensitive,
+  });
+
+  getColumns = caseSensitive => {
     return [
       {
         accessor: "inactive",
@@ -614,7 +624,7 @@ class RawGroupsTable extends React.Component {
         Header: I18n.t("activerecord.models.section", {count: 1}),
         accessor: "section",
         id: "section",
-        show: showSections || false,
+        show: this.props.showSections || false,
         minWidth: 70,
         Cell: ({value}) => {
           return this.props.sections[value] || "";
@@ -627,7 +637,7 @@ class RawGroupsTable extends React.Component {
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(sections).map(kv => ({
+        filterOptions: Object.entries(this.props.sections).map(kv => ({
           value: kv[1],
           text: kv[1],
         })),
@@ -637,6 +647,8 @@ class RawGroupsTable extends React.Component {
         accessor: "group_name",
         id: "group_name",
         minWidth: 150,
+        Filter: this.groupNameFilter,
+        filterMethod: caseSensitiveStringFilterMethod(caseSensitive),
       },
       {
         Header: I18n.t("activerecord.models.ta.other"),
@@ -673,7 +685,7 @@ class RawGroupsTable extends React.Component {
         minWidth: 70,
         className: "number",
         filterable: false,
-        show: showCoverage,
+        show: this.props.showCoverage,
       },
     ];
   };

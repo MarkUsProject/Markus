@@ -1,4 +1,4 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import {GroupsManager} from "../groups_manager";
 import {beforeEach, describe, expect, it} from "@jest/globals";
 import {getTimeExtension} from "../Helpers/table_helpers";
@@ -160,5 +160,77 @@ describe("GroupsManager", () => {
         });
       });
     });
+  });
+});
+
+describe("For the GroupsManager's group name search", () => {
+  beforeEach(async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        templates: [],
+        groups: groupMock,
+        exam_templates: [],
+        students: studentMock,
+        clone_assignments: [],
+      }),
+    });
+    const props = {
+      course_id: 1,
+      timed: false,
+      assignment_id: 2,
+      scanned_exam: false,
+      examTemplates: [],
+      times: ["weeks", "days", "hours", "minutes"],
+    };
+    render(<GroupsManager {...props} />);
+    await screen.findByText("c6scriab");
+  });
+
+  it("is case-sensitive by default", () => {
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "C6"}});
+
+    expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
+  });
+
+  it("matches case-sensitively when given exact case", () => {
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "c6"}});
+
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
+  });
+
+  it("becomes case-insensitive when the toggle is unchecked", () => {
+    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "C6"}});
+
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
+  });
+
+  it("returns to case-sensitive when toggled back", () => {
+    const toggle = screen.getByTestId("group_name_case_sensitive");
+    fireEvent.click(toggle); // off
+    fireEvent.click(toggle); // on again
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "C6"}});
+
+    expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
   });
 });
