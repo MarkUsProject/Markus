@@ -1,8 +1,9 @@
-@import 'markus';
-@import 'constants';
-@import 'navigation';
-@import 'ocr_suggestions';
-@import '../../../../node_modules/@fortawesome/fontawesome-svg-core/styles';
+@use 'markus';
+@use 'constants' as *;
+@use 'navigation';
+@use 'ocr_suggestions';
+@use 'mixins';
+@use '../../../../node_modules/@fortawesome/fontawesome-svg-core/styles';
 
 #about_dialog {
   max-height: 75%;
@@ -93,7 +94,7 @@ th.required::after {
   background: $background-main;
   padding: $dimen-vertical $dimen-horizontal;
 
-  @include breakpoint(mobile) {
+  @include mixins.breakpoint(mobile) {
     margin-top: 3.5em;
     padding: $dimen-vertical $dimen-hor-mobile;
   }
@@ -140,7 +141,7 @@ th.required::after {
   .heading_buttons {
     display: table-cell;
 
-    @include breakpoint(mobile) {
+    @include mixins.breakpoint(mobile) {
       display: block;
     }
   }
@@ -149,7 +150,7 @@ th.required::after {
     text-align: right;
     vertical-align: middle;
 
-    @include breakpoint(mobile) {
+    @include mixins.breakpoint(mobile) {
       text-align: left;
     }
   }
@@ -269,7 +270,7 @@ th.required::after {
   word-break: break-all;
 }
 
-@include breakpoint(mobile) {
+@include mixins.breakpoint(mobile) {
   button,
   .button,
   .form-control {

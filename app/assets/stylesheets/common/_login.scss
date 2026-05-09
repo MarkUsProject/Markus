@@ -1,5 +1,5 @@
-@import 'mixins';
-@import 'constants';
+@use 'mixins';
+@use 'constants' as *;
 /**
  * Login screen
  */
@@ -17,7 +17,7 @@
   width: 500px;
 
   /* Mobile friendly! */
-  @include breakpoint(tiny) {
+  @include mixins.breakpoint(tiny) {
     border-radius: 0;
     box-shadow: none;
     left: 0;

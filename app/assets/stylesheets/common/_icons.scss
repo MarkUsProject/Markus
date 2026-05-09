@@ -1,3 +1,6 @@
+@use 'constants' as *;
+@use 'mixins';
+
 .icon-left {
   margin-right: 5px;
 }
@@ -12,7 +15,7 @@ a[role='button'] > .svg-inline--fa {
   padding-right: 5px;
   vertical-align: baseline;
 
-  @include breakpoint(mobile) {
+  @include mixins.breakpoint(mobile) {
     padding-right: 0;
   }
 
@@ -27,7 +30,7 @@ a[role='button'] > .fa-layers {
   margin-right: 5px;
   vertical-align: baseline;
 
-  @include breakpoint(mobile) {
+  @include mixins.breakpoint(mobile) {
     margin-right: 0;
   }
 

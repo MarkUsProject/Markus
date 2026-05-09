@@ -1,5 +1,5 @@
 /* MarkUs custom styling */
-@import 'constants';
+@use 'constants' as *;
 
 .markus-annotation {
   background-color: $light-alert;
