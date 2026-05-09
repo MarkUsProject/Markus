@@ -46,6 +46,7 @@
 - Improved performance of `Table` component (#7919)
 - Updated GitHub Actions dependencies and added Dependabot config for quarterly GitHub Actions updates (#7920)
 - Updated `pdfjs-dist` to v5.6.205 (#7942)
+- Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
 
 ## [v2.9.6]
 

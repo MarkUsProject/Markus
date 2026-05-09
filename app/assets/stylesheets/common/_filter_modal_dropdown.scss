@@ -1,6 +1,6 @@
-@import 'constants';
+@use 'constants' as *;
 
-@mixin filter-modal-dropdown {
+@mixin styles {
   height: 30px;
   width: $dropdown-horizontal;
 

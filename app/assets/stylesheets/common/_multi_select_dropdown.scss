@@ -1,8 +1,8 @@
-@import 'constants';
-@import 'filter_modal_dropdown';
+@use 'constants' as *;
+@use 'filter_modal_dropdown';
 
 .dropdown.multi-select-dropdown {
-  @include filter-modal-dropdown;
+  @include filter_modal_dropdown.styles;
   padding: 0.25em;
 
   .tags-box {

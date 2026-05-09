@@ -1,4 +1,5 @@
-@import 'constants';
+@use 'constants' as *;
+@use 'mixins';
 
 // These styles are partially derived from React Table v6.
 // https://github.com/TanStack/table/blob/v6/src/index.styl
@@ -616,7 +617,7 @@
     min-width: 100px;
     padding: 0 0.4em;
 
-    @include breakpoint(mobile) {
+    @include mixins.breakpoint(mobile) {
       min-width: 3em;
     }
   }

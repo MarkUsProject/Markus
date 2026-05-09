@@ -1,4 +1,5 @@
-@import 'common/core';
+@use 'common/constants' as *;
+@use 'common/mixins';
 
 /* Peer Review Styles */
 
@@ -207,7 +208,7 @@
     display: flex;
     width: 100%;
 
-    @include breakpoint(small) {
+    @include mixins.breakpoint(small) {
       display: block;
     }
   }
@@ -227,7 +228,7 @@
   #right-pane {
     overflow: auto;
 
-    @include breakpoint(small) {
+    @include mixins.breakpoint(small) {
       display: block;
       float: none;
       width: 100% !important;
@@ -238,7 +239,7 @@
     margin-right: 3px;
     width: 70%;
 
-    @include breakpoint(small) {
+    @include mixins.breakpoint(small) {
       margin-bottom: 1em;
       padding-right: 0;
     }
@@ -248,7 +249,7 @@
     margin-left: 3px;
     width: 29.5%;
 
-    @include breakpoint(small) {
+    @include mixins.breakpoint(small) {
       padding-left: 0;
     }
   }
@@ -259,7 +260,7 @@
     position: inherit;
     width: 4px;
 
-    @include breakpoint(small) {
+    @include mixins.breakpoint(small) {
       display: none;
     }
   }
