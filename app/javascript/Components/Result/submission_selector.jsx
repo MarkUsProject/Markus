@@ -57,7 +57,7 @@ export class SubmissionSelector extends React.Component {
       buttonText = I18n.t("submissions.unrelease_marks");
       disabled = false;
       icon = (
-        <span className="fa-layers fa-fw">
+        <span className="fa-layers">
           <FontAwesomeIcon
             icon="fa-solid fa-envelope-circle-check"
             color={document.documentElement.style.getPropertyValue("--disabled_text")}
