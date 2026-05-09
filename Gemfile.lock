@@ -105,7 +105,7 @@ GEM
       debug_inspector (>= 1.2.0)
     bootsnap (1.24.0)
       msgpack (~> 1.2)
-    brakeman (7.1.0)
+    brakeman (8.0.4)
       racc
     browser (6.2.0)
     builder (3.3.0)
@@ -273,7 +273,7 @@ GEM
     multi_json (1.15.0)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
-    net-imap (0.6.2)
+    net-imap (0.6.4)
       date
       net-protocol
     net-pop (0.1.2)
@@ -283,7 +283,7 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.19.2)
+    nokogiri (1.19.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     observer (0.1.2)
@@ -493,7 +493,7 @@ GEM
     thor (1.5.0)
     tilt (2.6.1)
     timecop (0.9.10)
-    timeout (0.6.0)
+    timeout (0.6.1)
     tsort (0.2.0)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
