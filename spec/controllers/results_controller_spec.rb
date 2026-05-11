@@ -1402,6 +1402,10 @@ describe ResultsController do
   end
 
   shared_examples 'show result with old_total' do
+    before do
+      create(:ta_membership, role: ta, grouping: grouping)
+    end
+
     context 'when format is json' do
       it 'returns the total mark of the original result in old_total when it exists' do
         original_result = create(:complete_result, submission: submission)
