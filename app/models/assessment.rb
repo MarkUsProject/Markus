@@ -89,6 +89,14 @@ class Assessment < ApplicationRecord
     self.due_date > Time.current
   end
 
+  def currently_hidden?
+    return true if is_hidden
+    return true if visible_on.present? && Time.current < visible_on
+    return true if visible_until.present? && Time.current > visible_until
+
+    false
+  end
+
   # Returns grade distribution histogram bins of the grades for this assessment, using the grades in
   # self.completed_result_marks.
   def grade_distribution_array(intervals = 20)

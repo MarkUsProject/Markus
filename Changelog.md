@@ -26,6 +26,7 @@
 - Fix version mismatch between container client and database server (#7916)
 - Fixed filter Canvas Test Student from roster sync (#7926)
 - Fix: include original total mark in JSON response for remark requests (#7945)
+- Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
 
 ### 🔧 Internal changes
 - Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
