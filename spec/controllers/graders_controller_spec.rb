@@ -414,7 +414,7 @@ describe GradersController do
         rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
         expect(rows).to eq([
           ['second_test_group', ['c7benjam']],
-          ['test_group', ['g9browni', 'g9younas']]
+          ['test_group', %w[g9browni g9younas]]
         ])
       end
     end
