@@ -32,6 +32,11 @@ describe GradersController do
       post_as @student, :global_actions, params: { course_id: course.id, assignment_id: assignment.id }
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'GET on :grader_groupings_mapping' do
+      get_as @student, :grader_groupings_mapping, params: { course_id: course.id, assignment_id: assignment.id }
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   context 'An authenticated and authorized instructor' do
@@ -380,6 +385,37 @@ describe GradersController do
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
         end
+      end
+    end
+
+    context 'doing a GET on :grader_groupings_mapping' do
+      it 'returns a CSV mapping each grouping to its assigned graders' do
+        ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+        ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+        ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
+        grouping1 = create(:grouping,
+                           assignment: @assignment,
+                           group: create(:group, course: course, group_name: 'test_group'))
+        grouping2 = create(:grouping,
+                           assignment: @assignment,
+                           group: create(:group, course: course, group_name: 'second_test_group'))
+        grouping1.tas << [ta1, ta2]
+        grouping2.tas << ta3
+
+        get_as @instructor, :grader_groupings_mapping,
+               params: { course_id: course.id, assignment_id: @assignment.id }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq 'text/csv'
+        expect(response.headers['Content-Disposition']).to include('attachment')
+        expect(response.headers['Content-Disposition'])
+          .to include("#{@assignment.short_identifier}_grader_groupings_mapping.csv")
+
+        rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
+        expect(rows).to eq([
+          ['second_test_group', ['c7benjam']],
+          ['test_group', ['g9browni', 'g9younas']]
+        ])
       end
     end
 
