@@ -376,4 +376,87 @@ describe MarksGradersController do
       end
     end
   end
+
+  describe '#randomly_assign' do
+    before do
+      allow(GradeEntryStudent).to receive(:randomly_assign_tas)
+    end
+
+    context 'when students and graders are selected' do
+      it 'calls GradeEntryStudent `randomly_assign_tas` and returns a success response' do
+        student = create(:student)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
+        grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
+
+        expect(GradeEntryStudent).to receive(:randomly_assign_tas).with(
+          [grade_entry_student.id.to_s],
+          [grade_entry_student_ta.id.to_s],
+          grade_entry_form
+        )
+
+        post_as instructor, :randomly_assign, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [grade_entry_student.id],
+          graders: [grade_entry_student_ta.id]
+        }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when students are not selected' do
+      it 'returns bad request and sets a flash error' do
+        post_as instructor, :randomly_assign, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [],
+          graders: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when graders are not selected' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :randomly_assign, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [1],
+          graders: []
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+
+    context 'when students parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :randomly_assign, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          graders: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+    end
+
+    context 'when graders parameter is missing' do
+      it 'returns bad request and sets flash error' do
+        post_as instructor, :randomly_assign, params: {
+          course_id: course.id,
+          grade_entry_form_id: grade_entry_form.id,
+          students: [1]
+        }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('graders.select_a_grader'))
+      end
+    end
+  end
 end
