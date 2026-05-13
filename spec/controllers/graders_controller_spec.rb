@@ -28,6 +28,11 @@ describe GradersController do
       expect(response).to have_http_status(:forbidden)
     end
 
+    it 'GET on :grader_criteria_mapping' do
+      get_as @student, :grader_criteria_mapping, params: { course_id: course.id, assignment_id: assignment.id }
+      expect(response).to have_http_status(:forbidden)
+    end
+
     it 'POST on :global_actions' do
       post_as @student, :global_actions, params: { course_id: course.id, assignment_id: assignment.id }
       expect(response).to have_http_status(:forbidden)
@@ -46,6 +51,34 @@ describe GradersController do
       get_as @instructor, :index, params: { course_id: course.id, assignment_id: @assignment.id }
       expect(response).to have_http_status(:ok)
       expect(assigns(:assignment)).not_to be_nil
+    end
+
+    it 'doing a GET on :grader_criteria_mapping' do
+      @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
+      @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
+      @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
+      @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
+      @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
+      @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
+
+      @criterion1.tas << [@ta1, @ta2]
+      @criterion2.tas << @ta1
+      @criterion3.tas << @ta3
+
+      get_as @instructor, :grader_criteria_mapping, params: { course_id: course.id, assignment_id: @assignment.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to eq('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+      expect(response.headers['Content-Disposition'])
+        .to include("#{@assignment.short_identifier}_grader_criteria_mapping.csv")
+
+      rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
+      expect(rows).to eq([
+        ['class design', ['c7benjam']],
+        ['correctness', %w[g9browni g9younas]],
+        ['style', ['g9browni']]
+      ])
     end
 
     context 'doing a POST on :upload (assigning to groups)' do
