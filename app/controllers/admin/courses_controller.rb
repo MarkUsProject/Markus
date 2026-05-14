@@ -86,7 +86,7 @@ module Admin
     private
 
     def course_create_params
-      params.require(:course).permit(:name, :is_hidden, :display_name, :max_file_size)
+      params.require(:course).permit(:name, :is_hidden, :display_name, :max_file_size, :start_at, :end_at)
     end
 
     def course_update_params
