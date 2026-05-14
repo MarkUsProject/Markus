@@ -56,4 +56,35 @@ describe Assessment do
       expect(assessment.errors[:visible_until]).to include('must be after visible_on')
     end
   end
+
+  describe 'LTI line item resync on update' do
+    let(:assignment) { create(:assignment) }
+    let(:lti_deployment) { create(:lti_deployment, course: assignment.course) }
+
+    context 'when no LTI line item exists for the assessment' do
+      it 'does not enqueue a sync job on due_date change' do
+        expect(LtiLineItemJob).not_to receive(:perform_later)
+        assignment.update!(due_date: 2.days.from_now)
+      end
+    end
+
+    context 'when an LTI line item exists for the assessment' do
+      before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assignment) }
+
+      it 'enqueues a sync job when due_date changes' do
+        expect(LtiLineItemJob).to receive(:perform_later).with([lti_deployment.id], assignment)
+        assignment.update!(due_date: 3.days.from_now)
+      end
+
+      it 'enqueues a sync job when description changes' do
+        expect(LtiLineItemJob).to receive(:perform_later).with([lti_deployment.id], assignment)
+        assignment.update!(description: 'updated description')
+      end
+
+      it 'does not enqueue when only an unrelated attribute changes' do
+        expect(LtiLineItemJob).not_to receive(:perform_later)
+        assignment.update!(message: 'unrelated change')
+      end
+    end
+  end
 end
