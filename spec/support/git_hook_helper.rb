@@ -41,8 +41,8 @@ shared_context 'git_hooks' do
   end
 
   after do
-    FileUtils.rm_r(repo_path)
-    FileUtils.rm_r(repo_bare_path)
+    FileUtils.rm_rf(repo_path, secure: true)
+    FileUtils.rm_rf(repo_bare_path, secure: true)
   end
 
   def commit_changes(changes: '.')
