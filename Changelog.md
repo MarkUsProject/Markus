@@ -25,6 +25,7 @@
 - Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
 - Fix version mismatch between container client and database server (#7916)
 - Fixed filter Canvas Test Student from roster sync (#7926)
+- Fix: include original total mark in JSON response for remark requests (#7945)
 
 ### 🔧 Internal changes
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
