@@ -390,15 +390,11 @@ describe GradersController do
 
     context 'doing a GET on :grader_groupings_mapping' do
       it 'returns a CSV mapping each grouping to its assigned graders' do
-        ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
-        ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
-        ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
-        grouping1 = create(:grouping,
-                           assignment: @assignment,
-                           group: create(:group, course: course, group_name: 'test_group'))
-        grouping2 = create(:grouping,
-                           assignment: @assignment,
-                           group: create(:group, course: course, group_name: 'second_test_group'))
+        ta1 = create(:ta)
+        ta2 = create(:ta)
+        ta3 = create(:ta)
+        grouping1 = create(:grouping, assignment: @assignment, group: create(:group, course: course))
+        grouping2 = create(:grouping, assignment: @assignment, group: create(:group, course: course))
         grouping1.tas << [ta1, ta2]
         grouping2.tas << ta3
 
@@ -413,9 +409,9 @@ describe GradersController do
 
         rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
         expect(rows).to eq([
-          ['second_test_group', ['c7benjam']],
-          ['test_group', %w[g9browni g9younas]]
-        ])
+          [grouping1.group.group_name, [ta1.user.user_name, ta2.user.user_name].sort],
+          [grouping2.group.group_name, [ta3.user.user_name]]
+        ].sort)
       end
     end
 
