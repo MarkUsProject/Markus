@@ -16,6 +16,8 @@
 - Add JS autotester example (#7866)
 - Return structured JSON from grade entry forms API show endpoint with optional student filter and CSV export (#7886)
 - Added term-based suffixes to course names created via LTI to ensure uniqueness across academic years (#7881)
+- Added `db:populate_course_dates` rake task to backfill `start_at`/`end_at` for existing courses, and permit those fields when creating courses through the admin UI (#7925)
+- Sync due date when creating or updating LTI gradebook line items, and re-sync automatically when an assessment is edited (#7872)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
@@ -23,6 +25,7 @@
 - Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
 - Fix version mismatch between container client and database server (#7916)
 - Fixed filter Canvas Test Student from roster sync (#7926)
+- Fix: include original total mark in JSON response for remark requests (#7945)
 
 ### 🔧 Internal changes
 - Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
@@ -48,6 +51,7 @@
 - Updated GitHub Actions dependencies and added Dependabot config for quarterly GitHub Actions updates (#7920)
 - Updated `pdfjs-dist` to v5.6.205 (#7942)
 - Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
+- Fixed flaky git-hooks tests (#7950)
 
 ## [v2.9.6]
 
