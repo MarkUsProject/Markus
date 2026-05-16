@@ -188,10 +188,10 @@ export class ImageViewer extends React.PureComponent {
     let picture = document.getElementById("image_preview");
 
     if (this.state.rotation > 0) {
-      picture.addClass("rotate" + this.state.rotation.toString());
-      picture.removeClass("rotate" + (this.state.rotation - 90).toString());
+      picture.classList.add("rotate" + this.state.rotation.toString());
+      picture.classList.remove("rotate" + (this.state.rotation - 90).toString());
     } else {
-      picture.removeClass("rotate270");
+      picture.classList.remove("rotate270");
     }
   };
 

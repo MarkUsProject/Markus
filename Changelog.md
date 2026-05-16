@@ -51,6 +51,7 @@
 - Updated `pdfjs-dist` to v5.6.205 (#7942)
 - Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
 - Fixed flaky git-hooks tests (#7950)
+- Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
 
 ## [v2.9.6]
 
