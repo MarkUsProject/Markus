@@ -1,5 +1,6 @@
 import React from "react";
 import Prism from "prismjs";
+import {TextAnnotationManager} from "../../common/annotations/text_annotation_manager";
 
 export class TextViewer extends React.PureComponent {
   constructor(props) {
@@ -144,7 +145,7 @@ export class TextViewer extends React.PureComponent {
     this.highlight_root.style.font_size = this.state.fontSize + "em";
 
     if (this.props.resultView) {
-      window.annotation_type = ANNOTATION_TYPES.CODE;
+      window.annotation_type = window.ANNOTATION_TYPES.CODE;
 
       window.annotation_manager = new TextAnnotationManager(this.raw_content.current.children);
       this.annotation_manager = window.annotation_manager;

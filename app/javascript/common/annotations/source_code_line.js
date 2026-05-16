@@ -14,7 +14,7 @@
       to enable unglowing with overlapping annotations.
 */
 
-class SourceCodeLine {
+export class SourceCodeLine {
   constructor(line_node) {
     // line_node is the DOM element that holds a line of source code
     this.line_node = line_node;
