@@ -54,16 +54,18 @@ describe GradersController do
     end
 
     it 'doing a GET on :grader_criteria_mapping' do
-      @ta1 = create(:ta, user: create(:end_user, user_name: 'g9browni'))
-      @ta2 = create(:ta, user: create(:end_user, user_name: 'g9younas'))
-      @ta3 = create(:ta, user: create(:end_user, user_name: 'c7benjam'))
-      @criterion1 = create(:rubric_criterion, assignment: @assignment, name: 'correctness')
-      @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
-      @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
+      ta1 = create(:ta)
+      ta2 = create(:ta)
+      ta3 = create(:ta)
+      criterion1 = create(:rubric_criterion, assignment: @assignment)
+      criterion2 = create(:rubric_criterion, assignment: @assignment)
+      criterion3 = create(:rubric_criterion, assignment: @assignment)
 
-      @criterion1.tas << [@ta1, @ta2]
-      @criterion2.tas << @ta1
-      @criterion3.tas << @ta3
+      criterion1.tas << [ta1, ta2]
+      criterion2.tas << ta1
+      criterion3.tas << ta3
+
+      [ta1.user.user_name, ta2.user.user_name].sort
 
       get_as @instructor, :grader_criteria_mapping, params: { course_id: course.id, assignment_id: @assignment.id }
 
@@ -75,10 +77,10 @@ describe GradersController do
 
       rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
       expect(rows).to eq([
-        ['class design', ['c7benjam']],
-        ['correctness', %w[g9browni g9younas]],
-        ['style', ['g9browni']]
-      ])
+        [criterion1.name, [ta1.user.user_name, ta2.user.user_name].sort],
+        [criterion2.name, [ta1.user.user_name]],
+        [criterion3.name, [ta3.user.user_name]]
+      ].sort)
     end
 
     context 'doing a POST on :upload (assigning to groups)' do

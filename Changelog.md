@@ -7,7 +7,6 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
 - Improve admin user list loading time by replacing ActiveRecord instantiation with direct column extraction (#7897)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
@@ -26,6 +25,7 @@
 - Fixed filter Canvas Test Student from roster sync (#7926)
 
 ### 🔧 Internal changes
+- Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
