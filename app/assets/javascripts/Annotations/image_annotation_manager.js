@@ -67,9 +67,9 @@ class ImageAnnotationManager extends AnnotationManager {
       if (holder === null) {
         holder = document.createElement("div");
         holder.id = "annotation_holder_" + annotation_id;
-        holder.addClass("annotation_holder");
+        holder.classList.add("annotation_holder");
         if (this.annotations[annotation_id].is_remark) {
-          holder.addClass("remark");
+          holder.classList.add("remark");
         }
         holder.onmousemove = this.check_for_annotations.bind(this);
         if (this.enable_annotations) {

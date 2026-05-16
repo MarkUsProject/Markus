@@ -53,7 +53,7 @@
 
       let $control = document.createElement("div");
       $control.id = "sel_box";
-      $control.addClass("annotation-holder-active");
+      $control.classList.add("annotation-holder-active");
       $control.style.display = "none";
 
       // append $control before the first annotation_holder but after the annotationLayer
@@ -219,9 +219,9 @@
 
       let $control = document.createElement("div");
       $control.id = "annotation_holder_" + annotation_id;
-      $control.addClass("annotation_holder");
+      $control.classList.add("annotation_holder");
       if (this.annotations[annotation_id].is_remark) {
-        $control.addClass("remark");
+        $control.classList.add("remark");
       }
       $control.style.top = (newCoords.y1 / COORDINATE_MULTIPLIER) * 100 + "%";
       $control.style.left = (newCoords.x1 / COORDINATE_MULTIPLIER) * 100 + "%";
