@@ -28,6 +28,7 @@
 - Fix: include original total mark in JSON response for remark requests (#7945)
 
 ### 🔧 Internal changes
+- Added tests for `GradersController` to fully cover `grader_groupers_mapping` (#7946)
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
