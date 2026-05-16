@@ -41,7 +41,7 @@
     }
   }
 
-  .array-item-add > .svg-inline--fa {
+  .rjsf-array-item-add > .svg-inline--fa {
     padding-right: 0;
   }
 
@@ -49,7 +49,7 @@
     min-width: 150px;
   }
 
-  .array-item {
+  .rjsf-array-item {
     border: 1px solid $primary-two;
     border-radius: $radius;
     display: flex;
@@ -163,7 +163,7 @@
       width: initial;
     }
 
-    .array-item {
+    .rjsf-array-item {
       border: 0;
     }
   }
