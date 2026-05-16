@@ -95,6 +95,7 @@ import "./common/menu";
 import "./common/react_config";
 import "./common/redirect";
 import "./common/fetch_proxy";
+import "./common/annotations/globals";
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.

@@ -5,12 +5,9 @@
     displaying that div at given coordinates, and hiding that div.
 
     Multiple texts are displayed at once, and each one is contained with a <p> tag.
-
-    Rules:
-    - Assumes existence of AnnotationText class
 */
 
-class AnnotationTextDisplayer {
+export class AnnotationTextDisplayer {
   constructor() {
     // Create the div that we will display in
     this.display_node = document.createElement("div");

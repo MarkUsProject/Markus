@@ -1,9 +1,11 @@
+import {AbstractAnnotationManager} from "./annotation_manager";
+
 /**
- * AnnotationManager subclass for PDF files.
+ * AbstractAnnotationManager subclass for PDF files.
  *
  * @param {boolean} enable_annotations Whether annotations can be modified
  */
-class ImageAnnotationManager extends AnnotationManager {
+export class ImageAnnotationManager extends AbstractAnnotationManager {
   constructor(enable_annotations) {
     super();
     this.enable_annotations = enable_annotations;

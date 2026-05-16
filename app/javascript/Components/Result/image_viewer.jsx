@@ -1,5 +1,6 @@
 import React from "react";
 import heic2any from "heic2any";
+import {ImageAnnotationManager} from "../../common/annotations/image_annotation_manager";
 
 export class ImageViewer extends React.PureComponent {
   constructor(props) {
@@ -56,7 +57,7 @@ export class ImageViewer extends React.PureComponent {
   };
 
   ready_annotations = () => {
-    window.annotation_type = ANNOTATION_TYPES.IMAGE;
+    window.annotation_type = window.ANNOTATION_TYPES.IMAGE;
 
     $(".annotation_holder").remove();
     window.annotation_manager = new ImageAnnotationManager(!this.props.released_to_students);

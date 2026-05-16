@@ -53,6 +53,7 @@
 - Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
 - Fixed flaky git-hooks tests (#7950)
 - Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
+- Moved annotation-related Javascript to be bundled with webpack (#7953)
 
 ## [v2.9.6]
 
