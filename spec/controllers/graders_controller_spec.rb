@@ -65,8 +65,6 @@ describe GradersController do
       criterion2.tas << ta1
       criterion3.tas << ta3
 
-      [ta1.user.user_name, ta2.user.user_name].sort
-
       get_as @instructor, :grader_criteria_mapping, params: { course_id: course.id, assignment_id: @assignment.id }
 
       expect(response).to have_http_status(:ok)
