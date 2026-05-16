@@ -252,6 +252,70 @@
     };
 
     /**
+     * Returns a fallback 40×40 selection centred at the last right-click position,
+     * for use when no area is currently selected.
+     * Applies the same inverse-rotation correction as getSelection() so that
+     * renderAnnotation()'s forward rotation produces the correct screen position.
+     * @returns {{x1, y1, x2, y2, page}|false}
+     */
+    getFallbackSelection() {
+      // Find which page element was right-clicked.
+      const e = this.last_click_event;
+      let pageEl = null;
+      let pageNumber = 1;
+
+      if (e) {
+        // Walk up from the event target to find the page container.
+        let el = document.elementFromPoint(e.clientX, e.clientY);
+        while (el && el !== document.body) {
+          if (el.dataset && el.dataset.pageNumber) {
+            pageEl = el;
+            pageNumber = parseInt(el.dataset.pageNumber, 10);
+            break;
+          }
+          el = el.parentElement;
+        }
+      }
+
+      if (!pageEl) {
+        // Fall back to first visible page.
+        const $firstPage = $(".page[data-page-number]").first();
+        if ($firstPage.length) {
+          pageEl = $firstPage[0];
+          pageNumber = $firstPage.data("page-number");
+        }
+      }
+
+      if (!pageEl) return false;
+
+      const rect = pageEl.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return false;
+
+      // Click position as percentage of page dimensions, scaled by COORDINATE_MULTIPLIER.
+      const clickX = e ? e.clientX - rect.left : rect.width / 2;
+      const clickY = e ? e.clientY - rect.top : rect.height / 2;
+      const cx = Math.round((clickX / rect.width) * COORDINATE_MULTIPLIER);
+      const cy = Math.round((clickY / rect.height) * COORDINATE_MULTIPLIER);
+
+      // 40px in COORDINATE_MULTIPLIER units relative to page size.
+      const halfX = Math.round((20 / rect.width) * COORDINATE_MULTIPLIER);
+      const halfY = Math.round((20 / rect.height) * COORDINATE_MULTIPLIER);
+
+      // 40x40 box centred at click, clamped to page bounds.
+      const box = {
+        x1: Math.max(0, cx - halfX),
+        y1: Math.max(0, cy - halfY),
+        x2: Math.min(COORDINATE_MULTIPLIER, cx + halfX),
+        y2: Math.min(COORDINATE_MULTIPLIER, cy + halfY),
+      };
+
+      // Apply the same inverse-rotation correction that getSelection() applies,
+      // so renderAnnotation()'s forward rotation produces the correct screen position.
+      const rotated = getRotatedCoords(box, 360 - this.angle);
+      return {...rotated, page: pageNumber};
+    }
+
+    /**
      * The following two functions are used to keep track of the orientation of
      * the PDF so we know how to render the annotations.
      */

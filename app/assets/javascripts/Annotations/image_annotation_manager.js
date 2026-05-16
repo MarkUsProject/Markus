@@ -313,6 +313,41 @@ class ImageAnnotationManager extends AnnotationManager {
     return box;
   }
 
+  /**
+   * Returns a fallback 40×40 px selection centred at the last right-click position,
+   * for use when no area is currently selected.
+   * @returns {{x1, y1, x2, y2}|false}
+   */
+  getFallbackSelection() {
+    const img = this.image_preview; // the <img> DOM element
+    if (!img) return false;
+
+    const rect = img.getBoundingClientRect();
+    const displayWidth = rect.width;
+    const displayHeight = rect.height;
+    if (displayWidth === 0 || displayHeight === 0) return false;
+
+    // Convert page click position to position within the displayed image.
+    const e = this.last_click_event;
+    const clickX = e ? e.clientX - rect.left : displayWidth / 2;
+    const clickY = e ? e.clientY - rect.top : displayHeight / 2;
+
+    // Scale from display pixels to image natural pixels.
+    const scaleX = img.naturalWidth / displayWidth;
+    const scaleY = img.naturalHeight / displayHeight;
+    const imgX = Math.round(clickX * scaleX);
+    const imgY = Math.round(clickY * scaleY);
+
+    // 40x40 box centred at click, clamped to image bounds.
+    const half = 20;
+    return {
+      x1: Math.max(0, imgX - half),
+      y1: Math.max(0, imgY - half),
+      x2: Math.min(img.naturalWidth, imgX + half),
+      y2: Math.min(img.naturalHeight, imgY + half),
+    };
+  }
+
   get_selection_box_coordinates() {
     let img = this.image_preview;
     let zoomHeight = img.height;

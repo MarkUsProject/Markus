@@ -136,15 +136,22 @@ export var annotation_context_menu = {
         menu_items.download,
       ],
       beforeOpen: function (event, ui) {
-        // Enable annotation menu items only if a selection has been made
-        var selection_exists = !!window.annotation_manager.getSelection(false);
-        $(document).contextmenu("enableEntry", "check_mark_annotation", selection_exists);
-        $(document).contextmenu("enableEntry", "thumbs_up_annotation", selection_exists);
-        $(document).contextmenu("enableEntry", "heart_annotation", selection_exists);
-        $(document).contextmenu("enableEntry", "smile_annotation", selection_exists);
-        $(document).contextmenu("enableEntry", "new_annotation", selection_exists);
-        $(document).contextmenu("enableEntry", "common_annotations", selection_exists);
-        $(document).contextmenu("enableEntry", "copy", selection_exists);
+        // Store right-click event so annotation managers can use the click position for fallback
+        // selections. Note: on touch/long-press (taphold: true above), clientX/clientY may be
+        // zero on the jQuery synthetic event — this is a pre-existing quirk of the taphold path.
+        if (window.annotation_manager) {
+          window.annotation_manager.last_click_event = event;
+        }
+        // Annotation creation items are always enabled; fallback selection synthesized on use.
+        $(document).contextmenu("enableEntry", "check_mark_annotation", true);
+        $(document).contextmenu("enableEntry", "thumbs_up_annotation", true);
+        $(document).contextmenu("enableEntry", "heart_annotation", true);
+        $(document).contextmenu("enableEntry", "smile_annotation", true);
+        $(document).contextmenu("enableEntry", "new_annotation", true);
+        $(document).contextmenu("enableEntry", "common_annotations", true);
+        // copy requires an actual browser text selection, not an annotation region.
+        var text_selected = !!(window.getSelection && window.getSelection().type === "Range");
+        $(document).contextmenu("enableEntry", "copy", text_selected);
 
         var has_common_annot =
           $(document).contextmenu("getMenu").find(".has_common_annotations").length > 0;

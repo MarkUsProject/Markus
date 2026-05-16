@@ -31,7 +31,7 @@ function check_annotation_overlap(range) {
   );
 }
 
-function get_html_annotation_range() {
+function get_html_annotation_range(warn = true) {
   const iframe = document.getElementById("html-content");
   const target = iframe.contentDocument;
   const selection = target.getSelection();
@@ -39,12 +39,14 @@ function get_html_annotation_range() {
     const range = selection.getRangeAt(0);
     if (check_annotation_overlap(range)) {
       alert(I18n.t("results.annotation.no_overlap"));
-      return {};
+      return null;
     }
     if (range.startOffset !== range.endOffset || range.startContainer !== range.endContainer) {
       return range;
     }
   }
-  alert(I18n.t("results.annotation.select_some_text"));
-  return {};
+  if (warn) {
+    alert(I18n.t("results.annotation.select_some_text"));
+  }
+  return null;
 }

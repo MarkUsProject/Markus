@@ -337,18 +337,31 @@ class Result extends React.Component {
   extend_with_selection_data = annotation_data => {
     let box;
     if (annotation_type === ANNOTATION_TYPES.HTML) {
-      const range = get_html_annotation_range();
-      box = {
-        start_node: pathToNode(range.startContainer),
-        start_offset: range.startOffset,
-        end_node: pathToNode(range.endContainer),
-        end_offset: range.endOffset,
-      };
+      const range = get_html_annotation_range(false); // suppress alert
+      if (range && range.startContainer) {
+        box = {
+          start_node: pathToNode(range.startContainer),
+          start_offset: range.startOffset,
+          end_node: pathToNode(range.endContainer),
+          end_offset: range.endOffset,
+        };
+      } else {
+        box = synthesize_html_fallback_selection();
+      }
     } else {
-      box = window.annotation_manager.getSelection();
+      // annotation_manager is null only for HTML files, which are handled by the branch
+      // above. This guard is unreachable in production but kept as a defensive safety net.
+      if (!window.annotation_manager) return;
+      box = window.annotation_manager.getSelection(false);
+      if (!box) {
+        box = window.annotation_manager.getFallbackSelection();
+      }
     }
     if (box) {
       return Object.assign(annotation_data, box);
+    } else {
+      alert(I18n.t("results.annotation.cannot_annotate_empty"));
+      return undefined;
     }
   };
 
@@ -1090,4 +1103,49 @@ export function makeResult(elem, props) {
   const component = React.createRef();
   root.render(<Result {...props} ref={component} />);
   return component;
+}
+
+/**
+ * Synthesize a fallback HTML annotation selection for when no text is currently selected
+ * in the HTML iframe. Finds the first text node in the iframe body and creates a
+ * single-character range at offset 0.
+ *
+ * Must live in result.jsx (not html_annotations.js) because it uses pathToNode,
+ * which is an ES module export and is not available in the legacy IIFE scripts.
+ *
+ * @returns {{start_node, start_offset, end_node, end_offset}|null}
+ */
+export function synthesize_html_fallback_selection() {
+  const iframe = document.getElementById("html-content");
+  if (!iframe) return null;
+  const target = iframe.contentDocument;
+  if (!target || !target.body) return null;
+
+  function findFirstTextNode(node) {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
+      return node;
+    }
+    for (const child of node.childNodes) {
+      const found = findFirstTextNode(child);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  const textNode = findFirstTextNode(target.body);
+  if (!textNode) return null;
+
+  const range = target.createRange();
+  range.setStart(textNode, 0);
+  range.setEnd(textNode, 1);
+
+  if (typeof check_annotation_overlap === "function" && check_annotation_overlap(range))
+    return null;
+
+  return {
+    start_node: pathToNode(textNode),
+    start_offset: 0,
+    end_node: pathToNode(textNode),
+    end_offset: 1,
+  };
 }
