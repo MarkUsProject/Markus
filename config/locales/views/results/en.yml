@@ -3,6 +3,7 @@ en:
   results:
     annotation:
       across_all_submission_files: Click on the filename to jump to the annotation.
+      cannot_annotate_empty: 'Cannot create annotation: the file has no content to annotate.'
       common: Common Annotations
       feedback_generated_header: 'Feedback generated from automated test run on %{time}:'
       include_in_download: Include Annotations

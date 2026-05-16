@@ -213,6 +213,27 @@ class TextAnnotationManager extends AnnotationManager {
     };
   }
 
+  /**
+   * Returns a fallback selection (first character of the first non-empty line)
+   * for use when no text is currently selected.
+   * @returns {{line_start, line_end, column_start, column_end}|false}
+   */
+  getFallbackSelection() {
+    // source_lines[0] is a null dummy; real lines start at index 1.
+    for (let i = 1; i < this.source_lines.length; i++) {
+      const lineContent = this.source_lines[i] ? this.source_lines[i].line_node.textContent : "";
+      if (lineContent.trim().length > 0) {
+        return {
+          line_start: i,
+          line_end: i,
+          column_start: 0,
+          column_end: 1,
+        };
+      }
+    }
+    return false; // empty file or all blank lines
+  }
+
   // Given some node, traverses upwards until it finds the span element that represents a line of code.
   // This is useful for figuring out what text is currently selected, using window.getSelection().anchorNode / focusNode
   getRootFromSelection(node) {
