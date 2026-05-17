@@ -842,6 +842,18 @@ describe GroupsController do
       end
     end
 
+    describe '#check_for_groupings' do
+      let(:grouping) { create(:grouping_with_inviter) }
+
+      it 'should return a bad request when no grouping is selected.' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                   assignment_id: grouping.assignment.id,
+                                                   groupings: [],
+                                                   global_actions: 'valid' }
+        expect(response).to have_http_status(:bad_request)
+      end
+    end
+
     describe '#add_members' do
       let(:grouping) { create(:grouping_with_inviter) }
       let(:grouping2) { create(:grouping_with_inviter, assignment: grouping.assignment) }
