@@ -159,6 +159,7 @@ Mimis Chlympatsos
 Mina Almasry
 Misa Sakamoto
 Misha Schwartz
+Muhammad Rafie
 Nathan ChowNeha Kumar
 Neha Kumar
 Nelle Varoquaux
@@ -223,6 +224,7 @@ William Roy
 Wilson Chiang
 Xiang Yu
 Yansong Zang
+Yanzhen Chen
 Yiqi Zhu
 Yujin Cho
 Yusi Fan

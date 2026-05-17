@@ -1,9 +1,11 @@
+import {AbstractAnnotationManager} from "./annotation_manager";
+
 /**
- * AnnotationManager subclass for PDF files.
+ * AbstractAnnotationManager subclass for PDF files.
  *
  * @param {boolean} enable_annotations Whether annotations can be modified
  */
-class ImageAnnotationManager extends AnnotationManager {
+export class ImageAnnotationManager extends AbstractAnnotationManager {
   constructor(enable_annotations) {
     super();
     this.enable_annotations = enable_annotations;
@@ -67,9 +69,9 @@ class ImageAnnotationManager extends AnnotationManager {
       if (holder === null) {
         holder = document.createElement("div");
         holder.id = "annotation_holder_" + annotation_id;
-        holder.addClass("annotation_holder");
+        holder.classList.add("annotation_holder");
         if (this.annotations[annotation_id].is_remark) {
-          holder.addClass("remark");
+          holder.classList.add("remark");
         }
         holder.onmousemove = this.check_for_annotations.bind(this);
         if (this.enable_annotations) {

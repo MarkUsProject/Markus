@@ -65,5 +65,5 @@ export function set_theme(theme) {
       document.documentElement.style.setProperty("--" + color, themes.light[color]);
     });
   }
-  document.body.addClass("color-" + theme);
+  document.body.classList.add("color-" + theme);
 }

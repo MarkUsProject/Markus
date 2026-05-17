@@ -4,7 +4,7 @@
  * This class is in charge of controlling the Annotation Texts
  */
 
-class AnnotationTextManager {
+export class AnnotationTextManager {
   constructor() {
     this.annotation_texts = {};
   }

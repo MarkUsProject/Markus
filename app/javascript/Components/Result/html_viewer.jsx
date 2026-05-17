@@ -15,7 +15,7 @@ export class HTMLViewer extends React.PureComponent {
   }
 
   readyAnnotations = () => {
-    annotation_type = ANNOTATION_TYPES.HTML;
+    window.annotation_type = window.ANNOTATION_TYPES.HTML;
   };
 
   renderAnnotations = () => {

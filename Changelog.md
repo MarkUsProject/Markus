@@ -29,6 +29,8 @@
 
 ### 🔧 Internal changes
 - Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
+- Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
+- Added tests for `GradersController` to fully cover `grader_groupers_mapping` (#7946)
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
@@ -52,6 +54,9 @@
 - Updated `pdfjs-dist` to v5.6.205 (#7942)
 - Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
 - Fixed flaky git-hooks tests (#7950)
+- Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
+- Moved annotation-related Javascript to be bundled with webpack (#7953)
+- Upgraded `react-jsonschema-form` to v6.5.2 (#7954)
 
 ## [v2.9.6]
 
