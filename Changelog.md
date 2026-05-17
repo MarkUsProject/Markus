@@ -54,6 +54,7 @@
 - Fixed flaky git-hooks tests (#7950)
 - Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
 - Moved annotation-related Javascript to be bundled with webpack (#7953)
+- Upgraded `react-jsonschema-form` to v6.5.2 (#7954)
 
 ## [v2.9.6]
 
