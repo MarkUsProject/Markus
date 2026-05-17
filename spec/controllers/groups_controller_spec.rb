@@ -887,6 +887,52 @@ describe GroupsController do
       end
     end
 
+    describe '#add_member' do
+      let(:grouping) { create(:grouping) }
+      let(:student1) { create(:student) }
+
+      it 'should assign inviter status when grouping has no members' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping],
+                                                      students: [student1.id],
+                                                      global_actions: 'assign' }
+        expect(grouping.student_memberships.reload.find_by(role: student1).membership_status)
+          .to eq(StudentMembership::STATUSES[:inviter])
+      end
+
+      it 'should return bad request when student is already in a group for this assignment' do
+        create(:grouping_with_inviter, assignment: grouping.assignment, inviter: student1)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping],
+                                                      students: [student1.id],
+                                                      global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'should return bad request when student cannot be invited' do
+        diff_course_student = create(:student)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping],
+                                                      students: [diff_course_student.id],
+                                                      global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'should set warning_grace_day when student has insufficient grace credits' do
+        student1.update!(grace_credits: 0)
+        allow_any_instance_of(Grouping).to receive(:grace_period_deduction_single).and_return(1)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping],
+                                                      students: [student1.id],
+                                                      global_actions: 'assign' }
+        expect(assigns(:warning_grace_day)).to be_present
+      end
+    end
+
     describe '#remove_members' do
       let(:grouping) { create(:grouping_with_inviter) }
       let(:student1) { create(:student) }
