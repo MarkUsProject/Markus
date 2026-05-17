@@ -56,6 +56,7 @@
 - Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
 - Moved annotation-related Javascript to be bundled with webpack (#7953)
 - Upgraded `react-jsonschema-form` to v6.5.2 (#7954)
+- Fixed CSP warnings and updated CSP config. Switched webpack development source map to `eval-source-map`. (#7956)
 
 ## [v2.9.6]
 
