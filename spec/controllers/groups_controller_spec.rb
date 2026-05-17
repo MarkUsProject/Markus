@@ -847,9 +847,9 @@ describe GroupsController do
 
       it 'should return a bad request when no grouping is selected.' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                   assignment_id: grouping.assignment.id,
-                                                   groupings: [],
-                                                   global_actions: 'valid' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [],
+                                                       global_actions: 'valid' }
         expect(response).to have_http_status(:bad_request)
       end
     end
@@ -872,29 +872,29 @@ describe GroupsController do
 
       it 'should return bad request when more than one grouping is selected' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping, grouping2],
-                                                      students: [student1.id],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping, grouping2],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
       end
 
       it 'should return bad request when no students are selected' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping],
-                                                      students: [],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [],
+                                                       global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
       end
 
       it 'should return bad request when assigning would exceed group_max' do
         grouping.assignment.update!(group_max: 1, student_form_groups: true)
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping],
-                                                      students: [student1.id],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
       end
     end
@@ -905,10 +905,10 @@ describe GroupsController do
 
       it 'should assign inviter status when grouping has no members' do
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping],
-                                                      students: [student1.id],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
         expect(grouping.student_memberships.reload.find_by(role: student1).membership_status)
           .to eq(StudentMembership::STATUSES[:inviter])
       end
@@ -916,20 +916,20 @@ describe GroupsController do
       it 'should return bad request when student is already in a group for this assignment' do
         create(:grouping_with_inviter, assignment: grouping.assignment, inviter: student1)
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping],
-                                                      students: [student1.id],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
       end
 
       it 'should return bad request when student cannot be invited' do
         diff_course_student = create(:student)
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping],
-                                                      students: [diff_course_student.id],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [diff_course_student.id],
+                                                       global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
       end
 
@@ -937,10 +937,10 @@ describe GroupsController do
         student1.update!(grace_credits: 0)
         allow_any_instance_of(Grouping).to receive(:grace_period_deduction_single).and_return(1)
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                      assignment_id: grouping.assignment.id,
-                                                      groupings: [grouping],
-                                                      students: [student1.id],
-                                                      global_actions: 'assign' }
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
         expect(assigns(:warning_grace_day)).to be_present
       end
     end
