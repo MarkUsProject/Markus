@@ -844,6 +844,7 @@ describe GroupsController do
 
     describe '#add_members' do
       let(:grouping) { create(:grouping_with_inviter) }
+      let(:grouping2) { create(:grouping_with_inviter, assignment: grouping.assignment) }
       let(:student1) { create(:student) }
       let(:student2) { create(:student) }
 
@@ -855,6 +856,34 @@ describe GroupsController do
                                                        global_actions: 'assign' }
 
         expect(grouping.students.size).to eq 3
+      end
+
+      it 'should return bad request when more than one grouping is selected' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping, grouping2],
+                                                      students: [student1.id],
+                                                      global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'should return bad request when no students are selected' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping],
+                                                      students: [],
+                                                      global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'should return bad request when assigning would exceed group_max' do
+        grouping.assignment.update!(group_max: 1, student_form_groups: true)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                      assignment_id: grouping.assignment.id,
+                                                      groupings: [grouping],
+                                                      students: [student1.id],
+                                                      global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
       end
     end
 
