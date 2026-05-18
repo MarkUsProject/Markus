@@ -28,6 +28,7 @@
 - Fix: include original total mark in JSON response for remark requests (#7945)
 
 ### 🔧 Internal changes
+- Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb`
 - Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
 - Added tests for `GradersController` to fully cover `grader_groupers_mapping` (#7946)
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
