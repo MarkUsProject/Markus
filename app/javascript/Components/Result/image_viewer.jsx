@@ -1,5 +1,4 @@
 import React from "react";
-import heic2any from "heic2any";
 import {ImageAnnotationManager} from "../../common/annotations/image_annotation_manager";
 
 export class ImageViewer extends React.PureComponent {
@@ -41,7 +40,9 @@ export class ImageViewer extends React.PureComponent {
       // Returns a promise containing an object URL for a JPEG image converted from the HEIC/HEIF format.
       return fetch(this.props.url)
         .then(res => res.blob())
-        .then(blob => heic2any({blob, toType: "image/jpeg"}))
+        .then(blob =>
+          import("heic2any").then(({default: heic2any}) => heic2any({blob, toType: "image/jpeg"}))
+        )
         .then(conversionResult => URL.createObjectURL(conversionResult))
         .then(JPEGObjectURL => this.setState({url: JPEGObjectURL}));
     } else {

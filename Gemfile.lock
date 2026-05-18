@@ -293,8 +293,8 @@ GEM
       racc
     pdf-core (0.10.0)
     pg (1.6.3)
-    pghero (3.7.0)
-      activerecord (>= 7.1)
+    pghero (3.8.0)
+      activerecord (>= 7.2)
     pkg-config (1.6.5)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
