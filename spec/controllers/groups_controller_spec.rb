@@ -797,6 +797,15 @@ describe GroupsController do
     describe '#validate_groupings' do
       let(:grouping) { create(:grouping_with_inviter) }
 
+      it 'should return a bad request when no grouping is selected.' do
+          post_as instructor, :global_actions, params: { course_id: course.id,
+                                                         assignment_id: grouping.assignment.id,
+                                                         groupings: [],
+                                                         global_actions: 'valid' }
+          expect(response).to have_http_status(:bad_request)
+          expect(flash[:error]).not_to be_blank
+      end
+
       it 'should validate groupings' do
         post_as instructor, :global_actions, params: { course_id: course.id,
                                                        assignment_id: grouping.assignment.id,
@@ -842,18 +851,6 @@ describe GroupsController do
       end
     end
 
-    describe '#check_for_groupings' do
-      let(:grouping) { create(:grouping_with_inviter) }
-
-      it 'should return a bad request when no grouping is selected.' do
-        post_as instructor, :global_actions, params: { course_id: course.id,
-                                                       assignment_id: grouping.assignment.id,
-                                                       groupings: [],
-                                                       global_actions: 'valid' }
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
-
     describe '#add_members' do
       let(:grouping) { create(:grouping_with_inviter) }
       let(:grouping2) { create(:grouping_with_inviter, assignment: grouping.assignment) }
@@ -877,6 +874,7 @@ describe GroupsController do
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).not_to be_blank
       end
 
       it 'should return bad request when no students are selected' do
@@ -886,6 +884,7 @@ describe GroupsController do
                                                        students: [],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).not_to be_blank
       end
 
       it 'should return bad request when assigning would exceed group_max' do
@@ -896,20 +895,17 @@ describe GroupsController do
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).not_to be_blank
       end
-    end
-
-    describe '#add_member' do
-      let(:grouping) { create(:grouping) }
-      let(:student1) { create(:student) }
 
       it 'should assign inviter status when grouping has no members' do
+        empty_grouping = create(:grouping)
         post_as instructor, :global_actions, params: { course_id: course.id,
-                                                       assignment_id: grouping.assignment.id,
-                                                       groupings: [grouping],
+                                                       assignment_id: empty_grouping.assignment.id,
+                                                       groupings: [empty_grouping],
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
-        expect(grouping.student_memberships.reload.find_by(role: student1).membership_status)
+        expect(empty_grouping.student_memberships.reload.find_by(role: student1).membership_status)
           .to eq(StudentMembership::STATUSES[:inviter])
       end
 
@@ -921,6 +917,7 @@ describe GroupsController do
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).not_to be_blank
       end
 
       it 'should return bad request when student cannot be invited' do
@@ -931,9 +928,10 @@ describe GroupsController do
                                                        students: [diff_course_student.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).not_to be_blank
       end
 
-      it 'should set warning_grace_day when student has insufficient grace credits' do
+      it 'should flash a warning when student has insufficient grace credits' do
         student1.update!(grace_credits: 0)
         allow_any_instance_of(Grouping).to receive(:grace_period_deduction_single).and_return(1)
         post_as instructor, :global_actions, params: { course_id: course.id,
@@ -941,7 +939,8 @@ describe GroupsController do
                                                        groupings: [grouping],
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
-        expect(assigns(:warning_grace_day)).to be_present
+        expect(flash[:warning]).to be_present
+        expect(grouping.student_memberships.reload.find_by(role: student1)).to be_present
       end
     end
 
