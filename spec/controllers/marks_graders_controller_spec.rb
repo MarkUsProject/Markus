@@ -385,7 +385,7 @@ describe MarksGradersController do
     context 'when students and graders are selected' do
       it 'calls GradeEntryStudent `randomly_assign_tas` and returns a success response' do
         student = create(:student)
-        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role: student)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_by(role: student)
         grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
 
         expect(GradeEntryStudent).to receive(:randomly_assign_tas).with(
