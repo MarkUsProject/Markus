@@ -28,8 +28,18 @@ describe GradersController do
       expect(response).to have_http_status(:forbidden)
     end
 
+    it 'GET on :grader_criteria_mapping' do
+      get_as @student, :grader_criteria_mapping, params: { course_id: course.id, assignment_id: assignment.id }
+      expect(response).to have_http_status(:forbidden)
+    end
+
     it 'POST on :global_actions' do
       post_as @student, :global_actions, params: { course_id: course.id, assignment_id: assignment.id }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'GET on :grader_groupings_mapping' do
+      get_as @student, :grader_groupings_mapping, params: { course_id: course.id, assignment_id: assignment.id }
       expect(response).to have_http_status(:forbidden)
     end
   end
@@ -46,6 +56,34 @@ describe GradersController do
       get_as @instructor, :index, params: { course_id: course.id, assignment_id: @assignment.id }
       expect(response).to have_http_status(:ok)
       expect(assigns(:assignment)).not_to be_nil
+    end
+
+    it 'doing a GET on :grader_criteria_mapping' do
+      ta1 = create(:ta)
+      ta2 = create(:ta)
+      ta3 = create(:ta)
+      criterion1 = create(:rubric_criterion, assignment: @assignment)
+      criterion2 = create(:rubric_criterion, assignment: @assignment)
+      criterion3 = create(:rubric_criterion, assignment: @assignment)
+
+      criterion1.tas << [ta1, ta2]
+      criterion2.tas << ta1
+      criterion3.tas << ta3
+
+      get_as @instructor, :grader_criteria_mapping, params: { course_id: course.id, assignment_id: @assignment.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to eq('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+      expect(response.headers['Content-Disposition'])
+        .to include("#{@assignment.short_identifier}_grader_criteria_mapping.csv")
+
+      rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
+      expect(rows).to eq([
+        [criterion1.name, [ta1.user.user_name, ta2.user.user_name].sort],
+        [criterion2.name, [ta1.user.user_name]],
+        [criterion3.name, [ta3.user.user_name]]
+      ].sort)
     end
 
     context 'doing a POST on :upload (assigning to groups)' do
@@ -380,6 +418,33 @@ describe GradersController do
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
         end
+      end
+    end
+
+    context 'doing a GET on :grader_groupings_mapping' do
+      it 'returns a CSV mapping each grouping to its assigned graders' do
+        ta1 = create(:ta)
+        ta2 = create(:ta)
+        ta3 = create(:ta)
+        grouping1 = create(:grouping, assignment: @assignment, group: create(:group, course: course))
+        grouping2 = create(:grouping, assignment: @assignment, group: create(:group, course: course))
+        grouping1.tas << [ta1, ta2]
+        grouping2.tas << ta3
+
+        get_as @instructor, :grader_groupings_mapping,
+               params: { course_id: course.id, assignment_id: @assignment.id }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq 'text/csv'
+        expect(response.headers['Content-Disposition']).to include('attachment')
+        expect(response.headers['Content-Disposition'])
+          .to include("#{@assignment.short_identifier}_grader_groupings_mapping.csv")
+
+        rows = CSV.parse(response.body).map { |row| [row.first, row.drop(1).sort] }.sort
+        expect(rows).to eq([
+          [grouping1.group.group_name, [ta1.user.user_name, ta2.user.user_name].sort],
+          [grouping2.group.group_name, [ta3.user.user_name]]
+        ].sort)
       end
     end
 

@@ -31,7 +31,7 @@ function check_annotation_overlap(range) {
   );
 }
 
-function get_html_annotation_range() {
+export function get_html_annotation_range() {
   const iframe = document.getElementById("html-content");
   const target = iframe.contentDocument;
   const selection = target.getSelection();

@@ -11,9 +11,6 @@ import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
 import {flashMessage} from "../common/flash";
 
-const ajvOptionsOverrides = {discriminator: true};
-const validator = customizeValidator({ajvOptionsOverrides});
-
 class AutotestManager extends React.Component {
   constructor(props) {
     super(props);
@@ -493,7 +490,7 @@ class AutotestManager extends React.Component {
             uiSchema={this.state.uiSchema}
             formData={this.state.formData}
             onChange={this.handleFormChange}
-            validator={validator}
+            validator={this.props.validator}
             templates={{
               ErrorListTemplate: AutotestErrorList,
               ButtonTemplates: {
@@ -630,8 +627,9 @@ function MoveUpButton(props) {
 }
 
 export function makeAutotestManager(elem, props) {
+  const validator = customizeValidator({ajvOptionsOverrides: {discriminator: true}});
   const root = createRoot(elem);
   const component = React.createRef();
-  root.render(<AutotestManager {...props} ref={component} />);
+  root.render(<AutotestManager {...props} validator={validator} ref={component} />);
   return component;
 }
