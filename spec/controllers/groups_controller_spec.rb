@@ -922,6 +922,7 @@ describe GroupsController do
 
       it 'should return bad request when student cannot be invited' do
         diff_course_student = create(:student)
+        diff_course_student.update!(course: create(:course))
         post_as instructor, :global_actions, params: { course_id: course.id,
                                                        assignment_id: grouping.assignment.id,
                                                        groupings: [grouping],
