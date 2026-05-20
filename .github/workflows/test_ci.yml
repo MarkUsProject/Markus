@@ -36,9 +36,9 @@ jobs:
           --entrypoint redis-server
     env:
       BUNDLE_WITHOUT: development:production:console:unicorn
+      COVERAGE: true
       RAILS_ENV: test
       RSPEC_RENDER_VIEWS: true
-      COVERAGE: true
     permissions:
       contents: read
     steps:

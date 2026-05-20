@@ -3,8 +3,8 @@ require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 
 # Enable simplecov only when COVERAGE environment variable is set to true
-simplecov_enable = ENV.fetch('COVERAGE', nil) == 'true'
-if simplecov_enable
+enable_coverage = ENV.fetch('COVERAGE', nil) == 'true'
+if enable_coverage
   require 'simplecov'
   require 'simplecov-lcov'
 
@@ -103,7 +103,7 @@ RSpec.configure do |config|
     # Override the default driver used by rspec system tests
     driven_by :selenium_remote_chrome
 
-    if simplecov_enable
+    if enable_coverage
       SimpleCov.command_name 'system'
     end
   end
