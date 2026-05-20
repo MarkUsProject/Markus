@@ -797,6 +797,15 @@ describe GroupsController do
     describe '#validate_groupings' do
       let(:grouping) { create(:grouping_with_inviter) }
 
+      it 'should return a bad request when no grouping is selected.' do
+          post_as instructor, :global_actions, params: { course_id: course.id,
+                                                         assignment_id: grouping.assignment.id,
+                                                         groupings: [],
+                                                         global_actions: 'valid' }
+          expect(response).to have_http_status(:bad_request)
+          expect(flash[:error]).to have_message(I18n.t('groups.select_a_group'))
+      end
+
       it 'should validate groupings' do
         post_as instructor, :global_actions, params: { course_id: course.id,
                                                        assignment_id: grouping.assignment.id,
@@ -844,6 +853,7 @@ describe GroupsController do
 
     describe '#add_members' do
       let(:grouping) { create(:grouping_with_inviter) }
+      let(:grouping2) { create(:grouping_with_inviter, assignment: grouping.assignment) }
       let(:student1) { create(:student) }
       let(:student2) { create(:student) }
 
@@ -855,6 +865,85 @@ describe GroupsController do
                                                        global_actions: 'assign' }
 
         expect(grouping.students.size).to eq 3
+      end
+
+      it 'should return bad request when more than one grouping is selected' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping, grouping2],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_only_one_group'))
+      end
+
+      it 'should return bad request when no students are selected' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+
+      it 'should return bad request when assigning would exceed group_max' do
+        grouping.assignment.update!(group_max: 1, student_form_groups: true)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.assign_over_limit', group: grouping.group.group_name))
+      end
+
+      it 'should assign inviter status when grouping has no members' do
+        empty_grouping = create(:grouping)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: empty_grouping.assignment.id,
+                                                       groupings: [empty_grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(empty_grouping.student_memberships.reload.find_by(role: student1).membership_status)
+          .to eq(StudentMembership::STATUSES[:inviter])
+      end
+
+      it 'should return bad request when student is already in a group for this assignment' do
+        create(:grouping_with_inviter, assignment: grouping.assignment, inviter: student1)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.already_grouped',
+                                                     user_name: student1.user_name))
+      end
+
+      it 'should return bad request when student cannot be invited' do
+        diff_course_student = create(:student)
+        diff_course_student.update!(course: create(:course))
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [diff_course_student.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.not_found',
+                                                     user_name: diff_course_student.user_name))
+      end
+
+      it 'should flash a warning when student has insufficient grace credits' do
+        student1.update!(grace_credits: 0)
+        allow_any_instance_of(Grouping).to receive(:grace_period_deduction_single).and_return(1)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(flash[:warning]).to have_message(I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name))
+        expect(grouping.student_memberships.reload.find_by(role: student1)).to be_present
       end
     end
 
