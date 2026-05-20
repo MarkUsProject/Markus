@@ -803,7 +803,7 @@ describe GroupsController do
                                                          groupings: [],
                                                          global_actions: 'valid' }
           expect(response).to have_http_status(:bad_request)
-          expect(flash[:error]).not_to be_blank
+          expect(flash[:error]).to have_message(I18n.t('groups.select_a_group'))
       end
 
       it 'should validate groupings' do
@@ -874,7 +874,7 @@ describe GroupsController do
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).not_to be_blank
+        expect(flash[:error]).to have_message(I18n.t('groups.select_only_one_group'))
       end
 
       it 'should return bad request when no students are selected' do
@@ -884,7 +884,7 @@ describe GroupsController do
                                                        students: [],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).not_to be_blank
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
       end
 
       it 'should return bad request when assigning would exceed group_max' do
@@ -895,7 +895,7 @@ describe GroupsController do
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).not_to be_blank
+        expect(flash[:error]).to have_message(I18n.t('groups.assign_over_limit', group: grouping.group.group_name))
       end
 
       it 'should assign inviter status when grouping has no members' do
@@ -917,7 +917,8 @@ describe GroupsController do
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).not_to be_blank
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.already_grouped',
+                                                     user_name: student1.user_name))
       end
 
       it 'should return bad request when student cannot be invited' do
@@ -929,7 +930,8 @@ describe GroupsController do
                                                        students: [diff_course_student.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).not_to be_blank
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.not_found',
+                                                     user_name: diff_course_student.user_name))
       end
 
       it 'should flash a warning when student has insufficient grace credits' do
@@ -940,7 +942,7 @@ describe GroupsController do
                                                        groupings: [grouping],
                                                        students: [student1.id],
                                                        global_actions: 'assign' }
-        expect(flash[:warning]).to be_present
+        expect(flash[:warning]).to have_message(I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name))
         expect(grouping.student_memberships.reload.find_by(role: student1)).to be_present
       end
     end
