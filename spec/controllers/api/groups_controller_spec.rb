@@ -52,6 +52,16 @@ describe Api::GroupsController do
            params: { assignment_id: assignment.id, course_id: course.id, id: group.id, extension: extension_params }
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'should fail to authenticate a GET overall_comment request' do
+      get :overall_comment, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'should fail to authenticate a PATCH overall_comment request' do
+      patch :overall_comment, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   context 'An authenticated request requesting' do
@@ -1457,6 +1467,112 @@ describe Api::GroupsController do
           expect(test_results.length).to eq(1)
           expect(test_results.first['test_result_name']).to eq('New Test')
           expect(test_results.first['marks_earned']).to eq(4.0)
+        end
+      end
+    end
+
+    context 'Overall Comment' do
+      let!(:grouping) { create(:grouping, group: group, assignment: assignment) }
+
+      before { request.env['HTTP_ACCEPT'] = 'application/json' }
+
+      context 'when no submission/result exists' do
+        it 'GET returns 404' do
+          get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it 'PATCH returns 404' do
+          patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id,
+                                            id: group.id, overall_comment: 'hello' }
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
+      context 'when a result exists' do
+        let(:submission) { create(:version_used_submission, grouping: grouping) }
+
+        before { submission }
+
+        context 'expecting a json response' do
+          it 'GET returns 200 with the overall_comment' do
+            grouping.current_result.update!(overall_comment: 'existing comment')
+            get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+            expect(response).to have_http_status(:ok)
+            expect(response.parsed_body['overall_comment']).to eq('existing comment')
+          end
+
+          it 'GET returns 200 with null overall_comment when none set' do
+            get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+            expect(response).to have_http_status(:ok)
+            expect(response.parsed_body['overall_comment']).to be_nil
+          end
+
+          it_behaves_like 'for a different course' do
+            before do
+              get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+            end
+          end
+        end
+
+        context 'expecting an xml response' do
+          before { request.env['HTTP_ACCEPT'] = 'application/xml' }
+
+          it 'GET returns 200' do
+            get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'GET returns overall_comment nested under a result root element' do
+            grouping.current_result.update!(overall_comment: 'xml comment')
+            get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+            parsed = Hash.from_xml(response.body)
+            expect(parsed.dig('result', 'overall_comment')).to eq('xml comment')
+          end
+
+          it 'GET returns null overall_comment as empty element when none set' do
+            get :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+            parsed = Hash.from_xml(response.body)
+            expect(parsed.dig('result', 'overall_comment')).to be_nil
+          end
+        end
+
+        it 'PATCH updates overall_comment and returns 200' do
+          patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id,
+                                            id: group.id, overall_comment: 'new comment' }
+          expect(response).to have_http_status(:ok)
+          expect(grouping.current_result.reload.overall_comment).to eq('new comment')
+        end
+
+        it 'PATCH returns 422 when result is released' do
+          grouping.current_result.update!(released_to_students: true)
+          patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id,
+                                            id: group.id, overall_comment: 'blocked' }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'PATCH returns 422 when overall_comment param is missing' do
+          patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id, id: group.id }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'PATCH returns 422 when overall_comment param is nil' do
+          patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id,
+                                            id: group.id, overall_comment: nil }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'PATCH returns 422 when overall_comment param is empty string' do
+          patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id,
+                                            id: group.id, overall_comment: '' }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it_behaves_like 'for a different course' do
+          before do
+            patch :overall_comment, params: { course_id: course.id, assignment_id: assignment.id,
+                                              id: group.id, overall_comment: 'hello' }
+          end
         end
       end
     end
