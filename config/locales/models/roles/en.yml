@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        role:
+          invalid_assignment: non end users cannot be assigned the %{role_name} role

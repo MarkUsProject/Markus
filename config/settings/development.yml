@@ -39,7 +39,7 @@ autotest:
   max_batch_size: 10
 
 lti:
-  course_filter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>
+  adapter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>
   domains: <%= %w[host.docker.internal] %>
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
   unpermitted_new_course_message: 'You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator.'

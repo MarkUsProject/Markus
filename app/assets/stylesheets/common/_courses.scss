@@ -1,8 +1,15 @@
+@use 'constants' as *;
+@use 'mixins';
+
 .course-list {
   display: flex;
   flex-flow: row wrap;
   height: 100%;
   width: 100%;
+}
+
+.course-list > h2 {
+  flex-basis: 100%;
 }
 
 .course-card {
@@ -18,7 +25,7 @@
   max-width: 300px;
   text-align: center;
 
-  @include breakpoint(mobile) {
+  @include mixins.breakpoint(mobile) {
     max-width: 100%;
     min-width: 300px;
   }

@@ -15,10 +15,12 @@
           "test_cases": 100,
           "extra_info": {
             "criterion": "criterion",
+            "display_output": "instructors",
             "name": "Haskell Test Group"
           }
         }
-      ]
+      ],
+      "env_data": {}
     }
   ]
 }

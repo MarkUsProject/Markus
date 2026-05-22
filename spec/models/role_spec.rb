@@ -10,6 +10,8 @@ describe Role do
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
   it { is_expected.to have_many(:notes).dependent(:destroy) }
+  it { is_expected.to have_many(:last_updated_marks).class_name('Mark') }
+  it { is_expected.to have_many(:last_updated_grades).class_name('Grade') }
   it { expect(student).to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
 
   context 'A good Role model' do

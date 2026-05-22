@@ -3,17 +3,32 @@ module Api
     DEFAULT_FIELDS = [:id, :short_identifier, :description, :due_date, :is_hidden, :visible_on, :visible_until,
                       :show_total].freeze
 
-    # Sends the contents of the specified grade entry form
+    # Returns the specified grade entry form
     # Requires: id
+    # Default: returns CSV export (backward compatible)
+    # Optional: .json extension or Accept: application/json header for structured JSON with student grades
+    #           user_names[] (filter to specific students)
     def show
       grade_entry_form = record
-      send_data grade_entry_form.export_as_csv(current_role),
-                type: 'text/csv',
-                filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
-                disposition: 'inline'
-    rescue ActiveRecord::RecordNotFound => e
-      # could not find grade entry form
-      render 'shared/http_status', locals: { code: '404', message: e }, status: :not_found
+      if grade_entry_form.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'Grade Entry Form not found' }, status: :not_found
+        return
+      end
+
+      user_names = params[:user_names].presence
+
+      respond_to do |format|
+        format.json do
+          render json: grade_entry_form.export_as_json(current_role, user_names: user_names)
+        end
+        format.any do
+          send_data grade_entry_form.export_as_csv(current_role, user_names: user_names),
+                    type: 'text/csv',
+                    filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
+                    disposition: 'inline'
+        end
+      end
     end
 
     def index

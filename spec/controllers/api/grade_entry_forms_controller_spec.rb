@@ -187,34 +187,127 @@ describe Api::GradeEntryFormsController do
     end
 
     context 'GET show' do
-      context 'requesting an existant grade entry form' do
-        before { get :show, params: { id: grade_entry_form.id, course_id: course.id } }
+      context 'expecting a json response' do
+        before { request.env['HTTP_ACCEPT'] = 'application/json' }
 
-        it 'should download a basic csv' do
-          csv_array = [
-            Student::CSV_ORDER.map { |field| GradeEntryForm.human_attribute_name(field) },
-            [''] * (Student::CSV_ORDER.length - 1) +
-              [GradeEntryItem.human_attribute_name(:out_of)]
-          ]
-          csv_data = MarkusCsv.generate(csv_array, &:itself)
-          expect(response.body).to eq csv_data
+        it 'returns form metadata, items, and empty students when no students exist' do
+          get :show, params: { id: grade_entry_form.id, course_id: course.id }
+          expect(response).to have_http_status(:ok)
+          body = response.parsed_body
+          expect(body.keys.map(&:to_sym)).to include(*Api::GradeEntryFormsController::DEFAULT_FIELDS)
+          expect(body['grade_entry_items']).to eq([])
+          expect(body['students']).to eq([])
         end
-        # TODO: add more tests
+
+        it 'returns items, graded/ungraded students, and excludes hidden students' do
+          item1 = create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, name: 'Q1', position: 1)
+          item2 = create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 5, name: 'Q2', position: 2)
+          graded_student = create(:student, course: course)
+          ungraded_student = create(:student, course: course)
+          hidden_student = create(:student, course: course, hidden: true)
+          ges = grade_entry_form.grade_entry_students.find_by(role: graded_student)
+          create(:grade, grade_entry_student: ges, grade_entry_item: item1, grade: 8.0)
+          create(:grade, grade_entry_student: ges, grade_entry_item: item2, grade: 4.0)
+
+          get :show, params: { id: grade_entry_form.id, course_id: course.id }
+
+          items = response.parsed_body['grade_entry_items']
+          expect(items.pluck('name')).to eq(%w[Q1 Q2])
+          expect(items.first).to include('name' => 'Q1', 'out_of' => 10, 'bonus' => false)
+
+          students = response.parsed_body['students']
+          graded = students.find { |s| s['user_name'] == graded_student.user_name }
+          ungraded = students.find { |s| s['user_name'] == ungraded_student.user_name }
+          expect(graded['grades']).to eq({ 'Q1' => 8.0, 'Q2' => 4.0 })
+          expect(ungraded['grades']).to eq({})
+          expect(students.pluck('user_name')).not_to include(hidden_student.user_name)
+        end
+
+        context 'with show_total' do
+          let!(:grade_entry_item) { create(:grade_entry_item, grade_entry_form: form, out_of: 10, name: 'Q1') }
+          let!(:student) { create(:student, course: course) }
+
+          before do
+            ges = form.grade_entry_students.find_by(role: student)
+            create(:grade, grade_entry_student: ges, grade_entry_item: grade_entry_item, grade: 7.0)
+          end
+
+          context 'enabled' do
+            let(:form) { create(:grade_entry_form, course: course, show_total: true) }
+
+            it 'includes total_grade per student' do
+              get :show, params: { id: form.id, course_id: course.id }
+              expect(response.parsed_body['students'].first['total_grade']).to eq(7.0)
+            end
+          end
+
+          context 'disabled' do
+            let(:form) { create(:grade_entry_form, course: course, show_total: false) }
+
+            it 'omits total_grade' do
+              get :show, params: { id: form.id, course_id: course.id }
+              expect(response.parsed_body['students'].first).not_to have_key('total_grade')
+            end
+          end
+        end
+
+        context 'with user_names filter' do
+          let!(:grade_entry_item) do
+            create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, name: 'Q1')
+          end
+          let!(:student1) { create(:student, course: course) }
+          let!(:student2) { create(:student, course: course) }
+          let!(:student3) { create(:student, course: course) }
+
+          before do
+            ges1 = grade_entry_form.grade_entry_students.find_by(role: student1)
+            create(:grade, grade_entry_student: ges1, grade_entry_item: grade_entry_item, grade: 9.0)
+            ges2 = grade_entry_form.grade_entry_students.find_by(role: student2)
+            create(:grade, grade_entry_student: ges2, grade_entry_item: grade_entry_item, grade: 6.0)
+            ges3 = grade_entry_form.grade_entry_students.find_by(role: student3)
+            create(:grade, grade_entry_student: ges3, grade_entry_item: grade_entry_item, grade: 3.0)
+          end
+
+          it 'returns only the matching student for a single user_name' do
+            get :show, params: { id: grade_entry_form.id, course_id: course.id,
+                                 user_names: [student1.user_name] }
+            students = response.parsed_body['students']
+            expect(students.length).to eq(1)
+            expect(students.first['user_name']).to eq(student1.user_name)
+          end
+
+          it 'returns multiple matching students' do
+            get :show, params: { id: grade_entry_form.id, course_id: course.id,
+                                 user_names: [student1.user_name, student2.user_name] }
+            students = response.parsed_body['students']
+            expect(students.length).to eq(2)
+            expect(students.pluck('user_name')).to contain_exactly(student1.user_name, student2.user_name)
+          end
+
+          it 'returns empty students for nonexistent user_names' do
+            get :show, params: { id: grade_entry_form.id, course_id: course.id,
+                                 user_names: ['nonexistent'] }
+            expect(response).to have_http_status(:ok)
+            expect(response.parsed_body['students']).to eq([])
+          end
+        end
       end
 
-      context 'requesting a non-existant grade entry form' do
-        it 'should respond with 404' do
-          get :show, params: { id: -1, course_id: course.id }
-          expect(response).to have_http_status(:not_found)
-        end
+      it 'returns CSV by default' do
+        get :show, params: { id: grade_entry_form.id, course_id: course.id }
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('text/csv')
       end
 
-      context 'requesting a grade entry form in a different course' do
-        it 'should response with 403' do
-          grade_entry_form = create(:grade_entry_form, course: create(:course))
-          get :show, params: { id: grade_entry_form.id, course_id: grade_entry_form.course_id }
-          expect(response).to have_http_status(:forbidden)
-        end
+      it 'returns 404 for non-existant grade entry form' do
+        get :show, params: { id: -1, course_id: course.id }
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'returns 403 for a grade entry form in a different course' do
+        other_form = create(:grade_entry_form, course: create(:course))
+        get :show, params: { id: other_form.id, course_id: other_form.course_id }
+        expect(response).to have_http_status(:forbidden)
       end
     end
 

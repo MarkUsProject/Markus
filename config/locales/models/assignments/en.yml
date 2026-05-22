@@ -43,10 +43,14 @@ en:
         assignment_deletion: 'Problem with deletion: %{problem_message}'
         assignment_properties:
           attributes:
+            group_max:
+              less_than_group_min: must be greater than or equal to the minimum number of members
             is_timed:
               not_scanned: scanned_exam and is_timed cannot both be true
             remote_autotest_settings_id:
               taken: remote_autotest_settings_id has already been taken by the same autotester.
+            repo_folder_change:
+              repository_folder_unchanged: repository folder should not be changed once an assignment has been created
             start_time:
               before_due_date: must be before due date
     models:

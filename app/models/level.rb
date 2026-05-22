@@ -1,4 +1,26 @@
 # Level represents a level within a Rubric Criterion
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: levels
+#
+#  id           :bigint           not null, primary key
+#  description  :string           not null
+#  mark         :float            not null
+#  name         :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  criterion_id :bigint           not null
+#
+# Indexes
+#
+#  index_levels_on_criterion_id  (criterion_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (criterion_id => criteria.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Level < ApplicationRecord
   belongs_to :criterion
 
@@ -40,7 +62,7 @@ class Level < ApplicationRecord
   def only_update_if_results_unreleased
     return if self.criterion.nil? # When the level is first being created
     unless self.criterion.results_unreleased?
-      errors.add(:base, 'Cannot update level once results are released.')
+      errors.add(:base, :results_already_released)
     end
   end
 

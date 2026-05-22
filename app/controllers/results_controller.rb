@@ -239,7 +239,7 @@ class ResultsController < ApplicationController
           data[:assignment_max_mark] = assignment.max_mark
         end
         data[:total] = marks_map.pluck('mark')
-        data[:old_total] = old_marks.values_at(:mark).compact.sum
+        data[:old_total] = original_result&.get_total_mark || 0
 
         # Tags
         all_tags = assignment.tags.pluck_to_hash(:id, :name)
@@ -454,7 +454,8 @@ class ResultsController < ApplicationController
 
     m_logger = MarkusLogger.instance
 
-    if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?))
+    if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?),
+                          last_updated_by: current_role)
 
       m_logger.log("User '#{current_role.user_name}' updated mark for " \
                    "submission (id: #{submission.id}) of " \

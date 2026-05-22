@@ -1,3 +1,26 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: memberships
+#
+#  id                :integer          not null, primary key
+#  membership_status :string
+#  type              :string
+#  created_at        :datetime
+#  updated_at        :datetime
+#  grouping_id       :integer          not null
+#  role_id           :bigint           not null
+#
+# Indexes
+#
+#  index_memberships_on_role_id  (role_id)
+#
+# Foreign Keys
+#
+#  fk_memberships_groupings  (grouping_id => groupings.id)
+#  fk_rails_...              (role_id => roles.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class StudentMembership < Membership
   STATUSES = {
     accepted: 'accepted',
@@ -31,11 +54,11 @@ class StudentMembership < Membership
 
   def must_be_valid_student
     if role && !role.is_a?(Student)
-      errors.add('base', 'User must be a student')
+      errors.add(:base, :not_student)
       return false
     end
     unless STATUSES.value?(membership_status)
-      errors.add('base', 'Invalid membership status')
+      errors.add(:base, :invalid_membership)
       false
     end
   end

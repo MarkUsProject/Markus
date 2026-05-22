@@ -24,6 +24,7 @@ export class AssignmentSummaryTable extends React.Component {
       lti_deployments: [],
       columnFilters: [{id: "inactive", value: false}],
       inactiveGroupsCount: 0,
+      columns: this.getColumns([], markingStates, "all"),
     };
   }
 
@@ -31,7 +32,7 @@ export class AssignmentSummaryTable extends React.Component {
     this.fetchData();
   }
 
-  getColumns = () => {
+  getColumns = (criteriaColumns, marking_states, markingStateFilter) => {
     const columnHelper = createColumnHelper();
 
     const fixedColumns = [
@@ -102,56 +103,56 @@ export class AssignmentSummaryTable extends React.Component {
         },
         filterAllOptionText:
           I18n.t("all") +
-          (this.state.markingStateFilter === "all"
-            ? ` (${Object.values(this.state.marking_states).reduce((a, b) => a + b)})`
+          (markingStateFilter === "all"
+            ? ` (${Object.values(marking_states).reduce((a, b) => a + b)})`
             : ""),
         filterOptions: [
           {
             value: "before_due_date",
             text:
               I18n.t("submissions.state.before_due_date") +
-              (["before_due_date", "all"].includes(this.state.markingStateFilter)
-                ? ` (${this.state.marking_states["before_due_date"]})`
+              (["before_due_date", "all"].includes(markingStateFilter)
+                ? ` (${marking_states["before_due_date"]})`
                 : ""),
           },
           {
             value: "not_collected",
             text:
               I18n.t("submissions.state.not_collected") +
-              (["not_collected", "all"].includes(this.state.markingStateFilter)
-                ? ` (${this.state.marking_states["not_collected"]})`
+              (["not_collected", "all"].includes(markingStateFilter)
+                ? ` (${marking_states["not_collected"]})`
                 : ""),
           },
           {
             value: "incomplete",
             text:
               I18n.t("submissions.state.in_progress") +
-              (["incomplete", "all"].includes(this.state.markingStateFilter)
-                ? ` (${this.state.marking_states["incomplete"]})`
+              (["incomplete", "all"].includes(markingStateFilter)
+                ? ` (${marking_states["incomplete"]})`
                 : ""),
           },
           {
             value: "complete",
             text:
               I18n.t("submissions.state.complete") +
-              (["complete", "all"].includes(this.state.markingStateFilter)
-                ? ` (${this.state.marking_states["complete"]})`
+              (["complete", "all"].includes(markingStateFilter)
+                ? ` (${marking_states["complete"]})`
                 : ""),
           },
           {
             value: "released",
             text:
               I18n.t("submissions.state.released") +
-              (["released", "all"].includes(this.state.markingStateFilter)
-                ? ` (${this.state.marking_states["released"]})`
+              (["released", "all"].includes(markingStateFilter)
+                ? ` (${marking_states["released"]})`
                 : ""),
           },
           {
             value: "remark",
             text:
               I18n.t("submissions.state.remark_requested") +
-              (["remark", "all"].includes(this.state.markingStateFilter)
-                ? ` (${this.state.marking_states["remark"]})`
+              (["remark", "all"].includes(markingStateFilter)
+                ? ` (${marking_states["remark"]})`
                 : ""),
           },
         ],
@@ -199,7 +200,7 @@ export class AssignmentSummaryTable extends React.Component {
       }),
     ];
 
-    const criteriaColumns = this.state.criteriaColumns.map(col =>
+    const criteriaColumnDefs = criteriaColumns.map(col =>
       columnHelper.accessor(col.accessor, {
         id: col.id,
         header: () => col.Header,
@@ -222,7 +223,7 @@ export class AssignmentSummaryTable extends React.Component {
       sortDescFirst: true,
     });
 
-    return [...fixedColumns, ...criteriaColumns, bonusColumn];
+    return [...fixedColumns, ...criteriaColumnDefs, bonusColumn];
   };
 
   toggleShowInactiveGroups = showInactiveGroups => {
@@ -291,6 +292,11 @@ export class AssignmentSummaryTable extends React.Component {
           marking_states: markingStates,
           lti_deployments: res.ltiDeployments,
           inactiveGroupsCount: inactive_groups_count,
+          columns: this.getColumns(
+            res.criteriaColumns,
+            markingStates,
+            this.state.markingStateFilter
+          ),
         });
       });
   };
@@ -328,10 +334,24 @@ export class AssignmentSummaryTable extends React.Component {
     const summaryTable = this.wrappedInstance;
     if (column.id != "marking_state") {
       const markingStates = getMarkingStates(summaryTable.state.sortedData);
-      this.setState({marking_states: markingStates});
+      this.setState({
+        marking_states: markingStates,
+        columns: this.getColumns(
+          this.state.criteriaColumns,
+          markingStates,
+          this.state.markingStateFilter
+        ),
+      });
     } else {
       const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
-      this.setState({markingStateFilter: markingStateFilter});
+      this.setState({
+        markingStateFilter,
+        columns: this.getColumns(
+          this.state.criteriaColumns,
+          this.state.marking_states,
+          markingStateFilter
+        ),
+      });
     }
   };
 
@@ -424,7 +444,7 @@ export class AssignmentSummaryTable extends React.Component {
         </div>
         <Table
           data={data}
-          columns={this.getColumns()}
+          columns={this.state.columns}
           initialState={{
             sorting: [{id: "group_name"}],
           }}

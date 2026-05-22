@@ -17,12 +17,12 @@ repos:
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
   -   repo: https://github.com/rbubley/mirrors-prettier
-      rev: v3.7.3
+      rev: v3.8.3
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v16.26.1
+      rev: v17.10.0
       hooks:
         - id: stylelint
           additional_dependencies: [
@@ -39,7 +39,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.81.7
+    rev: v1.86.1
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -53,11 +53,11 @@ repos:
           )$
         additional_dependencies:
           - rubocop-rails:2.33.4
-          - rubocop-performance:1.23.0
-          - rubocop-factory_bot:2.26.1
+          - rubocop-performance:1.26.1
+          - rubocop-factory_bot:2.28.0
           - rubocop-rspec:3.2.0
-          - rubocop-rspec_rails:2.30.0
-          - rubocop-capybara:2.21.0
+          - rubocop-rspec_rails:2.32.0
+          - rubocop-capybara:2.22.1
   - repo: local
     hooks:
       - id: erb_lint
@@ -73,6 +73,14 @@ repos:
           )$
         additional_dependencies:
           - erb_lint:0.9.0
+      - id: i18n-tasks-health
+        name: i18n-tasks health
+        entry: i18n-tasks health
+        language: ruby
+        files: config/locales/
+        pass_filenames: false
+        additional_dependencies:
+          - i18n-tasks
 
 exclude: vendor
 

@@ -1,3 +1,31 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: exam_templates
+#
+#  id                :integer          not null, primary key
+#  automatic_parsing :boolean          default(FALSE), not null
+#  cover_fields      :string           default(""), not null
+#  crop_height       :decimal(, )
+#  crop_width        :decimal(, )
+#  crop_x            :decimal(, )
+#  crop_y            :decimal(, )
+#  filename          :string           not null
+#  name              :string           not null
+#  num_pages         :integer          not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  assessment_id     :bigint
+#
+# Indexes
+#
+#  index_exam_templates_on_assessment_id  (assessment_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'fileutils'
 
 class ExamTemplate < ApplicationRecord

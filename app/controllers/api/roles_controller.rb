@@ -137,15 +137,15 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        if params[:section_name]
-          if params[:section_name].empty?
+        if params.key?(:section_name)
+          if params[:section_name].blank?
             role.section = nil
           else
             role.section = @current_course.sections.find_by!(name: params[:section_name])
           end
         end
-        role.grace_credits = params[:grace_credits] if params[:grace_credits]
-        role.hidden = params[:hidden].to_s.casecmp('true').zero? if params[:hidden]
+        role.grace_credits = params[:grace_credits] if params.key?(:grace_credits)
+        role.hidden = params[:hidden].to_s.casecmp('true').zero? if params.key?(:hidden)
         role.save!
       end
       render 'shared/http_status', locals: { code: '200', message:

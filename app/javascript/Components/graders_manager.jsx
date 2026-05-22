@@ -453,84 +453,84 @@ class RawGradersTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
+      columns: [
+        {
+          accessor: "hidden",
+          id: "hidden",
+          width: 0,
+          className: "rt-hidden",
+          headerClassName: "rt-hidden",
+          resizable: false,
+        },
+        {
+          show: false,
+          accessor: "_id",
+          id: "_id",
+        },
+        {
+          Header: I18n.t("activerecord.attributes.user.user_name"),
+          accessor: "user_name",
+          id: "user_name",
+          Cell: props =>
+            props.original.hidden
+              ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
+              : props.value,
+          filterMethod: (filter, row) => {
+            if (filter.value) {
+              return `${row._original.user_name}${
+                row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
+              }`.includes(filter.value);
+            } else {
+              return true;
+            }
+          },
+          sortable: true,
+          minWidth: 90,
+        },
+        {
+          Header: I18n.t("activerecord.attributes.user.full_name"),
+          accessor: "full_name",
+          id: "full_name",
+          filterable: true,
+          Filter: textFilter,
+          Cell: row => `${row.original.first_name} ${row.original.last_name}`,
+          filterMethod: (filter, row) => {
+            if (filter.value) {
+              const fullName =
+                `${row._original.first_name} ${row._original.last_name}`.toLowerCase();
+              return fullName.includes(filter.value.toLowerCase());
+            } else {
+              return true;
+            }
+          },
+          sortable: true,
+          minWidth: 170,
+        },
+        {
+          Header: I18n.t("activerecord.models.group.other"),
+          accessor: "groups",
+          className: "number",
+          filterable: false,
+        },
+        {
+          Header: I18n.t("activerecord.models.criterion.other"),
+          accessor: "criteria",
+          filterable: false,
+          Cell: ({value}) => {
+            if (this.props.assign_graders_to_criteria) {
+              return (
+                <span>
+                  {value}/{this.props.numCriteria}
+                </span>
+              );
+            } else {
+              return I18n.t("all");
+            }
+          },
+        },
+      ],
     };
   }
-
-  getColumns = () => [
-    {
-      accessor: "hidden",
-      id: "hidden",
-      width: 0,
-      className: "rt-hidden",
-      headerClassName: "rt-hidden",
-      resizable: false,
-    },
-    {
-      show: false,
-      accessor: "_id",
-      id: "_id",
-    },
-    {
-      Header: I18n.t("activerecord.attributes.user.user_name"),
-      accessor: "user_name",
-      id: "user_name",
-      Cell: props =>
-        props.original.hidden
-          ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
-          : props.value,
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          return `${row._original.user_name}${
-            row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
-          }`.includes(filter.value);
-        } else {
-          return true;
-        }
-      },
-      sortable: true,
-      minWidth: 90,
-    },
-    {
-      Header: I18n.t("activerecord.attributes.user.full_name"),
-      accessor: "full_name",
-      id: "full_name",
-      filterable: true,
-      Filter: textFilter,
-      Cell: row => `${row.original.first_name} ${row.original.last_name}`,
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          const fullName = `${row._original.first_name} ${row._original.last_name}`.toLowerCase();
-          return fullName.includes(filter.value.toLowerCase());
-        } else {
-          return true;
-        }
-      },
-      sortable: true,
-      minWidth: 170,
-    },
-    {
-      Header: I18n.t("activerecord.models.group.other"),
-      accessor: "groups",
-      className: "number",
-      filterable: false,
-    },
-    {
-      Header: I18n.t("activerecord.models.criterion.other"),
-      accessor: "criteria",
-      filterable: false,
-      Cell: ({value}) => {
-        if (this.props.assign_graders_to_criteria) {
-          return (
-            <span>
-              {value}/{this.props.numCriteria}
-            </span>
-          );
-        } else {
-          return I18n.t("all");
-        }
-      },
-    },
-  ];
 
   static getDerivedStateFromProps(props, state) {
     let filtered = [];
@@ -554,7 +554,7 @@ class RawGradersTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={this.props.graders}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "user_name",
@@ -575,10 +575,27 @@ class RawGroupsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
+      columns: this.getColumns(props.showSections, props.sections, props.showCoverage),
     };
   }
 
-  getColumns = () => {
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.showSections !== this.props.showSections ||
+      prevProps.sections !== this.props.sections ||
+      prevProps.showCoverage !== this.props.showCoverage
+    ) {
+      this.setState({
+        columns: this.getColumns(
+          this.props.showSections,
+          this.props.sections,
+          this.props.showCoverage
+        ),
+      });
+    }
+  }
+
+  getColumns = (showSections, sections, showCoverage) => {
     return [
       {
         accessor: "inactive",
@@ -597,7 +614,7 @@ class RawGroupsTable extends React.Component {
         Header: I18n.t("activerecord.models.section", {count: 1}),
         accessor: "section",
         id: "section",
-        show: this.props.showSections || false,
+        show: showSections || false,
         minWidth: 70,
         Cell: ({value}) => {
           return this.props.sections[value] || "";
@@ -610,7 +627,7 @@ class RawGroupsTable extends React.Component {
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(kv => ({
+        filterOptions: Object.entries(sections).map(kv => ({
           value: kv[1],
           text: kv[1],
         })),
@@ -656,7 +673,7 @@ class RawGroupsTable extends React.Component {
         minWidth: 70,
         className: "number",
         filterable: false,
-        show: this.props.showCoverage,
+        show: showCoverage,
       },
     ];
   };
@@ -679,7 +696,7 @@ class RawGroupsTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={this.props.groups}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "group_name",
@@ -696,56 +713,59 @@ class RawGroupsTable extends React.Component {
 }
 
 class RawCriteriaTable extends React.Component {
-  getColumns = () => {
-    return [
-      {
-        show: false,
-        accessor: "_id",
-        id: "_id",
-      },
-      {
-        Header: I18n.t("activerecord.attributes.criterion.name"),
-        accessor: "name",
-        minWidth: 150,
-      },
-      {
-        Header: I18n.t("activerecord.models.ta.other"),
-        accessor: "graders",
-        Cell: row => {
-          return row.value.map(ta_data => (
-            <div key={`${row.original._id}-${ta_data.grader}`}>
-              {ta_data.hidden
-                ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
-                : ta_data.grader}
-              <a
-                href="#"
-                onClick={() =>
-                  this.props.unassignSingle(row.original._id, ta_data.grader, "criteria_table")
-                }
-                title={I18n.t("graders.actions.unassign_grader")}
-              >
-                <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
-              </a>
-            </div>
-          ));
+  constructor(props) {
+    super(props);
+    this.state = {
+      columns: [
+        {
+          show: false,
+          accessor: "_id",
+          id: "_id",
         },
-        filterable: false,
-        minWidth: 70,
-      },
-      {
-        Header: I18n.t("graders.coverage"),
-        accessor: "coverage",
-        Cell: ({value}) => (
-          <span>
-            {value}/{this.props.numGroups}
-          </span>
-        ),
-        minWidth: 70,
-        className: "number",
-        filterable: false,
-      },
-    ];
-  };
+        {
+          Header: I18n.t("activerecord.attributes.criterion.name"),
+          accessor: "name",
+          minWidth: 150,
+        },
+        {
+          Header: I18n.t("activerecord.models.ta.other"),
+          accessor: "graders",
+          Cell: row => {
+            return row.value.map(ta_data => (
+              <div key={`${row.original._id}-${ta_data.grader}`}>
+                {ta_data.hidden
+                  ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
+                  : ta_data.grader}
+                <a
+                  href="#"
+                  onClick={() =>
+                    this.props.unassignSingle(row.original._id, ta_data.grader, "criteria_table")
+                  }
+                  title={I18n.t("graders.actions.unassign_grader")}
+                >
+                  <FontAwesomeIcon icon="fa-solid fa-trash" className="icon-right" />
+                </a>
+              </div>
+            ));
+          },
+          filterable: false,
+          minWidth: 70,
+        },
+        {
+          Header: I18n.t("graders.coverage"),
+          accessor: "coverage",
+          Cell: ({value}) => (
+            <span>
+              {value}/{this.props.numGroups}
+            </span>
+          ),
+          minWidth: 70,
+          className: "number",
+          filterable: false,
+        },
+      ],
+    };
+  }
 
   render() {
     if (this.props.display) {
@@ -753,7 +773,7 @@ class RawCriteriaTable extends React.Component {
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
           data={this.props.criteria}
-          columns={this.getColumns()}
+          columns={this.state.columns}
           defaultSorted={[
             {
               id: "_id",

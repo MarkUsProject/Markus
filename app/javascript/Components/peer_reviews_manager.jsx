@@ -155,7 +155,23 @@ PeerReviewsManager.defaultProps = {
 };
 
 class RawReviewersTable extends React.Component {
-  getColumns = () => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      columns: this.getColumns(props.sections, props.showSections),
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.sections !== this.props.sections ||
+      prevProps.showSections !== this.props.showSections
+    ) {
+      this.setState({columns: this.getColumns(this.props.sections, this.props.showSections)});
+    }
+  }
+
+  getColumns = (sections, showSections) => {
     return [
       {
         show: false,
@@ -166,7 +182,7 @@ class RawReviewersTable extends React.Component {
         Header: I18n.t("activerecord.models.section", {count: 1}),
         accessor: "section",
         id: "section",
-        show: this.props.showSections,
+        show: showSections,
         minWidth: 70,
         Cell: ({value}) => {
           return value === "-" ? "" : value;
@@ -179,7 +195,7 @@ class RawReviewersTable extends React.Component {
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(kv => ({
+        filterOptions: Object.entries(sections).map(kv => ({
           value: kv[1],
           text: kv[1],
         })),
@@ -227,7 +243,7 @@ class RawReviewersTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={groups_data}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "name",
@@ -242,7 +258,23 @@ class RawReviewersTable extends React.Component {
 }
 
 class RawRevieweesTable extends React.Component {
-  getColumns = () => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      columns: this.getColumns(props.sections, props.showSections),
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.sections !== this.props.sections ||
+      prevProps.showSections !== this.props.showSections
+    ) {
+      this.setState({columns: this.getColumns(this.props.sections, this.props.showSections)});
+    }
+  }
+
+  getColumns = (sections, showSections) => {
     return [
       {
         show: false,
@@ -253,7 +285,7 @@ class RawRevieweesTable extends React.Component {
         Header: I18n.t("activerecord.models.section", {count: 1}),
         accessor: "section",
         id: "section",
-        show: this.props.showSections,
+        show: showSections,
         minWidth: 70,
         Cell: ({value}) => {
           return value === "-" ? "" : value;
@@ -266,7 +298,7 @@ class RawRevieweesTable extends React.Component {
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(kv => ({
+        filterOptions: Object.entries(sections).map(kv => ({
           value: kv[1],
           text: kv[1],
         })),
@@ -347,7 +379,7 @@ class RawRevieweesTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={groups_data}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "name",

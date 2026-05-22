@@ -1,3 +1,27 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: annotation_categories
+#
+#  id                       :integer          not null, primary key
+#  annotation_category_name :text
+#  position                 :integer
+#  created_at               :datetime
+#  updated_at               :datetime
+#  assessment_id            :bigint           not null
+#  flexible_criterion_id    :bigint
+#
+# Indexes
+#
+#  index_annotation_categories_on_assessment_id          (assessment_id)
+#  index_annotation_categories_on_flexible_criterion_id  (flexible_criterion_id)
+#
+# Foreign Keys
+#
+#  fk_annotation_categories_assignments  (assessment_id => assessments.id) ON DELETE => cascade
+#  fk_rails_...                          (flexible_criterion_id => criteria.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AnnotationCategory < ApplicationRecord
   before_update :check_if_marks_released, if: ->(c) {
     changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
@@ -106,14 +130,14 @@ class AnnotationCategory < ApplicationRecord
 
   def delete_allowed?
     if marks_released? && deductive_annotations_exist?
-      errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
+      errors.add(:base, :cannot_delete_annotation)
       throw(:abort)
     end
   end
 
   def check_if_marks_released
     if marks_released?
-      errors.add(:base, I18n.t('activerecord.errors.models.annotation_category.cannot_update_flex'))
+      errors.add(:base, :cannot_update_flex)
       throw(:abort)
     end
   end

@@ -17,9 +17,13 @@ en:
       done: All groups have been successfully assigned students
       help: Assign students to scanned exam groups based on printed student names.
       no_cover_page: This submission does not have a cover page.
+      no_id: No ID
+      no_similar_students: No similar students found. Please assign manually.
       not_all_submissions_collected: Not all submissions have been collected.
+      ocr_detected: 'OCR Detected %{field_type}:'
       skip_group: Skip group
       student_not_found: Student with name %{name} does not exist.
+      suggested_students: 'Suggested Students:'
       title: Assign Scans
     back_to_exam_templates_page: Back to Exam Templates page
     create:

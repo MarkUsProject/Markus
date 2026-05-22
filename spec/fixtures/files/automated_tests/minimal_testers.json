@@ -6,8 +6,7 @@
     },
     "test_data_categories": {
       "type": "string",
-      "enum": [],
-      "enumNames": []
+      "enum": []
     },
     "extra_group_data": {},
     "installed_testers": {

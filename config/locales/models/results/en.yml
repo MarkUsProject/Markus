@@ -5,6 +5,11 @@ en:
       result:
         marking_state: Marking State
         overall_comment: Overall Comments
+    errors:
+      models:
+        result:
+          criterion_incomplete_error: Unable to change marking status to complete because not every criterion has been given a mark.
+          marks_released: The marks have been released. You cannot change the grades.
     models:
       result:
         one: Result

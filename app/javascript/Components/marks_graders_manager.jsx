@@ -225,7 +225,20 @@ class RawGradersTable extends React.Component {
 }
 
 class RawMarksStudentsTable extends React.Component {
-  getColumns = () => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      columns: this.getColumns(props.showSections),
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.showSections !== this.props.showSections) {
+      this.setState({columns: this.getColumns(this.props.showSections)});
+    }
+  }
+
+  getColumns = showSections => {
     return [
       {
         show: false,
@@ -233,7 +246,7 @@ class RawMarksStudentsTable extends React.Component {
         id: "_id",
       },
       {
-        show: this.props.showSections,
+        show: showSections,
         Header: I18n.t("activerecord.models.section.one"),
         accessor: "section",
         minWidth: 70,
@@ -287,7 +300,7 @@ class RawMarksStudentsTable extends React.Component {
       <CheckboxTable
         ref={r => (this.checkboxTable = r)}
         data={this.props.students}
-        columns={this.getColumns()}
+        columns={this.state.columns}
         defaultSorted={[
           {
             id: "user_name",

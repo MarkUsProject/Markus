@@ -17,7 +17,7 @@ Depends:
 # libpq-dev: needed by the pg gem
   libpq-dev (>= 12),
 # ghostscript: for managing pdfs
-  ghostscript (>= 9.5), ghostscript (<< 10),
+  ghostscript (>= 9.5), ghostscript (<< 11),
 # libmagickwand-dev: used by the rmagick gem
   libmagickwand-dev (>= 8:6), libmagickwand-dev (<< 8:7),
 # git: used by the rugged gem
@@ -27,7 +27,7 @@ Depends:
 # libyaml-dev: used by the psych gem
   libyaml-dev,
 # nodejs: for serving/managing javascript
-  nodejs (>= 18), nodejs (<< 21),
+  nodejs (>= 20), nodejs (<< 25),
 # poppler-utils: required for scanned exams
   poppler-utils,
 # tesseract-ocr: required for scanned exams
@@ -54,5 +54,5 @@ Depends:
   libxrandr2,
 # libgbm1: required for Jupyter notebook to PDF conversion
   libgbm1,
-# libasound2: required for Jupyter notebook to PDF conversion
-  libasound2
+# libasound2t64: required for Jupyter notebook to PDF conversion
+  libasound2t64

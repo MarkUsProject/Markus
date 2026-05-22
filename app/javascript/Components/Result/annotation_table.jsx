@@ -8,6 +8,21 @@ export class AnnotationTable extends React.Component {
   constructor(props) {
     super(props);
     this.annotationTable = React.createRef();
+    this.state = {
+      columns: this.getColumns(
+        props.detailed,
+        props.annotations.some(a => !!a.deduction)
+      ),
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    renderMathInElement(this.annotationTable.current);
+    const hadDeductions = prevProps.annotations.some(a => !!a.deduction);
+    const hasDeductions = this.props.annotations.some(a => !!a.deduction);
+    if (prevProps.detailed !== this.props.detailed || hadDeductions !== hasDeductions) {
+      this.setState({columns: this.getColumns(this.props.detailed, hasDeductions)});
+    }
   }
 
   deductionFilter = (filter, row) => {
@@ -168,29 +183,23 @@ export class AnnotationTable extends React.Component {
     maxWidth: 120,
   };
 
+  getColumns = (detailed, hasDeductions) => {
+    const columns = detailed ? [...this.columns, ...this.detailedColumns] : [...this.columns];
+    if (hasDeductions) columns.push(this.deductionColumn);
+    return columns;
+  };
+
   componentDidMount() {
     renderMathInElement(this.annotationTable.current);
   }
 
-  componentDidUpdate() {
-    renderMathInElement(this.annotationTable.current);
-  }
-
   render() {
-    let allColumns = this.columns;
-    if (this.props.detailed) {
-      allColumns = allColumns.concat(this.detailedColumns);
-    }
-    if (this.props.annotations.some(a => !!a.deduction)) {
-      allColumns.push(this.deductionColumn);
-    }
-
     return (
       <div id={"annotation_table"} ref={this.annotationTable}>
         <ReactTable
           className="auto-overflow"
           data={this.props.annotations}
-          columns={allColumns}
+          columns={this.state.columns}
           getTdProps={() => {
             return {className: "-wrap"};
           }}

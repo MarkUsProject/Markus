@@ -1,4 +1,22 @@
 # Class describing a top level file or directory in a starter files group
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: starter_file_entries
+#
+#  id                    :bigint           not null, primary key
+#  path                  :string           not null
+#  starter_file_group_id :bigint           not null
+#
+# Indexes
+#
+#  index_starter_file_entries_on_starter_file_group_id  (starter_file_group_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (starter_file_group_id => starter_file_groups.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class StarterFileEntry < ApplicationRecord
   belongs_to :starter_file_group
   has_one :course, through: :starter_file_group
@@ -65,6 +83,6 @@ class StarterFileEntry < ApplicationRecord
   private
 
   def entry_exists
-    errors.add(:base, 'entry does not exist') unless File.exist?(full_path)
+    errors.add(:base, :entry_does_not_exist) unless File.exist?(full_path)
   end
 end

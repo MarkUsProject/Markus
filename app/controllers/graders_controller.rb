@@ -6,7 +6,7 @@ class GradersController < ApplicationController
                     { ta_memberships: :role, inviter: :section }].freeze
   # The names of the associations of criteria required by the view, which
   # should be eagerly loaded.
-  CRITERION_ASSOC = [criterion_ta_associations: :ta].freeze
+  CRITERION_ASSOC = [{ criterion_ta_associations: :ta }].freeze
 
   before_action { authorize! }
 
@@ -136,7 +136,6 @@ class GradersController < ApplicationController
         if found_empty_submission
           assign_all_graders(filtered_grouping_ids, grader_ids)
           flash_now(:info, I18n.t('graders.group_submission_no_files'))
-          head :ok
         else
           assign_all_graders(grouping_ids, grader_ids)
         end
@@ -192,6 +191,7 @@ class GradersController < ApplicationController
         rescue StandardError => e
           head :bad_request
           flash_now(:error, e.message)
+          return
         end
       end
     when 'criteria_table'

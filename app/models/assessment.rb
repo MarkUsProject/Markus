@@ -1,5 +1,36 @@
 # Assessment is an abstract model used for single-table-inheritance with Assignment and GradeEntryForm
 # It can represent any form of graded work (assignment, test, lab, exam...etc.)
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: assessments
+#
+#  id                   :integer          not null, primary key
+#  description          :string           not null
+#  due_date             :datetime
+#  is_hidden            :boolean          default(TRUE), not null
+#  message              :text             default(""), not null
+#  short_identifier     :string           not null
+#  show_total           :boolean          default(FALSE), not null
+#  type                 :string           not null
+#  visible_on           :datetime
+#  visible_until        :datetime
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  course_id            :bigint           not null
+#  parent_assessment_id :integer
+#
+# Indexes
+#
+#  index_assessments_on_course_id                       (course_id)
+#  index_assessments_on_short_identifier_and_course_id  (short_identifier,course_id) UNIQUE
+#  index_assessments_on_type_and_short_identifier       (type,short_identifier)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Assessment < ApplicationRecord
   # Constant for scheduled visibility option used in forms and controller
   SCHEDULED_VISIBILITY = 'scheduled'.freeze
@@ -18,6 +49,8 @@ class Assessment < ApplicationRecord
   accepts_nested_attributes_for :assessment_section_properties
 
   has_many :lti_line_items, dependent: :destroy
+
+  after_update_commit :sync_lti_line_items, if: :lti_sync_needed?
 
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
@@ -40,20 +73,28 @@ class Assessment < ApplicationRecord
 
   def short_identifier_unchanged
     return unless short_identifier_changed?
-    errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
+    errors.add(:short_identifier, :short_identifier_changed)
     false
   end
 
   def visible_dates_are_valid
     return if visible_on.nil? || visible_until.nil?
     if visible_on >= visible_until
-      errors.add(:visible_until, 'must be after visible_on')
+      errors.add(:visible_until, :before_visible_on)
     end
   end
 
   def upcoming(*)
     return true if self.due_date.nil?
     self.due_date > Time.current
+  end
+
+  def currently_hidden?
+    return true if is_hidden
+    return true if visible_on.present? && Time.current < visible_on
+    return true if visible_until.present? && Time.current > visible_until
+
+    false
   end
 
   # Returns grade distribution histogram bins of the grades for this assessment, using the grades in
@@ -129,5 +170,19 @@ class Assessment < ApplicationRecord
     else
       DescriptiveStatistics.standard_deviation(marks)
     end
+  end
+
+  private
+
+  # Re-pushes line item metadata to any LMS that already has this assessment linked,
+  # so changes in MarkUs (notably due_date) propagate without manual re-trigger.
+  def sync_lti_line_items
+    deployment_ids = lti_line_items.distinct.pluck(:lti_deployment_id)
+    LtiLineItemJob.perform_later(deployment_ids, self)
+  end
+
+  def lti_sync_needed?
+    return false unless lti_line_items.exists?
+    saved_change_to_due_date? || saved_change_to_description?
   end
 end

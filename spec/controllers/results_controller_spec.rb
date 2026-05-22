@@ -1004,6 +1004,14 @@ describe ResultsController do
         expect(rubric_mark.reload.override).to be true
       end
 
+      it 'sets last_updated_by to the current role when updating a mark' do
+        patch :update_mark, params: { course_id: course.id,
+                                      id: incomplete_result.id,
+                                      criterion_id: rubric_mark.criterion_id,
+                                      mark: 1 }, xhr: true
+        expect(rubric_mark.reload.last_updated_by).to eq(current_role)
+      end
+
       context 'setting override when annotations linked to criteria exist' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
         let(:result) { assignment.groupings.first.current_result }
@@ -1393,6 +1401,32 @@ describe ResultsController do
     end
   end
 
+  shared_examples 'show result with old_total' do
+    before do
+      create(:ta_membership, role: ta, grouping: grouping)
+    end
+
+    context 'when format is json' do
+      it 'returns the total mark of the original result in old_total when it exists' do
+        original_result = create(:complete_result, submission: submission)
+        allow_any_instance_of(Submission).to receive(:remark_submitted?).and_return(true)
+        allow_any_instance_of(Submission).to receive(:get_original_result).and_return(original_result)
+        allow(original_result).to receive(:get_total_mark).and_return(85.5)
+
+        get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.parsed_body['old_total']).to eq(85.5)
+      end
+
+      it 'returns 0 for old_total when no original result exists' do
+        allow_any_instance_of(Submission).to receive(:remark_submitted?).and_return(false)
+        get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+        expect(response.parsed_body['old_total']).to eq(0)
+      end
+    end
+  end
+
   context 'A student' do
     before { sign_in student }
 
@@ -1627,6 +1661,8 @@ describe ResultsController do
 
   context 'An instructor' do
     before { sign_in instructor }
+
+    it_behaves_like 'show result with old_total'
 
     context 'accessing set_released_to_students' do
       before do
@@ -2135,6 +2171,8 @@ describe ResultsController do
 
   context 'A TA' do
     before { sign_in ta }
+
+    it_behaves_like 'show result with old_total'
 
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
 

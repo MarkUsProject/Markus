@@ -1,4 +1,35 @@
 # Model representing a user's role in a given course.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: roles
+#
+#  id                      :bigint           not null, primary key
+#  grace_credits           :integer          default(0), not null
+#  hidden                  :boolean          default(FALSE), not null
+#  receives_invite_emails  :boolean          default(FALSE), not null
+#  receives_results_emails :boolean          default(FALSE), not null
+#  type                    :string           not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  course_id               :bigint           not null
+#  section_id              :bigint
+#  user_id                 :bigint           not null
+#
+# Indexes
+#
+#  index_roles_on_course_id              (course_id)
+#  index_roles_on_section_id             (section_id)
+#  index_roles_on_user_id                (user_id)
+#  index_roles_on_user_id_and_course_id  (user_id,course_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (section_id => sections.id)
+#  fk_rails_...  (user_id => users.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Role < ApplicationRecord
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
@@ -16,6 +47,10 @@ class Role < ApplicationRecord
   has_many :split_pdf_logs
   has_many :assessments, through: :course
   has_many :tags
+  has_many :last_updated_marks, class_name: 'Mark', foreign_key: 'last_updated_by_id', inverse_of: :last_updated_by,
+                                dependent: :nullify
+  has_many :last_updated_grades, class_name: 'Grade', foreign_key: 'last_updated_by_id', inverse_of: :last_updated_by,
+                                 dependent: :nullify
 
   validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
   validates :user_id, uniqueness: { scope: :course_id }
@@ -102,7 +137,7 @@ class Role < ApplicationRecord
   # is an end user
   def associated_user_is_an_end_user
     unless self.user.nil? || self.user.end_user?
-      errors.add(:base, "non end users cannot be assigned the #{self.model_name.human} role")
+      errors.add(:base, :invalid_assignment, role_name: self.model_name.human)
     end
   end
 

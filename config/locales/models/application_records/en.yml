@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        application_record:
+          courses_should_match: "%{names} must all belong to the same course"

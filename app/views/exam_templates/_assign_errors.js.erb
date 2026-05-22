@@ -54,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
   var pdfViewer = new pdfjsViewer.PDFViewer({
     eventBus: eventBus,
     container: container,
-    renderer: 'svg'
   });
   eventBus.on('pagesinit', function () {
     pdfViewer.currentScaleValue = 'page-fit';

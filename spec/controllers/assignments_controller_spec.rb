@@ -1,5 +1,6 @@
 describe AssignmentsController do
   include AutomatedTestsHelper
+  include ActiveSupport::Testing::TimeHelpers
 
   # TODO: add 'role is from a different course' shared tests to each route test below
 
@@ -407,6 +408,83 @@ describe AssignmentsController do
           expect(response).to have_http_status(:success)
         end
       end
+    end
+  end
+
+  describe '#index rendered visibility labels' do
+    render_views
+
+    let(:role) { create(:instructor) }
+    let(:course) { role.course }
+    let(:current_time) { Time.zone.local(2026, 5, 9, 12, 0, 0) }
+
+    visibility_cases = [
+      { label: 'explicitly hidden', options: -> { { is_hidden: true } }, hidden: true },
+      { label: 'future start', options: -> { { visible_on: 1.day.from_now } }, hidden: true },
+      { label: 'past end', options: -> { { visible_until: 1.day.ago } }, hidden: true },
+      { label: 'window future',
+        options: -> { { visible_on: 1.day.from_now, visible_until: 2.days.from_now } }, hidden: true },
+      { label: 'window expired',
+        options: -> { { visible_on: 2.days.ago, visible_until: 1.day.ago } }, hidden: true },
+      { label: 'plain visible', options: -> { {} }, hidden: false },
+      { label: 'past start', options: -> { { visible_on: 1.day.ago } }, hidden: false },
+      { label: 'future end', options: -> { { visible_until: 1.day.from_now } }, hidden: false },
+      { label: 'window current',
+        options: -> { { visible_on: 1.day.ago, visible_until: 1.day.from_now } }, hidden: false },
+      { label: 'starts now', options: -> { { visible_on: Time.current } }, hidden: false },
+      { label: 'ends now', options: -> { { visible_until: Time.current } }, hidden: false }
+    ]
+
+    before { travel_to current_time }
+
+    visibility_cases.each do |vc|
+      it "renders #{vc[:hidden] ? 'the hidden label' : 'no hidden label'} for #{vc[:label]}" do
+        assignment = create(:assignment, course: course, **vc[:options].call)
+        get_as role, :index, params: { course_id: course.id }
+
+        base_text = "#{assignment.short_identifier}: #{assignment.description}"
+        hidden_text = I18n.t('assignments.hidden', assignment_text: base_text)
+
+        if vc[:hidden]
+          expect(response.body).to include(hidden_text)
+        else
+          expect(response.body).to include(base_text)
+          expect(response.body).not_to include(hidden_text)
+        end
+      end
+    end
+  end
+
+  describe '#edit rendered visibility labels' do
+    render_views
+
+    let(:role) { create(:instructor) }
+    let(:course) { role.course }
+    let(:current_time) { Time.zone.local(2026, 5, 9, 12, 0, 0) }
+    let(:scheduled_target) { create(:assignment, course: course, visible_on: 1.day.from_now) }
+    let(:currently_visible) { create(:assignment, course: course, visible_until: 1.day.from_now) }
+
+    before do
+      travel_to current_time
+      scheduled_target
+      currently_visible
+    end
+
+    it 'renders the hidden label in both the current assignment submenu title and the dropdown list item' do
+      get_as role, :edit, params: { course_id: course.id, id: scheduled_target.id }
+
+      current_title = I18n.t('assignments.hidden', assignment_text: scheduled_target.short_identifier)
+      doc = response.parsed_body
+      dropdown = doc.at_css('li#dropdown > div.dropdown')
+      dropdown_text = dropdown.children.find { |node| node.text? && !node.text.strip.empty? }.text.strip
+      target_path = switch_course_assignment_path(course, scheduled_target.id)
+      visible_path = switch_course_assignment_path(course, currently_visible.id)
+      target_link = dropdown.at_css("ul a[href='#{target_path}'][title='#{scheduled_target.description}']")
+      visible_link = dropdown.at_css("ul a[href='#{visible_path}'][title='#{currently_visible.description}']")
+
+      expect(dropdown_text).to eq(current_title)
+      expect(target_link.text).to eq(current_title)
+      expect(visible_link.text).to eq(currently_visible.short_identifier)
     end
   end
 

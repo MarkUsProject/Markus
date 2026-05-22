@@ -1,3 +1,30 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: groupings
+#
+#  id                      :integer          not null, primary key
+#  criteria_coverage_count :integer          default(0)
+#  instructor_approved     :boolean          default(FALSE), not null
+#  is_collected            :boolean          default(FALSE), not null
+#  start_time              :datetime
+#  starter_file_changed    :boolean          default(FALSE), not null
+#  test_tokens             :integer          default(0), not null
+#  created_at              :datetime
+#  updated_at              :datetime
+#  assessment_id           :bigint           not null
+#  group_id                :integer          not null
+#
+# Indexes
+#
+#  groupings_u1  (assessment_id,group_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_groupings_assignments  (assessment_id => assessments.id)
+#  fk_groupings_groups       (group_id => groups.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'set'
 
 # Represents a grouping of students working together on a single assignment. This model manages various aspects of the
@@ -288,7 +315,7 @@ class Grouping < ApplicationRecord
     all_errors = []
     members.each do |m|
       m = m.strip
-      user = course.students.joins(:user).where(hidden: false).find_by('users.user_name': m)
+      user = course.students.joins(:user).find_by('users.user_name': m)
       begin
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
@@ -305,7 +332,7 @@ class Grouping < ApplicationRecord
 
   # Add a new member to base
   def add_member(role, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if role.has_accepted_grouping_for?(self.assessment_id) || role.hidden
+    if role.has_accepted_grouping_for?(self.assessment_id)
       nil
     else
       member = StudentMembership.new(role: role, membership_status:
@@ -329,6 +356,8 @@ class Grouping < ApplicationRecord
   def can_invite?(role)
     if self.inviter == role
       raise I18n.t('groups.invite_member.errors.inviting_self')
+    elsif role.hidden
+      raise I18n.t('groups.invite_member.errors.inactive_student', user_name: role.user_name)
     elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
@@ -1079,7 +1108,7 @@ class Grouping < ApplicationRecord
   def assignments_should_match
     return if assessment_id.nil?
     unless self.tags.pluck(:assessment_id).compact.all?(self.assessment_id)
-      errors.add(:base, 'tags must belong to the same assignment as this grouping')
+      errors.add(:base, :different_assignment_grouping)
     end
   end
 end
