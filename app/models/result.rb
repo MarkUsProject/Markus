@@ -252,10 +252,6 @@ class Result < ApplicationRecord
     grouping = submission.grouping
     assignment = grouping.assignment
 
-    # Make folder for temporary files
-    # workdir = "tmp/print/#{self.id}"
-    # FileUtils.mkdir_p(workdir)
-
     # Constants used for PDF generation
     logo_width = 80
     line_space = 12
