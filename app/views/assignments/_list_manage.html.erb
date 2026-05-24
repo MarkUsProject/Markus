@@ -20,7 +20,7 @@
         <% assignments.each do |assignment| %>
           <% route = { controller: 'assignments', action: action, id: assignment.id } %>
           <% assignment_text = "#{h(assignment.short_identifier)}: #{h(assignment.description)}" %>
-          <% assignment_text = t('assignments.hidden', assignment_text: assignment_text) if assignment.is_hidden %>
+          <% assignment_text = formatted_assessment_visibility_label(assignment, assignment_text) %>
           <tr>
             <td>
               <%= link_to assignment_text, route %>

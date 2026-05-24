@@ -1,4 +1,6 @@
 describe CoursesController do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:instructor) { create(:instructor) }
   let(:course) { instructor.course }
   let(:student) { create(:student, course: course) }
@@ -353,6 +355,53 @@ describe CoursesController do
           let(:user) { create(:student) }
 
           it_behaves_like 'cannot update course'
+        end
+      end
+    end
+  end
+
+  describe '#show rendered visibility labels' do
+    render_views
+
+    let(:current_time) { Time.zone.local(2026, 5, 9, 12, 0, 0) }
+
+    # short_identifier and description keep text short so (hidden) is never truncated in _dashboard_list
+    visibility_cases = [
+      { label: 'future start',
+        options: -> { { short_identifier: 'A1', description: 'a', visible_on: 1.day.from_now } },
+        hidden: true },
+      { label: 'past end',
+        options: -> { { short_identifier: 'A2', description: 'a', visible_until: 1.day.ago } },
+        hidden: true },
+      { label: 'plain visible',
+        options: -> { { short_identifier: 'A3', description: 'a' } },
+        hidden: false },
+      { label: 'future end',
+        options: -> { { short_identifier: 'A4', description: 'a', visible_until: 1.day.from_now } },
+        hidden: false },
+      { label: 'starts now',
+        options: -> { { short_identifier: 'A5', description: 'a', visible_on: Time.current } },
+        hidden: false },
+      { label: 'ends now',
+        options: -> { { short_identifier: 'A6', description: 'a', visible_until: Time.current } },
+        hidden: false }
+    ]
+
+    before { travel_to current_time }
+
+    visibility_cases.each do |vc|
+      it "renders #{vc[:hidden] ? 'the hidden label' : 'no hidden label'} for #{vc[:label]}" do
+        assignment = create(:assignment, course: course, **vc[:options].call)
+        get_as instructor, :show, params: { id: course }
+
+        base_text = "#{assignment.short_identifier}: #{assignment.description}"
+        hidden_text = I18n.t('assignments.hidden', assignment_text: base_text)
+
+        if vc[:hidden]
+          expect(response.body).to include(hidden_text)
+        else
+          expect(response.body).to include(base_text)
+          expect(response.body).not_to include(hidden_text)
         end
       end
     end
