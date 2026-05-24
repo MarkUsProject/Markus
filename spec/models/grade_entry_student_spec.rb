@@ -84,7 +84,7 @@ describe GradeEntryStudent do
         GradeEntryStudent.assign_all_tas(student_ids, ta_ids.first, form)
 
         # First grade entry student gets all the TAs.
-        grade_entry_student = form.grade_entry_students.first
+        grade_entry_student = form.grade_entry_students.find_by!(role_id: student_ids.first)
         grade_entry_student.reload
         form.grade_entry_students.delete(grade_entry_student)
         expect(grade_entry_student.tas).to match_array(tas)
