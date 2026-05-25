@@ -11,15 +11,8 @@ class AnnotationUsagePanel extends React.Component {
     this.state = {
       applications: null,
       details: false,
-      caseSensitive: true,
-      columns: this.getColumns(true),
+      columns: this.getColumns(),
     };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.caseSensitive !== this.state.caseSensitive) {
-      this.setState({columns: this.getColumns(this.state.caseSensitive)});
-    }
   }
 
   toggle = () => {
@@ -30,16 +23,7 @@ class AnnotationUsagePanel extends React.Component {
     }
   };
 
-  toggleCaseSensitive = () => {
-    this.setState(state => ({caseSensitive: !state.caseSensitive}));
-  };
-
-  groupNameFilter = caseSensitiveTextFilter({
-    getCaseSensitive: () => this.state.caseSensitive,
-    onToggle: this.toggleCaseSensitive,
-  });
-
-  getColumns = caseSensitive => {
+  getColumns = () => {
     return [
       {
         Header: I18n.t("annotations.used_by"),
@@ -58,13 +42,15 @@ class AnnotationUsagePanel extends React.Component {
         },
         sortable: false,
         Aggregated: row => `(${row.value})`,
-        Filter: this.groupNameFilter,
+        Filter: caseSensitiveTextFilter,
         filterMethod: (filter, row) => {
+          const {filterValue, caseSensitive} = filter.value;
+          if (!filterValue) return true;
           if (row._subRows === undefined) {
-            return caseSensitiveIncludes(row[filter.id], filter.value, caseSensitive);
+            return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
           }
           return row._subRows.some(sr =>
-            caseSensitiveIncludes(sr.group_name, filter.value, caseSensitive)
+            caseSensitiveIncludes(sr.group_name, filterValue, caseSensitive)
           );
         },
         Cell: row => {

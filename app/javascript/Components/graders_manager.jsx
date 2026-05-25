@@ -580,32 +580,21 @@ class RawGroupsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
-      caseSensitive: true,
-      columns: this.getColumns(true),
+      columns: this.getColumns(),
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (
       prevProps.showSections !== this.props.showSections ||
       prevProps.sections !== this.props.sections ||
-      prevProps.showCoverage !== this.props.showCoverage ||
-      prevState.caseSensitive !== this.state.caseSensitive
+      prevProps.showCoverage !== this.props.showCoverage
     ) {
-      this.setState({columns: this.getColumns(this.state.caseSensitive)});
+      this.setState({columns: this.getColumns()});
     }
   }
 
-  toggleCaseSensitive = () => {
-    this.setState(state => ({caseSensitive: !state.caseSensitive}));
-  };
-
-  groupNameFilter = caseSensitiveTextFilter({
-    getCaseSensitive: () => this.state.caseSensitive,
-    onToggle: this.toggleCaseSensitive,
-  });
-
-  getColumns = caseSensitive => {
+  getColumns = () => {
     return [
       {
         accessor: "inactive",
@@ -647,8 +636,8 @@ class RawGroupsTable extends React.Component {
         accessor: "group_name",
         id: "group_name",
         minWidth: 150,
-        Filter: this.groupNameFilter,
-        filterMethod: caseSensitiveStringFilterMethod(caseSensitive),
+        Filter: caseSensitiveTextFilter,
+        filterMethod: caseSensitiveStringFilterMethod,
       },
       {
         Header: I18n.t("activerecord.models.ta.other"),

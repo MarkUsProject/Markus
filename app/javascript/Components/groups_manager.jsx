@@ -430,27 +430,11 @@ class RawGroupsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
-      caseSensitive: true,
-      columns: this.getColumns(true),
+      columns: this.getColumns(),
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.caseSensitive !== this.state.caseSensitive) {
-      this.setState({columns: this.getColumns(this.state.caseSensitive)});
-    }
-  }
-
-  toggleCaseSensitive = () => {
-    this.setState(state => ({caseSensitive: !state.caseSensitive}));
-  };
-
-  groupNameFilter = caseSensitiveTextFilter({
-    getCaseSensitive: () => this.state.caseSensitive,
-    onToggle: this.toggleCaseSensitive,
-  });
-
-  getColumns = caseSensitive => {
+  getColumns = () => {
     return [
       {
         accessor: "inactive",
@@ -469,8 +453,8 @@ class RawGroupsTable extends React.Component {
         Header: I18n.t("activerecord.models.group.one"),
         accessor: "group_name",
         id: "group_name",
-        Filter: this.groupNameFilter,
-        filterMethod: caseSensitiveStringFilterMethod(caseSensitive),
+        Filter: caseSensitiveTextFilter,
+        filterMethod: caseSensitiveStringFilterMethod,
         Cell: row => {
           return (
             <span>

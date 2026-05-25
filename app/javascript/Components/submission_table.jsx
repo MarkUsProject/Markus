@@ -30,7 +30,6 @@ class RawSubmissionTable extends React.Component {
       markingStateFilter: "all",
       inactiveGroupsCount: 0,
       filtered: [],
-      caseSensitive: true,
       columns: this.getColumns({}, markingStates, "all"),
     };
   }
@@ -40,32 +39,13 @@ class RawSubmissionTable extends React.Component {
     this.createChannelSubscriptions();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.caseSensitive !== this.state.caseSensitive) {
-      // Rebuild columns to invalidate react-table's cached filter results;
-      // groupNameFilter reads this.state.caseSensitive on every call.
-      this.setState(state => ({
-        columns: this.getColumns(state.sections, state.marking_states, state.markingStateFilter),
-      }));
-    }
-  }
-
-  toggleCaseSensitive = () => {
-    this.setState(state => ({caseSensitive: !state.caseSensitive}));
-  };
-
-  groupNameFilterComponent = caseSensitiveTextFilter({
-    getCaseSensitive: () => this.state.caseSensitive,
-    onToggle: this.toggleCaseSensitive,
-  });
-
   groupNameFilter = (filter, row) => {
-    if (!filter.value) return true;
-    const {caseSensitive} = this.state;
-    if (caseSensitiveIncludes(row._original.group_name, filter.value, caseSensitive)) return true;
+    const {filterValue, caseSensitive} = filter.value;
+    if (!filterValue) return true;
+    if (caseSensitiveIncludes(row._original.group_name, filterValue, caseSensitive)) return true;
     if (!row._original.members) return false;
     return row._original.members.some(member =>
-      caseSensitiveIncludes(member[0], filter.value, caseSensitive)
+      caseSensitiveIncludes(member[0], filterValue, caseSensitive)
     );
   };
 
@@ -171,7 +151,7 @@ class RawSubmissionTable extends React.Component {
         }
       },
       minWidth: 170,
-      Filter: this.groupNameFilterComponent,
+      Filter: caseSensitiveTextFilter,
       filterMethod: this.groupNameFilter,
     },
     {

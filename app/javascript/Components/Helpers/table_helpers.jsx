@@ -111,42 +111,49 @@ export function textFilter({filter, onChange, column}) {
 }
 
 /**
- * Locale-aware substring match with optional case sensitivity. Both arguments
- * are coerced to strings, so callers do not have to guard against null/undefined.
+ * Locale-aware substring match with optional case sensitivity. null/undefined
+ * arguments are treated as the empty string, so callers do not have to guard
+ * against them.
  */
 export function caseSensitiveIncludes(haystack, needle, caseSensitive) {
-  const a = String(haystack);
-  const b = String(needle);
+  const a = haystack == null ? "" : String(haystack);
+  const b = needle == null ? "" : String(needle);
   if (caseSensitive) return a.includes(b);
   return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
 }
 
 /**
- * Builds a filterMethod that matches `row[filter.id]` against `filter.value`
- * with the given case sensitivity. Empty filters match every row.
+ * filterMethod that matches `row[filter.id]` against the filter's search text
+ * with the filter's own case sensitivity. Pair with `caseSensitiveTextFilter`,
+ * which stores `{filterValue, caseSensitive}` as the filter value. Empty
+ * filters match every row.
  */
-export function caseSensitiveStringFilterMethod(caseSensitive) {
-  return (filter, row) => {
-    if (!filter.value) return true;
-    return caseSensitiveIncludes(row[filter.id], filter.value, caseSensitive);
-  };
+export function caseSensitiveStringFilterMethod(filter, row) {
+  const {filterValue, caseSensitive} = filter.value;
+  if (!filterValue) return true;
+  return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
 }
 
 /**
- * Builds a Filter component that pairs a text input with an "Aa" checkbox
- * toggle for case-sensitive matching. `getCaseSensitive` is read on every
- * render so the checkbox reflects the latest value without rebuilding the
- * Filter — this keeps the rendered <input> elements stable across re-renders.
+ * A Filter component pairing a text input with an "Aa" checkbox toggle for
+ * case-sensitive matching. It owns both the search text and the toggle,
+ * passing them to the table together via `onChange` as
+ * `{filterValue, caseSensitive}`. Matching defaults to case-sensitive. Pair
+ * with `caseSensitiveStringFilterMethod`, or a custom filterMethod that reads
+ * `filter.value.filterValue` and `filter.value.caseSensitive`.
  */
-export function caseSensitiveTextFilter({getCaseSensitive, onToggle}) {
-  return ({filter, onChange, column}) => (
+export function caseSensitiveTextFilter({filter, onChange, column}) {
+  const filterValue = filter ? filter.value.filterValue : "";
+  const caseSensitive = filter ? filter.value.caseSensitive : true;
+
+  return (
     <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
       <input
         type="text"
         style={{flex: 1, minWidth: 0}}
-        value={filter ? filter.value : ""}
+        value={filterValue}
         aria-label={`${I18n.t("search")} ${column.Header || ""}`}
-        onChange={event => onChange(event.target.value)}
+        onChange={event => onChange({filterValue: event.target.value, caseSensitive})}
       />
       <label
         title={I18n.t("table.case_sensitive_search")}
@@ -154,8 +161,8 @@ export function caseSensitiveTextFilter({getCaseSensitive, onToggle}) {
       >
         <input
           type="checkbox"
-          checked={getCaseSensitive()}
-          onChange={onToggle}
+          checked={caseSensitive}
+          onChange={event => onChange({filterValue, caseSensitive: event.target.checked})}
           aria-label={I18n.t("table.case_sensitive_search")}
           data-testid={`${column.id}_case_sensitive`}
         />
