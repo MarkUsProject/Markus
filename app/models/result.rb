@@ -257,7 +257,7 @@ class Result < ApplicationRecord
     line_space = 12
     annotation_size = 20
 
-    Dir.mktmpdir("print/#{self.id}", 'tmp') do |workdir|
+    Dir.mktmpdir("print-#{self.id}") do |workdir|
       # Generate front page
       Prawn::Document.generate("#{workdir}/front.pdf") do
         # Add MarkUs logo
