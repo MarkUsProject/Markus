@@ -47,6 +47,7 @@ class Result < ApplicationRecord
   validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
   validates :released_to_students, inclusion: { in: [true, false] }
+  validates :view_token, presence: true
 
   before_update :check_for_released
 

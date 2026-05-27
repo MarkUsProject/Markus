@@ -33,6 +33,7 @@ class SubmissionFile < ApplicationRecord
   validates :path, presence: true
 
   validates :is_converted, inclusion: { in: [true, false] }
+  validates :error_converting, inclusion: { in: [true, false] }
 
   def is_supported_image?
     # Here you can add more image types to support

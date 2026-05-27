@@ -38,6 +38,7 @@ class GradeEntryItem < ApplicationRecord
 
   validates :position, presence: true
   validates :position, numericality: { greater_than_or_equal_to: 0 }
+  validates :bonus, inclusion: { in: [true, false] }
 
   BLANK_MARK = ''.freeze
 

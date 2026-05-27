@@ -30,6 +30,7 @@
 - Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
 
 ### 🔧 Internal changes
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation`
 - Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
 - Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
 - Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)

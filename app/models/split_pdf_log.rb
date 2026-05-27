@@ -39,6 +39,7 @@ class SplitPdfLog < ApplicationRecord
   validates :num_groups_in_complete, :num_groups_in_complete, :num_pages_qr_scan_error, :original_num_pages,
             numericality: { greater_than_or_equal_to: 0,
                             only_integer: true }
+  validates :qr_code_found, inclusion: { in: [true, false] }
 
   validate :courses_should_match
 

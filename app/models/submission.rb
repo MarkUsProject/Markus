@@ -29,6 +29,7 @@ class Submission < ApplicationRecord
 
   validates :submission_version_used, inclusion: { in: [true, false] }
   validates :submission_version, numericality: { only_integer: true }
+  validates :is_empty, inclusion: { in: [true, false] }
   validate :max_number_of_results
   belongs_to :grouping
 

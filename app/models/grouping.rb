@@ -124,6 +124,8 @@ class Grouping < ApplicationRecord
   has_one :course, through: :assignment
 
   validates :is_collected, inclusion: { in: [true, false] }
+  validates :instructor_approved, inclusion: { in: [true, false] }
+  validates :starter_file_changed, inclusion: { in: [true, false] }
 
   validates :test_tokens, presence: true
   validates :test_tokens, numericality: { greater_than_or_equal_to: 0, only_integer: true }

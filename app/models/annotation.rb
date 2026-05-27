@@ -40,7 +40,7 @@
 class Annotation < ApplicationRecord
   belongs_to :submission_file
   belongs_to :annotation_text
-  belongs_to :creator, polymorphic: true
+  belongs_to :creator, polymorphic: true, optional: true
   belongs_to :result
 
   has_one :course, through: :submission_file

@@ -45,7 +45,7 @@ class User < ApplicationRecord
   has_many :lti_users, dependent: :destroy
   validates :type, format: { with: /\AEndUser|AutotestUser|AdminUser\z/ }
 
-  validates :user_name, :last_name, :first_name, :time_zone, :display_name, presence: true
+  validates :user_name, :last_name, :first_name, :time_zone, :display_name, :theme, presence: true
   validates :user_name, uniqueness: true
   validates :email, uniqueness: { allow_nil: true }
   validates :id_number, uniqueness: { allow_nil: true }

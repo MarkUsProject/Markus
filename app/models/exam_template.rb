@@ -40,6 +40,8 @@ class ExamTemplate < ApplicationRecord
             length: { maximum: 20 }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
+  validates :automatic_parsing, inclusion: { in: [true, false] }
+  validates :cover_fields, exclusion: { in: [nil] }
 
   has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy

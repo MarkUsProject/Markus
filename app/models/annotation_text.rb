@@ -22,7 +22,7 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AnnotationText < ApplicationRecord
-  belongs_to :creator, class_name: 'Role'
+  belongs_to :creator, class_name: 'Role', optional: true
   belongs_to :last_editor, class_name: 'Role', optional: true
 
   has_one :course, through: :creator

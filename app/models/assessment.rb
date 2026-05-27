@@ -65,6 +65,9 @@ class Assessment < ApplicationRecord
   validate :visible_dates_are_valid
   validates :description, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
+  validates :show_total, inclusion: { in: [true, false] }
+  validates :type, presence: true
+  validates :message, exclusion: { in: [nil] }
   validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/ }
 
   def self.type

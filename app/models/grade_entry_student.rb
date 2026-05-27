@@ -74,6 +74,7 @@ class GradeEntryStudent < ApplicationRecord
     assign_tas(student_ids, ta_ids, form) do |grade_entry_student_ids, tids|
       # Assign TAs in a round-robin fashion to a list of random grade entry
       # students.
+      next [] if tids.empty?
       grade_entry_student_ids.shuffle.zip(tids.cycle)
     end
   end

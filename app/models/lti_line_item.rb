@@ -26,4 +26,5 @@ class LtiLineItem < ApplicationRecord
   belongs_to :assessment
   belongs_to :lti_deployment
   validates :assessment, uniqueness: { scope: :lti_deployment_id }
+  validates :lti_line_item_id, presence: true
 end
