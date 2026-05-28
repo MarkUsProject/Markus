@@ -466,6 +466,34 @@ module Api
       end
     end
 
+    def overall_comment
+      result = grouping&.current_result
+      return page_not_found('No submission exists for that group') if result.nil?
+
+      case request.method
+      when 'GET'
+        respond_to do |format|
+          format.xml do
+            render xml: { overall_comment: result.overall_comment }.to_xml(root: 'result', skip_types: 'true')
+          end
+          format.json { render json: { overall_comment: result.overall_comment } }
+        end
+      when 'PATCH'
+        if has_missing_params?([:overall_comment])
+          render 'shared/http_status', locals: { code: '422', message:
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
+          return
+        end
+        if result.update(overall_comment: params[:overall_comment])
+          head :ok
+        else
+          render 'shared/http_status',
+                 locals: { code: '422', message: result.errors.full_messages.first },
+                 status: :unprocessable_content
+        end
+      end
+    end
+
     private
 
     def assignment
