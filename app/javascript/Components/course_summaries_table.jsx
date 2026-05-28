@@ -3,14 +3,31 @@ import Table from "./table/table";
 import {createColumnHelper, filterFns} from "@tanstack/react-table";
 
 export class CourseSummaryTable extends React.Component {
+  columnHelper = createColumnHelper();
+
   constructor(props) {
     super(props);
     this.state = {
       showHidden: false,
       columnFilters: [{id: "inactive", value: false}],
+      columns: this.getColumns(props.student, props.assessments, props.marking_schemes),
     };
+  }
 
-    this.columnHelper = createColumnHelper();
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.student !== this.props.student ||
+      prevProps.assessments !== this.props.assessments ||
+      prevProps.marking_schemes !== this.props.marking_schemes
+    ) {
+      this.setState({
+        columns: this.getColumns(
+          this.props.student,
+          this.props.assessments,
+          this.props.marking_schemes
+        ),
+      });
+    }
   }
 
   static defaultProps = {
@@ -18,12 +35,21 @@ export class CourseSummaryTable extends React.Component {
     marking_schemes: [],
     data: [],
   };
+
+  getColumns = (student, assessments, marking_schemes) => {
+    if (student) {
+      return this.dataColumns(assessments, marking_schemes);
+    } else {
+      return [...this.nameColumns(), ...this.dataColumns(assessments, marking_schemes)];
+    }
+  };
+
   nameColumns = () => {
     const columnHelper = this.columnHelper;
     return [
       columnHelper.accessor("hidden", {
         id: "inactive",
-        filterFn: (row, columnId, filterValue) => {
+        filterFn: (row, _columnId, filterValue) => {
           // Show all rows if filter true, else only show non-hidden rows
           return filterValue || !row.original.hidden;
         },
@@ -69,11 +95,11 @@ export class CourseSummaryTable extends React.Component {
     this.setState({columnFilters, showHidden});
   };
 
-  dataColumns = () => {
+  dataColumns = (assessments, marking_schemes) => {
     const columnHelper = this.columnHelper;
     const columns = [];
 
-    this.props.assessments.forEach(data => {
+    assessments.forEach(data => {
       columns.push(
         columnHelper.accessor(`assessment_marks.${data.id}.mark`, {
           filterFn: filterFns.equalsString,
@@ -87,7 +113,7 @@ export class CourseSummaryTable extends React.Component {
         })
       );
     });
-    this.props.marking_schemes.forEach(data => {
+    marking_schemes.forEach(data => {
       columns.push(
         columnHelper.accessor(`weighted_marks.${data.id}.mark`, {
           filterFn: filterFns.equalsString,
@@ -105,10 +131,6 @@ export class CourseSummaryTable extends React.Component {
   };
 
   render() {
-    const columns = this.props.student
-      ? this.dataColumns()
-      : [...this.nameColumns(), ...this.dataColumns()];
-
     return (
       <>
         {!this.props.student && (
@@ -126,7 +148,7 @@ export class CourseSummaryTable extends React.Component {
         )}
         <Table
           data={this.props.data}
-          columns={columns}
+          columns={this.state.columns}
           columnFilters={this.state.columnFilters}
           onColumnFiltersChange={updaterOrValue => {
             this.setState(prevState => {

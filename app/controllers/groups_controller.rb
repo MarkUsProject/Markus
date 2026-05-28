@@ -147,12 +147,18 @@ class GroupsController < ApplicationController
     if num_valid == num_total
       flash_message(:success, t('exam_templates.assign_scans.done'))
     end
+    # Get OCR match data and suggestions if available
+    ocr_match = OcrMatchService.get_match(next_grouping.id)
+    ocr_suggestions = ocr_match ? OcrMatchService.get_suggestions(next_grouping.id, current_course.id) : []
+
     @data = {
       group_name: next_grouping.group.group_name,
       grouping_id: next_grouping.id,
       students: names,
       num_total: num_total,
-      num_valid: num_valid
+      num_valid: num_valid,
+      ocr_match: ocr_match,
+      ocr_suggestions: format_ocr_suggestions(ocr_suggestions)
     }
     next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
     if next_file.nil?
@@ -221,6 +227,8 @@ class GroupsController < ApplicationController
       end
       StudentMembership
         .find_or_create_by(role: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+      # Clear OCR match data after successful assignment
+      OcrMatchService.clear_match(@grouping.id)
     end
     next_grouping
   end
@@ -243,12 +251,18 @@ class GroupsController < ApplicationController
     if num_valid == num_total
       flash_message(:success, t('exam_templates.assign_scans.done'))
     end
+    # Get OCR match data and suggestions if available
+    ocr_match = OcrMatchService.get_match(next_grouping.id)
+    ocr_suggestions = ocr_match ? OcrMatchService.get_suggestions(next_grouping.id, current_course.id) : []
+
     if !@grouping.nil? && next_grouping.id == @grouping.id
       render json: {
         grouping_id: next_grouping.id,
         students: names,
         num_total: num_total,
-        num_valid: num_valid
+        num_valid: num_valid,
+        ocr_match: ocr_match,
+        ocr_suggestions: format_ocr_suggestions(ocr_suggestions)
       }
     else
       data = {
@@ -256,7 +270,9 @@ class GroupsController < ApplicationController
         grouping_id: next_grouping.id,
         students: names,
         num_total: num_total,
-        num_valid: num_valid
+        num_valid: num_valid,
+        ocr_match: ocr_match,
+        ocr_suggestions: format_ocr_suggestions(ocr_suggestions)
       }
       next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
       unless next_file.nil?
@@ -290,6 +306,7 @@ class GroupsController < ApplicationController
 
         group_rows << row.compact_blank
       end
+
       if result[:invalid_lines].empty?
         @current_job = CreateGroupsJob.perform_later assignment, group_rows
         session[:job_id] = @current_job.job_id
@@ -473,8 +490,8 @@ class GroupsController < ApplicationController
       if errors.blank?
         to_invite.each do |i|
           i = i.strip
-          invited_user = current_course.students.joins(:user).where(hidden: false).find_by('users.user_name': i)
-          if invited_user.receives_invite_emails?
+          invited_user = current_course.students.joins(:user).find_by('users.user_name': i)
+          if invited_user&.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
                                     grouping: @grouping).grouping_invite_email.deliver_later
@@ -683,9 +700,6 @@ class GroupsController < ApplicationController
                             end
     @bad_user_names = []
 
-    if student.hidden
-      raise I18n.t('groups.invite_member.errors.not_found', user_name: student.user_name)
-    end
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
@@ -699,7 +713,7 @@ class GroupsController < ApplicationController
     # Generate a warning if a member is added to a group and they
     # have fewer grace days credits than already used by that group
     if student.remaining_grace_credits < grouping.grace_period_deduction_single
-      @warning_grace_day = I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name)
+      flash_message(:warning, I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name))
     end
 
     grouping.reload
@@ -726,6 +740,19 @@ class GroupsController < ApplicationController
   def remove_member(membership, grouping)
     grouping.remove_member(membership.id)
     grouping.reload
+  end
+
+  # Format OCR suggestions for JSON response
+  def format_ocr_suggestions(ocr_suggestions)
+    ocr_suggestions.map do |s|
+      {
+        id: s[:student].id,
+        user_name: s[:student].user.user_name,
+        id_number: s[:student].user.id_number,
+        display_name: s[:student].user.display_name,
+        similarity: (s[:similarity] * 100).round(1)
+      }
+    end
   end
 
   # This override is necessary because this controller is acting as a controller

@@ -49,6 +49,10 @@
         $("#assign_student").find("#skip").val("1").prop('checked', false);
         let current_group = $("#grouping_id").val();
         update_bar(data.num_valid, data.num_total);
+
+        // Update OCR suggestions
+        updateOcrSuggestions(data.ocr_match, data.ocr_suggestions);
+
         // Anytime we advance to another assignment
         if (data.grouping_id !== current_group) {
           $("#grouping_id").val(data.grouping_id);
@@ -70,7 +74,6 @@
       let pdfViewer = new pdfjsViewer.PDFViewer({
         eventBus: eventBus,
         container: container,
-        renderer: 'svg'
       });
       eventBus.on('pagesinit', function() {
         pdfViewer.currentScaleValue = 'page-fit';
@@ -134,6 +137,12 @@
           <button type="submit"><%= t('save') %></button>
         </p>
       </form>
+
+      <!-- OCR Suggestions Section -->
+      <div id="ocr_suggestions" class="ocr-suggestions-container no-display">
+        <!-- Will be populated by JavaScript -->
+      </div>
+
       <h3>
         <%= Group.human_attribute_name(:student_memberships) %>
       </h3>

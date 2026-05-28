@@ -1,3 +1,26 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: peer_reviews
+#
+#  id          :integer          not null, primary key
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  result_id   :integer          not null
+#  reviewer_id :integer          not null
+#
+# Indexes
+#
+#  index_peer_reviews_on_result_id                  (result_id)
+#  index_peer_reviews_on_result_id_and_reviewer_id  (result_id,reviewer_id) UNIQUE
+#  index_peer_reviews_on_reviewer_id                (reviewer_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (result_id => results.id)
+#  fk_rails_...  (reviewer_id => groupings.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'set'
 
 class PeerReview < ApplicationRecord
@@ -17,7 +40,7 @@ class PeerReview < ApplicationRecord
       reviewer.students.each { |student| student_id_set.add(student.id) }
       result.submission.grouping.students.each do |student|
         if student_id_set.include?(student.id)
-          errors.add(:reviewer_id, I18n.t('peer_reviews.errors.cannot_allow_reviewer_to_be_reviewee'))
+          errors.add(:reviewer_id, :cannot_allow_reviewer_to_be_reviewee)
           break
         end
       end
@@ -149,7 +172,7 @@ class PeerReview < ApplicationRecord
   def assignments_should_match
     return if result.nil? || reviewer.nil?
     unless result.submission.grouping.assignment == reviewer.assignment.parent_assignment
-      errors.add(:base, 'result and reviewer must all belong to the same assignment')
+      errors.add(:base, :not_in_same_assignment)
     end
   end
 end

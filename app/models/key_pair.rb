@@ -1,3 +1,19 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: key_pairs
+#
+#  id         :integer          not null, primary key
+#  public_key :string
+#  created_at :datetime
+#  updated_at :datetime
+#  user_id    :integer
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class KeyPair < ApplicationRecord
   belongs_to :user
 
@@ -21,6 +37,6 @@ class KeyPair < ApplicationRecord
     single_line = self.public_key.lines.one? { |line| line.strip.present? }
     key_type, key, _comment = self.public_key.split
     valid_key_type = KEY_TYPES.include? key_type
-    errors.add(:public_key, I18n.t('key_pairs.create.invalid_key')) unless single_line && valid_key_type && !key.nil?
+    errors.add(:public_key, :invalid_key) unless single_line && valid_key_type && !key.nil?
   end
 end

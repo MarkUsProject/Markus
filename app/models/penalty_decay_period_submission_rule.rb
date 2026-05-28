@@ -1,3 +1,20 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: submission_rules
+#
+#  id            :integer          not null, primary key
+#  penalty_type  :string           default("percentage")
+#  type          :string           default("NoLateSubmissionRule")
+#  created_at    :datetime
+#  updated_at    :datetime
+#  assessment_id :bigint           not null
+#
+# Indexes
+#
+#  index_submission_rules_on_assessment_id  (assessment_id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class PenaltyDecayPeriodSubmissionRule < SubmissionRule
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.

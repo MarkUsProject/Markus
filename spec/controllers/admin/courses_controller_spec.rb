@@ -69,6 +69,13 @@ describe Admin::CoursesController do
           expect(response).to have_http_status(:forbidden)
         end
       end
+
+      describe '#refresh_autotest_schema' do
+        it 'responds with 403' do
+          post_as user, :refresh_autotest_schema, params: { id: course.id }
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
     end
 
     context 'Instructor' do
@@ -193,6 +200,25 @@ describe Admin::CoursesController do
             autotest_url: 'http://example.com'
           }
         }
+      end
+
+      it 'persists start_at and end_at when provided' do
+        new_start_at = Time.zone.parse('2026-01-01')
+        new_end_at = Time.zone.parse('2026-04-30')
+
+        post_as admin, :create, params: {
+          course: {
+            name: 'CSC207',
+            display_name: 'Software Design',
+            is_hidden: true,
+            start_at: new_start_at,
+            end_at: new_end_at
+          }
+        }
+
+        created_course = Course.find_by(name: 'CSC207')
+        expect(created_course.start_at).to be_within(1.second).of(new_start_at)
+        expect(created_course.end_at).to be_within(1.second).of(new_end_at)
       end
     end
 
@@ -349,6 +375,38 @@ describe Admin::CoursesController do
           it 'should flash a success message' do
             subject
             expect(flash.now[:error]).not_to be_empty
+          end
+        end
+      end
+    end
+
+    describe '#refresh_autotest_schema' do
+      subject { post_as admin, :refresh_autotest_schema, params: { id: course.id } }
+
+      context 'there is no autotest_setting set' do
+        it 'should flash an error message' do
+          subject
+          expect(response).to have_http_status(:found)
+          expect(flash[:error]).not_to be_empty
+        end
+      end
+
+      context 'there is an autotest_setting' do
+        include_context 'course with an autotest setting'
+        it 'should update the schema' do
+          schema_json = { 'schema' => 'data' }.to_json
+          allow(controller).to receive(:get_schema).and_return(schema_json)
+          subject
+          expect(autotest_setting.reload.schema).to eq(schema_json)
+          expect(flash[:success]).not_to be_empty
+        end
+
+        context 'when the refresh request fails' do
+          before { allow(controller).to receive(:get_schema).and_raise(StandardError) }
+
+          it 'should flash an error message' do
+            subject
+            expect(flash[:error]).not_to be_empty
           end
         end
       end

@@ -1,3 +1,26 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: annotation_texts
+#
+#  id                     :integer          not null, primary key
+#  content                :text
+#  deduction              :float
+#  created_at             :datetime
+#  updated_at             :datetime
+#  annotation_category_id :integer
+#  creator_id             :integer
+#  last_editor_id         :integer
+#
+# Indexes
+#
+#  index_annotation_texts_on_annotation_category_id  (annotation_category_id)
+#
+# Foreign Keys
+#
+#  fk_annotation_labels_annotation_categories  (annotation_category_id => annotation_categories.id) ON DELETE => cascade
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AnnotationText < ApplicationRecord
   belongs_to :creator, class_name: 'Role'
   belongs_to :last_editor, class_name: 'Role', optional: true
@@ -47,7 +70,7 @@ class AnnotationText < ApplicationRecord
               Result.where(submission_id: annotation_results.pluck('submissions.id'))
                     .where.not(remark_request_submitted_at: nil)
                     .empty?
-    errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
+    errors.add(:base, :results_already_released)
     throw(:abort)
   end
 

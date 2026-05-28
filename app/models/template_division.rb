@@ -1,3 +1,27 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: template_divisions
+#
+#  id                 :integer          not null, primary key
+#  end                :integer          not null
+#  label              :string           not null
+#  start              :integer          not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  assignment_file_id :integer
+#  exam_template_id   :integer
+#
+# Indexes
+#
+#  index_template_divisions_on_exam_template_id  (exam_template_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assignment_file_id => assignment_files.id)
+#  fk_rails_...  (exam_template_id => exam_templates.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TemplateDivision < ApplicationRecord
   belongs_to :exam_template
   belongs_to :assignment_file, optional: true
@@ -23,7 +47,7 @@ class TemplateDivision < ApplicationRecord
   end
 
   def end_should_be_less_than_or_equal_to_num_pages
-    errors.add(:end, 'should be less than or equal to num_pages') unless self.end <= self.exam_template.num_pages
+    errors.add(:end, :more_than_num_pages) unless self.end <= self.exam_template.num_pages
   end
 
   def set_defaults_for_assignment_file

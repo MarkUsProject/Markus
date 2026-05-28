@@ -18,6 +18,7 @@
           ],
           "extra_info": {
             "criterion": "criterion",
+            "display_output": "instructors",
             "name": "Python Test Group"
           }
         }
@@ -44,6 +45,7 @@
           ],
           "extra_info": {
             "criterion": "criterion",
+            "display_output": "instructors",
             "name": "Jupyter Test Group"
           }
         }

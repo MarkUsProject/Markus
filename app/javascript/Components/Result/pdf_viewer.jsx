@@ -1,5 +1,6 @@
 import React from "react";
 import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
+import {PdfAnnotationManager} from "../../common/annotations/pdf_annotation_manager";
 
 export class PDFViewer extends React.PureComponent {
   constructor(props) {
@@ -16,7 +17,6 @@ export class PDFViewer extends React.PureComponent {
     this.pdfViewer = new pdfjsViewer.PDFViewer({
       eventBus: this.eventBus,
       container: this.pdfContainer.current,
-      // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
     });
     window.pdfViewer = this; // For fixing display when pane width changes
 
@@ -51,7 +51,7 @@ export class PDFViewer extends React.PureComponent {
   };
 
   ready_annotations = () => {
-    annotation_type = ANNOTATION_TYPES.PDF;
+    window.annotation_type = window.ANNOTATION_TYPES.PDF;
 
     window.annotation_manager = new PdfAnnotationManager(!this.props.released_to_students);
     window.annotation_manager.resetAngle();

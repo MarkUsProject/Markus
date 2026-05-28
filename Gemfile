@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 8.0.3'
+gem 'rails', '~> 8.1.2'
 gem 'sprockets'
 gem 'sprockets-rails'
 
@@ -37,7 +37,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 8.0.2'
+gem 'rails-i18n', '~> 8.1.0'
 
 # Redis
 gem 'redis', '~> 5.4.1'
@@ -46,7 +46,7 @@ gem 'redis', '~> 5.4.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.1.4'
+gem 'rmagick', '~> 6.2.0'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -64,6 +64,7 @@ gem 'cookies_eu'
 gem 'dry-validation'  # For settings schema validation
 gem 'exception_notification'
 gem 'marcel'
+gem 'pghero'
 gem 'rails-html-sanitizer'
 gem 'rails_performance'
 gem 'responders'
@@ -77,6 +78,7 @@ gem 'pg'
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
 group :development do
+  gem 'annotaterb', require: false
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller' # supplement for better_errors
@@ -96,7 +98,7 @@ group :test do
   gem 'rails-controller-testing'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'shoulda-context', '~> 3.0.0.rc1'
-  gem 'shoulda-matchers', '~> 6.5'
+  gem 'shoulda-matchers', '~> 7.0'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'timecop'
@@ -106,11 +108,12 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
+  gem 'active_record_doctor', require: false
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'rspec-rails', '~> 8.0.2'
+  gem 'rspec-rails', '~> 8.0.4'
   gem 'selenium-webdriver'
 end
 

@@ -1,4 +1,4 @@
-@import 'common/core';
+@use 'common/constants' as *;
 
 .ui-menu {
   background: $background-main;

@@ -15,8 +15,8 @@ import consumer from "../channels/consumer";
 import {renderFlashMessages} from "../common/flash";
 
 class RawSubmissionTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     const markingStates = getMarkingStates([]);
     this.state = {
       groupings: [],
@@ -28,6 +28,7 @@ class RawSubmissionTable extends React.Component {
       markingStateFilter: "all",
       inactiveGroupsCount: 0,
       filtered: [],
+      columns: this.getColumns({}, markingStates, "all"),
     };
   }
 
@@ -67,13 +68,14 @@ class RawSubmissionTable extends React.Component {
 
         const markingStates = getMarkingStates(res.groupings);
 
-        this.setState({
+        this.setState(state => ({
           groupings: res.groupings,
           sections: res.sections,
           loading: false,
           marking_states: markingStates,
           inactiveGroupsCount: inactive_groups_count,
-        });
+          columns: this.getColumns(res.sections, markingStates, state.markingStateFilter),
+        }));
       });
   };
 
@@ -81,13 +83,19 @@ class RawSubmissionTable extends React.Component {
     const summaryTable = this.checkboxTable.getWrappedInstance();
     if (column.id != "marking_state") {
       const markingStates = getMarkingStates(summaryTable.state.sortedData);
-      this.setState({marking_states: markingStates});
+      this.setState(state => ({
+        marking_states: markingStates,
+        columns: this.getColumns(state.sections, markingStates, state.markingStateFilter),
+        filtered,
+      }));
     } else {
       const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
-      this.setState({markingStateFilter: markingStateFilter});
+      this.setState(state => ({
+        markingStateFilter,
+        columns: this.getColumns(state.sections, state.marking_states, markingStateFilter),
+        filtered,
+      }));
     }
-
-    this.setState({filtered});
   };
 
   groupNameWithMembers = row => {
@@ -118,7 +126,7 @@ class RawSubmissionTable extends React.Component {
     }
   };
 
-  columns = () => [
+  getColumns = (sections, marking_states, markingStateFilter) => [
     {
       show: false,
       accessor: "inactive",
@@ -183,7 +191,7 @@ class RawSubmissionTable extends React.Component {
         }
       },
       Filter: selectFilter,
-      filterOptions: Object.entries(this.state.sections).map(kv => ({
+      filterOptions: Object.entries(sections).map(kv => ({
         value: kv[1],
         text: kv[1],
       })),
@@ -229,7 +237,7 @@ class RawSubmissionTable extends React.Component {
       minWidth: 100,
       style: {textAlign: "right"},
     },
-    markingStateColumn(this.state.marking_states, this.state.markingStateFilter, {minWidth: 70}),
+    markingStateColumn(marking_states, markingStateFilter, {minWidth: 70}),
     {
       Header: I18n.t("results.total_mark"),
       accessor: "final_grade",
@@ -482,7 +490,7 @@ class RawSubmissionTable extends React.Component {
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
           data={this.state.groupings}
-          columns={this.columns()}
+          columns={this.state.columns}
           defaultSorted={[
             {
               id: "group_name",
@@ -627,7 +635,7 @@ class SubmissionsActionBox extends React.Component {
           onClick={this.props.unreleaseMarks}
           title={I18n.t("submissions.unrelease_marks")}
         >
-          <span className="fa-layers fa-fw">
+          <span className="fa-layers">
             <FontAwesomeIcon
               icon="fa-solid fa-envelope-circle-check"
               color={document.documentElement.style.getPropertyValue("--disabled_text")}

@@ -11,9 +11,7 @@
         <% if assessment.is_a?(Assignment) && assessment.is_peer_review? %>
           <% title = "#{assessment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" %>
         <% end %>
-        <% if assessment.is_hidden %>
-          <% title = t('assignments.hidden', assignment_text: title) %>
-        <% end %>
+        <% title = formatted_assessment_visibility_label(assessment, title) %>
         <%= title %>
       <% end %>
       <ul>

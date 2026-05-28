@@ -1,11 +1,10 @@
-require:
-  - rubocop-performance
-  - rubocop-factory_bot
-  - rubocop-rspec_rails
-  - rubocop-capybara
 plugins:
+  - rubocop-capybara
+  - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-factory_bot
 
 AllCops:
   Exclude:
@@ -29,6 +28,9 @@ FactoryBot/ConsistentParenthesesStyle:
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
+Layout/IndentationWidth:
+  Enabled: false
+
 Layout/LineEndStringConcatenationIndentation:
   Enabled: true
 
@@ -44,6 +46,9 @@ Layout/FirstHashElementIndentation:
 
 Layout/LineLength:
   Max: 120
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
 
 # Disable to allow method chaining aligned at the '.'
 Layout/MultilineOperationIndentation:
@@ -346,6 +351,10 @@ Style/NumberedParametersLimit:
   Enabled: true
 
 Style/NumericPredicate:
+  Enabled: false
+
+# TODO: enable this check
+Style/OneClassPerFile:
   Enabled: false
 
 Style/OpenStructUse:

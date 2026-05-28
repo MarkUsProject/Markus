@@ -1,26 +1,26 @@
 import React from "react";
 
-export default function SelectFilter({column}) {
-  const uniqueValuesMap = column.getFacetedUniqueValues();
-
+export default function SelectFilter({column, filterValue, facetedUniqueValues}) {
   const sortedUniqueValues = React.useMemo(() => {
-    return Array.from(uniqueValuesMap.keys()).sort();
-  }, [uniqueValuesMap]);
+    return Array.from(facetedUniqueValues.keys())
+      .filter(value => value !== "")
+      .sort();
+  }, [facetedUniqueValues]);
 
   const totalRowCount = React.useMemo(() => {
-    return [...uniqueValuesMap.values()].reduce((sum, count) => sum + count, 0);
-  }, [uniqueValuesMap]);
+    return [...(facetedUniqueValues.values() || [])].reduce((sum, count) => sum + count, 0);
+  }, [facetedUniqueValues]);
 
   return (
     <select
       onChange={e => column.setFilterValue(e.target.value)}
-      value={column.getFilterValue()?.toString() || ""}
+      value={filterValue?.toString() || ""}
       style={{width: "100%"}}
     >
       <option value="">All ({totalRowCount})</option>
       {sortedUniqueValues.map(value => (
         <option value={value} key={value}>
-          {value} ({uniqueValuesMap.get(value).toString()})
+          {value} ({facetedUniqueValues.get(value).toString()})
         </option>
       ))}
     </select>

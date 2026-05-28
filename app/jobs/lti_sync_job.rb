@@ -19,7 +19,7 @@ class LtiSyncJob < ApplicationJob
                                  can_create_users: can_create_users, can_create_roles: can_create_roles)
       if roster_error
         status.update(warning_message: [status[:warning_message], I18n.t('lti.roster_sync_errors')].compact
-                                                                                                   .join("\n"))
+                                                                                                       .join("\n"))
       end
       grade_sync(deployment, assessment)
     end

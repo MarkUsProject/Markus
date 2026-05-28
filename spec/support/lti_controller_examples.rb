@@ -32,6 +32,7 @@ shared_examples 'lti deployment controller' do
       LtiDeployment::LTI_CLAIMS[:deployment_id] => 'some_deployment_id',
       LtiDeployment::LTI_CLAIMS[:context] => { label: 'csc108', title: 'test' },
       LtiDeployment::LTI_CLAIMS[:custom] => { course_id: 1, user_id: 1 },
+      LtiDeployment::LTI_CLAIMS[:lis] => { course_offering_sourcedid: 'some_sourced_id' },
       LtiDeployment::LTI_CLAIMS[:user_id] => 'some_user_id',
       LtiDeployment::LTI_CLAIMS[:roles] => roles }
   end

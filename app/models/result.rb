@@ -1,3 +1,29 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: results
+#
+#  id                          :integer          not null, primary key
+#  marking_state               :string
+#  overall_comment             :text
+#  released_to_students        :boolean          default(FALSE), not null
+#  remark_request_submitted_at :datetime
+#  view_token                  :string           not null
+#  view_token_expiry           :datetime
+#  created_at                  :datetime
+#  updated_at                  :datetime
+#  submission_id               :integer
+#
+# Indexes
+#
+#  index_results_on_submission_id  (submission_id)
+#  index_results_on_view_token     (view_token) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_results_submissions  (submission_id => submissions.id) ON DELETE => cascade
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Result < ApplicationRecord
   MARKING_STATES = {
     complete: 'complete',
@@ -111,7 +137,7 @@ class Result < ApplicationRecord
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
   def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible, subtotals: nil)
-    result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
+    result_data = Result.joins(:extra_marks, submission: [{ grouping: :assignment }])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
     subtotals ||= Result.get_subtotals(result_ids, user_visibility: user_visibility)
@@ -315,9 +341,7 @@ class Result < ApplicationRecord
       input_files.each do |sf|
         contents = sf.retrieve_file(repo: repo)
         FileUtils.mkdir_p(File.join(workdir, sf.path))
-        f = File.open(File.join(workdir, sf.path, sf.filename), 'wb')
-        f.write(contents)
-        f.close
+        File.binwrite(File.join(workdir, sf.path, sf.filename), contents)
       end
     end
 
@@ -423,7 +447,7 @@ class Result < ApplicationRecord
   # Do not allow the marking state to be changed to incomplete if the result is released
   def check_for_released
     if released_to_students && marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
-      errors.add(:base, I18n.t('results.marks_released'))
+      errors.add(:base, :marks_released)
       throw(:abort)
     end
     true
@@ -459,7 +483,7 @@ class Result < ApplicationRecord
     end
 
     if nil_marks || num_marks < criteria.count
-      errors.add(:base, I18n.t('results.criterion_incomplete_error'))
+      errors.add(:base, :criterion_incomplete_error)
       throw(:abort)
     end
     true

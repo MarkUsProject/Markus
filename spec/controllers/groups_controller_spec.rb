@@ -286,7 +286,9 @@ describe GroupsController do
               grouping_id: grouping.id,
               students: names,
               num_total: 1,
-              num_valid: 1
+              num_valid: 1,
+              ocr_match: nil,
+              ocr_suggestions: []
             }
 
             get_as instructor, :assign_scans, params: { course_id: course.id,
@@ -350,6 +352,80 @@ describe GroupsController do
               expect(flash[:warning]).to be_nil
             end
           end
+
+          context 'when OCR match data exists' do
+            let!(:student1) { create(:student, course: course) }
+            let!(:student2) { create(:student, course: course) }
+
+            before do
+              # Create exam template (required for assignment)
+              create(:exam_template_midterm, assignment: assignment)
+
+              student1.user.update!(id_number: '1234567890', user_name: 'student1')
+              student2.user.update!(id_number: '1234567891', user_name: 'student2')
+
+              # Store OCR match data for unmatched grouping
+              OcrMatchService.store_match(
+                grouping.id,
+                '1234567890',
+                'id_number',
+                matched: false,
+                student_id: nil
+              )
+            end
+
+            it 'includes OCR match data in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_match]).not_to be_nil
+              expect(data[:ocr_match][:parsed_value]).to eq '1234567890'
+              expect(data[:ocr_match][:field_type]).to eq 'id_number'
+              expect(data[:ocr_match][:matched]).to be false
+            end
+
+            it 'includes OCR suggestions in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_suggestions]).not_to be_empty
+              expect(data[:ocr_suggestions].first[:id]).to eq student1.id
+              expect(data[:ocr_suggestions].first[:id_number]).to eq '1234567890'
+              expect(data[:ocr_suggestions].first[:similarity]).to be > 90.0
+            end
+          end
+
+          context 'when no OCR match data exists' do
+            let(:exam_template) { create(:exam_template_midterm, assignment: assignment) }
+
+            before { exam_template }
+
+            it 'includes nil ocr_match in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_match]).to be_nil
+              expect(data[:ocr_suggestions]).to be_empty
+            end
+          end
+
+          context 'when assignment has no exam template' do
+            it 'includes nil ocr_match in response' do
+              get_as instructor, :assign_scans, params: { course_id: course.id,
+                                                          assignment_id: grouping.assignment.id,
+                                                          grouping_id: grouping.id }
+
+              data = controller.view_assigns['data']
+              expect(data[:ocr_match]).to be_nil
+              expect(data[:ocr_suggestions]).to be_empty
+            end
+          end
         end
       end
 
@@ -407,7 +483,9 @@ describe GroupsController do
               grouping_id: grouping.id,
               students: names,
               num_total: 1,
-              num_valid: 0
+              num_valid: 0,
+              ocr_match: nil,
+              ocr_suggestions: []
             }
 
             get_as instructor, :assign_scans, params: { course_id: course.id,
@@ -454,7 +532,8 @@ describe GroupsController do
         # Setup for Git Repository
         allow(Settings.repository).to receive(:type).and_return('git')
 
-        @assignment = create(:assignment)
+        # Create assignment with group_max of 3 to accommodate test files
+        @assignment = create(:assignment, assignment_properties_attributes: { group_max: 3 })
 
         # Create students corresponding to the file_good
         @student_user_names = %w[c8shosta c5bennet]
@@ -491,6 +570,67 @@ describe GroupsController do
         expect(response).to have_http_status(:found)
         expect(flash[:error]).not_to be_blank
         expect(response).to redirect_to(action: 'index')
+      end
+
+      it 'accepts groups within the maximum group size' do
+        @assignment.update!(assignment_properties_attributes: { group_max: 2 })
+        # Students c8shosta and c5bennet are already created in the outer before block
+        expect do
+          post_as instructor, :upload, params: {
+            course_id: course.id,
+            assignment_id: @assignment.id,
+            upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
+          }
+        end.to have_enqueued_job(CreateGroupsJob)
+
+        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to be_blank
+        expect(response).to redirect_to(action: 'index')
+      end
+
+      it 'accepts single-member groups' do
+        @assignment.update!(assignment_properties_attributes: { group_max: 1 })
+        create(:student, user: create(:end_user, user_name: 'solo_student'))
+
+        csv_content = "group1,solo_student\n"
+        file = Tempfile.new(['test_upload', '.csv'])
+        file.write(csv_content)
+        file.rewind
+
+        expect do
+          post_as instructor, :upload, params: { course_id: course.id,
+                                                 assignment_id: @assignment.id,
+                                                 upload_file: fixture_file_upload(file.path, 'text/csv') }
+        end.to have_enqueued_job(CreateGroupsJob)
+
+        file.close
+        file.unlink
+
+        expect(flash[:error]).to be_blank
+      end
+
+      context 'when uploading groups with inactive students' do
+        before do
+          @assignment.update!(assignment_properties_attributes: { group_max: 2 })
+          # Create an active student
+          @active_student = create(:student, user: create(:end_user, user_name: 'active_student'))
+          # Create an inactive student (hidden: true)
+          @inactive_student = create(:student, hidden: true, user: create(:end_user, user_name: 'inactive_student'))
+        end
+
+        it 'allows importing groups with inactive students (ISSUE-7743)' do
+          expect do
+            post_as instructor, :upload, params: {
+              course_id: course.id,
+              assignment_id: @assignment.id,
+              upload_file: fixture_file_upload('groups/form_with_inactive_students.csv', 'text/csv')
+            }
+          end.to have_enqueued_job(CreateGroupsJob)
+
+          expect(response).to have_http_status(:found)
+          expect(flash[:error]).to be_blank
+          expect(response).to redirect_to(action: 'index')
+        end
       end
     end
 
@@ -657,6 +797,15 @@ describe GroupsController do
     describe '#validate_groupings' do
       let(:grouping) { create(:grouping_with_inviter) }
 
+      it 'should return a bad request when no grouping is selected.' do
+          post_as instructor, :global_actions, params: { course_id: course.id,
+                                                         assignment_id: grouping.assignment.id,
+                                                         groupings: [],
+                                                         global_actions: 'valid' }
+          expect(response).to have_http_status(:bad_request)
+          expect(flash[:error]).to have_message(I18n.t('groups.select_a_group'))
+      end
+
       it 'should validate groupings' do
         post_as instructor, :global_actions, params: { course_id: course.id,
                                                        assignment_id: grouping.assignment.id,
@@ -704,6 +853,7 @@ describe GroupsController do
 
     describe '#add_members' do
       let(:grouping) { create(:grouping_with_inviter) }
+      let(:grouping2) { create(:grouping_with_inviter, assignment: grouping.assignment) }
       let(:student1) { create(:student) }
       let(:student2) { create(:student) }
 
@@ -715,6 +865,85 @@ describe GroupsController do
                                                        global_actions: 'assign' }
 
         expect(grouping.students.size).to eq 3
+      end
+
+      it 'should return bad request when more than one grouping is selected' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping, grouping2],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_only_one_group'))
+      end
+
+      it 'should return bad request when no students are selected' do
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.select_a_student'))
+      end
+
+      it 'should return bad request when assigning would exceed group_max' do
+        grouping.assignment.update!(group_max: 1, student_form_groups: true)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.assign_over_limit', group: grouping.group.group_name))
+      end
+
+      it 'should assign inviter status when grouping has no members' do
+        empty_grouping = create(:grouping)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: empty_grouping.assignment.id,
+                                                       groupings: [empty_grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(empty_grouping.student_memberships.reload.find_by(role: student1).membership_status)
+          .to eq(StudentMembership::STATUSES[:inviter])
+      end
+
+      it 'should return bad request when student is already in a group for this assignment' do
+        create(:grouping_with_inviter, assignment: grouping.assignment, inviter: student1)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.already_grouped',
+                                                     user_name: student1.user_name))
+      end
+
+      it 'should return bad request when student cannot be invited' do
+        diff_course_student = create(:student)
+        diff_course_student.update!(course: create(:course))
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [diff_course_student.id],
+                                                       global_actions: 'assign' }
+        expect(response).to have_http_status(:bad_request)
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.not_found',
+                                                     user_name: diff_course_student.user_name))
+      end
+
+      it 'should flash a warning when student has insufficient grace credits' do
+        student1.update!(grace_credits: 0)
+        allow_any_instance_of(Grouping).to receive(:grace_period_deduction_single).and_return(1)
+        post_as instructor, :global_actions, params: { course_id: course.id,
+                                                       assignment_id: grouping.assignment.id,
+                                                       groupings: [grouping],
+                                                       students: [student1.id],
+                                                       global_actions: 'assign' }
+        expect(flash[:warning]).to have_message(I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name))
+        expect(grouping.student_memberships.reload.find_by(role: student1)).to be_present
       end
     end
 

@@ -94,7 +94,7 @@ export var annotation_context_menu = {
     };
 
     function get_annotation_id(clicked_element) {
-      if (annotation_type === ANNOTATION_TYPES.CODE) {
+      if (window.annotation_type === window.ANNOTATION_TYPES.CODE) {
         let curr = clicked_element;
         while (curr !== null && curr.tagName === "SPAN") {
           for (let attr in curr.dataset) {
@@ -153,7 +153,7 @@ export var annotation_context_menu = {
         // Enable "delete" menu item if an annotation was clicked.
         var annotation_selected = (function () {
           var clicked_element = $(ui.target);
-          if (annotation_type === ANNOTATION_TYPES.CODE) {
+          if (window.annotation_type === window.ANNOTATION_TYPES.CODE) {
             return clicked_element.closest(".source-code-glowing-1").length > 0;
           } else {
             return clicked_element.closest(".annotation_holder").length > 0;

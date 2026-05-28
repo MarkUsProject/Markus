@@ -1,4 +1,19 @@
 # Represents properties of an assessment specific to a given section.
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: assessment_section_properties
+#
+#  id            :integer          not null, primary key
+#  due_date      :datetime
+#  is_hidden     :boolean
+#  start_time    :datetime
+#  visible_on    :datetime
+#  visible_until :datetime
+#  assessment_id :bigint
+#  section_id    :integer
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AssessmentSectionProperties < ApplicationRecord
   belongs_to :section
   belongs_to :assessment, inverse_of: :assessment_section_properties
@@ -22,7 +37,7 @@ class AssessmentSectionProperties < ApplicationRecord
   def visible_dates_are_valid
     return if visible_on.nil? || visible_until.nil?
     if visible_on >= visible_until
-      errors.add(:visible_until, 'must be after visible_on')
+      errors.add(:visible_until, :before_visible_on)
     end
   end
 end

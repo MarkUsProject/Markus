@@ -1,3 +1,24 @@
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: sections
+#
+#  id         :integer          not null, primary key
+#  name       :string
+#  created_at :datetime
+#  updated_at :datetime
+#  course_id  :bigint           not null
+#
+# Indexes
+#
+#  index_sections_on_course_id           (course_id)
+#  index_sections_on_name_and_course_id  (name,course_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Section < ApplicationRecord
   validates :name, presence: true, allow_blank: false,
                    format: { with: /\A[a-zA-Z0-9\-_ ]+\z/ }

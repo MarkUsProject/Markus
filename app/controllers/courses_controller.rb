@@ -128,8 +128,8 @@ class CoursesController < ApplicationController
                 type: 'text/yml',
                 disposition: 'attachment')
     else
-      flash[:error] = t('download_errors.unrecognized_format', format: format)
-      redirect_back_or_to(course_assignments_path(current_course))
+      flash[:error] = t('download_errors.unrecognized_format', file_format: format)
+      redirect_back(fallback_location: course_assignments_path(current_course))
     end
   end
 

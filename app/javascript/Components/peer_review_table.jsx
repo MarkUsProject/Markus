@@ -14,6 +14,7 @@ class RawPeerReviewTable extends React.Component {
       loading: true,
       marking_states: markingStates,
       markingStateFilter: "all",
+      columns: this.getColumns(markingStates, "all"),
     };
   }
 
@@ -41,11 +42,12 @@ class RawPeerReviewTable extends React.Component {
       .then(res => {
         this.props.resetSelection();
         const markingStates = getMarkingStates(res);
-        this.setState({
+        this.setState(state => ({
           peer_reviews: res,
           loading: false,
           marking_states: markingStates,
-        });
+          columns: this.getColumns(markingStates, state.markingStateFilter),
+        }));
       });
   };
 
@@ -53,14 +55,20 @@ class RawPeerReviewTable extends React.Component {
     const summaryTable = this.checkboxTable.getWrappedInstance();
     if (column.id != "marking_state") {
       const markingStates = getMarkingStates(summaryTable.state.sortedData);
-      this.setState({marking_states: markingStates});
+      this.setState(state => ({
+        marking_states: markingStates,
+        columns: this.getColumns(markingStates, state.markingStateFilter),
+      }));
     } else {
       const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
-      this.setState({markingStateFilter: markingStateFilter});
+      this.setState(state => ({
+        markingStateFilter,
+        columns: this.getColumns(state.marking_states, markingStateFilter),
+      }));
     }
   };
 
-  columns = () => [
+  getColumns = (marking_states, markingStateFilter) => [
     {
       show: false,
       accessor: "_id",
@@ -86,7 +94,7 @@ class RawPeerReviewTable extends React.Component {
       accessor: "reviewee_name",
       id: "reviewee_name",
     },
-    markingStateColumn(this.state.marking_states, this.state.markingStateFilter, {minWidth: 70}),
+    markingStateColumn(marking_states, markingStateFilter, {minWidth: 70}),
     {
       Header: I18n.t("results.total_mark"),
       accessor: "final_grade",
@@ -156,7 +164,7 @@ class RawPeerReviewTable extends React.Component {
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
           data={this.state.peer_reviews}
-          columns={this.columns()}
+          columns={this.state.columns}
           defaultSorted={[
             {
               id: "reviewer_name",

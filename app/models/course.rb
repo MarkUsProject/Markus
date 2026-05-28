@@ -1,4 +1,30 @@
 # Class describing a course
+# rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
+# == Schema Information
+#
+# Table name: courses
+#
+#  id                  :bigint           not null, primary key
+#  display_name        :string           not null
+#  end_at              :datetime
+#  is_hidden           :boolean          default(TRUE), not null
+#  max_file_size       :bigint           default(5000000), not null
+#  name                :string           not null
+#  start_at            :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  autotest_setting_id :bigint
+#
+# Indexes
+#
+#  index_courses_on_autotest_setting_id  (autotest_setting_id)
+#  index_courses_on_name                 (name) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (autotest_setting_id => autotest_settings.id)
+#
+# rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Course < ApplicationRecord
   has_many :assessments, inverse_of: :course, dependent: :destroy
   has_many :assignments
@@ -176,7 +202,7 @@ class Course < ApplicationRecord
   def start_at_before_or_equal_to_end_at
     return if start_at.nil? || end_at.nil?
     if start_at > end_at
-      errors.add(:start_at, 'must be before or equal to end date')
+      errors.add(:start_at, :after_end_date)
     end
   end
 end

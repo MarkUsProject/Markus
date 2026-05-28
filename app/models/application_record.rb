@@ -12,7 +12,7 @@ class ApplicationRecord < ActiveRecord::Base
     course_ids = associations.filter_map { |a| a.is_a?(Course) ? a.id : a&.course&.id }
     if course_ids.to_set.length > 1
       names = associations.compact.map { |a| a.class.name.underscore }.join(', ')
-      errors.add(:base, "#{names} must all belong to the same course")
+      errors.add(:base, :courses_should_match, names: names)
     end
   end
 end

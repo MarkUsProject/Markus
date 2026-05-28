@@ -9,6 +9,27 @@ class StudentPeerReviewsTable extends React.Component {
     this.state = {
       peer_reviews: [],
       loading: true,
+      columns: [
+        {
+          Header: I18n.t("activerecord.models.peer_review.one"),
+          Cell: row => {
+            return (
+              <a
+                href={Routes.edit_course_result_path(
+                  this.props.course_id,
+                  row.original["results.id"]
+                )}
+              >
+                {`${I18n.t("activerecord.models.peer_review.one")} ${row.original["peer_reviews.id"]}`}
+              </a>
+            );
+          },
+        },
+        {
+          Header: I18n.t("submissions.status"),
+          accessor: "marking_state",
+        },
+      ],
     };
   }
 
@@ -37,30 +58,11 @@ class StudentPeerReviewsTable extends React.Component {
       });
   };
 
-  columns = () => [
-    {
-      Header: I18n.t("activerecord.models.peer_review.one"),
-      Cell: row => {
-        return (
-          <a
-            href={Routes.edit_course_result_path(this.props.course_id, row.original["results.id"])}
-          >
-            {`${I18n.t("activerecord.models.peer_review.one")} ${row.original["peer_reviews.id"]}`}
-          </a>
-        );
-      },
-    },
-    {
-      Header: I18n.t("submissions.status"),
-      accessor: "marking_state",
-    },
-  ];
-
   render() {
     return (
       <ReactTable
         data={this.state.peer_reviews}
-        columns={this.columns()}
+        columns={this.state.columns}
         defaultSorted={[{id: "name"}]}
         sortable={false}
         loading={this.state.loading}

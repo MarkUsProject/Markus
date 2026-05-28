@@ -95,6 +95,7 @@ import "./common/menu";
 import "./common/react_config";
 import "./common/redirect";
 import "./common/fetch_proxy";
+import "./common/annotations/globals";
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.
@@ -108,6 +109,8 @@ import {refreshOrLogout} from "./common/refresh_or_logout";
 window.refreshOrLogout = refreshOrLogout;
 import {ModalMarkus} from "./common/modals";
 window.ModalMarkus = ModalMarkus;
+import {updateOcrSuggestions} from "./common/ocr_suggestions";
+window.updateOcrSuggestions = updateOcrSuggestions;
 import {makeDashboard} from "./Components/dashboard";
 window.makeDashboard = makeDashboard;
 import {makeAssignmentSummary} from "./Components/assignment_summary";

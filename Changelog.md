@@ -1,16 +1,62 @@
 # Changelog
 
-## [unreleased]
-
-### 🛡️ Security
-
-### 🚨 Breaking changes
+## [v2.10.0]
 
 ### ✨ New features and improvements
+- Improve admin user list loading time by replacing ActiveRecord instantiation with direct column extraction (#7897)
+- Provide suggestions for partial student matching scans (#7760)
+- Allow inactive students to join groups (#7757)
+- Update autotest settings form UI (#7777)
+- Split courses into Current and Past sections for all users (#7801)
+- Add an administrator action on the course settings page to refresh autotest schema (#7828)
+- Add JS autotester example (#7866)
+- Return structured JSON from grade entry forms API show endpoint with optional student filter and CSV export (#7886)
+- Added term-based suffixes to course names created via LTI to ensure uniqueness across academic years (#7881)
+- Added `db:populate_course_dates` rake task to backfill `start_at`/`end_at` for existing courses, and permit those fields when creating courses through the admin UI (#7925)
+- Sync due date when creating or updating LTI gradebook line items, and re-sync automatically when an assessment is edited (#7872)
 
 ### 🐛 Bug fixes
+- Prevent "No rows found" message from displaying in tables when data is loading (#7790)
+- Fixed course card link behavior on the dashboard (#7887)
+- Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
+- Fix version mismatch between container client and database server (#7916)
+- Fixed filter Canvas Test Student from roster sync (#7926)
+- Fix: include original total mark in JSON response for remark requests (#7945)
+- Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
 
 ### 🔧 Internal changes
+- Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
+- Added tests for `GroupsController` to fully cover `global_actions` (#7955)
+- Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
+- Added tests for `GradersController` to fully cover `grader_groupers_mapping` (#7946)
+- Added seed task to assign TAs to A1 groupings and criteria (#7867)
+- Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
+- Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
+- Added tests for `GradeEntryFormsController` to fully cover `update_grade_entry_form_params` (#7789)
+- Updated the grade breakdown summary table to use `@tanstack/react-table` v8 (#7800)
+- Internationalized custom model validation error messages by replacing hardcoded English strings with i18n symbol keys (#7805)
+- Changed model validation errors to use built-in error key resolution instead of inline `I18n.t` calls (#7806)
+- Upgraded to Rails v8.1 (#7815)
+- Updated the student table to use `@tanstack/react-table` v8 (#7826)
+- Added `active_record_doctor` development gem (#7861)
+- Added `annotaterb` development gem and added model and route annotations (#7861)
+- Added `pghero` gem and added PgHero admin dashboard (#7861)
+- Add nullable last_updated_by foreign key (to roles) to marks and grades tables to track who assigned which grade (#7878)
+- Updates ResultsController#update_mark to set the last_updated_by field when marks are modified (#7885)
+- Added pre-commit hook to run `i18n-tasks health` when locale files are changed (#7894)
+- Refactored tables to avoid recreating column definitions on every render (#7910)
+- Updated Docker configuration to use Ubuntu 24.04, Ruby 3.4.9, Bundler 4.0.10, Node 24, and Postgres 17 (#7911)
+- Update Dockerfile to include the python3.13-dev package which allows building c++ extensions from source (#7912)
+- Improved performance of `Table` component (#7919)
+- Updated GitHub Actions dependencies and added Dependabot config for quarterly GitHub Actions updates (#7920)
+- Updated `pdfjs-dist` to v5.6.205 (#7942)
+- Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
+- Fixed flaky git-hooks tests (#7950)
+- Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
+- Moved annotation-related Javascript to be bundled with webpack (#7953)
+- Upgraded `react-jsonschema-form` to v6.5.2 (#7954)
+- Fixed CSP warnings and updated CSP config. Switched webpack development source map to `eval-source-map`. (#7956)
+- Move all CSS builds into webpack pipeline (#7957)
 
 ## [v2.9.6]
 

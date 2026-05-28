@@ -170,7 +170,7 @@ class AnnotationCategoriesController < ApplicationController
                 disposition: 'attachment'
     else
       flash[:error] = t('download_errors.unrecognized_format',
-                        format: params[:format])
+                        file_format: params[:format])
       redirect_to action: 'index',
                   id: params[:id]
     end

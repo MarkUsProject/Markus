@@ -1,25 +1,25 @@
 @charset "UTF-8";
 
-@import 'reset';
-@import 'constants';
-@import 'columns';
-@import 'file_viewer';
-@import 'login';
-@import 'mixins';
-@import 'modals';
-@import 'notes_dialog';
-@import 'annotations_dialog';
-@import 'icons';
-@import 'react_json_schema_form';
-@import 'react_tabs';
-@import 'courses';
-@import 'url_viewer';
-@import 'statistics';
-@import 'criteria_filter';
-@import 'multi_select_dropdown';
-@import 'single_select_dropdown';
-@import 'filter_modal';
-@import 'table';
+@use 'reset';
+@use 'constants' as *;
+@use 'columns';
+@use 'file_viewer';
+@use 'login';
+@use 'mixins';
+@use 'modals';
+@use 'notes_dialog';
+@use 'annotations_dialog';
+@use 'icons';
+@use 'react_json_schema_form';
+@use 'react_tabs';
+@use 'courses';
+@use 'url_viewer';
+@use 'statistics';
+@use 'criteria_filter';
+@use 'multi_select_dropdown';
+@use 'single_select_dropdown';
+@use 'filter_modal';
+@use 'table';
 
 /** Main */
 
@@ -29,7 +29,7 @@ body {
   font: 400 0.8em/1.2em $fonts;
   transition: background-color $time-quick;
 
-  @include breakpoint(tiny) {
+  @include mixins.breakpoint(tiny) {
     background-color: $background-main;
   }
 }
@@ -224,6 +224,15 @@ textarea {
     &.fixed-width {
       width: unset;
     }
+  }
+}
+
+input[type='checkbox'] {
+  cursor: pointer;
+
+  &[disabled],
+  &[readonly] {
+    cursor: default;
   }
 }
 
@@ -1290,7 +1299,7 @@ nav {
     min-width: 100px;
     padding: 0 0.4em;
 
-    @include breakpoint(mobile) {
+    @include mixins.breakpoint(mobile) {
       min-width: 3em;
 
       > .svg-inline--fa:only-child {
