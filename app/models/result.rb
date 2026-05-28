@@ -439,11 +439,17 @@ class Result < ApplicationRecord
 
   private
 
-  # Do not allow the marking state to be changed to incomplete if the result is released
+  # Do not allow certain fields to be changed when the result is released
   def check_for_released
-    if released_to_students && marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
-      errors.add(:base, :marks_released)
-      throw(:abort)
+    if released_to_students
+      if marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
+        errors.add(:base, :marks_released)
+        throw(:abort)
+      end
+      if overall_comment_changed?
+        errors.add(:overall_comment, :marks_released)
+        throw(:abort)
+      end
     end
     true
   end
