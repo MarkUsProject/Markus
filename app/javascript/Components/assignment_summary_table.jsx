@@ -78,11 +78,25 @@ export class AssignmentSummaryTable extends React.Component {
               member.slice(0, 3).some(name => name.toLowerCase().includes(filterValue))
             );
 
-            if (member_matches) {
-              return true;
-            }
-
-            // Check grader user names
+            return member_matches;
+          } else {
+            return true;
+          }
+        },
+      }),
+      columnHelper.accessor("graders", {
+        id: "graders",
+        header: () => I18n.t("activerecord.models.ta.other"),
+        size: 100,
+        enableResizing: true,
+        cell: props => {
+          const graders = props.row.original.graders;
+          return this.graderDisplay(graders);
+        },
+        filterFn: (row, columnId, filterValue) => {
+          if (filterValue) {
+            filterValue = filterValue.toLowerCase();
+            // Check grader usernames
             return row.original.graders.some(grader =>
               grader.some(name => name.toLowerCase().includes(filterValue))
             );
@@ -248,6 +262,18 @@ export class AssignmentSummaryTable extends React.Component {
         ")"
       );
     }
+  };
+
+  graderDisplay = graders => {
+    return (
+      "" +
+      graders
+        .map(grader => {
+          return grader[0];
+        })
+        .join(", ") +
+      ""
+    );
   };
 
   fetchData = () => {
@@ -459,7 +485,6 @@ export class AssignmentSummaryTable extends React.Component {
             });
           }}
           getRowCanExpand={() => true}
-          renderSubComponent={renderSubComponent}
           loading={this.state.loading}
         />
         <DownloadTestResultsModal
@@ -480,20 +505,3 @@ export class AssignmentSummaryTable extends React.Component {
     );
   }
 }
-
-const renderSubComponent = ({row}) => {
-  return (
-    <div>
-      <h4>{I18n.t("activerecord.models.ta", {count: row.original.graders.length})}</h4>
-      <ul>
-        {row.original.graders.map(grader => {
-          return (
-            <li key={grader[0]}>
-              ({grader[0]}) {grader[1]} {grader[2]}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-};
