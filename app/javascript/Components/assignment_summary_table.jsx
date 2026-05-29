@@ -84,27 +84,6 @@ export class AssignmentSummaryTable extends React.Component {
           }
         },
       }),
-      columnHelper.accessor("graders", {
-        id: "graders",
-        header: () => I18n.t("activerecord.models.ta.other"),
-        size: 100,
-        enableResizing: true,
-        cell: props => {
-          const graders = props.row.original.graders;
-          return this.graderDisplay(graders);
-        },
-        filterFn: (row, columnId, filterValue) => {
-          if (filterValue) {
-            filterValue = filterValue.toLowerCase();
-            // Check grader usernames
-            return row.original.graders.some(grader =>
-              grader.some(name => name.toLowerCase().includes(filterValue))
-            );
-          } else {
-            return true;
-          }
-        },
-      }),
       columnHelper.accessor("marking_state", {
         header: () => I18n.t("activerecord.attributes.result.marking_state"),
         accessorKey: "marking_state",
@@ -237,7 +216,29 @@ export class AssignmentSummaryTable extends React.Component {
       sortDescFirst: true,
     });
 
-    return [...fixedColumns, ...criteriaColumnDefs, bonusColumn];
+    const gradersColumn = columnHelper.accessor("graders", {
+      id: "graders",
+      header: () => I18n.t("activerecord.models.ta.other"),
+      size: 100,
+      enableResizing: true,
+      cell: props => {
+        const graders = props.row.original.graders;
+        return this.graderDisplay(graders);
+      },
+      filterFn: (row, columnId, filterValue) => {
+        if (filterValue) {
+          filterValue = filterValue.toLowerCase();
+          // Check grader usernames
+          return row.original.graders.some(grader =>
+            grader.some(name => name.toLowerCase().includes(filterValue))
+          );
+        } else {
+          return true;
+        }
+      },
+    });
+
+    return [...fixedColumns, ...criteriaColumnDefs, bonusColumn, gradersColumn];
   };
 
   toggleShowInactiveGroups = showInactiveGroups => {
