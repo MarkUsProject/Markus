@@ -357,31 +357,6 @@ export class AssignmentSummaryTable extends React.Component {
     return data;
   }
 
-  onFilteredChange = (filtered, column) => {
-    const summaryTable = this.wrappedInstance;
-    if (column.id != "marking_state") {
-      const markingStates = getMarkingStates(summaryTable.state.sortedData);
-      this.setState({
-        marking_states: markingStates,
-        columns: this.getColumns(
-          this.state.criteriaColumns,
-          markingStates,
-          this.state.markingStateFilter
-        ),
-      });
-    } else {
-      const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
-      this.setState({
-        markingStateFilter,
-        columns: this.getColumns(
-          this.state.criteriaColumns,
-          this.state.marking_states,
-          markingStateFilter
-        ),
-      });
-    }
-  };
-
   onDownloadTestsModal = () => {
     this.setState({showDownloadTestsModal: true});
   };
