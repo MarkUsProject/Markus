@@ -10,8 +10,8 @@
 #  start_time              :datetime
 #  starter_file_changed    :boolean          default(FALSE), not null
 #  test_tokens             :integer          default(0), not null
-#  created_at              :datetime
-#  updated_at              :datetime
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
 #  assessment_id           :bigint           not null
 #  group_id                :integer          not null
 #

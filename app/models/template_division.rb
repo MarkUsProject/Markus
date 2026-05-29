@@ -10,7 +10,7 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  assignment_file_id :integer
-#  exam_template_id   :integer
+#  exam_template_id   :integer          not null
 #
 # Indexes
 #

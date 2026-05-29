@@ -8,11 +8,11 @@
 #  id            :integer          not null, primary key
 #  bonus         :boolean          default(FALSE), not null
 #  name          :string           not null
-#  out_of        :float
-#  position      :integer
-#  created_at    :datetime
-#  updated_at    :datetime
-#  assessment_id :bigint
+#  out_of        :float            not null
+#  position      :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  assessment_id :bigint           not null
 #
 # Indexes
 #

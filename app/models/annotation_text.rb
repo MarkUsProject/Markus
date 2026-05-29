@@ -6,8 +6,8 @@
 #  id                     :integer          not null, primary key
 #  content                :text
 #  deduction              :float
-#  created_at             :datetime
-#  updated_at             :datetime
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
 #  annotation_category_id :integer
 #  creator_id             :integer
 #  last_editor_id         :integer

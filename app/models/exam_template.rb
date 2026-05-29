@@ -15,7 +15,7 @@
 #  num_pages         :integer          not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  assessment_id     :bigint
+#  assessment_id     :bigint           not null
 #
 # Indexes
 #

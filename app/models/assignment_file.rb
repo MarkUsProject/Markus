@@ -5,9 +5,9 @@
 #
 #  id            :integer          not null, primary key
 #  filename      :string           not null
-#  created_at    :datetime
-#  updated_at    :datetime
-#  assessment_id :bigint
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  assessment_id :bigint           not null
 #
 # Indexes
 #

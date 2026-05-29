@@ -11,8 +11,8 @@
 #  position             :integer          not null
 #  status               :text             not null
 #  time                 :bigint
-#  created_at           :datetime
-#  updated_at           :datetime
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
 #  test_group_result_id :bigint           not null
 #
 # Indexes

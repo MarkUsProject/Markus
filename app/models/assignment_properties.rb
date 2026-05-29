@@ -45,7 +45,7 @@
 #  vcs_submit                       :boolean          default(FALSE), not null
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  assessment_id                    :bigint
+#  assessment_id                    :bigint           not null
 #  default_starter_file_group_id    :bigint
 #  remote_autotest_settings_id      :integer
 #
