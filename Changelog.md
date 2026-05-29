@@ -7,7 +7,6 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-
 - Improve admin user list loading time by replacing ActiveRecord instantiation with direct column extraction (#7897)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
@@ -22,7 +21,6 @@
 - Added GET and PATCH /overall_comment API routes (#7963)
 
 ### 🐛 Bug fixes
-
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
 - Fixed course card link behavior on the dashboard (#7887)
 - Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
@@ -32,8 +30,7 @@
 - Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
 
 ### 🔧 Internal changes
-
-- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation`
 - Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
 - Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
 - Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
@@ -74,13 +71,11 @@
 ## [v2.9.6]
 
 ### ✨ New features and improvements
-
 - Improve assignment list loading time (#7868)
 - Update user info during roster sync (#7865)
 - Improve assignment summary loading time (#7899)
 
 ### 🐛 Bug fixes
-
 - Fixed missing translation for "in progress" status on the batch test runs table by removing redundant double-translation of the status value (#7869)
 - Fixed search box in the grades view being unresponsive to user input (#7880)
 - Fixed searching by grader name in the grades view crashing due to calling `.toLowerCase()` on an array (#7880)
@@ -88,22 +83,18 @@
 ## [v2.9.5]
 
 ### 🛡️ Security
-
 - Escape raw HTML syntax in RMarkdown conversion to HTML (#7841)
 - Sanitize content when rendering submission files as HTML (#7841)
 - Added iframe `sandbox` attribute to `HTMLViewer` component (#7841)
 - Removed `allow-scripts` from `sandbox` attribute to `HTMLViewer` component (#7848)
 
 ### ✨ New features and improvements
-
 - Store start and end date for courses (#7783)
 
 ### 🐛 Bug fixes
-
 - Add index to `results` - `submission_id` column (#7851)
 
 ### 🔧 Internal changes
-
 - Replaced MathJax with KaTeX (#7848)
 - Refactored TA membership queries to leverage existing `role_id` index on `memberships` table (#7858)
 - Bumped dompurify from 3.2.6 to 3.3.2 (#7857)
@@ -113,65 +104,55 @@
 ## [v2.9.4]
 
 ### 🛡️ Security
-
 - Added limit to uploaded YML file size and number of nodes
 - Added configuration settings for zip extraction limits
 
 ### ✨ New features and improvements
-
 - Enable test results downloads through the API (#7754)
 - Improve assignment loading time on grading page (#7836)
 
 ### 🐛 Bug fixes
-
 - Trigger repository permissions update after LTI roster sync (#7831)
 
 ### 🔧 Internal changes
-
 - Bumped nokogiri from 1.19.0 to 1.19.1 (#7834)
 - Bumped rack from 3.2.4 to 3.2.5 (#7832)
 - Bumped ajv from 8.17.1 to 8.18.0 (#7835)
 
+
 ## [v2.9.3]
 
 ### ✨ New features and improvements
-
 - Allow administrators to remove instructors from a course (#7808)
 - Batch the calculation of TA grading statistics on assignments index page (#7787)
 - Improve git repo access time, by reducing db queries (#7791)
 - Updated to `markus_exam_matcher` v0.4.0, which corrects upside down scanned pages and improves OCR (#7823)
 
 ### 🐛 Bug fixes
-
 - Prevent ZIP files from being previewed in the assignment file viewer (#7802)
 - Display descriptive error message when scanned exam template name exceeds the 20-character limit (#7796)
 - Made repository URL not a link for student assignment view when version control is enabled (#7807)
 
 ### 🔧 Internal changes
-
 - Updated development environment to use Python 3.13 (#7823)
 - Switched development environment to install CPU-only version of pytorch (#7823)
 
 ## [v2.9.2]
 
 ### 🐛 Bug fixes
-
 - Fixed display of inline images in notebook HTML rendering (#7816)
 
 ## [v2.9.1]
 
 ### 🛡️ Security
-
 - Removed insecure html_content route
 - Verify zip entry names in assignment configuration zip upload
 
 ### ✨ New features and improvements
-
 - Prevent adding duplicate grader group mappings on CSV upload (#7786)
 - Update batch test runs table UI (#7790)
 
 ### 🐛 Bug fixes
-
 - Fixed assignment YML export to correctly nest assignment property attributes under `assignment_properties_attributes` (#7792)
 - Hide deactivated/missing students and restore re-enrolled students during roster sync (#7799)
 - Fixed the editing form of marking schemes to include newly added assessments (#7788)
@@ -179,7 +160,6 @@
 ## [v2.9.0]
 
 ### ✨ New features and improvements
-
 - Added touch event support for PDF and image annotations in grading view (#7736)
 - Added datetime-based visibility scheduling for assessments with `visible_on` and `visible_until` columns (#7697)
 - Added frontend UI for assignment visibility scheduling with three visibility options and section-specific overrides (#7717)
@@ -197,7 +177,6 @@
 - Enable scanned assignments the ability to add inactive students (#7737)
 
 ### 🐛 Bug fixes
-
 - Fix name column search in graders table (#7693)
 - Check against mtime instead of atime for clean up of git repo directories in tmp folder (#7706)
 - Update Model: Fix level validation checks through use of a custom validator (#7696)
@@ -205,7 +184,6 @@
 - Fixed syncing grades with Canvas to not include inactive students (#7759)
 
 ### 🔧 Internal changes
-
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
 - Converted "Create Group" functionality to React modal (#7663)
 - Added tests to improve coverage for `AnnotationCategory`'s `self.to_json` method
@@ -223,13 +201,11 @@
 ## [v2.8.2]
 
 ### ✨ New features and improvements
-
 - Update message and page displaying cannot create new course via external LTI tool (#7669)
 - Provide file viewer the option to render Microsoft files (#7676)
 - Display late submission selection and add accompanying filter (#7689)
 
 ### 🐛 Bug fixes
-
 - Fixed N+1 query problem in StudentsController by eager loading user association (#7678)
 - Resque Host Authorization, removing env condition as this is for all environments (#7671)
 - Fixed ordering of assignments in the Assignment dropdown menu and Assignment index page (#7642)
@@ -241,7 +217,6 @@
 ## [v2.8.1]
 
 ### 🐛 Bug fixes
-
 - Fixed group member filtering in assignment summary table (#7644)
 - Fixed spacing issue for the remote authentication login button (#7646)
 - Fixed API bug when creating binary submission files (#7647)
@@ -249,14 +224,12 @@
 - Fixed autogeneration of URL alias in URL submission form (#7661)
 
 ### 🔧 Internal changes
-
 - Updated the assignment summary table to use `@tanstack/react-table` v8 (#7630)
 - Updated Github Actions CI to use cache-apt-pkgs to speed up workflow runs (#7645)
 
 ## [v2.8.0]
 
 ### ✨ New features and improvements
-
 - Improved layout and labeling in the assignment settings form for both standard and timed assessments. (#7531)
 - Design improvement of tables when the data is empty. (#7557)
 - Improved Assignment view for students (#7533)
@@ -268,7 +241,6 @@
 - Create User class method to retrieve orphaned users (#7633)
 
 ### 🐛 Bug fixes
-
 - Added host authorization setting for Resque (#7562)
 
 ### 🔧 Internal changes
@@ -520,26 +492,21 @@
 - Allow restricting IP addresses for remote logins (#7072)
 
 ## [v2.4.9]
-
 - Peer review table bug fix to display total marks (#7034)
 - Fix bug preventing deletion of autotest files (#7033)
 
 ## [v2.4.8]
-
 - Validate user-provided paths (#7025)
 
 ## [v2.4.7]
-
 - Support Jupyter notebooks for results printing (#6993)
 - Enable bulk download of print PDFs for an assignments (#6998)
 - Fixed long annotations being cut off in the annotation table (#7001)
 
 ## [v2.4.6]
-
 - Disallow students from uploading .git file and .git folder in their repository (#6963)
 
 ## [v2.4.5]
-
 - Add workaround for CSP in Safari < 16 (#6947)
 - Improve add button labels on autotest settings page (#6948)
 - Fix bug where grader distribution graph displays graders multiple times (#6950)
@@ -547,18 +514,15 @@
 - Make display of group member information consistent across submissions and summary table (#6917)
 
 ## [v2.4.4]
-
 - Fix websocket connection when logged in with remote auth (#6912)
 - Fix bug where graders table failed to load when a group had no members (#6916)
 
 ## [v2.4.3]
-
 - Fix autotest settings criterion JSON schema validation (#6907)
 - Ensure autotested criteria do not have marks set if tests time out (#6907)
 - Fix import bug that prevents the peer review table from loading (#6908)
 
 ## [v2.4.2]
-
 - Fix feedback file API not returning feedback file IDs correctly (#6875)
 - Allow inactive groups in the graders table to be toggled for display (#6778)
 - Enable plotly rendering for jupyter notebooks (#6871)
@@ -567,11 +531,9 @@
 - Display error message in real-time when running automated tests, rather than waiting for page refresh (#6878)
 
 ## [v2.4.1]
-
 - Internal changes only
 
 ## [v2.4.0]
-
 - Display error message on file upload failure (#6703)
 - Remark request grading: differentiate between old and new annotations using colour and remark flag (#6704)
 - Display detailed messages about grace period deductions for an assignment on student interface (#6706)
@@ -590,30 +552,25 @@
 - Fix member filtering in Groups table (#6842)
 
 ## [v2.3.4]
-
 - Ensure the "Random Incomplete Submission" button takes into account criteria assignment for TAs (#6800)
 - Ensure bonus marks are not included in assignment "out of" in submissions table (#6836)
 - Ensure assignment "out of" in submissions table is rounded to two decimal places (#6836)
 - Added POST API for Group Creation (#6834)
 
 ## [v2.3.3]
-
 - Fix bug where uploading scanned exam pages with overwriting option selected did not update submission files (#6768)
 - Fix bug: "Download Submissions" download link was not being rendered from partial view (#6779)
 
 ## [v2.3.2]
-
 - Allow MathJAX to process environments (e.g., align) (#6762)
 
 ## [v2.3.1]
-
 - Add filter for empty/non-empty submissions in submissions table (#6711)
 - Fix bug where autotest settings would not appear if there were no assignment criteria (#6718)
 - Added API routes for Extensions API (#6743)
 - Fix premature page reloading when autotest settings are saved (#6744)
 
 ## [v2.3.0]
-
 - Do not destroy pending group memberships if the group is given an extension (#6582)
 - Add OCR for parsing scanned exam uploads (#6433)
 - Move submission-specific results/ routes to be under submissions/ (#6434)
@@ -624,7 +581,7 @@
 - Clarify assignment submission rule configuration labels (#6529)
 - Enable client-side validation of autotest settings page (#6568)
 - Use web sockets instead of polling to update submissions table after collecting submissions (#6583)
-- Order students by username when downloading the CSV grades breakdown for an assignment from Summary tab (#6589)
+- Order students by username when downloading the CSV grades breakdown for an assignment from Summary tab  (#6589)
 - Use web sockets to update TestRunTable for non-batch run tests when a test run is in progress or completed (#6591)
 - Add button to allow students to cancel automated test runs (#6596)
 - Use web sockets instead of polling to update submission collection status (#6597)
@@ -653,25 +610,21 @@
 - Added persistence to the filter modal (#6697)
 
 ## [v2.2.4]
-
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 
-## [v2.2.3]
 
+## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
 
 ## [v2.2.2]
-
 - Apply course maximum file size to feedback files (#6430)
 
 ## [v2.2.1]
-
 - Fix bug where error was raised when viewing jupyter notebooks if python is not available (#6418)
 - Fix bug where peer reviewers could not view results they are assigned to review (#6439)
 - Make fewer connections when connecting to redis (#6443)
 
 ## [v2.2.0]
-
 - Moved markdown text preview to new tab in the generic autosaving text form component (#6154)
 - Simplify configuration options for storing files on disk (#6157)
 - Replace yarn with npm as a package manager (#6159)
@@ -705,19 +658,16 @@
 - Fix bug where certain results attributes could not be updated if the result was incomplete (#6388)
 
 ## [v2.1.7]
-
 - Switch from jquery-ui-timepicker-addon to flatpickr for datetime inputs (#6158)
 - Allow results to be made available only through unique tokens (#6244)
 
 ## [v2.1.6]
-
 - Fix bug where TAs were able to access urls for results they haven't been assigned to (#6321)
 - Fix bug where the marking state was left as "complete" after a new criterion is created (#6303)
 - Fix bug where writing starter files to repositories failed if the starter files contained a directory (#6294)
 - Fix bug where csv summary download fails if criteria are created after marking (#6302)
 
 ## [v2.1.5]
-
 - Add admin users to the .access file so that they can be authenticated as having access to the git repos (#6237)
 - Optionally log which user makes each request by tagging the log files with user_names (#6241)
 - Allow users to upload and download csv files for marks spreadsheets in the same format (#6267)
@@ -727,15 +677,12 @@
 - Fix bug where test results were being associated with the wrong test runs (#6287)
 
 ## [v2.1.4]
-
 - Fix bug where git hooks are not run server side when symlinked (#6276/#6277)
 
 ## [v2.1.3]
-
 - Fix bug where automated test results were occasionally associated with the wrong grouping (#6238)
 
 ## [v2.1.2]
-
 - Fix bug preventing use of the update_grades API route (#6188)
 - Fix overly restrictive policies for admin users (#6209)
 - Add check for version format to ensure that Wiki links are well-formed (#6221)
@@ -744,7 +691,6 @@
 - Allow admin users to manage the maximum file size setting through the UI (#6195)
 
 ## [v2.1.1]
-
 - Fix bug where files could not be uploaded using drag and drop if no files or folders previously existed. (#6117)
 - Added drag and drop functionality to upload starter files and automated tests. (#6117)
 - Added new summary statistics display for grade entry forms and grade entry column items (#6118)
@@ -753,7 +699,6 @@
 - Enable updating student active/inactive status in student edit form (#6145)
 
 ## [v2.1.0]
-
 - Remove unmaintained locales (#5727)
 - Introduce standalone ruby script as an alternative method to checking for repository access (#5736)
 - Added the ability to submit URLs (#5822)
@@ -825,29 +770,24 @@
 - Reorganize rake tasks to simplify steps required for asset precompilation in production (#6146)
 
 ## [v2.0.10]
-
 - Fix bug when sorting batch test runs where sorting by date was not working (#5906)
 - Ensure tabs in result view do not reload when switching between them (#5910)
 - Fix bug where penalty periods were sometimes incorrectly ordered (#5908)
 
 ## [v2.0.9]
-
 - Fix bug when downloading all automated test files where the files were saved to a sub directory (#5864)
 - Fix bugs in assigning scanned exams and improve error message when assigning by name (#5895)
 - Remove MarkUs logo from mobile view left navigation menu (#5899)
 - Allow adding annotations to remark requests (#5900)
 
 ## [v2.0.8]
-
 - Fix bug where "run tests" grader permission was not working for submission table (#5860)
 - Fix bug for replacing exam template files (#5863)
 
 ## [v2.0.7]
-
 - Fix bugs in starter files when assigning by section (#5846)
 
 ## [v2.0.6]
-
 - Fix bug for "Delete Group" button generating an invalid path (#5768)
 - When role switched, 403 errors are displayed as flash messages after redirecting back to the previous page (#5785)
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5781)
@@ -857,11 +797,9 @@
 - Do not trigger starter file changed timestamp when only starter_files_after_due assignment setting is changed (#5845)
 
 ## [v2.0.5]
-
 - Add ability to annotate notebook (jupyter and Rmd) submissions (#5749)
 
 ## [v2.0.4]
-
 - Fix bug where "Create Note" button was displaying when a course had no noteables (#5745)
 - Redesign login page for multiple authentication options (#5752)
 - Do not timeout users who are logged in using remote authentication (#5738)
@@ -872,31 +810,25 @@
 - Allow students to populate their repositories with starter files (#5754)
 
 ## [v2.0.3]
-
 - Fix bug where repository access files were not taking multiple courses into account (#5734)
 - Fix bug where sections and grace credits could not be updated from the student edit view (#5739)
 
 ## [v2.0.2]
-
 - Fix bug in displaying feedback files for test results (#5719)
 - Require starter group names to be unique for an assignment (#5721)
 - Fix bug in updating the autotester url for a given course (#5724)
 
 ## [v2.0.1]
-
 - Fix bug where a login with remote authentication failed to redirect to the landing page (#5690)
 - Allow admin user to have a unique user name (#5691)
 
 ## [v2.0.0]
-
 - Support multiple courses in a single MarkUs instance (#5685)
 
 ## [v1.14.1]
-
 - Update wiki urls to point to https://github.com/MarkUsProject/Wiki (#5782)
 
 ## [v1.14.0]
-
 - Add the ability to hide assignments from individual sections (#5445)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
 - Fix bug with run test button in grading view when marks are released (#5527)
@@ -920,25 +852,21 @@
 - Fix bug in displaying associated feedback files when switching between results (#5676)
 
 ## [v1.13.3]
-
 - Display multiple feedback files returned by the autotester (#5524)
 - Add workaround for CSP rules in Safari (#5526)
 - Change level mark input field to accept change increments of 0.01 (#5546)
 - Fix bug in annotation upload when updating categories not associated with a criterion (#5564)
 
 ## [v1.13.2]
-
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)
 - Set criteria marks after autotest run (#5508)
 
 ## [v1.13.1]
-
 - Ensure that downloadable test specs file is portable between assignments and instances (#5469)
 - Support rendering of Markdown in criterion descriptions (#5500)
 - Ensure "Create all groups" button creates repositories for students usering their user name (#5499)
 
 ## [v1.13.0]
-
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
 - Add copy to clipboard button for plaintext submission files in Results view (#5223)
@@ -961,29 +889,23 @@
 - Update UI for test results table (#5465)
 
 ## [v1.12.5]
-
 - Fix bugs in grading view when switching between submissions (#5400)
 
 ## [v1.12.4]
-
 - Symlink git repo hooks (#5283)
 
 ## [v1.12.3]
-
 - Add workaround for content security policy to allow loading blobs in Safari (#5273)
 
 ## [v1.12.2]
-
 - Require TestServer user to have a non-conflicting user name (#5268)
 
 ## [v1.12.1]
-
 - Remove counter caches (#5222)
 - Delay grouping creation for working-alone timed assessments to when the student starts the assessment (#5224)
 - Add option to hide starter files after collection date (#5226)
 
 ## [v1.12.0]
-
 - Remove annotations context menu from peer assignments view (#5116)
 - Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
 - Add time zone validations (#5060)
@@ -1021,21 +943,17 @@
 - Add percentage extra marks when calculating total extra marks properly (#5213)
 
 ## [v1.11.5]
-
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
 - Prevent students from downloading starter files early (#5189)
 
 ## [v1.11.4]
-
 - Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
 - Fix bug where groupings created before starter files were uploaded could not download starter files (#5160)
 
 ## [v1.11.3]
-
 - Fix easyModal overlay bug (#5117)
 
 ## [v1.11.2]
-
 - Fix bug where newlines were being added to files in zip archives (#5030)
 - Fix bug where graders could be assigned to groups with empty submissions (#5031)
 - Use Fullscreen API for grading in "fullscreen mode" (#5036)
@@ -1048,13 +966,11 @@
 - Fix bug where grader permission for creating annotations were not properly set (#5078)
 
 ## [v1.11.1]
-
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)
 - Only display latest results for each test group to students viewing results from an released assignment (#5013)
 - Remove localization path parameter (#4985)
 
 ## [v1.11.0]
-
 - Converts annotation modals from ERB into React (#4997)
 - Refactor localization setting to settings page (#4996)
 - Add admins to display name (#4994)
@@ -1094,12 +1010,10 @@
 - Add color theme settings (#4924)
 
 ## [v1.10.4]
-
 - Fix bug where students could see average and median marks when the results had not been released yet (#4976)
 - Add email and id_number to user information returned by get requests to api user routes (#4974)
 
 ## [v1.10.3]
-
 - Allow for more concurrent access to git repositories (#4895)
 - Fixed calculation bugs for grade summary (#4899)
 - Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
@@ -1107,7 +1021,6 @@
 - Fixed bug where negative total marks may be displayed when a negative extra mark exists (#4925)
 
 ## [v1.10.2]
-
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
 - Limit number of tests sent to the autotest server at one time (#4901)
 - Restore the flash messages displayed when students submit files (#4903)
@@ -1117,14 +1030,12 @@
 - Fixed a bug where the progress bar in submissions and results page counts the not collected submissions (#4854)
 
 ## [v1.10.1]
-
 - Fix out of dates link to the wiki (#4843)
 - Fixed a bug where the grade summary view was not being properly displayed if no criteria existed (#4855)
 - Fixed an error preventing graders from viewing grade entry forms (#4857)
 - Fixed an error which used unreleased results to calculate assignment statistics (#4862)
 
 ## [v1.10.0]
-
 - Issue #3670: Added API for adding and removing extra marks (#4499)
 - Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
 - Fixed sorting in annotation table in results view (#4542)
@@ -1165,13 +1076,11 @@
 - Remove partially created annotation category data for failed upload (#4795)
 
 ## [v1.9.3]
-
 - Fixed inverse association bug with assignments (#4551)
 - Fixed bug preventing graders from downloading submission files from multiple students (#4658)
 - Fixed bug preventing downloading all submission files from git repo (#4658)
 
 ## [v1.9.2]
-
 - Fixed bug preventing all git hooks from being run in production (#4594)
 - Fixed bug preventing folders from being deleted in file managers (#4605)
 - Added support for displaying .heic and .heif files in the file viewer (#4607)
@@ -1179,7 +1088,6 @@
 - Fixed a bug preventing graders viewing the submissions page if they had specific criteria assigned to them (#4617)
 
 ## [v1.9.1]
-
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
@@ -1188,7 +1096,6 @@
 - Updated interface with the autotester so that files do not need to be copied when test are setup/enqueued (#4546)
 
 ## [v1.9.0]
-
 - Added option to anonymize group membership when viewed by graders (#4331)
 - Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
   ungradeable (#4331)
@@ -1215,12 +1122,10 @@
 - Add ability to upload and download autotest settings as a json file/string through the UI and API (#4498)
 
 ## [v1.8.4]
-
 - Fixed bug where test output was not being properly hidden from students (#4379)
 - Fixed bug where certain fonts were not rendered properly using pdfjs (#4382)
 
 ## [v1.8.3]
-
 - Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
 - Added feature to set multiple submissions to in/complete from the submissions table (#4336)
@@ -1231,21 +1136,17 @@
 - Fixed bug where the student interface page wasn't rendered if creating a single student grouping at the same time (#4372)
 
 ## [v1.8.2]
-
 - Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left. (#4290)
 - Updated the Changelog format. (#4292)
 - Fix displayed number of graded assignments being larger than total allocated for TAs. (#4297)
 
 ## [v1.0.0 - v1.8.1]
-
 ### Notes
-
 - Due to a lapse in using the release system and this changelog, we do not have a detailed description of changes
 - Future releases will continue to update this changelog
 - For all changes since 1.0.0 release see: https://github.com/MarkUsProject/Markus/pulls?q=is%3Apr+created%3A2014-02-15..2019-12-11+is%3Aclosed
 
 ## [v1.0.0]
-
 - Using Rails to 3.0.x
 - Add Support for Ruby 1.9.x
 - Issue #1002: new REST API
@@ -1258,13 +1159,10 @@
 - Several improvements on sections
 - Syntax Highlighter is now working with non utf-8 files
 - Tests are not using fixtures anymore
-
 ### Notes
-
 - For a list of all fixed issues see: https://github.com/MarkUsProject/Markus/issues?milestone=8
 
 ## [v0.10.0]
-
 - Use of Bundler to manage Gems dependencies.
 - Fixed UI bugs (marking state, released checkbox).
 - Fixed bug with javascript cache.
@@ -1298,21 +1196,17 @@
 - Issue #3: Diplaying server's time on student view.
 
 ## [v0.9.5]
-
 - Fixed bug which prohibited removal of required assignment
   files.
 
 ## [v0.9.4]
-
 - Fixed releasing and unreleasing marks for students using
   select-all-across-pages feature in the submissions table.
 
 ## [v0.9.3]
-
 - Added UI for students to view their test results.
 
 ## [v0.9.2]
-
 - Issue #180: Infinite redirect loop caused by duplicate group records in the
   database in turn possibly caused by races in a multi-mongrels-setup.
   (commits: 6552f28bf7, 19933b7f65, e39c542a4d, c226371823, ac0e348bb6,
@@ -1334,12 +1228,10 @@
 - I18n fixes (commits: bc791a4f21, 232384e05a, 8e2fcb6d61, 95c27db874)
 
 ## [v0.9.1]
-
 - Submission collection problem due to erroneous eager loading
   expression (commit: a1d380b60e).
 
 ## [v0.9.0]
-
 - Multiple bug fixes
 - REMOTE_USER authentication support
 - Redesigned manage groups and graders pages
@@ -1349,25 +1241,22 @@
 - Added ability to assign graders to individual criteria
 
 ## [v0.8.0]
-
 - Using Rails 2.3.8
 - MarkUs renders a 404 page error for mismatching routes
 - Bug fixes on submission dates and grace period credits
 - Python and Ruby Scripts using MarkUs API (see lib/tools)
 - Displaying and annotating images
-  A lot of accessibility features have been implemented :
-  - Missing labels & Better focus on forms
-  - Adding annotations in downloaded code from students repository
-  - Re-arrange criteria using keyboard
+ A lot of accessibility features have been implemented :
+	* Missing labels & Better focus on forms
+	* Adding annotations in downloaded code from students repository
+	* Re-arrange criteria using keyboard
 - MarkUs is now completely internationalized
 - Added new translation : french
 
 ## [v0.7.1]
-
 - Bugfix for svn permissions with web submissions
 
 ## [v0.7.0]
-
 - The notes system has been polished, and users can now add notes to groups, students, and submissions.
 - Added the flexible criterion marking scheme type
 - Added the marks spreadsheet feature
@@ -1375,19 +1264,16 @@
 - Minor bugfixes and usability fixes.
 
 ## [v0.6.3]
-
 - Added rake task to automatically regenerate svn_authz in the event of corruption
 - MarkUs now ensures student read/write permissions on repositories after cloning groups
 
 ## [v0.6.2]
-
 - For now, students who work alone do not have their repositories named after them
 - "Allow Web Submits?" in Assignment Properties page defaults to REPOSITORY_EXTERNAL_SUBMITS_ONLY setting now
 - Annotation Category dropdowns no longer close prematurely on mouseover-ing a tooltip
 - Added "Reset Mark" capability to grader view
 
 ## [v0.6.1]
-
 - Fixed trace on detailed CSV download for assignments (g9jerboa)
 - Random TA assignment now applies only to selected groups (rburke)
 - Next/Previous Submission links in grader view no longer skip submissions marked "completed" (c6conley)
@@ -1396,7 +1282,6 @@
 - Functional tests now all pass (c6conley)
 
 ## [v0.6.0]
-
 - Submissions table is now paginated (c6conley)
 - It is now possible to push test results into MarkUs using the new REST API
   (g9jerboa)
@@ -1410,8 +1295,8 @@
   Grader View (c6conley)
 - MarkUs logs basic user actions (g9jerboa)
 
-## [<= v0.5.10]
 
+## [<= v0.5.10]
 - MarkUs 0.5.10 corresponds to revision 1118 in release_0.5 branch (g9jerboa)
 - Pump MARKUS_VERSION patch level to 10 (version is now 0.5.10) (g9jerboa)
 - Added changelog file (g9jerboa)
