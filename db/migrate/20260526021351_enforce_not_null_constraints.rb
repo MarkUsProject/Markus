@@ -66,8 +66,6 @@ class EnforceNotNullConstraints < ActiveRecord::Migration[8.1]
     change_column_null :grade_entry_students_tas, :grade_entry_student_id, false
     change_column_null :grade_entry_students_tas, :ta_id, false
 
-    change_column_null :groups, :group_name, false
-
     change_column_null :groupings, :created_at, false
     change_column_null :groupings, :updated_at, false
 
