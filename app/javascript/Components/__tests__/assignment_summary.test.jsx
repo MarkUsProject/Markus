@@ -264,21 +264,21 @@ describe("For the AssignmentSummaryTable's search filter", () => {
 
   describe("For the Graders Column", () => {
     it("filters rows as the user types in the Graders search box", () => {
-      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[1], {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
         target: {value: "Mark"},
       });
 
       expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
       expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
 
-      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[1], {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
         target: {value: "Varoquaux"},
       });
 
       expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
       expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
 
-      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[1], {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
         target: {value: "c6gehwol"},
       });
 
@@ -287,7 +287,7 @@ describe("For the AssignmentSummaryTable's search filter", () => {
     });
 
     it("restores all rows when the Graders search query is cleared", () => {
-      const searchInput = screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[1];
+      const searchInput = screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2];
       fireEvent.change(searchInput, {target: {value: "Rada"}});
       fireEvent.change(searchInput, {target: {value: ""}});
 
@@ -296,7 +296,7 @@ describe("For the AssignmentSummaryTable's search filter", () => {
     });
 
     it("shows no rows when the Graders search query matches nothing", () => {
-      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[1], {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
         target: {value: "zzznomatch"},
       });
 
