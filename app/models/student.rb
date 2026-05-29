@@ -70,6 +70,10 @@ class Student < Role
 
   validates :section, presence: { unless: -> { section_id.nil? } }
 
+  validates :receives_invite_emails, inclusion: { in: [true, false] }
+
+  validates :receives_results_emails, inclusion: { in: [true, false] }
+
   validates :grace_credits,
             numericality: { only_integer: true,
                             greater_than_or_equal_to: 0 }
