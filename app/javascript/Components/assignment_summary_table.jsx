@@ -484,7 +484,6 @@ export class AssignmentSummaryTable extends React.Component {
               return {columnFilters: newFilters};
             });
           }}
-          getRowCanExpand={() => true}
           loading={this.state.loading}
         />
         <DownloadTestResultsModal
