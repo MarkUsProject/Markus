@@ -5,7 +5,7 @@
 # Table name: groups
 #
 #  id         :integer          not null, primary key
-#  group_name :string           not null
+#  group_name :string
 #  repo_name  :string
 #  course_id  :bigint           not null
 #
