@@ -396,7 +396,6 @@ class Result < ApplicationRecord
           contents = sf.retrieve_file(repo: repo)
           tmp_path = File.join(workdir, 'tmp_file.pdf')
           FileUtils.rm_rf(tmp_path)
-
           args = [
             Rails.application.config.python,
             '-m', 'nbconvert',
@@ -413,6 +412,7 @@ class Result < ApplicationRecord
           end
         end
       end
+
       # Finally, insert cover page at the front
       combined_pdf >> CombinePDF.load("#{workdir}/front.pdf")
       combined_pdf
