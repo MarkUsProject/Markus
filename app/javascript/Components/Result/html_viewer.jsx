@@ -46,6 +46,8 @@ export class HTMLViewer extends React.PureComponent {
       });
 
     renderMathInElement(this.iframe.current.contentDocument.body);
+
+    this.props.setLoadingCallback(false);
   };
 
   componentDidUpdate(prevProps) {

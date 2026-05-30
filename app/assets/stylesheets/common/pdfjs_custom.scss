@@ -23,3 +23,7 @@
 .pdfViewer {
   padding-top: 5px;
 }
+
+.pdfContainer .pdfViewer .page.loadingIcon::after {
+  background: none;
+}
