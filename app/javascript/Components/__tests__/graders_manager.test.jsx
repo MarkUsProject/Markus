@@ -255,36 +255,19 @@ describe("For the GradersManager's group name search", () => {
     await screen.findByText("Alpha_group");
   });
 
-  it("is case-sensitive by default", () => {
-    const groupSearch = screen.getByRole("textbox", {
-      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
-    });
-    fireEvent.change(groupSearch, {target: {value: "Alpha"}});
-
-    expect(screen.getByText("Alpha_group")).toBeInTheDocument();
-    expect(screen.queryByText("alpha_group_lower")).not.toBeInTheDocument();
-    expect(screen.queryByText("Beta_group")).not.toBeInTheDocument();
-  });
-
-  it("becomes case-insensitive when the toggle is unchecked", () => {
+  it("is case-insensitive by default", () => {
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
     });
     fireEvent.change(groupSearch, {target: {value: "alpha"}});
-    expect(screen.queryByText("Alpha_group")).not.toBeInTheDocument();
-    expect(screen.getByText("alpha_group_lower")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
 
     expect(screen.getByText("Alpha_group")).toBeInTheDocument();
     expect(screen.getByText("alpha_group_lower")).toBeInTheDocument();
     expect(screen.queryByText("Beta_group")).not.toBeInTheDocument();
   });
 
-  it("returns to case-sensitive when toggled back", () => {
-    const toggle = screen.getByTestId("group_name_case_sensitive");
-    fireEvent.click(toggle); // off
-    fireEvent.click(toggle); // on again
+  it("becomes case-sensitive when the toggle is checked", () => {
+    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
 
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
@@ -293,5 +276,20 @@ describe("For the GradersManager's group name search", () => {
 
     expect(screen.getByText("Alpha_group")).toBeInTheDocument();
     expect(screen.queryByText("alpha_group_lower")).not.toBeInTheDocument();
+    expect(screen.queryByText("Beta_group")).not.toBeInTheDocument();
+  });
+
+  it("returns to case-insensitive when toggled back off", () => {
+    const toggle = screen.getByTestId("group_name_case_sensitive");
+    fireEvent.click(toggle); // on
+    fireEvent.click(toggle); // off again
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "alpha"}});
+
+    expect(screen.getByText("Alpha_group")).toBeInTheDocument();
+    expect(screen.getByText("alpha_group_lower")).toBeInTheDocument();
   });
 });

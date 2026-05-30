@@ -39,16 +39,6 @@ class RawSubmissionTable extends React.Component {
     this.createChannelSubscriptions();
   }
 
-  groupNameFilter = (filter, row) => {
-    const {filterValue, caseSensitive} = filter.value;
-    if (!filterValue) return true;
-    if (caseSensitiveIncludes(row._original.group_name, filterValue, caseSensitive)) return true;
-    if (!row._original.members) return false;
-    return row._original.members.some(member =>
-      caseSensitiveIncludes(member[0], filterValue, caseSensitive)
-    );
-  };
-
   fetchData = () => {
     fetch(
       Routes.course_assignment_submissions_path(this.props.course_id, this.props.assignment_id),
@@ -121,6 +111,20 @@ class RawSubmissionTable extends React.Component {
       members = ` (${row.original.members.map(m => m[0]).join(", ")})`;
     }
     return row.value + members;
+  };
+
+  groupNameFilter = (filter, row) => {
+    const {filterValue, caseSensitive} = filter.value;
+    if (!filterValue) return true;
+    if (caseSensitiveIncludes(row._original.group_name, filterValue, caseSensitive)) {
+      return true;
+    }
+    return (
+      row._original.members &&
+      row._original.members.some(member =>
+        caseSensitiveIncludes(member[0], filterValue, caseSensitive)
+      )
+    );
   };
 
   getColumns = (sections, marking_states, markingStateFilter) => [

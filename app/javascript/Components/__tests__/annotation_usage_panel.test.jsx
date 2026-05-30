@@ -49,20 +49,7 @@ describe("For the AnnotationUsagePanel's group name search", () => {
     await screen.findByText("(alice) Alice First");
   });
 
-  it("is case-sensitive by default", () => {
-    const groupSearch = screen.getByRole("textbox", {
-      name: `${I18n.t("search")} ${I18n.t("activerecord.models.submission.one")}`,
-    });
-    fireEvent.change(groupSearch, {target: {value: "Alpha"}});
-
-    expect(screen.getByText("(alice) Alice First")).toBeInTheDocument();
-    expect(screen.queryByText("(bob) Bob Second")).not.toBeInTheDocument();
-    expect(screen.queryByText("(carol) Carol Third")).not.toBeInTheDocument();
-  });
-
-  it("becomes case-insensitive when the toggle is unchecked", () => {
-    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
-
+  it("is case-insensitive by default", () => {
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.submission.one")}`,
     });
@@ -70,6 +57,19 @@ describe("For the AnnotationUsagePanel's group name search", () => {
 
     expect(screen.getByText("(alice) Alice First")).toBeInTheDocument();
     expect(screen.getByText("(bob) Bob Second")).toBeInTheDocument();
+    expect(screen.queryByText("(carol) Carol Third")).not.toBeInTheDocument();
+  });
+
+  it("becomes case-sensitive when the toggle is checked", () => {
+    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.submission.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "Alpha"}});
+
+    expect(screen.getByText("(alice) Alice First")).toBeInTheDocument();
+    expect(screen.queryByText("(bob) Bob Second")).not.toBeInTheDocument();
     expect(screen.queryByText("(carol) Carol Third")).not.toBeInTheDocument();
   });
 });

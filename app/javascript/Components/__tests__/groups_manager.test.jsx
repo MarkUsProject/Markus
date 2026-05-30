@@ -188,17 +188,17 @@ describe("For the GroupsManager's group name search", () => {
     await screen.findByText("c6scriab");
   });
 
-  it("is case-sensitive by default", () => {
+  it("is case-insensitive by default", () => {
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
     });
     fireEvent.change(groupSearch, {target: {value: "C6"}});
 
-    expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
     expect(screen.queryByText("group2")).not.toBeInTheDocument();
   });
 
-  it("matches case-sensitively when given exact case", () => {
+  it("matches case-insensitively when given exact case", () => {
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
     });
@@ -208,7 +208,7 @@ describe("For the GroupsManager's group name search", () => {
     expect(screen.queryByText("group2")).not.toBeInTheDocument();
   });
 
-  it("becomes case-insensitive when the toggle is unchecked", () => {
+  it("becomes case-sensitive when the toggle is checked", () => {
     fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
 
     const groupSearch = screen.getByRole("textbox", {
@@ -216,21 +216,21 @@ describe("For the GroupsManager's group name search", () => {
     });
     fireEvent.change(groupSearch, {target: {value: "C6"}});
 
-    expect(screen.getByText("c6scriab")).toBeInTheDocument();
+    expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
     expect(screen.queryByText("group2")).not.toBeInTheDocument();
   });
 
-  it("returns to case-sensitive when toggled back", () => {
+  it("returns to case-insensitive when toggled back off", () => {
     const toggle = screen.getByTestId("group_name_case_sensitive");
-    fireEvent.click(toggle); // off
-    fireEvent.click(toggle); // on again
+    fireEvent.click(toggle); // on
+    fireEvent.click(toggle); // off again
 
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
     });
     fireEvent.change(groupSearch, {target: {value: "C6"}});
 
-    expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
     expect(screen.queryByText("group2")).not.toBeInTheDocument();
   });
 });

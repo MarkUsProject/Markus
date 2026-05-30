@@ -116,8 +116,8 @@ export function textFilter({filter, onChange, column}) {
  * against them.
  */
 export function caseSensitiveIncludes(haystack, needle, caseSensitive) {
-  const a = haystack == null ? "" : String(haystack);
-  const b = needle == null ? "" : String(needle);
+  const a = haystack === null || haystack === undefined ? "" : String(haystack);
+  const b = needle === null || needle === undefined ? "" : String(needle);
   if (caseSensitive) return a.includes(b);
   return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
 }
@@ -138,13 +138,13 @@ export function caseSensitiveStringFilterMethod(filter, row) {
  * A Filter component pairing a text input with an "Aa" checkbox toggle for
  * case-sensitive matching. It owns both the search text and the toggle,
  * passing them to the table together via `onChange` as
- * `{filterValue, caseSensitive}`. Matching defaults to case-sensitive. Pair
+ * `{filterValue, caseSensitive}`. Matching defaults to case-insensitive. Pair
  * with `caseSensitiveStringFilterMethod`, or a custom filterMethod that reads
  * `filter.value.filterValue` and `filter.value.caseSensitive`.
  */
 export function caseSensitiveTextFilter({filter, onChange, column}) {
   const filterValue = filter ? filter.value.filterValue : "";
-  const caseSensitive = filter ? filter.value.caseSensitive : true;
+  const caseSensitive = filter ? filter.value.caseSensitive : false;
 
   return (
     <div style={{display: "flex", alignItems: "center", gap: "4px"}}>

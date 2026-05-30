@@ -580,7 +580,7 @@ class RawGroupsTable extends React.Component {
     super(props);
     this.state = {
       filtered: [],
-      columns: this.getColumns(),
+      columns: this.getColumns(props.showSections, props.sections, props.showCoverage),
     };
   }
 
@@ -590,11 +590,17 @@ class RawGroupsTable extends React.Component {
       prevProps.sections !== this.props.sections ||
       prevProps.showCoverage !== this.props.showCoverage
     ) {
-      this.setState({columns: this.getColumns()});
+      this.setState({
+        columns: this.getColumns(
+          this.props.showSections,
+          this.props.sections,
+          this.props.showCoverage
+        ),
+      });
     }
   }
 
-  getColumns = () => {
+  getColumns = (showSections, sections, showCoverage) => {
     return [
       {
         accessor: "inactive",
@@ -613,7 +619,7 @@ class RawGroupsTable extends React.Component {
         Header: I18n.t("activerecord.models.section", {count: 1}),
         accessor: "section",
         id: "section",
-        show: this.props.showSections || false,
+        show: showSections || false,
         minWidth: 70,
         Cell: ({value}) => {
           return this.props.sections[value] || "";
@@ -626,7 +632,7 @@ class RawGroupsTable extends React.Component {
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(kv => ({
+        filterOptions: Object.entries(sections).map(kv => ({
           value: kv[1],
           text: kv[1],
         })),
@@ -674,7 +680,7 @@ class RawGroupsTable extends React.Component {
         minWidth: 70,
         className: "number",
         filterable: false,
-        show: this.props.showCoverage,
+        show: showCoverage,
       },
     ];
   };

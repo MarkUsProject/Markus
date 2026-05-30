@@ -11,7 +11,6 @@ class AnnotationUsagePanel extends React.Component {
     this.state = {
       applications: null,
       details: false,
-      columns: this.getColumns(),
     };
   }
 
@@ -23,48 +22,44 @@ class AnnotationUsagePanel extends React.Component {
     }
   };
 
-  getColumns = () => {
-    return [
-      {
-        Header: I18n.t("annotations.used_by"),
-        accessor: row => `(${row.user_name}) ${row.first_name} ${row.last_name}`,
-        id: "user",
-        minWidth: 200,
-        PivotValue: ({value}) => value,
+  columns = [
+    {
+      Header: I18n.t("annotations.used_by"),
+      accessor: row => "(" + row["user_name"] + ") " + row["first_name"] + " " + row["last_name"],
+      id: "user",
+      minWidth: 200,
+      PivotValue: ({value}) => value,
+    },
+    {
+      Header: I18n.t("activerecord.models.submission.one"),
+      accessor: "group_name",
+      aggregate: (vals, pivots) => {
+        let usageCount = pivots.reduce((accumulator, p) => accumulator + p._original["count"], 0);
+        return I18n.t("annotations.used_times", {count: usageCount});
       },
-      {
-        Header: I18n.t("activerecord.models.submission.one"),
-        accessor: "group_name",
-        id: "group_name",
-        aggregate: (vals, pivots) => {
-          const usageCount = pivots.reduce((sum, p) => sum + p._original.count, 0);
-          return I18n.t("annotations.used_times", {count: usageCount});
-        },
-        sortable: false,
-        Aggregated: row => `(${row.value})`,
-        Filter: caseSensitiveTextFilter,
-        filterMethod: (filter, row) => {
-          const {filterValue, caseSensitive} = filter.value;
-          if (!filterValue) return true;
-          if (row._subRows === undefined) {
-            return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
-          }
-          return row._subRows.some(sr =>
-            caseSensitiveIncludes(sr.group_name, filterValue, caseSensitive)
-          );
-        },
-        Cell: row => {
-          const {group_name, count, result_id} = row.original;
-          const suffix = count > 1 ? ` (${count})` : "";
-          return (
-            <a href={Routes.edit_course_result_path(this.props.course_id, result_id)}>
-              {`${group_name}${suffix}`}
-            </a>
-          );
-        },
+      sortable: false,
+      Aggregated: row => "(" + row.value + ")",
+      Filter: caseSensitiveTextFilter,
+      filterMethod: (filter, row) => {
+        const {filterValue, caseSensitive} = filter.value;
+        if (!filterValue) return true;
+        if (row._subRows === undefined) {
+          return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
+        }
+        return row._subRows.some(sr =>
+          caseSensitiveIncludes(sr["group_name"], filterValue, caseSensitive)
+        );
       },
-    ];
-  };
+      Cell: row => {
+        return (
+          <a href={Routes.edit_course_result_path(this.props.course_id, row.original["result_id"])}>
+            {row.original["group_name"] +
+              (row.original["count"] > 1 ? " (" + row.original["count"] + ")" : "")}
+          </a>
+        );
+      },
+    },
+  ];
 
   fetchData = () => {
     const url = Routes.annotation_text_uses_course_assignment_annotation_categories_path(
@@ -103,7 +98,7 @@ class AnnotationUsagePanel extends React.Component {
         <ReactTable
           className="auto-overflow"
           data={this.state.applications}
-          columns={this.state.columns}
+          columns={this.columns}
           filterable
           pivotBy={["user"]}
         />
