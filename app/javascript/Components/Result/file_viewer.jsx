@@ -9,32 +9,12 @@ import {BinaryViewer} from "./binary_viewer";
 import {URLViewer} from "./url_viewer";
 
 export const FileViewer = React.memo(function FileViewer(props) {
-  const [loading, setLoadingState] = useState(false);
-  const [errorMessage, setErrorMessageState] = useState(null);
-  const mounted = useRef(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-
-  const setLoading = useCallback(value => {
-    if (mounted.current) {
-      setLoadingState(value);
-    }
-  }, []);
-
-  const setErrorMessage = useCallback(message => {
-    if (mounted.current) {
-      setErrorMessageState(message);
-    }
-  }, []);
-
-  useEffect(() => {
-    setLoadingState(true);
-    setErrorMessageState(null);
+    setLoading(true);
+    setErrorMessage(null);
   }, [props.selectedFile, props.selectedFileURL, props.selectedFileType]);
 
   const commonProps = {
