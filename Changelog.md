@@ -19,6 +19,7 @@
 - Added `db:populate_course_dates` rake task to backfill `start_at`/`end_at` for existing courses, and permit those fields when creating courses through the admin UI (#7925)
 - Sync due date when creating or updating LTI gradebook line items, and re-sync automatically when an assessment is edited (#7872)
 - Added GET and PATCH /overall_comment API routes (#7963)
+- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
