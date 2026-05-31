@@ -219,7 +219,7 @@ export class AssignmentSummaryTable extends React.Component {
     const gradersColumn = columnHelper.accessor("graders", {
       id: "graders",
       header: () => I18n.t("activerecord.models.ta.other"),
-      size: 100,
+      size: 200,
       enableResizing: true,
       cell: props => {
         const graders = props.row.original.graders;
@@ -228,7 +228,7 @@ export class AssignmentSummaryTable extends React.Component {
       filterFn: (row, columnId, filterValue) => {
         if (filterValue) {
           filterValue = filterValue.toLowerCase();
-          // Check grader usernames
+          // Check grader usernames, first names, or last names
           return row.original.graders.some(grader =>
             grader.some(name => name.toLowerCase().includes(filterValue))
           );
@@ -266,15 +266,15 @@ export class AssignmentSummaryTable extends React.Component {
   };
 
   graderDisplay = graders => {
-    return (
-      "" +
-      graders
-        .map(grader => {
-          return grader[0];
-        })
-        .join(", ") +
-      ""
-    );
+    return graders.map((grader, index) => (
+      <span key={index}>
+        {grader[0]}{" "}
+        <span title={grader[1] + " " + grader[2]}>
+          <i className="fa-solid fa-circle-info" />
+        </span>
+        {index < graders.length - 1 ? ", " : ""}
+      </span>
+    ));
   };
 
   fetchData = () => {
