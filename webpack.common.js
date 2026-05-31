@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -26,9 +27,10 @@ module.exports = {
         test: /\.(sass|scss|css)$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          // url: false — asset URLs in CSS (fonts, images) are resolved by Rails/Sprockets at
+          // url: false — asset URLs in CSS (fonts, images) are resolved by Rails/Propshaft at
           // serve time, not by webpack. Without this, css-loader tries to bundle them and fails.
           {loader: "css-loader", options: {url: false}},
+          {loader: "postcss-loader"},
           {
             loader: "sass-loader",
             options: {
@@ -59,6 +61,12 @@ module.exports = {
       maxChunks: 1,
     }),
     new MiniCssExtractPlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
+        {from: "node_modules/katex/dist/fonts", to: "fonts"},
+        {from: "node_modules/pdfjs-dist/web/images", to: "images"},
+      ],
+    }),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
