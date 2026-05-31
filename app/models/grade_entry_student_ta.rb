@@ -5,8 +5,8 @@
 # Table name: grade_entry_students_tas
 #
 #  id                     :integer          not null, primary key
-#  grade_entry_student_id :integer
-#  ta_id                  :integer
+#  grade_entry_student_id :integer          not null
+#  ta_id                  :integer          not null
 #
 # Indexes
 #

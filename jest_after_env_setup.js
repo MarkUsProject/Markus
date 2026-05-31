@@ -46,7 +46,7 @@ import "./app/javascript/common/fontawesome_config";
 import Modal from "react-modal";
 beforeAll(() => Modal.setAppElement("body"));
 
-// Originally defined in app/assets/javascripts/Grader/marking.js
+// Originally defined in app/assets/javascripts/Results/main.js
 global.activeCriterion = jest.fn();
 
 // Ensure @testing-library/react cleanup function is called after every test

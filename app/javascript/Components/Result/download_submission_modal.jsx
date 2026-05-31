@@ -1,5 +1,5 @@
 import React from "react";
-import {FileSelector} from "./submission_file_panel";
+import {FileSelector} from "./file_selector";
 
 export class DownloadSubmissionModal extends React.Component {
   constructor(props) {

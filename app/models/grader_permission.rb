@@ -22,4 +22,8 @@
 class GraderPermission < ApplicationRecord
   belongs_to :ta, class_name: 'Ta', foreign_key: :role_id, inverse_of: :grader_permission
   has_one :course, through: :ta
+
+  validates :manage_assessments, inclusion: { in: [true, false] }
+  validates :manage_submissions, inclusion: { in: [true, false] }
+  validates :run_tests, inclusion: { in: [true, false] }
 end

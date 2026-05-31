@@ -6,8 +6,8 @@
 #  id                     :integer          not null, primary key
 #  content                :text
 #  deduction              :float
-#  created_at             :datetime
-#  updated_at             :datetime
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
 #  annotation_category_id :integer
 #  creator_id             :integer
 #  last_editor_id         :integer
@@ -22,7 +22,7 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AnnotationText < ApplicationRecord
-  belongs_to :creator, class_name: 'Role'
+  belongs_to :creator, class_name: 'Role', optional: true
   belongs_to :last_editor, class_name: 'Role', optional: true
 
   has_one :course, through: :creator

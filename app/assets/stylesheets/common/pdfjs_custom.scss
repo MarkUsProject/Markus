@@ -23,3 +23,8 @@
 .pdfViewer {
   padding-top: 5px;
 }
+
+/* Prevent pdf.js background spinner from loading */
+.pdfContainer .pdfViewer .page.loadingIcon::after {
+  background: none;
+}

@@ -48,7 +48,7 @@ class Course < ApplicationRecord
   # Note rails provides built-in sanitization via active record.
   validates :display_name, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
-  validates :max_file_size, numericality: { greater_than_or_equal_to: 0 }
+  validates :max_file_size, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validate :start_at_before_or_equal_to_end_at
 
   after_save_commit :update_repo_max_file_size

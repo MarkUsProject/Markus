@@ -10,8 +10,8 @@
 #  start_time    :datetime
 #  visible_on    :datetime
 #  visible_until :datetime
-#  assessment_id :bigint
-#  section_id    :integer
+#  assessment_id :bigint           not null
+#  section_id    :integer          not null
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AssessmentSectionProperties < ApplicationRecord

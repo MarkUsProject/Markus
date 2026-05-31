@@ -4,10 +4,10 @@
 # Table name: annotation_categories
 #
 #  id                       :integer          not null, primary key
-#  annotation_category_name :text
+#  annotation_category_name :text             not null
 #  position                 :integer
-#  created_at               :datetime
-#  updated_at               :datetime
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
 #  assessment_id            :bigint           not null
 #  flexible_criterion_id    :bigint
 #
