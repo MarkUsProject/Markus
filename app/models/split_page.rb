@@ -11,7 +11,7 @@
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  group_id         :integer
-#  split_pdf_log_id :integer
+#  split_pdf_log_id :integer          not null
 #
 # Indexes
 #

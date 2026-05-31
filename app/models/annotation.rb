@@ -4,7 +4,7 @@
 # Table name: annotations
 #
 #  id                 :integer          not null, primary key
-#  annotation_number  :integer
+#  annotation_number  :integer          not null
 #  column_end         :integer
 #  column_start       :integer
 #  creator_type       :string
@@ -21,10 +21,10 @@
 #  x2                 :integer
 #  y1                 :integer
 #  y2                 :integer
-#  annotation_text_id :integer
+#  annotation_text_id :integer          not null
 #  creator_id         :integer
-#  result_id          :integer
-#  submission_file_id :integer
+#  result_id          :integer          not null
+#  submission_file_id :integer          not null
 #
 # Indexes
 #
@@ -40,7 +40,7 @@
 class Annotation < ApplicationRecord
   belongs_to :submission_file
   belongs_to :annotation_text
-  belongs_to :creator, polymorphic: true
+  belongs_to :creator, polymorphic: true, optional: true
   belongs_to :result
 
   has_one :course, through: :submission_file

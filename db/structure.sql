@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -144,10 +145,10 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.annotation_categories (
     id integer NOT NULL,
-    annotation_category_name text,
+    annotation_category_name text NOT NULL,
     "position" integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     flexible_criterion_id bigint
 );
@@ -181,8 +182,8 @@ CREATE TABLE public.annotation_texts (
     id integer NOT NULL,
     content text,
     annotation_category_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     creator_id integer,
     last_editor_id integer,
     deduction double precision
@@ -217,21 +218,21 @@ CREATE TABLE public.annotations (
     id integer NOT NULL,
     line_start integer,
     line_end integer,
-    annotation_text_id integer,
-    submission_file_id integer,
+    annotation_text_id integer NOT NULL,
+    submission_file_id integer NOT NULL,
     x1 integer,
     x2 integer,
     y1 integer,
     y2 integer,
     type character varying,
-    annotation_number integer,
+    annotation_number integer NOT NULL,
     is_remark boolean DEFAULT false NOT NULL,
     page integer,
     column_start integer,
     column_end integer,
     creator_type character varying,
     creator_id integer,
-    result_id integer,
+    result_id integer NOT NULL,
     start_node character varying,
     end_node character varying,
     start_offset integer,
@@ -278,8 +279,8 @@ CREATE TABLE public.ar_internal_metadata (
 CREATE TABLE public.assessment_section_properties (
     id integer NOT NULL,
     due_date timestamp without time zone,
-    section_id integer,
-    assessment_id bigint,
+    section_id integer NOT NULL,
+    assessment_id bigint NOT NULL,
     start_time timestamp without time zone,
     is_hidden boolean,
     visible_on timestamp(6) without time zone,
@@ -356,9 +357,9 @@ ALTER SEQUENCE public.assessments_id_seq OWNED BY public.assessments.id;
 CREATE TABLE public.assignment_files (
     id integer NOT NULL,
     filename character varying NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    assessment_id bigint
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    assessment_id bigint NOT NULL
 );
 
 
@@ -388,7 +389,7 @@ ALTER SEQUENCE public.assignment_files_id_seq OWNED BY public.assignment_files.i
 
 CREATE TABLE public.assignment_properties (
     id integer NOT NULL,
-    assessment_id bigint,
+    assessment_id bigint NOT NULL,
     group_min integer DEFAULT 1 NOT NULL,
     group_max integer DEFAULT 1 NOT NULL,
     student_form_groups boolean DEFAULT false NOT NULL,
@@ -551,8 +552,8 @@ CREATE TABLE public.criteria_assignment_files_joins (
     id integer NOT NULL,
     criterion_id integer NOT NULL,
     assignment_file_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -601,11 +602,11 @@ ALTER SEQUENCE public.criteria_id_seq OWNED BY public.criteria.id;
 
 CREATE TABLE public.criterion_ta_associations (
     id integer NOT NULL,
-    ta_id integer,
-    criterion_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    assessment_id bigint
+    ta_id integer NOT NULL,
+    criterion_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    assessment_id bigint NOT NULL
 );
 
 
@@ -646,7 +647,7 @@ CREATE TABLE public.exam_templates (
     crop_y numeric,
     crop_width numeric,
     crop_height numeric,
-    assessment_id bigint
+    assessment_id bigint NOT NULL
 );
 
 
@@ -710,12 +711,12 @@ ALTER SEQUENCE public.extensions_id_seq OWNED BY public.extensions.id;
 
 CREATE TABLE public.extra_marks (
     id integer NOT NULL,
-    result_id integer,
+    result_id integer NOT NULL,
     description character varying,
     extra_mark double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    unit character varying
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    unit character varying NOT NULL
 );
 
 
@@ -783,8 +784,8 @@ CREATE TABLE public.grace_period_deductions (
     id integer NOT NULL,
     membership_id integer,
     deduction integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -815,12 +816,12 @@ ALTER SEQUENCE public.grace_period_deductions_id_seq OWNED BY public.grace_perio
 CREATE TABLE public.grade_entry_items (
     id integer NOT NULL,
     name character varying NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    out_of double precision,
-    "position" integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    out_of double precision NOT NULL,
+    "position" integer NOT NULL,
     bonus boolean DEFAULT false NOT NULL,
-    assessment_id bigint
+    assessment_id bigint NOT NULL
 );
 
 
@@ -851,9 +852,9 @@ ALTER SEQUENCE public.grade_entry_items_id_seq OWNED BY public.grade_entry_items
 CREATE TABLE public.grade_entry_students (
     id integer NOT NULL,
     released_to_student boolean DEFAULT false NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    assessment_id bigint,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    assessment_id bigint NOT NULL,
     role_id bigint NOT NULL
 );
 
@@ -883,8 +884,8 @@ ALTER SEQUENCE public.grade_entry_students_id_seq OWNED BY public.grade_entry_st
 --
 
 CREATE TABLE public.grade_entry_students_tas (
-    grade_entry_student_id integer,
-    ta_id integer,
+    grade_entry_student_id integer NOT NULL,
+    ta_id integer NOT NULL,
     id integer NOT NULL
 );
 
@@ -947,11 +948,11 @@ ALTER SEQUENCE public.grader_permissions_id_seq OWNED BY public.grader_permissio
 
 CREATE TABLE public.grades (
     id integer NOT NULL,
-    grade_entry_item_id integer,
-    grade_entry_student_id integer,
+    grade_entry_item_id integer NOT NULL,
+    grade_entry_student_id integer NOT NULL,
     grade double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     last_updated_by_id bigint
 );
 
@@ -1013,8 +1014,8 @@ ALTER SEQUENCE public.grouping_starter_file_entries_id_seq OWNED BY public.group
 CREATE TABLE public.groupings (
     id integer NOT NULL,
     group_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     instructor_approved boolean DEFAULT false NOT NULL,
     is_collected boolean DEFAULT false NOT NULL,
     criteria_coverage_count integer DEFAULT 0,
@@ -1127,10 +1128,10 @@ ALTER SEQUENCE public.job_messengers_id_seq OWNED BY public.job_messengers.id;
 
 CREATE TABLE public.key_pairs (
     id integer NOT NULL,
-    user_id integer,
-    public_key character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    user_id integer NOT NULL,
+    public_key character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -1365,8 +1366,8 @@ ALTER SEQUENCE public.lti_users_id_seq OWNED BY public.lti_users.id;
 CREATE TABLE public.marking_schemes (
     id integer NOT NULL,
     name character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     course_id bigint NOT NULL
 );
 
@@ -1397,10 +1398,10 @@ ALTER SEQUENCE public.marking_schemes_id_seq OWNED BY public.marking_schemes.id;
 
 CREATE TABLE public.marking_weights (
     id integer NOT NULL,
-    marking_scheme_id integer,
+    marking_scheme_id integer NOT NULL,
     weight numeric,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL
 );
 
@@ -1431,11 +1432,11 @@ ALTER SEQUENCE public.marking_weights_id_seq OWNED BY public.marking_weights.id;
 
 CREATE TABLE public.marks (
     id integer NOT NULL,
-    result_id integer,
-    criterion_id integer,
+    result_id integer NOT NULL,
+    criterion_id integer NOT NULL,
     mark double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     override boolean DEFAULT false NOT NULL,
     last_updated_by_id bigint
 );
@@ -1468,8 +1469,8 @@ ALTER SEQUENCE public.marks_id_seq OWNED BY public.marks.id;
 CREATE TABLE public.memberships (
     id integer NOT NULL,
     membership_status character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     grouping_id integer NOT NULL,
     type character varying,
     role_id bigint NOT NULL
@@ -1504,8 +1505,8 @@ CREATE TABLE public.notes (
     id integer NOT NULL,
     notes_message text NOT NULL,
     creator_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     noteable_type character varying NOT NULL,
     noteable_id integer NOT NULL
 );
@@ -1570,13 +1571,13 @@ ALTER SEQUENCE public.peer_reviews_id_seq OWNED BY public.peer_reviews.id;
 
 CREATE TABLE public.periods (
     id integer NOT NULL,
-    submission_rule_id integer,
+    submission_rule_id integer NOT NULL,
     deduction double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     hours double precision,
     "interval" double precision,
-    submission_rule_type character varying
+    submission_rule_type character varying NOT NULL
 );
 
 
@@ -1606,11 +1607,11 @@ ALTER SEQUENCE public.periods_id_seq OWNED BY public.periods.id;
 
 CREATE TABLE public.results (
     id integer NOT NULL,
-    submission_id integer,
-    marking_state character varying,
+    submission_id integer NOT NULL,
+    marking_state character varying NOT NULL,
     overall_comment text,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     released_to_students boolean DEFAULT false NOT NULL,
     remark_request_submitted_at timestamp without time zone,
     view_token character varying NOT NULL,
@@ -1721,9 +1722,9 @@ ALTER SEQUENCE public.section_starter_file_groups_id_seq OWNED BY public.section
 
 CREATE TABLE public.sections (
     id integer NOT NULL,
-    name character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     course_id bigint NOT NULL
 );
 
@@ -1791,7 +1792,7 @@ CREATE TABLE public.split_pages (
     exam_page_number integer,
     filename character varying,
     status character varying,
-    split_pdf_log_id integer,
+    split_pdf_log_id integer NOT NULL,
     group_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1826,15 +1827,15 @@ CREATE TABLE public.split_pdf_logs (
     id integer NOT NULL,
     uploaded_when timestamp without time zone,
     error_description character varying,
-    filename character varying,
-    num_groups_in_complete integer,
-    num_groups_in_incomplete integer,
-    num_pages_qr_scan_error integer,
-    original_num_pages integer,
+    filename character varying NOT NULL,
+    num_groups_in_complete integer NOT NULL,
+    num_groups_in_incomplete integer NOT NULL,
+    num_pages_qr_scan_error integer NOT NULL,
+    original_num_pages integer NOT NULL,
     qr_code_found boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    exam_template_id integer,
+    exam_template_id integer NOT NULL,
     role_id bigint NOT NULL
 );
 
@@ -1927,8 +1928,8 @@ ALTER SEQUENCE public.starter_file_groups_id_seq OWNED BY public.starter_file_gr
 
 CREATE TABLE public.submission_files (
     id integer NOT NULL,
-    submission_id integer,
-    filename character varying,
+    submission_id integer NOT NULL,
+    filename character varying NOT NULL,
     path character varying DEFAULT '/'::character varying NOT NULL,
     is_converted boolean DEFAULT false NOT NULL,
     error_converting boolean DEFAULT false NOT NULL
@@ -1962,8 +1963,8 @@ ALTER SEQUENCE public.submission_files_id_seq OWNED BY public.submission_files.i
 CREATE TABLE public.submission_rules (
     id integer NOT NULL,
     type character varying DEFAULT 'NoLateSubmissionRule'::character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     penalty_type character varying DEFAULT 'percentage'::character varying
 );
@@ -1995,8 +1996,8 @@ ALTER SEQUENCE public.submission_rules_id_seq OWNED BY public.submission_rules.i
 
 CREATE TABLE public.submissions (
     id integer NOT NULL,
-    grouping_id integer,
-    created_at timestamp without time zone,
+    grouping_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
     submission_version integer,
     submission_version_used boolean DEFAULT false NOT NULL,
     revision_identifier text,
@@ -2066,7 +2067,7 @@ ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
 
 CREATE TABLE public.template_divisions (
     id integer NOT NULL,
-    exam_template_id integer,
+    exam_template_id integer NOT NULL,
     start integer NOT NULL,
     "end" integer NOT NULL,
     label character varying NOT NULL,
@@ -2213,8 +2214,8 @@ CREATE TABLE public.test_results (
     status text NOT NULL,
     marks_earned double precision DEFAULT 0.0 NOT NULL,
     output text DEFAULT ''::text NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     marks_total double precision DEFAULT 0.0 NOT NULL,
     "time" bigint,
     test_group_result_id bigint NOT NULL,
@@ -2288,11 +2289,11 @@ ALTER SEQUENCE public.test_runs_id_seq OWNED BY public.test_runs.id;
 CREATE TABLE public.users (
     id integer NOT NULL,
     user_name character varying NOT NULL,
-    last_name character varying,
-    first_name character varying,
+    last_name character varying NOT NULL,
+    first_name character varying NOT NULL,
     type character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     api_key character varying,
     email character varying,
     id_number character varying,
@@ -4453,6 +4454,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260526021351'),
 ('20260415150142'),
 ('20260326174749'),
 ('20260325180720'),

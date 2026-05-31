@@ -30,6 +30,7 @@
 - Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
 
 ### 🔧 Internal changes
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
 - Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
 - Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
 - Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)

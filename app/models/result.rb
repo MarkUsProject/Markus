@@ -4,15 +4,15 @@
 # Table name: results
 #
 #  id                          :integer          not null, primary key
-#  marking_state               :string
+#  marking_state               :string           not null
 #  overall_comment             :text
 #  released_to_students        :boolean          default(FALSE), not null
 #  remark_request_submitted_at :datetime
 #  view_token                  :string           not null
 #  view_token_expiry           :datetime
-#  created_at                  :datetime
-#  updated_at                  :datetime
-#  submission_id               :integer
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  submission_id               :integer          not null
 #
 # Indexes
 #
@@ -47,6 +47,7 @@ class Result < ApplicationRecord
   validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
   validates :released_to_students, inclusion: { in: [true, false] }
+  validates :view_token, presence: true
 
   before_update :check_for_released
 
