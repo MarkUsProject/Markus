@@ -6,8 +6,8 @@
 #  id            :integer          not null, primary key
 #  penalty_type  :string           default("percentage")
 #  type          :string           default("NoLateSubmissionRule")
-#  created_at    :datetime
-#  updated_at    :datetime
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #  assessment_id :bigint           not null
 #
 # Indexes

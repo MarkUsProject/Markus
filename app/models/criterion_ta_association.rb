@@ -4,11 +4,11 @@
 # Table name: criterion_ta_associations
 #
 #  id            :integer          not null, primary key
-#  created_at    :datetime
-#  updated_at    :datetime
-#  assessment_id :bigint
-#  criterion_id  :integer
-#  ta_id         :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  assessment_id :bigint           not null
+#  criterion_id  :integer          not null
+#  ta_id         :integer          not null
 #
 # Indexes
 #

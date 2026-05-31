@@ -15,7 +15,7 @@ describe AnnotationText do
 
     it { is_expected.to belong_to(:annotation_category).optional }
     it { is_expected.to have_many(:annotations) }
-    it { is_expected.to belong_to(:creator) }
+    it { is_expected.to belong_to(:creator).optional }
     it { is_expected.to belong_to(:last_editor).optional }
     it { is_expected.to have_one(:course) }
 

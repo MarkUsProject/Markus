@@ -6,11 +6,11 @@
 #  id                 :integer          not null, primary key
 #  mark               :float
 #  override           :boolean          default(FALSE), not null
-#  created_at         :datetime
-#  updated_at         :datetime
-#  criterion_id       :integer
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  criterion_id       :integer          not null
 #  last_updated_by_id :bigint
-#  result_id          :integer
+#  result_id          :integer          not null
 #
 # Indexes
 #

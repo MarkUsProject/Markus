@@ -50,6 +50,11 @@ class Criterion < ApplicationRecord
   validates :name, uniqueness: { scope: :assessment_id }
 
   validates :bonus, inclusion: { in: [true, false] }
+  validates :type, presence: true
+  validates :position, presence: true
+  validates :ta_visible, inclusion: { in: [true, false] }
+  validates :peer_visible, inclusion: { in: [true, false] }
+  validates :description, exclusion: { in: [nil] }
 
   validates :max_mark, presence: true
   validates :max_mark, numericality: { greater_than: 0 }
@@ -79,6 +84,7 @@ class Criterion < ApplicationRecord
   def self.randomly_assign_tas(criterion_ids, ta_ids, assignment)
     assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
+      next [] if t_ids.empty?
       shuffled_criterion_ids = c_ids.shuffle
       shuffled_criterion_ids.zip(t_ids.cycle).map(&:flatten)
     end

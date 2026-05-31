@@ -27,7 +27,8 @@ class Extension < ApplicationRecord
 
   attribute :time_delta, :interval
 
-  validates :time_delta, numericality: { greater_than: 0 }
+  validates :time_delta, presence: true, numericality: { greater_than: 0 }
+  validates :apply_penalty, inclusion: { in: [true, false] }
 
   after_create :validate_grouping
 

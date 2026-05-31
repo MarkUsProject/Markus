@@ -6,8 +6,8 @@
 #  id            :integer          not null, primary key
 #  noteable_type :string           not null
 #  notes_message :text             not null
-#  created_at    :datetime
-#  updated_at    :datetime
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #  creator_id    :integer          not null
 #  noteable_id   :integer          not null
 #
