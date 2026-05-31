@@ -7,19 +7,16 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
+gem 'propshaft'
 gem 'puma'
 gem 'rails', '~> 8.1.2'
-gem 'sprockets'
-gem 'sprockets-rails'
 
 # Models and database interactions
 gem 'pluck_to_hash'
 
 # CSS and JavaScript
-gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'terser'
 
 # Background tasks
 gem 'activejob-status'
@@ -131,5 +128,3 @@ end
 group :unicorn do
   gem 'unicorn'
 end
-
-gem 'cssbundling-rails', '~> 1.4'
