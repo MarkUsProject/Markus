@@ -39,6 +39,7 @@ class StarterFileGroup < ApplicationRecord
 
   validates :entry_rename, exclusion: { in: %w[.. .] }
   validates :entry_rename, presence: { if: -> { self.use_rename } }
+  validates :use_rename, inclusion: { in: [true, false] }
 
   def path
     Pathname.new(assignment.starter_file_path) + id.to_s

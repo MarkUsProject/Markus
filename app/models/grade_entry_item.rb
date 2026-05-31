@@ -8,11 +8,11 @@
 #  id            :integer          not null, primary key
 #  bonus         :boolean          default(FALSE), not null
 #  name          :string           not null
-#  out_of        :float
-#  position      :integer
-#  created_at    :datetime
-#  updated_at    :datetime
-#  assessment_id :bigint
+#  out_of        :float            not null
+#  position      :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  assessment_id :bigint           not null
 #
 # Indexes
 #
@@ -38,6 +38,7 @@ class GradeEntryItem < ApplicationRecord
 
   validates :position, presence: true
   validates :position, numericality: { greater_than_or_equal_to: 0 }
+  validates :bonus, inclusion: { in: [true, false] }
 
   BLANK_MARK = ''.freeze
 

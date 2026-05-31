@@ -5,10 +5,10 @@
 #
 #  id               :integer          not null, primary key
 #  error_converting :boolean          default(FALSE), not null
-#  filename         :string
+#  filename         :string           not null
 #  is_converted     :boolean          default(FALSE), not null
 #  path             :string           default("/"), not null
-#  submission_id    :integer
+#  submission_id    :integer          not null
 #
 # Indexes
 #
@@ -33,6 +33,7 @@ class SubmissionFile < ApplicationRecord
   validates :path, presence: true
 
   validates :is_converted, inclusion: { in: [true, false] }
+  validates :error_converting, inclusion: { in: [true, false] }
 
   def is_supported_image?
     # Here you can add more image types to support

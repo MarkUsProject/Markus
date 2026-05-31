@@ -115,16 +115,21 @@ class RawSubmissionTable extends React.Component {
 
   groupNameFilter = (filter, row) => {
     const {filterValue, caseSensitive} = filter.value;
-    if (!filterValue) return true;
-    if (caseSensitiveIncludes(row._original.group_name, filterValue, caseSensitive)) {
+    if (filterValue) {
+      // Check group name
+      if (caseSensitiveIncludes(row._original.group_name, filterValue, caseSensitive)) {
+        return true;
+      }
+      // Check member names
+      return (
+        row._original.members &&
+        row._original.members.some(member =>
+          caseSensitiveIncludes(member[0], filterValue, caseSensitive)
+        )
+      );
+    } else {
       return true;
     }
-    return (
-      row._original.members &&
-      row._original.members.some(member =>
-        caseSensitiveIncludes(member[0], filterValue, caseSensitive)
-      )
-    );
   };
 
   getColumns = (sections, marking_states, markingStateFilter) => [

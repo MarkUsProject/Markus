@@ -6,10 +6,10 @@
 #
 #  id                     :integer          not null, primary key
 #  grade                  :float
-#  created_at             :datetime
-#  updated_at             :datetime
-#  grade_entry_item_id    :integer
-#  grade_entry_student_id :integer
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  grade_entry_item_id    :integer          not null
+#  grade_entry_student_id :integer          not null
 #  last_updated_by_id     :bigint
 #
 # Indexes

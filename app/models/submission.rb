@@ -11,8 +11,8 @@
 #  revision_timestamp       :datetime
 #  submission_version       :integer
 #  submission_version_used  :boolean          default(FALSE), not null
-#  created_at               :datetime
-#  grouping_id              :integer
+#  created_at               :datetime         not null
+#  grouping_id              :integer          not null
 #
 # Indexes
 #
@@ -29,6 +29,7 @@ class Submission < ApplicationRecord
 
   validates :submission_version_used, inclusion: { in: [true, false] }
   validates :submission_version, numericality: { only_integer: true }
+  validates :is_empty, inclusion: { in: [true, false] }
   validate :max_number_of_results
   belongs_to :grouping
 

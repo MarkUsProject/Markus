@@ -28,4 +28,5 @@ class LtiService < ApplicationRecord
   belongs_to :lti_deployment
   validates :service_type, inclusion: { in: LTI_SERVICES.values }
   validates :service_type, uniqueness: { scope: :lti_deployment_id }
+  validates :url, presence: true
 end

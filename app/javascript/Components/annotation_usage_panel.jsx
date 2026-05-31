@@ -42,13 +42,15 @@ class AnnotationUsagePanel extends React.Component {
       Filter: caseSensitiveTextFilter,
       filterMethod: (filter, row) => {
         const {filterValue, caseSensitive} = filter.value;
-        if (!filterValue) return true;
-        if (row._subRows === undefined) {
+        if (!filterValue) {
+          return true;
+        } else if (row._subRows === undefined) {
           return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
+        } else {
+          return row._subRows.some(sr =>
+            caseSensitiveIncludes(sr["group_name"], filterValue, caseSensitive)
+          );
         }
-        return row._subRows.some(sr =>
-          caseSensitiveIncludes(sr["group_name"], filterValue, caseSensitive)
-        );
       },
       Cell: row => {
         return (

@@ -20,5 +20,5 @@
 class LtiUser < ApplicationRecord
   belongs_to :lti_client
   belongs_to :user
-  validates :lti_user_id, uniqueness: { scope: :lti_client_id }
+  validates :lti_user_id, presence: true, uniqueness: { scope: :lti_client_id }
 end

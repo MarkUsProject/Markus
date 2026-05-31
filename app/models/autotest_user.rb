@@ -8,16 +8,16 @@
 #  api_key      :string
 #  display_name :string           not null
 #  email        :string
-#  first_name   :string
+#  first_name   :string           not null
 #  id_number    :string
-#  last_name    :string
+#  last_name    :string           not null
 #  locale       :string           default("en"), not null
 #  theme        :integer          default("light"), not null
 #  time_zone    :string           not null
 #  type         :string
 #  user_name    :string           not null
-#  created_at   :datetime
-#  updated_at   :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
