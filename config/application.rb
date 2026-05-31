@@ -48,14 +48,6 @@ module Markus
       g.test_framework :rspec
     end
 
-    # Assets
-    # Enable the asset pipeline.
-    config.assets.enabled = true
-    # Suppress logger output for asset requests.
-    config.assets.quiet = true
-    # Add node_modules folder to the asset load path.
-    config.assets.paths << Rails.root.join('node_modules')
-
     # Ensure form_with calls generate remote forms by
     config.action_view.form_with_generates_remote_forms = true
 

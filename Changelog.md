@@ -70,6 +70,7 @@
 - Fixed CSP warnings and updated CSP config. Switched webpack development source map to `eval-source-map`. (#7956)
 - Move all CSS builds into webpack pipeline (#7957)
 - Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
+- Migrated asset pipeline from Sprockets to Propshaft (#7970)
 
 ## [v2.9.6]
 
