@@ -47,6 +47,7 @@ export class PDFViewer extends React.PureComponent {
   loadPDFFile = () => {
     pdfjs.getDocument(this.props.url).promise.then(pdfDocument => {
       this.pdfViewer.setDocument(pdfDocument);
+      this.props.setLoadingCallback(false);
     });
   };
 
