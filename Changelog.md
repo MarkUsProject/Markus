@@ -7,6 +7,24 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added GET and PATCH /overall_comment API routes (#7963)
+- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+
+### 🐛 Bug fixes
+
+### 🔧 Internal changes
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
+- Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
+- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
+- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
+- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
+- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
+- Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
+- Migrated asset pipeline from Sprockets to Propshaft (#7970)
+
+## [v2.10.0]
+
+### ✨ New features and improvements
 - Improve admin user list loading time by replacing ActiveRecord instantiation with direct column extraction (#7897)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
@@ -18,8 +36,6 @@
 - Added term-based suffixes to course names created via LTI to ensure uniqueness across academic years (#7881)
 - Added `db:populate_course_dates` rake task to backfill `start_at`/`end_at` for existing courses, and permit those fields when creating courses through the admin UI (#7925)
 - Sync due date when creating or updating LTI gradebook line items, and re-sync automatically when an assessment is edited (#7872)
-- Added GET and PATCH /overall_comment API routes (#7963)
-- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
@@ -31,12 +47,6 @@
 - Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
 
 ### 🔧 Internal changes
-- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
-- Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
-- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
-- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
-- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
-- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
 - Added tests for `GroupsController` to fully cover `global_actions` (#7955)
 - Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
@@ -69,8 +79,6 @@
 - Upgraded `react-jsonschema-form` to v6.5.2 (#7954)
 - Fixed CSP warnings and updated CSP config. Switched webpack development source map to `eval-source-map`. (#7956)
 - Move all CSS builds into webpack pipeline (#7957)
-- Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
-- Migrated asset pipeline from Sprockets to Propshaft (#7970)
 
 ## [v2.9.6]
 
