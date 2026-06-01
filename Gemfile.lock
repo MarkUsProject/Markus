@@ -283,13 +283,16 @@ GEM
       racc (~> 1.4)
     observer (0.1.2)
     ostruct (0.6.3)
+    parallel (1.28.0)
+    parallel_tests (5.7.0)
+      parallel
     parser (3.3.7.4)
       ast (~> 2.4.1)
       racc
     pdf-core (0.10.0)
     pg (1.6.3)
-    pghero (3.8.0)
-      activerecord (>= 7.2)
+    pghero (3.7.0)
+      activerecord (>= 7.1)
     pkg-config (1.6.5)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
@@ -549,6 +552,7 @@ DEPENDENCIES
   machinist (< 3)
   marcel
   mini_mime
+  parallel_tests
   pg
   pghero
   pluck_to_hash
