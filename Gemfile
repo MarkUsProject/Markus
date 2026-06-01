@@ -92,6 +92,7 @@ group :test do
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'machinist', '< 3'
+  gem 'parallel_tests'
   gem 'rails-controller-testing'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'shoulda-context', '~> 3.0.0.rc1'
@@ -110,7 +111,6 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
-  gem 'parallel_tests'
   gem 'rspec-rails', '~> 8.0.4'
   gem 'selenium-webdriver'
 end
