@@ -57,6 +57,13 @@
 - Fixed spurious navigation warnings on autotest manager and starter file manager pages (#7968)
 
 ### 🔧 Internal changes
+- Parallelized RSpec tests via the `parallel_tests` gem to reduce CI test suite runtime (#7972)
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
+- Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
+- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
+- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
+- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
+- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
 - Added tests for `GroupsController` to fully cover `global_actions` (#7955)
 - Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
