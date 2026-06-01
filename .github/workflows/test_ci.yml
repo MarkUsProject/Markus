@@ -143,14 +143,14 @@ jobs:
           cp config/database.yml.ci config/database.yml
       - name: Build assets
         run: bundle exec rake javascript:build
-      - name: Set up database
-        run: bundle exec rails db:migrate
+      - name: Set up databases
+        run: bundle exec rake parallel:setup
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
       - name: Run chromedriver
         run: chromedriver --port=9515 --whitelisted-ips &
       - name: Run rspec tests
-        run: bundle exec rspec
+        run: bundle exec parallel_tests spec/ -t rspec --exclude-pattern "spec/system/**/*_spec.rb"
         env:
           MARKUS__PYTHON: ./venv/bin/python3
       - name: Run rspec system tests
