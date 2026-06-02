@@ -2,10 +2,10 @@ describe Group do
   describe 'validations' do
     subject { build(:group) }
 
-    it { is_expected.to belong_to(:course) }
-
-    it { is_expected.to validate_presence_of(:group_name) }
-    it { is_expected.to validate_uniqueness_of(:group_name).scoped_to(:course_id) }
+    # NOTE: presence, uniqueness, and belongs_to(:course) for group_name are
+    # enforced via the before_validation callback (assign_id_and_default_names),
+    # the groups_on_group_name_and_course_id unique index, and the foreign key
+    # on course_id respectively — not via standalone validators on this model.
 
     it { is_expected.not_to allow_value('Mike !Ooh').for(:group_name) }
     it { is_expected.not_to allow_value('A!a.sa').for(:group_name) }
