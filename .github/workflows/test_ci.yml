@@ -144,13 +144,13 @@ jobs:
       - name: Build assets
         run: bundle exec rake javascript:build
       - name: Set up databases
-        run: bundle exec rake parallel:setup
+        run: bundle exec rails parallel:setup
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
       - name: Run chromedriver
         run: chromedriver --port=9515 --whitelisted-ips &
       - name: Run rspec tests
-        run: bundle exec parallel_tests spec/ -t rspec --exclude-pattern "spec/system/**/*_spec.rb"
+        run: bundle exec rails parallel:spec spec/ -t rspec --exclude-pattern "spec/system/**/*_spec.rb"
         env:
           MARKUS__PYTHON: ./venv/bin/python3
       - name: Run rspec system tests
