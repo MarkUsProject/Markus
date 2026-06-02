@@ -150,7 +150,7 @@ jobs:
       - name: Run chromedriver
         run: chromedriver --port=9515 --whitelisted-ips &
       - name: Run rspec tests
-        run: bundle exec rails parallel:spec spec/ -- --exclude-pattern "spec/system/**/*_spec.rb"
+        run: bundle exec rails "parallel:spec[spec/, --exclude-pattern spec/system/**/*_spec.rb]"
         env:
           MARKUS__PYTHON: ./venv/bin/python3
       - name: Run rspec system tests
