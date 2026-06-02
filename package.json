@@ -14,7 +14,7 @@
     "@tanstack/react-table": "^8.21.3",
     "chart.js": "^4.5.0",
     "core-js": "^3.43.0",
-    "dayjs": "^1.11.13",
+    "dayjs": "^1.11.21",
     "dompurify": "^3.4.0",
     "flatpickr": "^4.6.13",
     "heic2any": "^0.0.4",
