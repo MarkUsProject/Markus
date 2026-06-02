@@ -45,6 +45,7 @@
 - Fixed filter Canvas Test Student from roster sync (#7926)
 - Fix: include original total mark in JSON response for remark requests (#7945)
 - Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
+- Fixed spurious navigation warnings on autotest manager and starter file manager pages (#7968)
 
 ### 🔧 Internal changes
 - Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)

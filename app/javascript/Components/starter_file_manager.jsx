@@ -31,6 +31,16 @@ class StarterFileManager extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    // takes over from _navigation_warning.js.erb to use React state as the source of truth
+    window.onbeforeunload = () => {
+      if (this.state.form_changed) {
+        return I18n.t("uncommitted_changes_warning");
+      }
+    };
+  }
+
+  componentWillUnmount() {
+    window.onbeforeunload = null;
   }
 
   toggleFormChanged = value => {
