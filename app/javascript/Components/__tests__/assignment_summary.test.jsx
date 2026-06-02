@@ -200,7 +200,10 @@ describe("For the AssignmentSummaryTable's search filter", () => {
             section: null,
             members: [["c8holstg", "Holst", "Gustav", false]],
             tags: [],
-            graders: [["c9varoqu", "Nelle", "Varoquaux"]],
+            graders: [
+              ["c6gehwol", "Severin", "Gehwolf"],
+              ["c9rada", "Mark", "Rada"],
+            ],
             marking_state: "complete",
             final_grade: 6.0,
             criteria: {},
@@ -230,122 +233,75 @@ describe("For the AssignmentSummaryTable's search filter", () => {
     await screen.findByText("group_0001", {exact: false});
   });
 
-  it("filters rows as the user types in the search box", () => {
-    fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0], {
-      target: {value: "0001"},
+  describe("For the Group Column", () => {
+    it("filters rows as the user types in the Group search box", () => {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0], {
+        target: {value: "0001"},
+      });
+
+      expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
     });
 
-    expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
-    expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
-  });
+    it("restores all rows when the Group search query is cleared", () => {
+      const searchInput = screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0];
+      fireEvent.change(searchInput, {target: {value: "0001"}});
+      fireEvent.change(searchInput, {target: {value: ""}});
 
-  it("restores all rows when the search query is cleared", () => {
-    const searchInput = screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0];
-    fireEvent.change(searchInput, {target: {value: "0001"}});
-    fireEvent.change(searchInput, {target: {value: ""}});
-
-    expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
-    expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
-  });
-
-  it("shows no rows when the search query matches nothing", () => {
-    fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0], {
-      target: {value: "zzznomatch"},
+      expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
     });
 
-    expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
-  });
-});
+    it("shows no rows when the Group search query matches nothing", () => {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[0], {
+        target: {value: "zzznomatch"},
+      });
 
-describe("For the AssignmentSummaryTable's subcomponent behavior", () => {
-  let groups_sample;
-  beforeEach(async () => {
-    groups_sample = [
-      {
-        group_name: "group_0001",
-        section: null,
-        members: [
-          ["c9nielse", "Nielsen", "Carl", true],
-          ["c8szyman", "Szymanowski", "Karol", true],
-        ],
-        tags: [],
-        graders: [["c9varoqu", "Nelle", "Varoquaux"]],
-        marking_state: "released",
-        final_grade: 9.0,
-        criteria: {1: 0.0},
-        max_mark: "21.0",
-        result_id: 15,
-        submission_id: 15,
-        total_extra_marks: null,
-      },
-      {
-        group_name: "group_0002",
-        section: "LEC0101",
-        members: [
-          ["c8debuss", "Debussy", "Claude", false],
-          ["c8holstg", "Holst", "Gustav", false],
-        ],
-        tags: [],
-        graders: [["c9varoqu", "Nelle", "Varoquaux"]],
-        marking_state: "released",
-        final_grade: 6.0,
-        criteria: {1: 2.0},
-        max_mark: "21.0",
-        result_id: 5,
-        submission_id: 5,
-        total_extra_marks: null,
-      },
-    ];
-    fetch.mockReset();
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: jest.fn().mockResolvedValueOnce({
-        data: groups_sample,
-        criteriaColumns: [
-          {
-            Header: "dolores",
-            accessor: "criteria.1",
-            className: "number",
-            headerClassName: "",
-          },
-        ],
-        numAssigned: 2,
-        numMarked: 2,
-        ltiDeployments: [],
-      }),
-    });
-
-    await act(async () => {
-      render(
-        <AssignmentSummaryTable
-          assignment_id={1}
-          course_id={1}
-          is_instructor={false}
-          lti_deployments={[]}
-        />
-      );
+      expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
     });
   });
 
-  it("should initially hide grader subcomponent content", () => {
-    expect(
-      screen.queryByText(I18n.t("activerecord.models.ta", {count: groups_sample[0].graders.length}))
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText(I18n.t("activerecord.models.ta", {count: groups_sample[1].graders.length}))
-    ).not.toBeInTheDocument();
-  });
+  describe("For the Graders Column", () => {
+    it("filters rows as the user types in the Graders search box", () => {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
+        target: {value: "Mark"},
+      });
 
-  it("should show grader subcomponent when expanded", async () => {
-    const expanders = await screen.findAllByTestId("expander-button");
+      expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
 
-    fireEvent.click(expanders[0]);
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
+        target: {value: "Varoquaux"},
+      });
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(I18n.t("activerecord.models.ta", {count: groups_sample[0].graders.length}))
-      ).toBeInTheDocument();
+      expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
+
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
+        target: {value: "c6gehwol"},
+      });
+
+      expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
+    });
+
+    it("restores all rows when the Graders search query is cleared", () => {
+      const searchInput = screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2];
+      fireEvent.change(searchInput, {target: {value: "Rada"}});
+      fireEvent.change(searchInput, {target: {value: ""}});
+
+      expect(screen.queryByText(/group_0001/)).toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).toBeInTheDocument();
+    });
+
+    it("shows no rows when the Graders search query matches nothing", () => {
+      fireEvent.change(screen.getAllByPlaceholderText(defaultSearchPlaceholderText())[2], {
+        target: {value: "zzznomatch"},
+      });
+
+      expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/group_0002/)).not.toBeInTheDocument();
     });
   });
 });

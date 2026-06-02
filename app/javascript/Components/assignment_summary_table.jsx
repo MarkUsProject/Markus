@@ -80,14 +80,7 @@ export class AssignmentSummaryTable extends React.Component {
               member.slice(0, 3).some(name => name.toLowerCase().includes(filterValue))
             );
 
-            if (member_matches) {
-              return true;
-            }
-
-            // Check grader user names
-            return row.original.graders.some(grader =>
-              grader.some(name => name.toLowerCase().includes(filterValue))
-            );
+            return member_matches;
           } else {
             return true;
           }
@@ -225,7 +218,29 @@ export class AssignmentSummaryTable extends React.Component {
       sortDescFirst: true,
     });
 
-    return [...fixedColumns, ...criteriaColumnDefs, bonusColumn];
+    const gradersColumn = columnHelper.accessor("graders", {
+      id: "graders",
+      header: () => I18n.t("activerecord.models.ta.other"),
+      size: 200,
+      enableResizing: true,
+      cell: props => {
+        const graders = props.row.original.graders;
+        return this.graderDisplay(graders);
+      },
+      filterFn: (row, columnId, filterValue) => {
+        if (filterValue) {
+          filterValue = filterValue.toLowerCase();
+          // Check grader usernames, first names, or last names
+          return row.original.graders.some(grader =>
+            grader.some(name => name.toLowerCase().includes(filterValue))
+          );
+        } else {
+          return true;
+        }
+      },
+    });
+
+    return [...fixedColumns, ...criteriaColumnDefs, bonusColumn, gradersColumn];
   };
 
   toggleShowInactiveGroups = showInactiveGroups => {
@@ -250,6 +265,18 @@ export class AssignmentSummaryTable extends React.Component {
         ")"
       );
     }
+  };
+
+  graderDisplay = graders => {
+    return graders.map((grader, index) => (
+      <span key={index}>
+        {grader[0]}{" "}
+        <span title={grader[1] + " " + grader[2]}>
+          <i className="fa-solid fa-circle-info" />
+        </span>
+        {index < graders.length - 1 ? ", " : ""}
+      </span>
+    ));
   };
 
   fetchData = () => {
@@ -331,31 +358,6 @@ export class AssignmentSummaryTable extends React.Component {
     });
     return data;
   }
-
-  onFilteredChange = (filtered, column) => {
-    const summaryTable = this.wrappedInstance;
-    if (column.id != "marking_state") {
-      const markingStates = getMarkingStates(summaryTable.state.sortedData);
-      this.setState({
-        marking_states: markingStates,
-        columns: this.getColumns(
-          this.state.criteriaColumns,
-          markingStates,
-          this.state.markingStateFilter
-        ),
-      });
-    } else {
-      const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
-      this.setState({
-        markingStateFilter,
-        columns: this.getColumns(
-          this.state.criteriaColumns,
-          this.state.marking_states,
-          markingStateFilter
-        ),
-      });
-    }
-  };
 
   onDownloadTestsModal = () => {
     this.setState({showDownloadTestsModal: true});
@@ -468,8 +470,6 @@ export class AssignmentSummaryTable extends React.Component {
               return {columnFilters: newFilters};
             });
           }}
-          getRowCanExpand={() => true}
-          renderSubComponent={renderSubComponent}
           loading={this.state.loading}
         />
         <AssignmentGradesUploadModal
@@ -497,20 +497,3 @@ export class AssignmentSummaryTable extends React.Component {
     );
   }
 }
-
-const renderSubComponent = ({row}) => {
-  return (
-    <div>
-      <h4>{I18n.t("activerecord.models.ta", {count: row.original.graders.length})}</h4>
-      <ul>
-        {row.original.graders.map(grader => {
-          return (
-            <li key={grader[0]}>
-              ({grader[0]}) {grader[1]} {grader[2]}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-};
