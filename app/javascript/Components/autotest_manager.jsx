@@ -77,7 +77,7 @@ class AutotestManager extends React.Component {
           },
         },
       },
-      formData: {},
+      formData: null,
       enable_test: true,
       enable_student_tests: true,
       token_start_date: "",
@@ -98,6 +98,16 @@ class AutotestManager extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    // takes over from _navigation_warning.js.erb to use React state as the source of truth
+    window.onbeforeunload = () => {
+      if (this.state.form_changed) {
+        return I18n.t("uncommitted_changes_warning");
+      }
+    };
+  }
+
+  componentWillUnmount() {
+    window.onbeforeunload = null;
   }
 
   fetchData = () => {
@@ -205,7 +215,10 @@ class AutotestManager extends React.Component {
   };
 
   handleFormChange = data => {
-    this.setState({formData: data.formData}, () => this.toggleFormChanged(true));
+    this.setState({formData: data.formData});
+    if (this.state.formData !== null) {
+      this.toggleFormChanged(true);
+    }
   };
 
   toggleEnableTest = () => {
@@ -488,7 +501,7 @@ class AutotestManager extends React.Component {
             disabled={!this.state.enable_test}
             schema={this.state.schema}
             uiSchema={this.state.uiSchema}
-            formData={this.state.formData}
+            formData={this.state.formData ?? {}}
             onChange={this.handleFormChange}
             validator={this.props.validator}
             templates={{
@@ -625,6 +638,8 @@ function MoveUpButton(props) {
     </button>
   );
 }
+
+export {AutotestManager};
 
 export function makeAutotestManager(elem, props) {
   const validator = customizeValidator({ajvOptionsOverrides: {discriminator: true}});

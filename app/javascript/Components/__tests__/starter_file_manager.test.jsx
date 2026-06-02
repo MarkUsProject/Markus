@@ -1,5 +1,5 @@
 import {StarterFileManager} from "../starter_file_manager";
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent, act} from "@testing-library/react";
 
 import React from "react";
 
@@ -127,5 +127,62 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
         expect(saveButton).not.toBeDisabled();
       }
     });
+  });
+});
+
+const minimalFetchPayload = {
+  files: [],
+  sections: {},
+  available_after_due: true,
+  starterfileType: "simple",
+  defaultStarterFileGroup: "",
+};
+
+function renderManager() {
+  return render(<StarterFileManager course_id={1} assignment_id={1} read_only={false} />);
+}
+
+describe("StarterFileManager navigation warning", () => {
+  beforeEach(() => {
+    fetch.resetMocks();
+    fetch.mockResponseOnce(JSON.stringify(minimalFetchPayload));
+  });
+
+  afterEach(() => {
+    window.onbeforeunload = null;
+  });
+
+  it("does not warn when no changes have been made", () => {
+    renderManager();
+    expect(window.onbeforeunload()).toBeUndefined();
+  });
+
+  it("warns after a field is changed", async () => {
+    renderManager();
+    await screen.findByTestId("available_after_due_checkbox");
+    fireEvent.click(screen.getByTestId("available_after_due_checkbox"));
+    expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
+  });
+
+  it("clears the warning after form is saved", async () => {
+    renderManager();
+    await screen.findByTestId("available_after_due_checkbox");
+    fireEvent.click(screen.getByTestId("available_after_due_checkbox"));
+    expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
+
+    jest.spyOn($, "ajax").mockResolvedValue({});
+    fetch.resetMocks();
+    fetch.mockResponseOnce(JSON.stringify(minimalFetchPayload));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("save_button"));
+    });
+    expect(window.onbeforeunload()).toBeUndefined();
+  });
+
+  it("restores window.onbeforeunload to null on unmount", () => {
+    const {unmount} = renderManager();
+    expect(window.onbeforeunload).not.toBeNull();
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
   });
 });
