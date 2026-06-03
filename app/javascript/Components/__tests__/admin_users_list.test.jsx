@@ -11,10 +11,10 @@ beforeAll(() => {
   global.I18n = {
     t: jest.fn(key => {
       const translations = {
-        "activerecord.attributes.user.user_name": "Username",
+        "activerecord.attributes.user.user_name": "User Name",
         "activerecord.attributes.user.email": "Email",
-        "activerecord.models.admin_user.one": "Admin",
-        "activerecord.models.end_user.one": "Regular User",
+        "activerecord.models.admin_user.one": "Admin User",
+        "activerecord.models.end_user.one": "End User",
         actions: "Actions",
         edit: "Edit",
       };
@@ -36,7 +36,7 @@ describe("AdminUsersList Component", () => {
     users: [
       {
         id: 42,
-        user_name: "spiderman",
+        user_name: "Bobby",
         first_name: "Miles",
         last_name: "Morales",
         email: "miles@ny.edu",
@@ -62,9 +62,9 @@ describe("AdminUsersList Component", () => {
       );
     });
 
-    expect(await screen.findByText("spiderman")).toBeInTheDocument();
+    expect(await screen.findByText("Bobby")).toBeInTheDocument();
     expect(screen.getByText("Miles")).toBeInTheDocument();
-    expect(screen.getByRole("gridcell", {name: "Regular User"})).toBeInTheDocument();
+    expect(screen.getByRole("gridcell", {name: "End User"})).toBeInTheDocument();
   });
 
   it("resets targetPage to 0 if a filter configuration transition occurs", async () => {
