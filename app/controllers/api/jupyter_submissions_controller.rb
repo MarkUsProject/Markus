@@ -175,7 +175,7 @@ module Api
       return Course.find(course_id) if course_id.present?
 
       course_key = payload['course'].to_s.strip
-      return nil if course_key.blank?
+      return if course_key.blank?
 
       return Course.find(course_key) if integer_string?(course_key)
 
@@ -225,7 +225,7 @@ module Api
       # This is useful when testing with standalone JupyterLab, where the token
       # authenticates the server but does not identify a real JupyterHub user.
       if Rails.env.development? && ENV['JUPYTER_DEV_USERNAME'].present?
-        return ENV['JUPYTER_DEV_USERNAME']
+        return ENV.fetch('JUPYTER_DEV_USERNAME', nil)
       end
 
       JupyterIdentityFetcher.new(

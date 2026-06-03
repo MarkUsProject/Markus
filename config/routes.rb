@@ -563,7 +563,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     post 'jupyter_submissions', to: 'jupyter_submissions#create'
-      
+
     resources :users, only: [:index, :create, :show, :update] do
       collection do
         put 'update_by_username'

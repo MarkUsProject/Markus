@@ -7,9 +7,11 @@ require 'tempfile'
 class JupyterSubmissionWriter
   include RepositoryHelper
 
-  WriteError = Class.new(StandardError)
+  class WriteError < StandardError
+  end
 
-  def initialize(assignment:, grouping:, current_role:, current_user:, destination_path:, filename:, content:, content_type:)
+  def initialize(assignment:, grouping:, current_role:, current_user:, destination_path:, filename:, content:,
+                 content_type:)
     @assignment = assignment
     @grouping = grouping
     @current_role = current_role
