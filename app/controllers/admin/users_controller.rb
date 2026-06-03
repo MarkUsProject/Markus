@@ -19,7 +19,7 @@ module Admin
 
               if SEARCHABLE_FIELDS.include?(f['id'])
                 term = "%#{User.sanitize_sql_like(f['value'].strip)}%"
-                users_scope = users_scope.where("#{f['id']} LIKE ?", term)
+                users_scope = users_scope.where("#{f['id']} ILIKE ?", term)
               elsif f['id'] == 'type' && f['value'] != 'all'
                 users_scope = users_scope.where(type: f['value'])
               end

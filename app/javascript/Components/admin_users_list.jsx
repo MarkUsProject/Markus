@@ -5,7 +5,7 @@ import {selectFilter} from "./Helpers/table_helpers";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-class AdminUsersList extends React.Component {
+export class AdminUsersList extends React.Component {
   constructor() {
     super();
     this.state = {
