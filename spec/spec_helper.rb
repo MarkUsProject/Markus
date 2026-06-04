@@ -18,6 +18,7 @@ if enable_coverage
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::LcovFormatter
   ])
+  SimpleCov.command_name "rspec-#{ENV.fetch('TEST_ENV_NUMBER', 'main')}"
   SimpleCov.start do
     add_filter 'better_errors'
     add_filter 'bullet'

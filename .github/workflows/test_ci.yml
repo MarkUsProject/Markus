@@ -157,6 +157,22 @@ jobs:
         run: bundle exec rspec spec/system
         env:
           MARKUS__PYTHON: ./venv/bin/python3
+      - name: Merge SimpleCov results
+        run: |
+          bundle exec ruby -e "
+            require 'simplecov'
+            require 'simplecov-lcov'
+            SimpleCov::Formatter::LcovFormatter.config do |c|
+              c.report_with_single_file = true
+              c.output_directory = 'coverage'
+              c.lcov_file_name = 'lcov.info'
+            end
+            SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+              SimpleCov::Formatter::HTMLFormatter,
+              SimpleCov::Formatter::LcovFormatter
+            ])
+            SimpleCov.collate Dir['coverage/.resultset.json']
+          "
       - name: Coveralls Parallel (rspec)
         uses: coverallsapp/github-action@v2
         with:
