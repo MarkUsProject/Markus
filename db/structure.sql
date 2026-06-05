@@ -1062,7 +1062,7 @@ CREATE TABLE public.groupings_tags (
 
 CREATE TABLE public.groups (
     id integer NOT NULL,
-    group_name character varying,
+    group_name character varying NOT NULL,
     repo_name character varying,
     course_id bigint NOT NULL
 );
@@ -4454,6 +4454,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260530200000'),
 ('20260526021351'),
 ('20260415150142'),
 ('20260326174749'),
