@@ -1,21 +1,21 @@
 describe Group do
   describe 'validations' do
-    subject { build(:group) }
+    subject { create(:group) }
 
-    # NOTE: presence, uniqueness, and belongs_to(:course) for group_name are
-    # enforced via the before_validation callback (assign_id_and_default_names),
-    # the groups_on_group_name_and_course_id unique index, and the foreign key
-    # on course_id respectively — not via standalone validators on this model.
+    it { is_expected.to belong_to(:course) }
+
+    it { is_expected.to validate_presence_of(:group_name) }
+    it { is_expected.to validate_uniqueness_of(:group_name).scoped_to(:course_id) }
 
     it { is_expected.not_to allow_value('Mike !Ooh').for(:group_name) }
     it { is_expected.not_to allow_value('A!a.sa').for(:group_name) }
     it { is_expected.to allow_value('Ads_ -hb').for(:group_name) }
     it { is_expected.to allow_value('-22125-k1lj42_').for(:group_name) }
 
-    it { is_expected.to allow_value('Mike !Ooh').for(:repo_name) }
-    it { is_expected.to allow_value('A!a.sa').for(:repo_name) }
-    it { is_expected.to allow_value('Ads_ -hb').for(:repo_name) }
-    it { is_expected.to allow_value('-22125-k1lj42_').for(:repo_name) }
+    it { is_expected.to allow_value('Mike !Ooh').for(:repo_name).on(:create) }
+    it { is_expected.to allow_value('A!a.sa').for(:repo_name).on(:create) }
+    it { is_expected.to allow_value('Ads_ -hb').for(:repo_name).on(:create) }
+    it { is_expected.to allow_value('-22125-k1lj42_').for(:repo_name).on(:create) }
 
     it do
       expect(subject).not_to allow_value('Mike !Ooh').for(:repo_name).on(:update)
