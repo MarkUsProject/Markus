@@ -53,6 +53,7 @@ class MarkingSchemeTable extends React.Component {
       columnHelper.accessor(col.accessor, {
         header: col.Header,
         minSize: col.minWidth,
+        enableColumnFilter: false,
         meta: {
           className: col.className,
         },
