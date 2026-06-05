@@ -171,7 +171,8 @@ jobs:
               SimpleCov::Formatter::HTMLFormatter,
               SimpleCov::Formatter::LcovFormatter
             ])
-            SimpleCov.collate Dir['coverage/.resultset.json']
+            SimpleCov.merge_timeout 7200
+            SimpleCov.collate Dir['coverage/worker*/.resultset.json']
           "
       - name: Coveralls Parallel (rspec)
         uses: coverallsapp/github-action@v2
