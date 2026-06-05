@@ -35,7 +35,7 @@ class MarkingSchemeTable extends React.Component {
       .then(res => {
         this.setState({
           data: res.data,
-          columns: res.columns,
+          columns: this.getColumns(res.columns),
           loading: false,
         });
       });
@@ -91,7 +91,7 @@ class MarkingSchemeTable extends React.Component {
     return (
       <Table
         data={this.state.data}
-        columns={this.getColumns(this.state.columns)}
+        columns={this.state.columns}
         initialState={{
           sorting: [{id: "name"}],
         }}
