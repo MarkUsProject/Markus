@@ -15,6 +15,8 @@
 ### 🐛 Bug fixes
 
 ### 🔧 Internal changes
+- Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
+- Added `NOT NULL` constraint on `groups.group_name` (#7975)
 - Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
 - Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
 - Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
