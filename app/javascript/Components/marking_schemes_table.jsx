@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {createColumnHelper} from "@tanstack/react-table";
 import Table from "./table/table";
 
-class MarkingSchemeTable extends React.Component {
+export class MarkingSchemeTable extends React.Component {
   constructor() {
     super();
     this.state = {
