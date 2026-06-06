@@ -1,11 +1,12 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 
-import ReactTable from "react-table";
 import {faPencil, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {createColumnHelper} from "@tanstack/react-table";
+import Table from "./table/table";
 
-class MarkingSchemeTable extends React.Component {
+export class MarkingSchemeTable extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -34,27 +35,37 @@ class MarkingSchemeTable extends React.Component {
       .then(res => {
         this.setState({
           data: res.data,
-          columns: res.columns,
+          columns: this.getColumns(res.columns),
           loading: false,
         });
       });
   }
 
-  nameColumns = [
-    {
-      Header: I18n.t("activerecord.attributes.marking_schemes.name"),
-      accessor: "name",
-      filterable: true,
-    },
-  ];
+  getColumns = columns => {
+    const columnHelper = createColumnHelper();
 
-  modifyColumn = [
-    {
-      Header: I18n.t("actions"),
-      Cell: ({original}) => (
+    const nameColumn = columnHelper.accessor("name", {
+      header: I18n.t("activerecord.attributes.marking_schemes.name"),
+      enableColumnFilter: true,
+    });
+
+    const assessmentWeightColumnDefs = columns.map(col =>
+      columnHelper.accessor(col.accessor, {
+        header: col.Header,
+        minSize: col.minWidth,
+        enableColumnFilter: false,
+        meta: {
+          className: col.className,
+        },
+      })
+    );
+
+    const modifyColumn = columnHelper.display({
+      header: I18n.t("actions"),
+      cell: props => (
         <span>
           <a
-            href={original.edit_link}
+            href={props.row.original.edit_link}
             data-remote="true"
             aria-label={I18n.t("edit")}
             title={I18n.t("edit")}
@@ -63,7 +74,7 @@ class MarkingSchemeTable extends React.Component {
           </a>
           &nbsp;|&nbsp;
           <a
-            href={original.delete_link}
+            href={props.row.original.delete_link}
             data-method="delete"
             aria-label={I18n.t("delete")}
             title={I18n.t("delete")}
@@ -72,20 +83,19 @@ class MarkingSchemeTable extends React.Component {
           </a>
         </span>
       ),
-      sortable: false,
-    },
-  ];
+      enableSorting: false,
+    });
 
+    return [nameColumn, ...assessmentWeightColumnDefs, modifyColumn];
+  };
   render() {
     return (
-      <ReactTable
+      <Table
         data={this.state.data}
-        columns={this.nameColumns.concat(this.state.columns).concat(this.modifyColumn)}
-        defaultSorted={[
-          {
-            id: "name",
-          },
-        ]}
+        columns={this.state.columns}
+        initialState={{
+          sorting: [{id: "name"}],
+        }}
         loading={this.state.loading}
       />
     );
