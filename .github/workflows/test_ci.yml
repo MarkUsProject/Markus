@@ -150,7 +150,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           key: runtime-cache-all
-          path: tmp/parallel_runtime_test.log
+          path: tmp/parallel_runtime_rspec.log
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
       - name: Run chromedriver
@@ -175,7 +175,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           key: runtime-cache-chunk
-          path: tmp/parallel_runtime_test
+          path: tmp/parallel_runtime_rspec.log
       - name: Merge SimpleCov results
         run: |
           bundle exec ruby -e "
@@ -211,11 +211,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           key: runtime-cache-chunk
-          path: tmp/parallel_runtime_test
-      - name: "Runtime cache: combine"
-        run: |
-          cat tmp/parallel_runtime_test/* > tmp/parallel_runtime_test.log
-          cat tmp/parallel_runtime_test.log
+          path: tmp/parallel_runtime_rspec.log
       - name: "Runtime cache: clear"
         env:
           GH_TOKEN: ${{ github.token }}
@@ -227,7 +223,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           key: runtime-cache-all
-          path: tmp/parallel_runtime_test.log
+          path: tmp/parallel_runtime_rspec.log
 
   test_jest:
     if: github.event.pull_request.draft == false
