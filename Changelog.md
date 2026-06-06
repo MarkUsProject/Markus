@@ -13,6 +13,7 @@
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 
 ### 🐛 Bug fixes
+- Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 
 ### 🔧 Internal changes
 - Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
