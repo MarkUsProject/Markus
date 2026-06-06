@@ -1,7 +1,8 @@
 import React from "react";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {DataChart} from "../Helpers/data_chart";
+import {Bar} from "react-chartjs-2";
+import {chartScales} from "../Helpers/chart_helpers";
 import {ResultContext} from "./result_context";
 
 export class SummaryPanel extends React.Component {
@@ -316,12 +317,15 @@ export class SummaryPanel extends React.Component {
           </button>
         </p>
         <aside className="markus-dialog data-chart-container" id={"marks_chart"} style={style}>
-          <DataChart
-            labels={this.state.labels}
-            datasets={this.state.datasets}
-            xTitle={this.state.xTitle}
-            yTitle={this.state.yTitle}
-            legend={this.state.chartLegend}
+          <Bar
+            data={{labels: this.state.labels, datasets: this.state.datasets}}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {legend: {display: this.state.chartLegend}},
+              scales: chartScales(this.state.xTitle, this.state.yTitle),
+            }}
+            height={500}
           />
         </aside>
         <ReactTable
