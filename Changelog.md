@@ -16,7 +16,7 @@
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 
 ### 🔧 Internal changes
-- Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global
+- Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global; fixed shift+up/shift+down being suppressed when a criterion input had focus
 - Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
 - Added `NOT NULL` constraint on `groups.group_name` (#7975)
 - Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)

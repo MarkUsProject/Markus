@@ -1,6 +1,24 @@
 // Open the keyboard shortcuts help modal
 import Mousetrap from "mousetrap";
 
+// Allow navigation keybindings to fire even when a form input has focus.
+// Mousetrap suppresses all bindings on inputs by default to avoid interfering
+// with typing, but these combos don't produce characters so suppression is wrong.
+// shift+n is intentionally excluded so it stays blocked while typing.
+const _originalStopCallback = Mousetrap.stopCallback.bind(Mousetrap);
+Mousetrap.stopCallback = function (e, element, combo) {
+  const allowedOnInputs = [
+    "shift+up",
+    "shift+down",
+    "shift+left",
+    "shift+right",
+    "ctrl+shift+right",
+    "alt+enter",
+  ];
+  if (allowedOnInputs.includes(combo)) return false;
+  return _originalStopCallback(e, element, combo);
+};
+
 export function bind_keybindings() {
   Mousetrap.bind("?", function () {
     modal_help.open();
