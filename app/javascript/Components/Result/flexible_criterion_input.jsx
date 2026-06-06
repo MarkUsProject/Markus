@@ -29,6 +29,7 @@ export default function FlexibleCriterionInput({
   const [invalid, setInvalid] = useState(false);
   const typing_timer = useRef(undefined);
   const inputRef = useRef(null);
+  const liRef = useRef(null);
 
   const listDeductions = () => {
     let label = I18n.t("annotations.list_deductions");
@@ -143,6 +144,12 @@ export default function FlexibleCriterionInput({
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
 
+  useEffect(() => {
+    if (active) {
+      liRef.current?.scrollIntoView?.({block: "nearest", behavior: "smooth"});
+    }
+  }, [active]);
+
   // Auto-expand if not already when active
   useEffect(() => {
     if (active && !expanded) {
@@ -181,6 +188,7 @@ export default function FlexibleCriterionInput({
 
   return (
     <li
+      ref={liRef}
       id={`flexible_criterion_${id}`}
       className={`flexible_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
       onClick={setActive}

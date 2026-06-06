@@ -24,6 +24,8 @@ export default function RubricCriterionInput({
 }) {
   const [hoveredLevelIndex, setHoveredLevelIndex] = useState(null);
 
+  const liRef = useRef(null);
+
   // Refs so keybinding handlers always see current values without re-binding
   const hoveredRef = useRef(null);
   hoveredRef.current = hoveredLevelIndex;
@@ -33,6 +35,12 @@ export default function RubricCriterionInput({
   };
   const handleChangeRef = useRef(handleChange);
   handleChangeRef.current = handleChange;
+
+  useEffect(() => {
+    if (active) {
+      liRef.current?.scrollIntoView?.({block: "nearest", behavior: "smooth"});
+    }
+  }, [active]);
 
   // Set initial hover position when this criterion becomes active / inactive
   useEffect(() => {
@@ -134,6 +142,7 @@ export default function RubricCriterionInput({
 
   return (
     <li
+      ref={liRef}
       id={`rubric_criterion_${id}`}
       className={`rubric_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
       onClick={setActive}
