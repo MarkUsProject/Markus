@@ -24,6 +24,7 @@
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
 - Migrated asset pipeline from Sprockets to Propshaft (#7970)
+- Simplified Chart.js usage: removed the `DataChart` wrapper component, converted `chart_config.js` to an ES module, and replaced `registerables` with a minimal set of Chart.js components (#7987)
 
 ## [v2.10.0]
 
