@@ -5,8 +5,8 @@ import Mousetrap from "mousetrap";
 // Mousetrap suppresses all bindings on inputs by default to avoid interfering
 // with typing, but these combos don't produce characters so suppression is wrong.
 // shift+n is intentionally excluded so it stays blocked while typing.
-const _originalStopCallback = Mousetrap.stopCallback.bind(Mousetrap);
-Mousetrap.stopCallback = function (e, element, combo) {
+const _originalStopCallback = Mousetrap.prototype.stopCallback;
+Mousetrap.prototype.stopCallback = function (e, element, combo) {
   const allowedOnInputs = [
     "shift+up",
     "shift+down",
@@ -16,7 +16,7 @@ Mousetrap.stopCallback = function (e, element, combo) {
     "alt+enter",
   ];
   if (allowedOnInputs.includes(combo)) return false;
-  return _originalStopCallback(e, element, combo);
+  return _originalStopCallback.call(this, e, element, combo);
 };
 
 export function bind_keybindings() {

@@ -11,7 +11,7 @@ const mockReset = jest.fn();
 jest.doMock("mousetrap", () => ({
   bind: mockBind,
   reset: mockReset,
-  stopCallback: jest.fn(),
+  prototype: {stopCallback: jest.fn()},
 }));
 
 const {bind_keybindings, unbind_all_keybindings} = require("../Result/keybinding");
