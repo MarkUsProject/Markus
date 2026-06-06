@@ -1,5 +1,6 @@
 import {render, screen, waitFor, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import {MarksPanel} from "../Result/marks_panel";
 
 import CheckboxCriterionInput from "../Result/checkbox_criterion_input";

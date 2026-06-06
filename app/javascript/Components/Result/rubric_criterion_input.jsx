@@ -26,15 +26,17 @@ export default function RubricCriterionInput({
 
   const liRef = useRef(null);
 
-  // Refs so keybinding handlers always see current values without re-binding
-  const hoveredRef = useRef(null);
-  hoveredRef.current = hoveredLevelIndex;
-
   const handleChange = level => {
     updateMark(id, level.mark);
   };
-  const handleChangeRef = useRef(handleChange);
-  handleChangeRef.current = handleChange;
+
+  // Ref so the enter handler always sees current hoveredLevelIndex without re-binding
+  const handleEnterRef = useRef(null);
+  handleEnterRef.current = () => {
+    if (hoveredLevelIndex !== null && levels[hoveredLevelIndex]) {
+      handleChange(levels[hoveredLevelIndex]);
+    }
+  };
 
   useEffect(() => {
     if (active) {
@@ -80,10 +82,7 @@ export default function RubricCriterionInput({
       });
       Mousetrap.bind("enter", e => {
         e.preventDefault();
-        const idx = hoveredRef.current;
-        if (idx !== null && levels[idx]) {
-          handleChangeRef.current(levels[idx]);
-        }
+        handleEnterRef.current();
       });
 
       return () => {

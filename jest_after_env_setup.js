@@ -56,9 +56,6 @@ beforeAll(() => Modal.setAppElement("body"));
 // Apply Mousetrap.prototype.stopCallback override so shift+up/down work from form inputs
 import "./app/javascript/Components/Result/keybinding";
 
-// Originally defined in app/assets/javascripts/Results/main.js
-global.activeCriterion = jest.fn();
-
 // Ensure @testing-library/react cleanup function is called after every test
 import {cleanup} from "@testing-library/react";
 afterEach(cleanup);
