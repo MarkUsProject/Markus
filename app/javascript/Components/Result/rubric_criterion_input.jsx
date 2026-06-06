@@ -1,4 +1,5 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import Mousetrap from "mousetrap";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -21,12 +22,74 @@ export default function RubricCriterionInput({
   unassigned,
   updateMark,
 }) {
-  // The parameter `level` is the level object selected
+  const [hoveredLevelIndex, setHoveredLevelIndex] = useState(null);
+
+  // Refs so keybinding handlers always see current values without re-binding
+  const hoveredRef = useRef(null);
+  hoveredRef.current = hoveredLevelIndex;
+
   const handleChange = level => {
     updateMark(id, level.mark);
   };
+  const handleChangeRef = useRef(handleChange);
+  handleChangeRef.current = handleChange;
 
-  // The parameter `level` is the level object selected
+  // Set initial hover position when this criterion becomes active / inactive
+  useEffect(() => {
+    if (active) {
+      const selectedIndex =
+        mark !== null && mark !== undefined
+          ? levels.findIndex(l => l.mark.toFixed(2) === mark.toFixed(2))
+          : -1;
+      setHoveredLevelIndex(selectedIndex >= 0 ? selectedIndex : 0);
+    } else {
+      setHoveredLevelIndex(null);
+    }
+    // Intentionally omit `mark` and `levels` — we only want to reset when
+    // the active criterion changes, not on every mark update.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  // Bind up/down/enter for rubric-level navigation while this criterion is active
+  useEffect(() => {
+    if (active && !unassigned) {
+      const isTextSelected = () =>
+        "getSelection" in window && window.getSelection().type === "Range";
+
+      Mousetrap.bind("up", e => {
+        if (!isTextSelected()) {
+          e.preventDefault?.();
+          setHoveredLevelIndex(i => (i === 0 ? levels.length - 1 : i - 1));
+          return false;
+        }
+      });
+      Mousetrap.bind("down", e => {
+        if (!isTextSelected()) {
+          e.preventDefault?.();
+          setHoveredLevelIndex(i => (i === levels.length - 1 ? 0 : i + 1));
+          return false;
+        }
+      });
+      Mousetrap.bind("enter", e => {
+        e.preventDefault?.();
+        const idx = hoveredRef.current;
+        if (idx !== null && levels[idx]) {
+          handleChangeRef.current(levels[idx]);
+        }
+      });
+
+      return () => {
+        Mousetrap.unbind(["up", "down", "enter"]);
+      };
+    }
+  }, [active, unassigned]);
+
+  useEffect(() => {
+    if (active && !expanded) {
+      toggleExpanded();
+    }
+  }, [active, expanded]);
+
   const renderRubricLevel = (level, index) => {
     const levelMark = level.mark.toFixed(2);
     let selectedClass = "";
@@ -35,11 +98,8 @@ export default function RubricCriterionInput({
     if (mark !== undefined && mark !== null && levelMark === mark.toFixed(2)) {
       selectedClass = "selected";
     }
-    if (active) {
-      // Make level active if selected OR nothing selected yet & this is the first level
-      if (selectedClass === "selected" || (mark === null && index === 0)) {
-        activeRubricClass = "active-rubric";
-      }
+    if (active && index === hoveredLevelIndex) {
+      activeRubricClass = "active-rubric";
     }
     if (
       oldMark !== undefined &&
@@ -71,12 +131,6 @@ export default function RubricCriterionInput({
   const rubricLevels = levels.map((level, index) => renderRubricLevel(level, index));
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
-
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active, expanded]);
 
   return (
     <li

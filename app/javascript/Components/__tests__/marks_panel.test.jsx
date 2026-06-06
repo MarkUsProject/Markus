@@ -1,5 +1,6 @@
 import {render, screen, waitFor, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import Mousetrap from "mousetrap";
 
 import {MarksPanel} from "../Result/marks_panel";
 
@@ -149,7 +150,7 @@ describe("MarksPanel", () => {
     expect(secondCriterion).toHaveClass("active-criterion");
   });
 
-  it("navigates to next criterion using window.marksPanel.nextCriterion", async () => {
+  it("navigates to next criterion using shift+down keybinding", async () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,
@@ -182,7 +183,7 @@ describe("MarksPanel", () => {
     expect(firstCriterion).toHaveClass("active-criterion");
 
     // Navigate to next
-    window.marksPanel.nextCriterion();
+    Mousetrap.trigger("shift+down");
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -190,7 +191,7 @@ describe("MarksPanel", () => {
     });
   });
 
-  it("navigates to previous criterion using window.marksPanel.prevCriterion", async () => {
+  it("navigates to previous criterion using shift+up keybinding", async () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,
@@ -222,7 +223,7 @@ describe("MarksPanel", () => {
 
     expect(firstCriterion).toHaveClass("active-criterion");
 
-    window.marksPanel.prevCriterion();
+    Mousetrap.trigger("shift+up");
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -847,5 +848,69 @@ describe("RubricCriterionInput", () => {
     const selectedRow = screen.getByText("level 2").closest("tr");
     expect(selectedRow).toHaveClass("selected");
     expect(selectedRow).not.toHaveClass("active-rubric");
+  });
+
+  it("navigates to next rubric level with down keybinding when active", async () => {
+    const props = {...basicProps, active: true, mark: 1};
+    render(<RubricCriterionInput {...props} />);
+
+    const level1Row = screen.getByText("level 1").closest("tr");
+    const level2Row = screen.getByText("level 2").closest("tr");
+    expect(level1Row).toHaveClass("active-rubric");
+
+    Mousetrap.trigger("down");
+
+    await waitFor(() => {
+      expect(level1Row).not.toHaveClass("active-rubric");
+      expect(level2Row).toHaveClass("active-rubric");
+    });
+  });
+
+  it("wraps to the last level when pressing up from the first level", async () => {
+    const props = {...basicProps, active: true, mark: 1};
+    render(<RubricCriterionInput {...props} />);
+
+    const level1Row = screen.getByText("level 1").closest("tr");
+    const level2Row = screen.getByText("level 2").closest("tr");
+    expect(level1Row).toHaveClass("active-rubric");
+
+    Mousetrap.trigger("up");
+
+    await waitFor(() => {
+      expect(level1Row).not.toHaveClass("active-rubric");
+      expect(level2Row).toHaveClass("active-rubric");
+    });
+  });
+
+  it("selects the hovered level on enter keybinding when active", async () => {
+    const props = {...basicProps, active: true, mark: null};
+    render(<RubricCriterionInput {...props} />);
+
+    // First level is initially hovered; move down to second level
+    Mousetrap.trigger("down");
+    await waitFor(() => {
+      expect(screen.getByText("level 2").closest("tr")).toHaveClass("active-rubric");
+    });
+
+    Mousetrap.trigger("enter");
+
+    await waitFor(() => {
+      expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 2);
+    });
+  });
+
+  it("does not navigate rubric levels when criterion is unassigned", async () => {
+    const props = {...basicProps, active: true, unassigned: true, mark: 1};
+    render(<RubricCriterionInput {...props} />);
+
+    const level1Row = screen.getByText("level 1").closest("tr");
+    const level2Row = screen.getByText("level 2").closest("tr");
+    expect(level1Row).toHaveClass("active-rubric");
+
+    Mousetrap.trigger("down");
+
+    // No keybinding is registered for unassigned criteria
+    expect(level1Row).toHaveClass("active-rubric");
+    expect(level2Row).not.toHaveClass("active-rubric");
   });
 });
