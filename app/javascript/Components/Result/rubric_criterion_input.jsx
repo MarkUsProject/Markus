@@ -38,7 +38,7 @@ export default function RubricCriterionInput({
 
   useEffect(() => {
     if (active) {
-      liRef.current?.scrollIntoView?.({block: "nearest", behavior: "smooth"});
+      liRef.current?.scrollIntoView({block: "nearest", behavior: "smooth"});
     }
   }, [active]);
 
@@ -66,20 +66,20 @@ export default function RubricCriterionInput({
 
       Mousetrap.bind("up", e => {
         if (!isTextSelected()) {
-          e.preventDefault?.();
+          e.preventDefault();
           setHoveredLevelIndex(i => (i === 0 ? levels.length - 1 : i - 1));
           return false;
         }
       });
       Mousetrap.bind("down", e => {
         if (!isTextSelected()) {
-          e.preventDefault?.();
+          e.preventDefault();
           setHoveredLevelIndex(i => (i === levels.length - 1 ? 0 : i + 1));
           return false;
         }
       });
       Mousetrap.bind("enter", e => {
-        e.preventDefault?.();
+        e.preventDefault();
         const idx = hoveredRef.current;
         if (idx !== null && levels[idx]) {
           handleChangeRef.current(levels[idx]);

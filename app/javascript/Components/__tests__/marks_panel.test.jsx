@@ -1,7 +1,5 @@
 import {render, screen, waitFor, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Mousetrap from "mousetrap";
-
 import {MarksPanel} from "../Result/marks_panel";
 
 import CheckboxCriterionInput from "../Result/checkbox_criterion_input";
@@ -182,8 +180,15 @@ describe("MarksPanel", () => {
 
     expect(firstCriterion).toHaveClass("active-criterion");
 
-    // Navigate to next
-    Mousetrap.trigger("shift+down");
+    // Dispatch to the focused input (radio button auto-focused by CheckboxCriterionInput).
+    // This goes through Mousetrap's stopCallback, which must be patched (via jest_after_env_setup.js)
+    // to allow shift+down through form inputs, otherwise the handler is silently blocked.
+    fireEvent.keyDown(document.activeElement || document, {
+      shiftKey: true,
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -223,7 +228,12 @@ describe("MarksPanel", () => {
 
     expect(firstCriterion).toHaveClass("active-criterion");
 
-    Mousetrap.trigger("shift+up");
+    fireEvent.keyDown(document.activeElement || document, {
+      shiftKey: true,
+      key: "ArrowUp",
+      keyCode: 38,
+      which: 38,
+    });
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -858,7 +868,11 @@ describe("RubricCriterionInput", () => {
     const level2Row = screen.getByText("level 2").closest("tr");
     expect(level1Row).toHaveClass("active-rubric");
 
-    Mousetrap.trigger("down");
+    fireEvent.keyDown(document.activeElement || document, {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
 
     await waitFor(() => {
       expect(level1Row).not.toHaveClass("active-rubric");
@@ -874,7 +888,7 @@ describe("RubricCriterionInput", () => {
     const level2Row = screen.getByText("level 2").closest("tr");
     expect(level1Row).toHaveClass("active-rubric");
 
-    Mousetrap.trigger("up");
+    fireEvent.keyDown(document.activeElement || document, {key: "ArrowUp", keyCode: 38, which: 38});
 
     await waitFor(() => {
       expect(level1Row).not.toHaveClass("active-rubric");
@@ -887,12 +901,16 @@ describe("RubricCriterionInput", () => {
     render(<RubricCriterionInput {...props} />);
 
     // First level is initially hovered; move down to second level
-    Mousetrap.trigger("down");
+    fireEvent.keyDown(document.activeElement || document, {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
     await waitFor(() => {
       expect(screen.getByText("level 2").closest("tr")).toHaveClass("active-rubric");
     });
 
-    Mousetrap.trigger("enter");
+    fireEvent.keyDown(document.activeElement || document, {key: "Enter", keyCode: 13, which: 13});
 
     await waitFor(() => {
       expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 2);
@@ -907,7 +925,11 @@ describe("RubricCriterionInput", () => {
     const level2Row = screen.getByText("level 2").closest("tr");
     expect(level1Row).toHaveClass("active-rubric");
 
-    Mousetrap.trigger("down");
+    fireEvent.keyDown(document.activeElement || document, {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
 
     // No keybinding is registered for unassigned criteria
     expect(level1Row).toHaveClass("active-rubric");

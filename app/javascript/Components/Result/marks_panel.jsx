@@ -65,14 +65,14 @@ export class MarksPanel extends React.Component {
         "getSelection" in window && window.getSelection().type === "Range";
       Mousetrap.bind("shift+up", e => {
         if (!isTextSelected()) {
-          e.preventDefault?.();
+          e.preventDefault();
           this.prevCriterion();
           return false;
         }
       });
       Mousetrap.bind("shift+down", e => {
         if (!isTextSelected()) {
-          e.preventDefault?.();
+          e.preventDefault();
           this.nextCriterion();
           return false;
         }

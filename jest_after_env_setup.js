@@ -16,6 +16,13 @@ window.Routes = global.Routes = require("./app/javascript/routes");
 // Jest fetch mock
 require("jest-fetch-mock").enableMocks();
 
+// Stub Element.prototype.scrollIntoView (not implemented in JSDOM)
+Object.defineProperty(Element.prototype, "scrollIntoView", {
+  value: jest.fn(),
+  writable: true,
+  configurable: true,
+});
+
 // Define HTMLElement.prototype.offsetParent
 // Code from https://github.com/jsdom/jsdom/issues/1261#issuecomment-1765404346
 Object.defineProperty(HTMLElement.prototype, "offsetParent", {
@@ -45,6 +52,9 @@ import "./app/javascript/common/fontawesome_config";
 // Ensure App element is defined for react-modal
 import Modal from "react-modal";
 beforeAll(() => Modal.setAppElement("body"));
+
+// Apply Mousetrap.prototype.stopCallback override so shift+up/down work from form inputs
+import "./app/javascript/Components/Result/keybinding";
 
 // Originally defined in app/assets/javascripts/Results/main.js
 global.activeCriterion = jest.fn();

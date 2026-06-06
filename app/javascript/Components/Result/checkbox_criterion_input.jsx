@@ -29,7 +29,7 @@ export default function CheckboxCriterionInput({
 
   useEffect(() => {
     if (active) {
-      liRef.current?.scrollIntoView?.({block: "nearest", behavior: "smooth"});
+      liRef.current?.scrollIntoView({block: "nearest", behavior: "smooth"});
     }
   }, [active]);
 
