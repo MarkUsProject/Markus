@@ -1,4 +1,11 @@
-<%= form_with url: split_course_assignment_exam_templates_path(@current_course),
+<% exam_template_data = @exam_templates.map{
+  |exam_template|
+    { exam_template_id: exam_template.id, template_division_count: exam_template.template_divisions.size }
+} %>
+
+<%= form_with id: 'upload_scans_form',
+              url: split_course_assignment_exam_templates_path(@current_course),
+              html: {data: { exam_templates: exam_template_data }},
               method: :patch,
               authenticity_token: true,
               multipart: true do |f| %>
@@ -6,7 +13,8 @@
     <%= f.label :exam_template_id, ExamTemplate.model_name.human %>
     <%= f.select :exam_template_id,
                  options_from_collection_for_select(@exam_templates, 'id', 'name'),
-                 required: true %>
+                 {required: true},
+                 {id: 'exam_template_dropdown'} %>
     <%= f.label :pdf_to_split, t('exam_templates.upload_scans.instruction') %>
     <%= f.file_field :pdf_to_split, required: true, accept: 'application/pdf' %>
   </div>

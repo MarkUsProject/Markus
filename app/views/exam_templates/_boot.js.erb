@@ -246,3 +246,26 @@ function set_crop_selection(crop_target, form, id, jcrop_api) {
 function _round_down_to_nearest_hundred(num) {
   return Math.floor(num / 100) * 100;
 }
+
+function init_upload_scans_form() {
+  const uploadScansForm = document.getElementById('upload_scans_form');
+  const dropdown = document.getElementById('exam_template_dropdown');
+
+  if (!uploadScansForm || !dropdown) {
+    return;
+  }
+
+  const examTemplates = JSON.parse(uploadScansForm.dataset.examTemplates);
+
+  uploadScansForm.addEventListener('submit', (e) => {
+    const selectedExamTemplate = examTemplates.find(template => String(template.exam_template_id) === dropdown.value);
+
+    if (!selectedExamTemplate || selectedExamTemplate.template_division_count === 0) {
+      const proceed = confirm('The selected exam template has no template divisions assigned to it. Are you sure you would like to proceed?');
+      if (!proceed) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+  }, true);
+}
