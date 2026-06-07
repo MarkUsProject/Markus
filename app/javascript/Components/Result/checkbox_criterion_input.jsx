@@ -34,7 +34,11 @@ export default function CheckboxCriterionInput({
   }, [active]);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active) {
+      yesInputRef.current?.blur();
+      noInputRef.current?.blur();
+      return;
+    }
 
     // Auto-expand if not already
     if (!expanded) {

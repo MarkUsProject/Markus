@@ -165,6 +165,8 @@ export default function FlexibleCriterionInput({
         inputRef.current.value.length,
         inputRef.current.value.length
       );
+    } else if (!active) {
+      inputRef.current?.blur();
     }
   }, [active, expanded]);
 

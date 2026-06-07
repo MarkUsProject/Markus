@@ -22,10 +22,20 @@ export default function RubricCriterionInput({
   unassigned,
   updateMark,
 }) {
-  const [hoveredLevelIndex, setHoveredLevelIndex] = useState(null);
+  // Initialize hovered level
+  let selectedIndex;
+  if (mark !== null && mark !== undefined) {
+    selectedIndex = levels.findIndex(l => l.mark.toFixed(2) === mark.toFixed(2));
+  } else {
+    selectedIndex = 0;
+  }
+  const [hoveredLevelIndex, setHoveredLevelIndex] = useState(
+    selectedIndex >= 0 ? selectedIndex : 0
+  );
 
   const liRef = useRef(null);
 
+  // The parameter `level` is the level object selected
   const handleChange = level => {
     updateMark(id, level.mark);
   };
@@ -42,22 +52,6 @@ export default function RubricCriterionInput({
     if (active) {
       liRef.current?.scrollIntoView({block: "nearest", behavior: "smooth"});
     }
-  }, [active]);
-
-  // Set initial hover position when this criterion becomes active / inactive
-  useEffect(() => {
-    if (active) {
-      const selectedIndex =
-        mark !== null && mark !== undefined
-          ? levels.findIndex(l => l.mark.toFixed(2) === mark.toFixed(2))
-          : -1;
-      setHoveredLevelIndex(selectedIndex >= 0 ? selectedIndex : 0);
-    } else {
-      setHoveredLevelIndex(null);
-    }
-    // Intentionally omit `mark` and `levels` — we only want to reset when
-    // the active criterion changes, not on every mark update.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
   // Bind up/down/enter for rubric-level navigation while this criterion is active
@@ -91,12 +85,7 @@ export default function RubricCriterionInput({
     }
   }, [active, unassigned]);
 
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active, expanded]);
-
+  // The parameter `level` is the level object selected
   const renderRubricLevel = (level, index) => {
     const levelMark = level.mark.toFixed(2);
     let selectedClass = "";
@@ -138,6 +127,12 @@ export default function RubricCriterionInput({
   const rubricLevels = levels.map((level, index) => renderRubricLevel(level, index));
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
+
+  useEffect(() => {
+    if (active && !expanded) {
+      toggleExpanded();
+    }
+  }, [active, expanded]);
 
   return (
     <li
