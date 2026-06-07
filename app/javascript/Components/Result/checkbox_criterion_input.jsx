@@ -23,11 +23,22 @@ export default function CheckboxCriterionInput({
 }) {
   const unassignedClass = unassigned ? "unassigned" : "";
   const expandedClass = expanded ? "expanded" : "collapsed";
+  const liRef = useRef(null);
   const yesInputRef = useRef(null);
   const noInputRef = useRef(null);
 
   useEffect(() => {
-    if (!active) return;
+    if (active) {
+      liRef.current?.scrollIntoView({block: "nearest", behavior: "smooth"});
+    }
+  }, [active]);
+
+  useEffect(() => {
+    if (!active) {
+      yesInputRef.current?.blur();
+      noInputRef.current?.blur();
+      return;
+    }
 
     // Auto-expand if not already
     if (!expanded) {
@@ -52,6 +63,7 @@ export default function CheckboxCriterionInput({
 
   return (
     <li
+      ref={liRef}
       id={`checkbox_criterion_${id}`}
       className={`checkbox_criterion ${expandedClass} ${unassignedClass} ${active ? "active-criterion" : ""}`}
       onClick={setActive}
