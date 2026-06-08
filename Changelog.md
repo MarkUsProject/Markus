@@ -13,6 +13,7 @@
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Preserved PDF scroll position when switching between submissions while grading scanned exams (#8004)
+- Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET and PATCH /overall_comment API routes (#7963)

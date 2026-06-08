@@ -287,6 +287,28 @@ describe AutotestRunJob do
           end
         end
       end
+
+      context 'batch_id attribution' do
+        it 'forwards the batch id for a multi-group run' do
+          expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
+            expect(JSON.parse(net_obj.body)['batch_id']).to eq TestBatch.first.id
+            dummy_return
+          end
+          subject
+        end
+
+        context 'when there is a single group' do
+          let(:n_groups) { 1 }
+
+          it 'forwards a null batch id for a solo run' do
+            expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
+              expect(JSON.parse(net_obj.body)).to include('batch_id' => nil)
+              dummy_return
+            end
+            subject
+          end
+        end
+      end
     end
 
     context 'tests are not set up' do
