@@ -111,10 +111,11 @@ module AutomatedTestsHelper
   end
 
   def get_markus_address(host_with_port)
+    base = ENV.fetch('MARKUS_URL', host_with_port)
     if Rails.application.config.relative_url_root.nil?
-      host_with_port
+      base
     else
-      host_with_port + Rails.application.config.relative_url_root
+      base + Rails.application.config.relative_url_root
     end
   end
 
@@ -209,6 +210,8 @@ module AutomatedTestsHelper
       req.body = {
         test_data: test_data,
         categories: role.student? ? ['student'] : ['instructor'],
+        # Maps to TestBatch.id for telemetry attribution; null for solo runs.
+        batch_id: batch&.id,
         request_high_priority: batch.nil? && role.student?
       }.to_json
       res = send_request!(req, uri)
@@ -307,10 +310,11 @@ module AutomatedTestsHelper
 
     # Get the current URL for this MarkUs instance (adds the relative url root to +host_with_port+) if it exists.
     def get_markus_address(host_with_port)
+      base = ENV.fetch('MARKUS_URL', host_with_port)
       if Rails.application.config.relative_url_root.nil?
-        host_with_port
+        base
       else
-        host_with_port + Rails.application.config.relative_url_root
+        base + Rails.application.config.relative_url_root
       end
     end
 
