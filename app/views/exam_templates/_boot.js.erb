@@ -247,6 +247,13 @@ function _round_down_to_nearest_hundred(num) {
   return Math.floor(num / 100) * 100;
 }
 
+/**
+ * Adds a submit event listener to the upload scans form.
+ * The event listener checks the template divisions count of the template that was selected from the form dropdown
+ * and shows a confirmation dialog on submission of the form if the selected template has no divisions assigned to it.
+ * This function runs after the form is injected in view_logs.js.erb.
+ * @returns {void}
+ */
 function init_upload_scans_form() {
   const uploadScansForm = document.getElementById('upload_scans_form');
   const dropdown = document.getElementById('exam_template_dropdown');
