@@ -168,8 +168,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh extension install actions/gh-actions-cache
-          gh actions-cache delete runtime-cache-chunk --confirm
+          gh cache delete runtime-cache-chunk
         continue-on-error: true
       - name: Save new runtime chunk
         uses: actions/cache/save@v4
@@ -216,8 +215,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh extension install actions/gh-actions-cache
-          gh actions-cache delete runtime-cache-all --confirm
+          gh cache delete runtime-cache-all
         continue-on-error: true
       - name: "Runtime cache: store"
         uses: actions/cache/save@v4
