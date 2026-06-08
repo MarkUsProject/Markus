@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, screen} from "@testing-library/react";
+import {fireEvent, screen, waitFor} from "@testing-library/react";
 import {SummaryPanel} from "../Result/summary_panel";
 import {renderInResultContext} from "./result_context_renderer";
 
@@ -47,5 +47,11 @@ describe("SummaryPanel", () => {
       "markus-dialog",
       "data-chart-container"
     );
+
+    fireEvent.click(document.querySelector(".ReactModal__Overlay"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("marks-chart")).not.toBeInTheDocument();
+    });
   });
 });
