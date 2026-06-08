@@ -149,7 +149,8 @@ jobs:
       - name: Restore runtime log
         uses: actions/cache/restore@v4
         with:
-          key: runtime-cache-all
+          key: runtime-cache-all-${{ github.run_id }}
+          restore-keys: runtime-cache-all-
           path: tmp/parallel_runtime_rspec.log
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
@@ -164,16 +165,10 @@ jobs:
         run: bundle exec rspec spec/system
         env:
           MARKUS__PYTHON: ./venv/bin/python3
-      - name: Clear previous runtime chunk
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache delete runtime-cache-chunk
-        continue-on-error: true
       - name: Save new runtime chunk
         uses: actions/cache/save@v4
         with:
-          key: runtime-cache-chunk
+          key: runtime-cache-chunk-${{ github.run_id }}
           path: tmp/parallel_runtime_rspec.log
       - name: Merge SimpleCov results
         run: |
@@ -209,18 +204,12 @@ jobs:
       - name: "Runtime cache: load chunk"
         uses: actions/cache/restore@v4
         with:
-          key: runtime-cache-chunk
+          key: runtime-cache-chunk-${{ github.run_id }}
           path: tmp/parallel_runtime_rspec.log
-      - name: "Runtime cache: clear"
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache delete runtime-cache-all
-        continue-on-error: true
       - name: "Runtime cache: store"
         uses: actions/cache/save@v4
         with:
-          key: runtime-cache-all
+          key: runtime-cache-all-${{ github.run_id }}
           path: tmp/parallel_runtime_rspec.log
 
   test_jest:
