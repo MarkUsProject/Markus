@@ -342,9 +342,20 @@ describe ExamTemplatesController do
     end
 
     describe '#view_logs' do
-      before { get_as user, :view_logs, params: { assignment_id: exam_template.assignment.id, course_id: course.id } }
+      render_views
+      before do
+ get_as user, :view_logs, format: 'js', params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+      end
 
       it('should respond with 200') { expect(response).to have_http_status :ok }
+
+      it 'embeds template division data on the upload form' do
+        expect(response.body).to include('data-exam-templates')
+        expect(response.body).to include('upload_scans_form')
+        expect(response.body).to include('template_division_count')
+        expect(response.body).to include('init_upload_scans_form()')
+        expect(response.body).to include(exam_template.id.to_s)
+      end
     end
 
     describe '#download_generate' do
