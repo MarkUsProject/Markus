@@ -283,6 +283,9 @@ GEM
       racc (~> 1.4)
     observer (0.1.2)
     ostruct (0.6.3)
+    parallel (1.28.0)
+    parallel_tests (5.7.0)
+      parallel
     parser (3.3.7.4)
       ast (~> 2.4.1)
       racc
@@ -313,7 +316,7 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    puma (7.2.0)
+    puma (7.2.1)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
@@ -549,6 +552,7 @@ DEPENDENCIES
   machinist (< 3)
   marcel
   mini_mime
+  parallel_tests
   pg
   pghero
   pluck_to_hash

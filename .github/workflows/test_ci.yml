@@ -41,6 +41,7 @@ jobs:
       RSPEC_RENDER_VIEWS: true
     permissions:
       contents: read
+      actions: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -143,20 +144,49 @@ jobs:
           cp config/database.yml.ci config/database.yml
       - name: Build assets
         run: bundle exec rake javascript:build
-      - name: Set up database
-        run: bundle exec rails db:migrate
+      - name: Set up databases
+        run: bundle exec rails parallel:setup
+      - name: Restore runtime log
+        uses: actions/cache/restore@v4
+        with:
+          key: runtime-cache-all-${{ hashFiles('spec/**/*.rb') }}
+          restore-keys: runtime-cache-all-
+          path: tmp/parallel_runtime_rspec.log
       - name: Install  chromedriver
         uses: nanasess/setup-chromedriver@v2
       - name: Run chromedriver
         run: chromedriver --port=9515 --whitelisted-ips &
       - name: Run rspec tests
-        run: bundle exec rspec
+        run: bundle exec rails "parallel:spec[spec/, --exclude-pattern spec/system/**/*_spec.rb]"
         env:
           MARKUS__PYTHON: ./venv/bin/python3
+          RECORD_RUNTIME: "true"
       - name: Run rspec system tests
         run: bundle exec rspec spec/system
         env:
           MARKUS__PYTHON: ./venv/bin/python3
+      - name: Save new runtime chunk
+        uses: actions/cache/save@v4
+        with:
+          key: runtime-cache-all-${{ hashFiles('spec/**/*.rb') }}
+          path: tmp/parallel_runtime_rspec.log
+      - name: Merge SimpleCov results
+        run: |
+          bundle exec ruby -e "
+            require 'simplecov'
+            require 'simplecov-lcov'
+            SimpleCov::Formatter::LcovFormatter.config do |c|
+              c.report_with_single_file = true
+              c.output_directory = 'coverage'
+              c.lcov_file_name = 'lcov.info'
+            end
+            SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+              SimpleCov::Formatter::HTMLFormatter,
+              SimpleCov::Formatter::LcovFormatter
+            ])
+            SimpleCov.merge_timeout 7200
+            SimpleCov.collate Dir['coverage/worker*/.resultset.json']
+          "
       - name: Coveralls Parallel (rspec)
         uses: coverallsapp/github-action@v2
         with:
