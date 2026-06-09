@@ -37,3 +37,6 @@ lti:
   token_endpoint: "http://test.host.com/login/oauth2/token"
   unpermitted_new_course_message: 'You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator.'
   sync_schedule: "0 3 * * *"
+
+file_storage:
+  default_root_path: <%= "#{::Rails.root}/data/#{::Rails.env}#{ENV['TEST_ENV_NUMBER']}/" %>

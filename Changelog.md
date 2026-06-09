@@ -57,6 +57,7 @@
 - Fixed spurious navigation warnings on autotest manager and starter file manager pages (#7968)
 
 ### 🔧 Internal changes
+- Parallelized RSpec tests via the `parallel_tests` gem to reduce CI test suite runtime (#7972)
 - Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
 - Added tests for `GroupsController` to fully cover `global_actions` (#7955)
 - Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)

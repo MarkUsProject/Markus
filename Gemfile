@@ -110,6 +110,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
+  gem 'parallel_tests'
   gem 'rspec-rails', '~> 8.0.4'
   gem 'selenium-webdriver'
 end

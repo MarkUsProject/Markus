@@ -2,7 +2,12 @@ require 'resque/server'
 require 'resque-scheduler'
 require 'resque/scheduler/server'
 
-Resque.redis = Settings.redis.url
+if Rails.env.test?
+  worker_id = ENV.fetch('TEST_ENV_NUMBER', '')
+  Resque.redis = Redis::Namespace.new("test#{worker_id}", redis: Redis.new(url: Settings.redis.url))
+else
+  Resque.redis = Settings.redis.url
+end
 
 # Modify Resque::Server class to add (manual) authentication
 unless ENV['NO_INIT_SCHEDULER']
