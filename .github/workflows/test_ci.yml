@@ -149,7 +149,7 @@ jobs:
       - name: Restore runtime log
         uses: actions/cache/restore@v4
         with:
-          key: runtime-cache-all-${{ github.run_id }}
+          key: runtime-cache-all-${{ hashFiles('spec/**/*.rb') }}
           restore-keys: runtime-cache-all-
           path: tmp/parallel_runtime_rspec.log
       - name: Install  chromedriver
@@ -168,7 +168,7 @@ jobs:
       - name: Save new runtime chunk
         uses: actions/cache/save@v4
         with:
-          key: runtime-cache-chunk-${{ github.run_id }}
+          key: runtime-cache-all-${{ hashFiles('spec/**/*.rb') }}
           path: tmp/parallel_runtime_rspec.log
       - name: Merge SimpleCov results
         run: |
@@ -194,23 +194,6 @@ jobs:
           flag-name: rspec
           parallel: true
           file: coverage/lcov.info
-
-  store-runtime:
-    runs-on: ubuntu-24.04
-    needs: test_rspec
-    permissions:
-      actions: write
-    steps:
-      - name: "Runtime cache: load chunk"
-        uses: actions/cache/restore@v4
-        with:
-          key: runtime-cache-chunk-${{ github.run_id }}
-          path: tmp/parallel_runtime_rspec.log
-      - name: "Runtime cache: store"
-        uses: actions/cache/save@v4
-        with:
-          key: runtime-cache-all-${{ github.run_id }}
-          path: tmp/parallel_runtime_rspec.log
 
   test_jest:
     if: github.event.pull_request.draft == false
