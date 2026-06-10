@@ -267,7 +267,7 @@ function init_upload_scans_form(examTemplateData) {
     const selectedExamTemplate = examTemplateData.find(template => String(template.exam_template_id) === dropdown.value);
 
     if (selectedExamTemplate && selectedExamTemplate.template_division_count === 0) {
-      const proceed = confirm('The selected exam template has no template divisions assigned to it. Are you sure you would like to proceed?');
+      const proceed = confirm(I18n.t('exam_templates.upload_scans.confirmation_dialog'));
       if (!proceed) {
         e.preventDefault();
         e.stopPropagation();
