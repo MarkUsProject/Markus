@@ -13,7 +13,7 @@ export class AdminUsersList extends React.Component {
       pages: 0,
       loading: true,
       page: 0,
-      pageSize: 100, // Explicitly locked to 100
+      pageSize: 100,
     };
     this.previousFiltered = "[]";
     this.previousSorted = "[]";
