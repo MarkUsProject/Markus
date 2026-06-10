@@ -252,9 +252,10 @@ function _round_down_to_nearest_hundred(num) {
  * The event listener checks the template divisions count of the template that was selected from the form dropdown
  * and shows a confirmation dialog on submission of the form if the selected template has no divisions assigned to it.
  * This function runs after the form is injected in view_logs.js.erb.
+ * @param {Array} examTemplateData contains exam template ids and matching template division counts.
  * @returns {void}
  */
-function init_upload_scans_form() {
+function init_upload_scans_form(examTemplateData) {
   const uploadScansForm = document.getElementById('upload_scans_form');
   const dropdown = document.getElementById('exam_template_dropdown');
 
@@ -262,10 +263,8 @@ function init_upload_scans_form() {
     return;
   }
 
-  const examTemplates = JSON.parse(uploadScansForm.dataset.examTemplates);
-
   uploadScansForm.addEventListener('submit', (e) => {
-    const selectedExamTemplate = examTemplates.find(template => String(template.exam_template_id) === dropdown.value);
+    const selectedExamTemplate = examTemplateData.find(template => String(template.exam_template_id) === dropdown.value);
 
     if (selectedExamTemplate && selectedExamTemplate.template_division_count === 0) {
       const proceed = confirm('The selected exam template has no template divisions assigned to it. Are you sure you would like to proceed?');

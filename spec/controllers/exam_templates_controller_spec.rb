@@ -349,11 +349,10 @@ describe ExamTemplatesController do
 
       it('should respond with 200') { expect(response).to have_http_status :ok }
 
-      it 'embeds template division data on the upload form' do
-        expect(response.body).to include('data-exam-templates')
+      it 'passes template division data to init_upload_scans_form' do
         expect(response.body).to include('upload_scans_form')
         expect(response.body).to include('template_division_count')
-        expect(response.body).to include('init_upload_scans_form()')
+        expect(response.body).to include('init_upload_scans_form(examTemplateData)')
         expect(response.body).to include(exam_template.id.to_s)
       end
     end

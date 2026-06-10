@@ -4,4 +4,11 @@ document.getElementById('editing_pane_menu').innerHTML =
 makeExamScanLogTable(document.getElementById('exam_scan_log_table'),
   {course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
 
-init_upload_scans_form();
+<% exam_template_data = @exam_templates.map{
+  |exam_template|
+    { exam_template_id: exam_template.id, template_division_count: exam_template.template_divisions.size }
+} %>
+
+let examTemplateData = <%= exam_template_data.to_json.html_safe %>;
+
+init_upload_scans_form(examTemplateData);

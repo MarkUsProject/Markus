@@ -1,11 +1,5 @@
-<% exam_template_data = @exam_templates.map{
-  |exam_template|
-    { exam_template_id: exam_template.id, template_division_count: exam_template.template_divisions.size }
-} %>
-
 <%= form_with id: 'upload_scans_form',
               url: split_course_assignment_exam_templates_path(@current_course),
-              html: {data: { exam_templates: exam_template_data }},
               method: :patch,
               authenticity_token: true,
               multipart: true do |f| %>
