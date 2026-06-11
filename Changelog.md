@@ -17,6 +17,7 @@
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
+- Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 
 ### 🔧 Internal changes
 - Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
