@@ -20,6 +20,7 @@
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 
 ### 🔧 Internal changes
+- Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
 - Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
 - Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
 - Added `NOT NULL` constraint on `groups.group_name` (#7975)
