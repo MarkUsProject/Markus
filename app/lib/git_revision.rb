@@ -65,21 +65,28 @@ class GitRevision < Repository::AbstractRevision
     if parents.empty?
       return !entry.nil?
     end
+
     # check each parent commit (a merge has 2+ parents)
-    parents.each do |parent|
+    parent_diffs = parents.map do |parent|
       parent_entry = get_entry_hash(path, parent)
       # neither exists, no change
       if !entry && !parent_entry
-        next
-        # only in one of them, change
+        false
+      # only in one of them, change
       elsif !entry || !parent_entry
-        return true
-        # otherwise it's changed if their ids aren't the same
-      elsif entry[:oid] != parent_entry[:oid]  # rubocop:disable Lint/DuplicateBranch
-        return true
+        true
+      # otherwise it's changed if their oids aren't the same
+      else
+        entry[:oid] != parent_entry[:oid]
       end
     end
-    false
+
+    # For merge commits, only consider the path changed if it differs from ALL parents.
+    # If the result matches any parent, the merge was trivial for this path (it just
+    # carried that parent's version forward). Treating such a merge as a change would
+    # incorrectly attribute an instructor's merge commit as the latest student submission
+    # (see https://github.com/MarkUsProject/Markus/issues/4534).
+    parent_diffs.all?
   end
 
   def changes_at_path?(path)

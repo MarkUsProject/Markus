@@ -11,6 +11,7 @@ const mockReset = jest.fn();
 jest.doMock("mousetrap", () => ({
   bind: mockBind,
   reset: mockReset,
+  prototype: {stopCallback: jest.fn()},
 }));
 
 const {bind_keybindings, unbind_all_keybindings} = require("../Result/keybinding");
@@ -234,19 +235,14 @@ describe("SubmissionSelectorKeybinding", () => {
       ["shift+left"],
       ["shift+right"],
       ["ctrl+shift+right"],
-      ["shift+up"],
-      ["shift+down"],
-      ["up"],
-      ["down"],
-      ["enter"],
       ["shift+n"],
       ["alt+enter"],
     ])("should expect a function to be binded with %s", argument => {
       expect(mockBind).toHaveBeenCalledWith(argument, expect.any(Function));
     });
 
-    it("should have 11 bindings", () => {
-      expect(mockBind).toHaveBeenCalledTimes(11);
+    it("should have 6 bindings", () => {
+      expect(mockBind).toHaveBeenCalledTimes(6);
     });
   });
 

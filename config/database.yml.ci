@@ -38,7 +38,7 @@ test:
   host: localhost
   port: 5432
   encoding: unicode
-  database: markus_test
+  database: markus_test<%= ENV['TEST_ENV_NUMBER'] %>
   username: postgres
   password: postgres
 #

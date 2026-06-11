@@ -7,19 +7,16 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
+gem 'propshaft'
 gem 'puma'
 gem 'rails', '~> 8.1.2'
-gem 'sprockets'
-gem 'sprockets-rails'
 
 # Models and database interactions
 gem 'pluck_to_hash'
 
 # CSS and JavaScript
-gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'terser'
 
 # Background tasks
 gem 'activejob-status'
@@ -98,7 +95,7 @@ group :test do
   gem 'rails-controller-testing'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'shoulda-context', '~> 3.0.0.rc1'
-  gem 'shoulda-matchers', '~> 6.5'
+  gem 'shoulda-matchers', '~> 7.0'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'timecop'
@@ -113,6 +110,7 @@ group :development, :test do
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
   gem 'i18n-tasks', require: false
+  gem 'parallel_tests'
   gem 'rspec-rails', '~> 8.0.4'
   gem 'selenium-webdriver'
 end
@@ -131,5 +129,3 @@ end
 group :unicorn do
   gem 'unicorn'
 end
-
-gem 'cssbundling-rails', '~> 1.4'

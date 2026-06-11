@@ -1,3 +1,10 @@
+// pdfjs-dist v5 sets color-scheme: light dark on :root, which causes browsers
+// to render native form controls (checkboxes, radios) in dark mode system styling.
+// MarkUs manages its own dark theme manually, so we lock the scheme to light.
+:root {
+  color-scheme: only light !important;
+}
+
 .pdfContainerParent {
   position: relative;
   overflow: auto;
@@ -15,4 +22,9 @@
 
 .pdfViewer {
   padding-top: 5px;
+}
+
+/* Prevent pdf.js background spinner from loading */
+.pdfContainer .pdfViewer .page.loadingIcon::after {
+  background: none;
 }

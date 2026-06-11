@@ -4,7 +4,6 @@
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
   <%= javascript_include_tag 'application_webpack', nonce: true %>
-  <%= javascript_include_tag 'application', nonce: true %>
   <% unless session[:auth_type] == 'remote' %>
     <%= javascript_include_tag 'check_timeout', nonce: true %>
   <% end %>
@@ -16,6 +15,7 @@
 <div id='<%= controller.action_name == "login" ? "loggedOut" : "loggedIn" %>'>
   <div id='mobile_menu'>
     <a id='menu_icon'></a>
+    <a href='<%= root_path %>' id='mobile-logo' aria-label='<%= t('menu.home') %>'></a>
   </div>
   <div id='wrapper' class='flex-col'>
     <nav id='menus'>

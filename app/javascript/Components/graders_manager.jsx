@@ -4,7 +4,12 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
-import {selectFilter, textFilter} from "./Helpers/table_helpers";
+import {
+  caseSensitiveStringFilterMethod,
+  caseSensitiveTextFilter,
+  selectFilter,
+  textFilter,
+} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
 
@@ -637,6 +642,8 @@ class RawGroupsTable extends React.Component {
         accessor: "group_name",
         id: "group_name",
         minWidth: 150,
+        Filter: caseSensitiveTextFilter,
+        filterMethod: caseSensitiveStringFilterMethod,
       },
       {
         Header: I18n.t("activerecord.models.ta.other"),

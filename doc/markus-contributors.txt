@@ -1,4 +1,5 @@
 Aaron Lee
+Aayush Karki
 Abdelhamid Benmouffok
 Adam Goucher
 Aimen Khan
@@ -57,6 +58,7 @@ Clément Delafargue
 Clément Schiano
 Danesh Dadachanji
 Daniel Dervishi
+Daniel Rafailov
 Daniel St. Jules
 Daniyal Liaqat
 Daryn Lam
@@ -158,6 +160,7 @@ Mimis Chlympatsos
 Mina Almasry
 Misa Sakamoto
 Misha Schwartz
+Muhammad Rafie
 Nathan ChowNeha Kumar
 Neha Kumar
 Nelle Varoquaux
@@ -176,6 +179,7 @@ Parker Hutcheson
 Partoo Vafaeikia
 Paymahn Moghadasian
 Peter Guanjie Zhao
+Philip Kukulak
 Pranav Rao
 Rafael Padilha
 Raine Yang
@@ -222,6 +226,7 @@ William Roy
 Wilson Chiang
 Xiang Yu
 Yansong Zang
+Yanzhen Chen
 Yiqi Zhu
 Yujin Cho
 Yusi Fan

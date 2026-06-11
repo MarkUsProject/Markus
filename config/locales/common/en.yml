@@ -79,6 +79,8 @@ en:
   select_filename: Select Filename
   skip: Skip
   table:
+    case_sensitive_indicator: Aa
+    case_sensitive_search: Match case
     hide_details: Hide details
     no_data: No rows found
     search: Search

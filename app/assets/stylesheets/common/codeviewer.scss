@@ -1,5 +1,5 @@
-@import 'mixins';
-@import 'constants';
+@use 'mixins';
+@use 'constants' as *;
 
 .text-viewer-container {
   .toolbar {

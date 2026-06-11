@@ -26,7 +26,9 @@ class LtiDeployment < ApplicationRecord
   belongs_to :lti_client
   has_many :lti_services, dependent: :destroy
   has_many :lti_line_items, dependent: :destroy
-  validates :lms_course_id, uniqueness: { scope: :lti_client }, allow_nil: true
+  validates :external_deployment_id, presence: true
+  validates :lms_course_id, presence: true, uniqueness: { scope: :lti_client }
+  validates :lms_course_name, presence: true
   # See LTI documentation for full lists of scopes/claims/roles
   # https://www.imsglobal.org/spec/lti/v1p3
   LTI_SCOPES = { names_role: 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',

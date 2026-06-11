@@ -12,14 +12,12 @@ describe AutomatedTestsHelper do
           'test_data' => [{
             'extra_info' => {
               'test_group_id' => test_group_id,
-              'criterion' => criterion.name
+              'criterion' => nil
             }
           }]
         }
       ] }
     end
-
-    before { allow(AutomatedTestsHelper).to receive(:flash_message) }
 
     context 'when the test group exists' do
       let!(:test_group_id) { create(:test_group, assignment: assignment).id }
@@ -49,6 +47,18 @@ describe AutomatedTestsHelper do
 
     context 'when the criterion exists' do
       let(:test_group_id) { create(:test_group, assignment: assignment).id }
+      let(:specs) do
+        { 'testers' => [
+          {
+            'test_data' => [{
+              'extra_info' => {
+                'test_group_id' => test_group_id,
+                'criterion' => criterion.name
+              }
+            }]
+          }
+        ] }
+      end
 
       before { criterion.save }
 
@@ -59,12 +69,32 @@ describe AutomatedTestsHelper do
     end
 
     context 'when the criterion does not exist' do
-      let(:test_group_id) { create(:test_group, assignment: assignment).id }
+      let!(:test_group_id) { create(:test_group, assignment: assignment).id }
+      let(:specs_with_bad_criterion) do
+        { 'testers' => [
+          {
+            'test_data' => [{
+              'extra_info' => {
+                'test_group_id' => test_group_id,
+                'criterion' => 'nonexistent_criterion'
+              }
+            }]
+          }
+        ] }
+      end
 
-      before { subject }
+      it 'raises with the invalid criterion name' do
+        expect { update_test_groups_from_specs(assignment, specs_with_bad_criterion) }
+          .to raise_error(/Unable to find a criterion with name/)
+      end
 
-      it 'should not set the criterion on the test group' do
-        expect(assignment.test_groups.first.criterion).to be_nil
+      it 'does not persist any changes' do
+        begin
+          update_test_groups_from_specs(assignment, specs_with_bad_criterion)
+        rescue StandardError
+          nil
+        end
+        expect(assignment.reload.autotest_settings).to be_nil
       end
     end
   end

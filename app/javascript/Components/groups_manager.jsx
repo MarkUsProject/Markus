@@ -4,7 +4,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
-import {durationSort, selectFilter, getTimeExtension} from "./Helpers/table_helpers";
+import {
+  caseSensitiveStringFilterMethod,
+  caseSensitiveTextFilter,
+  durationSort,
+  getTimeExtension,
+  selectFilter,
+} from "./Helpers/table_helpers";
 import AutoMatchModal from "./Modals/auto_match_modal";
 import CreateGroupModal from "./Modals/create_group_modal";
 import RenameGroupModal from "./Modals/rename_group_modal";
@@ -456,6 +462,8 @@ class RawGroupsTable extends React.Component {
               </span>
             );
           },
+          Filter: caseSensitiveTextFilter,
+          filterMethod: caseSensitiveStringFilterMethod,
         },
         {
           Header: I18n.t("activerecord.attributes.group.student_memberships"),

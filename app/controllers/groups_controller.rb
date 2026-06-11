@@ -713,7 +713,7 @@ class GroupsController < ApplicationController
     # Generate a warning if a member is added to a group and they
     # have fewer grace days credits than already used by that group
     if student.remaining_grace_credits < grouping.grace_period_deduction_single
-      @warning_grace_day = I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name)
+      flash_message(:warning, I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name))
     end
 
     grouping.reload

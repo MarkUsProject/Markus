@@ -13,6 +13,8 @@ import CreateTagModal from "../Modals/create_tag_modal";
 import {pathToNode} from "../Helpers/range_selector";
 import {ResultContext} from "./result_context";
 import {annotation_context_menu} from "./context_menu";
+import {AnnotationText} from "../../common/annotations/annotation_text";
+import {get_html_annotation_range} from "../../common/annotations/html_annotations";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -336,7 +338,7 @@ class Result extends React.Component {
 
   extend_with_selection_data = annotation_data => {
     let box;
-    if (annotation_type === ANNOTATION_TYPES.HTML) {
+    if (window.annotation_type === window.ANNOTATION_TYPES.HTML) {
       const range = get_html_annotation_range();
       box = {
         start_node: pathToNode(range.startContainer),

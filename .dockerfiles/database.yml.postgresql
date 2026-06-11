@@ -13,7 +13,7 @@ development:
 
 test:
   <<: *default
-  database: <%= ENV.fetch('PGDATABASETEST') { ENV.fetch('PGDATABASE', '') + '-test' } %>
+  database: <%= "#{ENV.fetch('PGDATABASETEST') { ENV.fetch('PGDATABASE', '') + '-test' }}#{ENV['TEST_ENV_NUMBER']}" %>
 
 production:
   <<: *default

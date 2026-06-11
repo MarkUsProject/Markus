@@ -1,4 +1,4 @@
-@import 'constants';
+@use 'constants' as *;
 
 .react-modal {
   background: $background-main;

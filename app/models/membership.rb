@@ -7,8 +7,8 @@
 #  id                :integer          not null, primary key
 #  membership_status :string
 #  type              :string
-#  created_at        :datetime
-#  updated_at        :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
 #  grouping_id       :integer          not null
 #  role_id           :bigint           not null
 #

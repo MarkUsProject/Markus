@@ -1,3 +1,6 @@
+@use 'constants' as *;
+@use 'mixins';
+
 .course-list {
   display: flex;
   flex-flow: row wrap;
@@ -22,7 +25,7 @@
   max-width: 300px;
   text-align: center;
 
-  @include breakpoint(mobile) {
+  @include mixins.breakpoint(mobile) {
     max-width: 100%;
     min-width: 300px;
   }
