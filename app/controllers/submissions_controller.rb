@@ -1004,17 +1004,22 @@ class SubmissionsController < ApplicationController
   # Used in update_files and file_manager actions.
   # Requires @grouping and @assignment variables to be set.
   def flash_file_manager_messages
+    @past_due_date = false
+
     if @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
       flash_message(:warning,
                     "#{I18n.t('assignments.timed.past_end_time')} #{I18n.t('submissions.past_collection_time')}")
+      @past_due_date = true
     elsif @assignment.is_timed && !@grouping.start_time.nil? && !@assignment.grouping_past_due_date?(@grouping)
       flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
     elsif @grouping.past_collection_date?
       flash_message(:warning,
                     "#{@assignment.submission_rule.class.human_attribute_name(:after_collection_message)} " \
                     "#{I18n.t('submissions.past_collection_time')}")
+      @past_due_date = true
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+      @past_due_date = true
     end
 
     unless @grouping.is_valid?
