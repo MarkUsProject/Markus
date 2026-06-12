@@ -18,6 +18,7 @@
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
+- Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
 - Added release automation scripts (#7914)
