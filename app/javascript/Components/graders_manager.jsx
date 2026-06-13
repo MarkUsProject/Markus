@@ -746,8 +746,6 @@ class GroupsTable extends React.Component {
           sorting: [{id: "group_name"}],
           columnVisibility: {
             _id: false,
-            section: this.props.showSections || false,
-            criteria_coverage_count: this.props.showCoverage,
           },
         }}
         columnFilters={this.state.columnFilters}
