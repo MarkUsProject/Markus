@@ -7,15 +7,22 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET and PATCH /overall_comment API routes (#7963)
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 
 ### 🐛 Bug fixes
+- Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
+- Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
+- Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 
 ### 🔧 Internal changes
+- Added release automation scripts (#7914)
+- Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
+- Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
 - Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
 - Added `NOT NULL` constraint on `groups.group_name` (#7975)
 - Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
@@ -54,6 +61,7 @@
 - Fixed spurious navigation warnings on autotest manager and starter file manager pages (#7968)
 
 ### 🔧 Internal changes
+- Parallelized RSpec tests via the `parallel_tests` gem to reduce CI test suite runtime (#7972)
 - Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
 - Added tests for `GroupsController` to fully cover `global_actions` (#7955)
 - Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)

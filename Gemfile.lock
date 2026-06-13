@@ -237,7 +237,7 @@ GEM
       railties (>= 3.1)
     jsbundling-rails (1.3.1)
       railties (>= 6.0.0)
-    json (2.19.2)
+    json (2.19.8)
     jwt (2.10.1)
       base64
     kgio (2.11.4)
@@ -268,7 +268,7 @@ GEM
     multi_json (1.15.0)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
-    net-imap (0.6.4)
+    net-imap (0.6.4.1)
       date
       net-protocol
     net-pop (0.1.2)
@@ -283,6 +283,9 @@ GEM
       racc (~> 1.4)
     observer (0.1.2)
     ostruct (0.6.3)
+    parallel (1.28.0)
+    parallel_tests (5.7.0)
+      parallel
     parser (3.3.7.4)
       ast (~> 2.4.1)
       racc
@@ -313,7 +316,7 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    puma (7.2.0)
+    puma (7.2.1)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
@@ -549,6 +552,7 @@ DEPENDENCIES
   machinist (< 3)
   marcel
   mini_mime
+  parallel_tests
   pg
   pghero
   pluck_to_hash

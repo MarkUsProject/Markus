@@ -14,10 +14,13 @@ if enable_coverage
     c.lcov_file_name = 'lcov.info'
   end
 
+  worker_id = ENV.fetch('TEST_ENV_NUMBER', 'main')
+  SimpleCov.coverage_dir "coverage/worker-#{worker_id}"
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::LcovFormatter
   ])
+  SimpleCov.command_name "rspec-#{worker_id}"
   SimpleCov.start do
     add_filter 'better_errors'
     add_filter 'bullet'

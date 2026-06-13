@@ -74,7 +74,7 @@ nav {
     background-image: url('markus_logo_dark.svg');
   }
 
-  #mobile_menu {
+  #mobile_menu #mobile-logo {
     background-image: url('markus_logo_dark.svg');
   }
 }
@@ -132,7 +132,7 @@ nav {
 }
 
 #mobile_menu {
-  background: $background-support url('markus_logo.svg') no-repeat center center / 90px 30px;
+  background: $background-support;
   border-bottom: 1px solid $primary-three;
   display: none;
   height: 3.5em;
@@ -145,12 +145,26 @@ nav {
     display: block;
   }
 
+  #mobile-logo {
+    background: transparent url('markus_logo.svg') no-repeat center center / 90px 30px;
+    display: block;
+    height: 3.5em;
+    left: 50%;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    width: 90px;
+  }
+
   #menu_icon {
+    background: transparent;
     cursor: pointer;
     display: inline-block;
     height: 2em;
     margin: 0.5em 0 0 0.5em;
+    position: relative;
     width: 2em;
+    z-index: 1;
 
     &::before,
     &::after {
