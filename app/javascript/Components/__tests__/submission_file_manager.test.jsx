@@ -209,3 +209,166 @@ describe("For the SubmissionFileManager", () => {
     });
   });
 });
+
+describe("For the late submit confirm dialog", () => {
+  const files_sample = {
+    entries: [
+      {
+        id: 136680,
+        url: "test.url",
+        filename: '<img src="" /><a href=""> HelloWorld.java</a>',
+        raw_name: "HelloWorld.java",
+        last_revised_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
+        last_modified_revision: "58ca2e15254aa63c4d41cb5db7dfc398b6bda3fb",
+        revision_by: "c5anthei",
+        submitted_date: "Saturday, May 14, 2022, 09:15:24 PM EDT",
+        type: "java",
+        key: "HelloWorld.java",
+        modified: 1652577324,
+        relativeKey: "HelloWorld.java",
+      },
+    ],
+    only_required_files: false,
+    required_files: [],
+    max_file_size: 10,
+    number_of_missing_files: 0,
+  };
+
+  const file = new File(["content"], "test.txt", {type: "text/plain"});
+  let confirmSpy;
+
+  const mockPost = () => {
+    $.post = jest.fn().mockReturnValue({
+      then: jest.fn().mockReturnThis(),
+      fail: jest.fn().mockReturnThis(),
+      always: jest.fn().mockReturnThis(),
+    });
+  };
+
+  const renderManager = (props = {}) => {
+    fetch.mockResponseOnce(JSON.stringify(files_sample));
+    document.body.innerHTML = `<div id="content"></div>`;
+    render(
+      <SubmissionFileManager
+        course_id={1}
+        assignment_id={1}
+        starterFileChanged={false}
+        {...props}
+      />
+    );
+  };
+
+  const submitFileThroughModal = async () => {
+    const submitLink = screen.getByText(I18n.t("submit_the", {item: I18n.t("file")}));
+    await userEvent.click(submitLink);
+    await userEvent.upload(screen.getByTitle(I18n.t("modals.file_upload.file_input_label")), [
+      file,
+    ]);
+    await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
+  };
+
+  const submitUrlThroughModal = async () => {
+    const submitLink = screen.getByText(
+      I18n.t("submit_the", {item: I18n.t("submissions.student.link")})
+    );
+    await userEvent.click(submitLink);
+    await userEvent.type(
+      document.querySelector('input[name="new_url"]'),
+      "https://example.com/page"
+    );
+    await userEvent.type(document.querySelector('input[name="new_url_text"]'), "example");
+    await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
+  };
+
+  beforeEach(() => {
+    fetch.resetMocks();
+    confirmSpy = jest.spyOn(window, "confirm").mockReturnValue(true);
+    mockPost();
+  });
+
+  afterEach(() => {
+    confirmSpy.mockRestore();
+  });
+
+  describe("For the submission file upload modal", () => {
+    it("calls confirm when show_late_submit_confirmation is true", async () => {
+      renderManager({show_late_submit_confirmation: true});
+      await screen.findByText("HelloWorld.java");
+      await submitFileThroughModal();
+      expect(confirmSpy).toHaveBeenCalledWith(
+        I18n.t("submissions.student.upload_file_confirmation_dialog")
+      );
+    });
+
+    it("does not call confirm when show_late_submit_confirmation is false", async () => {
+      renderManager({show_late_submit_confirmation: false});
+      await screen.findByText("HelloWorld.java");
+      await submitFileThroughModal();
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect($.post).toHaveBeenCalled();
+    });
+
+    it("does not upload when user cancels the confirm dialog", async () => {
+      confirmSpy.mockReturnValue(false);
+      renderManager({show_late_submit_confirmation: true});
+      await screen.findByText("HelloWorld.java");
+      await submitFileThroughModal();
+      expect(confirmSpy).toHaveBeenCalledWith(
+        I18n.t("submissions.student.upload_file_confirmation_dialog")
+      );
+      expect($.post).not.toHaveBeenCalled();
+    });
+
+    it("uploads when the user confirms the dialog", async () => {
+      confirmSpy.mockReturnValue(true);
+      renderManager({show_late_submit_confirmation: true});
+      await screen.findByText("HelloWorld.java");
+      await submitFileThroughModal();
+      expect(confirmSpy).toHaveBeenCalledWith(
+        I18n.t("submissions.student.upload_file_confirmation_dialog")
+      );
+      expect($.post).toHaveBeenCalled();
+    });
+  });
+
+  describe("For the submit URL upload modal", () => {
+    it("calls confirm when show_late_submit_confirmation is true", async () => {
+      renderManager({show_late_submit_confirmation: true, enableUrlSubmit: true});
+      await screen.findByText("HelloWorld.java");
+      await submitUrlThroughModal();
+      expect(confirmSpy).toHaveBeenCalledWith(
+        I18n.t("submissions.student.upload_file_confirmation_dialog")
+      );
+    });
+
+    it("does not call confirm when show_late_submit_confirmation is false", async () => {
+      renderManager({show_late_submit_confirmation: false, enableUrlSubmit: true});
+      await screen.findByText("HelloWorld.java");
+      await submitUrlThroughModal();
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect($.post).toHaveBeenCalled();
+    });
+
+    it("does not upload when user cancels the confirm dialog", async () => {
+      confirmSpy.mockReturnValue(false);
+      renderManager({show_late_submit_confirmation: true, enableUrlSubmit: true});
+      await screen.findByText("HelloWorld.java");
+      await submitUrlThroughModal();
+      expect(confirmSpy).toHaveBeenCalledWith(
+        I18n.t("submissions.student.upload_file_confirmation_dialog")
+      );
+      expect($.post).not.toHaveBeenCalled();
+    });
+
+    it("uploads when the user confirms the dialog", async () => {
+      confirmSpy.mockReturnValue(true);
+      renderManager({show_late_submit_confirmation: true, enableUrlSubmit: true});
+      await screen.findByText("HelloWorld.java");
+      await submitUrlThroughModal();
+      expect(confirmSpy).toHaveBeenCalledWith(
+        I18n.t("submissions.student.upload_file_confirmation_dialog")
+      );
+      expect($.post).toHaveBeenCalled();
+    });
+  });
+});
