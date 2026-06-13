@@ -105,6 +105,10 @@ class SubmissionRule < ApplicationRecord
     @can_collect_all_now = nil
   end
 
+  def penalty_for(_grouping)
+    0
+  end
+
   private
 
   # Over time hours could be a fraction. This is mostly used for testing

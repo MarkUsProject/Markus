@@ -127,6 +127,7 @@ en:
       only_required_files: You may only submit the required files listed above.
       rename_file_to: "(optional) Rename file to"
       select_file: Select a file to view
+      upload_file_confirmation_dialog: You are about to submit a late assignment which will incur a late penalty. This action cannot be undone. Are you sure you would like to proceed?
       url: URL
       url_text: Display URL as
       version_control_warning: Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting.
