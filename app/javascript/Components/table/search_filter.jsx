@@ -10,7 +10,7 @@ export default function SearchFilter({column, filterValue}) {
       onChange={e => column.setFilterValue(e.target.value)}
       value={filterValue?.toString() || ""}
       style={{width: "100%"}}
-      aria-label={defaultSearchPlaceholderText()}
+      aria-label={`${I18n.t("search")} ${column.columnDef.header || ""}`}
     />
   );
 }
