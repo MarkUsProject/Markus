@@ -1,11 +1,17 @@
 import React from "react";
 import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
 import {PdfAnnotationManager} from "../../common/annotations/pdf_annotation_manager";
+import {ResultContext} from "./result_context";
 
 export class PDFViewer extends React.PureComponent {
+  static contextType = ResultContext;
+
   constructor(props) {
     super(props);
     this.pdfContainer = React.createRef();
+    this.scrollContainer = React.createRef();
+    this.savedScrollPosition = null;
+    this.zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
     this.state = {
       zoom: "page-width",
       rotation: 0, // NOTE: this is in degrees
@@ -23,10 +29,12 @@ export class PDFViewer extends React.PureComponent {
     if (this.props.resultView) {
       this.eventBus.on("pagesinit", this.ready_annotations);
       this.eventBus.on("pagesloaded", this.refresh_annotations);
+      this.eventBus.on("pagesloaded", this.restore_scroll_position);
     } else {
       this.eventBus.on("pagesloaded", this.update_pdf_view);
     }
 
+    this.loadedSubmissionId = this.context.submission_id;
     if (this.props.url) {
       this.loadPDFFile();
     }
@@ -34,13 +42,19 @@ export class PDFViewer extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.url && this.props.url !== prevProps.url) {
-      this.loadPDFFile();
-    } else {
-      if (this.props.resultView) {
-        this.refresh_annotations();
+      if (this.context.submission_id !== this.loadedSubmissionId) {
+        // Submission switch: carry the scroll position over to the next PDF.
+        this.save_scroll_position();
       } else {
-        this.update_pdf_view();
+        // Different file within the same submission: open it at the top.
+        this.savedScrollPosition = null;
       }
+      this.loadedSubmissionId = this.context.submission_id;
+      this.loadPDFFile();
+    } else if (this.props.resultView) {
+      this.refresh_annotations();
+    } else {
+      this.update_pdf_view();
     }
   }
 
@@ -70,11 +84,26 @@ export class PDFViewer extends React.PureComponent {
     window.pdfViewer = undefined;
   }
 
+  // For scanned exams, preserve the scroll position across submission switches
+  // so TAs grading one question on a shared page don't re-scroll every time.
+  save_scroll_position = () => {
+    if (!this.context.scanned_exam || !this.scrollContainer.current) return;
+
+    const {scrollTop, scrollLeft} = this.scrollContainer.current;
+    this.savedScrollPosition = {top: scrollTop, left: scrollLeft};
+  };
+
+  restore_scroll_position = () => {
+    if (!this.context.scanned_exam || !this.scrollContainer.current) return;
+    if (this.savedScrollPosition === null || this.props.annotationFocus) return;
+
+    this.scrollContainer.current.scrollTop = this.savedScrollPosition.top;
+    this.scrollContainer.current.scrollLeft = this.savedScrollPosition.left;
+  };
+
   update_pdf_view = () => {
-    if (
-      !!document.getElementById("pdfContainer") &&
-      !!document.getElementById("pdfContainer").offsetParent
-    ) {
+    const container = document.getElementById("pdfContainer");
+    if (container && container.offsetParent) {
       this.pdfViewer.currentScaleValue = this.state.zoom;
       this.pdfViewer.pagesRotation = this.state.rotation;
     }
@@ -84,7 +113,7 @@ export class PDFViewer extends React.PureComponent {
     $(".annotation_holder").remove();
     this.update_pdf_view();
     this.props.annotations.forEach(this.display_annotation);
-    if (!!this.props.annotationFocus) {
+    if (this.props.annotationFocus) {
       document.getElementById("annotation_holder_" + this.props.annotationFocus).scrollIntoView();
     }
   };
@@ -103,12 +132,9 @@ export class PDFViewer extends React.PureComponent {
     if (annotation.x_range === undefined || annotation.y_range === undefined) {
       return;
     }
-    let content = "";
-    if (!annotation.deduction) {
-      content += annotation.content;
-    } else {
-      content +=
-        annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
+    let content = annotation.content;
+    if (annotation.deduction) {
+      content += ` [${annotation.criterion_name}: -${annotation.deduction}]`;
     }
 
     if (annotation.is_remark) {
@@ -131,26 +157,18 @@ export class PDFViewer extends React.PureComponent {
   };
 
   getZoomValuesToDisplayName = () => {
-    // 25-200 in increments of 25
-    const zoomLevels = Array.from({length: (200 - 25) / 25 + 1}, (_, i) =>
-      ((i * 25 + 25) / 100).toFixed(2)
-    );
-
-    const valueToDisplayName = zoomLevels.reduce(
-      (acc, value) => {
-        acc[value] = `${(value * 100).toFixed(0)} %`;
-        return acc;
-      },
-      {"page-width": I18n.t("results.fit_to_page_width")}
-    );
-
+    const valueToDisplayName = {"page-width": I18n.t("results.fit_to_page_width")};
+    // 25%-200% in increments of 25%
+    for (let percent = 25; percent <= 200; percent += 25) {
+      valueToDisplayName[(percent / 100).toFixed(2)] = `${percent} %`;
+    }
     return valueToDisplayName;
   };
 
   render() {
     const cursor = this.props.released_to_students ? "default" : "crosshair";
     const userSelect = this.props.released_to_students ? "default" : "none";
-    const zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
+    const zoomValuesToDisplayName = this.zoomValuesToDisplayName;
 
     return (
       <React.Fragment>
@@ -179,7 +197,7 @@ export class PDFViewer extends React.PureComponent {
             />
           </div>
         </div>
-        <div className="pdfContainerParent">
+        <div className="pdfContainerParent" ref={this.scrollContainer}>
           <div
             id="pdfContainer"
             className="pdfContainer"

@@ -96,7 +96,9 @@ export class SubmissionFilePanel extends React.Component {
         a => a.submission_file_id === submission_file_id
       );
     }
-    this.setState({selectedFile, visibleAnnotations});
+    // Clear focus carried over from a previously selected annotation; leaving it
+    // set would keep targeting the old result after a submission switch.
+    this.setState({selectedFile, visibleAnnotations, focusLine: null, annotationFocus: undefined});
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
