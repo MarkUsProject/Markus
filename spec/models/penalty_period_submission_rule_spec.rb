@@ -19,6 +19,11 @@ describe PenaltyPeriodSubmissionRule do
 
   context 'when the group submitted on time' do
     include_context 'submission_rule_on_time'
+    let(:period) { create(:period, deduction: 1, hours: 10, submission_rule: rule) }
+    let(:rule) { create(:penalty_period_submission_rule, assignment: assignment) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:assignment) { create(:assignment, due_date: Time.zone.today + 3.weeks) }
+
     context 'when the student did not submit any files' do
       let(:grouping_creation_time) { collection_time }
       let(:submission) { create(:version_used_submission, grouping: grouping, is_empty: true) }
@@ -36,6 +41,29 @@ describe PenaltyPeriodSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', 0, -5.days
+
+    it 'should have no penalty' do
+      Timecop.freeze(assignment.due_date - 10.hours) do
+        expect(rule.penalty_for(grouping)).to eq 0
+      end
+    end
+  end
+
+  context 'when the group submitted late' do
+    let(:assignment) { create(:assignment, due_date: 2.days.ago) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:rule) { create(:penalty_period_submission_rule, assignment: assignment) }
+
+    before do
+      create(:period, deduction: 1, hours: 10, submission_rule: rule)
+      rule.reload
+    end
+
+    it 'should have have a penalty' do
+      Timecop.freeze(assignment.due_date + 10.hours) do
+        expect(rule.penalty_for(grouping)).to be > 0
+      end
+    end
   end
 
   context 'when the group submitted during the first penalty period' do
