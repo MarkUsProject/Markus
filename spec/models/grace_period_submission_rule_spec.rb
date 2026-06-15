@@ -36,6 +36,13 @@ describe GracePeriodSubmissionRule do
         end
       end
     end
+
+    it 'should have no penalty' do
+      rule.reload
+      Timecop.freeze(due_date - 10.hours) do
+        expect(rule.penalty_for(grouping)).to eq 0
+      end
+    end
   end
 
   context 'when the group submitted during the first penalty period' do
@@ -129,6 +136,13 @@ describe GracePeriodSubmissionRule do
         end
       end
     end
+
+    it 'should have no penalty' do
+      rule.reload
+      Timecop.freeze(due_date + 10.hours) do
+        expect(rule.penalty_for(grouping)).to eq 0
+      end
+    end
   end
 
   context 'when the group submitted during the second penalty period' do
@@ -179,6 +193,13 @@ describe GracePeriodSubmissionRule do
         apply_rule
         timestamp = grouping.current_submission_used.revision_timestamp.utc
         expect(timestamp).to be_within(1.second).of(due_date + 10.hours)
+      end
+    end
+
+    it 'should have no penalty' do
+      rule.reload
+      Timecop.freeze(due_date + 25.hours) do
+        expect(rule.penalty_for(grouping)).to eq 0
       end
     end
   end

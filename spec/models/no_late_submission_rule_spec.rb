@@ -16,11 +16,6 @@ describe NoLateSubmissionRule do
 
   context 'when the group submitted on time' do
     include_context 'submission_rule_on_time'
-    let(:period) { create(:period, deduction: 1, hours: 10, submission_rule: rule) }
-    let(:rule) { create(:no_late_submission_rule, assignment: assignment) }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:assignment) { create(:assignment, due_date: Time.zone.today + 3.weeks) }
-
     it 'should be able to calculate collection time' do
       expect(assignment.due_date).to eq(rule.calculate_collection_time)
     end
@@ -32,7 +27,8 @@ describe NoLateSubmissionRule do
     it_behaves_like 'valid overtime message', -5.days
 
     it 'should have no penalty' do
-      Timecop.freeze(assignment.due_date - 10.hours) do
+      rule.reload
+      Timecop.freeze(due_date - 10.hours) do
         expect(rule.penalty_for(grouping)).to eq 0
       end
     end
@@ -40,15 +36,6 @@ describe NoLateSubmissionRule do
 
   context 'when the group submitted late' do
     include_context 'submission_rule_during_first'
-    let(:rule) { create(:no_late_submission_rule, assignment: assignment) }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:assignment) { create(:assignment, due_date: 2.days.ago) }
-
-    before do
-      create(:period, deduction: 1, hours: 10, submission_rule: rule)
-      rule.reload
-    end
-
     it 'does not deduct credits' do
       expect { apply_rule }.not_to(change { grouping.inviter.grace_period_deductions.count })
     end
@@ -60,7 +47,8 @@ describe NoLateSubmissionRule do
     it_behaves_like 'valid overtime message', 5.days
 
     it 'should have no penalty' do
-      Timecop.freeze(assignment.due_date + 10.hours) do
+      rule.reload
+      Timecop.freeze(due_date + 10.hours) do
         expect(rule.penalty_for(grouping)).to eq 0
       end
     end
