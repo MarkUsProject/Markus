@@ -205,7 +205,7 @@ describe("For the SubmissionFileManager", () => {
       ]);
       await userEvent.click(screen.getByRole("button", {name: I18n.t("save"), hidden: true}));
 
-      expect(screen.findByRole("progressbar", {hidden: true})).rejects.toThrow();
+      await expect(screen.findByRole("progressbar", {hidden: true})).rejects.toThrow();
     });
   });
 });
