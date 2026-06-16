@@ -16,9 +16,17 @@ class JupyterIdentityFetcher
   def username
     # Local development fallback only.
     # This allows standalone JupyterLab testing where there is no JupyterHub identity endpoint.
+<<<<<<< HEAD
     if Rails.env.development? && ENV['JUPYTER_DEV_USERNAME'].present?
       Rails.logger.info("[JupyterIdentityFetcher] Using development username #{ENV.fetch('JUPYTER_DEV_USERNAME', nil)}")
       return ENV.fetch('JUPYTER_DEV_USERNAME', nil)
+=======
+    if Rails.env.development? && Settings.jupyter_server.dev_username.present?
+      Rails.logger.info(
+        "[JupyterIdentityFetcher] Using development username #{Settings.jupyter_server.dev_username}"
+      )
+      return Settings.jupyter_server.dev_username
+>>>>>>> 95066dd62 (Revised files based on review suggestions.)
     end
 
     validate!
@@ -42,19 +50,25 @@ class JupyterIdentityFetcher
     end
 
     unless response.is_a?(Net::HTTPSuccess)
-      raise IdentityError, "JupyterHub identity lookup returned HTTP #{response.code}: #{response.body}"
+      raise IdentityError,
+            "JupyterHub identity lookup returned HTTP #{response.code}: #{response.body}"
     end
 
     model = JSON.parse(response.body)
     name = model['name'] || model['username']
 
-    raise IdentityError, 'JupyterHub identity response did not include a username.' if name.blank?
+    if name.blank?
+      raise IdentityError,
+            'JupyterHub identity response did not include a username.'
+    end
 
     name
   rescue JSON::ParserError => e
-    raise IdentityError, "JupyterHub identity response was not valid JSON: #{e.message}"
+    raise IdentityError,
+          "JupyterHub identity response was not valid JSON: #{e.message}"
   rescue Errno::ECONNREFUSED, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
-    raise IdentityError, "Could not connect to JupyterHub identity endpoint: #{e.message}"
+    raise IdentityError,
+          "Could not connect to JupyterHub identity endpoint: #{e.message}"
   end
 
   private
@@ -64,15 +78,12 @@ class JupyterIdentityFetcher
   end
 
   def hub_user_uri
-    hub_origin = ENV.fetch('JUPYTERHUB_API_ORIGIN', nil).presence || @origin
-    hub_origin = hub_origin.to_s.strip.sub(%r{/*\z}, '')
-
-    URI.parse("#{hub_origin}/hub/api/user")
+    URI.parse("#{@origin}/hub/api/user")
   end
 
   def normalize_origin(origin)
-    overridden = ENV.fetch('JUPYTER_FETCH_ORIGIN', nil)
-    value = overridden.presence || origin.to_s
+    configured_origin = Settings.jupyter_server.api_origin.presence
+    value = configured_origin || origin.to_s
 
     value.strip.sub(%r{/*\z}, '')
   end

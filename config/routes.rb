@@ -562,7 +562,6 @@ Rails.application.routes.draw do
   # optional path scope (denoted by the parentheses)
   # API routes
   namespace :api do
-    post 'jupyter_submissions', to: 'jupyter_submissions#create'
 
     resources :users, only: [:index, :create, :show, :update] do
       collection do
@@ -1096,4 +1095,8 @@ Rails.application.routes.draw do
   post 'main/logout', controller: 'main', action: 'logout'
 
   match '*path', controller: 'main', action: 'page_not_found', via: :all
+end
+
+namespace :jupyter do
+  post 'submit', to: 'submissions#submit'
 end

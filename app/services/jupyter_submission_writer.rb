@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'tempfile'
-
 # Writes a fetched Jupyter file into the student's MarkUs repository using the
 # same helper methods used by the normal MarkUs web submission flow.
 class JupyterSubmissionWriter
