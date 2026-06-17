@@ -57,4 +57,11 @@ module ApplicationHelper
   def yield_content!(content_key)
     view_flow.content.delete(content_key)
   end
+
+  def inline_svg_data_uris(html)
+    html.to_s.gsub(%r{<img\b[^>]*?\bsrc=(["'])data:image/svg\+xml;base64,([^"']+)\1[^>]*?>}i) do
+      svg = Base64.decode64(Regexp.last_match(2)).force_encoding('UTF-8')
+      svg.sub(/\A.*?(?=<svg)/m, '')   # drop the <?xml?> prolog / DOCTYPE / comments
+    end
+  end
 end
