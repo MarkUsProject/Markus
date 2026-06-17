@@ -1,2 +1,2 @@
 <%= sanitize(inline_svg_data_uris(@html_content),
-             scrubber: Rails::HTML::PermitScrubber.new(prune: true)) %>
+             scrubber: Rails::HTML::TargetScrubber.new(prune: true)) %>
