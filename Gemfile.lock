@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.7.5)
+    action_policy (0.7.6)
       ruby-next-core (>= 1.0)
     action_text-trix (2.1.18)
       railties
@@ -444,7 +444,7 @@ GEM
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
-    ruby-next-core (1.1.1)
+    ruby-next-core (1.2.0)
     ruby-progressbar (1.13.0)
     ruby-rc4 (0.1.5)
     ruby2_keywords (0.0.5)
