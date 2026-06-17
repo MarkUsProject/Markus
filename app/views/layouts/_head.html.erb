@@ -4,6 +4,9 @@
 <%= action_cable_meta_tag %>
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
+<!-- The following meta tag is used by the styled-components dependency.
+     See https://styled-components.com/docs/advanced#security -->
+<meta property="csp-nonce" content="<%= content_security_policy_nonce %>">
 <%= stylesheet_link_tag 'application' %>
 <%= stylesheet_link_tag 'application_webpack' %>
 <% if @current_user&.theme == 'dark' %>

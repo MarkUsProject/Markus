@@ -1,8 +1,11 @@
+import {AbstractAnnotationManager} from "./annotation_manager";
+import {SourceCodeLine} from "./source_code_line";
+
 /**
- * AnnotationManager subclass for plaintext files. Its constructor is given a list of DOM elements
+ * AbstractAnnotationManager subclass for plaintext files. Its constructor is given a list of DOM elements
  * (one for each line of text in the file), that have been transformed through syntax highlighting.
  */
-class TextAnnotationManager extends AnnotationManager {
+export class TextAnnotationManager extends AbstractAnnotationManager {
   constructor(source_nodes) {
     super();
 

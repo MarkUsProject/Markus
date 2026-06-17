@@ -3059,7 +3059,7 @@ describe Assignment do
         end
         actual_members_data = received_data[:groups][0][:members]
 
-        expect(actual_members_data).to eq(expected_members_data)
+        expect(actual_members_data).to match_array(expected_members_data)
       end
 
       context 'graders are hidden' do

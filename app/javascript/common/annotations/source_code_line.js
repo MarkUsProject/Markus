@@ -14,7 +14,7 @@
       to enable unglowing with overlapping annotations.
 */
 
-class SourceCodeLine {
+export class SourceCodeLine {
   constructor(line_node) {
     // line_node is the DOM element that holds a line of source code
     this.line_node = line_node;
@@ -87,9 +87,9 @@ class SourceCodeLine {
           newGlowDepth = (parseInt(glowDepth, 10) + 1).toString();
         }
         parent.setAttribute("data-annotationDepth", newGlowDepth);
-        parent.addClass("source-code-glowing-" + newGlowDepth);
+        parent.classList.add("source-code-glowing-" + newGlowDepth);
         if (is_remark) {
-          parent.addClass("remark");
+          parent.classList.add("remark");
         }
         parent.addEventListener("mouseover", hoverOnFunction);
         parent.addEventListener("mouseout", hoverOffFunction);
@@ -131,7 +131,7 @@ class SourceCodeLine {
         startNode.textContent = startNode.textContent.substr(startNodeOffset);
 
         // Maintain events
-        if (startSpanPlain.hasClass("source-code-glowing-1")) {
+        if (startSpanPlain.classList.contains("source-code-glowing-1")) {
           startSpanPlain.addEventListener("mouseover", hoverOnFunction);
           startSpanPlain.addEventListener("mouseout", hoverOffFunction);
         }
@@ -196,9 +196,9 @@ class SourceCodeLine {
     }
     spanGlow.setAttribute("data-annotationDepth", newGlowDepth);
     spanGlow.setAttribute("data-annotationID" + annotationId, annotationId);
-    spanGlow.addClass("source-code-glowing-" + newGlowDepth);
+    spanGlow.classList.add("source-code-glowing-" + newGlowDepth);
     if (is_remark) {
-      spanGlow.addClass("remark");
+      spanGlow.classList.add("remark");
     }
     spanGlow.addEventListener("mouseover", hoverOnFunction);
     spanGlow.addEventListener("mouseout", hoverOffFunction);
@@ -233,7 +233,7 @@ class SourceCodeLine {
         let glowDepth = parseInt(parent.getAttribute("data-annotationDepth"), 10);
         parent.setAttribute("data-annotationDepth", (glowDepth - 1).toString());
 
-        parent.removeClass("source-code-glowing-" + glowDepth);
+        parent.classList.remove("source-code-glowing-" + glowDepth);
 
         // Remove mouse listeners if no longer glowing
         if (glowDepth === 1) {

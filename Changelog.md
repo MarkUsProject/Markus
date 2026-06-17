@@ -7,6 +7,37 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
+- Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
+- Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
+- Added GET and PATCH /overall_comment API routes (#7963)
+- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+
+### 🐛 Bug fixes
+- Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
+- Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
+- Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
+- Fixed autotester spec upload when spec contains non-existent criterion (#7998)
+
+### 🔧 Internal changes
+- Added release automation scripts (#7914)
+- Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
+- Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
+- Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
+- Added `NOT NULL` constraint on `groups.group_name` (#7975)
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
+- Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
+- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
+- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
+- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
+- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
+- Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
+- Migrated asset pipeline from Sprockets to Propshaft (#7970)
+- Simplified Chart.js usage: removed the `DataChart` wrapper component, converted `chart_config.js` to an ES module, and replaced `registerables` with a minimal set of Chart.js components (#7987)
+
+## [v2.10.0]
+
+### ✨ New features and improvements
 - Improve admin user list loading time by replacing ActiveRecord instantiation with direct column extraction (#7897)
 - Provide suggestions for partial student matching scans (#7760)
 - Allow inactive students to join groups (#7757)
@@ -16,6 +47,8 @@
 - Add JS autotester example (#7866)
 - Return structured JSON from grade entry forms API show endpoint with optional student filter and CSV export (#7886)
 - Added term-based suffixes to course names created via LTI to ensure uniqueness across academic years (#7881)
+- Added `db:populate_course_dates` rake task to backfill `start_at`/`end_at` for existing courses, and permit those fields when creating courses through the admin UI (#7925)
+- Sync due date when creating or updating LTI gradebook line items, and re-sync automatically when an assessment is edited (#7872)
 
 ### 🐛 Bug fixes
 - Prevent "No rows found" message from displaying in tables when data is loading (#7790)
@@ -23,8 +56,16 @@
 - Fixed reserved interpolation key `%{format}` in `download_errors.unrecognized_format` locale string, renamed to `%{file_format}` (#7894)
 - Fix version mismatch between container client and database server (#7916)
 - Fixed filter Canvas Test Student from roster sync (#7926)
+- Fix: include original total mark in JSON response for remark requests (#7945)
+- Fixed `(hidden)` assignment labeling for assignments with `visible_on` and/or `visible_until` set (#7944)
+- Fixed spurious navigation warnings on autotest manager and starter file manager pages (#7968)
 
 ### 🔧 Internal changes
+- Parallelized RSpec tests via the `parallel_tests` gem to reduce CI test suite runtime (#7972)
+- Fixed flaky test `can bulk assign duplicated TAs to grade entry students` in `/spec/models/grade_entry_student_spec.rb` (#7958)
+- Added tests for `GroupsController` to fully cover `global_actions` (#7955)
+- Added tests for `graders_controller` to fully cover `grader_criteria_mapping` function (#7949)
+- Added tests for `GradersController` to fully cover `grader_groupers_mapping` (#7946)
 - Added seed task to assign TAs to A1 groupings and criteria (#7867)
 - Updated autotest seed files to ensure settings follow tester JSON schema (#7775)
 - Refactored grade entry form helper logic into `GradeEntryFormsController` and removed the newly-unused helper file. (#7789)
@@ -47,6 +88,12 @@
 - Updated GitHub Actions dependencies and added Dependabot config for quarterly GitHub Actions updates (#7920)
 - Updated `pdfjs-dist` to v5.6.205 (#7942)
 - Switched SCSS files to use `@use` instead of `@import` to reduce bundle size (#7943)
+- Fixed flaky git-hooks tests (#7950)
+- Replaced custom `HTMLElement` class methods with native versions and removed `application.js` (#7951)
+- Moved annotation-related Javascript to be bundled with webpack (#7953)
+- Upgraded `react-jsonschema-form` to v6.5.2 (#7954)
+- Fixed CSP warnings and updated CSP config. Switched webpack development source map to `eval-source-map`. (#7956)
+- Move all CSS builds into webpack pipeline (#7957)
 
 ## [v2.9.6]
 

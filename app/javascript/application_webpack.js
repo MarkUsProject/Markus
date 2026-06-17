@@ -56,9 +56,6 @@ import Jcrop from "jcrop";
 window.Jcrop = Jcrop;
 
 // chart.js
-import {Chart, registerables} from "chart.js";
-Chart.register(...registerables);
-window.Chart = Chart;
 import "./common/chart_config";
 
 // flatpickr
@@ -95,6 +92,7 @@ import "./common/menu";
 import "./common/react_config";
 import "./common/redirect";
 import "./common/fetch_proxy";
+import "./common/annotations/globals";
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.

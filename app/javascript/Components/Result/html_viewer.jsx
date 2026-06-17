@@ -15,7 +15,7 @@ export class HTMLViewer extends React.PureComponent {
   }
 
   readyAnnotations = () => {
-    annotation_type = ANNOTATION_TYPES.HTML;
+    window.annotation_type = window.ANNOTATION_TYPES.HTML;
   };
 
   renderAnnotations = () => {
@@ -46,6 +46,8 @@ export class HTMLViewer extends React.PureComponent {
       });
 
     renderMathInElement(this.iframe.current.contentDocument.body);
+
+    this.props.setLoadingCallback(false);
   };
 
   componentDidUpdate(prevProps) {

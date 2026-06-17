@@ -1,5 +1,6 @@
 import React from "react";
 import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
+import {PdfAnnotationManager} from "../../common/annotations/pdf_annotation_manager";
 
 export class PDFViewer extends React.PureComponent {
   constructor(props) {
@@ -46,11 +47,12 @@ export class PDFViewer extends React.PureComponent {
   loadPDFFile = () => {
     pdfjs.getDocument(this.props.url).promise.then(pdfDocument => {
       this.pdfViewer.setDocument(pdfDocument);
+      this.props.setLoadingCallback(false);
     });
   };
 
   ready_annotations = () => {
-    annotation_type = ANNOTATION_TYPES.PDF;
+    window.annotation_type = window.ANNOTATION_TYPES.PDF;
 
     window.annotation_manager = new PdfAnnotationManager(!this.props.released_to_students);
     window.annotation_manager.resetAngle();

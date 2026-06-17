@@ -152,14 +152,15 @@ describe MainController do
 
     context 'logging in during an LTI launch' do
       let(:lti) { create(:lti_deployment) }
+      let(:lti_redirect_url) { redirect_login_canvas_path }
 
       before do
-        cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
+        cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: lti_redirect_url })
       end
 
       it 'redirects to redirect_login' do
-        sign_in instructor
-        expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
+        post :login, params: { user_login: instructor.user_name, user_password: 'a' }
+        expect(response).to redirect_to lti_redirect_url
       end
 
       context 'when logged in during lti launch' do
@@ -207,7 +208,7 @@ describe MainController do
 
     context 'after logging in without remote user auth' do
       before do
-        sign_in student
+        post :login, params: { user_login: student.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'student tests'
@@ -217,7 +218,7 @@ describe MainController do
       before do
         env_hash = { HTTP_X_FORWARDED_USER: student.user_name }
         request.headers.merge! env_hash
-        sign_in student
+        post :login, params: { user_login: student.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'student tests'
@@ -233,7 +234,7 @@ describe MainController do
 
     context 'after logging in without remote user auth' do
       before do
-        sign_in ta
+        post :login, params: { user_login: ta.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'ta tests'
@@ -243,7 +244,7 @@ describe MainController do
       before do
         env_hash = { HTTP_X_FORWARDED_USER: ta.user_name }
         request.headers.merge! env_hash
-        sign_in ta
+        post :login, params: { user_login: ta.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'ta tests'
@@ -259,7 +260,7 @@ describe MainController do
 
     context 'after logging in without remote user auth' do
       before do
-        sign_in admin_user
+        post :login, params: { user_login: admin_user.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'admin tests'
@@ -269,7 +270,7 @@ describe MainController do
       before do
         env_hash = { HTTP_X_FORWARDED_USER: admin_user.user_name }
         request.headers.merge! env_hash
-        sign_in admin_user
+        post :login, params: { user_login: admin_user.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'admin tests'

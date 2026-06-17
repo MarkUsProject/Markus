@@ -1,23 +1,31 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'simplecov'
-require 'simplecov-lcov'
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 
-SimpleCov::Formatter::LcovFormatter.config do |c|
-  c.report_with_single_file = true
-  c.output_directory = 'coverage'
-  c.lcov_file_name = 'lcov.info'
-end
+# Enable simplecov only when COVERAGE environment variable is set to true
+enable_coverage = ENV.fetch('COVERAGE', nil) == 'true'
+if enable_coverage
+  require 'simplecov'
+  require 'simplecov-lcov'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::LcovFormatter
-])
-SimpleCov.start do
-  add_filter 'better_errors'
-  add_filter 'bullet'
-  add_filter 'rails_erd'
+  SimpleCov::Formatter::LcovFormatter.config do |c|
+    c.report_with_single_file = true
+    c.output_directory = 'coverage'
+    c.lcov_file_name = 'lcov.info'
+  end
+
+  worker_id = ENV.fetch('TEST_ENV_NUMBER', 'main')
+  SimpleCov.coverage_dir "coverage/worker-#{worker_id}"
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::LcovFormatter
+  ])
+  SimpleCov.command_name "rspec-#{worker_id}"
+  SimpleCov.start do
+    add_filter 'better_errors'
+    add_filter 'bullet'
+    add_filter 'rails_erd'
+  end
 end
 
 ENV['RAILS_ENV'] ||= 'test'
@@ -98,7 +106,9 @@ RSpec.configure do |config|
     # Override the default driver used by rspec system tests
     driven_by :selenium_remote_chrome
 
-    SimpleCov.command_name 'system'
+    if enable_coverage
+      SimpleCov.command_name 'system'
+    end
   end
 
   config.before :each, type: :request do

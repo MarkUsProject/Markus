@@ -1,7 +1,11 @@
+import {AnnotationText} from "./annotation_text";
+import {AnnotationTextDisplayer} from "./annotation_text_displayer";
+import {AnnotationTextManager} from "./annotation_text_manager";
+
 /**
- * Abstract class AnnotationManager, used to manage the annotations for a submission.
+ * AbstractAnnotationManager class, used to manage the annotations for a submission.
  */
-class AnnotationManager {
+export class AbstractAnnotationManager {
   constructor() {
     this.annotation_text_displayer = new AnnotationTextDisplayer();
     this.annotation_text_manager = new AnnotationTextManager();
@@ -62,7 +66,7 @@ class AnnotationManager {
 
   /**
    * Returns the selection box coordinates (used when creating an annotation).
-   * This is an abstract method that should be overridden by each AnnotationManager subclass.
+   * This is an abstract method that should be overridden by each AbstractAnnotationManager subclass.
    *
    * @param warn_no_selection  If true (default), display an alert to the user when there is no selection
    * @returns {object}
