@@ -148,6 +148,16 @@ describe("PDFViewer", () => {
       ...overrides,
     });
 
+    beforeEach(() => {
+      // The restore is deferred to an animation frame; run frames synchronously
+      // so the test can assert on the result immediately after `pagesloaded`.
+      jest.spyOn(window, "requestAnimationFrame").mockImplementation(cb => {
+        cb();
+        return 1;
+      });
+      jest.spyOn(window, "cancelAnimationFrame").mockImplementation(() => {});
+    });
+
     // Renders a viewer inside a ResultContext and returns helpers to scroll,
     // load a different PDF (switching submissions or files), and fire pdf.js events.
     const renderWithContext = scanned_exam => {
@@ -163,6 +173,10 @@ describe("PDFViewer", () => {
       const utils = renderViewer(null, {});
       const eventBus = eventBusInstances[eventBusInstances.length - 1];
       const scrollParent = utils.container.querySelector(".pdfContainerParent");
+      // jsdom does no layout, so give the container dimensions that satisfy the
+      // restore readiness check (visible and tall enough to scroll).
+      Object.defineProperty(scrollParent, "scrollHeight", {configurable: true, value: 2000});
+      Object.defineProperty(scrollParent, "clientHeight", {configurable: true, value: 500});
       const switchSubmission = (url, overrides = {}) => {
         submission_id += 1;
         renderViewer(utils, {url, ...overrides});
@@ -197,6 +211,49 @@ describe("PDFViewer", () => {
         eventBus.dispatch("pagesloaded");
       });
 
+      expect(scrollParent.scrollTop).toBe(480);
+    });
+
+    it("waits until the container is tall enough before restoring", () => {
+      const {eventBus, scrollParent, switchSubmission} = renderWithContext(true);
+      // Pages not laid out yet when pagesloaded fires — too short to hold offset.
+      Object.defineProperty(scrollParent, "scrollHeight", {configurable: true, value: 500});
+      const frames = [];
+      window.requestAnimationFrame.mockImplementation(cb => frames.push(cb));
+
+      scrollParent.scrollTop = 480;
+      switchSubmission("/files/2.pdf");
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      // Frame 1: not tall enough, so nothing is written yet.
+      frames.shift()();
+      expect(scrollParent.scrollTop).toBe(0);
+
+      // Frame 2: pages laid out tall enough -> the saved position is applied.
+      Object.defineProperty(scrollParent, "scrollHeight", {configurable: true, value: 2000});
+      frames.shift()();
+      expect(scrollParent.scrollTop).toBe(480);
+    });
+
+    it("re-applies the saved position if it is reset after loading", () => {
+      const {eventBus, scrollParent, switchSubmission} = renderWithContext(true);
+      const frames = [];
+      window.requestAnimationFrame.mockImplementation(cb => frames.push(cb));
+
+      scrollParent.scrollTop = 480;
+      switchSubmission("/files/2.pdf");
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      // Frame 1: applies the saved position.
+      frames.shift()();
+      expect(scrollParent.scrollTop).toBe(480);
+
+      // pdf.js resets the scroll to the top after our write...
+      scrollParent.scrollTop = 0;
+      // ...the next frame re-asserts it.
+      frames.shift()();
       expect(scrollParent.scrollTop).toBe(480);
     });
 

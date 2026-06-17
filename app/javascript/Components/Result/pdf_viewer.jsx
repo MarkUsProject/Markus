@@ -3,6 +3,10 @@ import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
 import {PdfAnnotationManager} from "../../common/annotations/pdf_annotation_manager";
 import {ResultContext} from "./result_context";
 
+// Frame budget for restoring scroll: enough to wait out pdf.js's async layout and
+// re-assert the position past its scroll-to-top reset (~40 frames ≈ 0.65s).
+const MAX_SCROLL_RESTORE_FRAMES = 40;
+
 export class PDFViewer extends React.PureComponent {
   static contextType = ResultContext;
 
@@ -11,6 +15,7 @@ export class PDFViewer extends React.PureComponent {
     this.pdfContainer = React.createRef();
     this.scrollContainer = React.createRef();
     this.savedScrollPosition = null;
+    this.scrollRestoreFrame = null;
     this.zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
     this.state = {
       zoom: "page-width",
@@ -82,7 +87,14 @@ export class PDFViewer extends React.PureComponent {
     }
     this.eventBus = null;
     window.pdfViewer = undefined;
+    this.cancel_scroll_restore();
   }
+
+  cancel_scroll_restore = () => {
+    if (!this.scrollRestoreFrame) return;
+    cancelAnimationFrame(this.scrollRestoreFrame);
+    this.scrollRestoreFrame = null;
+  };
 
   // For scanned exams, preserve the scroll position across submission switches
   // so TAs grading one question on a shared page don't re-scroll every time.
@@ -94,11 +106,52 @@ export class PDFViewer extends React.PureComponent {
   };
 
   restore_scroll_position = () => {
-    if (!this.context.scanned_exam || !this.scrollContainer.current) return;
-    if (this.savedScrollPosition === null || this.props.annotationFocus) return;
+    this.cancel_scroll_restore();
+    if (
+      !this.context.scanned_exam ||
+      this.savedScrollPosition === null ||
+      this.props.annotationFocus
+    ) {
+      return;
+    }
 
-    this.scrollContainer.current.scrollTop = this.savedScrollPosition.top;
-    this.scrollContainer.current.scrollLeft = this.savedScrollPosition.left;
+    // pdf.js loads the new document asynchronously: it un-hides the viewer, lays
+    // out the pages, and resets the scroll to the top — and any of those can land
+    // after a single scrollTop write, so the position intermittently snaps back.
+    // Re-assert every frame until the container can hold the offset and the
+    // position has stuck for two consecutive frames (or we exhaust the budget).
+    const {top, left} = this.savedScrollPosition;
+    let attempts = 0;
+    let heldFrames = 0;
+    const apply = () => {
+      this.scrollRestoreFrame = null;
+      const scrollParent = this.scrollContainer.current;
+      if (!scrollParent) return;
+
+      const reschedule = () => {
+        attempts += 1;
+        if (attempts < MAX_SCROLL_RESTORE_FRAMES) {
+          this.scrollRestoreFrame = requestAnimationFrame(apply);
+        }
+      };
+
+      // Not ready yet: still hidden, or pages too short to hold the offset.
+      const hasRoom = scrollParent.scrollHeight - scrollParent.clientHeight >= top;
+      if (scrollParent.offsetParent === null || !hasRoom) {
+        reschedule();
+        return;
+      }
+
+      if (Math.abs(scrollParent.scrollTop - top) <= 1) {
+        heldFrames += 1;
+      } else {
+        scrollParent.scrollTop = top;
+        scrollParent.scrollLeft = left;
+        heldFrames = 0;
+      }
+      if (heldFrames < 2) reschedule();
+    };
+    this.scrollRestoreFrame = requestAnimationFrame(apply);
   };
 
   update_pdf_view = () => {
