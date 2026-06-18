@@ -866,6 +866,64 @@ class Assignment < Assessment
     end
   end
 
+  def import_marks_from_csv(grades_data, overwrite, role)
+    results_by_group_name = current_results
+                            .joins(grouping: :group)
+                            .includes(:marks, grouping: :group)
+                            .index_by { |result| result.grouping.group.group_name }
+    results_by_user_name = current_results
+                           .joins(grouping: { accepted_students: :user })
+                           .includes(:marks)
+                           .pluck('users.user_name', 'results.id')
+                           .to_h
+    results_by_id = results_by_group_name.values.index_by(&:id)
+    criteria_by_name = criteria_by_upload_name
+
+    headers = nil
+    criterion_columns = nil
+    group_name_index = nil
+    user_name_index = nil
+
+    MarkusCsv.parse(grades_data, header_count: 2) do |row|
+      next if row.empty?
+
+      if headers.nil?
+        headers = row
+        group_name_index = headers.index(Group.human_attribute_name(:group_name)) || 0
+        user_name_index = headers.index(User.human_attribute_name(:user_name)) || 1
+        next
+      elsif criterion_columns.nil?
+        begin
+          criterion_columns = assignment_upload_criterion_columns(headers, row, criteria_by_name)
+        rescue CsvInvalidLineError
+          criterion_columns = :invalid
+          raise
+        end
+        next
+      end
+
+      raise CsvInvalidLineError if criterion_columns == :invalid
+
+      result = result_for_uploaded_marks_row(row, group_name_index, user_name_index,
+                                             results_by_group_name, results_by_user_name, results_by_id)
+      raise CsvInvalidLineError if result.nil? || result.released_to_students?
+
+      Mark.transaction do
+        criterion_columns.each do |column_index, criterion|
+          mark = result.marks.find_or_initialize_by(criterion: criterion)
+          next if !overwrite && !mark.mark.nil?
+
+          mark_value = parse_uploaded_mark(row[column_index])
+          unless mark.update(mark: mark_value,
+                             override: !(mark_value.nil? && mark.deductive_annotations_absent?),
+                             last_updated_by: role)
+            raise CsvInvalidLineError, mark.errors.full_messages.to_sentence
+          end
+        end
+      end
+    end
+  end
+
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
     criteria.map do |criterion|
@@ -880,6 +938,68 @@ class Assignment < Assessment
     # grabbing the most up-to-date count of the criteria.
     criteria.exists? ? criteria.last.position + 1 : 1
   end
+
+  def criteria_by_upload_name
+    ta_criteria.each_with_object({}) do |criterion, mapping|
+      mapping[criterion.name.to_s.strip] = criterion
+      if criterion.bonus?
+        mapping["#{criterion.name} (#{Criterion.human_attribute_name(:bonus)})".strip] = criterion
+      end
+    end
+  end
+
+  def assignment_upload_criterion_columns(headers, totals, criteria_by_name)
+    unknown_columns = []
+    columns = headers.each_with_index.filter_map do |header, i|
+      header = header.to_s.strip
+      criterion = criteria_by_name[header]
+      next [i, criterion] unless criterion.nil?
+
+      if uploaded_assignment_mark_column?(header, totals[i])
+        unknown_columns << header
+      end
+      nil
+    end
+
+    if columns.empty? || unknown_columns.present?
+      raise CsvInvalidLineError,
+            I18n.t('assignments.upload_grades.invalid_criteria', criteria: unknown_columns.join(', '))
+    end
+
+    columns
+  end
+
+  def uploaded_assignment_mark_column?(header, total)
+    return false if header.blank?
+    return false if header == I18n.t('results.total_mark') || header == 'Bonus/Deductions'
+
+    total_value = Float(total, exception: false)
+    !total_value.nil? && total_value >= 0
+  end
+
+  def result_for_uploaded_marks_row(row, group_name_index, user_name_index,
+                                    results_by_group_name, results_by_user_name, results_by_id)
+    group_name = row[group_name_index]
+    user_name = row[user_name_index]
+    return results_by_group_name[group_name] if group_name.present? && results_by_group_name.key?(group_name)
+
+    result_id = results_by_user_name[user_name]
+    results_by_id[result_id]
+  end
+
+  def parse_uploaded_mark(value)
+    return if value.blank?
+
+    mark = Float(value, exception: false)
+    raise CsvInvalidLineError if mark.nil? || mark.negative?
+
+    mark
+  end
+  private :criteria_by_upload_name,
+          :assignment_upload_criterion_columns,
+          :uploaded_assignment_mark_column?,
+          :result_for_uploaded_marks_row,
+          :parse_uploaded_mark
 
   # Returns all the submissions that have not been graded (completed).
   # Note: This assumes that every submission has at least one result.
