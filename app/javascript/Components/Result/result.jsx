@@ -132,7 +132,6 @@ class Result extends React.Component {
         }
         const markData = this.processMarks(res);
         this.setState({...res, ...markData, loading: false}, () => {
-          this.refreshPdfViewer();
           this.updateContextMenu();
           if (this.props.role !== "Student") {
             this.syncFilterData();
