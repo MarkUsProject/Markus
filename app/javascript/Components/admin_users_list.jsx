@@ -31,16 +31,17 @@ export class AdminUsersList extends React.Component {
       this.previousSorted = currentSortedStr;
     }
 
-    const params = new URLSearchParams({
-      page: targetPage + 1,
-      per_page: state.pageSize,
-      sorted: currentSortedStr,
-      filtered: currentFilteredStr,
-    });
-
-    fetch(`${Routes.admin_users_path()}?${params.toString()}`, {
-      headers: {Accept: "application/json"},
-    })
+    fetch(
+      Routes.admin_users_path({
+        page: targetPage + 1,
+        per_page: state.pageSize,
+        sorted: currentSortedStr,
+        filtered: currentFilteredStr,
+      }),
+      {
+        headers: {Accept: "application/json"},
+      }
+    )
       .then(response => {
         if (response.ok) return response.json();
         throw new Error("Failed to fetch grid data");
@@ -92,14 +93,23 @@ export class AdminUsersList extends React.Component {
       Header: I18n.t("activerecord.attributes.user.user_type"),
       accessor: "type",
       minWidth: 90,
-      Cell: ({value}) =>
-        value === "AdminUser"
-          ? I18n.t("activerecord.models.admin_user.one")
-          : I18n.t("activerecord.models.end_user.one"),
+      Cell: ({value}) => {
+        if (value === "AdminUser") {
+          return I18n.t("activerecord.models.admin_user.one");
+        } else {
+          return I18n.t("activerecord.models.end_user.one");
+        }
+      },
       Filter: selectFilter,
       filterOptions: [
-        {text: I18n.t("activerecord.models.admin_user.one"), value: "AdminUser"},
-        {text: I18n.t("activerecord.models.end_user.one"), value: "EndUser"},
+        {
+          text: I18n.t("activerecord.models.admin_user.one"),
+          value: "AdminUser",
+        },
+        {
+          text: I18n.t("activerecord.models.end_user.one"),
+          value: "EndUser",
+        },
       ],
     },
     {

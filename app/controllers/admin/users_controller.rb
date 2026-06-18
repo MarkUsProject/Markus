@@ -22,7 +22,7 @@ module Admin
           records = users_scope.limit(per_page).offset(offset_value)
 
           render json: {
-            users: records.pluck_to_hash(:id, :user_name, :first_name, :last_name, :email, :id_number, :type),
+            users: records.pluck_to_hash(*DEFAULT_FIELDS),
             total_pages: total_pages
           }
         end
@@ -101,13 +101,17 @@ module Admin
     def sorted_users(scope)
       return scope.order(:user_name) if params[:sorted].blank?
 
-      sort_config = JSON.parse(params[:sorted]).first
-      return scope.order(:user_name) if sort_config.blank?
+      sort_configs = JSON.parse(params[:sorted])
+      order_clauses = sort_configs.filter_map do |sort_config|
+        next unless SORTABLE_FIELDS.include?(sort_config['id'])
 
-      direction = sort_config['desc'] ? 'DESC' : 'ASC'
-      column = SORTABLE_FIELDS.include?(sort_config['id']) ? sort_config['id'] : 'user_name'
+        direction = sort_config['desc'] ? 'DESC' : 'ASC'
+        "#{sort_config['id']} #{direction}"
+      end
 
-      scope.order("#{column} #{direction}")
+      return scope.order(:user_name) if order_clauses.empty?
+
+      scope.order(Arel.sql(order_clauses.join(', ')))
     end
 
     def flash_interpolation_options

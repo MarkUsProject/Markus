@@ -5,7 +5,13 @@ import {AdminUsersList} from "../admin_users_list";
 
 beforeAll(() => {
   global.Routes = {
-    admin_users_path: jest.fn(() => "/admin/users"),
+    admin_users_path: jest.fn(params => {
+      if (params) {
+        const query = new URLSearchParams(params).toString();
+        return `/admin/users?${query}`;
+      }
+      return "/admin/users";
+    }),
     edit_admin_user_path: jest.fn(id => `/admin/users/${id}/edit`),
   };
   global.I18n = {

@@ -164,6 +164,19 @@ describe Admin::UsersController do
           expect(received_usernames).to eq(received_usernames.sort.reverse)
         end
 
+        it 'handles server-side multi-column sorting' do
+          create(:end_user, user_name: 'aaa_user', first_name: 'Charlie', last_name: 'Smith')
+          create(:end_user, user_name: 'bbb_user', first_name: 'Alice', last_name: 'Smith')
+          create(:end_user, user_name: 'ccc_user', first_name: 'Bob', last_name: 'Brown')
+
+          sort_params = [{ id: 'last_name', desc: false }, { id: 'first_name', desc: false }].to_json
+
+          get_as admin, :index, format: 'json', params: { sorted: sort_params }
+          received = response.parsed_body['users'].map { |u| [u['last_name'], u['first_name']] }
+
+          expect(received).to eq(received.sort_by { |last, first| [last, first] })
+        end
+
         it 'hides AutotestUser entities from the payload entirely' do
           get_as admin, :index, format: 'json'
           types = response.parsed_body['users'].pluck('type')
