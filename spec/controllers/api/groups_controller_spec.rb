@@ -784,8 +784,21 @@ describe Api::GroupsController do
       let(:assignment) { create(:assignment) }
       let(:grouping) { create(:grouping, assignment: assignment) }
       let(:submission) { create(:version_used_submission, grouping: grouping) }
-      let(:submission_file) { create(:submission_file, submission: submission) }
+      let!(:submission_file) { create(:submission_file, submission: submission) }
+      let!(:image_file) { create(:image_submission_file, submission: submission) }
+      let!(:pdf_file) { create(:pdf_submission_file, submission: submission) }
+      let!(:notebook_file) { create(:notebook_submission_file, submission: submission) }
       let(:response_type) { 'application/xml' }
+
+      def post_annotations(annotation_data)
+        request.env['HTTP_ACCEPT'] = response_type
+        post :add_annotations, params: {
+          assignment_id: assignment.id,
+          id: grouping.group_id,
+          course_id: course.id,
+          annotations: annotation_data
+        }
+      end
 
       it 'creates new annotations for a submission file that exists' do
         annotation_data = [
@@ -808,18 +821,107 @@ describe Api::GroupsController do
             column_end: 15
           }
         ]
-        request.env['HTTP_ACCEPT'] = response_type
-        post :add_annotations, params: {
-          assignment_id: assignment.id,
-          id: grouping.group_id,
-          course_id: course.id,
-          annotations: annotation_data
-        }
+        post_annotations(annotation_data)
 
         expect(response).to have_http_status :success
 
         annotation_contents = submission.current_result.annotations.map { |a| a.annotation_text.content }
         expect(annotation_contents).to contain_exactly('Content 1', 'Content 2')
+      end
+
+      it "creates a TextAnnotation for type 'TextAnnotation' on a text file" do
+        post_annotations([{ type: 'TextAnnotation', filename: submission_file.filename, content: 'c',
+                            line_start: 1, line_end: 2, column_start: 0, column_end: 5 }])
+
+        expect(response).to have_http_status :success
+        expect(submission.current_result.annotations.first).to be_a(TextAnnotation)
+      end
+
+      it "creates an ImageAnnotation for type 'ImageAnnotation' on an image file" do
+        post_annotations([{ type: 'ImageAnnotation', filename: image_file.filename, content: 'c',
+                            x1: 1, y1: 2, x2: 3, y2: 4 }])
+
+        expect(response).to have_http_status :success
+        annotation = submission.current_result.annotations.first
+        expect(annotation).to be_a(ImageAnnotation)
+        expect([annotation.x1, annotation.y1, annotation.x2, annotation.y2]).to eq([1, 2, 3, 4])
+      end
+
+      it "creates a PdfAnnotation for type 'PdfAnnotation' on a pdf file" do
+        post_annotations([{ type: 'PdfAnnotation', filename: pdf_file.filename, content: 'c',
+                            x1: 1, y1: 2, x2: 3, y2: 4, page: 7 }])
+
+        expect(response).to have_http_status :success
+        annotation = submission.current_result.annotations.first
+        expect(annotation).to be_a(PdfAnnotation)
+        expect(annotation.page).to eq(7)
+      end
+
+      it "creates an HtmlAnnotation for type 'HtmlAnnotation' on a notebook file" do
+        post_annotations([{ type: 'HtmlAnnotation', filename: notebook_file.filename, content: 'c',
+                            start_node: 'p:nth-child(1)', start_offset: 0,
+                            end_node: 'p:nth-child(2)', end_offset: 10 }])
+
+        expect(response).to have_http_status :success
+        annotation = submission.current_result.annotations.first
+        expect(annotation).to be_a(HtmlAnnotation)
+        expect(annotation.start_node).to eq('p:nth-child(1)')
+      end
+
+      it 'derives the type from the file when type is omitted' do
+        post_annotations([{ filename: pdf_file.filename, content: 'c',
+                            x1: 1, y1: 2, x2: 3, y2: 4, page: 1 }])
+
+        expect(response).to have_http_status :success
+        expect(submission.current_result.annotations.first).to be_a(PdfAnnotation)
+      end
+
+      it 'creates annotations of mixed types across files in a single request' do
+        annotation_data = [
+          { type: 'TextAnnotation', filename: submission_file.filename, content: 'text',
+            line_start: 1, line_end: 1, column_start: 0, column_end: 5 },
+          { type: 'PdfAnnotation', filename: pdf_file.filename, content: 'pdf',
+            x1: 1, y1: 2, x2: 3, y2: 4, page: 1 }
+        ]
+        post_annotations(annotation_data)
+
+        expect(response).to have_http_status :success
+        types = submission.current_result.annotations.map { |a| a.class.name }
+        expect(types).to contain_exactly('TextAnnotation', 'PdfAnnotation')
+      end
+
+      context 'with invalid input' do
+        it 'returns 422 when the asserted type does not match the file' do
+          post_annotations([{ type: 'TextAnnotation', filename: pdf_file.filename, content: 'c',
+                              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 for an unknown annotation type' do
+          post_annotations([{ type: 'bogus', filename: submission_file.filename, content: 'c',
+                              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 when the submission file does not exist' do
+          post_annotations([{ type: 'TextAnnotation', filename: 'does_not_exist.txt', content: 'c',
+                              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 when a required field is missing for the derived type' do
+          post_annotations([{ filename: pdf_file.filename, content: 'c',
+                              x1: 1, y1: 2, x2: 3, y2: 4 }]) # missing page
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
       end
     end
 

@@ -53,6 +53,17 @@ class SubmissionFile < ApplicationRecord
     File.extname(filename).casecmp('.rmd')&.zero?
   end
 
+  # The annotation class (single-table-inheritance type) appropriate for this file,
+  # derived from its type. Mirrors the logic used when creating annotations in the UI
+  # (see AnnotationsController), and is the single source of truth for that mapping.
+  def annotation_type
+    return 'ImageAnnotation' if is_supported_image?
+    return 'PdfAnnotation' if is_pdf?
+    return 'HtmlAnnotation' if is_pynb? || (is_rmd? && Rails.application.config.rmd_convert_enabled)
+
+    'TextAnnotation'
+  end
+
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
     file_contents.size == 0 ||

@@ -335,4 +335,36 @@ describe SubmissionFile do
       expect(file.retrieve_file.include?(deductive_info)).to be true
     end
   end
+
+  describe '#annotation_type' do
+    it 'returns ImageAnnotation for an image file' do
+      expect(build(:image_submission_file).annotation_type).to eq('ImageAnnotation')
+    end
+
+    it 'returns PdfAnnotation for a pdf file' do
+      expect(build(:pdf_submission_file).annotation_type).to eq('PdfAnnotation')
+    end
+
+    it 'returns HtmlAnnotation for a notebook file' do
+      expect(build(:notebook_submission_file).annotation_type).to eq('HtmlAnnotation')
+    end
+
+    it 'returns TextAnnotation for a plaintext file' do
+      expect(build(:submission_file, filename: 'foo.py').annotation_type).to eq('TextAnnotation')
+    end
+
+    context 'for an RMarkdown file' do
+      let(:rmd_file) { build(:rmd_submission_file) }
+
+      it 'returns HtmlAnnotation when rmd_convert_enabled is true' do
+        allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true)
+        expect(rmd_file.annotation_type).to eq('HtmlAnnotation')
+      end
+
+      it 'returns TextAnnotation when rmd_convert_enabled is false' do
+        allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false)
+        expect(rmd_file.annotation_type).to eq('TextAnnotation')
+      end
+    end
+  end
 end
