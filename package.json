@@ -36,6 +36,7 @@
     "react-keyed-file-browser": "^1.14.0",
     "react-loader-spinner": "^8.0.2",
     "react-modal": "^3.16.3",
+    "react-resizable-panels": "^4.11.2",
     "react-table": "^6.11.5",
     "react-tabs": "^6.1.0",
     "tslib": "^2.8.1",
