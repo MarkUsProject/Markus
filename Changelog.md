@@ -22,6 +22,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
 - Added release automation scripts (#7914)
 - Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
 - Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
