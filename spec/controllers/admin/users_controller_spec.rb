@@ -112,7 +112,13 @@ describe Admin::UsersController do
           expect(response).to have_http_status(:ok)
         end
 
-        it 'sends the appropriate data' do
+        it 'sends the appropriate data structure and pagination keys' do
+          get_as admin, :index, format: 'json'
+          expect(response.parsed_body).to have_key('users')
+          expect(response.parsed_body).to have_key('total_pages')
+        end
+
+        it 'sends the appropriate user payload records' do
           expected_data = [
             {
               id: admin.id,
@@ -134,8 +140,47 @@ describe Admin::UsersController do
             }
           ]
           get_as admin, :index, format: 'json'
-          received_data = response.parsed_body.map(&:symbolize_keys)
+          received_data = response.parsed_body['users'].map(&:symbolize_keys)
           expect(received_data).to match_array(expected_data)
+        end
+
+        it 'handles server-side fuzzy string text filtering' do
+          create(:end_user, user_name: 'aaa_filter_test_user', first_name: 'Alexandria')
+          filter_params = [{ id: 'first_name', value: 'alex' }].to_json
+
+          get_as admin, :index, format: 'json', params: { per_page: 100, filtered: filter_params }
+          received_names = response.parsed_body['users'].pluck('first_name')
+
+          expect(received_names).to include('Alexandria')
+          expect(received_names).not_to include(user.first_name)
+        end
+
+        it 'handles server-side custom column sorting rules' do
+          sort_params = [{ id: 'user_name', desc: true }].to_json
+
+          get_as admin, :index, format: 'json', params: { sorted: sort_params }
+          received_usernames = response.parsed_body['users'].pluck('user_name')
+
+          expect(received_usernames).to eq(received_usernames.sort.reverse)
+        end
+
+        it 'handles server-side multi-column sorting' do
+          create(:end_user, user_name: 'aaa_user', first_name: 'Charlie', last_name: 'Smith')
+          create(:end_user, user_name: 'bbb_user', first_name: 'Alice', last_name: 'Smith')
+          create(:end_user, user_name: 'ccc_user', first_name: 'Bob', last_name: 'Brown')
+
+          sort_params = [{ id: 'last_name', desc: false }, { id: 'first_name', desc: false }].to_json
+
+          get_as admin, :index, format: 'json', params: { sorted: sort_params }
+          received = response.parsed_body['users'].map { |u| [u['last_name'], u['first_name']] }
+
+          expect(received).to eq(received.sort_by { |last, first| [last, first] })
+        end
+
+        it 'hides AutotestUser entities from the payload entirely' do
+          get_as admin, :index, format: 'json'
+          types = response.parsed_body['users'].pluck('type')
+          expect(types).not_to include('AutotestUser')
         end
       end
     end
