@@ -27,6 +27,10 @@ export class SubmissionFilePanel extends React.Component {
       focusLine: null,
       annotationFocus: undefined,
       visibleAnnotations: [],
+      // Counts deliberate file picks so the PDF viewer can tell a user opening a
+      // different file (reset scroll) from an automatic refresh on a submission
+      // switch (keep scroll).
+      userFileSelectionCount: 0,
     };
   }
 
@@ -150,12 +154,13 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   selectFile = (file, id, type, focusLine, annotationFocus) => {
-    this.setState({
+    this.setState(prevState => ({
       selectedFile: [file, id, type],
       focusLine: focusLine,
       annotationFocus: annotationFocus,
       visibleAnnotations: this.props.annotations.filter(a => a.submission_file_id === id),
-    });
+      userFileSelectionCount: prevState.userFileSelectionCount + 1,
+    }));
     localStorage.setItem("file", file);
   };
 
@@ -230,6 +235,7 @@ export class SubmissionFilePanel extends React.Component {
             selectedFile={submission_file_id}
             selectedFileURL={this.getFileDownloadURL(submission_file_id)}
             selectedFileType={this.state.selectedFile ? this.state.selectedFile[2] : null}
+            userFileSelectionCount={this.state.userFileSelectionCount}
             annotations={this.state.visibleAnnotations}
             focusLine={this.state.focusLine}
             annotationFocus={this.state.annotationFocus}

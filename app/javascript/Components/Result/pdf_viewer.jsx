@@ -47,12 +47,15 @@ export class PDFViewer extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.url && this.props.url !== prevProps.url) {
-      if (this.context.submission_id !== this.loadedSubmissionId) {
-        // Submission switch: carry the scroll position over to the next PDF.
-        this.save_scroll_position();
-      } else {
-        // Different file within the same submission: open it at the top.
+      if (this.props.userFileSelectionCount !== prevProps.userFileSelectionCount) {
+        // The user explicitly opened a different file: show it from the top.
         this.savedScrollPosition = null;
+      } else if (this.context.submission_id !== this.loadedSubmissionId) {
+        // Automatic switch to another submission: carry the scroll position over.
+        // A submission switch updates the URL twice (the submission id, then the
+        // auto-selected file); keying the reset on an explicit file pick instead
+        // of the submission id keeps the second update from clobbering the save.
+        this.save_scroll_position();
       }
       this.loadedSubmissionId = this.context.submission_id;
       this.loadPDFFile();

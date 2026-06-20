@@ -162,10 +162,11 @@ describe("PDFViewer", () => {
     // load a different PDF (switching submissions or files), and fire pdf.js events.
     const renderWithContext = scanned_exam => {
       let submission_id = 1;
+      let userFileSelectionCount = 0;
       const renderViewer = (utils, overrides) => {
         const tree = (
           <ResultContext.Provider value={{scanned_exam, submission_id}}>
-            <PDFViewer {...viewerProps(overrides)} />
+            <PDFViewer {...viewerProps({userFileSelectionCount, ...overrides})} />
           </ResultContext.Provider>
         );
         return utils ? utils.rerender(tree) : render(tree);
@@ -181,8 +182,32 @@ describe("PDFViewer", () => {
         submission_id += 1;
         renderViewer(utils, {url, ...overrides});
       };
-      const switchFile = (url, overrides = {}) => renderViewer(utils, {url, ...overrides});
-      return {eventBus, scrollParent, switchSubmission, switchFile};
+      // A real submission switch changes the URL twice in separate renders: first
+      // the submission id (the download URL embeds it), then the auto-selected
+      // file for that submission. Neither is an explicit user file pick.
+      const switchSubmissionInTwoSteps = (interimUrl, finalUrl, overrides = {}) => {
+        submission_id += 1;
+        renderViewer(utils, {url: interimUrl, ...overrides});
+        renderViewer(utils, {url: finalUrl, ...overrides});
+      };
+      // The user deliberately opening a different file bumps the selection count.
+      const switchFile = (url, overrides = {}) => {
+        userFileSelectionCount += 1;
+        renderViewer(utils, {url, ...overrides});
+      };
+      // Re-picking the already-open file bumps the count without changing the URL.
+      const repickSameFile = (overrides = {}) => {
+        userFileSelectionCount += 1;
+        renderViewer(utils, {...overrides});
+      };
+      return {
+        eventBus,
+        scrollParent,
+        switchSubmission,
+        switchSubmissionInTwoSteps,
+        switchFile,
+        repickSameFile,
+      };
     };
 
     it("restores the scroll position after the new submission's PDF loads", () => {
@@ -267,6 +292,52 @@ describe("PDFViewer", () => {
       eventBus.dispatch("pagesloaded");
 
       expect(scrollParent.scrollTop).toBe(0);
+    });
+
+    it("keeps the scroll position when a switch updates the URL in two steps", () => {
+      const {eventBus, scrollParent, switchSubmissionInTwoSteps} = renderWithContext(true);
+
+      scrollParent.scrollTop = 480;
+      // First the submission id changes (interim URL), then the new submission's
+      // file is auto-selected — the file refresh must not wipe the saved position.
+      switchSubmissionInTwoSteps("/files/2-interim.pdf", "/files/2.pdf");
+
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      expect(scrollParent.scrollTop).toBe(480);
+    });
+
+    it("opens a file picked after a submission switch at the top", () => {
+      const {eventBus, scrollParent, switchSubmission, switchFile} = renderWithContext(true);
+
+      // Switch submission (saves 480), then the user opens a different file.
+      scrollParent.scrollTop = 480;
+      switchSubmission("/files/2.pdf");
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+      expect(scrollParent.scrollTop).toBe(480);
+
+      switchFile("/files/2-other.pdf");
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      expect(scrollParent.scrollTop).toBe(0);
+    });
+
+    it("keeps the scroll position when the same file is re-picked before a switch", () => {
+      const {eventBus, scrollParent, repickSameFile, switchSubmission} = renderWithContext(true);
+
+      scrollParent.scrollTop = 480;
+      // Re-selecting the open file bumps the count but does not change the URL;
+      // the next submission switch must still carry the scroll position over.
+      repickSameFile();
+      switchSubmission("/files/2.pdf");
+
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      expect(scrollParent.scrollTop).toBe(480);
     });
 
     it("does not restore the scroll position for non-scanned assignments", () => {
