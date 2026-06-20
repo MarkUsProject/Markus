@@ -489,7 +489,6 @@ class GradersTable extends React.Component {
           enableSorting: true,
           minSize: 90,
         }),
-
         columnHelper.accessor("full_name", {
           header: I18n.t("activerecord.attributes.user.full_name"),
           id: "full_name",
@@ -506,7 +505,6 @@ class GradersTable extends React.Component {
           enableSorting: true,
           minSize: 170,
         }),
-
         columnHelper.accessor("groups", {
           header: I18n.t("activerecord.models.group.other"),
           enableColumnFilter: false,
@@ -534,12 +532,13 @@ class GradersTable extends React.Component {
   }
 
   resetSelection = () => {
-    this.state.rowSelection = {};
+    this.setState({rowSelection: {}});
   };
 
   getSelectedRows = () => {
     return Object.keys(this.state.rowSelection).map(id => Number(id));
   };
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.showHidden !== this.props.showHidden) {
       this.setState(prevState => {
@@ -729,7 +728,7 @@ class GroupsTable extends React.Component {
   };
 
   resetSelection = () => {
-    this.state.rowSelection = {};
+    this.setState({rowSelection: {}});
   };
 
   getSelectedRows = () => {
