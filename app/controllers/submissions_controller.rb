@@ -135,6 +135,10 @@ class SubmissionsController < ApplicationController
     set_filebrowser_vars(@grouping)
     flash_file_manager_messages
 
+    past_due_date = @assignment.grouping_past_due_date?(@grouping)
+    past_collection_date = @grouping.past_collection_date?
+    @show_late_submit_confirmation = past_due_date && !past_collection_date
+
     render 'file_manager', layout: 'assignment_content', locals: {}
   end
 
