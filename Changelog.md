@@ -23,6 +23,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
 - Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
 - Added release automation scripts (#7914)
 - Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
