@@ -126,11 +126,6 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    @past_due_date = @assignment.grouping_past_due_date?(@grouping)
-    @late_penalty = @assignment.submission_rule.penalty_for(@grouping)
-    @past_collection_date = @grouping.past_collection_date?
-    @show_late_submit_confirmation = @past_due_date && @late_penalty.positive? && !@past_collection_date
-
     authorize! @grouping, to: :view_file_manager?
 
     @path = params[:path] || '/'
@@ -139,6 +134,10 @@ class SubmissionsController < ApplicationController
     # helper. See update_files action where this is used as well.
     set_filebrowser_vars(@grouping)
     flash_file_manager_messages
+
+    past_due_date = @assignment.grouping_past_due_date?(@grouping)
+    past_collection_date = @grouping.past_collection_date?
+    @show_late_submit_confirmation = past_due_date && !past_collection_date
 
     render 'file_manager', layout: 'assignment_content', locals: {}
   end

@@ -25,13 +25,6 @@ describe NoLateSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', -5.days
-
-    it 'should have no penalty' do
-      rule.reload
-      Timecop.freeze(due_date - 10.hours) do
-        expect(rule.penalty_for(grouping)).to eq 0
-      end
-    end
   end
 
   context 'when the group submitted late' do
@@ -45,12 +38,5 @@ describe NoLateSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', 5.days
-
-    it 'should have no penalty' do
-      rule.reload
-      Timecop.freeze(due_date + 10.hours) do
-        expect(rule.penalty_for(grouping)).to eq 0
-      end
-    end
   end
 end

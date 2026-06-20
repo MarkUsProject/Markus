@@ -211,6 +211,18 @@ describe("For the SubmissionFileManager", () => {
 });
 
 describe("For the late submit confirm dialog", () => {
+  const LATE_SUBMIT_MESSAGES = {
+    GracePeriodSubmissionRule: I18n.t(
+      "activerecord.attributes.grace_period_submission_rule.upload_late_confirmation_dialog"
+    ),
+    PenaltyDecayPeriodSubmissionRule: I18n.t(
+      "activerecord.attributes.penalty_decay_period_submission_rule.upload_late_confirmation_dialog"
+    ),
+    PenaltyPeriodSubmissionRule: I18n.t(
+      "activerecord.attributes.penalty_period_submission_rule.upload_late_confirmation_dialog"
+    ),
+  };
+
   const files_sample = {
     entries: [
       {
@@ -291,13 +303,44 @@ describe("For the late submit confirm dialog", () => {
   });
 
   describe("For the submission file upload modal", () => {
-    it("calls confirm when show_late_submit_confirmation is true", async () => {
-      renderManager({show_late_submit_confirmation: true});
-      await screen.findByText("HelloWorld.java");
-      await submitFileThroughModal();
-      expect(confirmSpy).toHaveBeenCalledWith(
-        I18n.t("submissions.student.upload_file_confirmation_dialog")
-      );
+    describe.each([
+      ["GracePeriodSubmissionRule"],
+      ["PenaltyDecayPeriodSubmissionRule"],
+      ["PenaltyPeriodSubmissionRule"],
+    ])("when submission_rule is %s", submissionRule => {
+      it("calls confirm with the correct message", async () => {
+        renderManager({
+          show_late_submit_confirmation: true,
+          submission_rule: submissionRule,
+        });
+        await screen.findByText("HelloWorld.java");
+        await submitFileThroughModal();
+        expect(confirmSpy).toHaveBeenCalledWith(LATE_SUBMIT_MESSAGES[submissionRule]);
+      });
+
+      it("does not upload when user cancels the confirm dialog", async () => {
+        confirmSpy.mockReturnValue(false);
+        renderManager({
+          show_late_submit_confirmation: true,
+          submission_rule: submissionRule,
+        });
+        await screen.findByText("HelloWorld.java");
+        await submitFileThroughModal();
+        expect(confirmSpy).toHaveBeenCalledWith(LATE_SUBMIT_MESSAGES[submissionRule]);
+        expect($.post).not.toHaveBeenCalled();
+      });
+
+      it("uploads when the user confirms the dialog", async () => {
+        confirmSpy.mockReturnValue(true);
+        renderManager({
+          show_late_submit_confirmation: true,
+          submission_rule: submissionRule,
+        });
+        await screen.findByText("HelloWorld.java");
+        await submitFileThroughModal();
+        expect(confirmSpy).toHaveBeenCalledWith(LATE_SUBMIT_MESSAGES[submissionRule]);
+        expect($.post).toHaveBeenCalled();
+      });
     });
 
     it("does not call confirm when show_late_submit_confirmation is false", async () => {
@@ -308,37 +351,57 @@ describe("For the late submit confirm dialog", () => {
       expect($.post).toHaveBeenCalled();
     });
 
-    it("does not upload when user cancels the confirm dialog", async () => {
-      confirmSpy.mockReturnValue(false);
+    it("does not call confirm when show_late_submit_confirmation is true but submission_rule is missing", async () => {
       renderManager({show_late_submit_confirmation: true});
       await screen.findByText("HelloWorld.java");
       await submitFileThroughModal();
-      expect(confirmSpy).toHaveBeenCalledWith(
-        I18n.t("submissions.student.upload_file_confirmation_dialog")
-      );
-      expect($.post).not.toHaveBeenCalled();
-    });
-
-    it("uploads when the user confirms the dialog", async () => {
-      confirmSpy.mockReturnValue(true);
-      renderManager({show_late_submit_confirmation: true});
-      await screen.findByText("HelloWorld.java");
-      await submitFileThroughModal();
-      expect(confirmSpy).toHaveBeenCalledWith(
-        I18n.t("submissions.student.upload_file_confirmation_dialog")
-      );
+      expect(confirmSpy).not.toHaveBeenCalled();
       expect($.post).toHaveBeenCalled();
     });
   });
 
   describe("For the submit URL upload modal", () => {
-    it("calls confirm when show_late_submit_confirmation is true", async () => {
-      renderManager({show_late_submit_confirmation: true, enableUrlSubmit: true});
-      await screen.findByText("HelloWorld.java");
-      await submitUrlThroughModal();
-      expect(confirmSpy).toHaveBeenCalledWith(
-        I18n.t("submissions.student.upload_file_confirmation_dialog")
-      );
+    describe.each([
+      ["GracePeriodSubmissionRule"],
+      ["PenaltyDecayPeriodSubmissionRule"],
+      ["PenaltyPeriodSubmissionRule"],
+    ])("when submission_rule is %s", submissionRule => {
+      it("calls confirm with the correct message", async () => {
+        renderManager({
+          show_late_submit_confirmation: true,
+          submission_rule: submissionRule,
+          enableUrlSubmit: true,
+        });
+        await screen.findByText("HelloWorld.java");
+        await submitUrlThroughModal();
+        expect(confirmSpy).toHaveBeenCalledWith(LATE_SUBMIT_MESSAGES[submissionRule]);
+      });
+
+      it("does not upload when user cancels the confirm dialog", async () => {
+        confirmSpy.mockReturnValue(false);
+        renderManager({
+          show_late_submit_confirmation: true,
+          submission_rule: submissionRule,
+          enableUrlSubmit: true,
+        });
+        await screen.findByText("HelloWorld.java");
+        await submitUrlThroughModal();
+        expect(confirmSpy).toHaveBeenCalledWith(LATE_SUBMIT_MESSAGES[submissionRule]);
+        expect($.post).not.toHaveBeenCalled();
+      });
+
+      it("uploads when the user confirms the dialog", async () => {
+        confirmSpy.mockReturnValue(true);
+        renderManager({
+          show_late_submit_confirmation: true,
+          submission_rule: submissionRule,
+          enableUrlSubmit: true,
+        });
+        await screen.findByText("HelloWorld.java");
+        await submitUrlThroughModal();
+        expect(confirmSpy).toHaveBeenCalledWith(LATE_SUBMIT_MESSAGES[submissionRule]);
+        expect($.post).toHaveBeenCalled();
+      });
     });
 
     it("does not call confirm when show_late_submit_confirmation is false", async () => {
@@ -346,28 +409,6 @@ describe("For the late submit confirm dialog", () => {
       await screen.findByText("HelloWorld.java");
       await submitUrlThroughModal();
       expect(confirmSpy).not.toHaveBeenCalled();
-      expect($.post).toHaveBeenCalled();
-    });
-
-    it("does not upload when user cancels the confirm dialog", async () => {
-      confirmSpy.mockReturnValue(false);
-      renderManager({show_late_submit_confirmation: true, enableUrlSubmit: true});
-      await screen.findByText("HelloWorld.java");
-      await submitUrlThroughModal();
-      expect(confirmSpy).toHaveBeenCalledWith(
-        I18n.t("submissions.student.upload_file_confirmation_dialog")
-      );
-      expect($.post).not.toHaveBeenCalled();
-    });
-
-    it("uploads when the user confirms the dialog", async () => {
-      confirmSpy.mockReturnValue(true);
-      renderManager({show_late_submit_confirmation: true, enableUrlSubmit: true});
-      await screen.findByText("HelloWorld.java");
-      await submitUrlThroughModal();
-      expect(confirmSpy).toHaveBeenCalledWith(
-        I18n.t("submissions.student.upload_file_confirmation_dialog")
-      );
       expect($.post).toHaveBeenCalled();
     });
   });

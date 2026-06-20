@@ -36,13 +36,6 @@ describe PenaltyPeriodSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', 0, -5.days
-
-    it 'should have no penalty' do
-      rule.reload
-      Timecop.freeze(due_date - 10.hours) do
-        expect(rule.penalty_for(grouping)).to eq 0
-      end
-    end
   end
 
   context 'when the group submitted during the first penalty period' do
@@ -57,13 +50,6 @@ describe PenaltyPeriodSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', 1.0, 10.hours
-
-    it 'should have a penalty' do
-      rule.reload
-      Timecop.freeze(due_date + 10.hours) do
-        expect(rule.penalty_for(grouping)).to eq(1.0)
-      end
-    end
   end
 
   context 'when the group submitted during the second penalty period' do
@@ -78,13 +64,6 @@ describe PenaltyPeriodSubmissionRule do
     end
 
     it_behaves_like 'valid overtime message', 2.0, 25.hours
-
-    it 'should have a penalty' do
-      rule.reload
-      Timecop.freeze(due_date + 25.hours) do
-        expect(rule.penalty_for(grouping)).to eq(2.0)
-      end
-    end
   end
 
   context 'when penalty_type is percentage_of_mark' do

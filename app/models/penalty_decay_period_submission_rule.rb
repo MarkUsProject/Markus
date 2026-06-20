@@ -23,7 +23,10 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
             inclusion: { in: [ExtraMark::PERCENTAGE, ExtraMark::POINTS, ExtraMark::PERCENTAGE_OF_MARK] }
 
   def overtime_message(grouping)
-    potential_penalty = penalty_for(grouping)
+    # How far are we into overtime?
+    overtime_hours = calculate_overtime_hours_from(Time.current, grouping)
+    # Calculate the penalty that the grouping will suffer
+    potential_penalty = calculate_penalty(overtime_hours)
     penalty_suffix = penalty_type || ExtraMark::PERCENTAGE
 
     I18n.t "penalty_decay_period_submission_rules.overtime_message_#{penalty_suffix}",
@@ -75,12 +78,5 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
       overtime_hours -= period.hours
     end
     total_penalty
-  end
-
-  def penalty_for(grouping)
-    # How far are we into overtime?
-    overtime_hours = calculate_overtime_hours_from(Time.current, grouping)
-    # Calculate the penalty that the grouping will suffer
-    calculate_penalty(overtime_hours)
   end
 end

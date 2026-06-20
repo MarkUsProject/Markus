@@ -79,7 +79,26 @@ class SubmissionFileManager extends React.Component {
 
   confirmWhenLate = () => {
     if (this.props.show_late_submit_confirmation) {
-      return confirm(I18n.t("submissions.student.upload_file_confirmation_dialog"));
+      switch (this.props.submission_rule) {
+        case "GracePeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.grace_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+        case "PenaltyDecayPeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.penalty_decay_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+        case "PenaltyPeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.penalty_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+      }
     }
     return true;
   };
