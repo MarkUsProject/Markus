@@ -604,7 +604,7 @@ class GroupsTable extends React.Component {
     super(props);
     this.state = {
       columnFilters: [{id: "inactive", value: false}],
-      columns: this.getColumns(),
+      columns: this.getColumns(this.props.showCoverage, this.props.showSections),
       rowSelection: {},
       isCaseSensitive: false,
     };
@@ -617,7 +617,7 @@ class GroupsTable extends React.Component {
       prevProps.showCoverage !== this.props.showCoverage
     ) {
       this.setState({
-        columns: this.getColumns(),
+        columns: this.getColumns(this.props.showCoverage, this.props.showSections),
       });
     }
     if (prevProps.showInactive !== this.props.showInactive) {
@@ -636,7 +636,7 @@ class GroupsTable extends React.Component {
     }
   }
 
-  getColumns = () => {
+  getColumns = (showCoverage, showSections = false) => {
     return [
       columnHelper.accessor("inactive", {
         id: "inactive",
@@ -650,27 +650,31 @@ class GroupsTable extends React.Component {
       columnHelper.accessor("_id", {
         id: "_id",
       }),
-      columnHelper.accessor(
-        row => {
-          const sectionId = row.section;
-          return this.props.sections[sectionId] || "";
-        },
-        {
-          header: I18n.t("activerecord.models.section", {count: 1}),
-          id: "section",
-          minSize: 70,
-          filterFn: (row, columnId, filterValue) => {
-            if (filterValue === "all") {
-              return true;
-            } else {
-              return this.props.sections[row.original.section] === filterValue;
-            }
-          },
-          meta: {
-            filterVariant: "select",
-          },
-        }
-      ),
+      ...(showSections
+        ? [
+            columnHelper.accessor(
+              row => {
+                const sectionId = row.section;
+                return this.props.sections[sectionId] || "";
+              },
+              {
+                header: I18n.t("activerecord.models.section", {count: 1}),
+                id: "section",
+                minSize: 70,
+                filterFn: (row, columnId, filterValue) => {
+                  if (filterValue === "all") {
+                    return true;
+                  } else {
+                    return this.props.sections[row.original.section] === filterValue;
+                  }
+                },
+                meta: {
+                  filterVariant: "select",
+                },
+              }
+            ),
+          ]
+        : []),
       columnHelper.accessor("group_name", {
         header: I18n.t("activerecord.models.group.one"),
         id: "group_name",
@@ -716,21 +720,25 @@ class GroupsTable extends React.Component {
         enableColumnFilter: false,
         minSize: 100,
       }),
-      columnHelper.accessor("criteria_coverage_count", {
-        header: I18n.t("graders.coverage"),
-        cell: ({getValue}) => {
-          return (
-            <span>
-              {getValue() || 0}/{this.props.numCriteria}
-            </span>
-          );
-        },
-        minSize: 70,
-        enableColumnFilter: false,
-        meta: {
-          className: "number",
-        },
-      }),
+      ...(showCoverage
+        ? [
+            columnHelper.accessor("criteria_coverage_count", {
+              header: I18n.t("graders.coverage"),
+              cell: ({getValue}) => {
+                return (
+                  <span>
+                    {getValue() || 0}/{this.props.numCriteria}
+                  </span>
+                );
+              },
+              minSize: 70,
+              enableColumnFilter: false,
+              meta: {
+                className: "number",
+              },
+            }),
+          ]
+        : []),
     ];
   };
 
