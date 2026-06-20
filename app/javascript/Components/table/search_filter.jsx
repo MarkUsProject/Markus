@@ -1,7 +1,8 @@
 import React from "react";
 
 export const defaultSearchPlaceholderText = (header = "") => {
-  return `${I18n.t("table.search")} ${header}`;
+  const base = I18n.t("table.search");
+  return header ? `${base} ${header}` : base;
 };
 
 export default function SearchFilter({column, filterValue}) {
