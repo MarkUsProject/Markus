@@ -77,7 +77,36 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
+  confirmWhenLate = () => {
+    if (this.props.show_late_submit_confirmation) {
+      switch (this.props.submission_rule) {
+        case "GracePeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.grace_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+        case "PenaltyDecayPeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.penalty_decay_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+        case "PenaltyPeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.penalty_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+      }
+    }
+    return true;
+  };
+
   handleCreateUrl = (url, url_text) => {
+    if (!this.confirmWhenLate()) {
+      return;
+    }
     this.setState({showURLModal: false});
     const data_to_upload = {
       new_url: url,
@@ -99,6 +128,10 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleCreateFiles = (files, path, unzip, renameTo = "") => {
+    if (!this.confirmWhenLate()) {
+      return;
+    }
+
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
