@@ -489,22 +489,29 @@ class GradersTable extends React.Component {
           enableSorting: true,
           minSize: 90,
         }),
-        columnHelper.accessor("full_name", {
-          header: I18n.t("activerecord.attributes.user.full_name"),
-          id: "full_name",
-          enableColumnFilter: true,
-          cell: props => `${props.row.original.first_name} ${props.row.original.last_name}`,
-          filterFn: (row, columnId, filterValue) => {
-            if (filterValue) {
-              const fullName = `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
-              return fullName.includes(filterValue.toLowerCase());
-            } else {
-              return true;
-            }
+        columnHelper.accessor(
+          row => {
+            const first_name = row.first_name;
+            const last_name = row.last_name;
+            return `${first_name} ${last_name}`;
           },
-          enableSorting: true,
-          minSize: 170,
-        }),
+          {
+            header: I18n.t("activerecord.attributes.user.full_name"),
+            id: "full_name",
+            enableColumnFilter: true,
+            filterFn: (row, columnId, filterValue) => {
+              if (filterValue) {
+                const fullName =
+                  `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
+                return fullName.includes(filterValue.toLowerCase());
+              } else {
+                return true;
+              }
+            },
+            enableSorting: true,
+            minSize: 170,
+          }
+        ),
         columnHelper.accessor("groups", {
           header: I18n.t("activerecord.models.group.other"),
           enableColumnFilter: false,
