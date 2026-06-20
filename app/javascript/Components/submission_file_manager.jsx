@@ -77,7 +77,7 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
-  showConfirmWhenLate = () => {
+  confirmWhenLate = () => {
     if (this.props.show_late_submit_confirmation) {
       return confirm(I18n.t("submissions.student.upload_file_confirmation_dialog"));
     }
@@ -85,7 +85,7 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleCreateUrl = (url, url_text) => {
-    if (!this.showConfirmWhenLate()) {
+    if (!this.confirmWhenLate()) {
       return;
     }
     this.setState({showURLModal: false});
@@ -109,7 +109,7 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleCreateFiles = (files, path, unzip, renameTo = "") => {
-    if (!this.showConfirmWhenLate()) {
+    if (!this.confirmWhenLate()) {
       return;
     }
 
