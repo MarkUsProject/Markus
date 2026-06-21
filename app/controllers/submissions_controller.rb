@@ -371,7 +371,7 @@ class SubmissionsController < ApplicationController
     assignment_id = params[:assignment_id]
     unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
-    raise t('student.submission.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
+    raise t('submissions.student.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
 
     @path = params[:path].presence || '/'
 
@@ -407,7 +407,7 @@ class SubmissionsController < ApplicationController
     end
 
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty? && new_url.empty?
-      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+      flash_message(:warning, I18n.t('submissions.student.no_action_detected'))
     else
       messages = []
       path = FileHelper.checked_join(@grouping.assignment.repository_folder, @path.gsub(%r{^/}, ''))
@@ -458,7 +458,7 @@ class SubmissionsController < ApplicationController
             expected_mime_type = Marcel::MimeType.for extension: file_extension
 
             if content_type != expected_mime_type && content_type != 'application/octet-stream'
-              flash_message(:warning, I18n.t('student.submission.file_extension_mismatch', extension: file_extension))
+              flash_message(:warning, I18n.t('submissions.student.file_extension_mismatch', extension: file_extension))
             end
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
@@ -622,7 +622,7 @@ class SubmissionsController < ApplicationController
         end
       rescue StandardError => e
         flash_message(:error, e.message)
-        render plain: I18n.t('student.submission.missing_file',
+        render plain: I18n.t('submissions.student.missing_file',
                              file_name: params[:file_name], message: e.message)
         return
       end

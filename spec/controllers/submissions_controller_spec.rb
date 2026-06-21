@@ -206,8 +206,8 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id, new_files: [invalid_file] }
 
       expect(response).to have_http_status :ok
-      sample_warning_message = I18n.t('student.submission.file_extension_mismatch', extension: file_extension)
-      flash[:warning] = I18n.t('student.submission.file_extension_mismatch', extension: file_extension)
+      sample_warning_message = I18n.t('submissions.student.file_extension_mismatch', extension: file_extension)
+      flash[:warning] = I18n.t('submissions.student.file_extension_mismatch', extension: file_extension)
       expect(flash[:warning]).to eq sample_warning_message
 
       # Check to see if the file was added
