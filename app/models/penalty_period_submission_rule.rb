@@ -12,7 +12,7 @@
 #
 # Indexes
 #
-#  index_submission_rules_on_assessment_id  (assessment_id)
+#  index_submission_rules_on_assessment_id  (assessment_id) UNIQUE
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class PenaltyPeriodSubmissionRule < SubmissionRule
