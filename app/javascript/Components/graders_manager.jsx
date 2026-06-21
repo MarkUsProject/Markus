@@ -39,7 +39,7 @@ class GradersManager extends React.Component {
 
   openGraderDistributionModal = () => {
     let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
     let graders = this.gradersTable ? this.gradersTable.getSelectedRows() : [];
     if (groups.length === 0 && criteria.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -105,7 +105,7 @@ class GradersManager extends React.Component {
 
   assignAll = () => {
     let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
     let graders = this.gradersTable ? this.gradersTable.getSelectedRows() : [];
 
     if (groups.length === 0 && criteria.length === 0) {
@@ -155,7 +155,7 @@ class GradersManager extends React.Component {
 
   assignRandomly = weightings => {
     let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
     let graders = Object.keys(weightings);
     let weights = Object.values(weightings);
 
@@ -178,7 +178,7 @@ class GradersManager extends React.Component {
 
   unassignAll = () => {
     let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
     let graders = this.gradersTable ? this.gradersTable.getSelectedRows() : [];
 
     if (groups.length === 0 && criteria.length === 0) {
@@ -785,26 +785,23 @@ class GroupsTable extends React.Component {
   }
 }
 
-class RawCriteriaTable extends React.Component {
+class CriteriaTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      columnFilters: [],
       columns: [
-        {
-          show: false,
-          accessor: "_id",
+        columnHelper.accessor("_id", {
           id: "_id",
-        },
-        {
-          Header: I18n.t("activerecord.attributes.criterion.name"),
-          accessor: "name",
-          minWidth: 150,
-        },
-        {
-          Header: I18n.t("activerecord.models.ta.other"),
-          accessor: "graders",
-          Cell: row => {
-            return row.value.map(ta_data => (
+        }),
+        columnHelper.accessor("name", {
+          header: I18n.t("activerecord.attributes.criterion.name"),
+          minSize: 150,
+        }),
+        columnHelper.accessor("graders", {
+          header: I18n.t("activerecord.models.ta.other"),
+          cell: ({getValue, row}) => {
+            return getValue().map(ta_data => (
               <div key={`${row.original._id}-${ta_data.grader}`}>
                 {ta_data.hidden
                   ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
@@ -821,40 +818,67 @@ class RawCriteriaTable extends React.Component {
               </div>
             ));
           },
-          filterable: false,
-          minWidth: 70,
-        },
-        {
-          Header: I18n.t("graders.coverage"),
-          accessor: "coverage",
-          Cell: ({value}) => (
+          enableColumnFilter: false,
+          minSize: 70,
+        }),
+        columnHelper.accessor("coverage", {
+          header: I18n.t("graders.coverage"),
+          cell: ({getValue}) => (
             <span>
-              {value}/{this.props.numGroups}
+              {getValue()}/{this.props.numGroups}
             </span>
           ),
-          minWidth: 70,
-          className: "number",
-          filterable: false,
-        },
+          minSize: 70,
+          enableColumnFilter: false,
+          meta: {
+            className: "number",
+          },
+        }),
       ],
+      rowSelection: {},
     };
   }
+
+  resetSelection = () => {
+    this.setState({rowSelection: {}});
+  };
+
+  getSelectedRows = () => {
+    return Object.keys(this.state.rowSelection).map(id => Number(id));
+  };
 
   render() {
     if (this.props.display) {
       return (
-        <CheckboxTable
-          ref={r => (this.checkboxTable = r)}
+        <Table
+          loading={this.props.loading}
           data={this.props.criteria}
           columns={this.state.columns}
-          defaultSorted={[
-            {
-              id: "_id",
+          initialState={{
+            sorting: [{id: "_id"}],
+            columnVisibility: {
+              _id: false,
             },
-          ]}
-          loading={this.props.loading}
-          filterable
-          {...this.props.getCheckboxProps()}
+          }}
+          columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              let newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
+          enableRowSelection={true}
+          rowSelection={this.state.rowSelection}
+          onRowSelectionChange={updater => {
+            this.setState(prevState => ({
+              rowSelection:
+                typeof updater === "function" ? updater(prevState.rowSelection) : updater,
+            }));
+          }}
+          getRowId={row => row._id}
         />
       );
     } else {
@@ -862,8 +886,6 @@ class RawCriteriaTable extends React.Component {
     }
   }
 }
-
-const CriteriaTable = withSelection(RawCriteriaTable);
 
 class GradersActionBox extends React.Component {
   render = () => {
