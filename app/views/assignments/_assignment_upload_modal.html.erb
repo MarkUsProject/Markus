@@ -4,12 +4,6 @@
 
 <%= content_for :modal_content do %>
 
-  <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script',
-                             upload_id: 'upload_file',
-                             button_id: 'submit_upload', nonce: true %>
-
   <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: Assignment.name.pluralize.underscore.dasherize) %>
 
   <%= form_tag upload_assignments_course_path(@current_course),
@@ -23,7 +17,6 @@
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),
-                     disabled: true,
                      data: { disable_with: t(:uploading_please_wait) },
                      id: 'submit_upload' %>
       <input type='reset' value='<%= t(:cancel) %>'>

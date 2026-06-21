@@ -74,6 +74,15 @@ en:
   preview: Preview
   refresh: Refresh
   remove: Remove
+  repo:
+    assignment_dir_creation_error: Unable to create a directory for %{short_identifier}. Please retry this action.
+    commits:
+      assignment_folder: Create assignment folder for %{assignment}
+      default: Update files
+      initial: Initial commit
+      max_file_size: Update the maximum file size
+      required_files: Update the list of required files for assignment %{assignment}
+    timeout: Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.
   save: Save
   search: Search
   select_filename: Select Filename
