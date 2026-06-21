@@ -7,14 +7,15 @@ jest.mock("../Result/annotation_panel", () => ({AnnotationPanel: () => <div />})
 jest.mock("../Result/feedback_file_panel", () => ({FeedbackFilePanel: () => <div />}));
 jest.mock("../Result/remark_panel", () => ({RemarkPanel: () => <div />}));
 jest.mock("../test_run_table", () => ({TestRunTable: () => <div />}));
-jest.mock("../Result/submission_file_panel", () => ({
-  SubmissionFilePanel: class extends React.Component {
-    selectFile = jest.fn();
-    render() {
-      return <div />;
-    }
-  },
-}));
+jest.mock("../Result/submission_file_panel", () => {
+  const React = require("react");
+  const MockSubmissionFilePanel = React.forwardRef((props, ref) => {
+    React.useImperativeHandle(ref, () => ({selectFile: jest.fn()}));
+    return null;
+  });
+  MockSubmissionFilePanel.displayName = "MockSubmissionFilePanel";
+  return {SubmissionFilePanel: MockSubmissionFilePanel};
+});
 
 const flatFileData = {
   files: [
