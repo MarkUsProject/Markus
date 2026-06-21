@@ -687,7 +687,7 @@ class GroupsTable extends React.Component {
           }
           return caseSensitiveIncludes(
             row.original[columnId],
-            filterValue.filterValue,
+            filterValue.value,
             filterValue.caseSensitive
           );
         },

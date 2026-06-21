@@ -10,11 +10,11 @@ export default function CaseSensitiveSearchFilter({column, filterValue}) {
         placeholder={defaultSearchPlaceholderText()}
         type="text"
         style={{flex: 1, minWidth: 0}}
-        value={filterValue?.filterValue ?? ""}
+        value={filterValue?.value ?? ""}
         aria-label={`${I18n.t("search")} ${column.columnDef.header || ""}`}
         onChange={event => {
           column.setFilterValue({
-            filterValue: event.target.value,
+            value: event.target.value,
             caseSensitive: filterValue?.caseSensitive ?? false,
           });
         }}
@@ -28,7 +28,7 @@ export default function CaseSensitiveSearchFilter({column, filterValue}) {
           checked={caseSensitive}
           onChange={event => {
             column.setFilterValue({
-              filterValue: filterValue?.filterValue ?? "",
+              value: filterValue?.value ?? "",
               caseSensitive: event.target.checked,
             });
           }}
