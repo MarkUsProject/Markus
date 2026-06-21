@@ -8,11 +8,13 @@
 
 ### ✨ New features and improvements
 - Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
+- Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET and PATCH /overall_comment API routes (#7963)
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+- Add pagination to Admin Users table for performance (#7997)
 
 ### 🐛 Bug fixes
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
@@ -22,6 +24,10 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
+- Upgraded to Rails v8.1.3 (#8015)
+- Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
+- Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
 - Added release automation scripts (#7914)
 - Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
 - Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)

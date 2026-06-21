@@ -1,5 +1,6 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
+import {Group, Panel, Separator} from "react-resizable-panels";
 
 // TODO: This import seems to be required to automatically include the X-CSRF-TOKEN header on
 //   jQuery AJAX requests in this component, unlike all other pages. Requires further investigation.
@@ -72,14 +73,26 @@ class Result extends React.Component {
     this.leftPane = React.createRef();
   }
 
+  refreshPdfViewer = () => {
+    if (window.pdfViewer) {
+      window.pdfViewer.refresh_annotations();
+    }
+  };
+
+  handleFullscreenChange = () => {
+    this.setState({fullscreen: !!document.fullscreenElement}, this.refreshPdfViewer);
+  };
+
   componentDidMount() {
     this.fetchData();
     window.modal = new ModalMarkus("#annotation_dialog");
     window.modalNotesGroup = new ModalMarkus("#notes_dialog");
 
-    document.addEventListener("fullscreenchange", () => {
-      this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
-    });
+    if (!this.layoutListenersAdded) {
+      document.addEventListener("fullscreenchange", this.handleFullscreenChange);
+      window.addEventListener("resize", this.refreshPdfViewer);
+      this.layoutListenersAdded = true;
+    }
 
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
@@ -94,6 +107,13 @@ class Result extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.result_id !== prevState.result_id) {
       this.componentDidMount();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.layoutListenersAdded) {
+      document.removeEventListener("fullscreenchange", this.handleFullscreenChange);
+      window.removeEventListener("resize", this.refreshPdfViewer);
     }
   }
 
@@ -112,8 +132,6 @@ class Result extends React.Component {
         }
         const markData = this.processMarks(res);
         this.setState({...res, ...markData, loading: false}, () => {
-          initializePanes();
-          fix_panes();
           this.updateContextMenu();
           if (this.props.role !== "Student") {
             this.syncFilterData();
@@ -1007,8 +1025,8 @@ class Result extends React.Component {
               isOpen={this.state.isCreateTagModalOpen}
               onRequestClose={this.closeCreateTagModal}
             />
-            <div id="panes">
-              <div id="left-pane">
+            <Group id="panes" orientation="horizontal" onLayoutChange={this.refreshPdfViewer}>
+              <Panel id="left-pane" className="result-pane" defaultSize="70%" minSize="25%">
                 <LeftPane
                   ref={this.leftPane}
                   loading={this.state.loading}
@@ -1042,9 +1060,9 @@ class Result extends React.Component {
                   destroyAnnotation={this.destroyAnnotation}
                   rmd_convert_enabled={this.props.rmd_convert_enabled}
                 />
-              </div>
-              <div id="drag" />
-              <div id="right-pane">
+              </Panel>
+              <Separator id="drag" disableDoubleClick />
+              <Panel id="right-pane" className="result-pane" defaultSize="30%" minSize="25%">
                 <RightPane
                   members={this.state.members || []}
                   annotations={this.state.annotations}
@@ -1078,8 +1096,8 @@ class Result extends React.Component {
                   newNote={this.newNote}
                   findDeductiveAnnotation={this.findDeductiveAnnotation}
                 />
-              </div>
-            </div>
+              </Panel>
+            </Group>
           </div>
         </ResultContext.Provider>
       </React.Fragment>

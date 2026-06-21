@@ -191,7 +191,7 @@ class GroupsController < ApplicationController
                                          'users.first_name', 'users.last_name', 'roles.hidden')
 
     names = names.map do |h|
-      inactive = h['roles.hidden'] ? I18n.t('student.inactive') : ''
+      inactive = h['roles.hidden'] ? " (#{I18n.t('activerecord.attributes.user.hidden')})" : ''
       { id: h[:id],
         id_number: h['users.id_number'],
         user_name: h['users.user_name'],
@@ -209,7 +209,7 @@ class GroupsController < ApplicationController
       if params[:s_id].present?
         student = current_course.students.find(params[:s_id])
       end
-      replace_pattern = /#{Regexp.escape(I18n.t('student.inactive'))}\s*$/
+      replace_pattern = /\s*\(#{Regexp.escape(I18n.t('activerecord.attributes.user.hidden'))}\)\s*$/
       student_name = params[:names].sub(replace_pattern, '').strip
 
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
