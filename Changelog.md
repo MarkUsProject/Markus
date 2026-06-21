@@ -23,6 +23,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)
 - Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
 - Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
