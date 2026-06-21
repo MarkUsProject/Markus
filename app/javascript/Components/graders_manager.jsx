@@ -606,7 +606,6 @@ class GroupsTable extends React.Component {
       columnFilters: [{id: "inactive", value: false}],
       columns: this.getColumns(this.props.showCoverage, this.props.showSections),
       rowSelection: {},
-      isCaseSensitive: false,
     };
   }
 
@@ -681,9 +680,6 @@ class GroupsTable extends React.Component {
         minSize: 150,
         meta: {
           filterVariant: "case-sensitive-text",
-          toggleCaseSensitivity: isSensitive => {
-            this.setState({isCaseSensitive: isSensitive});
-          },
         },
         filterFn: (row, columnId, filterValue) => {
           if (!filterValue) {
@@ -691,8 +687,8 @@ class GroupsTable extends React.Component {
           }
           return caseSensitiveIncludes(
             row.original[columnId],
-            filterValue,
-            this.state.isCaseSensitive
+            filterValue.filterValue,
+            filterValue.caseSensitive
           );
         },
         enableColumnFilter: true,

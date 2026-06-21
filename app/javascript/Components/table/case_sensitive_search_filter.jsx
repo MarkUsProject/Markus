@@ -4,16 +4,20 @@ export const defaultSearchPlaceholderText = () => I18n.t("table.search");
 
 export default function CaseSensitiveSearchFilter({column, filterValue}) {
   let caseSensitive;
-  const toggleCaseSensitivity = column.columnDef.meta.toggleCaseSensitivity;
   return (
     <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
       <input
         placeholder={defaultSearchPlaceholderText()}
         type="text"
         style={{flex: 1, minWidth: 0}}
-        value={filterValue}
+        value={filterValue?.filterValue ?? ""}
         aria-label={`${I18n.t("search")} ${column.columnDef.header || ""}`}
-        onChange={event => column.setFilterValue(event.target.value)}
+        onChange={event => {
+          column.setFilterValue({
+            filterValue: event.target.value,
+            caseSensitive: filterValue?.caseSensitive ?? false,
+          });
+        }}
       />
       <label
         title={I18n.t("table.case_sensitive_search")}
@@ -23,7 +27,10 @@ export default function CaseSensitiveSearchFilter({column, filterValue}) {
           type="checkbox"
           checked={caseSensitive}
           onChange={event => {
-            toggleCaseSensitivity(event.target.checked);
+            column.setFilterValue({
+              filterValue: filterValue?.filterValue ?? "",
+              caseSensitive: event.target.checked,
+            });
           }}
           aria-label={I18n.t("table.case_sensitive_search")}
           data-testid={`${column.columnDef.id}_case_sensitive`}
