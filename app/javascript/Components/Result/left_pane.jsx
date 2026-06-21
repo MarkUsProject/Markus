@@ -55,11 +55,24 @@ export class LeftPane extends React.Component {
     }
   }
 
+  getFileTypeById = (fileData, id) => {
+    for (const file of fileData.files) {
+      if (file[1] === id) return file[2];
+    }
+    for (const dir of Object.values(fileData.directories || {})) {
+      const type = this.getFileTypeById(dir, id);
+      if (type !== null) return type;
+    }
+    return null;
+  };
+
   // Display a given file. Used to changes files from the annotations panel.
   selectFile = (file, submission_file_id, focus_line, annotation_focus) => {
+    const type = this.getFileTypeById(this.props.submission_files, submission_file_id);
     this.submissionFilePanel.current.selectFile(
       file,
       submission_file_id,
+      type,
       focus_line,
       annotation_focus
     );
