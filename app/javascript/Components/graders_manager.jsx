@@ -5,7 +5,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
-import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import {caseSensitiveIncludes} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
@@ -756,6 +755,7 @@ class GroupsTable extends React.Component {
           sorting: [{id: "group_name"}],
           columnVisibility: {
             _id: false,
+            inactive: false,
           },
         }}
         columnFilters={this.state.columnFilters}

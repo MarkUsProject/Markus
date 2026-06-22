@@ -7,7 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable`(#8014)
+- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
