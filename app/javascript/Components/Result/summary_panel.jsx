@@ -1,10 +1,11 @@
 import React from "react";
 import Modal from "react-modal";
-import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "../Helpers/chart_helpers";
 import {ResultContext} from "./result_context";
+import {createColumnHelper} from "@tanstack/react-table";
+import Table from "../table/table";
 
 export class SummaryPanel extends React.Component {
   static contextType = ResultContext;
@@ -95,31 +96,51 @@ export class SummaryPanel extends React.Component {
     this.setState({showMarksChart: false});
   };
 
-  criterionColumns = remark_submitted => [
-    {
-      Header: I18n.t("activerecord.models.criterion.one"),
-      accessor: "criterion",
-      classes: ["left"],
-    },
-    {
-      Header: "Old Mark",
-      accessor: "old_mark.mark",
-      className: "number",
-      show: remark_submitted,
-    },
-    {
-      Header: I18n.t("activerecord.models.mark.one"),
-      id: "mark",
-      className: "number",
-      Cell: row => {
-        let mark = row.original.mark;
-        if (mark === undefined || mark === null) {
-          mark = "-";
-        }
-        return `${mark} / ${row.original.max_mark}`;
-      },
-    },
-  ];
+  columnHelper = createColumnHelper();
+
+  criterionColumns = remark_submitted => {
+    let columns = [
+      this.columnHelper.accessor("criterion", {
+        header: I18n.t("activerecord.models.criterion.one"),
+        meta: {
+          className: "left",
+        },
+        enableColumnFilter: false,
+      }),
+    ];
+
+    if (remark_submitted) {
+      columns.push(
+        this.columnHelper.accessor("old_mark.mark", {
+          header: "Old Mark",
+          meta: {
+            className: "number",
+          },
+          enableColumnFilter: false,
+        })
+      );
+    }
+
+    columns.push(
+      this.columnHelper.display({
+        header: I18n.t("activerecord.models.mark.one"),
+        id: "mark",
+        meta: {
+          className: "number",
+        },
+        cell: info => {
+          let mark = info.row.original.mark;
+          if (mark === undefined || mark === null) {
+            mark = "-";
+          }
+          return `${mark} / ${info.row.original.max_mark}`;
+        },
+        enableColumnFilter: false,
+      })
+    );
+
+    return columns;
+  };
 
   renderTotalMark = () => {
     const assignment_total = Math.round(this.props.assignment_max_mark * 100) / 100;
@@ -252,7 +273,7 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <h4>{I18n.t("activerecord.models.extra_mark.other")}</h4>
-        {data.length > 0 && <ReactTable columns={this.state.extraMarksColumns} data={data} />}
+        {data.length > 0 && <Table columns={this.state.extraMarksColumns} data={data} />}
         {!this.props.released_to_students && (
           <p>
             <button className="inline-button" onClick={this.newExtraMark}>
@@ -341,7 +362,7 @@ export class SummaryPanel extends React.Component {
             height={500}
           />
         </Modal>
-        <ReactTable
+        <Table
           columns={this.state.criterionColumns}
           data={this.props.criterionSummaryData}
           className="auto-overflow"
