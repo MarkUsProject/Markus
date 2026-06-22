@@ -176,63 +176,74 @@ export class SummaryPanel extends React.Component {
     );
   };
 
-  extraMarksColumns = released_to_students => [
-    {
-      Header: I18n.t("activerecord.attributes.extra_mark.description"),
-      accessor: "description",
-      minWidth: 150,
-      Cell: row => {
-        if (row.original._new) {
-          return <input type={"text"} defaultValue="" style={{width: "100%"}} />;
-        } else {
-          return row.value;
-        }
-      },
-    },
-    {
-      Header: I18n.t("activerecord.attributes.extra_mark.extra_mark"),
-      accessor: "extra_mark",
-      minWidth: 80,
-      className: "number",
-      Cell: row => {
-        if (row.original._new) {
-          return <input type={"number"} step="any" defaultValue={0} />;
-        } else if (row.original.unit === "points") {
-          return row.value;
-        } else if (row.original.unit === "percentage_of_mark") {
-          let mark_value = ((row.value * this.props.subtotal) / 100).toFixed(2);
-          return `${mark_value} (${row.value}%)`;
-        } else {
-          // Percentage
-          let mark_value = ((row.value * this.props.assignment_max_mark) / 100).toFixed(2);
-          return `${mark_value} (${row.value}%)`;
-        }
-      },
-    },
-    {
-      Header: "",
-      id: "action",
-      show: !released_to_students,
-      Cell: row => {
-        if (row.original._new) {
-          return (
-            <button onClick={this.createExtraMark} className="inline-button">
-              {I18n.t("save")}
-            </button>
-          );
-        } else {
-          return (
-            <button
-              onClick={() => this.props.destroyExtraMark(row.original.id)}
-              className="inline-button"
-            >
-              {I18n.t("delete")}
-            </button>
-          );
-        }
-      },
-    },
-  ];
+  extraMarksColumns = released_to_students => {
+    let columns = [
+      this.columnHelper.accessor("description", {
+        header: I18n.t("activerecord.attributes.extra_mark.description"),
+        minSize: 150,
+        cell: info => {
+          if (info.row.original._new) {
+            return <input type={"text"} defaultValue="" style={{width: "100%"}} />;
+          } else {
+            return info.getValue();
+          }
+        },
+        enableColumnFilter: false,
+      }),
+      this.columnHelper.accessor("extra_mark", {
+        header: I18n.t("activerecord.attributes.extra_mark.extra_mark"),
+        minSize: 80,
+        meta: {
+          className: "number",
+        },
+        cell: info => {
+          if (info.row.original._new) {
+            return <input type={"number"} step="any" defaultValue={0} />;
+          } else if (info.row.original.unit === "points") {
+            return info.getValue();
+          } else if (info.row.original.unit === "percentage_of_mark") {
+            let mark_value = ((info.getValue() * this.props.subtotal) / 100).toFixed(2);
+            return `${mark_value} (${info.getValue()}%)`;
+          } else {
+            // Percentage
+            let mark_value = ((info.getValue() * this.props.assignment_max_mark) / 100).toFixed(2);
+            return `${mark_value} (${info.getValue()}%)`;
+          }
+        },
+        enableColumnFilter: false,
+      }),
+    ];
+
+    if (!released_to_students) {
+      columns.push(
+        this.columnHelper.display({
+          header: "",
+          id: "action",
+          cell: info => {
+            if (info.row.original._new) {
+              return (
+                <button onClick={this.createExtraMark} className="inline-button">
+                  {I18n.t("save")}
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  onClick={() => this.props.destroyExtraMark(info.row.original.id)}
+                  className="inline-button"
+                >
+                  {I18n.t("delete")}
+                </button>
+              );
+            }
+          },
+          enableColumnFilter: false,
+        })
+      );
+    }
+
+    return columns;
+  };
 
   newExtraMark = () => {
     this.setState({showNewExtraMark: true});
