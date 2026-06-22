@@ -24,6 +24,10 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
+- Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
+- Upgraded to Rails v8.1.3 (#8015)
+- Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
 - Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
 - Added release automation scripts (#7914)
 - Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)

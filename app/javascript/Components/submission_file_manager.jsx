@@ -339,8 +339,10 @@ class SubmissionFileManager extends React.Component {
           <h2>{I18n.t("activerecord.attributes.assignment.assignment_files")}</h2>
           <p>
             {this.state.numberOfMissingFiles === 0
-              ? I18n.t("student.submission.all_files_submitted")
-              : I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})}
+              ? I18n.t("submissions.student.all_files_submitted")
+              : I18n.t("submissions.student.missing_files", {
+                  file: this.state.numberOfMissingFiles,
+                })}
           </p>
           {this.state.requiredFiles.map(filename => {
             return (

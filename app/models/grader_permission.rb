@@ -12,7 +12,7 @@
 #
 # Indexes
 #
-#  index_grader_permissions_on_role_id  (role_id)
+#  index_grader_permissions_on_role_id  (role_id) UNIQUE
 #
 # Foreign Keys
 #
