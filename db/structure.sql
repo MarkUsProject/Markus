@@ -3248,10 +3248,10 @@ CREATE UNIQUE INDEX groupings_u1 ON public.groupings USING btree (assessment_id,
 
 
 --
--- Name: index_annotation_categories_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_annotation_categories_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_annotation_categories_on_assessment_id ON public.annotation_categories USING btree (assessment_id);
+CREATE UNIQUE INDEX index_annotation_categories_on_assessment_id_and_name ON public.annotation_categories USING btree (assessment_id, annotation_category_name);
 
 
 --
@@ -3290,6 +3290,13 @@ CREATE INDEX index_assessments_on_course_id ON public.assessments USING btree (c
 
 
 --
+-- Name: index_assessments_on_parent_assessment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_assessments_on_parent_assessment_id ON public.assessments USING btree (parent_assessment_id);
+
+
+--
 -- Name: index_assessments_on_short_identifier_and_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3301,13 +3308,6 @@ CREATE UNIQUE INDEX index_assessments_on_short_identifier_and_course_id ON publi
 --
 
 CREATE INDEX index_assessments_on_type_and_short_identifier ON public.assessments USING btree (type, short_identifier);
-
-
---
--- Name: index_assignment_files_on_assessment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_assignment_files_on_assessment_id ON public.assignment_files USING btree (assessment_id);
 
 
 --
@@ -3346,10 +3346,10 @@ CREATE UNIQUE INDEX index_courses_on_name ON public.courses USING btree (name);
 
 
 --
--- Name: index_criteria_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_criteria_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_criteria_on_assessment_id ON public.criteria USING btree (assessment_id);
+CREATE UNIQUE INDEX index_criteria_on_assessment_id_and_name ON public.criteria USING btree (assessment_id, name);
 
 
 --
@@ -3367,10 +3367,10 @@ CREATE INDEX index_criterion_ta_associations_on_ta_id ON public.criterion_ta_ass
 
 
 --
--- Name: index_exam_templates_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_exam_templates_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_exam_templates_on_assessment_id ON public.exam_templates USING btree (assessment_id);
+CREATE UNIQUE INDEX index_exam_templates_on_assessment_id_and_name ON public.exam_templates USING btree (assessment_id, name);
 
 
 --
@@ -3433,7 +3433,7 @@ CREATE UNIQUE INDEX index_grade_entry_students_tas ON public.grade_entry_student
 -- Name: index_grader_permissions_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_grader_permissions_on_role_id ON public.grader_permissions USING btree (role_id);
+CREATE UNIQUE INDEX index_grader_permissions_on_role_id ON public.grader_permissions USING btree (role_id);
 
 
 --
@@ -3451,10 +3451,10 @@ CREATE INDEX index_grades_on_last_updated_by_id ON public.grades USING btree (la
 
 
 --
--- Name: index_grouping_starter_file_entries_on_grouping_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_grouping_starter_file_entries_on_grouping_and_entry; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_grouping_starter_file_entries_on_grouping_id ON public.grouping_starter_file_entries USING btree (grouping_id);
+CREATE UNIQUE INDEX index_grouping_starter_file_entries_on_grouping_and_entry ON public.grouping_starter_file_entries USING btree (grouping_id, starter_file_entry_id);
 
 
 --
@@ -3507,6 +3507,13 @@ CREATE INDEX index_lti_clients_on_course_id ON public.lti_clients USING btree (c
 
 
 --
+-- Name: index_lti_clients_on_host_and_client_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_lti_clients_on_host_and_client_id ON public.lti_clients USING btree (host, client_id);
+
+
+--
 -- Name: index_lti_deployments_on_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3514,10 +3521,10 @@ CREATE INDEX index_lti_deployments_on_course_id ON public.lti_deployments USING 
 
 
 --
--- Name: index_lti_deployments_on_lti_client_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_lti_deployments_on_lti_client_id_and_lms_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_lti_deployments_on_lti_client_id ON public.lti_deployments USING btree (lti_client_id);
+CREATE UNIQUE INDEX index_lti_deployments_on_lti_client_id_and_lms_course_id ON public.lti_deployments USING btree (lti_client_id, lms_course_id);
 
 
 --
@@ -3528,24 +3535,10 @@ CREATE INDEX index_lti_line_items_on_assessment_id ON public.lti_line_items USIN
 
 
 --
--- Name: index_lti_line_items_on_lti_deployment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_lti_line_items_on_lti_deployment_id ON public.lti_line_items USING btree (lti_deployment_id);
-
-
---
 -- Name: index_lti_line_items_on_lti_deployment_id_and_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_lti_line_items_on_lti_deployment_id_and_assessment_id ON public.lti_line_items USING btree (lti_deployment_id, assessment_id);
-
-
---
--- Name: index_lti_services_on_lti_deployment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_lti_services_on_lti_deployment_id ON public.lti_services USING btree (lti_deployment_id);
 
 
 --
@@ -3556,17 +3549,10 @@ CREATE UNIQUE INDEX index_lti_services_on_lti_deployment_id_and_service_type ON 
 
 
 --
--- Name: index_lti_users_on_lti_client_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_lti_users_on_lti_client_id_and_lti_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_lti_users_on_lti_client_id ON public.lti_users USING btree (lti_client_id);
-
-
---
--- Name: index_lti_users_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_lti_users_on_user_id ON public.lti_users USING btree (user_id);
+CREATE UNIQUE INDEX index_lti_users_on_lti_client_id_and_lti_user_id ON public.lti_users USING btree (lti_client_id, lti_user_id);
 
 
 --
@@ -3574,13 +3560,6 @@ CREATE INDEX index_lti_users_on_user_id ON public.lti_users USING btree (user_id
 --
 
 CREATE UNIQUE INDEX index_lti_users_on_user_id_and_lti_client_id ON public.lti_users USING btree (user_id, lti_client_id);
-
-
---
--- Name: index_marking_schemes_on_course_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_marking_schemes_on_course_id ON public.marking_schemes USING btree (course_id);
 
 
 --
@@ -3612,10 +3591,10 @@ CREATE INDEX index_marks_on_last_updated_by_id ON public.marks USING btree (last
 
 
 --
--- Name: index_marks_on_result_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_marks_on_result_id_and_criterion_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_marks_on_result_id ON public.marks USING btree (result_id);
+CREATE UNIQUE INDEX index_marks_on_result_id_and_criterion_id ON public.marks USING btree (result_id, criterion_id);
 
 
 --
@@ -3630,13 +3609,6 @@ CREATE INDEX index_memberships_on_role_id ON public.memberships USING btree (rol
 --
 
 CREATE INDEX index_notes_on_creator_id ON public.notes USING btree (creator_id);
-
-
---
--- Name: index_peer_reviews_on_result_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_peer_reviews_on_result_id ON public.peer_reviews USING btree (result_id);
 
 
 --
@@ -3686,13 +3658,6 @@ CREATE INDEX index_roles_on_course_id ON public.roles USING btree (course_id);
 --
 
 CREATE INDEX index_roles_on_section_id ON public.roles USING btree (section_id);
-
-
---
--- Name: index_roles_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_roles_on_user_id ON public.roles USING btree (user_id);
 
 
 --
@@ -3780,10 +3745,10 @@ CREATE INDEX index_starter_file_entries_on_starter_file_group_id ON public.start
 
 
 --
--- Name: index_starter_file_groups_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_starter_file_groups_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_starter_file_groups_on_assessment_id ON public.starter_file_groups USING btree (assessment_id);
+CREATE UNIQUE INDEX index_starter_file_groups_on_assessment_id_and_name ON public.starter_file_groups USING btree (assessment_id, name);
 
 
 --
@@ -3804,7 +3769,7 @@ CREATE INDEX index_submission_files_on_submission_id ON public.submission_files 
 -- Name: index_submission_rules_on_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_submission_rules_on_assessment_id ON public.submission_rules USING btree (assessment_id);
+CREATE UNIQUE INDEX index_submission_rules_on_assessment_id ON public.submission_rules USING btree (assessment_id);
 
 
 --
@@ -3829,10 +3794,10 @@ CREATE INDEX index_tags_on_role_id ON public.tags USING btree (role_id);
 
 
 --
--- Name: index_template_divisions_on_exam_template_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_template_divisions_on_exam_template_id_and_label; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_template_divisions_on_exam_template_id ON public.template_divisions USING btree (exam_template_id);
+CREATE UNIQUE INDEX index_template_divisions_on_exam_template_id_and_label ON public.template_divisions USING btree (exam_template_id, label);
 
 
 --
@@ -3871,10 +3836,10 @@ CREATE INDEX index_test_groups_on_criterion_id ON public.test_groups USING btree
 
 
 --
--- Name: index_test_results_on_test_group_result_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_test_results_on_test_group_result_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_test_results_on_test_group_result_id ON public.test_results USING btree (test_group_result_id);
+CREATE UNIQUE INDEX index_test_results_on_test_group_result_id_and_name ON public.test_results USING btree (test_group_result_id, name);
 
 
 --
@@ -3910,6 +3875,20 @@ CREATE INDEX index_test_runs_on_test_batch_id ON public.test_runs USING btree (t
 --
 
 CREATE UNIQUE INDEX index_users_on_api_key ON public.users USING btree (api_key);
+
+
+--
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
+
+
+--
+-- Name: index_users_on_id_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_id_number ON public.users USING btree (id_number);
 
 
 --
@@ -4454,6 +4433,8 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260621000001'),
+('20260621000000'),
 ('20260530200000'),
 ('20260526021351'),
 ('20260415150142'),

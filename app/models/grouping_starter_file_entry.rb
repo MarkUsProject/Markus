@@ -11,7 +11,7 @@
 #
 # Indexes
 #
-#  index_grouping_starter_file_entries_on_grouping_id            (grouping_id)
+#  index_grouping_starter_file_entries_on_grouping_and_entry     (grouping_id,starter_file_entry_id) UNIQUE
 #  index_grouping_starter_file_entries_on_starter_file_entry_id  (starter_file_entry_id)
 #
 # Foreign Keys
