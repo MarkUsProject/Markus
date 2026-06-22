@@ -922,6 +922,20 @@ describe Api::GroupsController do
           expect(response).to have_http_status :unprocessable_content
           expect(submission.current_result.annotations).to be_empty
         end
+
+        it 'rolls back categories created earlier in the batch when a later annotation is invalid' do
+          annotation_data = [
+            { type: 'TextAnnotation', filename: submission_file.filename, content: 'ok',
+              annotation_category_name: 'New Category',
+              line_start: 1, line_end: 1, column_start: 0, column_end: 5 },
+            { type: 'TextAnnotation', filename: pdf_file.filename, content: 'bad', # mismatched type/file
+              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }
+          ]
+
+          expect { post_annotations(annotation_data) }.not_to(change { assignment.annotation_categories.count })
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
       end
     end
 

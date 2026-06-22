@@ -336,21 +336,21 @@ describe SubmissionFile do
     end
   end
 
-  describe '#annotation_type' do
+  describe '#annotation_class' do
     it 'returns ImageAnnotation for an image file' do
-      expect(build(:image_submission_file).annotation_type).to eq('ImageAnnotation')
+      expect(build(:image_submission_file).annotation_class).to eq(ImageAnnotation)
     end
 
     it 'returns PdfAnnotation for a pdf file' do
-      expect(build(:pdf_submission_file).annotation_type).to eq('PdfAnnotation')
+      expect(build(:pdf_submission_file).annotation_class).to eq(PdfAnnotation)
     end
 
     it 'returns HtmlAnnotation for a notebook file' do
-      expect(build(:notebook_submission_file).annotation_type).to eq('HtmlAnnotation')
+      expect(build(:notebook_submission_file).annotation_class).to eq(HtmlAnnotation)
     end
 
     it 'returns TextAnnotation for a plaintext file' do
-      expect(build(:submission_file, filename: 'foo.py').annotation_type).to eq('TextAnnotation')
+      expect(build(:submission_file, filename: 'foo.py').annotation_class).to eq(TextAnnotation)
     end
 
     context 'for an RMarkdown file' do
@@ -358,12 +358,12 @@ describe SubmissionFile do
 
       it 'returns HtmlAnnotation when rmd_convert_enabled is true' do
         allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(true)
-        expect(rmd_file.annotation_type).to eq('HtmlAnnotation')
+        expect(rmd_file.annotation_class).to eq(HtmlAnnotation)
       end
 
       it 'returns TextAnnotation when rmd_convert_enabled is false' do
         allow(Rails.application.config).to receive(:rmd_convert_enabled).and_return(false)
-        expect(rmd_file.annotation_type).to eq('TextAnnotation')
+        expect(rmd_file.annotation_class).to eq(TextAnnotation)
       end
     end
   end

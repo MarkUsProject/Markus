@@ -5,17 +5,6 @@ module Api
     # Define default fields to display for index and show methods
     DEFAULT_FIELDS = [:id, :group_name].freeze
 
-    # The annotation types accepted by add_annotations (single-table-inheritance class names,
-    # matching the values reported by the annotations endpoint), mapped to the fields that must
-    # be present for each. Mirrors each subclass's model validations, enforced in add_annotations
-    # because insert_all bypasses them.
-    REQUIRED_ANNOTATION_FIELDS = {
-      'TextAnnotation' => %i[line_start line_end column_start column_end],
-      'ImageAnnotation' => %i[x1 y1 x2 y2],
-      'PdfAnnotation' => %i[x1 y1 x2 y2 page],
-      'HtmlAnnotation' => %i[start_node start_offset end_node end_offset]
-    }.freeze
-
     # Create an assignment's group
     # Requires: assignment_id
     # Optional: filter, fields
@@ -252,90 +241,86 @@ module Api
       annots = annotations_params
       submission_files = result.submission.submission_files.index_by(&:filename)
 
-      # Validation pass: insert_all bypasses model validations, so guard the input here
-      # before writing anything to the database. The annotation type is derived from the
-      # file; a caller-supplied type is optional but must agree with it.
-      annots.each do |annot_params|
-        submission_file = submission_files[annot_params[:filename]]
-        if submission_file.nil?
-          return add_annotations_error("Submission file not found: #{annot_params[:filename]}")
-        end
-
-        expected_type = submission_file.annotation_type
-
-        requested = annot_params[:type].presence
-        if requested
-          unless REQUIRED_ANNOTATION_FIELDS.key?(requested)
-            return add_annotations_error("Invalid annotation type: #{requested}")
-          end
-          if requested != expected_type
-            return add_annotations_error(
-              "Annotation type '#{requested}' does not match the type of file '#{annot_params[:filename]}'"
-            )
-          end
-        end
-
-        missing = REQUIRED_ANNOTATION_FIELDS[expected_type].select { |field| annot_params[field].blank? }
-        next if missing.empty?
-
-        return add_annotations_error(
-          "Missing required fields for #{expected_type}: #{missing.join(', ')}"
-        )
-      end
-
       annotation_texts = []
       annotations = []
       count = result.submission.annotations.count + 1
       annotation_category = nil
-      annots.each_with_index do |annot_params, i|
-        if annot_params[:annotation_category_name].nil?
-          annotation_category_id = nil
-        else
-          name = annot_params[:annotation_category_name]
-          if annotation_category.nil? || annotation_category.annotation_category_name != name
-            annotation_category = assignment.annotation_categories.find_or_create_by(
-              annotation_category_name: name
-            )
+      error_message = nil
+
+      ActiveRecord::Base.transaction do
+        annots.each_with_index do |annot_params, i|
+          submission_file = submission_files[annot_params[:filename]]
+          if submission_file.nil?
+            error_message = "Submission file not found: #{annot_params[:filename]}"
+            raise ActiveRecord::Rollback
           end
-          annotation_category_id = annotation_category.id
+
+          expected_class = submission_file.annotation_class
+          requested = annot_params[:type].presence
+          if requested && requested != expected_class.name
+            error_message = "Annotation type '#{requested}' does not match the type " \
+                            "of file '#{annot_params[:filename]}'"
+            raise ActiveRecord::Rollback
+          end
+
+          missing = expected_class.required_fields.select { |field| annot_params[field].blank? }
+          if missing.any?
+            error_message = "Missing required fields for #{expected_class.name}: #{missing.join(', ')}"
+            raise ActiveRecord::Rollback
+          end
+
+          if annot_params[:annotation_category_name].nil?
+            annotation_category_id = nil
+          else
+            name = annot_params[:annotation_category_name]
+            if annotation_category.nil? || annotation_category.annotation_category_name != name
+              annotation_category = assignment.annotation_categories.find_or_create_by(
+                annotation_category_name: name
+              )
+            end
+            annotation_category_id = annotation_category.id
+          end
+
+          annotation_texts << {
+            content: annot_params[:content],
+            annotation_category_id: annotation_category_id,
+            creator_id: current_role.id,
+            last_editor_id: current_role.id
+          }
+          annotations << {
+            type: expected_class.name,
+            line_start: annot_params[:line_start],
+            line_end: annot_params[:line_end],
+            column_start: annot_params[:column_start],
+            column_end: annot_params[:column_end],
+            x1: annot_params[:x1],
+            y1: annot_params[:y1],
+            x2: annot_params[:x2],
+            y2: annot_params[:y2],
+            page: annot_params[:page],
+            start_node: annot_params[:start_node],
+            start_offset: annot_params[:start_offset],
+            end_node: annot_params[:end_node],
+            end_offset: annot_params[:end_offset],
+            annotation_text_id: nil,
+            submission_file_id: submission_file.id,
+            creator_id: current_role.id,
+            creator_type: current_role.type,
+            is_remark: !result.remark_request_submitted_at.nil?,
+            annotation_number: count + i,
+            result_id: result.id
+          }
         end
 
-        submission_file = submission_files[annot_params[:filename]]
-        annotation_texts << {
-          content: annot_params[:content],
-          annotation_category_id: annotation_category_id,
-          creator_id: current_role.id,
-          last_editor_id: current_role.id
-        }
-        annotations << {
-          type: submission_file.annotation_type,
-          line_start: annot_params[:line_start],
-          line_end: annot_params[:line_end],
-          column_start: annot_params[:column_start],
-          column_end: annot_params[:column_end],
-          x1: annot_params[:x1],
-          y1: annot_params[:y1],
-          x2: annot_params[:x2],
-          y2: annot_params[:y2],
-          page: annot_params[:page],
-          start_node: annot_params[:start_node],
-          start_offset: annot_params[:start_offset],
-          end_node: annot_params[:end_node],
-          end_offset: annot_params[:end_offset],
-          annotation_text_id: nil,
-          submission_file_id: submission_file.id,
-          creator_id: current_role.id,
-          creator_type: current_role.type,
-          is_remark: !result.remark_request_submitted_at.nil?,
-          annotation_number: count + i,
-          result_id: result.id
-        }
+        imported = AnnotationText.insert_all! annotation_texts
+        imported.rows.zip(annotations) do |t, a|
+          a[:annotation_text_id] = t[0]
+        end
+        Annotation.insert_all! annotations
       end
-      imported = AnnotationText.insert_all! annotation_texts
-      imported.rows.zip(annotations) do |t, a|
-        a[:annotation_text_id] = t[0]
-      end
-      Annotation.insert_all! annotations
+
+      return add_annotations_error(error_message) if error_message
+
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
