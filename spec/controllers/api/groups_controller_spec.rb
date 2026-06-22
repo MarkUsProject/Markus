@@ -891,6 +891,14 @@ describe Api::GroupsController do
       end
 
       context 'with invalid input' do
+        it 'raises ParameterMissing when the annotations key is absent' do
+          request.env['HTTP_ACCEPT'] = response_type
+          expect do
+            post :add_annotations, params: { assignment_id: assignment.id, id: grouping.group_id,
+                                             course_id: course.id }
+          end.to raise_error(ActionController::ParameterMissing)
+        end
+
         it 'returns 422 when the asserted type does not match the file' do
           post_annotations([{ type: 'TextAnnotation', filename: pdf_file.filename, content: 'c',
                               line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
@@ -918,6 +926,15 @@ describe Api::GroupsController do
         it 'returns 422 when a required field is missing for the derived type' do
           post_annotations([{ filename: pdf_file.filename, content: 'c',
                               x1: 1, y1: 2, x2: 3, y2: 4 }]) # missing page
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 when fields belonging to a different type are included' do
+          post_annotations([{ filename: pdf_file.filename, content: 'c',
+                              x1: 1, y1: 2, x2: 3, y2: 4, page: 1,
+                              line_start: 5 }]) # line_start belongs to a TextAnnotation
 
           expect(response).to have_http_status :unprocessable_content
           expect(submission.current_result.annotations).to be_empty

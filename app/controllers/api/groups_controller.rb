@@ -256,6 +256,7 @@ module Api
           end
 
           expected_class = submission_file.annotation_class
+          required = expected_class.required_fields
           requested = annot_params[:type].presence
           if requested && requested != expected_class.name
             error_message = "Annotation type '#{requested}' does not match the type " \
@@ -263,9 +264,15 @@ module Api
             raise ActiveRecord::Rollback
           end
 
-          missing = expected_class.required_fields.select { |field| annot_params[field].blank? }
+          missing = required.select { |field| annot_params[field].blank? }
           if missing.any?
             error_message = "Missing required fields for #{expected_class.name}: #{missing.join(', ')}"
+            raise ActiveRecord::Rollback
+          end
+
+          extra = (Annotation.location_fields - required).select { |field| annot_params[field].present? }
+          if extra.any?
+            error_message = "Unexpected fields for #{expected_class.name}: #{extra.join(', ')}"
             raise ActiveRecord::Rollback
           end
 
@@ -289,19 +296,7 @@ module Api
           }
           annotations << {
             type: expected_class.name,
-            line_start: annot_params[:line_start],
-            line_end: annot_params[:line_end],
-            column_start: annot_params[:column_start],
-            column_end: annot_params[:column_end],
-            x1: annot_params[:x1],
-            y1: annot_params[:y1],
-            x2: annot_params[:x2],
-            y2: annot_params[:y2],
-            page: annot_params[:page],
-            start_node: annot_params[:start_node],
-            start_offset: annot_params[:start_offset],
-            end_node: annot_params[:end_node],
-            end_offset: annot_params[:end_offset],
+            **annot_params.slice(*required).to_h.symbolize_keys,
             annotation_text_id: nil,
             submission_file_id: submission_file.id,
             creator_id: current_role.id,
@@ -316,7 +311,11 @@ module Api
         imported.rows.zip(annotations) do |t, a|
           a[:annotation_text_id] = t[0]
         end
-        Annotation.insert_all! annotations
+        # Each annotation type has a different set of location columns, and insert_all! requires
+        # uniform keys, so insert one type at a time.
+        annotations.group_by { |annotation| annotation[:type] }.each_value do |rows|
+          Annotation.insert_all!(rows)
+        end
       end
 
       return add_annotations_error(error_message) if error_message
@@ -544,7 +543,7 @@ module Api
     end
 
     def annotations_params
-      params.permit(annotations: [
+      params.expect(annotations: [[
         :annotation_category_name,
         :content,
         :filename,
@@ -562,7 +561,7 @@ module Api
         :start_offset,
         :end_node,
         :end_offset
-      ])[:annotations] || []
+      ]])
     end
 
     def add_annotations_error(message)
