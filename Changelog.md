@@ -19,6 +19,7 @@
 - Added support for all annotation types for POST /add_annotations (#8007)
 
 ### 🐛 Bug fixes
+- Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
