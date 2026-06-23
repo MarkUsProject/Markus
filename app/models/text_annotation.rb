@@ -43,6 +43,10 @@ class TextAnnotation < Annotation
   validates :column_start, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :column_end, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
+  def self.required_fields
+    %i[line_start line_end column_start column_end]
+  end
+
   def get_data(include_creator: false)
     data = super
     data.merge({

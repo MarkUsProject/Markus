@@ -21,6 +21,7 @@
 # Indexes
 #
 #  index_assessments_on_course_id                       (course_id)
+#  index_assessments_on_parent_assessment_id            (parent_assessment_id) UNIQUE
 #  index_assessments_on_short_identifier_and_course_id  (short_identifier,course_id) UNIQUE
 #  index_assessments_on_type_and_short_identifier       (type,short_identifier)
 #

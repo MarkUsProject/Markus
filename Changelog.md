@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
 - Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
@@ -15,6 +16,7 @@
 - Added GET and PATCH /overall_comment API routes (#7963)
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 - Add pagination to Admin Users table for performance (#7997)
+- Added support for all annotation types for POST /add_annotations (#8007)
 
 ### 🐛 Bug fixes
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
@@ -24,6 +26,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)
 - Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)

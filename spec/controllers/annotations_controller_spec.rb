@@ -115,6 +115,17 @@ describe AnnotationsController do
         expect(response).to have_http_status(:success)
         expect(result.annotations.reload.size).to eq 1
       end
+
+      it 'raises when required annotation attributes are missing' do
+        expect do
+          post_as user,
+                  :add_existing_annotation,
+                  params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id,
+                            result_id: result.id, course_id: course.id },
+                  format: :js
+        end.to raise_error(ActiveRecord::RecordInvalid)
+        expect(result.annotations.reload).to be_empty
+      end
     end
 
     describe '#create' do

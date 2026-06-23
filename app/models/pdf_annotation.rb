@@ -43,6 +43,10 @@ class PdfAnnotation < Annotation
   validates :x1, :x2, :y1, :y2, :page, presence: true
   validates :x1, :x2, :y1, :y2, :page, numericality: true
 
+  def self.required_fields
+    %i[x1 y1 x2 y2 page]
+  end
+
   # Return a hash containing the coordinates of the rectangle containing the
   # annotation and the page.
   #

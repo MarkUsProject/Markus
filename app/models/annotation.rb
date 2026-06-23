@@ -66,6 +66,12 @@ class Annotation < ApplicationRecord
   before_destroy :check_if_released
   after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
 
+  # The union of every annotation subclass's location fields, used to detect annotation
+  # params that belong to a different type than the one being created.
+  def self.location_fields
+    [TextAnnotation, ImageAnnotation, PdfAnnotation, HtmlAnnotation].flat_map(&:required_fields).uniq
+  end
+
   def modify_mark_with_deduction
     criterion = self.annotation_text.annotation_category.flexible_criterion
     self.result.marks.find_or_create_by(criterion: criterion).update_deduction unless self.is_remark

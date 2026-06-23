@@ -12,7 +12,8 @@
 #
 # Indexes
 #
-#  index_lti_clients_on_course_id  (course_id)
+#  index_lti_clients_on_course_id           (course_id)
+#  index_lti_clients_on_host_and_client_id  (host,client_id) UNIQUE
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiClient < ApplicationRecord

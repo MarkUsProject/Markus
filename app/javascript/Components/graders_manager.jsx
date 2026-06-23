@@ -3,13 +3,9 @@ import {createRoot} from "react-dom/client";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
-import {
-  caseSensitiveStringFilterMethod,
-  caseSensitiveTextFilter,
-  selectFilter,
-  textFilter,
-} from "./Helpers/table_helpers";
+import Table from "./table/table";
+import {createColumnHelper} from "@tanstack/react-table";
+import {caseSensitiveIncludes} from "./Helpers/table_helpers";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
 
@@ -41,9 +37,9 @@ class GradersManager extends React.Component {
   }
 
   openGraderDistributionModal = () => {
-    let groups = this.groupsTable ? this.groupsTable.state.selection : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
+    let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
+    let graders = this.gradersTable ? this.gradersTable.getSelectedRows() : [];
     if (groups.length === 0 && criteria.length === 0) {
       alert(I18n.t("groups.select_a_group"));
       return;
@@ -107,9 +103,9 @@ class GradersManager extends React.Component {
   };
 
   assignAll = () => {
-    let groups = this.groupsTable ? this.groupsTable.state.selection : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
+    let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
+    let graders = this.gradersTable ? this.gradersTable.getSelectedRows() : [];
 
     if (groups.length === 0 && criteria.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -157,8 +153,8 @@ class GradersManager extends React.Component {
   };
 
   assignRandomly = weightings => {
-    let groups = this.groupsTable ? this.groupsTable.state.selection : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
+    let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
     let graders = Object.keys(weightings);
     let weights = Object.values(weightings);
 
@@ -180,9 +176,9 @@ class GradersManager extends React.Component {
   };
 
   unassignAll = () => {
-    let groups = this.groupsTable ? this.groupsTable.state.selection : [];
-    let criteria = this.criteriaTable ? this.criteriaTable.state.selection : [];
-    let graders = this.gradersTable.state.selection;
+    let groups = this.groupsTable ? this.groupsTable.getSelectedRows() : [];
+    let criteria = this.criteriaTable ? this.criteriaTable.getSelectedRows() : [];
+    let graders = this.gradersTable ? this.gradersTable.getSelectedRows() : [];
 
     if (groups.length === 0 && criteria.length === 0) {
       alert(I18n.t("groups.select_a_group"));
@@ -291,7 +287,7 @@ class GradersManager extends React.Component {
 
   getAssignedGraderObjects = () => {
     return this.state.graders.filter(grader => {
-      return this.gradersTable.state.selection.includes(grader._id);
+      return this.gradersTable.getSelectedRows().includes(grader._id);
     });
   };
 
@@ -453,203 +449,253 @@ class GradersManager extends React.Component {
   }
 }
 
-class RawGradersTable extends React.Component {
+const columnHelper = createColumnHelper();
+class GradersTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filtered: [],
+      columnFilters: [{id: "hidden", value: false}],
+      rowSelection: {},
       columns: [
-        {
-          accessor: "hidden",
+        columnHelper.accessor("hidden", {
           id: "hidden",
-          width: 0,
-          className: "rt-hidden",
-          headerClassName: "rt-hidden",
-          resizable: false,
-        },
-        {
-          show: false,
-          accessor: "_id",
+          size: 0,
+          meta: {
+            className: "rt-hidden",
+            headerClassName: "rt-hidden",
+          },
+          enableResizing: false,
+        }),
+        columnHelper.accessor("_id", {
           id: "_id",
-        },
-        {
-          Header: I18n.t("activerecord.attributes.user.user_name"),
-          accessor: "user_name",
+        }),
+        columnHelper.accessor("user_name", {
+          header: I18n.t("activerecord.attributes.user.user_name"),
           id: "user_name",
-          Cell: props =>
-            props.original.hidden
-              ? `${props.value} (${I18n.t("activerecord.attributes.user.hidden")})`
-              : props.value,
-          filterMethod: (filter, row) => {
-            if (filter.value) {
-              return `${row._original.user_name}${
-                row._original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
-              }`.includes(filter.value);
+          cell: ({getValue, row}) =>
+            row.original.hidden
+              ? `${getValue()} (${I18n.t("activerecord.attributes.user.hidden")})`
+              : getValue(),
+          filterFn: (row, columnId, filterValue) => {
+            if (filterValue) {
+              return `${row.original.user_name}${
+                row.original.hidden ? `, ${I18n.t("activerecord.attributes.user.hidden")}` : ""
+              }`.includes(filterValue);
             } else {
               return true;
             }
           },
-          sortable: true,
-          minWidth: 90,
-        },
-        {
-          Header: I18n.t("activerecord.attributes.user.full_name"),
-          accessor: "full_name",
-          id: "full_name",
-          filterable: true,
-          Filter: textFilter,
-          Cell: row => `${row.original.first_name} ${row.original.last_name}`,
-          filterMethod: (filter, row) => {
-            if (filter.value) {
-              const fullName =
-                `${row._original.first_name} ${row._original.last_name}`.toLowerCase();
-              return fullName.includes(filter.value.toLowerCase());
-            } else {
-              return true;
-            }
+          enableSorting: true,
+          minSize: 90,
+        }),
+        columnHelper.accessor(
+          row => {
+            const first_name = row.first_name;
+            const last_name = row.last_name;
+            return `${first_name} ${last_name}`;
           },
-          sortable: true,
-          minWidth: 170,
-        },
-        {
-          Header: I18n.t("activerecord.models.group.other"),
-          accessor: "groups",
-          className: "number",
-          filterable: false,
-        },
-        {
-          Header: I18n.t("activerecord.models.criterion.other"),
-          accessor: "criteria",
-          filterable: false,
-          Cell: ({value}) => {
+          {
+            header: I18n.t("activerecord.attributes.user.full_name"),
+            id: "full_name",
+            enableColumnFilter: true,
+            filterFn: (row, columnId, filterValue) => {
+              if (filterValue) {
+                const fullName =
+                  `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
+                return fullName.includes(filterValue.toLowerCase());
+              } else {
+                return true;
+              }
+            },
+            enableSorting: true,
+            minSize: 170,
+          }
+        ),
+        columnHelper.accessor("groups", {
+          header: I18n.t("activerecord.models.group.other"),
+          enableColumnFilter: false,
+          meta: {
+            className: "number",
+          },
+        }),
+        columnHelper.accessor("criteria", {
+          header: I18n.t("activerecord.models.criterion.other"),
+          enableColumnFilter: false,
+          cell: ({getValue}) => {
             if (this.props.assign_graders_to_criteria) {
               return (
                 <span>
-                  {value}/{this.props.numCriteria}
+                  {getValue()}/{this.props.numCriteria}
                 </span>
               );
             } else {
               return I18n.t("all");
             }
           },
-        },
+        }),
       ],
     };
   }
 
-  static getDerivedStateFromProps(props, state) {
-    let filtered = [];
-    for (let i = 0; i < state.filtered.length; i++) {
-      if (state.filtered[i].id !== "hidden") {
-        filtered.push(state.filtered[i]);
-      }
-    }
-    if (!props.showHidden) {
-      filtered.push({id: "hidden", value: false});
-    }
-    return {filtered};
-  }
-
-  onFilteredChange = filtered => {
-    this.setState({filtered});
+  resetSelection = () => {
+    this.setState({rowSelection: {}});
   };
+
+  getSelectedRows = () => {
+    return Object.keys(this.state.rowSelection).map(id => Number(id));
+  };
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.showHidden !== this.props.showHidden) {
+      this.setState(prevState => {
+        let newFilters = prevState.columnFilters;
+
+        if (this.props.showHidden) {
+          newFilters = newFilters.filter(f => f.id !== "hidden");
+        } else {
+          if (!newFilters.some(f => f.id === "hidden")) {
+            newFilters = [...newFilters, {id: "hidden", value: false}];
+          }
+        }
+        return {columnFilters: newFilters};
+      });
+    }
+  }
 
   render() {
     return (
-      <CheckboxTable
-        ref={r => (this.checkboxTable = r)}
+      <Table
+        loading={this.props.loading}
         data={this.props.graders}
         columns={this.state.columns}
-        defaultSorted={[
-          {
-            id: "user_name",
+        initialState={{
+          sorting: [{id: "user_name"}],
+          columnVisibility: {
+            hidden: false,
+            _id: false,
           },
-        ]}
-        loading={this.props.loading}
-        filterable
-        filtered={this.state.filtered}
-        onFilteredChange={this.onFilteredChange}
-        {...this.props.getCheckboxProps()}
+        }}
+        columnFilters={this.state.columnFilters}
+        onColumnFiltersChange={updaterOrValue => {
+          this.setState(prevState => {
+            let newFilters =
+              typeof updaterOrValue === "function"
+                ? updaterOrValue(prevState.columnFilters)
+                : updaterOrValue;
+            return {columnFilters: newFilters};
+          });
+        }}
+        enableRowSelection={true}
+        rowSelection={this.state.rowSelection}
+        onRowSelectionChange={updater => {
+          this.setState(prevState => ({
+            rowSelection: typeof updater === "function" ? updater(prevState.rowSelection) : updater,
+          }));
+        }}
+        getRowId={row => row._id}
       />
     );
   }
 }
 
-class RawGroupsTable extends React.Component {
+class GroupsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filtered: [],
-      columns: this.getColumns(props.showSections, props.sections, props.showCoverage),
+      columnFilters: [{id: "inactive", value: false}],
+      columns: this.getColumns(this.props.showCoverage, this.props.showSections),
+      rowSelection: {},
     };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       prevProps.showSections !== this.props.showSections ||
       prevProps.sections !== this.props.sections ||
       prevProps.showCoverage !== this.props.showCoverage
     ) {
       this.setState({
-        columns: this.getColumns(
-          this.props.showSections,
-          this.props.sections,
-          this.props.showCoverage
-        ),
+        columns: this.getColumns(this.props.showCoverage, this.props.showSections),
+      });
+    }
+    if (prevProps.showInactive !== this.props.showInactive) {
+      this.setState(prevState => {
+        let newFilters = prevState.columnFilters;
+
+        if (this.props.showInactive) {
+          newFilters = newFilters.filter(f => f.id !== "inactive");
+        } else {
+          if (!newFilters.some(f => f.id === "inactive")) {
+            newFilters = [...newFilters, {id: "inactive", value: false}];
+          }
+        }
+        return {columnFilters: newFilters};
       });
     }
   }
 
-  getColumns = (showSections, sections, showCoverage) => {
+  getColumns = (showCoverage, showSections = false) => {
     return [
-      {
-        accessor: "inactive",
+      columnHelper.accessor("inactive", {
         id: "inactive",
-        width: 0,
-        className: "rt-hidden",
-        headerClassName: "rt-hidden",
-        resizable: false,
-      },
-      {
-        show: false,
-        accessor: "_id",
+        size: 0,
+        meta: {
+          className: "rt-hidden",
+          headerClassName: "rt-hidden",
+        },
+        enableResizing: false,
+      }),
+      columnHelper.accessor("_id", {
         id: "_id",
-      },
-      {
-        Header: I18n.t("activerecord.models.section", {count: 1}),
-        accessor: "section",
-        id: "section",
-        show: showSections || false,
-        minWidth: 70,
-        Cell: ({value}) => {
-          return this.props.sections[value] || "";
-        },
-        filterMethod: (filter, row) => {
-          if (filter.value === "all") {
-            return true;
-          } else {
-            return this.props.sections[row[filter.id]] === filter.value;
-          }
-        },
-        Filter: selectFilter,
-        filterOptions: Object.entries(sections).map(kv => ({
-          value: kv[1],
-          text: kv[1],
-        })),
-      },
-      {
-        Header: I18n.t("activerecord.models.group.one"),
-        accessor: "group_name",
+      }),
+      ...(showSections
+        ? [
+            columnHelper.accessor(
+              row => {
+                const sectionId = row.section;
+                return this.props.sections[sectionId] || "";
+              },
+              {
+                header: I18n.t("activerecord.models.section", {count: 1}),
+                id: "section",
+                minSize: 70,
+                filterFn: (row, columnId, filterValue) => {
+                  if (filterValue === "all") {
+                    return true;
+                  } else {
+                    return this.props.sections[row.original.section] === filterValue;
+                  }
+                },
+                meta: {
+                  filterVariant: "select",
+                },
+              }
+            ),
+          ]
+        : []),
+      columnHelper.accessor("group_name", {
+        header: I18n.t("activerecord.models.group.one"),
         id: "group_name",
-        minWidth: 150,
-        Filter: caseSensitiveTextFilter,
-        filterMethod: caseSensitiveStringFilterMethod,
-      },
-      {
-        Header: I18n.t("activerecord.models.ta.other"),
-        accessor: "graders",
-        Cell: row => {
-          return row.value.map(ta_data => (
+        minSize: 150,
+        meta: {
+          filterVariant: "case-sensitive-text",
+        },
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue) {
+            return true;
+          }
+          return caseSensitiveIncludes(
+            row.original[columnId],
+            filterValue.value,
+            filterValue.caseSensitive
+          );
+        },
+        enableColumnFilter: true,
+      }),
+      columnHelper.accessor("graders", {
+        header: I18n.t("activerecord.models.ta.other"),
+        cell: ({getValue, row}) => {
+          return getValue().map(ta_data => (
             <div key={`${row.original._id}-${ta_data.grader}`}>
               {ta_data.hidden
                 ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
@@ -666,79 +712,92 @@ class RawGroupsTable extends React.Component {
             </div>
           ));
         },
-        filterable: false,
-        minWidth: 100,
-      },
-      {
-        Header: I18n.t("graders.coverage"),
-        accessor: "criteria_coverage_count",
-        Cell: ({value}) => (
-          <span>
-            {value || 0}/{this.props.numCriteria}
-          </span>
-        ),
-        minWidth: 70,
-        className: "number",
-        filterable: false,
-        show: showCoverage,
-      },
+        enableColumnFilter: false,
+        minSize: 100,
+      }),
+      ...(showCoverage
+        ? [
+            columnHelper.accessor("criteria_coverage_count", {
+              header: I18n.t("graders.coverage"),
+              cell: ({getValue}) => {
+                return (
+                  <span>
+                    {getValue() || 0}/{this.props.numCriteria}
+                  </span>
+                );
+              },
+              minSize: 70,
+              enableColumnFilter: false,
+              meta: {
+                className: "number",
+              },
+            }),
+          ]
+        : []),
     ];
   };
 
-  static getDerivedStateFromProps(props, state) {
-    let filtered = state.filtered.filter(group => group.id !== "inactive");
+  resetSelection = () => {
+    this.setState({rowSelection: {}});
+  };
 
-    if (!props.showInactive) {
-      filtered.push({id: "inactive", value: false});
-    }
-    return {filtered};
-  }
-
-  onFilteredChange = filtered => {
-    this.setState({filtered});
+  getSelectedRows = () => {
+    return Object.keys(this.state.rowSelection).map(id => Number(id));
   };
 
   render() {
     return (
-      <CheckboxTable
-        ref={r => (this.checkboxTable = r)}
+      <Table
+        loading={this.props.loading}
         data={this.props.groups}
         columns={this.state.columns}
-        defaultSorted={[
-          {
-            id: "group_name",
+        initialState={{
+          sorting: [{id: "group_name"}],
+          columnVisibility: {
+            _id: false,
+            inactive: false,
           },
-        ]}
-        loading={this.props.loading}
-        filterable
-        filtered={this.state.filtered}
-        onFilteredChange={this.onFilteredChange}
-        {...this.props.getCheckboxProps()}
+        }}
+        columnFilters={this.state.columnFilters}
+        onColumnFiltersChange={updaterOrValue => {
+          this.setState(prevState => {
+            let newFilters =
+              typeof updaterOrValue === "function"
+                ? updaterOrValue(prevState.columnFilters)
+                : updaterOrValue;
+            return {columnFilters: newFilters};
+          });
+        }}
+        enableRowSelection={true}
+        rowSelection={this.state.rowSelection}
+        onRowSelectionChange={updater => {
+          this.setState(prevState => ({
+            rowSelection: typeof updater === "function" ? updater(prevState.rowSelection) : updater,
+          }));
+        }}
+        getRowId={row => row._id}
       />
     );
   }
 }
 
-class RawCriteriaTable extends React.Component {
+class CriteriaTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      columnFilters: [],
       columns: [
-        {
-          show: false,
-          accessor: "_id",
+        columnHelper.accessor("_id", {
           id: "_id",
-        },
-        {
-          Header: I18n.t("activerecord.attributes.criterion.name"),
-          accessor: "name",
-          minWidth: 150,
-        },
-        {
-          Header: I18n.t("activerecord.models.ta.other"),
-          accessor: "graders",
-          Cell: row => {
-            return row.value.map(ta_data => (
+        }),
+        columnHelper.accessor("name", {
+          header: I18n.t("activerecord.attributes.criterion.name"),
+          minSize: 150,
+        }),
+        columnHelper.accessor("graders", {
+          header: I18n.t("activerecord.models.ta.other"),
+          cell: ({getValue, row}) => {
+            return getValue().map(ta_data => (
               <div key={`${row.original._id}-${ta_data.grader}`}>
                 {ta_data.hidden
                   ? `${ta_data.grader} (${I18n.t("activerecord.attributes.user.hidden")})`
@@ -755,40 +814,67 @@ class RawCriteriaTable extends React.Component {
               </div>
             ));
           },
-          filterable: false,
-          minWidth: 70,
-        },
-        {
-          Header: I18n.t("graders.coverage"),
-          accessor: "coverage",
-          Cell: ({value}) => (
+          enableColumnFilter: false,
+          minSize: 70,
+        }),
+        columnHelper.accessor("coverage", {
+          header: I18n.t("graders.coverage"),
+          cell: ({getValue}) => (
             <span>
-              {value}/{this.props.numGroups}
+              {getValue()}/{this.props.numGroups}
             </span>
           ),
-          minWidth: 70,
-          className: "number",
-          filterable: false,
-        },
+          minSize: 70,
+          enableColumnFilter: false,
+          meta: {
+            className: "number",
+          },
+        }),
       ],
+      rowSelection: {},
     };
   }
+
+  resetSelection = () => {
+    this.setState({rowSelection: {}});
+  };
+
+  getSelectedRows = () => {
+    return Object.keys(this.state.rowSelection).map(id => Number(id));
+  };
 
   render() {
     if (this.props.display) {
       return (
-        <CheckboxTable
-          ref={r => (this.checkboxTable = r)}
+        <Table
+          loading={this.props.loading}
           data={this.props.criteria}
           columns={this.state.columns}
-          defaultSorted={[
-            {
-              id: "_id",
+          initialState={{
+            sorting: [{id: "_id"}],
+            columnVisibility: {
+              _id: false,
             },
-          ]}
-          loading={this.props.loading}
-          filterable
-          {...this.props.getCheckboxProps()}
+          }}
+          columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              let newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
+          enableRowSelection={true}
+          rowSelection={this.state.rowSelection}
+          onRowSelectionChange={updater => {
+            this.setState(prevState => ({
+              rowSelection:
+                typeof updater === "function" ? updater(prevState.rowSelection) : updater,
+            }));
+          }}
+          getRowId={row => row._id}
         />
       );
     } else {
@@ -796,10 +882,6 @@ class RawCriteriaTable extends React.Component {
     }
   }
 }
-
-const GradersTable = withSelection(RawGradersTable);
-const GroupsTable = withSelection(RawGroupsTable);
-const CriteriaTable = withSelection(RawCriteriaTable);
 
 class GradersActionBox extends React.Component {
   render = () => {

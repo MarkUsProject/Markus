@@ -224,6 +224,7 @@ export default function Table({
               // columnSizing is not used directly in TableRow, but is passed to trigger
               // re-render when column sizes change
               columnSizing={columnSizing}
+              columns={finalColumns}
             />
           ))}
           {loading && table.getRowModel().rows.length > 0 && (
