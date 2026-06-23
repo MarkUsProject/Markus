@@ -43,6 +43,10 @@ class ImageAnnotation < Annotation
   validates :x1, :x2, :y1, :y2, presence: true
   validates :x1, :x2, :y1, :y2, numericality: true
 
+  def self.required_fields
+    %i[x1 y1 x2 y2]
+  end
+
   # Return a hash containing the coordinates of the rectangle containing the
   # annotation.
   #
