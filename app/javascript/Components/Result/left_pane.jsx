@@ -57,9 +57,18 @@ export class LeftPane extends React.Component {
 
   // Display a given file. Used to changes files from the annotations panel.
   selectFile = (file, submission_file_id, focus_line, annotation_focus) => {
+    const parts = file.split("/");
+    const filename = parts.pop();
+    let node = this.props.submission_files;
+    for (const dir of parts) {
+      node = node.directories[dir];
+    }
+    const fileEntry = node.files.find(f => f[0] === filename);
+    const type = fileEntry ? fileEntry[2] : null;
     this.submissionFilePanel.current.selectFile(
       file,
       submission_file_id,
+      type,
       focus_line,
       annotation_focus
     );
