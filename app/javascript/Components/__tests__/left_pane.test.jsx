@@ -79,29 +79,6 @@ const basicProps = {
 };
 
 describe("LeftPane", () => {
-  describe("getFileTypeById", () => {
-    let leftPaneRef;
-
-    beforeEach(() => {
-      leftPaneRef = React.createRef();
-      renderInResultContext(<LeftPane ref={leftPaneRef} {...basicProps} />);
-    });
-
-    it("returns the file type for a file at the root level", () => {
-      expect(leftPaneRef.current.getFileTypeById(flatFileData, 1)).toBe("pdf");
-      expect(leftPaneRef.current.getFileTypeById(flatFileData, 2)).toBe("text");
-    });
-
-    it("returns the file type for a file in a nested subdirectory", () => {
-      expect(leftPaneRef.current.getFileTypeById(nestedFileData, 2)).toBe("image");
-      expect(leftPaneRef.current.getFileTypeById(nestedFileData, 3)).toBe("text");
-    });
-
-    it("returns null when no file with the given id exists", () => {
-      expect(leftPaneRef.current.getFileTypeById(flatFileData, 3)).toBeNull();
-    });
-  });
-
   describe("selectFile", () => {
     it("passes the file type for a file at the root level", () => {
       const leftPaneRef = React.createRef();
