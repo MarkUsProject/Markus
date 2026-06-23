@@ -164,7 +164,7 @@ describe AssignmentsController do
     let(:csv_data) do
       headers = [Group.human_attribute_name(:group_name)] +
         Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
-        [I18n.t('results.total_mark'), criterion.name, 'Bonus/Deductions']
+        [I18n.t('results.total_mark'), criterion.export_name, 'Bonus/Deductions']
       totals = [' '] * Student::CSV_ORDER.length +
         [Assessment.human_attribute_name(:max_mark), assignment.max_mark, criterion.max_mark, '']
       row = [grouping.group.group_name] +

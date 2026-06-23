@@ -2490,9 +2490,9 @@ describe Assignment do
       headers ||= [Group.human_attribute_name(:group_name)] +
         Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
         [I18n.t('results.total_mark'),
-         'Correctness',
-         'Style',
-         "Bonus (#{Criterion.human_attribute_name(:bonus)})",
+         criterion1.export_name,
+         criterion2.export_name,
+         bonus_criterion.export_name,
          'Bonus/Deductions']
       totals ||= [' '] * Student::CSV_ORDER.length +
         [Assessment.human_attribute_name(:max_mark), assignment.max_mark, 10, 5, 2, '']
@@ -2551,7 +2551,6 @@ describe Assignment do
     it 'reports invalid rows while still processing valid rows' do
       invalid_row = assignment_grades_row(grouping1, 6, 2, 1)
       invalid_row[0] = 'unknown_group'
-      invalid_row[1 + Student::CSV_ORDER.index(:user_name)] = 'unknown_user'
       csv_data = assignment_grades_csv(
         assignment,
         [invalid_row, assignment_grades_row(grouping2, 9, 5, 2)]
@@ -2562,6 +2561,17 @@ describe Assignment do
       expect(result[:invalid_lines]).to include('unknown_group')
       expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to be_nil
       expect(grouping2.current_result.reload.mark_hash[criterion1.id][:mark]).to eq 9
+    end
+
+    it 'ignores student data when matching rows' do
+      row = assignment_grades_row(grouping1, 8, 4, 1)
+      row[1 + Student::CSV_ORDER.index(:user_name)] = 'unknown_user'
+      csv_data = assignment_grades_csv(assignment, [row])
+
+      result = assignment.import_marks_from_csv(csv_data, true, instructor)
+
+      expect(result[:invalid_lines]).to be_empty
+      expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to eq 8
     end
 
     it 'does not update released results' do
