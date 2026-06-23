@@ -2,7 +2,6 @@
 class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?
-  alias_rule :upload_grades?, to: :manage?
   alias_rule :stop_batch_tests?, :batch_runs?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
   alias_rule :starter_file?, :download_starter_file_mappings?, :download_sample_starter_files?,

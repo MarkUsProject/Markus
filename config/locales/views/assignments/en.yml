@@ -110,5 +110,5 @@ en:
     upload_file_requirement: Filename %{file_name} is not allowed for this assignment.
     upload_file_requirement_in_folder: Filename %{file_name} in %{file_path} is not allowed for this assignment.
     upload_grades:
-      invalid_criteria: 'No matching criteria were found in the uploaded CSV. Unknown criteria: %{criteria}'
+      invalid_criteria: 'The following criteria were not found for this assignment: %{criteria}'
       overwrite: Overwrite existing grades?
