@@ -112,7 +112,7 @@ export class SummaryPanel extends React.Component {
     if (remark_submitted) {
       columns.push(
         this.columnHelper.accessor("old_mark.mark", {
-          header: "Old Mark",
+          header: I18n.t("activerecord.models.mark.old"),
           meta: {
             className: "number",
           },
@@ -128,12 +128,12 @@ export class SummaryPanel extends React.Component {
         meta: {
           className: "number",
         },
-        cell: info => {
-          let mark = info.row.original.mark;
+        cell: props => {
+          let mark = props.row.original.mark;
           if (mark === undefined || mark === null) {
             mark = "-";
           }
-          return `${mark} / ${info.row.original.max_mark}`;
+          return `${mark} / ${props.row.original.max_mark}`;
         },
         enableColumnFilter: false,
       })
@@ -181,11 +181,11 @@ export class SummaryPanel extends React.Component {
       this.columnHelper.accessor("description", {
         header: I18n.t("activerecord.attributes.extra_mark.description"),
         minSize: 150,
-        cell: info => {
-          if (info.row.original._new) {
+        cell: props => {
+          if (props.row.original._new) {
             return <input type={"text"} defaultValue="" style={{width: "100%"}} />;
           } else {
-            return info.getValue();
+            return props.getValue();
           }
         },
         enableColumnFilter: false,
@@ -196,18 +196,18 @@ export class SummaryPanel extends React.Component {
         meta: {
           className: "number",
         },
-        cell: info => {
-          if (info.row.original._new) {
+        cell: props => {
+          if (props.row.original._new) {
             return <input type={"number"} step="any" defaultValue={0} />;
-          } else if (info.row.original.unit === "points") {
-            return info.getValue();
-          } else if (info.row.original.unit === "percentage_of_mark") {
-            let mark_value = ((info.getValue() * this.props.subtotal) / 100).toFixed(2);
-            return `${mark_value} (${info.getValue()}%)`;
+          } else if (props.row.original.unit === "points") {
+            return props.getValue();
+          } else if (props.row.original.unit === "percentage_of_mark") {
+            let mark_value = ((props.getValue() * this.props.subtotal) / 100).toFixed(2);
+            return `${mark_value} (${props.getValue()}%)`;
           } else {
             // Percentage
-            let mark_value = ((info.getValue() * this.props.assignment_max_mark) / 100).toFixed(2);
-            return `${mark_value} (${info.getValue()}%)`;
+            let mark_value = ((props.getValue() * this.props.assignment_max_mark) / 100).toFixed(2);
+            return `${mark_value} (${props.getValue()}%)`;
           }
         },
         enableColumnFilter: false,
@@ -219,8 +219,8 @@ export class SummaryPanel extends React.Component {
         this.columnHelper.display({
           header: "",
           id: "action",
-          cell: info => {
-            if (info.row.original._new) {
+          cell: props => {
+            if (props.row.original._new) {
               return (
                 <button onClick={this.createExtraMark} className="inline-button">
                   {I18n.t("save")}
@@ -229,7 +229,7 @@ export class SummaryPanel extends React.Component {
             } else {
               return (
                 <button
-                  onClick={() => this.props.destroyExtraMark(info.row.original.id)}
+                  onClick={() => this.props.destroyExtraMark(props.row.original.id)}
                   className="inline-button"
                 >
                   {I18n.t("delete")}

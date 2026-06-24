@@ -7,5 +7,6 @@ en:
           not_in_same_assignment: result and criterion must all belong to the same assignment
     models:
       mark:
+        old: Old Mark
         one: Mark
         other: Marks
