@@ -837,7 +837,7 @@ class Assignment < Assessment
       headers[0] << crit.export_name
       headers[1] << crit.max_mark
     end
-    headers[0] << 'Bonus/Deductions'
+    headers[0] << I18n.t('assignments.bonus_deductions')
     headers[1] << ''
 
     result_ids = groupings.pluck('results.id').uniq.compact
@@ -875,7 +875,7 @@ class Assignment < Assessment
     criteria_by_name = ta_criteria.index_by(&:export_name)
     ignored_headers = [Group.human_attribute_name(:group_name),
                        I18n.t('results.total_mark'),
-                       'Bonus/Deductions'] +
+                       I18n.t('assignments.bonus_deductions')] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) }
     result_ids = results_by_group_name.values.map(&:id)
     criterion_ids = criteria_by_name.values.map(&:id)
@@ -907,15 +907,11 @@ class Assignment < Assessment
         end
 
         if uploaded_criterion_columns.empty? || unknown_columns.present?
-          criterion_columns = []
-          raise CsvInvalidLineError,
-                I18n.t('assignments.upload_grades.invalid_criteria', criteria: unknown_columns.join(', '))
+          raise I18n.t('assignments.upload_grades.invalid_criteria', criteria: unknown_columns.join(', '))
         end
         criterion_columns = uploaded_criterion_columns
         next
       end
-
-      raise CsvInvalidLineError if criterion_columns.empty?
 
       group_name = row[group_name_index]
       next if group_name.blank?
@@ -926,7 +922,11 @@ class Assignment < Assessment
       criterion_columns.each do |column_index, criterion|
         key = [uploaded_result.id, criterion.id]
         mark = marks_by_result_and_criterion[key]
-        current_mark = new_mark_updates[key]&.[](:mark) || mark&.[](:mark)
+        current_mark = if mark&.[](:id)
+                         mark_updates.key?(mark[:id]) ? mark_updates[mark[:id]][:mark] : mark[:mark]
+                       else
+                         new_mark_updates[key]&.[](:mark)
+                       end
         next if !overwrite && !current_mark.nil?
 
         mark_value = nil
@@ -953,9 +953,8 @@ class Assignment < Assessment
         if mark&.[](:id)
           mark_updates[mark[:id]] = attrs.merge(id: mark[:id])
         else
-          new_mark_updates[key] = attrs.merge(created_at: now)
+          new_mark_updates[key] = attrs
         end
-        marks_by_result_and_criterion[key] = { id: mark&.[](:id), mark: attrs[:mark] }
         incomplete_result_ids << attrs[:result_id] if attrs[:mark].nil?
       end
     end

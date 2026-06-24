@@ -2493,7 +2493,7 @@ describe Assignment do
          criterion1.export_name,
          criterion2.export_name,
          bonus_criterion.export_name,
-         'Bonus/Deductions']
+         I18n.t('assignments.bonus_deductions')]
       totals ||= [' '] * Student::CSV_ORDER.length +
         [Assessment.human_attribute_name(:max_mark), assignment.max_mark, 10, 5, 2, '']
       MarkusCsv.generate([headers, totals] + rows, &:itself)
@@ -2590,7 +2590,7 @@ describe Assignment do
     it 'rejects unknown criterion columns' do
       headers = [Group.human_attribute_name(:group_name)] +
         Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
-        [I18n.t('results.total_mark'), 'Unknown criterion', 'Bonus/Deductions']
+        [I18n.t('results.total_mark'), 'Unknown criterion', I18n.t('assignments.bonus_deductions')]
       totals = [' '] * Student::CSV_ORDER.length +
         [Assessment.human_attribute_name(:max_mark), assignment.max_mark, 1, '']
       csv_data = assignment_grades_csv(
@@ -2600,9 +2600,8 @@ describe Assignment do
         totals: totals
       )
 
-      result = assignment.import_marks_from_csv(csv_data, true, instructor)
-
-      expect(result[:invalid_lines]).to include('Unknown criterion')
+      expect { assignment.import_marks_from_csv(csv_data, true, instructor) }
+        .to raise_error(RuntimeError, /Unknown criterion/)
       expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to be_nil
     end
   end
