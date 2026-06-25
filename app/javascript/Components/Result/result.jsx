@@ -960,6 +960,7 @@ class Result extends React.Component {
       course_id: this.props.course_id,
       role: this.props.role,
       is_reviewer: this.state.is_reviewer,
+      scanned_exam: !!this.props.scanned_exam,
     };
 
     return (
