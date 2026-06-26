@@ -71,6 +71,10 @@ class Criterion < ApplicationRecord
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
 
+  def export_name
+    bonus? ? "#{name} (#{Criterion.human_attribute_name(:bonus)})" : name
+  end
+
   def update_assigned_groups_count
     result = criterion_ta_associations.flat_map do |cta|
       cta.ta.get_groupings_by_assignment(assignment)

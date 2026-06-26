@@ -8,6 +8,7 @@
 
 ### ✨ New features and improvements
 - Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
+- Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Preserved PDF scroll position when switching between submissions while grading scanned exams (#8004)
