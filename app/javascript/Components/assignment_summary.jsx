@@ -18,6 +18,7 @@ class AssignmentSummary extends React.Component {
               course_id={this.props.course_id}
               assignment_id={this.props.assessment_id}
               is_instructor={this.props.is_instructor}
+              encodings={this.props.encodings}
               lti_deployments={this.props.lti_deployments}
             />
           </TabPanel>
@@ -38,6 +39,7 @@ class AssignmentSummary extends React.Component {
           course_id={this.props.course_id}
           assignment_id={this.props.assessment_id}
           is_instructor={this.props.is_instructor}
+          encodings={this.props.encodings}
           lti_deployments={this.props.lti_deployments}
         />
       );
