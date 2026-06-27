@@ -61,7 +61,7 @@ describe("For the AnnotationUsagePanel's group name search", () => {
   });
 
   it("becomes case-sensitive when the toggle is checked", () => {
-    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
+    fireEvent.click(screen.getByRole("checkbox"));
 
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.submission.one")}`,
