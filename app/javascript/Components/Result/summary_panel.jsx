@@ -112,7 +112,7 @@ export class SummaryPanel extends React.Component {
     if (remark_submitted) {
       columns.push(
         this.columnHelper.accessor("old_mark.mark", {
-          header: I18n.t("activerecord.models.mark.old"),
+          header: I18n.t("results.old_mark"),
           meta: {
             className: "number",
           },
