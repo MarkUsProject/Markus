@@ -268,6 +268,18 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def upload_grades
+    @assignment = record
+    begin
+      data = process_file_upload(['.csv'])
+      result = @assignment.import_marks_from_csv(data[:contents], params[:overwrite], current_role)
+      flash_csv_result(result)
+    rescue StandardError => e
+      flash_message(:error, e.message)
+    end
+    redirect_to action: 'summary', id: @assignment.id
+  end
+
   def download_test_results
     @assignment = record
     respond_to do |format|
