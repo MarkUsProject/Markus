@@ -326,13 +326,14 @@ class GroupsController < ApplicationController
                            .where(hidden: false)
                            .pluck('users.user_name')
                            .map { |user_name| [user_name, user_name] }
-      @current_job = CreateGroupsJob.perform_later @assignment, data
-      session[:job_id] = @current_job.job_id
+      enqueuing_user = current_user
+      current_job = CreateGroupsJob.perform_later @assignment, data,
+                                                  enqueuing_user: enqueuing_user,
+                                                  notify_socket: true
+      GroupsChannel.broadcast_to(enqueuing_user, ActiveJob::Status.get(current_job).to_h) if enqueuing_user
     end
 
-    respond_to do |format|
-      format.js { render 'shared/_poll_job' }
-    end
+    head :ok
   end
 
   def download

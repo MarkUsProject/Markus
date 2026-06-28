@@ -649,20 +649,24 @@ describe GroupsController do
                  format: 'js'
 
           expected_args = ->(job_args) do
-            assignment_arg, data_arg = job_args
+            assignment_arg, data_arg, kwargs = job_args
             expect(assignment_arg).to eq(assignment)
             expect(data_arg).to match_array(data)
+            expect(kwargs).to include(enqueuing_user: instructor.user, notify_socket: true)
           end
 
           assert_enqueued_with(job: CreateGroupsJob, args: expected_args)
           expect(flash[:error]).to be_blank
         end
 
-        it 'responds with _poll_job template' do
+        it 'broadcasts the initial job status to the current user' do
+          expect(GroupsChannel).to receive(:broadcast_to) do |enqueuing_user, _|
+            expect(enqueuing_user).to eq(instructor.user)
+          end
+
           get_as instructor, :create_groups_when_students_work_alone,
                  params: { course_id: course.id, assignment_id: assignment.id },
                  format: 'js'
-          expect(response).to render_template('shared/_poll_job')
         end
 
         it 'responds with appropriate status' do
@@ -670,6 +674,13 @@ describe GroupsController do
                  params: { course_id: course.id, assignment_id: assignment.id },
                  format: 'js'
           expect(response).to have_http_status(:ok)
+        end
+
+        it 'does not render the polling template' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).not_to render_template('shared/_poll_job')
         end
       end
 
@@ -690,11 +701,18 @@ describe GroupsController do
           expect(response).to have_http_status(:ok)
         end
 
-        it 'responds with _poll_job template' do
+        it 'does not broadcast a job status' do
+          expect(GroupsChannel).not_to receive(:broadcast_to)
           get_as instructor, :create_groups_when_students_work_alone,
                  params: { course_id: course.id, assignment_id: assignment.id },
                  format: 'js'
-          expect(response).to render_template('shared/_poll_job')
+        end
+
+        it 'does not render the polling template' do
+          get_as instructor, :create_groups_when_students_work_alone,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'js'
+          expect(response).not_to render_template('shared/_poll_job')
         end
       end
     end
