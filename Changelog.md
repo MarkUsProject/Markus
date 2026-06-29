@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
 - Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
