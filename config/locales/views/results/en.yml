@@ -61,6 +61,7 @@ en:
     no_incomplete_submission: There are no other incomplete submissions!
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
+    old_mark: Old Mark
     overridden_deductions: Overridden
     previous_submission: Previous Submission
     print: Print
