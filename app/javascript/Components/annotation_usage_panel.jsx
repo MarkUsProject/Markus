@@ -1,15 +1,17 @@
 import React from "react";
-import ReactTable from "react-table";
 import {createRoot} from "react-dom/client";
-import ReactDOM from "react-dom";
+import {createColumnHelper} from "@tanstack/react-table";
+import Table from "./table/table";
 
-import {caseSensitiveIncludes, caseSensitiveTextFilter} from "./Helpers/table_helpers";
+import {caseSensitiveIncludes} from "./Helpers/table_helpers";
 
+const columnHelper = createColumnHelper();
 class AnnotationUsagePanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       applications: null,
+      columnFilters: [],
       details: false,
     };
   }
@@ -23,44 +25,51 @@ class AnnotationUsagePanel extends React.Component {
   };
 
   columns = [
-    {
-      Header: I18n.t("annotations.used_by"),
-      accessor: row => "(" + row["user_name"] + ") " + row["first_name"] + " " + row["last_name"],
-      id: "user",
-      minWidth: 200,
-      PivotValue: ({value}) => value,
-    },
-    {
-      Header: I18n.t("activerecord.models.submission.one"),
-      accessor: "group_name",
-      aggregate: (vals, pivots) => {
-        let usageCount = pivots.reduce((accumulator, p) => accumulator + p._original["count"], 0);
-        return I18n.t("annotations.used_times", {count: usageCount});
+    columnHelper.accessor(
+      row => "(" + row.user_name + ") " + row.first_name + " " + row.last_name,
+      {
+        header: I18n.t("annotations.used_by"),
+        id: "user",
+        minSize: 200,
+      }
+    ),
+    columnHelper.accessor("group_name", {
+      header: I18n.t("activerecord.models.submission.one"),
+      enableSorting: false,
+      aggregationFn: (columnId, leafRows, childRows) => {
+        return leafRows.reduce((acc, row) => acc + row.original.count, 0);
       },
-      sortable: false,
-      Aggregated: row => "(" + row.value + ")",
-      Filter: caseSensitiveTextFilter,
-      filterMethod: (filter, row) => {
-        const {filterValue, caseSensitive} = filter.value;
-        if (!filterValue) {
-          return true;
-        } else if (row._subRows === undefined) {
-          return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
-        } else {
-          return row._subRows.some(sr =>
-            caseSensitiveIncludes(sr["group_name"], filterValue, caseSensitive)
-          );
+      cell: props => {
+        if (props.row.getIsGrouped()) {
+          return I18n.t("annotations.used_times", {
+            count: props.row.getValue("group_name"),
+          });
         }
-      },
-      Cell: row => {
+
         return (
-          <a href={Routes.edit_course_result_path(this.props.course_id, row.original["result_id"])}>
-            {row.original["group_name"] +
-              (row.original["count"] > 1 ? " (" + row.original["count"] + ")" : "")}
+          <a
+            href={Routes.edit_course_result_path(
+              this.props.course_id,
+              props.row.original.result_id
+            )}
+          >
+            {props.row.original.group_name +
+              (props.row.original.count > 1 ? ` (${props.row.original.count})` : "")}
           </a>
         );
       },
-    },
+      filterFn: (row, columnId, filterValue) => {
+        const value = filterValue?.value;
+        const caseSensitive = filterValue?.caseSensitive;
+
+        if (!value) return true;
+
+        return caseSensitiveIncludes(row.original[columnId], value, caseSensitive);
+      },
+      meta: {
+        filterVariant: "case-sensitive-text",
+      },
+    }),
   ];
 
   fetchData = () => {
@@ -97,12 +106,22 @@ class AnnotationUsagePanel extends React.Component {
     );
     if (this.state.details) {
       let annotation_table = (
-        <ReactTable
-          className="auto-overflow"
+        <Table
           data={this.state.applications}
           columns={this.columns}
-          filterable
-          pivotBy={["user"]}
+          initialState={{
+            grouping: ["user"],
+          }}
+          columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={updaterOrValue => {
+            this.setState(prevState => {
+              let newFilters =
+                typeof updaterOrValue === "function"
+                  ? updaterOrValue(prevState.columnFilters)
+                  : updaterOrValue;
+              return {columnFilters: newFilters};
+            });
+          }}
         />
       );
       return (
