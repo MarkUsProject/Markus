@@ -789,6 +789,7 @@ Rails.application.routes.draw do
         get 'peer_review'
         get 'populate_starter_file_manager'
         get 'summary'
+        post 'upload_grades'
         get 'batch_runs'
         post 'set_boolean_graders_options'
         get 'stop_test'
