@@ -129,3 +129,10 @@ end
 group :unicorn do
   gem 'unicorn'
 end
+
+group :docs do
+  gem 'jekyll', '~> 4.4'
+  gem 'jekyll-relative-links'
+  gem 'jekyll-seo-tag'
+  gem 'just-the-docs'
+end
