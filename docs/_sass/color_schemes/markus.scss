@@ -1,0 +1,25 @@
+// MarkUs light color scheme for just-the-docs
+// Based on the MarkUs application color palette
+
+$color-scheme: light;
+
+// Backgrounds
+$body-background-color: #fff;
+$sidebar-color: #e8f4f2; // --background_support
+$code-background-color: #f5f6fa;
+$table-background-color: #fff;
+$search-background-color: #fff;
+$feedback-color: #cee3ea; // --primary_two (replaces darken() call)
+
+// Text
+$body-text-color: #464646; // --line
+$body-heading-color: #245185; // --primary_one
+$search-result-preview-color: #464646;
+
+// Links and navigation
+$link-color: #245185; // --primary_one
+$nav-child-link-color: #464646;
+
+// Buttons
+$base-button-color: #cee3ea; // --primary_two
+$btn-primary-color: #32649b; // --sub_menu

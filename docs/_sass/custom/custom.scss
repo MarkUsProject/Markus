@@ -1,0 +1,19 @@
+// Flush nav items to the left edge of the sidebar
+.nav-list-link {
+  padding-left: 0;
+
+  @include mq(md) {
+    padding-left: 0;
+  }
+}
+
+.nav-list .nav-list {
+  padding-left: 0;
+}
+
+// Active nav item: left border accent + stronger background
+.nav-list-link.active {
+  background-color: $base-button-color; // #cee3ea (--primary_two)
+  border-left: 3px solid $link-color; // #245185 (--primary_one)
+  font-weight: 600;
+}

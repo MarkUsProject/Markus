@@ -1,0 +1,30 @@
+destination: /jekyll/site
+cache_dir: /jekyll/cache
+
+title: MarkUs Docs
+description: Documentation for MarkUs — a web-based tool for the submission and grading of student programming assignments.
+theme: just-the-docs
+favicon_ico: "/assets/images/favicon.ico"
+color_scheme: markus
+color_scheme_toggle: true
+
+sass:
+  quiet_deps: true
+  silence_deprecations:
+    - import
+    - global-builtin
+    - color-functions
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-relative-links
+
+nav_external_links:
+  - title: GitHub
+    url: https://github.com/MarkUsProject/Markus
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"

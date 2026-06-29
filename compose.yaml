@@ -119,6 +119,20 @@ services:
     ports:
       - 6379
 
+  docs:
+    <<: *app
+    working_dir: /app/docs
+    command: bundle exec jekyll serve --host 0.0.0.0 --livereload
+    ports:
+      - "4000:4000"
+      - "35729:35729"
+    volumes:
+      - bundle:/bundle
+      - .:/app:cached
+      - jekyll_data:/jekyll
+    depends_on: []
+    profiles: ["docs"]
+
   webpack:
     <<: *app
     image: markus-dev-webpack:1.3.0
@@ -143,6 +157,7 @@ volumes:
   tmp:
   log:
   python:
+  jekyll_data:
 
 networks:
   markus_dev:
