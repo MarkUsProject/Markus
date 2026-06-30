@@ -33,7 +33,7 @@ export default function CaseSensitiveSearchFilter({column, filterValue}) {
             });
           }}
           aria-label={I18n.t("table.case_sensitive_search")}
-          data-testid={`${column.columnDef.id}_case_sensitive`}
+          data-testid={`${column.id}_case_sensitive`}
         />
         <span style={{fontSize: "1.05em", marginLeft: "2px"}}>
           {I18n.t("table.case_sensitive_indicator")}
