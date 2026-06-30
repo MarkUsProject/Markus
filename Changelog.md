@@ -7,7 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
+- Migrated `SummaryPanel` component to React Table V8 (#8019)
 - Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
 - Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
@@ -29,6 +29,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
 - Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)
