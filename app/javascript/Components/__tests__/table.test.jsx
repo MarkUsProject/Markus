@@ -29,11 +29,7 @@ function mockData() {
   ];
 }
 
-function renderTableWithMockData() {
-  return renderTable(mockColumns(), mockData());
-}
-
-function renderTableWithMockDataAndProps(tableProps = {}) {
+function renderTableWithMockData(tableProps = {}) {
   return renderTable(mockColumns(), mockData(), null, tableProps);
 }
 
@@ -346,7 +342,7 @@ describe("tests for the table component", () => {
 
   describe("filling and unfilling of the select column checkboxes", () => {
     it("fills the select column checkboxes when the select column header checkbox is selected", async () => {
-      const {table} = renderTableWithMockDataAndProps({enableRowSelection: true});
+      const {table} = renderTableWithMockData({enableRowSelection: true});
       const header = table.querySelector(".rt-thead.-header");
       const selectAllCheckbox = within(header).getByRole("checkbox");
 
@@ -360,7 +356,7 @@ describe("tests for the table component", () => {
     });
 
     it("unfills the select column checkboxes when the select column header checkbox is unselected", async () => {
-      const {table} = renderTableWithMockDataAndProps({enableRowSelection: true});
+      const {table} = renderTableWithMockData({enableRowSelection: true});
       const header = table.querySelector(".rt-thead.-header");
       const selectAllCheckbox = within(header).getByRole("checkbox");
       await user.click(selectAllCheckbox);
