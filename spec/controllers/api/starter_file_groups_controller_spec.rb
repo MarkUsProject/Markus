@@ -270,6 +270,7 @@ describe Api::StarterFileGroupsController do
   shared_examples 'updates starter_file_changed' do
     let(:grouping1) { create(:grouping, assignment: assignment) }
     let(:grouping2) { create(:grouping, assignment: assignment) }
+
     before do
       grouping1
       starter_file_group
