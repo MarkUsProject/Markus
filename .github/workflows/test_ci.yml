@@ -153,7 +153,7 @@ jobs:
           restore-keys: runtime-cache-all-
           path: tmp/parallel_runtime_rspec.log
       - name: Install  chromedriver
-        uses: nanasess/setup-chromedriver@v2
+        uses: nanasess/setup-chromedriver@v3
       - name: Run chromedriver
         run: chromedriver --port=9515 --whitelisted-ips &
       - name: Run rspec tests
