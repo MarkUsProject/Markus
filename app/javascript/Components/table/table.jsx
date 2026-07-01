@@ -175,6 +175,9 @@ export default function Table({
               size={header.getSize()}
               isSorted={header.column.getIsSorted()}
               isResizing={header.column.getIsResizing()}
+              allRowsSelected={
+                header.column.id === "select" ? table.getIsAllRowsSelected() : undefined
+              }
             />
           ))}
         </div>
