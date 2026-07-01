@@ -42,7 +42,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Add PostgreSQL apt repository and client
         run: |
           sudo apt-get install -y curl ca-certificates
@@ -188,7 +188,7 @@ jobs:
       NODE_ENV: test
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
