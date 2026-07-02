@@ -340,8 +340,8 @@ describe("tests for the table component", () => {
     });
   });
 
-  describe("filling and unfilling of the select column checkboxes", () => {
-    it("fills the select column checkboxes when the select column header checkbox is selected", async () => {
+  describe("checking and unchecking of the select column checkboxes", () => {
+    it("checks the select column checkboxes when the select column header checkbox is selected", async () => {
       const {table} = renderTableWithMockData({enableRowSelection: true});
       const header = table.querySelector(".rt-thead.-header");
       const selectAllCheckbox = within(header).getByRole("checkbox");
@@ -355,7 +355,7 @@ describe("tests for the table component", () => {
       rowCheckboxes.forEach(checkbox => expect(checkbox).toBeChecked());
     });
 
-    it("unfills the select column checkboxes when the select column header checkbox is unselected", async () => {
+    it("unchecks the select column checkboxes when the select column header checkbox is unselected", async () => {
       const {table} = renderTableWithMockData({enableRowSelection: true});
       const header = table.querySelector(".rt-thead.-header");
       const selectAllCheckbox = within(header).getByRole("checkbox");
