@@ -33,5 +33,6 @@ export default React.memo(
     prev.isSelected === next.isSelected &&
     prev.isExpanded === next.isExpanded &&
     prev.columnSizing === next.columnSizing &&
-    prev.columns === next.columns
+    prev.columns === next.columns &&
+    prev.row.subRows === next.row.subRows
 );

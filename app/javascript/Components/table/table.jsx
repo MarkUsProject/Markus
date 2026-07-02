@@ -9,6 +9,7 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -97,6 +98,7 @@ export default function Table({
   });
   const [expanded, setExpanded] = React.useState({});
   const [internalRowSelection, setInternalRowSelection] = React.useState({});
+  const [grouping, setGrouping] = React.useState(initialState?.grouping ?? []);
 
   const columnFilters = React.useMemo(
     () => (externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters),
@@ -141,16 +143,19 @@ export default function Table({
       columnVisibility,
       expanded,
       rowSelection,
+      grouping,
     },
     initialState: initialState,
     onColumnFiltersChange: handleColumnFiltersChange,
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: setExpanded,
+    onGroupingChange: setGrouping,
     onRowSelectionChange: handleRowSelectionChange,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
