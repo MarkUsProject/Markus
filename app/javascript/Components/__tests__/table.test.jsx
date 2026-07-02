@@ -29,8 +29,8 @@ function mockData() {
   ];
 }
 
-function renderTableWithMockData() {
-  return renderTable(mockColumns(), mockData());
+function renderTableWithMockData(tableProps = {}) {
+  return renderTable(mockColumns(), mockData(), null, tableProps);
 }
 
 function renderTableWithoutData() {
@@ -43,11 +43,22 @@ function renderTableWithoutDataCustomText() {
   return {...result, noDataText: customNoDataText};
 }
 
-function renderTable(columns, data, noDataText) {
+function renderTable(columns, data, noDataText, tableProps = {}) {
   const {container, rerender} = render(
-    <Table columns={columns} data={data} {...(noDataText != null && {noDataText})} />
+    <Table
+      columns={columns}
+      data={data}
+      {...(noDataText != null && {noDataText})}
+      {...tableProps}
+    />
   );
-  return {table: container, columns: columns, data: data, rerender: rerender};
+  return {
+    table: container,
+    columns: columns,
+    data: data,
+    rerender: rerender,
+    tableProps: tableProps,
+  };
 }
 
 function expectTextInDocument(text) {
@@ -326,6 +337,35 @@ describe("tests for the table component", () => {
         {col1: "abcd", col2: "p", col3: "Ivan"},
         {col1: "abc", col2: "pq", col3: "David"},
       ]);
+    });
+  });
+
+  describe("filling and unfilling of the select column checkboxes", () => {
+    it("fills the select column checkboxes when the select column header checkbox is selected", async () => {
+      const {table} = renderTableWithMockData({enableRowSelection: true});
+      const header = table.querySelector(".rt-thead.-header");
+      const selectAllCheckbox = within(header).getByRole("checkbox");
+
+      expect(selectAllCheckbox).not.toBeChecked();
+      await user.click(selectAllCheckbox);
+      expect(selectAllCheckbox).toBeChecked();
+
+      const body = document.querySelector(".rt-tbody");
+      const rowCheckboxes = within(body).getAllByRole("checkbox");
+      rowCheckboxes.forEach(checkbox => expect(checkbox).toBeChecked());
+    });
+
+    it("unfills the select column checkboxes when the select column header checkbox is unselected", async () => {
+      const {table} = renderTableWithMockData({enableRowSelection: true});
+      const header = table.querySelector(".rt-thead.-header");
+      const selectAllCheckbox = within(header).getByRole("checkbox");
+      await user.click(selectAllCheckbox);
+      await user.click(selectAllCheckbox);
+      expect(selectAllCheckbox).not.toBeChecked();
+
+      const body = document.querySelector(".rt-tbody");
+      const rowCheckboxes = within(body).getAllByRole("checkbox");
+      rowCheckboxes.forEach(checkbox => expect(checkbox).not.toBeChecked());
     });
   });
 });
