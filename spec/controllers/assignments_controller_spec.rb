@@ -759,6 +759,7 @@ describe AssignmentsController do
       example_form_params[:assignment][:submission_rule_attributes][:periods_attributes] = submission_rule.id
       example_form_params
     end
+
     it 'should update an assignment without errors' do
       expect { patch_as role, :update, params: params }.not_to raise_error
     end
@@ -1025,6 +1026,7 @@ describe AssignmentsController do
     let(:assignment) { create(:assignment_for_tests) }
     let(:grouping) { create(:grouping, assignment: assignment) }
     let(:test_run) { create(:test_run, grouping: grouping) }
+
     describe '#batch_runs' do
       before { get_as role, :batch_runs, params: { course_id: course.id, id: assignment.id } }
 
@@ -1470,6 +1472,7 @@ describe AssignmentsController do
       let!(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
       let!(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
+
       it 'should return a 200 status code' do
         subject
         expect(response).to have_http_status(:ok)
@@ -1793,6 +1796,7 @@ describe AssignmentsController do
 
     shared_examples 'download sample starter files' do
       let(:structure) { { 'q1/': nil, 'q1/q1.txt': 'q1 content', 'q2.txt': 'q2 content' } }
+
       # NOTE: other starter_file_type are not tested because they involve randomness and so are not deterministic
       before { create(:starter_file_group_with_entries, assignment: assignment, structure: structure) }
 
