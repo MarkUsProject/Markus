@@ -283,7 +283,7 @@ GEM
       jekyll-include-cache
       jekyll-seo-tag (>= 2.0)
       rake (>= 12.3.1)
-    jwt (2.10.3)
+    jwt (3.2.0)
       base64
     kgio (2.11.4)
     kramdown (2.5.2)
