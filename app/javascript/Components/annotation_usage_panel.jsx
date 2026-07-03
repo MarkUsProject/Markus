@@ -31,6 +31,12 @@ class AnnotationUsagePanel extends React.Component {
         header: I18n.t("annotations.used_by"),
         id: "user",
         minSize: 200,
+        cell: ({getValue, row}) => {
+          if (row.getIsGrouped()) {
+            return getValue();
+          }
+          return null;
+        },
       }
     ),
     columnHelper.accessor("group_name", {
@@ -122,6 +128,13 @@ class AnnotationUsagePanel extends React.Component {
               return {columnFilters: newFilters};
             });
           }}
+          renderSubComponent={({row}) => (
+            <div>
+              {row.subRows.map(subRow => (
+                <div key={subRow.id}>{subRow.original.group_name}</div>
+              ))}
+            </div>
+          )}
         />
       );
       return (
