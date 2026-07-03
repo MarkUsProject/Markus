@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, waitFor} from "@testing-library/react";
 import {TextViewer} from "../Result/text_viewer";
 import fetchMock from "jest-fetch-mock";
