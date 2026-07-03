@@ -6,6 +6,8 @@
 # Table name: grouping_starter_file_entries
 #
 #  id                    :bigint           not null, primary key
+#  created_at            :datetime
+#  updated_at            :datetime
 #  grouping_id           :bigint           not null
 #  starter_file_entry_id :bigint           not null
 #

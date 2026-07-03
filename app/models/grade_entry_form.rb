@@ -32,6 +32,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (parent_assessment_id => assessments.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GradeEntryForm < Assessment

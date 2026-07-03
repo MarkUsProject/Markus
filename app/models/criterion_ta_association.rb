@@ -15,6 +15,12 @@
 #  index_criterion_ta_associations_on_criterion_id  (criterion_id)
 #  index_criterion_ta_associations_on_ta_id         (ta_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (criterion_id => criteria.id)
+#  fk_rails_...  (ta_id => roles.id)
+#
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class CriterionTaAssociation < ApplicationRecord
   belongs_to :ta
