@@ -10,8 +10,15 @@
 #  start_time    :datetime
 #  visible_on    :datetime
 #  visible_until :datetime
+#  created_at    :datetime
+#  updated_at    :datetime
 #  assessment_id :bigint           not null
 #  section_id    :integer          not null
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (section_id => sections.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AssessmentSectionProperties < ApplicationRecord

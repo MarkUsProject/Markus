@@ -30,6 +30,8 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps`
+- Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys`
 - Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
 - Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
