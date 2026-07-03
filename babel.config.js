@@ -29,20 +29,28 @@ module.exports = function (api) {
         require("@babel/preset-env").default,
         {
           forceAllTransforms: true,
-          useBuiltIns: "entry",
-          corejs: "3.22",
           modules: false,
           exclude: ["transform-typeof-symbol"],
         },
       ],
-      require("@babel/preset-react"),
+      [
+        require("@babel/preset-react").default,
+        {
+          runtime: "classic",
+        },
+      ],
     ].filter(Boolean),
     plugins: [
-      [
-        require("@babel/plugin-transform-runtime").default,
+      (isProductionEnv || isDevelopmentEnv) && [
+        require("babel-plugin-polyfill-corejs3").default,
         {
-          helpers: false,
-          regenerator: true,
+          method: "entry-global",
+        },
+      ],
+      [
+        require("babel-plugin-polyfill-regenerator").default,
+        {
+          method: "usage-pure",
         },
       ],
       [
