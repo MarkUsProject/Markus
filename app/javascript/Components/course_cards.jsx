@@ -1,5 +1,3 @@
-import React from "react";
-
 function CourseCard({course_id, course_name, course_display_name, role_type}) {
   let coursePath;
   if (role_type === "Instructor") {

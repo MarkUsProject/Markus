@@ -33,12 +33,7 @@ module.exports = function (api) {
           exclude: ["transform-typeof-symbol"],
         },
       ],
-      [
-        require("@babel/preset-react").default,
-        {
-          runtime: "classic",
-        },
-      ],
+      require("@babel/preset-react").default,
     ].filter(Boolean),
     plugins: [
       (isProductionEnv || isDevelopmentEnv) && [
