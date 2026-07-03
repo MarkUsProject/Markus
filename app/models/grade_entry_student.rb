@@ -18,6 +18,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (assessment_id => assessments.id)
 #  fk_rails_...  (role_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
@@ -36,7 +37,7 @@ class GradeEntryStudent < ApplicationRecord
 
   has_many :grade_entry_items, through: :grades
 
-  has_many :grade_entry_student_tas
+  has_many :grade_entry_student_tas, dependent: :destroy
   has_many :tas, through: :grade_entry_student_tas
 
   has_one :user, through: :role
