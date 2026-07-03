@@ -1,5 +1,6 @@
 import React from "react";
 import TableCell from "./table_cell";
+import {SELECTION_COLUMN_ID} from "./table";
 
 function TableRow({row, isSelected, isExpanded, renderSubComponent}) {
   return (
@@ -8,7 +9,8 @@ function TableRow({row, isSelected, isExpanded, renderSubComponent}) {
         {row.getVisibleCells().map(cell => {
           // Only pass isSelected to the selection column. This prevents other cells from re-rendering
           // if the row selection status changes.
-          const cellSelection = cell.column.columnDef.id === "select" ? isSelected : null;
+          const cellSelection =
+            cell.column.columnDef.id === SELECTION_COLUMN_ID ? isSelected : null;
           return (
             <TableCell
               cell={cell}

@@ -1,7 +1,7 @@
 import React from "react";
 import {flexRender} from "@tanstack/react-table";
 
-function TableHeaderCell({header, size, isSorted, isResizing}) {
+function TableHeaderCell({header, size, isSorted, isResizing, allRowsSelected}) {
   const resizable = header.column.columnDef.enableResizing !== false;
   const sortable = header.column.columnDef.enableSorting !== false;
 
