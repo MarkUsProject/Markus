@@ -22,6 +22,7 @@
 - Added support for all annotation types for POST /add_annotations (#8007)
 
 ### 🐛 Bug fixes
+- Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
 - Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
@@ -51,6 +52,7 @@
 - Migrated asset pipeline from Sprockets to Propshaft (#7970)
 - Simplified Chart.js usage: removed the `DataChart` wrapper component, converted `chart_config.js` to an ES module, and replaced `registerables` with a minimal set of Chart.js components (#7987)
 - Added missing foreign keys in seed data (#8006)
+- Bump jwt from 2.10.3 to 3.2.0 (#8039)
 
 ## [v2.10.0]
 

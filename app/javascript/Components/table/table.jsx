@@ -20,6 +20,9 @@ import TableRow from "./table_row";
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
 const columnHelper = createColumnHelper();
+export const SELECTION_COLUMN_ID = "select";
+const FILTER_VARIANT_SELECT = "select";
+
 export const expanderColumn = columnHelper.display({
   id: "expander",
   header: () => null,
@@ -41,7 +44,7 @@ export const expanderColumn = columnHelper.display({
 });
 
 export const selectionColumn = columnHelper.display({
-  id: "select",
+  id: SELECTION_COLUMN_ID,
   header: ({table}) => {
     const checkboxRef = React.useRef(null);
 
@@ -181,6 +184,9 @@ export default function Table({
               size={header.getSize()}
               isSorted={header.column.getIsSorted()}
               isResizing={header.column.getIsResizing()}
+              allRowsSelected={
+                header.column.id === SELECTION_COLUMN_ID ? table.getIsAllRowsSelected() : undefined
+              }
             />
           ))}
         </div>
@@ -203,7 +209,7 @@ export default function Table({
               column={header.column}
               filterValue={header.column.getFilterValue()}
               facetedUniqueValues={
-                header.column.columnDef.meta?.filterVariant === "select"
+                header.column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
                   ? header.column.getFacetedUniqueValues()
                   : null
               }
