@@ -128,13 +128,7 @@ class AnnotationUsagePanel extends React.Component {
               return {columnFilters: newFilters};
             });
           }}
-          renderSubRows={({row}) => (
-            <div>
-              {row.subRows.map(subRow => (
-                <div key={subRow.id}>{subRow.original.group_name}</div>
-              ))}
-            </div>
-          )}
+          renderSubRows={true}
         />
       );
       return (
