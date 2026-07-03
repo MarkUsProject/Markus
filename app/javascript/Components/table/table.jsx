@@ -223,6 +223,7 @@ export default function Table({
             <TableRow
               row={row}
               isExpanded={row.getIsExpanded()}
+              isGrouped={row.getIsGrouped()}
               isSelected={row.getIsSelected()}
               key={row.id}
               renderSubComponent={renderSubComponent}
