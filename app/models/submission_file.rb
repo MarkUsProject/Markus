@@ -8,6 +8,8 @@
 #  filename         :string           not null
 #  is_converted     :boolean          default(FALSE), not null
 #  path             :string           default("/"), not null
+#  created_at       :datetime
+#  updated_at       :datetime
 #  submission_id    :integer          not null
 #
 # Indexes

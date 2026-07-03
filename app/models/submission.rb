@@ -12,11 +12,16 @@
 #  submission_version       :integer
 #  submission_version_used  :boolean          default(FALSE), not null
 #  created_at               :datetime         not null
+#  updated_at               :datetime
 #  grouping_id              :integer          not null
 #
 # Indexes
 #
 #  index_submissions_on_grouping_id  (grouping_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (grouping_id => groupings.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'fileutils' # FileUtils used here

@@ -44,7 +44,7 @@ class Criterion < ApplicationRecord
 
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
-  has_many :test_groups
+  has_many :test_groups, dependent: :nullify
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :assessment_id }

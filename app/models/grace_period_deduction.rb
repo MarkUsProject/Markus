@@ -13,6 +13,10 @@
 #
 #  index_grace_period_deductions_on_membership_id  (membership_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (membership_id => memberships.id)
+#
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GracePeriodDeduction < ApplicationRecord
   belongs_to :membership, optional: true

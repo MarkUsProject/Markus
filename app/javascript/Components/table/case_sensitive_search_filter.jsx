@@ -1,5 +1,3 @@
-import React from "react";
-
 export const defaultSearchPlaceholderText = () => I18n.t("table.search");
 
 export default function CaseSensitiveSearchFilter({column, filterValue}) {

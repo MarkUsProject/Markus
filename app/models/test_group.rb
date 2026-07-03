@@ -21,6 +21,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (criterion_id => criteria.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TestGroup < ApplicationRecord
