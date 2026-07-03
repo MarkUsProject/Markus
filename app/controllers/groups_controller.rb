@@ -308,8 +308,7 @@ class GroupsController < ApplicationController
       end
 
       if result[:invalid_lines].empty?
-        @current_job = CreateGroupsJob.perform_later assignment, group_rows
-        session[:job_id] = @current_job.job_id
+        create_groups_with_socket(assignment, group_rows)
       else
         flash_message(:error, result[:invalid_lines])
       end
@@ -326,13 +325,10 @@ class GroupsController < ApplicationController
                            .where(hidden: false)
                            .pluck('users.user_name')
                            .map { |user_name| [user_name, user_name] }
-      @current_job = CreateGroupsJob.perform_later @assignment, data
-      session[:job_id] = @current_job.job_id
+      create_groups_with_socket(@assignment, data)
     end
 
-    respond_to do |format|
-      format.js { render 'shared/_poll_job' }
-    end
+    head :ok
   end
 
   def download
@@ -627,6 +623,14 @@ class GroupsController < ApplicationController
   end
 
   private
+
+  def create_groups_with_socket(assignment, data)
+    enqueuing_user = current_user
+    current_job = CreateGroupsJob.perform_later assignment, data,
+                                                enqueuing_user: enqueuing_user,
+                                                notify_socket: true
+    GroupsChannel.broadcast_to(enqueuing_user, ActiveJob::Status.get(current_job).to_h) if enqueuing_user
+  end
 
   # These methods are called through global actions.
 
