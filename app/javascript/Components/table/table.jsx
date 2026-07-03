@@ -82,6 +82,7 @@ export default function Table({
   initialState,
   loading,
   renderSubComponent,
+  renderSubRows,
   getRowCanExpand,
   getRowId,
   enableRowSelection,
@@ -128,11 +129,11 @@ export default function Table({
     if (enableRowSelection) {
       cols = [selectionColumn, ...cols];
     }
-    if (renderSubComponent) {
+    if (renderSubComponent || renderSubRows) {
       cols = [expanderColumn, ...cols];
     }
     return cols;
-  }, [columns, enableRowSelection, renderSubComponent]);
+  }, [columns, enableRowSelection, renderSubComponent, renderSubRows]);
 
   const table = useReactTable({
     data,
