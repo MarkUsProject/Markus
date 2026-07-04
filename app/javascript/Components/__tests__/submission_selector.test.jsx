@@ -20,6 +20,7 @@ let props;
 const INITIAL_FILTER_MODAL_STATE = {
   ascending: true,
   orderBy: "group_name",
+  assignedGradersOnly: true,
   annotationText: "",
   tas: [],
   tags: [],
@@ -39,6 +40,7 @@ const basicProps = {
   assignment_max_mark: 100,
   available_tags: [],
   can_release: false,
+  can_manage_submissions: false,
   criterionSummaryData: [],
   current_tags: [],
   filterData: INITIAL_FILTER_MODAL_STATE,

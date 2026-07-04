@@ -21,6 +21,7 @@ describe("FilterModal", () => {
         filterData: {
           ascending: true,
           orderBy: "group_name",
+          assignedGradersOnly: true,
           annotationText: "",
           tas: ["a", "b"],
           tags: ["a", "b"],
@@ -54,6 +55,7 @@ describe("FilterModal", () => {
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
         updateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
+        can_manage_submissions: false,
         criterionSummaryData: [
           {criterion: "a"},
           {criterion: "b"},
@@ -420,6 +422,23 @@ describe("FilterModal", () => {
       it("should not render filter by tas", () => {
         const dropdown = screen.queryByTestId("Tas");
         expect(dropdown).not.toBeInTheDocument();
+      });
+    });
+
+    describe("Navigation scope", () => {
+      it("should not render the assigned submissions toggle without manage submissions permission", () => {
+        const toggle = screen.queryByTestId("assigned-graders-only");
+        expect(toggle).not.toBeInTheDocument();
+      });
+
+      it("should update filter data when the assigned submissions toggle changes", () => {
+        component.unmount();
+        props.can_manage_submissions = true;
+        renderInResultContext(<FilterModal {...props} />, {role: "Ta"});
+
+        fireEvent.click(screen.getByLabelText(I18n.t("results.filters.assigned_submissions_only")));
+
+        expect(props.updateFilterData).toHaveBeenCalledWith({assignedGradersOnly: false});
       });
     });
   });

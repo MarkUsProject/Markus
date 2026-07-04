@@ -4,7 +4,7 @@ describe ResultsController do
   let(:assignment) { create(:assignment) }
   let(:student) { create(:student, grace_credits: 2) }
   let(:instructor) { create(:instructor) }
-  let(:ta) { create(:ta) }
+  let(:ta) { create(:ta, course: course) }
   let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: student) }
   let(:submission) { create(:version_used_submission, grouping: grouping) }
   let(:incomplete_result) { submission.current_result }
@@ -2176,6 +2176,21 @@ describe ResultsController do
 
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
 
+    it 'reports that the TA cannot manage submissions by default' do
+      create(:ta_membership, role: ta, grouping: grouping)
+      get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+      expect(response.parsed_body['can_manage_submissions']).to be false
+    end
+
+    context 'with manage submissions permission' do
+      let(:ta) { create(:ta, course: course, manage_submissions: true) }
+
+      it 'reports that the TA can manage submissions' do
+        get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+        expect(response.parsed_body['can_manage_submissions']).to be true
+      end
+    end
+
     context 'when groups information is anonymized' do
       let(:data) { response.parsed_body }
 
@@ -2579,6 +2594,30 @@ describe ResultsController do
             end
           end
         end
+
+        context 'when the TA can manage submissions' do
+          let(:ta) { create(:ta, course: grouping1.course, manage_submissions: true) }
+
+          before do
+            grouping1.group.update!(group_name: 'group1')
+            grouping4.group.update!(group_name: 'group2')
+            grouping2.group.update!(group_name: 'group3')
+          end
+
+          it 'returns an unassigned grouping when assigned-only navigation is disabled' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { assignedGradersOnly: false } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+          end
+
+          it 'returns the next assigned grouping when assigned-only navigation is enabled' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { assignedGradersOnly: true } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
       end
 
       context 'accessing get_filtered_grouping_ids' do
@@ -2588,6 +2627,19 @@ describe ResultsController do
           returned_grouping_ids = data.pluck('grouping_id')
           expect(returned_grouping_ids).not_to include(grouping4.id)
           expect(returned_grouping_ids.length).to eq(3)
+        end
+
+        context 'when the TA can manage submissions' do
+          let(:ta) { create(:ta, course: grouping1.course, manage_submissions: true) }
+
+          it 'returns all groupings when assigned-only navigation is disabled' do
+            get :get_filtered_grouping_ids, params: { course_id: course.id,
+                                                      id: grouping1.current_result.id,
+                                                      filterData: { assignedGradersOnly: false } }
+            data = response.parsed_body
+            returned_grouping_ids = data.pluck('grouping_id')
+            expect(returned_grouping_ids).to include(grouping1.id, grouping2.id, grouping3.id, grouping4.id)
+          end
         end
       end
     end

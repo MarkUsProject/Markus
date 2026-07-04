@@ -32,7 +32,9 @@ en:
     filter_submissions: Filter Submissions
     filters:
       add_criterion: Add Criterion Filter
+      assigned_submissions_only: Only assigned submissions
       invalid_range: Invalid Range
+      navigation_scope: Navigation Scope
       no_options: No options available
       order_by: Order By
       ordering:

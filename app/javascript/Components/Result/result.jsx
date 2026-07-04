@@ -29,6 +29,7 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 const INITIAL_FILTER_MODAL_STATE = {
   ascending: true,
   orderBy: "group_name",
+  assignedGradersOnly: true,
   annotationText: "",
   tas: [],
   tags: [],
@@ -84,11 +85,12 @@ class Result extends React.Component {
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
 
-    this.refreshFilterData();
-    // Prefetch grouping IDs for client-side navigation (skip if already valid)
-    if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
-      this.fetchGroupingIds();
-    }
+    this.refreshFilterData(() => {
+      // Prefetch grouping IDs for client-side navigation (skip if already valid)
+      if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
+        this.fetchGroupingIds();
+      }
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -171,6 +173,25 @@ class Result extends React.Component {
       unSyncedCriteria.forEach(criterion => delete newCriteria[criterion]);
       this.updateFilterData({criteria: newCriteria});
     }
+  };
+
+  normalizeFilterData = filterData => {
+    const data = filterData || {};
+    return {
+      ...INITIAL_FILTER_MODAL_STATE,
+      ...data,
+      tas: data.tas || INITIAL_FILTER_MODAL_STATE.tas,
+      tags: data.tags || INITIAL_FILTER_MODAL_STATE.tags,
+      totalMarkRange: {
+        ...INITIAL_FILTER_MODAL_STATE.totalMarkRange,
+        ...(data.totalMarkRange || {}),
+      },
+      totalExtraMarkRange: {
+        ...INITIAL_FILTER_MODAL_STATE.totalExtraMarkRange,
+        ...(data.totalExtraMarkRange || {}),
+      },
+      criteria: data.criteria || INITIAL_FILTER_MODAL_STATE.criteria,
+    };
   };
 
   /* Processing result data */
@@ -900,7 +921,7 @@ class Result extends React.Component {
     });
   };
 
-  refreshFilterData = () => {
+  refreshFilterData = afterRefresh => {
     const storedFilter = localStorage.getItem(
       `${this.props.user_id}_${this.state.assignment_id}_filterData`
     );
@@ -910,15 +931,18 @@ class Result extends React.Component {
     } catch (e) {
       parsed_filter = null;
     }
-    if (parsed_filter) {
-      this.setState({filterData: parsed_filter});
-    } else {
-      this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
+    const filterData = this.normalizeFilterData(parsed_filter);
+    this.setState({filterData: filterData}, afterRefresh);
+    if (!parsed_filter) {
+      localStorage.setItem(
+        `${this.props.user_id}_${this.state.assignment_id}_filterData`,
+        JSON.stringify(filterData)
+      );
     }
   };
 
   updateFilterData = new_filters => {
-    const filters = {...this.state.filterData, ...new_filters};
+    const filters = this.normalizeFilterData({...this.state.filterData, ...new_filters});
     this.setState({filterData: filters, prefetchedIds: null, prefetchedIndex: -1}, () => {
       this.fetchGroupingIds();
     });
@@ -929,15 +953,13 @@ class Result extends React.Component {
   };
 
   resetFilterData = () => {
-    this.setState(
-      {filterData: INITIAL_FILTER_MODAL_STATE, prefetchedIds: null, prefetchedIndex: -1},
-      () => {
-        this.fetchGroupingIds();
-      }
-    );
+    const filterData = this.normalizeFilterData(INITIAL_FILTER_MODAL_STATE);
+    this.setState({filterData: filterData, prefetchedIds: null, prefetchedIndex: -1}, () => {
+      this.fetchGroupingIds();
+    });
     localStorage.setItem(
       `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(INITIAL_FILTER_MODAL_STATE)
+      JSON.stringify(filterData)
     );
   };
 
@@ -977,6 +999,7 @@ class Result extends React.Component {
           <SubmissionSelector
             key="submission-selector"
             can_release={this.state.can_release}
+            can_manage_submissions={this.state.can_manage_submissions}
             assignment_max_mark={this.state.assignment_max_mark}
             fullscreen={this.state.fullscreen}
             group_name={this.state.group_name}

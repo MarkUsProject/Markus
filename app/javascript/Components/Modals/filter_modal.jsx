@@ -96,6 +96,35 @@ export class FilterModal extends React.Component {
     );
   };
 
+  renderAssignedGradersOnlyToggle = () => {
+    if (this.context.role !== "Ta" || !this.props.can_manage_submissions) {
+      return null;
+    }
+    const checked =
+      this.props.filterData.assignedGradersOnly !== false &&
+      this.props.filterData.assignedGradersOnly !== "false";
+    return (
+      <div className={"filter"} data-testid={"assigned-graders-only"}>
+        <p>{I18n.t("results.filters.navigation_scope")}</p>
+        <div>
+          <input
+            id={"assigned_graders_only"}
+            type={"checkbox"}
+            checked={checked}
+            onChange={e => {
+              this.props.updateFilterData({
+                assignedGradersOnly: e.target.checked,
+              });
+            }}
+          />
+          <label htmlFor={"assigned_graders_only"}>
+            {I18n.t("results.filters.assigned_submissions_only")}
+          </label>
+        </div>
+      </div>
+    );
+  };
+
   rangeFilter = (min, max, title, onMinChange, onMaxChange) => {
     return (
       <div className={"filter"}>
@@ -304,6 +333,7 @@ export class FilterModal extends React.Component {
               </div>
               <div className={"modal-container"}>
                 {this.renderTasDropdown()}
+                {this.renderAssignedGradersOnlyToggle()}
                 <div className={"annotation-input"}>
                   <p>{I18n.t("activerecord.models.annotation.one")}</p>
                   <input
