@@ -1883,6 +1883,20 @@ describe Assignment do
         expect(data[0][:_id]).to be groupings[0].id
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment.current_submission_data(ta)
+          data_by_grouping_id = data.index_by { |group| group[:_id] }
+
+          expect(data.size).to eq groupings.size
+          expect(data_by_grouping_id[groupings[0].id][:assigned]).to be true
+          expect(data_by_grouping_id[groupings[1].id][:assigned]).to be false
+          expect(data_by_grouping_id[groupings[2].id][:assigned]).to be false
+        end
+      end
+
       context 'when hide_unassigned_criteria is true' do
         let(:assigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 3) }
         let(:unassigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 1) }

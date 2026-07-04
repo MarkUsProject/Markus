@@ -29,6 +29,9 @@ class RawSubmissionTable extends React.Component {
       marking_states: markingStates,
       markingStateFilter: "all",
       inactiveGroupsCount: 0,
+      assignedSubmissionsCount: 0,
+      showInactiveGroups: false,
+      showAssignedSubmissionsOnly: false,
       filtered: [],
       columns: this.getColumns({}, markingStates, "all"),
     };
@@ -57,6 +60,7 @@ class RawSubmissionTable extends React.Component {
         this.props.resetSelection();
 
         let inactive_groups_count = 0;
+        let assigned_submissions_count = 0;
         res.groupings.forEach(group => {
           if (group.members.length && group.members.every(member => member[1])) {
             group.inactive = true;
@@ -64,9 +68,10 @@ class RawSubmissionTable extends React.Component {
           } else {
             group.inactive = false;
           }
+          if (group.assigned) {
+            assigned_submissions_count++;
+          }
         });
-
-        this.toggleShowInactiveGroups(false);
 
         const markingStates = getMarkingStates(res.groupings);
 
@@ -76,9 +81,28 @@ class RawSubmissionTable extends React.Component {
           loading: false,
           marking_states: markingStates,
           inactiveGroupsCount: inactive_groups_count,
+          assignedSubmissionsCount: assigned_submissions_count,
+          filtered: this.visibilityFilters(
+            state.filtered,
+            state.showInactiveGroups,
+            state.showAssignedSubmissionsOnly
+          ),
           columns: this.getColumns(res.sections, markingStates, state.markingStateFilter),
         }));
       });
+  };
+
+  visibilityFilters = (filtered, showInactiveGroups, showAssignedSubmissionsOnly) => {
+    const updated = filtered.filter(filter => filter.id !== "inactive" && filter.id !== "assigned");
+
+    if (!showInactiveGroups) {
+      updated.push({id: "inactive", value: false});
+    }
+    if (showAssignedSubmissionsOnly) {
+      updated.push({id: "assigned", value: true});
+    }
+
+    return updated;
   };
 
   onFilteredChange = (filtered, column) => {
@@ -137,6 +161,11 @@ class RawSubmissionTable extends React.Component {
       show: false,
       accessor: "inactive",
       id: "inactive",
+    },
+    {
+      show: false,
+      accessor: "assigned",
+      id: "assigned",
     },
     {
       show: false,
@@ -455,15 +484,25 @@ class RawSubmissionTable extends React.Component {
   };
 
   toggleShowInactiveGroups = showInactiveGroups => {
-    let filtered = this.state.filtered.filter(group => {
-      group.id !== "inactive";
-    });
+    this.setState(state => ({
+      showInactiveGroups,
+      filtered: this.visibilityFilters(
+        state.filtered,
+        showInactiveGroups,
+        state.showAssignedSubmissionsOnly
+      ),
+    }));
+  };
 
-    if (!showInactiveGroups) {
-      filtered.push({id: "inactive", value: false});
-    }
-
-    this.setState({filtered});
+  toggleShowAssignedSubmissionsOnly = showAssignedSubmissionsOnly => {
+    this.setState(state => ({
+      showAssignedSubmissionsOnly,
+      filtered: this.visibilityFilters(
+        state.filtered,
+        state.showInactiveGroups,
+        showAssignedSubmissionsOnly
+      ),
+    }));
   };
 
   render() {
@@ -492,7 +531,12 @@ class RawSubmissionTable extends React.Component {
           authenticity_token={this.props.authenticity_token}
           release_with_urls={this.props.release_with_urls}
           inactiveGroupsCount={this.state.inactiveGroupsCount}
+          assignedSubmissionsCount={this.state.assignedSubmissionsCount}
+          canViewAssignedSubmissionsOnly={this.props.can_view_assigned_submissions_only}
+          showInactiveGroups={this.state.showInactiveGroups}
+          showAssignedSubmissionsOnly={this.state.showAssignedSubmissionsOnly}
           updateShowInactiveGroups={this.toggleShowInactiveGroups}
+          updateShowAssignedSubmissionsOnly={this.toggleShowAssignedSubmissionsOnly}
         />
         <CheckboxTable
           ref={r => (this.checkboxTable = r)}
@@ -544,6 +588,7 @@ SubmissionTable.defaultProps = {
   can_collect: false,
   is_timed: false,
   can_run_tests: false,
+  can_view_assigned_submissions_only: false,
 };
 
 class SubmissionsActionBox extends React.Component {
@@ -556,6 +601,7 @@ class SubmissionsActionBox extends React.Component {
 
   render = () => {
     let displayInactiveGroupsCheckbox,
+      displayAssignedSubmissionsCheckbox,
       completeButton,
       incompleteButton,
       collectButton,
@@ -565,10 +611,16 @@ class SubmissionsActionBox extends React.Component {
       showReleaseUrlsButton;
 
     let displayInactiveGroupsTooltip = "";
+    let displayAssignedSubmissionsTooltip = "";
 
     if (this.props.inactiveGroupsCount !== null) {
       displayInactiveGroupsTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_groups", {
         count: this.props.inactiveGroupsCount,
+      })}`;
+    }
+    if (this.props.assignedSubmissionsCount !== null) {
+      displayAssignedSubmissionsTooltip = `${I18n.t("submissions.groups.assigned_submissions", {
+        count: this.props.assignedSubmissionsCount,
       })}`;
     }
 
@@ -592,6 +644,29 @@ class SubmissionsActionBox extends React.Component {
         </label>
       </>
     );
+
+    if (this.props.canViewAssignedSubmissionsOnly) {
+      displayAssignedSubmissionsCheckbox = (
+        <>
+          <input
+            id="show_assigned_submissions_only"
+            name="show_assigned_submissions_only"
+            type="checkbox"
+            checked={this.props.showAssignedSubmissionsOnly}
+            onChange={e => this.props.updateShowAssignedSubmissionsOnly(e.target.checked)}
+            className={"hide-user-checkbox"}
+            data-testid={"show_assigned_submissions_only"}
+          />
+          <label
+            title={displayAssignedSubmissionsTooltip}
+            htmlFor="show_assigned_submissions_only"
+            data-testid={"show_assigned_submissions_only_tooltip"}
+          >
+            {I18n.t("submissions.groups.display_assigned_only")}
+          </label>
+        </>
+      );
+    }
 
     completeButton = (
       <button
@@ -707,6 +782,7 @@ class SubmissionsActionBox extends React.Component {
     return (
       <div className="rt-action-box">
         {displayInactiveGroupsCheckbox}
+        {displayAssignedSubmissionsCheckbox}
         {completeButton}
         {incompleteButton}
         {collectButton}
