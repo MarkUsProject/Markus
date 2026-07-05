@@ -1760,9 +1760,9 @@ describe Grouping do
       let(:groupings) { [grouping1, grouping3] }
 
       before do
-        grouping1.group.update!(group_name: 'group1')
-        grouping2.group.update!(group_name: 'group2')
-        grouping3.group.update!(group_name: 'group3')
+        grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+        grouping2.group.update!(group_name: "navigation-scope-2-#{grouping2.id}")
+        grouping3.group.update!(group_name: "navigation-scope-3-#{grouping3.id}")
       end
 
       it 'navigates only assigned groupings by default' do

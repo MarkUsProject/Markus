@@ -2599,9 +2599,9 @@ describe ResultsController do
           let(:ta) { create(:ta, course: grouping1.course, manage_submissions: true) }
 
           before do
-            grouping1.group.update!(group_name: 'group1')
-            grouping4.group.update!(group_name: 'group2')
-            grouping2.group.update!(group_name: 'group3')
+            grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+            grouping4.group.update!(group_name: "navigation-scope-2-#{grouping4.id}")
+            grouping2.group.update!(group_name: "navigation-scope-3-#{grouping2.id}")
           end
 
           it 'returns an unassigned grouping when assigned-only navigation is disabled' do
