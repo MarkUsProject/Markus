@@ -264,13 +264,13 @@ module RepositoryHelper
       case msg
       when :too_large
         max_size = (course.max_file_size / 1_000_000.00).round(2)
-        flash_message(:error, I18n.t('student.submission.file_too_large',
+        flash_message(:error, I18n.t('submissions.student.file_too_large',
                                      file_name: other_info,
                                      max_size: max_size))
       when :too_small
-        flash_message(:warning, I18n.t('student.submission.empty_file_warning', file_name: other_info))
+        flash_message(:warning, I18n.t('submissions.student.empty_file_warning', file_name: other_info))
       when :invalid_filename
-        flash_message(:error, I18n.t('student.submission.invalid_file_name', file_name: other_info))
+        flash_message(:error, I18n.t('submissions.student.invalid_file_name', file_name: other_info))
       when :extra_files
         full_file_path = other_info[0].rpartition('/')
         file_name = full_file_path.last
@@ -284,11 +284,11 @@ module RepositoryHelper
                                                                                 file_path: file_path))
         end
       when :no_files
-        flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+        flash_message(:warning, I18n.t('submissions.student.no_action_detected'))
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
       when :invalid_folder_name
-        flash_message(:error, I18n.t('student.submission.invalid_folder_name', folder_name: other_info))
+        flash_message(:error, I18n.t('submissions.student.invalid_folder_name', folder_name: other_info))
       end
     end
   end

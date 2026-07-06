@@ -7,6 +7,7 @@ en:
         commit_after_collection_message: The due date for this assignment, plus the maximum grace period, has passed. Your changes have been recorded, but will not be included in the grading.
         description: You may submit up to a set time past the due date, provided you have enough remaining grace credits to do so.
         form_description: Automatically deduct grace credits
+        upload_late_confirmation_dialog: The due date for this assignment has passed. If you submit files now, you will use grace credits, or your submission may not be graded, depending on when you submit and how many grace credits you have remaining. This action cannot be undone. Are you sure you would like to proceed?
       no_late_submission_rule:
         after_collection_message: The due date for this assignment has passed.
         commit_after_collection_message: The due date for this assignment has passed. Your changes have been recorded, but will not be included in the grading.
@@ -17,11 +18,13 @@ en:
         commit_after_collection_message: The due date for this assignment, plus the maximum late penalty period, has passed. Your changes have been recorded, but will not be included in the grading.
         description: You are able to submit up to a set time past the due date, but with the appropriate percentage deducted from your final grade.
         form_description: Use penalty decay formula
+        upload_late_confirmation_dialog: The due date for this assignment has passed. If you submit files now, you will incur a late penalty, or your submission may not be graded, depending on when you submit. This action cannot be undone. Are you sure you would like to proceed?
       penalty_period_submission_rule:
         after_collection_message: The maximum late penalty period has passed for this assignment.
         commit_after_collection_message: The due date for this assignment, plus the maximum late penalty period, has passed. Your changes have been recorded, but will not be included in the grading.
         description: You are able to submit up to a set time past the due date, but with the appropriate percentage deducted from your final grade.
         form_description: Set manual penalty periods
+        upload_late_confirmation_dialog: The due date for this assignment has passed. If you submit files now, you will incur a late penalty, or your submission may not be graded, depending on when you submit. This action cannot be undone. Are you sure you would like to proceed?
     models:
       submission_rule:
         one: Late Submission Policy

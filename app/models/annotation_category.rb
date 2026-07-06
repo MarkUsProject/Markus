@@ -13,8 +13,8 @@
 #
 # Indexes
 #
-#  index_annotation_categories_on_assessment_id          (assessment_id)
-#  index_annotation_categories_on_flexible_criterion_id  (flexible_criterion_id)
+#  index_annotation_categories_on_assessment_id_and_name  (assessment_id,annotation_category_name) UNIQUE
+#  index_annotation_categories_on_flexible_criterion_id   (flexible_criterion_id)
 #
 # Foreign Keys
 #

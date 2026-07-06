@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_lti_services_on_lti_deployment_id                   (lti_deployment_id)
 #  index_lti_services_on_lti_deployment_id_and_service_type  (lti_deployment_id,service_type) UNIQUE
 #
 # Foreign Keys

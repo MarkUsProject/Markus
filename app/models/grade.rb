@@ -19,6 +19,8 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (grade_entry_item_id => grade_entry_items.id)
+#  fk_rails_...  (grade_entry_student_id => grade_entry_students.id)
 #  fk_rails_...  (last_updated_by_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective

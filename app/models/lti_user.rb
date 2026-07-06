@@ -12,9 +12,13 @@
 #
 # Indexes
 #
-#  index_lti_users_on_lti_client_id              (lti_client_id)
-#  index_lti_users_on_user_id                    (user_id)
-#  index_lti_users_on_user_id_and_lti_client_id  (user_id,lti_client_id) UNIQUE
+#  index_lti_users_on_lti_client_id_and_lti_user_id  (lti_client_id,lti_user_id) UNIQUE
+#  index_lti_users_on_user_id_and_lti_client_id      (user_id,lti_client_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (lti_client_id => lti_clients.id)
+#  fk_rails_...  (user_id => users.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiUser < ApplicationRecord

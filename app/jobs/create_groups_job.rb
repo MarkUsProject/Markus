@@ -8,7 +8,8 @@ class CreateGroupsJob < ApplicationJob
     I18n.t('poll_job.create_groups_job', progress: status[:progress], total: status[:total])
   end
 
-  def perform(assignment, data)
+  def perform(assignment, data, enqueuing_user: nil, notify_socket: false)
+    job_failed = false
     progress.total = data.length
     Repository.get_class.update_permissions_after(only_on_request: true) do
       data.each do |(group_name, *members)|
@@ -45,10 +46,38 @@ class CreateGroupsJob < ApplicationJob
           end
         end
         progress.increment
+        broadcast_status(enqueuing_user, notify_socket)
       end
     end
     m_logger = MarkusLogger.instance
     m_logger.log('Creating all individual groups completed',
                  MarkusLogger::INFO)
+  rescue StandardError => e
+    job_failed = true
+    status.catch_exception(e)
+    raise e
+  ensure
+    broadcast_final_status(enqueuing_user, notify_socket, job_failed)
+  end
+
+  private
+
+  def broadcast_status(enqueuing_user, notify_socket)
+    return unless notify_socket && enqueuing_user
+
+    GroupsChannel.broadcast_to(enqueuing_user, status.to_h)
+  end
+
+  def broadcast_final_status(enqueuing_user, notify_socket, job_failed)
+    return unless notify_socket && enqueuing_user
+
+    message = if job_failed
+                status.to_h
+              else
+                { status: :completed }.tap do |options|
+                  options[:warning_message] = status[:warning_message] if status[:warning_message].present?
+                end
+              end
+    GroupsChannel.broadcast_to(enqueuing_user, message.merge({ update_table: true }))
   end
 end

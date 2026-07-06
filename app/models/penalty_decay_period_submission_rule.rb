@@ -12,11 +12,15 @@
 #
 # Indexes
 #
-#  index_submission_rules_on_assessment_id  (assessment_id)
+#  index_submission_rules_on_assessment_id  (assessment_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class PenaltyDecayPeriodSubmissionRule < SubmissionRule
-  # This message will be dislayed to Students on viewing their file manager
+  # This message will be displayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   validates :penalty_type,
             presence: true,

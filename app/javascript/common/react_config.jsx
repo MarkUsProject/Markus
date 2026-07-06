@@ -1,6 +1,5 @@
 import {I18n} from "i18n-js";
 import translations from "translations.json";
-import React from "react";
 import {ReactTableDefaults} from "react-table";
 import {faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

@@ -13,6 +13,7 @@ describe UploadRolesJob do
       subject { UploadRolesJob.perform_now(role_type, course, data, nil) }
 
       let(:data) { fixture_file_upload('tas/form_good.csv', 'text/csv').read }
+
       context 'when users exist' do
         before do
           create(:end_user, user_name: :c6conley)
