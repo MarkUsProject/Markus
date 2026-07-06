@@ -165,6 +165,7 @@ export default function Table({
     getFacetedRowModel: getFacetedRowModel(),
     getRowCanExpand,
     getRowId,
+    groupedColumnMode: false,
     enableSortingRemoval: false,
     enableColumnResizing: true,
     enableRowSelection: enableRowSelection,
