@@ -538,7 +538,8 @@ class AssignmentsController < ApplicationController
   end
 
   # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
-  # as the referer url for the new assignment if possible, unless the referer is an index page.
+  # as the referer url for the new assignment if possible,
+  # unless the referer url is an Assignments index page.
   # Otherwise, redirect to a default action depending on the type of user:
   #   - edit for instructors
   #   - summary for TAs
