@@ -327,7 +327,7 @@ class AssignmentsController < ApplicationController
       @current_job = AutotestCancelJob.perform_later(assignment_id, [test_run_id])
       session[:job_id] = @current_job.job_id
     end
-    redirect_back(fallback_location: root_path)
+    redirect_back_or_to(root_path)
   end
 
   def stop_batch_tests
@@ -335,7 +335,7 @@ class AssignmentsController < ApplicationController
     assignment_id = params[:id]
     @current_job = AutotestCancelJob.perform_later(assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
-    redirect_back(fallback_location: root_path)
+    redirect_back_or_to(root_path)
   end
 
   def batch_runs
@@ -538,8 +538,8 @@ class AssignmentsController < ApplicationController
   end
 
   # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
-  # as the referer url for the new assignment if possible. Otherwise redirect to a
-  # default action depending on the type of user:
+  # as the referer url for the new assignment if possible, unless the referer is an index page.
+  # Otherwise, redirect to a default action depending on the type of user:
   #   - edit for instructors
   #   - summary for TAs
   #   - show for students
@@ -547,12 +547,19 @@ class AssignmentsController < ApplicationController
     options = referer_options
     if switch_to_same(options)
       redirect_to options
-    elsif current_role.instructor?
-      redirect_to edit_course_assignment_path(current_course, params[:id])
+    else
+      redirect_to default_path_for_role
+    end
+  end
+
+  def default_path_for_role
+    nil
+    if current_role.instructor?
+      edit_course_assignment_path(current_course, params[:id])
     elsif current_role.ta?
-      redirect_to summary_course_assignment_path(current_course, params[:id])
+      summary_course_assignment_path(current_course, params[:id])
     else # current_role.student?
-      redirect_to course_assignment_path(current_course, params[:id])
+      course_assignment_path(current_course, params[:id])
     end
   end
 
@@ -708,10 +715,10 @@ class AssignmentsController < ApplicationController
       respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
     rescue ActiveRecord::DeleteRestrictionError
       flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
-      redirect_back fallback_location: { action: :edit, id: @assignment.id }
+      redirect_back_or_to({ action: :edit, id: @assignment.id })
     rescue StandardError => e
       flash_message(:error, I18n.t('activerecord.errors.models.assignment_deletion', problem_message: e.message))
-      redirect_back fallback_location: { action: :edit, id: @assignment.id }
+      redirect_back_or_to({ action: :edit, id: @assignment.id })
     end
   end
 
@@ -1128,6 +1135,7 @@ class AssignmentsController < ApplicationController
   end
 
   def switch_to_same(options)
+    return false if options[:action] == 'index' && options[:controller] == 'assignments'
     return false if options[:controller] == 'submissions' && %w[file_manager repo_browser].include?(options[:action])
     return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
 
