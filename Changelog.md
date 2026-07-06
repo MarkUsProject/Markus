@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added a submissions table toggle that lets TAs with manage submissions permission view all submissions or only assigned submissions (#8047)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
