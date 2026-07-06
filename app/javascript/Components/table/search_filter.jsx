@@ -1,6 +1,7 @@
-import React from "react";
-
-export const defaultSearchPlaceholderText = () => I18n.t("table.search");
+export const defaultSearchPlaceholderText = (header = "") => {
+  const base = I18n.t("table.search");
+  return header ? `${base} ${header}` : base;
+};
 
 export default function SearchFilter({column, filterValue}) {
   return (
@@ -10,7 +11,7 @@ export default function SearchFilter({column, filterValue}) {
       onChange={e => column.setFilterValue(e.target.value)}
       value={filterValue?.toString() || ""}
       style={{width: "100%"}}
-      aria-label={defaultSearchPlaceholderText()}
+      aria-label={defaultSearchPlaceholderText(column.columnDef.header)}
     />
   );
 }

@@ -1,6 +1,8 @@
 module Admin
   class UsersController < ApplicationController
     DEFAULT_FIELDS = [:id, :user_name, :email, :id_number, :type, :first_name, :last_name].freeze
+    SEARCHABLE_FIELDS = %w[user_name first_name last_name email id_number].freeze
+    SORTABLE_FIELDS = %w[user_name first_name last_name email id_number type].freeze
     before_action { authorize! }
 
     respond_to :html
@@ -10,7 +12,19 @@ module Admin
       respond_to do |format|
         format.html
         format.json do
-          render json: visible_users.order(:created_at).pluck_to_hash(*DEFAULT_FIELDS)
+          users_scope = sorted_users(filtered_users(visible_users))
+
+          per_page = (params[:per_page] || 100).to_i
+          current_page = (params[:page] || 1).to_i
+          total_count = users_scope.count
+          total_pages = [(total_count.to_f / per_page).ceil, 1].max
+          offset_value = (current_page - 1) * per_page
+          records = users_scope.limit(per_page).offset(offset_value)
+
+          render json: {
+            users: records.pluck_to_hash(*DEFAULT_FIELDS),
+            total_pages: total_pages
+          }
         end
       end
     end
@@ -62,6 +76,42 @@ module Admin
     # Do not make AutotestUser users visible
     def visible_users
       User.where.not(type: :AutotestUser)
+    end
+
+    # Apply column/type filters from the `filtered` param to the given scope.
+    def filtered_users(scope)
+      return scope if params[:filtered].blank?
+
+      JSON.parse(params[:filtered]).each do |f|
+        next if f['value'].blank?
+
+        if SEARCHABLE_FIELDS.include?(f['id'])
+          term = "%#{User.sanitize_sql_like(f['value'].strip)}%"
+          scope = scope.where("#{f['id']} ILIKE ?", term)
+        elsif f['id'] == 'type' && f['value'] != 'all'
+          scope = scope.where(type: f['value'])
+        end
+      end
+
+      scope
+    end
+
+    # Apply ordering from the `sorted` param to the given scope.
+    # Falls back to ordering by user_name when no valid sort is provided.
+    def sorted_users(scope)
+      return scope.order(:user_name) if params[:sorted].blank?
+
+      sort_configs = JSON.parse(params[:sorted])
+      order_clauses = sort_configs.filter_map do |sort_config|
+        next unless SORTABLE_FIELDS.include?(sort_config['id'])
+
+        direction = sort_config['desc'] ? 'DESC' : 'ASC'
+        "#{sort_config['id']} #{direction}"
+      end
+
+      return scope.order(:user_name) if order_clauses.empty?
+
+      scope.order(Arel.sql(order_clauses.join(', ')))
     end
 
     def flash_interpolation_options

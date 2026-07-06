@@ -1,11 +1,22 @@
 import React from "react";
 import {SingleSelectDropDown} from "../DropDown/SingleSelectDropDown";
 import {PdfAnnotationManager} from "../../common/annotations/pdf_annotation_manager";
+import {ResultContext} from "./result_context";
+
+// Frame budget for restoring scroll: enough to wait out pdf.js's async layout and
+// re-assert the position past its scroll-to-top reset (~40 frames ≈ 0.65s).
+const MAX_SCROLL_RESTORE_FRAMES = 40;
 
 export class PDFViewer extends React.PureComponent {
+  static contextType = ResultContext;
+
   constructor(props) {
     super(props);
     this.pdfContainer = React.createRef();
+    this.scrollContainer = React.createRef();
+    this.savedScrollPosition = null;
+    this.scrollRestoreFrame = null;
+    this.zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
     this.state = {
       zoom: "page-width",
       rotation: 0, // NOTE: this is in degrees
@@ -23,10 +34,12 @@ export class PDFViewer extends React.PureComponent {
     if (this.props.resultView) {
       this.eventBus.on("pagesinit", this.ready_annotations);
       this.eventBus.on("pagesloaded", this.refresh_annotations);
+      this.eventBus.on("pagesloaded", this.restore_scroll_position);
     } else {
       this.eventBus.on("pagesloaded", this.update_pdf_view);
     }
 
+    this.loadedSubmissionId = this.context.submission_id;
     if (this.props.url) {
       this.loadPDFFile();
     }
@@ -34,13 +47,22 @@ export class PDFViewer extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.url && this.props.url !== prevProps.url) {
-      this.loadPDFFile();
-    } else {
-      if (this.props.resultView) {
-        this.refresh_annotations();
-      } else {
-        this.update_pdf_view();
+      if (this.props.userFileSelectionCount !== prevProps.userFileSelectionCount) {
+        // The user explicitly opened a different file: show it from the top.
+        this.savedScrollPosition = null;
+      } else if (this.context.submission_id !== this.loadedSubmissionId) {
+        // Automatic switch to another submission: carry the scroll position over.
+        // A submission switch updates the URL twice (the submission id, then the
+        // auto-selected file); keying the reset on an explicit file pick instead
+        // of the submission id keeps the second update from clobbering the save.
+        this.save_scroll_position();
       }
+      this.loadedSubmissionId = this.context.submission_id;
+      this.loadPDFFile();
+    } else if (this.props.resultView) {
+      this.refresh_annotations();
+    } else {
+      this.update_pdf_view();
     }
   }
 
@@ -68,13 +90,76 @@ export class PDFViewer extends React.PureComponent {
     }
     this.eventBus = null;
     window.pdfViewer = undefined;
+    this.cancel_scroll_restore();
   }
 
-  update_pdf_view = () => {
+  cancel_scroll_restore = () => {
+    if (!this.scrollRestoreFrame) return;
+    cancelAnimationFrame(this.scrollRestoreFrame);
+    this.scrollRestoreFrame = null;
+  };
+
+  // For scanned exams, preserve the scroll position across submission switches
+  // so TAs grading one question on a shared page don't re-scroll every time.
+  save_scroll_position = () => {
+    if (!this.context.scanned_exam || !this.scrollContainer.current) return;
+
+    const {scrollTop, scrollLeft} = this.scrollContainer.current;
+    this.savedScrollPosition = {top: scrollTop, left: scrollLeft};
+  };
+
+  restore_scroll_position = () => {
+    this.cancel_scroll_restore();
     if (
-      !!document.getElementById("pdfContainer") &&
-      !!document.getElementById("pdfContainer").offsetParent
+      !this.context.scanned_exam ||
+      this.savedScrollPosition === null ||
+      this.props.annotationFocus
     ) {
+      return;
+    }
+
+    // pdf.js loads the new document asynchronously: it un-hides the viewer, lays
+    // out the pages, and resets the scroll to the top — and any of those can land
+    // after a single scrollTop write, so the position intermittently snaps back.
+    // Re-assert every frame until the container can hold the offset and the
+    // position has stuck for two consecutive frames (or we exhaust the budget).
+    const {top, left} = this.savedScrollPosition;
+    let attempts = 0;
+    let heldFrames = 0;
+    const apply = () => {
+      this.scrollRestoreFrame = null;
+      const scrollParent = this.scrollContainer.current;
+      if (!scrollParent) return;
+
+      const reschedule = () => {
+        attempts += 1;
+        if (attempts < MAX_SCROLL_RESTORE_FRAMES) {
+          this.scrollRestoreFrame = requestAnimationFrame(apply);
+        }
+      };
+
+      // Not ready yet: still hidden, or pages too short to hold the offset.
+      const hasRoom = scrollParent.scrollHeight - scrollParent.clientHeight >= top;
+      if (scrollParent.offsetParent === null || !hasRoom) {
+        reschedule();
+        return;
+      }
+
+      if (Math.abs(scrollParent.scrollTop - top) <= 1) {
+        heldFrames += 1;
+      } else {
+        scrollParent.scrollTop = top;
+        scrollParent.scrollLeft = left;
+        heldFrames = 0;
+      }
+      if (heldFrames < 2) reschedule();
+    };
+    this.scrollRestoreFrame = requestAnimationFrame(apply);
+  };
+
+  update_pdf_view = () => {
+    const container = document.getElementById("pdfContainer");
+    if (container && container.offsetParent) {
       this.pdfViewer.currentScaleValue = this.state.zoom;
       this.pdfViewer.pagesRotation = this.state.rotation;
     }
@@ -84,7 +169,7 @@ export class PDFViewer extends React.PureComponent {
     $(".annotation_holder").remove();
     this.update_pdf_view();
     this.props.annotations.forEach(this.display_annotation);
-    if (!!this.props.annotationFocus) {
+    if (this.props.annotationFocus) {
       document.getElementById("annotation_holder_" + this.props.annotationFocus).scrollIntoView();
     }
   };
@@ -103,12 +188,9 @@ export class PDFViewer extends React.PureComponent {
     if (annotation.x_range === undefined || annotation.y_range === undefined) {
       return;
     }
-    let content = "";
-    if (!annotation.deduction) {
-      content += annotation.content;
-    } else {
-      content +=
-        annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
+    let content = annotation.content;
+    if (annotation.deduction) {
+      content += ` [${annotation.criterion_name}: -${annotation.deduction}]`;
     }
 
     if (annotation.is_remark) {
@@ -131,26 +213,18 @@ export class PDFViewer extends React.PureComponent {
   };
 
   getZoomValuesToDisplayName = () => {
-    // 25-200 in increments of 25
-    const zoomLevels = Array.from({length: (200 - 25) / 25 + 1}, (_, i) =>
-      ((i * 25 + 25) / 100).toFixed(2)
-    );
-
-    const valueToDisplayName = zoomLevels.reduce(
-      (acc, value) => {
-        acc[value] = `${(value * 100).toFixed(0)} %`;
-        return acc;
-      },
-      {"page-width": I18n.t("results.fit_to_page_width")}
-    );
-
+    const valueToDisplayName = {"page-width": I18n.t("results.fit_to_page_width")};
+    // 25%-200% in increments of 25%
+    for (let percent = 25; percent <= 200; percent += 25) {
+      valueToDisplayName[(percent / 100).toFixed(2)] = `${percent} %`;
+    }
     return valueToDisplayName;
   };
 
   render() {
     const cursor = this.props.released_to_students ? "default" : "crosshair";
     const userSelect = this.props.released_to_students ? "default" : "none";
-    const zoomValuesToDisplayName = this.getZoomValuesToDisplayName();
+    const zoomValuesToDisplayName = this.zoomValuesToDisplayName;
 
     return (
       <React.Fragment>
@@ -179,7 +253,7 @@ export class PDFViewer extends React.PureComponent {
             />
           </div>
         </div>
-        <div className="pdfContainerParent">
+        <div className="pdfContainerParent" ref={this.scrollContainer}>
           <div
             id="pdfContainer"
             className="pdfContainer"

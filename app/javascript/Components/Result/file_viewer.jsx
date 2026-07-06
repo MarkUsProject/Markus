@@ -33,7 +33,13 @@ export const FileViewer = React.memo(function FileViewer(props) {
   if (props.selectedFileType === "image") {
     viewer = <ImageViewer mime_type={props.mime_type} {...commonProps} />;
   } else if (props.selectedFileType === "pdf") {
-    viewer = <PDFViewer annotationFocus={props.annotationFocus} {...commonProps} />;
+    viewer = (
+      <PDFViewer
+        annotationFocus={props.annotationFocus}
+        userFileSelectionCount={props.userFileSelectionCount}
+        {...commonProps}
+      />
+    );
   } else if (
     props.selectedFileType === "jupyter-notebook" ||
     (props.selectedFileType === "rmarkdown" && props.rmd_convert_enabled)

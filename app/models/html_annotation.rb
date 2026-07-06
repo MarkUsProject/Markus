@@ -21,6 +21,8 @@
 #  x2                 :integer
 #  y1                 :integer
 #  y2                 :integer
+#  created_at         :datetime
+#  updated_at         :datetime
 #  annotation_text_id :integer          not null
 #  creator_id         :integer
 #  result_id          :integer          not null
@@ -35,6 +37,7 @@
 #
 #  fk_annotations_annotation_texts  (annotation_text_id => annotation_texts.id)
 #  fk_annotations_submission_files  (submission_file_id => submission_files.id)
+#  fk_rails_...                     (result_id => results.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class HtmlAnnotation < Annotation
@@ -42,6 +45,10 @@ class HtmlAnnotation < Annotation
   validates :start_offset, presence: true
   validates :end_node, presence: true
   validates :end_offset, presence: true
+
+  def self.required_fields
+    %i[start_node start_offset end_node end_offset]
+  end
 
   def get_data(include_creator: false)
     data = super

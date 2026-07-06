@@ -8,13 +8,23 @@
 
 ### ✨ New features and improvements
 - Added a submissions table toggle that lets TAs with manage submissions permission view all submissions or only assigned submissions (#8047)
+- Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
+- Migrated `SummaryPanel` component to React Table V8 (#8019)
+- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
+- Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
+- Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
+- Preserved PDF scroll position when switching between submissions while grading scanned exams (#8004)
 - Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET and PATCH /overall_comment API routes (#7963)
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+- Add pagination to Admin Users table for performance (#7997)
+- Added support for all annotation types for POST /add_annotations (#8007)
 
 ### 🐛 Bug fixes
+- Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
+- Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
@@ -22,6 +32,16 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
+- Upgraded Babel to v8 (#8041)
+- Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)
+- Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
+- Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
+- Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
+- Upgraded to Rails v8.1.3 (#8015)
+- Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
+- Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
 - Added release automation scripts (#7914)
 - Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
 - Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
@@ -37,6 +57,7 @@
 - Migrated asset pipeline from Sprockets to Propshaft (#7970)
 - Simplified Chart.js usage: removed the `DataChart` wrapper component, converted `chart_config.js` to an ES module, and replaced `registerables` with a minimal set of Chart.js components (#7987)
 - Added missing foreign keys in seed data (#8006)
+- Bump jwt from 2.10.3 to 3.2.0 (#8039)
 
 ## [v2.10.0]
 

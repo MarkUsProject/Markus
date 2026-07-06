@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, fireEvent, waitFor, cleanup} from "@testing-library/react";
 import AssignmentGroupUseModal from "../Modals/assignment_group_use_modal";
 import Modal from "react-modal";

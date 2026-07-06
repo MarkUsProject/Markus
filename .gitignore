@@ -85,3 +85,6 @@ compose.override.yaml
 
 # Optional VSCode container configuration
 .devcontainer
+
+# Generated documentation
+docs/_site/

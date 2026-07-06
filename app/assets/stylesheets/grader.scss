@@ -202,23 +202,21 @@
   display: flex;
   flex-grow: 1;
   margin-top: 0.5em;
+  min-height: 0;
   width: 100%;
 
   #panes {
-    display: flex;
     width: 100%;
 
     @include mixins.breakpoint(small) {
-      display: block;
+      display: block !important;
+      overflow: auto !important;
     }
   }
 
-  #left-pane,
-  #drag,
-  #right-pane {
+  .result-pane {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     margin: 0;
     padding: 0;
     vertical-align: top;
@@ -226,7 +224,7 @@
 
   #left-pane,
   #right-pane {
-    overflow: auto;
+    min-width: 0;
 
     @include mixins.breakpoint(small) {
       display: block;
@@ -235,21 +233,21 @@
     }
   }
 
-  #left-pane {
+  #left-pane .result-pane {
     margin-right: 3px;
-    width: 70%;
 
     @include mixins.breakpoint(small) {
       margin-bottom: 1em;
+      margin-right: 0;
       padding-right: 0;
     }
   }
 
-  #right-pane {
+  #right-pane .result-pane {
     margin-left: 3px;
-    width: 29.5%;
 
     @include mixins.breakpoint(small) {
+      margin-left: 0;
       padding-left: 0;
     }
   }
@@ -257,11 +255,10 @@
   #drag {
     background: #ccc;
     cursor: col-resize;
-    position: inherit;
     width: 4px;
 
     @include mixins.breakpoint(small) {
-      display: none;
+      display: none !important;
     }
   }
 }

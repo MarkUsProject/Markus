@@ -19,7 +19,7 @@
 #
 # Indexes
 #
-#  index_exam_templates_on_assessment_id  (assessment_id)
+#  index_exam_templates_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
 # Foreign Keys
 #
