@@ -236,7 +236,9 @@ CREATE TABLE public.annotations (
     start_node character varying,
     end_node character varying,
     start_offset integer,
-    end_offset integer
+    end_offset integer,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -284,7 +286,9 @@ CREATE TABLE public.assessment_section_properties (
     start_time timestamp without time zone,
     is_hidden boolean,
     visible_on timestamp(6) without time zone,
-    visible_until timestamp(6) without time zone
+    visible_until timestamp(6) without time zone,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -463,7 +467,9 @@ CREATE TABLE public.autotest_settings (
     id bigint NOT NULL,
     url character varying NOT NULL,
     api_key character varying NOT NULL,
-    schema character varying NOT NULL
+    schema character varying NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -886,7 +892,9 @@ ALTER SEQUENCE public.grade_entry_students_id_seq OWNED BY public.grade_entry_st
 CREATE TABLE public.grade_entry_students_tas (
     grade_entry_student_id integer NOT NULL,
     ta_id integer NOT NULL,
-    id integer NOT NULL
+    id integer NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -919,7 +927,9 @@ CREATE TABLE public.grader_permissions (
     manage_submissions boolean DEFAULT false NOT NULL,
     manage_assessments boolean DEFAULT false NOT NULL,
     run_tests boolean DEFAULT false NOT NULL,
-    role_id bigint NOT NULL
+    role_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -984,7 +994,9 @@ ALTER SEQUENCE public.grades_id_seq OWNED BY public.grades.id;
 CREATE TABLE public.grouping_starter_file_entries (
     id bigint NOT NULL,
     grouping_id bigint NOT NULL,
-    starter_file_entry_id bigint NOT NULL
+    starter_file_entry_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1052,7 +1064,9 @@ ALTER SEQUENCE public.groupings_id_seq OWNED BY public.groupings.id;
 
 CREATE TABLE public.groupings_tags (
     tag_id integer NOT NULL,
-    grouping_id integer NOT NULL
+    grouping_id integer NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1064,7 +1078,9 @@ CREATE TABLE public.groups (
     id integer NOT NULL,
     group_name character varying NOT NULL,
     repo_name character varying,
-    course_id bigint NOT NULL
+    course_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1693,7 +1709,9 @@ CREATE TABLE public.schema_migrations (
 CREATE TABLE public.section_starter_file_groups (
     id bigint NOT NULL,
     section_id bigint NOT NULL,
-    starter_file_group_id bigint NOT NULL
+    starter_file_group_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1867,7 +1885,9 @@ ALTER SEQUENCE public.split_pdf_logs_id_seq OWNED BY public.split_pdf_logs.id;
 CREATE TABLE public.starter_file_entries (
     id bigint NOT NULL,
     starter_file_group_id bigint NOT NULL,
-    path character varying NOT NULL
+    path character varying NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1899,7 +1919,9 @@ CREATE TABLE public.starter_file_groups (
     assessment_id bigint NOT NULL,
     entry_rename character varying DEFAULT ''::character varying NOT NULL,
     use_rename boolean DEFAULT false NOT NULL,
-    name character varying NOT NULL
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1932,7 +1954,9 @@ CREATE TABLE public.submission_files (
     filename character varying NOT NULL,
     path character varying DEFAULT '/'::character varying NOT NULL,
     is_converted boolean DEFAULT false NOT NULL,
-    error_converting boolean DEFAULT false NOT NULL
+    error_converting boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -2004,7 +2028,8 @@ CREATE TABLE public.submissions (
     revision_timestamp timestamp without time zone,
     remark_request text,
     remark_request_timestamp timestamp without time zone,
-    is_empty boolean DEFAULT true NOT NULL
+    is_empty boolean DEFAULT true NOT NULL,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -2037,7 +2062,9 @@ CREATE TABLE public.tags (
     name character varying NOT NULL,
     description character varying,
     assessment_id bigint,
-    role_id bigint NOT NULL
+    role_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -3987,6 +4014,14 @@ ALTER TABLE ONLY public.grouping_starter_file_entries
 
 
 --
+-- Name: lti_deployments fk_rails_0587f17288; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_deployments
+    ADD CONSTRAINT fk_rails_0587f17288 FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
 -- Name: key_pairs fk_rails_07749372b3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4011,6 +4046,14 @@ ALTER TABLE ONLY public.groups
 
 
 --
+-- Name: annotation_texts fk_rails_113a699958; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annotation_texts
+    ADD CONSTRAINT fk_rails_113a699958 FOREIGN KEY (creator_id) REFERENCES public.roles(id);
+
+
+--
 -- Name: marking_weights fk_rails_15c421fa93; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4019,11 +4062,27 @@ ALTER TABLE ONLY public.marking_weights
 
 
 --
+-- Name: assessment_section_properties fk_rails_1d7f406bed; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assessment_section_properties
+    ADD CONSTRAINT fk_rails_1d7f406bed FOREIGN KEY (section_id) REFERENCES public.sections(id);
+
+
+--
 -- Name: peer_reviews fk_rails_1e5d815725; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.peer_reviews
     ADD CONSTRAINT fk_rails_1e5d815725 FOREIGN KEY (result_id) REFERENCES public.results(id);
+
+
+--
+-- Name: marking_weights fk_rails_207b1ceb94; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.marking_weights
+    ADD CONSTRAINT fk_rails_207b1ceb94 FOREIGN KEY (marking_scheme_id) REFERENCES public.marking_schemes(id);
 
 
 --
@@ -4067,6 +4126,22 @@ ALTER TABLE ONLY public.template_divisions
 
 
 --
+-- Name: annotation_texts fk_rails_30b7e34fef; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annotation_texts
+    ADD CONSTRAINT fk_rails_30b7e34fef FOREIGN KEY (last_editor_id) REFERENCES public.roles(id);
+
+
+--
+-- Name: submissions fk_rails_357336692c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submissions
+    ADD CONSTRAINT fk_rails_357336692c FOREIGN KEY (grouping_id) REFERENCES public.groupings(id);
+
+
+--
 -- Name: test_runs fk_rails_3c9d686a0f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4080,6 +4155,14 @@ ALTER TABLE ONLY public.test_runs
 
 ALTER TABLE ONLY public.tags
     ADD CONSTRAINT fk_rails_4562903764 FOREIGN KEY (role_id) REFERENCES public.roles(id);
+
+
+--
+-- Name: grades fk_rails_4b76d9331b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grades
+    ADD CONSTRAINT fk_rails_4b76d9331b FOREIGN KEY (grade_entry_student_id) REFERENCES public.grade_entry_students(id);
 
 
 --
@@ -4107,11 +4190,27 @@ ALTER TABLE ONLY public.feedback_files
 
 
 --
+-- Name: grade_entry_students_tas fk_rails_57182dc786; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_students_tas
+    ADD CONSTRAINT fk_rails_57182dc786 FOREIGN KEY (ta_id) REFERENCES public.roles(id);
+
+
+--
 -- Name: test_group_results fk_rails_5ad5ab0a6d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.test_group_results
     ADD CONSTRAINT fk_rails_5ad5ab0a6d FOREIGN KEY (test_group_id) REFERENCES public.test_groups(id);
+
+
+--
+-- Name: notes fk_rails_5d4a723a34; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT fk_rails_5d4a723a34 FOREIGN KEY (creator_id) REFERENCES public.roles(id);
 
 
 --
@@ -4139,6 +4238,14 @@ ALTER TABLE ONLY public.grouping_starter_file_entries
 
 
 --
+-- Name: lti_deployments fk_rails_700ad4f1c1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_deployments
+    ADD CONSTRAINT fk_rails_700ad4f1c1 FOREIGN KEY (lti_client_id) REFERENCES public.lti_clients(id);
+
+
+--
 -- Name: test_results fk_rails_706edea285; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4160,6 +4267,14 @@ ALTER TABLE ONLY public.exam_templates
 
 ALTER TABLE ONLY public.assessments
     ADD CONSTRAINT fk_rails_79e107ee61 FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
+-- Name: criterion_ta_associations fk_rails_7a0d4fe2f5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criterion_ta_associations
+    ADD CONSTRAINT fk_rails_7a0d4fe2f5 FOREIGN KEY (ta_id) REFERENCES public.roles(id);
 
 
 --
@@ -4195,6 +4310,22 @@ ALTER TABLE ONLY public.peer_reviews
 
 
 --
+-- Name: lti_users fk_rails_8c221c7d3d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_users
+    ADD CONSTRAINT fk_rails_8c221c7d3d FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: criterion_ta_associations fk_rails_8ce5f38173; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criterion_ta_associations
+    ADD CONSTRAINT fk_rails_8ce5f38173 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: test_runs fk_rails_8d1eefeaa6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4219,6 +4350,14 @@ ALTER TABLE ONLY public.starter_file_entries
 
 
 --
+-- Name: submission_rules fk_rails_94ce06df92; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_rules
+    ADD CONSTRAINT fk_rails_94ce06df92 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: split_pages fk_rails_9ea6507e1b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4227,11 +4366,27 @@ ALTER TABLE ONLY public.split_pages
 
 
 --
+-- Name: assessment_section_properties fk_rails_a1281a0028; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assessment_section_properties
+    ADD CONSTRAINT fk_rails_a1281a0028 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: split_pdf_logs fk_rails_a3bcef9f4d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.split_pdf_logs
     ADD CONSTRAINT fk_rails_a3bcef9f4d FOREIGN KEY (exam_template_id) REFERENCES public.exam_templates(id);
+
+
+--
+-- Name: grace_period_deductions fk_rails_a425869910; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grace_period_deductions
+    ADD CONSTRAINT fk_rails_a425869910 FOREIGN KEY (membership_id) REFERENCES public.memberships(id);
 
 
 --
@@ -4267,6 +4422,38 @@ ALTER TABLE ONLY public.memberships
 
 
 --
+-- Name: grades fk_rails_ad0732ef40; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grades
+    ADD CONSTRAINT fk_rails_ad0732ef40 FOREIGN KEY (grade_entry_item_id) REFERENCES public.grade_entry_items(id);
+
+
+--
+-- Name: grade_entry_students fk_rails_ae72733e62; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_students
+    ADD CONSTRAINT fk_rails_ae72733e62 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
+-- Name: assessments fk_rails_b2750d590e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assessments
+    ADD CONSTRAINT fk_rails_b2750d590e FOREIGN KEY (parent_assessment_id) REFERENCES public.assessments(id);
+
+
+--
+-- Name: criteria_assignment_files_joins fk_rails_b60e5e1ad7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criteria_assignment_files_joins
+    ADD CONSTRAINT fk_rails_b60e5e1ad7 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
+
+
+--
 -- Name: test_runs fk_rails_bb3bcd4524; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4299,6 +4486,14 @@ ALTER TABLE ONLY public.roles
 
 
 --
+-- Name: test_groups fk_rails_c147c92aff; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_groups
+    ADD CONSTRAINT fk_rails_c147c92aff FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
+
+
+--
 -- Name: grader_permissions fk_rails_c40f429065; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4320,6 +4515,14 @@ ALTER TABLE ONLY public.marks
 
 ALTER TABLE ONLY public.section_starter_file_groups
     ADD CONSTRAINT fk_rails_d988dc43a3 FOREIGN KEY (starter_file_group_id) REFERENCES public.starter_file_groups(id);
+
+
+--
+-- Name: annotations fk_rails_da86df1ca6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annotations
+    ADD CONSTRAINT fk_rails_da86df1ca6 FOREIGN KEY (result_id) REFERENCES public.results(id);
 
 
 --
@@ -4363,11 +4566,27 @@ ALTER TABLE ONLY public.grades
 
 
 --
+-- Name: grade_entry_students_tas fk_rails_eb93ffce42; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_students_tas
+    ADD CONSTRAINT fk_rails_eb93ffce42 FOREIGN KEY (grade_entry_student_id) REFERENCES public.grade_entry_students(id);
+
+
+--
 -- Name: grade_entry_students fk_rails_ec5b13f7ac; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.grade_entry_students
     ADD CONSTRAINT fk_rails_ec5b13f7ac FOREIGN KEY (role_id) REFERENCES public.roles(id);
+
+
+--
+-- Name: criterion_ta_associations fk_rails_f2f5f90ba7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criterion_ta_associations
+    ADD CONSTRAINT fk_rails_f2f5f90ba7 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
 
 
 --
@@ -4379,11 +4598,27 @@ ALTER TABLE ONLY public.criteria
 
 
 --
+-- Name: lti_users fk_rails_f4e2e2b28c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_users
+    ADD CONSTRAINT fk_rails_f4e2e2b28c FOREIGN KEY (lti_client_id) REFERENCES public.lti_clients(id);
+
+
+--
 -- Name: test_runs fk_rails_f712000ed8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.test_runs
     ADD CONSTRAINT fk_rails_f712000ed8 FOREIGN KEY (submission_id) REFERENCES public.submissions(id);
+
+
+--
+-- Name: grade_entry_items fk_rails_f80c7b41a3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_items
+    ADD CONSTRAINT fk_rails_f80c7b41a3 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
 
 
 --
@@ -4433,6 +4668,8 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260703000001'),
+('20260703000000'),
 ('20260621000001'),
 ('20260621000000'),
 ('20260530200000'),

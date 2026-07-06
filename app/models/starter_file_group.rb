@@ -8,6 +8,8 @@
 #  entry_rename  :string           default(""), not null
 #  name          :string           not null
 #  use_rename    :boolean          default(FALSE), not null
+#  created_at    :datetime
+#  updated_at    :datetime
 #  assessment_id :bigint           not null
 #
 # Indexes

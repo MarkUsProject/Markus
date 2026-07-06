@@ -3,10 +3,12 @@
 #
 # Table name: autotest_settings
 #
-#  id      :bigint           not null, primary key
-#  api_key :string           not null
-#  schema  :string           not null
-#  url     :string           not null
+#  id         :bigint           not null, primary key
+#  api_key    :string           not null
+#  schema     :string           not null
+#  url        :string           not null
+#  created_at :datetime
+#  updated_at :datetime
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AutotestSetting < ApplicationRecord
