@@ -538,8 +538,9 @@ class AssignmentsController < ApplicationController
   end
 
   # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
-  # as the referer url for the new assignment if possible. Otherwise redirect to a
-  # default action depending on the type of user:
+  # as the referer url for the new assignment if possible,
+  # unless the referer url is an Assignments index page.
+  # Otherwise, redirect to a default action depending on the type of user:
   #   - edit for instructors
   #   - summary for TAs
   #   - show for students
@@ -547,12 +548,18 @@ class AssignmentsController < ApplicationController
     options = referer_options
     if switch_to_same(options)
       redirect_to options
-    elsif current_role.instructor?
-      redirect_to edit_course_assignment_path(current_course, params[:id])
+    else
+      redirect_to default_path_for_role
+    end
+  end
+
+  def default_path_for_role
+    if current_role.instructor?
+      edit_course_assignment_path(current_course, params[:id])
     elsif current_role.ta?
-      redirect_to summary_course_assignment_path(current_course, params[:id])
+      summary_course_assignment_path(current_course, params[:id])
     else # current_role.student?
-      redirect_to course_assignment_path(current_course, params[:id])
+      course_assignment_path(current_course, params[:id])
     end
   end
 
@@ -1128,6 +1135,7 @@ class AssignmentsController < ApplicationController
   end
 
   def switch_to_same(options)
+    return false if options[:action] == 'index' && options[:controller] == 'assignments'
     return false if options[:controller] == 'submissions' && %w[file_manager repo_browser].include?(options[:action])
     return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
 

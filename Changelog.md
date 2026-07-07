@@ -22,6 +22,7 @@
 - Added support for all annotation types for POST /add_annotations (#8007)
 
 ### 🐛 Bug fixes
+- Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
 - Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
 - Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
