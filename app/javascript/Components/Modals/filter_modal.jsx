@@ -106,7 +106,7 @@ export class FilterModal extends React.Component {
     return (
       <div className={"filter"} data-testid={"assigned-graders-only"}>
         <p>{I18n.t("results.filters.navigation_scope")}</p>
-        <div>
+        <div className={"assigned-graders-only-toggle"}>
           <input
             id={"assigned_graders_only"}
             type={"checkbox"}
