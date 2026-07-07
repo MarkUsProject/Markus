@@ -31,6 +31,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
 - Upgraded Babel to v8 (#8041)
 - Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)
