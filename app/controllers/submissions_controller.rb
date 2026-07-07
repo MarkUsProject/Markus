@@ -698,7 +698,7 @@ class SubmissionsController < ApplicationController
       send_file zip_path, disposition: 'inline', filename: zip_file
     rescue ActionController::MissingFile
       flash_message(:error, I18n.t('submissions.download_zipped_file.file_missing', zip_file: zip_file))
-      redirect_back(fallback_location: root_path)
+      redirect_back_or_to(root_path)
     end
   end
 
@@ -722,7 +722,7 @@ class SubmissionsController < ApplicationController
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
           flash_message(:error, t('submissions.student.no_revision_available'))
-          redirect_back(fallback_location: root_path)
+          redirect_back_or_to(root_path)
           return
         end
       end
@@ -730,7 +730,7 @@ class SubmissionsController < ApplicationController
       files = revision.files_at_path(assignment.repository_folder)
       if files.empty?
         flash_message(:error, t('submissions.no_files_available'))
-        redirect_back(fallback_location: root_path)
+        redirect_back_or_to(root_path)
         return
       end
 
