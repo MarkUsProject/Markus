@@ -127,13 +127,18 @@ class ExamScanLogTable extends React.Component {
         filterable
         defaultSorted={[{id: "date", desc: true}]}
         SubComponent={row => (
-          <ExamScanErrorsTable
-            course_id={this.props.course_id}
-            data={row.original.page_data}
-            exam_template_id={row.original.exam_template_id}
-            split_pdf_log_id={row.original.file_id}
-            assignment_id={this.props.assignment_id}
-          />
+          <div>
+            <h4>{I18n.t("split_pdf_logs.pages_error")}</h4>
+            <ExamScanErrorsTable
+              course_id={this.props.course_id}
+              data={row.original.page_data}
+              exam_template_id={row.original.exam_template_id}
+              split_pdf_log_id={row.original.file_id}
+              assignment_id={this.props.assignment_id}
+            />
+            <h4>{I18n.t("split_pdf_logs.papers_found")}</h4>
+            <ExamScanGroupsTable data={row.original.group_data} />
+          </div>
         )}
         loading={this.state.loading}
       />
@@ -191,6 +196,36 @@ class ExamScanErrorsTable extends React.Component {
       accessor: "exam_page_number",
       maxWidth: 120,
       className: "number",
+    },
+  ];
+
+  render() {
+    return (
+      <ReactTable
+        data={this.props.data}
+        columns={this.columns}
+        style={{maxWidth: "800px", marginTop: "5px", marginBottom: "5px"}}
+        minRows={1}
+      />
+    );
+  }
+}
+
+class ExamScanGroupsTable extends React.Component {
+  constructor() {
+    super();
+  }
+
+  columns = [
+    {
+      Header: I18n.t("activerecord.models.group.one"),
+      accessor: "group",
+    },
+    {
+      Header: "Status",
+      accessor: "complete",
+      Cell: row =>
+        row.value ? I18n.t("submissions.state.complete") : I18n.t("submissions.state.incomplete"),
     },
   ];
 
