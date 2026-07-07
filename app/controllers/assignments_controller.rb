@@ -327,7 +327,7 @@ class AssignmentsController < ApplicationController
       @current_job = AutotestCancelJob.perform_later(assignment_id, [test_run_id])
       session[:job_id] = @current_job.job_id
     end
-    redirect_back_or_to(root_path)
+    redirect_back(fallback_location: root_path)
   end
 
   def stop_batch_tests
@@ -335,7 +335,7 @@ class AssignmentsController < ApplicationController
     assignment_id = params[:id]
     @current_job = AutotestCancelJob.perform_later(assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
-    redirect_back_or_to(root_path)
+    redirect_back(fallback_location: root_path)
   end
 
   def batch_runs
@@ -554,7 +554,6 @@ class AssignmentsController < ApplicationController
   end
 
   def default_path_for_role
-    nil
     if current_role.instructor?
       edit_course_assignment_path(current_course, params[:id])
     elsif current_role.ta?
@@ -716,10 +715,10 @@ class AssignmentsController < ApplicationController
       respond_with @assignment, location: -> { course_assignments_path(current_course, @assignment) }
     rescue ActiveRecord::DeleteRestrictionError
       flash_message(:error, I18n.t('assignments.assignment_has_groupings'))
-      redirect_back_or_to({ action: :edit, id: @assignment.id })
+      redirect_back fallback_location: { action: :edit, id: @assignment.id }
     rescue StandardError => e
       flash_message(:error, I18n.t('activerecord.errors.models.assignment_deletion', problem_message: e.message))
-      redirect_back_or_to({ action: :edit, id: @assignment.id })
+      redirect_back fallback_location: { action: :edit, id: @assignment.id }
     end
   end
 
