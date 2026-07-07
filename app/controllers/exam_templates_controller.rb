@@ -186,20 +186,25 @@ class ExamTemplatesController < ApplicationController
                                     .includes(split_pages: :group)
 
         data = split_pdf_logs.map do |log|
-          pages = log.split_pages.select do |p|
-            # TODO: make status non-nil.
-            p.status == 'FIXED' || p.status&.start_with?('ERROR')
+          page_data = []
+          group_data = {}
+
+          log.split_pages.each do |page|
+            if page.status == 'FIXED' || page.status&.start_with?('ERROR')
+              page_data << {
+                raw_page_number: page.raw_page_number,
+                exam_page_number: page.exam_page_number,
+                status: page.status,
+                group: page.group_id.nil? ? nil : page.group.group_name,
+                id: page.id
+              }
+            end
+
+            next if page.group_id.nil?
+            group_data[page.group_id] ||= { group: page.group.group_name, complete: false }
+            group_data[page.group_id][:complete] ||= page.status&.include?('Saved to complete directory') || false
           end
 
-          page_data = pages.map do |page|
-            {
-              raw_page_number: page.raw_page_number,
-              exam_page_number: page.exam_page_number,
-              status: page.status,
-              group: page.group_id.nil? ? nil : page.group.group_name,
-              id: page.id
-            }
-          end
           {
             date: I18n.l(log.uploaded_when),
             exam_template: log.exam_template.name,
@@ -211,7 +216,8 @@ class ExamTemplatesController < ApplicationController
             original_num_pages: log.original_num_pages,
             num_pages_qr_scan_error: log.num_pages_qr_scan_error,
             # number_of_pages_fixed: log.split_pages.where(status: 'FIXED').length
-            page_data: page_data
+            page_data: page_data,
+            group_data: group_data.values
           }
         end
         render json: data
