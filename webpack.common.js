@@ -70,6 +70,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
+      React: "react",
       "window.jQuery": "jquery",
     }),
   ],
