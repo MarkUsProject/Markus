@@ -34,12 +34,12 @@ en:
       add_criterion: Add Criterion Filter
       assigned_submissions_only: Only assigned submissions
       invalid_range: Invalid Range
-      navigation_scope: Navigation Scope
       no_options: No options available
       order_by: Order By
       ordering:
         ascending: Ascending
         descending: Descending
+      submission_scope: Submission Scope
       text_box_placeholder: Search text
     fit_to_page_width: Fit to page width
     fullscreen_enter: Fullscreen

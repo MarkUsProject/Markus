@@ -105,7 +105,7 @@ export class FilterModal extends React.Component {
       this.props.filterData.assignedGradersOnly !== "false";
     return (
       <div className={"filter"} data-testid={"assigned-graders-only"}>
-        <p>{I18n.t("results.filters.navigation_scope")}</p>
+        <p>{I18n.t("results.filters.submission_scope")}</p>
         <div className={"assigned-graders-only-toggle"}>
           <input
             id={"assigned_graders_only"}

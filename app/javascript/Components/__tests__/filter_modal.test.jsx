@@ -425,7 +425,7 @@ describe("FilterModal", () => {
       });
     });
 
-    describe("Navigation scope", () => {
+    describe("Submission scope", () => {
       it("should not render the assigned submissions toggle without manage submissions permission", () => {
         const toggle = screen.queryByTestId("assigned-graders-only");
         expect(toggle).not.toBeInTheDocument();
