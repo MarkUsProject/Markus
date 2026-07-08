@@ -36,6 +36,7 @@
 - Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)
 - Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
 - Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
+- Refactored GroupsController#create_groups_when_students_work_alone` and `GroupsController#upload` to use ActionCable websockets instead of polling to report `CreateGroupsJob` status. (#8020)
 - Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)
