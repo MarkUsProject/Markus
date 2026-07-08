@@ -81,6 +81,7 @@ From here you may:
     - **Tags**: You can select multiple tags (see [Tags](#tags)) to filter all submissions that have at least one of the specified tags associated with them.
     - **Section**: Filter submissions using the section of the associated group's inviter.
     - **Graders**: Instructors can select multiple graders to filter all submissions that have at least one of the specified graders assigned to them.
+    - **Navigation Scope**: Graders with the "Manage submissions" permission can choose whether the "Next" and "Previous" buttons navigate through only their assigned submissions or through all submissions. The "Only assigned submissions" option is enabled by default. Graders without this permission continue to navigate only their assigned submissions.
     - **Annotation**: Text that must be present in an annotation (see [Annotations](#annotations)) for the submission.
     - **Total Mark**: You can specify minimum and/or maximum total mark values to define a range and filter all submissions with total marks within the specified range (inclusive).
     - **Total Extra Marks**: You can specify minimum and/or maximum total extra marks values to define a range and filter all submissions with total extra  marks within the specified range (inclusive).
