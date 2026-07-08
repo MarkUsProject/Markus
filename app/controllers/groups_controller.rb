@@ -136,7 +136,7 @@ class GroupsController < ApplicationController
       if @assignment.groupings.left_outer_joins(:current_submission_used).where('submissions.id': nil).any?
         flash_message(:warning, I18n.t('exam_templates.assign_scans.not_all_submissions_collected'))
       end
-      redirect_back(fallback_location: course_assignment_groups_path(current_course, @assignment))
+      redirect_back_or_to(course_assignment_groups_path(current_course, @assignment))
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|
@@ -380,7 +380,7 @@ class GroupsController < ApplicationController
       end
     end
 
-    redirect_back(fallback_location: root_path)
+    redirect_back_or_to(root_path)
   end
 
   def accept_invitation
