@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Updated links to refer to new documentation website (#8048)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
 - Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)

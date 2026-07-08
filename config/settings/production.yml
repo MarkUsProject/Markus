@@ -34,6 +34,8 @@ autotest:
 
 # The settings below are for an experimental feature that is not available
 # in production yet. Please disregard for now.
+docs_url: https://markus-docs.teach.cs.toronto.edu
+
 lti:
   domains: <%= %w[canvas.instructure.com] %>
   token_endpoint: "https://canvas.instructure.com/login/oauth2/token"

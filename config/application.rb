@@ -141,10 +141,7 @@ module Markus
 
     config.rmd_convert_enabled = Settings.rmd_convert_enabled
 
-    # TODO: review initializers 01 and 02
-    # TODO review markus custom config format
-    # TODO handle namespaces properly for app/lib
-    # TODO migrate all javascript to webpack
+    # TODO: migrate all javascript to webpack
     # TODO try precompiled assets in production
     # TODO database pool connections and unicorn workers
   end
