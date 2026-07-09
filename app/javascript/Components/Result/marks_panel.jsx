@@ -146,7 +146,6 @@ export class MarksPanel extends React.Component {
 
     const props = {
       active: this.state.activeCriterionId === key,
-      key: key,
       released_to_students: this.props.released_to_students,
       unassigned: unassigned,
       updateMark: this.updateMark,
@@ -161,11 +160,11 @@ export class MarksPanel extends React.Component {
       ...markData,
     };
     if (markData.criterion_type === "CheckboxCriterion") {
-      return <CheckboxCriterionInput {...props} />;
+      return <CheckboxCriterionInput key={key} {...props} />;
     } else if (markData.criterion_type === "FlexibleCriterion") {
-      return <FlexibleCriterionInput {...props} />;
+      return <FlexibleCriterionInput key={key} {...props} />;
     } else if (markData.criterion_type === "RubricCriterion") {
-      return <RubricCriterionInput {...props} />;
+      return <RubricCriterionInput key={key} {...props} />;
     } else {
       return null;
     }

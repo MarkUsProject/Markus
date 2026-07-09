@@ -440,7 +440,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
+    mark_value = params[:mark].presence&.to_f
 
     is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 

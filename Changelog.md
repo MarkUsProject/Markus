@@ -23,6 +23,7 @@
 - Added support for all annotation types for POST /add_annotations (#8007)
 
 ### 🐛 Bug fixes
+- Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
 - Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
 - Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
@@ -32,6 +33,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
 - Upgraded Babel to v8 (#8041)
 - Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)

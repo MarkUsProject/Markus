@@ -129,7 +129,7 @@ class CoursesController < ApplicationController
                 disposition: 'attachment')
     else
       flash[:error] = t('download_errors.unrecognized_format', file_format: format)
-      redirect_back(fallback_location: course_assignments_path(current_course))
+      redirect_back_or_to(course_assignments_path(current_course))
     end
   end
 
@@ -151,7 +151,7 @@ class CoursesController < ApplicationController
         end
       end
     end
-    redirect_back(fallback_location: course_assignments_path(current_course))
+    redirect_back_or_to(course_assignments_path(current_course))
   end
 
   def destroy_lti_deployment
