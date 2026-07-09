@@ -106,20 +106,37 @@ export class FilterModal extends React.Component {
     return (
       <div className={"filter"} data-testid={"assigned-graders-only"}>
         <p>{I18n.t("results.filters.submission_scope")}</p>
-        <div className={"assigned-graders-only-toggle"}>
-          <input
-            id={"assigned_graders_only"}
-            type={"checkbox"}
-            checked={checked}
-            onChange={e => {
-              this.props.updateFilterData({
-                assignedGradersOnly: e.target.checked,
-              });
-            }}
-          />
-          <label htmlFor={"assigned_graders_only"}>
-            {I18n.t("results.filters.assigned_submissions_only")}
-          </label>
+        <div className={"submission-scope-options"}>
+          <div className={"submission-scope-option"}>
+            <input
+              id={"assigned_graders_only"}
+              name={"assigned_graders_only"}
+              type={"radio"}
+              checked={checked}
+              onChange={() => {
+                this.props.updateFilterData({
+                  assignedGradersOnly: true,
+                });
+              }}
+            />
+            <label htmlFor={"assigned_graders_only"}>
+              {I18n.t("results.filters.my_assigned_submissions")}
+            </label>
+          </div>
+          <div className={"submission-scope-option"}>
+            <input
+              id={"all_submissions"}
+              name={"assigned_graders_only"}
+              type={"radio"}
+              checked={!checked}
+              onChange={() => {
+                this.props.updateFilterData({
+                  assignedGradersOnly: false,
+                });
+              }}
+            />
+            <label htmlFor={"all_submissions"}>{I18n.t("results.filters.all_submissions")}</label>
+          </div>
         </div>
       </div>
     );

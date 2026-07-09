@@ -22,7 +22,13 @@
     margin: 5px;
   }
 
-  .assigned-graders-only-toggle label {
+  .submission-scope-options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .submission-scope-option label {
     margin-left: 4px;
   }
 
