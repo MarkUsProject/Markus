@@ -27,6 +27,7 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Fixed issue with exam scans where instructors were unable to identify which groups have missing pages in their exam scan (#8051)
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
 - Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
 - Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
