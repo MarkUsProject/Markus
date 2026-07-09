@@ -31,6 +31,7 @@ require 'set'
 # grouping's work, such as submissions, peer reviews, test runs, and repository management. A Grouping belongs to a
 # group and an assignment and can share a repository with other groupings.
 class Grouping < ApplicationRecord
+  include ActionPolicy::Behaviour
   include SubmissionsHelper
 
   after_create_commit -> { access_repo } # access the repo to trigger creation of assignment subdirectory
@@ -853,17 +854,18 @@ class Grouping < ApplicationRecord
 
   def navigation_results(current_role, filter_data)
     results = self.assignment.current_results
-    if filter_to_assigned_groupings?(current_role, filter_data)
-      results = results.joins(grouping: :memberships).where('memberships.role_id': current_role.id)
+    if current_role.ta?
+      can_manage_submissions = allowed_to?(
+        :manage_submissions?,
+        current_role,
+        context: { role: current_role, user: current_role.user, real_user: current_role.user }
+      )
+
+      if !can_manage_submissions || filter_data.fetch('assignedGradersOnly', true).to_s != 'false'
+        results = results.joins(grouping: :memberships).where('memberships.role_id': current_role.id)
+      end
     end
     results
-  end
-
-  def filter_to_assigned_groupings?(current_role, filter_data)
-    return false unless current_role.ta?
-    return true unless current_role.grader_permission.manage_submissions
-
-    filter_data.fetch('assignedGradersOnly', true).to_s != 'false'
   end
 
   # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
