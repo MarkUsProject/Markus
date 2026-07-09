@@ -122,7 +122,7 @@ class ApplicationController < ActionController::Base
   def check_course_switch
     if session[:role_switch_course_id] && current_course&.id != session[:role_switch_course_id]
       flash_message(:error, I18n.t('main.role_switch.forbidden_warning'))
-      redirect_back(fallback_location: course_assignments_path(session[:role_switch_course_id]))
+      redirect_back_or_to(course_assignments_path(session[:role_switch_course_id]))
     end
   end
 
