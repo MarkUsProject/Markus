@@ -5,7 +5,7 @@
 <%= content_for :modal_content do %>
 
   <p>
-    <%= t('users.admin_csv_upload_help_html', markus_version: Rails.configuration.markus_version) %>
+    <%= t('users.admin_csv_upload_help_html', docs_url: Settings.docs_url) %>
   </p>
   <%= form_tag upload_admin_users_path, { multipart: true } do %>
     <div>

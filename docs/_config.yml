@@ -1,6 +1,7 @@
 destination: /jekyll/site
 cache_dir: /jekyll/cache
 
+url: https://markus-docs.teach.cs.toronto.edu
 title: MarkUs Docs
 description: Documentation for MarkUs — a web-based tool for the submission and grading of student programming assignments.
 theme: just-the-docs
