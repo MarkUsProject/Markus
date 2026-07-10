@@ -100,9 +100,7 @@ export class FilterModal extends React.Component {
     if (this.context.role !== "Ta" || !this.props.can_manage_submissions) {
       return null;
     }
-    const checked =
-      this.props.filterData.assignedGradersOnly !== false &&
-      this.props.filterData.assignedGradersOnly !== "false";
+    const assignedGradersOnly = this.props.filterData.assignedGradersOnly !== false;
     return (
       <div className={"filter"} data-testid={"assigned-graders-only"}>
         <p>{I18n.t("results.filters.submission_scope")}</p>
@@ -112,7 +110,7 @@ export class FilterModal extends React.Component {
               id={"assigned_graders_only"}
               name={"assigned_graders_only"}
               type={"radio"}
-              checked={checked}
+              checked={assignedGradersOnly}
               onChange={() => {
                 this.props.updateFilterData({
                   assignedGradersOnly: true,
@@ -128,7 +126,7 @@ export class FilterModal extends React.Component {
               id={"all_submissions"}
               name={"assigned_graders_only"}
               type={"radio"}
-              checked={!checked}
+              checked={!assignedGradersOnly}
               onChange={() => {
                 this.props.updateFilterData({
                   assignedGradersOnly: false,
