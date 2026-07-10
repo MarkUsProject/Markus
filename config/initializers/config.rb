@@ -191,6 +191,7 @@ Config.setup do |config|
         optional(:lti).filled(:string)
         optional(:repos).filled(:string)
       end
+      optional(:docs_url).filled(:string)
       optional(:lti).hash do
         optional(:course_filter_file).filled(:string)
         required(:domains).array(:str?)

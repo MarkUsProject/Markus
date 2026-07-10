@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Updated links to refer to new documentation website (#8049)
 - Added a grading filter option that lets graders with manage submissions permission navigate either all submissions or only their assigned submissions (#8046)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
