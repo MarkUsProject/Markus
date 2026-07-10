@@ -21,6 +21,7 @@
             release_with_urls: <%= @assignment.release_with_urls %>,
             can_collect: <%= allowed_to? :manage? %>,
             can_view_assigned_submissions_only: <%= @current_role.ta? && allowed_to?(:manage?) %>,
+            initial_show_assigned_submissions_only: <%= @current_role.ta? %>,
             can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,
             defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
           }

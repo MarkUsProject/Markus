@@ -31,7 +31,7 @@ class RawSubmissionTable extends React.Component {
       inactiveGroupsCount: 0,
       assignedSubmissionsCount: 0,
       showInactiveGroups: false,
-      showAssignedSubmissionsOnly: false,
+      showAssignedSubmissionsOnly: this.props.initial_show_assigned_submissions_only,
       filtered: [],
       columns: this.getColumns({}, markingStates, "all"),
     };
@@ -589,6 +589,7 @@ SubmissionTable.defaultProps = {
   is_timed: false,
   can_run_tests: false,
   can_view_assigned_submissions_only: false,
+  initial_show_assigned_submissions_only: false,
 };
 
 class SubmissionsActionBox extends React.Component {

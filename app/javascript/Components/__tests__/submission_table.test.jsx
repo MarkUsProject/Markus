@@ -146,6 +146,7 @@ describe("For the SubmissionTable's display of assigned submissions", () => {
         can_collect={true}
         can_run_tests={false}
         can_view_assigned_submissions_only={true}
+        initial_show_assigned_submissions_only={true}
         defaultFiltered={[{id: "", value: ""}]}
       />
     );
@@ -158,22 +159,22 @@ describe("For the SubmissionTable's display of assigned submissions", () => {
     ).toEqual("1 assigned submission");
   });
 
-  it("initially displays assigned and unassigned submissions", () => {
-    expect(screen.getByText("assigned_group")).toBeInTheDocument();
-    expect(screen.getByText("unassigned_group")).toBeInTheDocument();
-  });
-
-  it("only displays assigned submissions after a single toggle", () => {
-    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+  it("initially displays only assigned submissions", () => {
     expect(screen.getByText("assigned_group")).toBeInTheDocument();
     expect(screen.queryByText("unassigned_group")).not.toBeInTheDocument();
   });
 
-  it("displays all submissions after two toggles", () => {
-    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+  it("displays all submissions after a single toggle", () => {
     fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
     expect(screen.getByText("assigned_group")).toBeInTheDocument();
     expect(screen.getByText("unassigned_group")).toBeInTheDocument();
+  });
+
+  it("only displays assigned submissions after two toggles", () => {
+    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+    expect(screen.getByText("assigned_group")).toBeInTheDocument();
+    expect(screen.queryByText("unassigned_group")).not.toBeInTheDocument();
   });
 });
 
