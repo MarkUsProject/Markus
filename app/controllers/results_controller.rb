@@ -75,6 +75,7 @@ class ResultsController < ApplicationController
         end
 
         data[:can_release] = allowed_to?(:manage_assessments?, current_role)
+        data[:can_manage_submissions] = allowed_to?(:manage_submissions?, current_role)
 
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path) do |hash|
