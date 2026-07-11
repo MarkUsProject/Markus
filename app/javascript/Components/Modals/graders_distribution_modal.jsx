@@ -55,9 +55,7 @@ export class GraderDistributionModal extends React.Component {
             <h2>{I18n.t("graders.weight")}</h2>
             <p className="auto-overflow" style={{maxWidth: "300px"}}>
               {I18n.t("graders.random_instruction")}
-              <a
-                href={`https://github.com/MarkUsProject/Wiki/blob/${MARKUS_VERSION}/Instructor-Guide--Assignments--Assigning-Graders.md`}
-              >
+              <a href={`${DOCS_URL}/instructors/assignments/assigning-graders/`}>
                 {" " + I18n.t("graders.wiki")}
               </a>
             </p>

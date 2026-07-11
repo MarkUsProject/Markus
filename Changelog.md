@@ -8,6 +8,8 @@
 
 ### ✨ New features and improvements
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
+- Updated links to refer to new documentation website (#8049)
+- Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
 - Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)

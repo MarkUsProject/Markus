@@ -96,6 +96,50 @@ export class FilterModal extends React.Component {
     );
   };
 
+  renderAssignedGradersOnlyToggle = () => {
+    if (this.context.role !== "Ta" || !this.props.can_manage_submissions) {
+      return null;
+    }
+    const assignedGradersOnly = this.props.filterData.assignedGradersOnly !== false;
+    return (
+      <div className={"filter"} data-testid={"assigned-graders-only"}>
+        <p>{I18n.t("results.filters.submission_scope")}</p>
+        <div className={"submission-scope-options"}>
+          <div className={"submission-scope-option"}>
+            <input
+              id={"assigned_graders_only"}
+              name={"assigned_graders_only"}
+              type={"radio"}
+              checked={assignedGradersOnly}
+              onChange={() => {
+                this.props.updateFilterData({
+                  assignedGradersOnly: true,
+                });
+              }}
+            />
+            <label htmlFor={"assigned_graders_only"}>
+              {I18n.t("results.filters.my_assigned_submissions")}
+            </label>
+          </div>
+          <div className={"submission-scope-option"}>
+            <input
+              id={"all_submissions"}
+              name={"assigned_graders_only"}
+              type={"radio"}
+              checked={!assignedGradersOnly}
+              onChange={() => {
+                this.props.updateFilterData({
+                  assignedGradersOnly: false,
+                });
+              }}
+            />
+            <label htmlFor={"all_submissions"}>{I18n.t("results.filters.all_submissions")}</label>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   rangeFilter = (min, max, title, onMinChange, onMaxChange) => {
     return (
       <div className={"filter"}>
@@ -304,6 +348,7 @@ export class FilterModal extends React.Component {
               </div>
               <div className={"modal-container"}>
                 {this.renderTasDropdown()}
+                {this.renderAssignedGradersOnlyToggle()}
                 <div className={"annotation-input"}>
                   <p>{I18n.t("activerecord.models.annotation.one")}</p>
                   <input

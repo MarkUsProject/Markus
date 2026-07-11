@@ -21,6 +21,7 @@ describe("FilterModal", () => {
         filterData: {
           ascending: true,
           orderBy: "group_name",
+          assignedGradersOnly: true,
           annotationText: "",
           tas: ["a", "b"],
           tags: ["a", "b"],
@@ -54,6 +55,7 @@ describe("FilterModal", () => {
         onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
         updateFilterData: jest.fn().mockImplementation(() => null),
         clearAllFilters: jest.fn().mockImplementation(() => null),
+        can_manage_submissions: false,
         criterionSummaryData: [
           {criterion: "a"},
           {criterion: "b"},
@@ -420,6 +422,50 @@ describe("FilterModal", () => {
       it("should not render filter by tas", () => {
         const dropdown = screen.queryByTestId("Tas");
         expect(dropdown).not.toBeInTheDocument();
+      });
+    });
+
+    describe("Submission scope", () => {
+      it("should not render the submission scope options without manage submissions permission", () => {
+        const toggle = screen.queryByTestId("assigned-graders-only");
+        expect(toggle).not.toBeInTheDocument();
+      });
+
+      it("should render submission scope radio buttons with assigned submissions selected by default", () => {
+        component.unmount();
+        props.can_manage_submissions = true;
+        renderInResultContext(<FilterModal {...props} />, {role: "Ta"});
+
+        const myAssignedSubmissions = screen.getByLabelText(
+          I18n.t("results.filters.my_assigned_submissions")
+        );
+        const allSubmissions = screen.getByLabelText(I18n.t("results.filters.all_submissions"));
+
+        expect(myAssignedSubmissions).toHaveAttribute("type", "radio");
+        expect(allSubmissions).toHaveAttribute("type", "radio");
+        expect(myAssignedSubmissions).toBeChecked();
+        expect(allSubmissions).not.toBeChecked();
+      });
+
+      it("should update filter data when all submissions is selected", () => {
+        component.unmount();
+        props.can_manage_submissions = true;
+        renderInResultContext(<FilterModal {...props} />, {role: "Ta"});
+
+        fireEvent.click(screen.getByLabelText(I18n.t("results.filters.all_submissions")));
+
+        expect(props.updateFilterData).toHaveBeenCalledWith({assignedGradersOnly: false});
+      });
+
+      it("should update filter data when my assigned submissions is selected", () => {
+        component.unmount();
+        props.can_manage_submissions = true;
+        props.filterData.assignedGradersOnly = false;
+        renderInResultContext(<FilterModal {...props} />, {role: "Ta"});
+
+        fireEvent.click(screen.getByLabelText(I18n.t("results.filters.my_assigned_submissions")));
+
+        expect(props.updateFilterData).toHaveBeenCalledWith({assignedGradersOnly: true});
       });
     });
   });
