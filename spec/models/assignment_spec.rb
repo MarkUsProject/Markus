@@ -2295,6 +2295,37 @@ describe Assignment do
         end
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        before do
+          Grouping.assign_all_tas([groupings.first.id], [ta.id], assignment_tag)
+        end
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment_tag.summary_json(ta)[:data]
+          data_by_group_name = data.index_by { |group| group[:group_name] }
+          assigned_group_name = groupings.first.group.group_name
+
+          expect(data.size).to eq groupings.size
+          expect(data.count { |group| group[:assigned] }).to eq 1
+          expect(data_by_group_name[assigned_group_name][:assigned]).to be true
+        end
+      end
+
+      context 'when the TA cannot manage submissions' do
+        before do
+          Grouping.assign_all_tas([groupings.first.id], [ta.id], assignment_tag)
+        end
+
+        it 'returns only the assigned groupings' do
+          data = assignment_tag.summary_json(ta)[:data]
+
+          expect(data.size).to eq 1
+          expect(data.first[:assigned]).to be true
+        end
+      end
+
       it 'has tags correct info' do
         Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
@@ -2345,7 +2376,8 @@ describe Assignment do
             :submission_id,
             :tags,
             :total_extra_marks,
-            :graders
+            :graders,
+            :assigned
           ]
 
           expect(data).not_to be_empty

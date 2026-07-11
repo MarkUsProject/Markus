@@ -50,6 +50,11 @@ en:
     grading_can_begin_after_for_sections: 'Grading can begin after %{time} for sections: %{sections}'
     grading_can_begin_for_sections: 'Grading can begin for sections: %{sections}'
     groups:
+      assigned_submissions:
+        one: 1 assigned submission
+        other: "%{count} assigned submissions"
+        zero: 0 assigned submissions
+      display_assigned_only: Display assigned submissions only
       display_inactive: Display inactive groups
     help:
       browse:
