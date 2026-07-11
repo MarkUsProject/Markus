@@ -16,9 +16,6 @@ AllCops:
   SuggestExtensions: false
   TargetRubyVersion: 3.1
 
-Capybara/ClickLinkOrButtonStyle:  # TODO: Enable and fix errors after reviewing system tests
-  Enabled: false
-
 FactoryBot/AssociationStyle:
   EnforcedStyle: explicit
 
