@@ -19,6 +19,7 @@ nav_order: 1
 ***Marks Spreadsheets provide the instructor a way of keeping a record of student's marks for assignments, quizzes or tests that do not require online submission.*** For example, an instructor may wish to set up a spreadsheet for a midterm and include a mark for each question on the test.
 
 To set up a marks spreadsheet navigate to the "Assignments" tab of MarkUs and click on the "Create Marks Spreadsheet" button:
+
 ![Create Marks Spreadsheet](/images/assignment-tab.png)
 
 This will bring you to the "Create Marks Spreadsheet" page where a few customization options are available.
@@ -26,6 +27,7 @@ This will bring you to the "Create Marks Spreadsheet" page where a few customiza
 ### Properties
 
 This section allows you to configure some display settings of your spreadsheet:
+
 ![Properties Marks Spreadsheet](/images/marks-spreadsheet-properties.png)
 
 **1. Short Identifier:** This is the short title of the spreadsheet that will appear in the drop down list of assignments.
@@ -41,7 +43,9 @@ This section allows you to configure some display settings of your spreadsheet:
 ### Columns
 
 In this section you may specify the columns (or marks) that you wish your spreadsheet to have:
+
 ![Columns Spreadsheet](/images/marks-spreadsheet-columns.png)
+
 To add a new column, click on the "Add a column" hyperlink at the bottom of the page. In each column you may specify:
 
 **1. Name:** The name of the column (e.g. Question 1, Part 1, Style, etc.). You can also think of this as the name of the specific criterion.

@@ -13,4 +13,5 @@ When you log in to MarkUs, the homepage displays your courses. Courses are group
 If you do not have any courses in one of these groups, the message **No courses to display.** is shown.
 
 ![Homepage](/images/homepage.png)
+
 ![Homepage with no courses](/images/homepage-no-course.png)
