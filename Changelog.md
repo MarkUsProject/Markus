@@ -34,6 +34,9 @@
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
+### 📚 Documentation changes
+- Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
+
 ### 🔧 Internal changes
 - Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
