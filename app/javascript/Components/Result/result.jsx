@@ -30,6 +30,7 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 const INITIAL_FILTER_MODAL_STATE = {
   ascending: true,
   orderBy: "group_name",
+  assignedGradersOnly: true,
   annotationText: "",
   tas: [],
   tags: [],
@@ -996,6 +997,7 @@ class Result extends React.Component {
           <SubmissionSelector
             key="submission-selector"
             can_release={this.state.can_release}
+            can_manage_submissions={this.state.can_manage_submissions}
             assignment_max_mark={this.state.assignment_max_mark}
             fullscreen={this.state.fullscreen}
             group_name={this.state.group_name}

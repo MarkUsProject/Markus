@@ -1883,6 +1883,20 @@ describe Assignment do
         expect(data[0][:_id]).to be groupings[0].id
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment.current_submission_data(ta)
+          data_by_grouping_id = data.index_by { |group| group[:_id] }
+
+          expect(data.size).to eq groupings.size
+          expect(data_by_grouping_id[groupings[0].id][:assigned]).to be true
+          expect(data_by_grouping_id[groupings[1].id][:assigned]).to be false
+          expect(data_by_grouping_id[groupings[2].id][:assigned]).to be false
+        end
+      end
+
       context 'when hide_unassigned_criteria is true' do
         let(:assigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 3) }
         let(:unassigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 1) }
@@ -2877,11 +2891,12 @@ describe Assignment do
                assignment_properties_attributes: { assign_graders_to_criteria: true })
       end
 
+      let(:assigned_grouping) { assignment2.groupings.order(:id).first }
       let(:new_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment2) }
       let(:new_result) { create(:incomplete_result, submission: new_grouping.current_submission_used) }
 
       before do
-        create(:ta_membership, role: ta2, grouping: assignment2.groupings.first)
+        create(:ta_membership, role: ta2, grouping: assigned_grouping)
         create(:ta_membership, role: ta2, grouping: new_grouping)
       end
 
@@ -2908,7 +2923,7 @@ describe Assignment do
           mark2.mark = 1.0
           mark2.save!
 
-          default_result = assignment2.groupings.first.current_result  # the result created by new_grouping
+          default_result = assigned_grouping.current_result
           mark3 = Mark.find_or_initialize_by(result: default_result, criterion: @criterion1)
           mark3.mark = 1.0
           mark3.save!

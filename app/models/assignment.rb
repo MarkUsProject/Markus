@@ -1469,12 +1469,20 @@ class Assignment < Assessment
     if current_role.instructor?
       groupings = self.groupings
     elsif current_role.ta?
-      groupings = self.groupings.where(id: self.groupings.joins(:memberships)
-                                                         .where('memberships.role_id': current_role.id)
-                                                         .select(:'groupings.id'))
+      assigned_grouping_ids = self.groupings
+                                  .joins(:memberships)
+                                  .where('memberships.role_id': current_role.id)
+                                  .ids
+                                  .to_set
+      groupings = if current_role.grader_permission.manage_submissions
+                    self.groupings
+                  else
+                    self.groupings.where(id: assigned_grouping_ids)
+                  end
     else
       return []
     end
+    assigned_grouping_ids ||= Set.new
 
     data = groupings
            .left_outer_joins(:group, :current_submission_used)
@@ -1564,7 +1572,8 @@ class Assignment < Assessment
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
                                      result_info['results.released_to_students'],
-                                     collection_date)
+                                     collection_date),
+        assigned: assigned_grouping_ids.include?(grouping_id)
       }
 
       base[:start_time] = I18n.l(start_time) if self.is_timed && !start_time.nil?

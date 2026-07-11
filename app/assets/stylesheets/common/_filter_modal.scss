@@ -22,6 +22,16 @@
     margin: 5px;
   }
 
+  .submission-scope-options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .submission-scope-option label {
+    margin-left: 4px;
+  }
+
   .order {
     padding-top: 10px;
   }
