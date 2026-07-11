@@ -32,6 +32,7 @@ nav_order: 5
 ## Prepare to Grade
 
 Once you have [collected](marking-set-up.md#collecting-an-assignment) an assignment you may begin grading. This is most likely the part of the process that will take the most time as it is here where you will be able to evaluate the work that the students have done. To get to the grading view, ensure you are in the "Submissions" tab of the appropriate assignment and click on the on the name of the group who's work you wish to grade (the group name will turn into a blue hyperlink once the assignment has been collected).
+
 ![Ready for Grading](/images/submission-table-collected-rows.png)
 
 After doing this, you'll be taken to the grading view, where you will be able to perform a number of different actions.
@@ -39,6 +40,7 @@ After doing this, you'll be taken to the grading view, where you will be able to
 ## View Submitted Files
 
 When you first enter the grading view, most of the screen will be used to display the files that a group has submit for the assignment. To switch between files click on the blue drop-down arrow beside the title of the file you're currently viewing to see a list of all the files that have been submitted:
+
 ![See Files in Grading](/images/grade-view-file-dropdown.png)
 
 You may display any file you wish simply by clicking on the name of the one you wish to view.
@@ -102,6 +104,7 @@ Note: When multiple filters are applied, the filtered submissions only include t
 MarkUs gives you the option of downloading the files that have been submitted. To do this, click on the "Download" button.
 
 This will open up a download modal:
+
 ![Download Modal](/images/grade-view-download-modal.png)
 
 From here you may:
@@ -138,11 +141,13 @@ MarkUs allows you to write in comments for the students to see right on the file
 ### Creating an Annotation
 
 To create an annotation you must first select a section you wish to comment on. In text files, you may highlight the lines you wish to annotate by clicking and dragging your cursor across the specific lines:
+
 ![Highlight Text](/images/grade-view-text-annotation.png)
 
 In the above image, an annotation is about to be made for lines 25 and 26.
 
 In non-text files, such as images, you may select a rectangle for your annotation:
+
 ![Select e](/images/grade-view-image-annotation.png)
 
 In the above image, an annotation is about to be made for the letter 'e'.
@@ -168,11 +173,13 @@ You can also quickly annotate with an emoji. After selecting a particular region
 In order to view all the annotation you (or anyone) has created for a submission, navigate to the annotations tab of the submission
 
 Once here, you will first see a section where you may add in any overall comments you have for the assignment. Once again, LaTeX and markdown commands are supported, so there is a preview window available:
+
 ![Overall Comments](/images/grade-view-annotations-tab.png)
 
 Make sure you hit the "Save" button after editing to save your overall comments!
 
 Underneath the "Overall comments" section is a table that lists all the annotations that have been created for this submission:
+
 ![Annotations Table](/images/grade-view-annotations-table.png)
 
 The table contains the following columns:
@@ -192,6 +199,7 @@ The Marks and Summary tabs are located to the right of the viewing screen and ar
 ### Marks
 
 The Marks tab will list all of the criteria that were created in the [Marking Scheme](marking-criteria.md):
+
 ![Marks Tab](/images/grade-view-criteria-tab.png)
 
 It is here where you are able to select specific criteria to assign marks. In the above image, you can see examples of the [checkbox type](marking-criteria.md#checkbox-type) and [rubric type](marking-criteria.md#rubric-type) criteria. The marks tab has three buttons at the top which do the following:
@@ -205,6 +213,7 @@ If you wish to remove a mark that was given in error, select the "delete mark" l
 ### Summary
 
 The Summary tab gives you an overview of the criteria for the submission, allows you to add bonuses or deductions, and calculates the total mark for the assignment.
+
 ![Summary Tab](/images/grade-view-summary-tab.png)
 
 #### Bonuses and Deductions
@@ -220,6 +229,7 @@ The Tags/Notes tab allows you to add a short tag or a note to the assignment you
 ### Tags
 
 To create a tag, click on the "Create Tag" button in the Tags/Notes view of the selected assignment.
+
 ![New Tag](/images/grade-view-tag-tab.png)
 
 Doing this will open the "Create Tag" window where you will be able to enter a name for your tag and a description. The tag description has a hard limit of 120 characters.
@@ -229,6 +239,7 @@ When you're finished click the "Save" button and your tag will appear in the "Cu
 #### **Current Tags vs Available Tags**
 
 **Current Tags:** Apply only to the current submission and will be visible in the tags column of the Submissions table:
+
 ![Tag in Submissions Table](/images/submission-table-tag-column.png)
 
 **Available Tags:** Tags that have been created but do not apply to the current submission. These will NOT be visible in the tags column for that submission.
@@ -240,6 +251,7 @@ When you're finished click the "Save" button and your tag will appear in the "Cu
 ### Notes
 
 To create a note click on the small "Notes" hyperlink under the tags dialogue in the Tags/Notes tab.
+
 ![Create a Note](/images/grade-view-notes-tab.png)
 
 This will open the note viewing window where you will be able to see the content, author and date of creation of each note. You are also able to add your own notes from this window. The number in parentheses beside the hyperlink lets you know how many notes have been created for this particular submission.

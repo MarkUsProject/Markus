@@ -36,5 +36,7 @@ You should see something like:
 2. Now you can choose to upload the public key file itself (located in the hidden folder in your home directory `~/.ssh/id_rsa.pub` or by executing the following commands to copy and paste your public key contents:
 `> cat ~/.ssh/id_rsa.pub`
 Then you can copy and paste your entire key into MarkUs:
-![Copying the output to the clipboard from running the "cat" program on your public key](https://raw.githubusercontent.com/SoftwareDev/Wiki/5c0ab2bbbdb47ed2309cfad27bcb64ff725a022f/images/Key_Pair-01.png)
-![Copy paste the results of running the "cat" program on your public key and paste it in the MarkUs "Add a Key-pair" form.](https://raw.githubusercontent.com/SoftwareDev/Wiki/5c0ab2bbbdb47ed2309cfad27bcb64ff725a022f/images/Key_Pair-02.png)
+
+![Copying the output to the clipboard from running the "cat" program on your public key](/images/key-pair-01.png)
+
+![Copy paste the results of running the "cat" program on your public key and paste it in the MarkUs "Add a Key-pair" form.](/images/key-pair-02.png)

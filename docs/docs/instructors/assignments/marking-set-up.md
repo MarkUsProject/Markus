@@ -26,6 +26,7 @@ For information on setting up a "Grader" account please see "[Grader Accounts](.
 ## Submissions Table
 
 The first step in marking an assignment is to collect the assignment. To do this, navigate to the "Assignments" tab of MarkUs, click on the assignment you wish to mark and then on the "Submissions" tab:
+
 ![Submissions Tab](/images/submissions-tab.png)
 
 Here you will see a table of all the groups that have been formed (see [How Students Form Groups](../../students/index.md) and [Managing Group Repositories](../groups/index.md)):
@@ -48,16 +49,19 @@ Graders with the **Manage submissions** permission can view all submissions for 
 ## Collecting an Assignment
 
 Before you may being grading an assignment, you must first collect the submitted files from each group. To do this, make sure you are on the "Submissions" page of the assignment you wish to grade and select the checkbox(es) of the groups from which you wish to collect. You may also select the box at the top of the column to select all groups. Once satisfied, click on the "Collect Submissions" button to begin collection.
+
 ![Collecting Assignments](/images/submissions-table-collect.png)
 
 > 🗒️ **NOTE:** By default, MarkUs only allows you to collect submissions AFTER the entire grace credit period has passed.
 
 This will open a modal window with collection options:
+
 ![Submissions Modal](/images/submissions-modal.png)
 
 The default option when the collect command is executed will select the file version for each submission that meets the due date and/or late penalty set for this assignment. It will not recollect submissions that have previously been collected. It then creates the views for annotating and grading each submission.
 
 However, the modal offers a few additional options for collection:
+
 ![Submissions Modal With Options](/images/submissions-modal-with-options.png)
 
 1. **Collect most recent files submitted, regardless of assignment due date or late period.** - if this box is checked, MarkUs will collect the most recent version of files the student has submitted, regardless of the due date and grace periods. This can be used to collect submissions both before and after the due date/grace credit periods.

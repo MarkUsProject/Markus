@@ -17,3 +17,10 @@
   border-left: 3px solid $link-color; // #245185 (--primary_one)
   font-weight: 600;
 }
+
+// Centre all documentation images
+.main-content img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
