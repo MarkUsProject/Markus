@@ -98,6 +98,7 @@ The "delete" link will remove the user from the database and the "edit" link wil
 By default, graders are not allowed to do anything other than view and grade student submissions that they have been assigned. If you would like to allow certain graders to do more on MarkUs you can select the checkboxes under "Grader Permissions":
 
 - Manage assessments: Grader can create/update assignments
+- Manage submissions: Grader can collect submissions, release/unrelease grades, and choose whether to work with all submissions or only submissions assigned to them in the submissions table and grading view.
 - Manage submissions: Grader can collect submissions, release/unrelease grades, and choose whether grading-view navigation includes all submissions or only their assigned submissions
 - Run tests: Grader can run automated tests
 

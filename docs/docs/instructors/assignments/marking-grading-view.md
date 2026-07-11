@@ -89,6 +89,7 @@ From here you may:
         - Select a criterion from the dropdown and click the "Add Criterion Filter" button. The criterion will show up on the list below.
         - Specify min and/or max values to define a range for that criterion.
         - Add more criteria if needed.
+    - **Navigation Scope**: Graders with the **Manage submissions** permission can use the **"Only assigned submissions"** checkbox to control which submissions the "Next" and "Previous" buttons navigate through. When checked, navigation stays within submissions assigned to the grader. When unchecked, navigation can move through all submissions for the assignment. Graders without this permission remain limited to their assigned submissions and do not see this option. Instructors continue to navigate all submissions.
 
 All options will be restored to their default states when the "Clear All" button is clicked.
 After the modal is closed, submissions navigable using the "Next" and "Previous" buttons from the

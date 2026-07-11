@@ -43,6 +43,8 @@ If students are not allowed to work in groups, then under the "Group" column you
 - The **"Total Mark"** column lists the group's mark once a grader has started entering marks for the assignment (default is 0).
 - The **"Tags"** column lists any tags created for the submission.
 
+Graders with the **Manage submissions** permission can view all submissions for an assignment from this table. These graders can use the **"Display assigned submissions only"** checkbox to switch between all submissions and only the submissions assigned to them. Graders without this permission remain limited to their assigned submissions and do not see this control. Instructors continue to view all submissions.
+
 ## Collecting an Assignment
 
 Before you may being grading an assignment, you must first collect the submitted files from each group. To do this, make sure you are on the "Submissions" page of the assignment you wish to grade and select the checkbox(es) of the groups from which you wish to collect. You may also select the box at the top of the column to select all groups. Once satisfied, click on the "Collect Submissions" button to begin collection.
