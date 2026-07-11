@@ -84,5 +84,8 @@ repos:
 
 exclude: vendor
 
+default_language_version:
+  node: "24.18.0"
+
 ci:
   autoupdate_schedule: monthly
