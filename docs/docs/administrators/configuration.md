@@ -290,13 +290,58 @@ If you wish to use Learning Tools Interoperability (LTI) with MarkUs, you'll nee
 - `lti.sync_schedule` must be a cron schedule dictating when MarkUs should attempt to automatically sync its roster via LTI.
 
 You must also create a private key for generating Javascript Web Tokens to sign LTI requests.
-A private key can be automatically created with the `markus:lti_key` rake task.
+A private key can be automatically created with the `markus:lti_key` rake task (see "LTI Key Rotation" below).
 
 If you wish to filter course creation requests from LTI deployments, add the following keys:
 
 - `lti.course_filter_file` must be the absolute path to a Ruby file that defines a method `LtiConfig::allowed_to_create_course?(lti_deployment)`, which takes an `LtiDeployment` model instance and returns `true` or `false`.
 - `lti.unpermitted_new_course_message` must be a message to display if an LTI deployment is rejected by the filter. The message must be a string with interpolation key `%{course_name}`, which will be bound to the `title` field in the launch claim `https://purl.imsglobal.org/spec/lti/claim/context`.
     - Example: `"You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator."`
+
+### LTI Key Rotation
+
+MarkUs signs LTI requests with an RSA private key, and publishes the corresponding public key at the `public_jwk` endpoint. The external platform (for example, Canvas) fetches this endpoint to verify those signatures.
+
+Keys are stored as timestamped PEM files in a rotation directory (by default, an `lti/keys` subdirectory under `file_storage.default_root_path`). The newest key is the current signer, and **every** key in the directory is published. This means a key that has been rotated out can still verify assertions that were signed before the rotation, so keys can be rotated without disrupting grade passback or roster syncing.
+
+Rotation is disabled by default. To schedule it automatically, set the following keys:
+
+```yaml
+lti:
+  rotation:
+    enabled: # boolean indicating whether to automatically rotate the LTI signing key (default: false)
+    max_age_days: # rotate the current key once it is older than this many days
+    overlap_days: # keep a rotated-out key published for this many days before deleting it
+    key_dir: # (optional) absolute path to the directory holding the key files (if null, a subdirectory under the default_root_path will be used)
+    current_key: # (optional) file name of a specific key to sign with, overriding the default of signing with the newest key
+```
+
+When `enabled` is true, the `LtiKeyMaintenanceJob` runs daily. It generates a new key once the current one is older than `max_age_days`, and deletes any key that has been rotated out for longer than `overlap_days`. The current signing key is never deleted.
+
+`overlap_days` should comfortably exceed the lifetime of a signed assertion (one hour) plus however long the platform caches the published keys. Seven days is a safe default.
+
+>**Note**: scheduled rotation requires the `resque-scheduler` process to be running. If your MarkUs instance runs on more than one application server, all of them must share the same key directory.
+
+#### Rake tasks
+
+- `markus:lti_key` generates a new key immediately and makes it the current signer. Use this to create the initial key, or to rotate right away if a key may have been compromised.
+- `markus:rotate_if_due` generates a new key only if the current one is older than `max_age_days`.
+- `markus:prune_keys` deletes keys that have been rotated out for longer than `overlap_days`.
+
+#### Migrating an existing instance
+
+If your instance predates key rotation, it has a single key at `lti/key.pem`. MarkUs continues to sign with this file if the rotation directory is empty, so upgrading requires no action and nothing is rotated unless you enable it.
+
+To start rotating without changing the key the platform already trusts, copy the existing key into the rotation directory **before** rotating for the first time. Copying preserves the key, and therefore the key id that the platform has already seen:
+
+```sh
+mkdir -p <default_root_path>/lti/keys
+cp <default_root_path>/lti/key.pem \
+   <default_root_path>/lti/keys/lti_key_$(date -u +%Y%m%dT%H%M%SZ).pem
+chmod 600 <default_root_path>/lti/keys/lti_key_*.pem
+```
+
+Confirm that the `public_jwk` endpoint still serves the same key, then delete the original `lti/key.pem`. Rotating before copying also works, but replaces the published key immediately instead of keeping the previous one available during the overlap window.
 
 ## Optional Features
 
