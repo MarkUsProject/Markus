@@ -201,8 +201,18 @@ class ExamTemplatesController < ApplicationController
             end
 
             next if page.group_id.nil?
-            group_data[page.group_id] ||= { group: page.group.group_name, complete: false }
-            group_data[page.group_id][:complete] ||= page.status&.include?('Saved to complete directory') || false
+            group_data[page.group_id] ||= { group: page.group.group_name, pages_seen: Set.new }
+            group_data[page.group_id][:pages_seen] << page.exam_page_number if page.exam_page_number
+          end
+
+          num_pages = log.exam_template.num_pages
+          group_data = group_data.values.map do |group|
+            missing_pages = num_pages - group[:pages_seen].size
+            {
+              group: group[:group],
+              complete: missing_pages == 0,
+              missing_pages: missing_pages
+            }
           end
 
           {
@@ -217,7 +227,7 @@ class ExamTemplatesController < ApplicationController
             num_pages_qr_scan_error: log.num_pages_qr_scan_error,
             # number_of_pages_fixed: log.split_pages.where(status: 'FIXED').length
             page_data: page_data,
-            group_data: group_data.values
+            group_data: group_data
           }
         end
         render json: data
