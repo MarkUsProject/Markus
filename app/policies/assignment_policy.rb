@@ -17,7 +17,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def manage?
-    check?(:manage_assessments?, role)
+    (!role.nil? || !record.nil?) && check?(:manage_assessments?, role)
   end
 
   def see_hidden?

@@ -10,7 +10,7 @@ class SubmissionPolicy < ApplicationPolicy
   authorize :from_codeviewer, :view_token, optional: true
 
   def manage?
-    check?(:manage_submissions?, role)
+    !role.nil? && check?(:manage_submissions?, role)
   end
 
   def file_manager?
