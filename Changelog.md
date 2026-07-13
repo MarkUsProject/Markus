@@ -39,6 +39,7 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Refactored `channels` auth handling to `channel.rb` superclass (#8054)
 - Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
 - Upgraded Babel to v8 (#8041)
