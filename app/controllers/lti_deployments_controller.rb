@@ -166,9 +166,8 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def public_jwk
-    key = OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH)
-    jwk = JWT::JWK.new(key)
-    render json: { keys: [jwk.export] }
+    response.set_header('Cache-Control', 'public, max-age=300')
+    render json: LtiKeyStore.public_jwks
   end
 
   def course_not_set_up
