@@ -20,17 +20,21 @@ has_children: true
 ## How to Form Groups
 
 After navigating to the appropriate assignment, click the `Create Group` button to create your group:
+
 ![Student Create Group](/images/student-create-group-step1.png)
 
 You may then choose to invite other group members using the "Invite Student(s)" button:
+
 ![Students Invite Students](/images/student-create-group-step2.png)
 
 ![Students invite students 2](/images/student-create-group-step3-4.png)
 
 If a student is not eligible to be a part of your group, you will receive a warning:
+
 ![Could not invite](/images/student-create-group-warning.png)
 
 Once you have invited someone, they will appear under the "Group invitations" list but will have a pending status until they accept the invitations. Invitations can be accepted by clicking the "Join Group" button or declined by clicking the "Decline Invitation" button.
+
 ![Join Group](/images/student-create-group-step5.png)
 
 Once a group meets the minimum member requirements for the assignment, you will be allowed to submit files for the assignment.
@@ -70,10 +74,15 @@ If you are missing some required files, a list of missing required files will be
 If you have uploaded one file to submit, you will have the option to rename it.
 
 - If you can only submit the files the instructor has requested for, you can rename your file from a drop down menu.
+
 ![Upload Modal Select Input](/images/submission-file-upload-modal-select.png)
+
 - If you can submit any file you want but the instructor has requested some files, you can rename your file using a textbox with a dropdown.
+
 ![Upload Modal Datalist Input](/images/submission-file-upload-modal-datalist.png)
+
 - If you can submit any file you want and the instructor has not requested any, you can rename your file using a textbox.
+
 ![Upload Modal Text Input](/images/submission-file-upload-modal-textbox.png)
 
 ### Late Submission Confirmation
