@@ -42,8 +42,7 @@ class LtiClient < ApplicationRecord
       iat: iat,
       jti: jti
     }
-    key = OpenSSL::PKey::RSA.new File.read(KEY_PATH)
-    jwk = JWT::JWK.new(key)
+    jwk = LtiKeyStore.current_jwk
     token = JWT.encode payload, jwk.keypair, 'RS256', { kid: jwk.kid } # encode and add kid as a header
     # See https://canvas.instructure.com/doc/api/file.oauth_endpoints.html#post-login-oauth2-token
     client_credentials_request = {
