@@ -1883,6 +1883,20 @@ describe Assignment do
         expect(data[0][:_id]).to be groupings[0].id
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment.current_submission_data(ta)
+          data_by_grouping_id = data.index_by { |group| group[:_id] }
+
+          expect(data.size).to eq groupings.size
+          expect(data_by_grouping_id[groupings[0].id][:assigned]).to be true
+          expect(data_by_grouping_id[groupings[1].id][:assigned]).to be false
+          expect(data_by_grouping_id[groupings[2].id][:assigned]).to be false
+        end
+      end
+
       context 'when hide_unassigned_criteria is true' do
         let(:assigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 3) }
         let(:unassigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 1) }
@@ -2295,6 +2309,37 @@ describe Assignment do
         end
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        before do
+          Grouping.assign_all_tas([groupings.first.id], [ta.id], assignment_tag)
+        end
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment_tag.summary_json(ta)[:data]
+          data_by_group_name = data.index_by { |group| group[:group_name] }
+          assigned_group_name = groupings.first.group.group_name
+
+          expect(data.size).to eq groupings.size
+          expect(data.count { |group| group[:assigned] }).to eq 1
+          expect(data_by_group_name[assigned_group_name][:assigned]).to be true
+        end
+      end
+
+      context 'when the TA cannot manage submissions' do
+        before do
+          Grouping.assign_all_tas([groupings.first.id], [ta.id], assignment_tag)
+        end
+
+        it 'returns only the assigned groupings' do
+          data = assignment_tag.summary_json(ta)[:data]
+
+          expect(data.size).to eq 1
+          expect(data.first[:assigned]).to be true
+        end
+      end
+
       it 'has tags correct info' do
         Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
@@ -2345,7 +2390,8 @@ describe Assignment do
             :submission_id,
             :tags,
             :total_extra_marks,
-            :graders
+            :graders,
+            :assigned
           ]
 
           expect(data).not_to be_empty

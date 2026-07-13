@@ -20,6 +20,10 @@ class AssignmentSummary extends React.Component {
               is_instructor={this.props.is_instructor}
               encodings={this.props.encodings}
               lti_deployments={this.props.lti_deployments}
+              can_view_assigned_submissions_only={this.props.can_view_assigned_submissions_only}
+              initial_show_assigned_submissions_only={
+                this.props.initial_show_assigned_submissions_only
+              }
             />
           </TabPanel>
           <TabPanel>
@@ -41,6 +45,8 @@ class AssignmentSummary extends React.Component {
           is_instructor={this.props.is_instructor}
           encodings={this.props.encodings}
           lti_deployments={this.props.lti_deployments}
+          can_view_assigned_submissions_only={this.props.can_view_assigned_submissions_only}
+          initial_show_assigned_submissions_only={this.props.initial_show_assigned_submissions_only}
         />
       );
     }
