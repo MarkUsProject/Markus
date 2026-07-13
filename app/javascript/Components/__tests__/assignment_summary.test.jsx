@@ -98,6 +98,122 @@ describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   });
 });
 
+describe("For the AssignmentSummaryTable's display of assigned submissions", () => {
+  beforeEach(async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        data: [
+          {
+            group_name: "assigned_group",
+            section: null,
+            members: [["c6scriab", "Scriabin", "Alexander", false]],
+            tags: [],
+            graders: [["c9varoqu", "Nelle", "Varoquaux"]],
+            marking_state: "released",
+            final_grade: 12.0,
+            criteria: {},
+            max_mark: "21.0",
+            result_id: 1,
+            submission_id: 1,
+            total_extra_marks: null,
+            assigned: true,
+          },
+          {
+            group_name: "unassigned_group",
+            section: null,
+            members: [["g8butter", "Butterworth", "George", false]],
+            tags: [],
+            graders: [],
+            marking_state: "released",
+            final_grade: 7.0,
+            criteria: {},
+            max_mark: "21.0",
+            result_id: 2,
+            submission_id: 2,
+            total_extra_marks: null,
+            assigned: false,
+          },
+        ],
+        criteriaColumns: [],
+        numAssigned: 1,
+        numMarked: 1,
+        enableTest: false,
+        ltiDeployments: [],
+      }),
+    });
+
+    render(
+      <AssignmentSummaryTable
+        assignment_id={1}
+        course_id={1}
+        is_instructor={false}
+        lti_deployments={[]}
+        can_view_assigned_submissions_only={true}
+        initial_show_assigned_submissions_only={true}
+      />
+    );
+    await screen.findByText("assigned_group", {exact: false});
+  });
+
+  it("contains the correct number of assigned submissions in the hidden tooltip", () => {
+    expect(
+      screen.getByTestId("show_assigned_submissions_only_tooltip").getAttribute("title")
+    ).toEqual("1 assigned submission");
+  });
+
+  it("initially displays only assigned submissions", () => {
+    expect(screen.getByTestId("show_assigned_submissions_only")).toBeChecked();
+    expect(screen.queryByText(/^assigned_group/)).toBeInTheDocument();
+    expect(screen.queryByText(/unassigned_group/)).not.toBeInTheDocument();
+  });
+
+  it("displays all submissions after a single toggle", () => {
+    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+
+    expect(screen.queryByText(/^assigned_group/)).toBeInTheDocument();
+    expect(screen.queryByText(/unassigned_group/)).toBeInTheDocument();
+  });
+
+  it("only displays assigned submissions after two toggles", () => {
+    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+    fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
+
+    expect(screen.queryByText(/^assigned_group/)).toBeInTheDocument();
+    expect(screen.queryByText(/unassigned_group/)).not.toBeInTheDocument();
+  });
+});
+
+describe("For graders who cannot view all assignment summary submissions", () => {
+  it("does not display the assigned submissions filter", async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        data: [],
+        criteriaColumns: [],
+        numAssigned: 0,
+        numMarked: 0,
+        enableTest: false,
+        ltiDeployments: [],
+      }),
+    });
+
+    render(
+      <AssignmentSummaryTable
+        assignment_id={1}
+        course_id={1}
+        is_instructor={false}
+        lti_deployments={[]}
+      />
+    );
+
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+    expect(screen.queryByTestId("show_assigned_submissions_only")).not.toBeInTheDocument();
+  });
+});
+
 describe("For the AssignmentSummaryTable's display of an assignment with automated testing", () => {
   beforeEach(() => {
     fetch.mockReset();

@@ -22,6 +22,8 @@ The grades tab can be used to view/visualize a variety of general statistics for
 
 After visiting the Grades tab, you will first see the summary table. This table gives a summarized grade breakdown for each student/submission. Each row in the table corresponds to a particular submission group. For each row you can view the name of the submission group, its marking state, any tags the submission may have, a total mark for the submission, and finally a mark breakdown of the submission from associated criteria.
 
+Graders with the **Manage submissions** permission can view all submissions in the summary table. These graders can use the **Display assigned submissions only** checkbox to switch between all submissions and only the submissions assigned to them. Graders without this permission remain limited to their assigned submissions and do not see this control. Instructors continue to view all submissions.
+
 ![Assignment Summary Table](/images/summary-table.png)
 
 If you wish to download this table for offline use in a CSV format, select the "Download" button in the top right. Alternatively, if you ran tests on submissions and wish to download the results of those tests, you can click the "Download Test Results" button also found in the top right.
