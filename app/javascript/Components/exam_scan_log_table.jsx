@@ -227,6 +227,11 @@ class ExamScanGroupsTable extends React.Component {
       Cell: row =>
         row.value ? I18n.t("submissions.state.complete") : I18n.t("submissions.state.incomplete"),
     },
+    {
+      Header: I18n.t("split_pdf_logs.missing_pages"),
+      accessor: "missing_pages",
+      className: "number",
+    },
   ];
 
   render() {

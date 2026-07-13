@@ -2,6 +2,7 @@
 en:
   split_pdf_logs:
     file_information: File information
+    missing_pages: Missing pages
     pages: Pages
     pages_error: Pending errors
     pages_fixed: Number fixed
