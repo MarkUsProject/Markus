@@ -32,12 +32,15 @@ en:
     filter_submissions: Filter Submissions
     filters:
       add_criterion: Add Criterion Filter
+      all_submissions: All submissions
       invalid_range: Invalid Range
+      my_assigned_submissions: My assigned submissions
       no_options: No options available
       order_by: Order By
       ordering:
         ascending: Ascending
         descending: Descending
+      submission_scope: Submission Scope
       text_box_placeholder: Search text
     fit_to_page_width: Fit to page width
     fullscreen_enter: Fullscreen
@@ -61,6 +64,7 @@ en:
     no_incomplete_submission: There are no other incomplete submissions!
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
+    old_mark: Old Mark
     overridden_deductions: Overridden
     previous_submission: Previous Submission
     print: Print

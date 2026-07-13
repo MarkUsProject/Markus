@@ -14,6 +14,10 @@
 #
 #  index_submission_rules_on_assessment_id  (assessment_id) UNIQUE
 #
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class PenaltyPeriodSubmissionRule < SubmissionRule
   # This message will be displayed to Students on viewing their file manager

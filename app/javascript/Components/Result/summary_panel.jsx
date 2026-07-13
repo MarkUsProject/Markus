@@ -1,10 +1,11 @@
 import React from "react";
 import Modal from "react-modal";
-import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "../Helpers/chart_helpers";
 import {ResultContext} from "./result_context";
+import {createColumnHelper} from "@tanstack/react-table";
+import Table from "../table/table";
 
 export class SummaryPanel extends React.Component {
   static contextType = ResultContext;
@@ -95,31 +96,51 @@ export class SummaryPanel extends React.Component {
     this.setState({showMarksChart: false});
   };
 
-  criterionColumns = remark_submitted => [
-    {
-      Header: I18n.t("activerecord.models.criterion.one"),
-      accessor: "criterion",
-      classes: ["left"],
-    },
-    {
-      Header: "Old Mark",
-      accessor: "old_mark.mark",
-      className: "number",
-      show: remark_submitted,
-    },
-    {
-      Header: I18n.t("activerecord.models.mark.one"),
-      id: "mark",
-      className: "number",
-      Cell: row => {
-        let mark = row.original.mark;
-        if (mark === undefined || mark === null) {
-          mark = "-";
-        }
-        return `${mark} / ${row.original.max_mark}`;
-      },
-    },
-  ];
+  columnHelper = createColumnHelper();
+
+  criterionColumns = remark_submitted => {
+    let columns = [
+      this.columnHelper.accessor("criterion", {
+        header: I18n.t("activerecord.models.criterion.one"),
+        meta: {
+          className: "left",
+        },
+        enableColumnFilter: false,
+      }),
+    ];
+
+    if (remark_submitted) {
+      columns.push(
+        this.columnHelper.accessor("old_mark.mark", {
+          header: I18n.t("results.old_mark"),
+          meta: {
+            className: "number",
+          },
+          enableColumnFilter: false,
+        })
+      );
+    }
+
+    columns.push(
+      this.columnHelper.display({
+        header: I18n.t("activerecord.models.mark.one"),
+        id: "mark",
+        meta: {
+          className: "number",
+        },
+        cell: props => {
+          let mark = props.row.original.mark;
+          if (mark === undefined || mark === null) {
+            mark = "-";
+          }
+          return `${mark} / ${props.row.original.max_mark}`;
+        },
+        enableColumnFilter: false,
+      })
+    );
+
+    return columns;
+  };
 
   renderTotalMark = () => {
     const assignment_total = Math.round(this.props.assignment_max_mark * 100) / 100;
@@ -155,63 +176,74 @@ export class SummaryPanel extends React.Component {
     );
   };
 
-  extraMarksColumns = released_to_students => [
-    {
-      Header: I18n.t("activerecord.attributes.extra_mark.description"),
-      accessor: "description",
-      minWidth: 150,
-      Cell: row => {
-        if (row.original._new) {
-          return <input type={"text"} defaultValue="" style={{width: "100%"}} />;
-        } else {
-          return row.value;
-        }
-      },
-    },
-    {
-      Header: I18n.t("activerecord.attributes.extra_mark.extra_mark"),
-      accessor: "extra_mark",
-      minWidth: 80,
-      className: "number",
-      Cell: row => {
-        if (row.original._new) {
-          return <input type={"number"} step="any" defaultValue={0} />;
-        } else if (row.original.unit === "points") {
-          return row.value;
-        } else if (row.original.unit === "percentage_of_mark") {
-          let mark_value = ((row.value * this.props.subtotal) / 100).toFixed(2);
-          return `${mark_value} (${row.value}%)`;
-        } else {
-          // Percentage
-          let mark_value = ((row.value * this.props.assignment_max_mark) / 100).toFixed(2);
-          return `${mark_value} (${row.value}%)`;
-        }
-      },
-    },
-    {
-      Header: "",
-      id: "action",
-      show: !released_to_students,
-      Cell: row => {
-        if (row.original._new) {
-          return (
-            <button onClick={this.createExtraMark} className="inline-button">
-              {I18n.t("save")}
-            </button>
-          );
-        } else {
-          return (
-            <button
-              onClick={() => this.props.destroyExtraMark(row.original.id)}
-              className="inline-button"
-            >
-              {I18n.t("delete")}
-            </button>
-          );
-        }
-      },
-    },
-  ];
+  extraMarksColumns = released_to_students => {
+    let columns = [
+      this.columnHelper.accessor("description", {
+        header: I18n.t("activerecord.attributes.extra_mark.description"),
+        minSize: 150,
+        cell: props => {
+          if (props.row.original._new) {
+            return <input type={"text"} defaultValue="" style={{width: "100%"}} />;
+          } else {
+            return props.getValue();
+          }
+        },
+        enableColumnFilter: false,
+      }),
+      this.columnHelper.accessor("extra_mark", {
+        header: I18n.t("activerecord.attributes.extra_mark.extra_mark"),
+        minSize: 80,
+        meta: {
+          className: "number",
+        },
+        cell: props => {
+          if (props.row.original._new) {
+            return <input type={"number"} step="any" defaultValue={0} />;
+          } else if (props.row.original.unit === "points") {
+            return props.getValue();
+          } else if (props.row.original.unit === "percentage_of_mark") {
+            let mark_value = ((props.getValue() * this.props.subtotal) / 100).toFixed(2);
+            return `${mark_value} (${props.getValue()}%)`;
+          } else {
+            // Percentage
+            let mark_value = ((props.getValue() * this.props.assignment_max_mark) / 100).toFixed(2);
+            return `${mark_value} (${props.getValue()}%)`;
+          }
+        },
+        enableColumnFilter: false,
+      }),
+    ];
+
+    if (!released_to_students) {
+      columns.push(
+        this.columnHelper.display({
+          header: "",
+          id: "action",
+          cell: props => {
+            if (props.row.original._new) {
+              return (
+                <button onClick={this.createExtraMark} className="inline-button">
+                  {I18n.t("save")}
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  onClick={() => this.props.destroyExtraMark(props.row.original.id)}
+                  className="inline-button"
+                >
+                  {I18n.t("delete")}
+                </button>
+              );
+            }
+          },
+          enableColumnFilter: false,
+        })
+      );
+    }
+
+    return columns;
+  };
 
   newExtraMark = () => {
     this.setState({showNewExtraMark: true});
@@ -252,7 +284,7 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <h4>{I18n.t("activerecord.models.extra_mark.other")}</h4>
-        {data.length > 0 && <ReactTable columns={this.state.extraMarksColumns} data={data} />}
+        {data.length > 0 && <Table columns={this.state.extraMarksColumns} data={data} />}
         {!this.props.released_to_students && (
           <p>
             <button className="inline-button" onClick={this.newExtraMark}>
@@ -341,7 +373,7 @@ export class SummaryPanel extends React.Component {
             height={500}
           />
         </Modal>
-        <ReactTable
+        <Table
           columns={this.state.criterionColumns}
           data={this.props.criterionSummaryData}
           className="auto-overflow"

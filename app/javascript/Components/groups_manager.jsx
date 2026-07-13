@@ -2,6 +2,8 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
+import consumer from "../channels/consumer";
+import {renderFlashMessages} from "../common/flash";
 import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
 import ExtensionModal from "./Modals/extension_modal";
 import {
@@ -42,6 +44,7 @@ class GroupsManager extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    this.createChannelSubscriptions();
   }
 
   fetchData = () => {
@@ -105,7 +108,29 @@ class GroupsManager extends React.Component {
         this.props.course_id,
         this.props.assignment_id
       ),
-    }).then(this.fetchData);
+    });
+  };
+
+  createChannelSubscriptions = () => {
+    consumer.subscriptions.create(
+      {
+        channel: "GroupsChannel",
+        course_id: this.props.course_id,
+        assignment_id: this.props.assignment_id,
+      },
+      {
+        connected: () => {},
+        disconnected: () => {},
+        received: data => {
+          if (data["status"] != null) {
+            renderFlashMessages(generateMessage(data));
+          }
+          if (data["update_table"] != null) {
+            this.fetchData();
+          }
+        },
+      }
+    );
   };
 
   deleteGroups = () => {
@@ -846,6 +871,36 @@ export function makeGroupsManager(elem, props) {
   const component = React.createRef();
   root.render(<GroupsManager {...props} ref={component} />);
   return component;
+}
+
+function generateMessage(status_data) {
+  let message_data = {};
+  switch (status_data["status"]) {
+    case "failed":
+      if (!status_data["exception"] || !status_data["exception"]["message"]) {
+        message_data["error"] = I18n.t("job.status.failed.no_message");
+      } else {
+        message_data["error"] = I18n.t("job.status.failed.message", {
+          error: status_data["exception"]["message"],
+        });
+      }
+      break;
+    case "completed":
+      message_data["success"] = I18n.t("job.status.completed");
+      break;
+    case "queued":
+      message_data["notice"] = I18n.t("job.status.queued");
+      break;
+    default: {
+      let progress = status_data["progress"];
+      let total = status_data["total"];
+      message_data["notice"] = I18n.t("poll_job.create_groups_job", {progress, total});
+    }
+  }
+  if (status_data["warning_message"]) {
+    message_data["warning"] = status_data["warning_message"];
+  }
+  return message_data;
 }
 
 export {GroupsManager};

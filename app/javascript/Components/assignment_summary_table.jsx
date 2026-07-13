@@ -1,6 +1,7 @@
 import React from "react";
 import {getMarkingStates, selectFilter} from "./Helpers/table_helpers";
 
+import AssignmentGradesUploadModal from "./Modals/assignment_grades_upload_modal";
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 import LtiGradeModal from "./Modals/send_lti_grades_modal";
 import {createColumnHelper} from "@tanstack/react-table";
@@ -20,10 +21,17 @@ export class AssignmentSummaryTable extends React.Component {
       marking_states: markingStates,
       markingStateFilter: "all",
       showDownloadTestsModal: false,
+      showGradesUploadModal: false,
       showLtiGradeModal: false,
       lti_deployments: [],
-      columnFilters: [{id: "inactive", value: false}],
+      columnFilters: [
+        {id: "inactive", value: false},
+        ...(props.initial_show_assigned_submissions_only ? [{id: "assigned", value: true}] : []),
+      ],
       inactiveGroupsCount: 0,
+      assignedSubmissionsCount: 0,
+      showInactiveGroups: false,
+      showAssignedSubmissionsOnly: props.initial_show_assigned_submissions_only,
       columns: this.getColumns([], markingStates, "all"),
     };
   }
@@ -38,6 +46,9 @@ export class AssignmentSummaryTable extends React.Component {
     const fixedColumns = [
       columnHelper.accessor("inactive", {
         id: "inactive",
+      }),
+      columnHelper.accessor("assigned", {
+        id: "assigned",
       }),
       columnHelper.accessor("group_name", {
         id: "group_name",
@@ -241,14 +252,41 @@ export class AssignmentSummaryTable extends React.Component {
     return [...fixedColumns, ...criteriaColumnDefs, bonusColumn, gradersColumn];
   };
 
-  toggleShowInactiveGroups = showInactiveGroups => {
-    let columnFilters = this.state.columnFilters.filter(group => group.id !== "inactive");
+  visibilityFilters = (columnFilters, showInactiveGroups, showAssignedSubmissionsOnly) => {
+    const updated = columnFilters.filter(
+      filter => filter.id !== "inactive" && filter.id !== "assigned"
+    );
 
     if (!showInactiveGroups) {
-      columnFilters.push({id: "inactive", value: false});
+      updated.push({id: "inactive", value: false});
+    }
+    if (showAssignedSubmissionsOnly) {
+      updated.push({id: "assigned", value: true});
     }
 
-    this.setState({columnFilters});
+    return updated;
+  };
+
+  toggleShowInactiveGroups = showInactiveGroups => {
+    this.setState(state => ({
+      showInactiveGroups,
+      columnFilters: this.visibilityFilters(
+        state.columnFilters,
+        showInactiveGroups,
+        state.showAssignedSubmissionsOnly
+      ),
+    }));
+  };
+
+  toggleShowAssignedSubmissionsOnly = showAssignedSubmissionsOnly => {
+    this.setState(state => ({
+      showAssignedSubmissionsOnly,
+      columnFilters: this.visibilityFilters(
+        state.columnFilters,
+        state.showInactiveGroups,
+        showAssignedSubmissionsOnly
+      ),
+    }));
   };
 
   memberDisplay = (group_name, members) => {
@@ -298,6 +336,7 @@ export class AssignmentSummaryTable extends React.Component {
         });
 
         let inactive_groups_count = 0;
+        let assigned_submissions_count = 0;
         res.data.forEach(group => {
           if (group.members.length && group.members.every(member => member[3])) {
             group.inactive = true;
@@ -305,11 +344,14 @@ export class AssignmentSummaryTable extends React.Component {
           } else {
             group.inactive = false;
           }
+          if (group.assigned) {
+            assigned_submissions_count++;
+          }
         });
 
         const processedData = this.processData(res.data);
         const markingStates = getMarkingStates(processedData);
-        this.setState({
+        this.setState(state => ({
           data: processedData,
           criteriaColumns: res.criteriaColumns,
           num_assigned: res.numAssigned,
@@ -319,12 +361,14 @@ export class AssignmentSummaryTable extends React.Component {
           marking_states: markingStates,
           lti_deployments: res.ltiDeployments,
           inactiveGroupsCount: inactive_groups_count,
-          columns: this.getColumns(
-            res.criteriaColumns,
-            markingStates,
-            this.state.markingStateFilter
+          assignedSubmissionsCount: assigned_submissions_count,
+          columnFilters: this.visibilityFilters(
+            state.columnFilters,
+            state.showInactiveGroups,
+            state.showAssignedSubmissionsOnly
           ),
-        });
+          columns: this.getColumns(res.criteriaColumns, markingStates, state.markingStateFilter),
+        }));
       });
   };
 
@@ -361,6 +405,10 @@ export class AssignmentSummaryTable extends React.Component {
     this.setState({showDownloadTestsModal: true});
   };
 
+  onGradesUploadModal = () => {
+    this.setState({showGradesUploadModal: true});
+  };
+
   onLtiGradeModal = () => {
     this.setState({showLtiGradeModal: true});
   };
@@ -377,10 +425,16 @@ export class AssignmentSummaryTable extends React.Component {
     }
 
     let displayInactiveGroupsTooltip = "";
+    let displayAssignedSubmissionsTooltip = "";
 
     if (this.state.inactiveGroupsCount !== null) {
       displayInactiveGroupsTooltip = `${I18n.t("activerecord.attributes.grouping.inactive_groups", {
         count: this.state.inactiveGroupsCount,
+      })}`;
+    }
+    if (this.state.assignedSubmissionsCount !== null) {
+      displayAssignedSubmissionsTooltip = `${I18n.t("submissions.groups.assigned_submissions", {
+        count: this.state.assignedSubmissionsCount,
       })}`;
     }
 
@@ -407,6 +461,7 @@ export class AssignmentSummaryTable extends React.Component {
             id="show_inactive_groups"
             name="show_inactive_groups"
             type="checkbox"
+            checked={this.state.showInactiveGroups}
             onChange={e => this.toggleShowInactiveGroups(e.target.checked)}
             className={"hide-user-checkbox"}
             data-testid={"show_inactive_groups"}
@@ -418,6 +473,26 @@ export class AssignmentSummaryTable extends React.Component {
           >
             {I18n.t("submissions.groups.display_inactive")}
           </label>
+          {this.props.can_view_assigned_submissions_only && (
+            <>
+              <input
+                id="show_assigned_submissions_only"
+                name="show_assigned_submissions_only"
+                type="checkbox"
+                checked={this.state.showAssignedSubmissionsOnly}
+                onChange={e => this.toggleShowAssignedSubmissionsOnly(e.target.checked)}
+                className={"hide-user-checkbox"}
+                data-testid={"show_assigned_submissions_only"}
+              />
+              <label
+                title={displayAssignedSubmissionsTooltip}
+                htmlFor="show_assigned_submissions_only"
+                data-testid={"show_assigned_submissions_only_tooltip"}
+              >
+                {I18n.t("submissions.groups.display_assigned_only")}
+              </label>
+            </>
+          )}
           {this.props.is_instructor && (
             <>
               <form
@@ -433,6 +508,10 @@ export class AssignmentSummaryTable extends React.Component {
                   {I18n.t("download")}
                 </button>
               </form>
+              <button type="button" name="upload" onClick={this.onGradesUploadModal}>
+                <i className="fa-solid fa-upload" aria-hidden="true" />
+                {I18n.t("upload")}
+              </button>
               {this.state.enable_test && (
                 <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
                   {I18n.t("download_the", {
@@ -449,6 +528,7 @@ export class AssignmentSummaryTable extends React.Component {
           columns={this.state.columns}
           initialState={{
             sorting: [{id: "group_name"}],
+            columnVisibility: {assigned: false},
           }}
           columnFilters={this.state.columnFilters}
           onColumnFiltersChange={updaterOrValue => {
@@ -461,6 +541,13 @@ export class AssignmentSummaryTable extends React.Component {
             });
           }}
           loading={this.state.loading}
+        />
+        <AssignmentGradesUploadModal
+          course_id={this.props.course_id}
+          assignment_id={this.props.assignment_id}
+          encodings={this.props.encodings || []}
+          isOpen={this.state.showGradesUploadModal}
+          onRequestClose={() => this.setState({showGradesUploadModal: false})}
         />
         <DownloadTestResultsModal
           course_id={this.props.course_id}
@@ -480,3 +567,8 @@ export class AssignmentSummaryTable extends React.Component {
     );
   }
 }
+
+AssignmentSummaryTable.defaultProps = {
+  can_view_assigned_submissions_only: false,
+  initial_show_assigned_submissions_only: false,
+};

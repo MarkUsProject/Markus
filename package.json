@@ -1,16 +1,15 @@
 {
   "name": "MarkUs",
   "dependencies": {
-    "@babel/runtime": "^7.29.7",
-    "@fortawesome/fontawesome-svg-core": "^7.2.0",
-    "@fortawesome/free-brands-svg-icons": "^7.2.0",
-    "@fortawesome/free-regular-svg-icons": "^7.2.0",
-    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/fontawesome-svg-core": "^7.3.0",
+    "@fortawesome/free-brands-svg-icons": "^7.3.0",
+    "@fortawesome/free-regular-svg-icons": "^7.3.0",
+    "@fortawesome/free-solid-svg-icons": "^7.3.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "@rails/actioncable": "^8.1.300",
     "@rails/ujs": "^7.1.3-4",
-    "@rjsf/core": "^6.6.1",
-    "@rjsf/validator-ajv8": "^6.6.1",
+    "@rjsf/core": "^6.6.2",
+    "@rjsf/validator-ajv8": "^6.6.2",
     "@tanstack/react-table": "^8.21.3",
     "chart.js": "^4.5.0",
     "core-js": "^3.43.0",
@@ -29,9 +28,9 @@
     "pdfjs-dist": "^5.6.205",
     "prismjs": "^1.30.0",
     "prop-types": "^15.8.1",
-    "react": "^18.3.1",
+    "react": "^19.2.7",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.7",
     "react-flatpickr": "^4.0.11",
     "react-keyed-file-browser": "^1.14.0",
     "react-loader-spinner": "^8.0.2",
@@ -39,21 +38,23 @@
     "react-resizable-panels": "^4.11.2",
     "react-table": "^6.11.5",
     "react-tabs": "^6.1.0",
+    "regenerator-runtime": "^0.14.1",
     "tslib": "^2.8.1",
     "ui-contextmenu": "^1.18.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/plugin-transform-runtime": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
-    "@babel/preset-react": "^7.29.7",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
     "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "autoprefixer": "^10.5.0",
-    "babel-jest": "^30.0.5",
-    "babel-loader": "^10.0.0",
+    "babel-jest": "^30.4.1",
+    "babel-loader": "^10.1.1",
+    "babel-plugin-polyfill-corejs3": "^1.0.0",
+    "babel-plugin-polyfill-regenerator": "^1.0.0",
     "babel-plugin-prismjs": "^2.1.0",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
@@ -82,15 +83,15 @@
   },
   "overrides": {
     "react-keyed-file-browser": {
-      "react": "^18.3.1",
+      "react": "^19.2.7",
       "classnames": "^2.5.1",
       "date-fns": "^3.3.1",
       "prop-types": "^15.8.1",
       "react-dnd-html5-backend": "^16.0.1"
     },
     "react-table": {
-      "react": "^18.3.1",
-      "react-dom": "^18.3.1"
+      "react": "^19.2.7",
+      "react-dom": "^19.2.7"
     }
   }
 }

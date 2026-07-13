@@ -1883,6 +1883,20 @@ describe Assignment do
         expect(data[0][:_id]).to be groupings[0].id
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment.current_submission_data(ta)
+          data_by_grouping_id = data.index_by { |group| group[:_id] }
+
+          expect(data.size).to eq groupings.size
+          expect(data_by_grouping_id[groupings[0].id][:assigned]).to be true
+          expect(data_by_grouping_id[groupings[1].id][:assigned]).to be false
+          expect(data_by_grouping_id[groupings[2].id][:assigned]).to be false
+        end
+      end
+
       context 'when hide_unassigned_criteria is true' do
         let(:assigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 3) }
         let(:unassigned_criteria) { create(:flexible_criterion, assignment: assignment, max_mark: 1) }
@@ -2295,6 +2309,37 @@ describe Assignment do
         end
       end
 
+      context 'when the TA can manage submissions' do
+        let(:ta) { create(:ta, manage_submissions: true) }
+
+        before do
+          Grouping.assign_all_tas([groupings.first.id], [ta.id], assignment_tag)
+        end
+
+        it 'returns all groupings and identifies the assigned ones' do
+          data = assignment_tag.summary_json(ta)[:data]
+          data_by_group_name = data.index_by { |group| group[:group_name] }
+          assigned_group_name = groupings.first.group.group_name
+
+          expect(data.size).to eq groupings.size
+          expect(data.count { |group| group[:assigned] }).to eq 1
+          expect(data_by_group_name[assigned_group_name][:assigned]).to be true
+        end
+      end
+
+      context 'when the TA cannot manage submissions' do
+        before do
+          Grouping.assign_all_tas([groupings.first.id], [ta.id], assignment_tag)
+        end
+
+        it 'returns only the assigned groupings' do
+          data = assignment_tag.summary_json(ta)[:data]
+
+          expect(data.size).to eq 1
+          expect(data.first[:assigned]).to be true
+        end
+      end
+
       it 'has tags correct info' do
         Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
         tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
@@ -2345,7 +2390,8 @@ describe Assignment do
             :submission_id,
             :tags,
             :total_extra_marks,
-            :graders
+            :graders,
+            :assigned
           ]
 
           expect(data).not_to be_empty
@@ -2467,6 +2513,142 @@ describe Assignment do
 
         it_behaves_like 'check csv content'
       end
+    end
+  end
+
+  describe '#import_marks_from_csv' do
+    let(:course) { create(:course) }
+    let(:instructor) { create(:instructor, course: course) }
+    let(:assignment) { create(:assignment, course: course) }
+    let!(:criterion1) do
+      create(:flexible_criterion, assignment: assignment, name: 'Correctness', max_mark: 10, position: 1)
+    end
+    let!(:criterion2) do
+      create(:flexible_criterion, assignment: assignment, name: 'Style', max_mark: 5, position: 2)
+    end
+    let!(:bonus_criterion) do
+      create(:flexible_criterion, assignment: assignment, name: 'Bonus', max_mark: 2, position: 3, bonus: true)
+    end
+    let!(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let!(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+
+    def assignment_grades_csv(assignment, rows, headers: nil, totals: nil)
+      headers ||= [Group.human_attribute_name(:group_name)] +
+        Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
+        [I18n.t('results.total_mark'),
+         criterion1.export_name,
+         criterion2.export_name,
+         bonus_criterion.export_name,
+         I18n.t('assignments.bonus_deductions')]
+      totals ||= [' '] * Student::CSV_ORDER.length +
+        [Assessment.human_attribute_name(:max_mark), assignment.max_mark, 10, 5, 2, '']
+      MarkusCsv.generate([headers, totals] + rows, &:itself)
+    end
+
+    def assignment_grades_row(grouping, correctness, style, bonus, total: 999, extra_marks: 100)
+      student = grouping.inviter
+      [grouping.group.group_name] +
+        Student::CSV_ORDER.map { |field| student.public_send(field) } +
+        [total, correctness, style, bonus, extra_marks]
+    end
+
+    it 'uploads criterion marks while ignoring total and extra marks columns' do
+      csv_data = assignment_grades_csv(
+        assignment,
+        [assignment_grades_row(grouping1, 8, 4, 1.5)]
+      )
+
+      result = assignment.import_marks_from_csv(csv_data, true, instructor)
+
+      expect(result[:invalid_lines]).to be_empty
+      marks = grouping1.current_result.reload.mark_hash
+      expect(marks[criterion1.id][:mark]).to eq 8
+      expect(marks[criterion2.id][:mark]).to eq 4
+      expect(marks[bonus_criterion.id][:mark]).to eq 1.5
+      expect(grouping1.current_result.extra_marks).to be_empty
+    end
+
+    it 'does not overwrite existing marks unless overwrite is selected' do
+      grouping1.current_result.marks.find_by(criterion: criterion1).update!(mark: 7)
+      csv_data = assignment_grades_csv(
+        assignment,
+        [assignment_grades_row(grouping1, 3, 4, 1)]
+      )
+
+      assignment.import_marks_from_csv(csv_data, false, instructor)
+
+      marks = grouping1.current_result.reload.mark_hash
+      expect(marks[criterion1.id][:mark]).to eq 7
+      expect(marks[criterion2.id][:mark]).to eq 4
+    end
+
+    it 'overwrites existing marks when overwrite is selected' do
+      grouping1.current_result.marks.find_by(criterion: criterion1).update!(mark: 7)
+      csv_data = assignment_grades_csv(
+        assignment,
+        [assignment_grades_row(grouping1, 3, 4, 1)]
+      )
+
+      assignment.import_marks_from_csv(csv_data, true, instructor)
+
+      expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to eq 3
+    end
+
+    it 'reports invalid rows while still processing valid rows' do
+      invalid_row = assignment_grades_row(grouping1, 6, 2, 1)
+      invalid_row[0] = 'unknown_group'
+      csv_data = assignment_grades_csv(
+        assignment,
+        [invalid_row, assignment_grades_row(grouping2, 9, 5, 2)]
+      )
+
+      result = assignment.import_marks_from_csv(csv_data, true, instructor)
+
+      expect(result[:invalid_lines]).to include('unknown_group')
+      expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to be_nil
+      expect(grouping2.current_result.reload.mark_hash[criterion1.id][:mark]).to eq 9
+    end
+
+    it 'ignores student data when matching rows' do
+      row = assignment_grades_row(grouping1, 8, 4, 1)
+      row[1 + Student::CSV_ORDER.index(:user_name)] = 'unknown_user'
+      csv_data = assignment_grades_csv(assignment, [row])
+
+      result = assignment.import_marks_from_csv(csv_data, true, instructor)
+
+      expect(result[:invalid_lines]).to be_empty
+      expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to eq 8
+    end
+
+    it 'does not update released results' do
+      grouping1.current_result.update!(released_to_students: true)
+      csv_data = assignment_grades_csv(
+        assignment,
+        [assignment_grades_row(grouping1, 8, 4, 1)]
+      )
+
+      result = assignment.import_marks_from_csv(csv_data, true, instructor)
+
+      expect(result[:invalid_lines]).to include(grouping1.group.group_name)
+      expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to be_nil
+    end
+
+    it 'rejects unknown criterion columns' do
+      headers = [Group.human_attribute_name(:group_name)] +
+        Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
+        [I18n.t('results.total_mark'), 'Unknown criterion', I18n.t('assignments.bonus_deductions')]
+      totals = [' '] * Student::CSV_ORDER.length +
+        [Assessment.human_attribute_name(:max_mark), assignment.max_mark, 1, '']
+      csv_data = assignment_grades_csv(
+        assignment,
+        [assignment_grades_row(grouping1, 8, 4, 1)],
+        headers: headers,
+        totals: totals
+      )
+
+      expect { assignment.import_marks_from_csv(csv_data, true, instructor) }
+        .to raise_error(RuntimeError, /Unknown criterion/)
+      expect(grouping1.current_result.reload.mark_hash[criterion1.id][:mark]).to be_nil
     end
   end
 
@@ -2741,11 +2923,12 @@ describe Assignment do
                assignment_properties_attributes: { assign_graders_to_criteria: true })
       end
 
+      let(:assigned_grouping) { assignment2.groupings.order(:id).first }
       let(:new_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment2) }
       let(:new_result) { create(:incomplete_result, submission: new_grouping.current_submission_used) }
 
       before do
-        create(:ta_membership, role: ta2, grouping: assignment2.groupings.first)
+        create(:ta_membership, role: ta2, grouping: assigned_grouping)
         create(:ta_membership, role: ta2, grouping: new_grouping)
       end
 
@@ -2772,7 +2955,7 @@ describe Assignment do
           mark2.mark = 1.0
           mark2.save!
 
-          default_result = assignment2.groupings.first.current_result  # the result created by new_grouping
+          default_result = assigned_grouping.current_result
           mark3 = Mark.find_or_initialize_by(result: default_result, criterion: @criterion1)
           mark3.mark = 1.0
           mark3.save!

@@ -12,6 +12,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (assignment_file_id => assignment_files.id)
+#  fk_rails_...  (criterion_id => criteria.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class CriteriaAssignmentFilesJoin < ApplicationRecord

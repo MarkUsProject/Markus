@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import RenameGroupModal from "../Modals/rename_group_modal";
 import Modal from "react-modal";

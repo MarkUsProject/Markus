@@ -75,6 +75,7 @@ class ResultsController < ApplicationController
         end
 
         data[:can_release] = allowed_to?(:manage_assessments?, current_role)
+        data[:can_manage_submissions] = allowed_to?(:manage_submissions?, current_role)
 
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path) do |hash|
@@ -439,7 +440,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
+    mark_value = params[:mark].presence&.to_f
 
     is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 

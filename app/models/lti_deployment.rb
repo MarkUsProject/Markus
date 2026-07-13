@@ -20,6 +20,11 @@
 #  index_lti_deployments_on_course_id                        (course_id)
 #  index_lti_deployments_on_lti_client_id_and_lms_course_id  (lti_client_id,lms_course_id) UNIQUE
 #
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (lti_client_id => lti_clients.id)
+#
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiDeployment < ApplicationRecord
   belongs_to :course, optional: true

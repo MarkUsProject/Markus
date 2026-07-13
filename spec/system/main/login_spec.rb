@@ -35,7 +35,7 @@ describe 'logging in' do
 
     it 'fails to sign in' do
       simulate_login
-      expect(page).to have_content(I18n.t('main.login_failed'))
+      expect(page).to have_text(I18n.t('main.login_failed'))
     end
   end
 end

@@ -31,6 +31,7 @@ require 'set'
 # grouping's work, such as submissions, peer reviews, test runs, and repository management. A Grouping belongs to a
 # group and an assignment and can share a repository with other groupings.
 class Grouping < ApplicationRecord
+  include ActionPolicy::Behaviour
   include SubmissionsHelper
 
   after_create_commit -> { access_repo } # access the repo to trigger creation of assignment subdirectory
@@ -754,17 +755,10 @@ class Grouping < ApplicationRecord
   end
 
   def get_next_grouping(current_role, reversed, filter_data = nil)
-    if current_role.ta?
-      results = self.assignment.current_results.joins(grouping: :memberships).where(
-        'memberships.role_id': current_role.id
-      )
-    else
-      results = self.assignment.current_results
-    end
-    results = results.joins(grouping: :group)
     if filter_data.nil?
       filter_data = {}
     end
+    results = navigation_results(current_role, filter_data).joins(grouping: :group)
     results = filter_results(current_role, results, filter_data)
     order_and_get_next_grouping(results, filter_data, reversed)
   end
@@ -772,14 +766,8 @@ class Grouping < ApplicationRecord
   # Returns an ordered array of { result_id:, grouping_id: } hashes for all
   # groupings matching the current filters and ordering.
   def get_filtered_ordered_ids(current_role, filter_data = nil, limit: nil)
-    if current_role.ta?
-      results = self.assignment.current_results.joins(grouping: :memberships).where(
-        'memberships.role_id': current_role.id
-      )
-    else
-      results = self.assignment.current_results
-    end
     filter_data = {} if filter_data.nil?
+    results = navigation_results(current_role, filter_data)
     results = filter_results(current_role, results, filter_data)
 
     dir = filter_data['ascending'].nil? || filter_data['ascending'] == 'true' ? :asc : :desc
@@ -863,6 +851,22 @@ class Grouping < ApplicationRecord
   end
 
   private
+
+  def navigation_results(current_role, filter_data)
+    results = self.assignment.current_results
+    if current_role.ta?
+      can_manage_submissions = allowed_to?(
+        :manage_submissions?,
+        current_role,
+        context: { role: current_role, user: current_role.user, real_user: current_role.user }
+      )
+
+      if !can_manage_submissions || filter_data.fetch('assignedGradersOnly', true).to_s != 'false'
+        results = results.joins(grouping: :memberships).where('memberships.role_id': current_role.id)
+      end
+    end
+    results
+  end
 
   # Takes in a collection of results specified by +results+, and filters them using +filter_data+. Assumes
   # +filter_data+ is not nil.

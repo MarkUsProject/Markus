@@ -1,5 +1,3 @@
-import React from "react";
-
 export const defaultSearchPlaceholderText = (header = "") => {
   const base = I18n.t("table.search");
   return header ? `${base} ${header}` : base;

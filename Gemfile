@@ -105,7 +105,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
-  gem 'active_record_doctor', require: false
+  gem 'active_record_doctor'
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
@@ -128,4 +128,11 @@ end
 # group if you are using Phusion Passenger or Puma.
 group :unicorn do
   gem 'unicorn'
+end
+
+group :docs do
+  gem 'jekyll', '~> 4.4'
+  gem 'jekyll-relative-links'
+  gem 'jekyll-seo-tag'
+  gem 'just-the-docs'
 end

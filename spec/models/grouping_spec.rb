@@ -935,6 +935,7 @@ describe Grouping do
       let(:assignment) { create(:timed_assignment) }
       let(:due_date) { due_date_obj.due_date || assignment.due_date }
       let(:start_time) { due_date_obj.start_time || assignment.start_time }
+
       context 'before the grouping has started' do
         it 'should return the due date' do
           expect(grouping.due_date).to be_within(1.second).of(due_date)
@@ -1752,6 +1753,28 @@ describe Grouping do
         expect(new_grouping.group_id).to eq(groupings.first.group_id)
       end
     end
+
+    context 'when the TA can manage submissions' do
+      let(:role) { create(:ta, manage_submissions: true) }
+      let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+      let(:groupings) { [grouping1, grouping3] }
+
+      before do
+        grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+        grouping2.group.update!(group_name: "navigation-scope-2-#{grouping2.id}")
+        grouping3.group.update!(group_name: "navigation-scope-3-#{grouping3.id}")
+      end
+
+      it 'navigates only assigned groupings by default' do
+        new_grouping = grouping1.get_next_grouping(role, false)
+        expect(new_grouping).to eq(grouping3)
+      end
+
+      it 'navigates all groupings when assigned-only navigation is disabled' do
+        new_grouping = grouping1.get_next_grouping(role, false, { 'assignedGradersOnly' => 'false' })
+        expect(new_grouping).to eq(grouping2)
+      end
+    end
   end
 
   describe '#get_random_incomplete' do
@@ -1896,6 +1919,23 @@ describe Grouping do
         returned_grouping_ids = result.pluck(:grouping_id)
         expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
         expect(returned_grouping_ids).not_to include(grouping2.id)
+      end
+
+      context 'when the TA can manage submissions' do
+        let(:role) { create(:ta, manage_submissions: true) }
+
+        it 'returns all groupings when assigned-only navigation is disabled' do
+          result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'false' })
+          returned_grouping_ids = result.pluck(:grouping_id)
+          expect(returned_grouping_ids).to include(grouping1.id, grouping2.id, grouping3.id)
+        end
+
+        it 'returns only assigned groupings when assigned-only navigation is enabled' do
+          result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'true' })
+          returned_grouping_ids = result.pluck(:grouping_id)
+          expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+          expect(returned_grouping_ids).not_to include(grouping2.id)
+        end
       end
     end
   end

@@ -7,11 +7,6 @@
 
 </details>
 
-<details>
-<summary>Associated <a href="https://github.com/MarkUsProject/Wiki">documentation repository</a> pull request (if applicable)</summary>
-
-</details>
-
 ## Type of Change
 *(Write an `X` or a brief description next to the type or types that best describe your changes.)*
 
@@ -24,6 +19,7 @@
 | ♻️ *Refactoring* (internal change to codebase, without changing functionality)          |          |
 | 🚦 *Test update* (change that *only* adds or modifies tests)                            |          |
 | 📦 *Dependency update* (change that updates a dependency)                               |          |
+| 📖 *Documentation update* (change that updates documentation)                           |          |
 | 🔧 *Internal* (change that *only* affects developers or continuous integration)         |          |
 
 

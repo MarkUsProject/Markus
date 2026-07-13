@@ -18,6 +18,10 @@
 #
 #  index_grade_entry_items_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GradeEntryItem < ApplicationRecord
   belongs_to :grade_entry_form, inverse_of: :grade_entry_items, foreign_key: :assessment_id
