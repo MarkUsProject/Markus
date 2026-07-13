@@ -96,6 +96,13 @@ resque_scheduler:
       job_class:  CleanTmpJob
       arguments:
         - 5184000  # 60 days, in seconds
+  LtiKeyMaintenanceJob:
+    class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+    queue: DEFAULT_QUEUE
+    every: 1d
+    args:
+      job_class: LtiKeyMaintenanceJob
+      arguments: [ ]
 autotest:
   student_test_buffer_minutes: 60
 
@@ -126,3 +133,9 @@ max_zip_total_size: 500000000
 
 resque:
   permitted_hosts: [".localhost", ".internal"]
+
+lti:
+  rotation:
+    enabled: false        # off everywhere by default
+    max_age_days: 90      # rotate the current key once it's older than this
+    overlap_days: 7       # keep a retired key published this long

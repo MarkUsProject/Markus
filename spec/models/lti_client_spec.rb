@@ -1,5 +1,7 @@
 describe LtiClient do
-  before { allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048)) }
+  let(:signing_key) { OpenSSL::PKey::RSA.new(2048) }
+
+  before { allow(LtiKeyStore).to receive(:current_jwk).and_return(JWT::JWK.new(signing_key)) }
 
   describe 'uniqueness_validation' do
     subject { create(:lti_client) }

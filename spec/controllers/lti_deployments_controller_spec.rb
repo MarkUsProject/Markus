@@ -222,6 +222,12 @@ describe LtiDeploymentsController do
   end
 
   describe '#public_jwk' do
+    let(:key) { OpenSSL::PKey::RSA.new(2048) }
+
+    before do
+      allow(LtiKeyStore).to receive(:public_jwks).and_return({ keys: [JWT::JWK.new(key).export] })
+    end
+
     it 'responds with success when logged out' do
       get :public_jwk
       expect(subject).to respond_with(:success)
@@ -250,8 +256,6 @@ describe LtiDeploymentsController do
       end
 
       context 'an individual key' do
-        let(:pub_jwk) { get :public_jwk }
-        let(:hash_jwk) { JSON.parse(pub_jwk.body) }
         let(:jwk_key) { hash_jwk['keys'][0] }
 
         it 'stores the correct signing algorithm' do
@@ -264,11 +268,38 @@ describe LtiDeploymentsController do
 
         it 'verifies a signed message' do
           payload = { test: 'data' }
-          token = JWT.encode payload, File.read(LtiClient::KEY_PATH), 'RS256', { kid: jwk_key['kid'] }
+          token = JWT.encode payload, key, 'RS256', { kid: jwk_key['kid'] }
           decoded = JWT.decode(token, nil, true, algorithms: ['RS256'], verify_iss: false, verify_aud: false,
                                                  jwks: hash_jwk)
           expect(decoded[0]['test']).to match('data')
         end
+      end
+    end
+
+    context 'with multiple keys published' do
+      let(:retired_key) { OpenSSL::PKey::RSA.new(2048) }
+      let(:hash_jwk) { JSON.parse(get(:public_jwk).body) }
+
+      before do
+        allow(LtiKeyStore).to receive(:public_jwks).and_return(
+          { keys: [JWT::JWK.new(key).export, JWT::JWK.new(retired_key).export] }
+        )
+      end
+
+      it 'publishes every key in the set' do
+        expect(hash_jwk['keys'].length).to eq(2)
+      end
+
+      it 'publishes a kid for each key' do
+        kids = hash_jwk['keys'].pluck('kid')
+        expect(kids).to contain_exactly(JWT::JWK.new(key).kid, JWT::JWK.new(retired_key).kid)
+      end
+
+      it 'verifies a message signed by a retired key' do
+        token = JWT.encode({ test: 'data' }, retired_key, 'RS256', { kid: JWT::JWK.new(retired_key).kid })
+        decoded = JWT.decode(token, nil, true, algorithms: ['RS256'], verify_iss: false, verify_aud: false,
+                                               jwks: hash_jwk)
+        expect(decoded[0]['test']).to match('data')
       end
     end
   end
