@@ -40,6 +40,7 @@ class CanvasController < LtiDeploymentsController
         user_id: '$Canvas.user.id',
         course_id: '$Canvas.course.id',
         course_name: '$Canvas.course.name',
+        term_name: '$Canvas.term.name',
         student_number: '$Canvas.user.sisIntegrationId'
       }
     }
