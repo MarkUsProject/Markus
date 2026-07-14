@@ -130,11 +130,11 @@ module Api
       rescue ActiveRecord::RecordInvalid => e
         # Some error occurred
         render 'shared/http_status', locals: { code: '500', message:
-          e.message }, status: :internal_server_error
+            e.message }, status: :internal_server_error
         return
       end
       render 'shared/http_status', locals: { code: '200', message:
-        'Extra mark created successfully' }, status: :ok
+          'Extra mark created successfully' }, status: :ok
     end
 
     def remove_extra_marks
@@ -145,7 +145,7 @@ module Api
                                      extra_mark: params[:extra_marks])
       if extra_mark.nil?
         render 'shared/http_status', locals: { code: '404', message:
-          'No such Extra Mark exist for that result' }, status: :not_found
+            'No such Extra Mark exist for that result' }, status: :not_found
         return
       end
       begin
@@ -153,19 +153,18 @@ module Api
       rescue ActiveRecord::RecordNotDestroyed => e
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-          e.message }, status: :internal_server_error
+            e.message }, status: :internal_server_error
         return
       end
       # Successfully deleted the Extra Mark; render success
       render 'shared/http_status', locals: { code: '200', message:
-        'Extra mark removed successfully' }, status: :ok
+          'Extra mark removed successfully' }, status: :ok
     end
 
     def annotations
       if record # this is a member route
         grouping_relation = assignment.groupings.where(group_id: record.id)
-      else
-        # this is a collection route
+      else # this is a collection route
         grouping_relation = assignment.groupings
       end
 
@@ -188,9 +187,9 @@ module Api
                     'annotations.y2 as y2']
 
       annotations = grouping_relation.left_joins(current_submission_used:
-                                                   [{ submission_files:
-                                                        [{ annotations:
-                                                             [{ annotation_text: :annotation_category }] }] }])
+                                              [{ submission_files:
+                                                 [{ annotations:
+                                                    [{ annotation_text: :annotation_category }] }] }])
                                      .where(assessment_id: params[:assignment_id])
                                      .where.not('annotations.id': nil)
                                      .pluck_to_hash(*pluck_keys)
@@ -232,14 +231,12 @@ module Api
     def test_runs
       return render_no_grouping_error unless grouping
 
-      group_runs = TestRun.where(grouping_id: grouping.id)
-      test_group_result_ids = TestGroupResult.where(test_run_id: group_runs)
-                                             .pluck(:test_run_id, :id)
-                                             .group_by(&:first)
-                                             .transform_values { |pairs| pairs.map(&:last) }
+      group_runs = grouping.test_runs
+      test_group_results = TestGroupResult.where(test_run_id: group_runs)
+                                          .group_by(&:test_run_id)
 
       grouping_test_runs = group_runs.as_json.map do |test_run|
-        test_run.merge('test_group_result_ids' => test_group_result_ids[test_run['id']])
+        test_run.merge('test_group_results' => test_group_results[test_run['id']])
       end
 
       respond_to do |format|
@@ -362,7 +359,7 @@ module Api
       if has_missing_params?([:marking_state])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: { code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
         return
       end
       result = self.grouping&.current_submission_used&.get_latest_result
@@ -370,10 +367,10 @@ module Api
       result.marking_state = params[:marking_state]
       if result.save
         render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
       else
         render 'shared/http_status', locals: { code: '500', message:
-          result.errors.full_messages.first }, status: :internal_server_error
+            result.errors.full_messages.first }, status: :internal_server_error
       end
     end
 
@@ -537,7 +534,7 @@ module Api
       when 'PATCH'
         if has_missing_params?([:overall_comment])
           render 'shared/http_status', locals: { code: '422', message:
-            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
           return
         end
         if result.update(overall_comment: params[:overall_comment])

@@ -1639,11 +1639,13 @@ describe Api::GroupsController do
             expect(test_results.length).to eq(1)
             expect(test_results.first).to include(
               'id' => test_run.id,
-              'test_group_result_ids' => [test_group_result.id],
               'status' => 'complete',
               'role_id' => instructor.id,
               'grouping_id' => grouping.id
             )
+            test_group_results = test_results.first['test_group_results']
+            expect(test_group_results.length).to eq(1)
+            expect(test_group_results.first['id']).to eq(test_group_result.id)
           end
         end
 
@@ -1680,9 +1682,11 @@ describe Api::GroupsController do
             expect(response).to have_http_status(:ok)
           end
 
-          it 'should return both test group result ids' do
-            expect(response.parsed_body.first['test_group_result_ids']).to eq([test_group_result.id,
-                                                                               test_group_result_two.id])
+          it 'should return both test group results' do
+            test_group_results = response.parsed_body.first['test_group_results']
+            expect(test_group_results.length).to eq(2)
+            expect(test_group_results.first['id']).to eq(test_group_result.id)
+            expect(test_group_results.last['id']).to eq(test_group_result_two.id)
           end
         end
       end
@@ -1715,8 +1719,12 @@ describe Api::GroupsController do
         it 'should return all test run results' do
           test_results = response.parsed_body
           expect(test_results.length).to eq(2)
-          expect(test_results.first['test_group_result_ids']).to eq([older_test_group_result.id])
-          expect(test_results.last['test_group_result_ids']).to eq([newer_test_group_result.id])
+          test_results_first = test_results.first['test_group_results']
+          expect(test_results_first.length).to eq(1)
+          expect(test_results_first.first['id']).to eq(newer_test_group_result.id)
+          test_results_second = test_results.last['test_group_results']
+          expect(test_results_second.length).to eq(1)
+          expect(test_results_second.first['id']).to eq(older_test_group_result.id)
         end
       end
 
