@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#7915)
 - Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
 - Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)
 - Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
