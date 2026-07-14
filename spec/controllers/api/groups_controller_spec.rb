@@ -1604,6 +1604,162 @@ describe Api::GroupsController do
       end
     end
 
+    context 'GET test_runs' do
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+      let(:test_group) { create(:test_group, assignment: assignment) }
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+
+      context 'when the group has one test run' do
+        let!(:test_run) do
+          create(:test_run, grouping: grouping, role: instructor, status: :complete, submission: submission)
+        end
+        let!(:test_group_result) do
+          create(:test_group_result, test_run: test_run, test_group: test_group,
+                                     marks_earned: 5.0, marks_total: 10.0, time: 1000)
+        end
+
+        before do
+          create(:test_result, test_group_result: test_group_result, name: 'Test 1',
+                               status: 'pass', marks_earned: 3.0, marks_total: 5.0, position: 1)
+        end
+
+        context 'expecting json response' do
+          before do
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return test runs for the group' do
+            test_results = response.parsed_body
+            expect(test_results).to be_an(Array)
+            expect(test_results.length).to eq(1)
+            expect(test_results.first).to include(
+              'id' => test_run.id,
+              'status' => 'complete',
+              'role_id' => instructor.id,
+              'grouping_id' => grouping.id
+            )
+            test_group_results = test_results.first['test_group_results']
+            expect(test_group_results.length).to eq(1)
+            expect(test_group_results.first['id']).to eq(test_group_result.id)
+          end
+        end
+
+        context 'expecting xml response' do
+          before do
+            request.env['HTTP_ACCEPT'] = 'application/xml'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return xml content' do
+            xml_data = Hash.from_xml(response.body)
+            expect(xml_data).to have_key('test_runs')
+          end
+        end
+
+        context 'with multiple test groups' do
+          let(:test_group_two) { create(:test_group, assignment: assignment, name: 'Group B') }
+          let!(:test_group_result_two) do
+            create(:test_group_result, test_run: test_run, test_group: test_group_two)
+          end
+
+          before do
+            create(:test_result, test_group_result: test_group_result_two, name: 'Test B1',
+                                 status: 'pass', marks_earned: 2.0, marks_total: 5.0, position: 1)
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return both test group results' do
+            test_group_results = response.parsed_body.first['test_group_results']
+            expect(test_group_results.length).to eq(2)
+            expect(test_group_results.first['id']).to eq(test_group_result.id)
+            expect(test_group_results.last['id']).to eq(test_group_result_two.id)
+          end
+        end
+      end
+
+      context 'when multiple test runs exist' do
+        let!(:older_test_run) do
+          create(:test_run, grouping: grouping, role: instructor, created_at: 2.days.ago, status: :complete,
+                            submission: submission)
+        end
+        let!(:newer_test_run) do
+          create(:test_run, grouping: grouping, role: instructor, created_at: 1.hour.ago, status: :complete,
+                            submission: submission)
+        end
+        let!(:older_test_group_result) do
+          create(:test_group_result, test_run: older_test_run, test_group: test_group)
+        end
+        let!(:newer_test_group_result) do
+          create(:test_group_result, test_run: newer_test_run, test_group: test_group)
+        end
+
+        before do
+          create(:test_result, test_group_result: older_test_group_result, name: 'Old Test',
+                               marks_earned: 1.0, marks_total: 5.0, status: 'pass', position: 1)
+          create(:test_result, test_group_result: newer_test_group_result, name: 'New Test',
+                               marks_earned: 4.0, marks_total: 5.0, status: 'pass', position: 1)
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return all test run results' do
+          test_results = response.parsed_body
+          expect(test_results.length).to eq(2)
+          test_results_first = test_results.first['test_group_results']
+          expect(test_results_first.length).to eq(1)
+          expect(test_results_first.first['id']).to eq(newer_test_group_result.id)
+          test_results_second = test_results.last['test_group_results']
+          expect(test_results_second.length).to eq(1)
+          expect(test_results_second.first['id']).to eq(older_test_group_result.id)
+        end
+      end
+
+      context 'authorization check' do
+        it_behaves_like 'for a different course' do
+          before do
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+        end
+      end
+
+      context 'when the group has no test results' do
+        before do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return an empty list' do
+          expect(response.parsed_body).to be_an(Array).and be_empty
+        end
+      end
+
+      context 'when the group does not exist' do
+        before do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_runs, params: { id: 999_999, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return 404 status' do
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+    end
+
     context 'Overall Comment' do
       let!(:grouping) { create(:grouping, group: group, assignment: assignment) }
 
