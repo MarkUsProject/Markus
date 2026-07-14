@@ -24,6 +24,7 @@
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 - Add pagination to Admin Users table for performance (#7997)
 - Added support for all annotation types for POST /add_annotations (#8007)
+- Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)

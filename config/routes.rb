@@ -39,6 +39,7 @@
 #                    collect_submission_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/collect_submission(.:format)                    api/groups#collect_submission
 #                          add_test_run_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/add_test_run(.:format)                          api/groups#add_test_run
 #                          test_results_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/test_results(.:format)                          api/groups#test_results
+#                             test_runs_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/test_runs(.:format)                             api/groups#test_runs
 #          remove_file_api_course_assignment_group_submission_files DELETE   /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files/remove_file(.:format)    api/submission_files#remove_file
 #        remove_folder_api_course_assignment_group_submission_files DELETE   /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files/remove_folder(.:format)  api/submission_files#remove_folder
 #       create_folders_api_course_assignment_group_submission_files POST     /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files/create_folders(.:format) api/submission_files#create_folders
@@ -599,6 +600,7 @@ Rails.application.routes.draw do
             post 'collect_submission'
             post 'add_test_run'
             get 'test_results'
+            get 'test_runs'
           end
           resources :submission_files, only: [:index, :create] do
             collection do
