@@ -6,7 +6,7 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :show?, :peer_review?, to: :student?
   alias_rule :starter_file?, :download_starter_file_mappings?, :download_sample_starter_files?,
              :populate_starter_file_manager?, to: :read_starter_files?
-  authorize :assessment, :test_run_id, optional: true
+  authorize :assessment, :test_run_id, :role, :real_user, :assignment, optional: true
 
   def index?
     true
@@ -17,7 +17,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def manage?
-    (!role.nil? || !record.nil?) && check?(:manage_assessments?, role)
+    !assignment.nil? && check?(:manage_assessments?, role)
   end
 
   def see_hidden?
