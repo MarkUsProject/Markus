@@ -118,7 +118,7 @@ class Criterion < ApplicationRecord
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
-    ta_ids = Ta.where(id: ta_ids).ids
+    ta_ids = assignment.course.graders.where(id: ta_ids).ids
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation

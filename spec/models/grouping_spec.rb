@@ -120,6 +120,19 @@ describe Grouping do
         end
       end
 
+      it 'only assigns instructors and TAs from the assignment course' do
+        instructor = create(:instructor, course: assignment.course)
+        student = create(:student, course: assignment.course)
+        other_instructor = create(:instructor, course: create(:course))
+        grader_ids = [instructor.id, student.id, other_instructor.id]
+
+        Grouping.randomly_assign_tas(grouping_ids, grader_ids, [1, 1, 1], assignment)
+
+        groupings.each do |grouping|
+          expect(grouping.reload.tas).to eq([instructor])
+        end
+      end
+
       it 'can randomly bulk assign TAs with weighting' do
         weightings = [3, 1]
         Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
@@ -233,6 +246,15 @@ describe Grouping do
           grouping_ids.zip(ta_ids.cycle)
         end
       end
+
+      it 'only assigns groupings from the given assignment' do
+        other_grouping = create(:grouping, assignment: create(:assignment))
+
+        Grouping.assign_all_tas([grouping_ids.first, other_grouping.id], ta_ids.first, assignment)
+
+        expect(groupings.first.reload.tas).to contain_exactly(tas.first)
+        expect(other_grouping.reload.tas).to be_empty
+      end
     end
 
     describe '.unassign_tas' do
@@ -250,6 +272,17 @@ describe Grouping do
           grouping.reload
           expect(grouping.tas).to be_empty
         end
+      end
+
+      it 'only unassigns memberships from the given assignment' do
+        other_assignment = create(:assignment)
+        other_grouping = create(:grouping, assignment: other_assignment)
+        other_ta = create(:ta, course: other_assignment.course)
+        membership = create(:ta_membership, grouping: other_grouping, role: other_ta)
+
+        Grouping.unassign_tas([membership.id], [other_grouping.id], assignment)
+
+        expect(membership.reload).to be_present
       end
 
       it 'updates criteria coverage counts after bulk unassign TAs' do

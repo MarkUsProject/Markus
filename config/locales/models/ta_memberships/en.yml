@@ -4,4 +4,4 @@ en:
     errors:
       models:
         ta_membership:
-          not_ta: User must be a TA
+          not_grader: User must be a TA or instructor

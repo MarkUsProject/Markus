@@ -1388,7 +1388,7 @@ class Assignment < Assessment
                       .joins(tas: :user)
                       .group('user_name')
                       .count
-    graders = self.course.tas.joins(:user)
+    graders = self.course.graders.joins(:user)
                   .pluck(:user_name, :first_name, :last_name, 'roles.id',
                          'roles.hidden').map do |user_name, first_name, last_name, id, hidden|
       {

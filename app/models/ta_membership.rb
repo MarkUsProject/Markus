@@ -22,14 +22,14 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TaMembership < Membership
-  validate :must_be_a_ta
+  validate :must_be_a_grader
 
   after_create { Repository.get_class.update_permissions }
   after_destroy { Repository.get_class.update_permissions }
 
-  def must_be_a_ta
-    if role && !role.is_a?(Ta)
-      errors.add(:base, :not_ta)
+  def must_be_a_grader
+    if role && !role.is_a?(Ta) && !role.instance_of?(Instructor)
+      errors.add(:base, :not_grader)
       false
     end
   end
@@ -44,7 +44,7 @@ class TaMembership < Membership
     end
     new_ta_memberships = []
     groupings = assignment.groupings.joins(:group).pluck('groups.group_name', :id).to_h
-    graders = assignment.course.tas.joins(:user).pluck('users.user_name', :id).to_h
+    graders = assignment.course.graders.joins(:user).pluck('users.user_name', :id).to_h
     result = MarkusCsv.parse(csv_data) do |row|
       raise CsvInvalidLineError if row.empty?
       raise CsvInvalidLineError if groupings[row[0]].nil?
