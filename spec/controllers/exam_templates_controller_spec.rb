@@ -364,7 +364,7 @@ describe ExamTemplatesController do
         let(:group) { create(:group, course: course) }
 
         def group_data_for(response)
-          JSON.parse(response.body).first['group_data']
+          response.parsed_body['group_data']
         end
 
         context 'when a group has every expected page scanned' do
