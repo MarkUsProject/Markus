@@ -13,6 +13,7 @@ en:
       page_number: Page Number
       upside_down: Page Upside Down?
     assign_scans:
+      assign: Assign
       display_inactive: Display inactive students
       done: All groups have been successfully assigned students
       help: Assign students to scanned exam groups based on printed student names.
@@ -21,7 +22,9 @@ en:
       no_similar_students: No similar students found. Please assign manually.
       not_all_submissions_collected: Not all submissions have been collected.
       ocr_detected: 'OCR Detected %{field_type}:'
-      skip_group: Skip group
+      progress: "%{valid} of %{total} assigned"
+      search_placeholder: Search by name, username, or ID number
+      skip_group: Skip
       student_not_found: Student with name %{name} does not exist.
       suggested_students: 'Suggested Students:'
       title: Assign Scans
