@@ -1,4 +1,5 @@
 class GroupsChannel < ApplicationCable::Channel
+  authorize :assignment, through: :assignment
   def subscribed
     stream_for current_user
   end
@@ -15,5 +16,9 @@ class GroupsChannel < ApplicationCable::Channel
 
   def authorization_rule
     :manage?
+  end
+
+  def assignment
+    course&.assignments&.find_by(id: params[:assignment_id])
   end
 end

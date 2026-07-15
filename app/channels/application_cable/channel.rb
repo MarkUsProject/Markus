@@ -4,9 +4,6 @@ module ApplicationCable
 
     authorize :role, through: :current_role
     authorize :real_user, through: :real_user
-    authorize :assignment, through: :assignment
-    authorize :grouping, through: :grouping
-    authorize :submission, through: :submission
     before_subscribe :authorize_channel
     before_subscribe :verify_authorized
 
@@ -49,18 +46,6 @@ module ApplicationCable
 
     def course
       Course.find_by(id: params[:course_id])
-    end
-
-    def assignment
-      course&.assignments&.find_by(id: params[:assignment_id])
-    end
-
-    def grouping
-      assignment&.groupings&.find_by(id: params[:grouping_id])
-    end
-
-    def submission
-      grouping&.submissions&.find_by(id: params[:submission_id])
     end
   end
 end
