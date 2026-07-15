@@ -136,7 +136,7 @@ class ExamScanLogTable extends React.Component {
               split_pdf_log_id={row.original.file_id}
               assignment_id={this.props.assignment_id}
             />
-            <h4>{I18n.t("split_pdf_logs.papers_found")}</h4>
+            <h4>{I18n.t("split_pdf_logs.incomplete_papers_found")}</h4>
             <ExamScanGroupsTable data={row.original.group_data} />
           </div>
         )}
@@ -212,25 +212,15 @@ class ExamScanErrorsTable extends React.Component {
 }
 
 class ExamScanGroupsTable extends React.Component {
-  constructor() {
-    super();
-  }
-
   columns = [
     {
-      Header: I18n.t("activerecord.models.group.one"),
+      Header: I18n.t("split_pdf_logs.paper"),
       accessor: "group",
-    },
-    {
-      Header: "Status",
-      accessor: "complete",
-      Cell: row =>
-        row.value ? I18n.t("submissions.state.complete") : I18n.t("submissions.state.incomplete"),
     },
     {
       Header: I18n.t("split_pdf_logs.missing_pages"),
       accessor: "missing_pages",
-      className: "number",
+      Cell: row => row.value.join(", "),
     },
   ];
 
@@ -239,7 +229,7 @@ class ExamScanGroupsTable extends React.Component {
       <ReactTable
         data={this.props.data}
         columns={this.columns}
-        style={{maxWidth: "800px", marginTop: "5px", marginBottom: "5px"}}
+        style={{maxWidth: "500px", marginTop: "5px", marginBottom: "5px"}}
         minRows={1}
       />
     );
