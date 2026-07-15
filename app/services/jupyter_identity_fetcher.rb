@@ -16,17 +16,11 @@ class JupyterIdentityFetcher
   def username
     # Local development fallback only.
     # This allows standalone JupyterLab testing where there is no JupyterHub identity endpoint.
-<<<<<<< HEAD
-    if Rails.env.development? && ENV['JUPYTER_DEV_USERNAME'].present?
-      Rails.logger.info("[JupyterIdentityFetcher] Using development username #{ENV.fetch('JUPYTER_DEV_USERNAME', nil)}")
-      return ENV.fetch('JUPYTER_DEV_USERNAME', nil)
-=======
     if Rails.env.development? && Settings.jupyter_server.dev_username.present?
       Rails.logger.info(
         "[JupyterIdentityFetcher] Using development username #{Settings.jupyter_server.dev_username}"
       )
       return Settings.jupyter_server.dev_username
->>>>>>> 95066dd62 (Revised files based on review suggestions.)
     end
 
     validate!
