@@ -23,9 +23,11 @@ nav_order: 1
 ## Initial Setup
 
 To create a new assignment navigate to the "Assignments" tab at the top of the MarkUs website.
+
 ![Website Create Assignment](/images/assignment-tab.png)
 
 Click on the "Create Assignment" button under Manage Course Work.
+
 ![Create Assignment](/images/create-assignment-button.png)
 
 You will be taken to the initial set-up page for an assignment on MarkUs. From this page you will be able to create and edit a new assignment for your class.
@@ -67,6 +69,7 @@ Please see the [Peer Review](peer-review.md) page for more information on Peer R
 ### Required Files
 
 This section will allow you to specify the names of files that students will be required to submit:
+
 ![Website Required Files](/images/assignment-required-files.png)
 
 - You may add a required file by clicking on the "Add a Required File" link and specifying a name.
@@ -77,6 +80,7 @@ This section will allow you to specify the names of files that students will be 
 ### Group Properties
 
 This section allows you to enable and configure settings for students to work in a group:
+
 ![Website Group Properties](/images/assignment-group-properties.png)
 
 - If this is the first assignment (or the first assignment with group work) then the "Students can work in groups" box must be selected to allow groups to be formed on MarkUs. Once checked, it will open up a new box with further settings. These settings include a "Students may form their own group" box which will allow students to create and invite other students to their group.
@@ -96,6 +100,7 @@ However, MarkUs supports a few different late submission policies, which you can
 ### Re-mark Requests
 
 This section lets you choose if you wish to allow re-mark requests. If you do, then a re-mark request due date may be specified by choosing a date from the drop down calendar. Specific instructions for the students may also be included in the "Remark Request Instructions" section.
+
 ![Website Remark Requests](/images/assignment-remark-requests.png)
 
 ### Saving Changes
@@ -103,7 +108,9 @@ This section lets you choose if you wish to allow re-mark requests. If you do, t
 Once all the required fields are completed (along with any other fields you choose to fill out), click the `Submit` button at the bottom of the change to create the assignment.
 
 If an assignment is created in error or you wish to delete an assignment, this can be done by navigating to the "Properties" tab of the assignment you wish to delete and checking the "Hide assignment from students" box:
+
 ![Website Deleting Assignment](/images/assignments-hide-checkbox.png)
+
 Although this does not delete the assignment from your dashboard, it does remove it from all of the student accounts. Students will neither be able to see nor access deleted assignments.
 
 ## What Students Will See
@@ -113,7 +120,8 @@ To get an idea of what an assignment looks like from the student's perspective c
 ## Modifying an Assignment After Creation
 
 Once an assignment has been created, you are still allowed to modify most of the fields from the "Create Assignment" page that you just filled out. This can be done by navigating to the "Assignments" (1) tab, clicking on the assignment you wish to modify, and then clicking on the "Settings" (2) and then "Properties" (3) tabs:
-![Website Edit Assignment](https://user-images.githubusercontent.com/50387112/58756344-d2680680-84c4-11e9-9a4f-af50a0c5cc00.png)
+
+![Website Edit Assignment](/images/website-edit-assignment.png)
 
 All the fields on this page are the same as the ones from the "Create Assignment" section.
 
@@ -122,13 +130,17 @@ All the fields on this page are the same as the ones from the "Create Assignment
 If you wish to save and/or transfer your settings for an existing assignment for future use, you can download a zip file of the assignment which you can later upload back to MarkUs. This is useful if you wish to reuse a specific assignment in a future offering of a course.
 
 To download an assignment, go to an assignment's properties page and click on the "Download" link in the top right corner.
+
 ![Assignment Download Link](/images/assignment-download-link.png)
 
 This will download an assignment zip file you can save and upload back later. For more information on this zip file and what settings are saved, please see the section on [importing and exporting assignment configurations](../importing-and-exporting-data.md#assignment-configuration).
 
 In order to upload an assignment zip file, navigate to the "Assignments" tab at the top of the page and click on the "Upload Configuration Zip File" link in the top right corner.
+
 ![Assignment Upload Link](/images/assignment-upload-link.png)
 
 This will show you a modal where you can select an assignment zip file to upload.
+
 ![Assignment Upload Modal](/images/assignment-upload-modal.png)
+
 After you have selected a zip file to upload, MarkUs will then create a new assignment using the settings specified within the zip file.

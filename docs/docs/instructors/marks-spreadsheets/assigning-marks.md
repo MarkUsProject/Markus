@@ -21,6 +21,7 @@ nav_order: 2
 ## Grades Tab
 
 In the grades tab you will be able to interact with your created spreadsheet. To navigate to to the "Grades" tab of your spreadsheet click on Assignments -> Grades:
+
 ![Grades Tab](/images/marks-spreadsheet-grade-tab.png)
 
 The grades tab will automatically load all the active students in your course into the spreadsheet. If you wish to display inactive students as well, click on the "Display inactive students" checkbox at the top of the page.
@@ -34,7 +35,9 @@ The marks spreadsheet contains a number of columns:
 - **First Name:** The first name of the student.
 - **Last Name:** The last name of the student.
 - **Column(s):** This is the main feature of the spreadsheet. You will now see the columns that you have created previously:
+
 ![Columns In Spreadsheet](/images/marks-spreadsheet-table.png)
+
     - Each column will list its name (i.e. "Question 1") and the mark associated with the column (i.e. 12.0).
     - At the very end of your specified columns will be the "Total" column **if you checked the "Show total" checkbox in the [set-up](setting-up.md) section**. The total column will have the sum of the **non-bonus mark columns** in parentheses.
     - The columns will all start empty and you may add in values for each student depending on their mark for each column. Negative values are not allowed however you may include values greater than what was specified for the column.

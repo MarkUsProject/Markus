@@ -595,6 +595,7 @@ class Assignment < Assessment
 
     if is_instructor
       groupings = self.groupings
+      assigned_grouping_ids = Set.new
       grader_data_agg = Arel.sql('json_agg(json_build_array(users.user_name, users.first_name, users.last_name))')
       graders = groupings.joins(tas: :user)
                          .group(:id)
@@ -608,9 +609,16 @@ class Assignment < Assessment
                                                   'lti_deployments.lms_course_name')
       lti_deployments.each { |deployment| deployment.transform_keys! { |key| key.to_s.split('.')[-1] } }
     else
-      groupings = self.groupings
-                      .joins(:memberships)
-                      .where('memberships.role_id': user.id)
+      assigned_grouping_ids = self.groupings
+                                  .joins(:memberships)
+                                  .where('memberships.role_id': user.id)
+                                  .ids
+                                  .to_set
+      groupings = if user.grader_permission.manage_submissions
+                    self.groupings
+                  else
+                    self.groupings.where(id: assigned_grouping_ids)
+                  end
       graders = {}
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
@@ -716,7 +724,8 @@ class Assignment < Assessment
         max_mark: max_mark,
         result_id: result_id,
         submission_id: submission_id,
-        total_extra_marks: extra_mark
+        total_extra_marks: extra_mark,
+        assigned: assigned_grouping_ids.include?(grouping_id)
       }
     end
 
@@ -1469,12 +1478,20 @@ class Assignment < Assessment
     if current_role.instructor?
       groupings = self.groupings
     elsif current_role.ta?
-      groupings = self.groupings.where(id: self.groupings.joins(:memberships)
-                                                         .where('memberships.role_id': current_role.id)
-                                                         .select(:'groupings.id'))
+      assigned_grouping_ids = self.groupings
+                                  .joins(:memberships)
+                                  .where('memberships.role_id': current_role.id)
+                                  .ids
+                                  .to_set
+      groupings = if current_role.grader_permission.manage_submissions
+                    self.groupings
+                  else
+                    self.groupings.where(id: assigned_grouping_ids)
+                  end
     else
       return []
     end
+    assigned_grouping_ids ||= Set.new
 
     data = groupings
            .left_outer_joins(:group, :current_submission_used)
@@ -1564,7 +1581,8 @@ class Assignment < Assessment
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
                                      result_info['results.released_to_students'],
-                                     collection_date)
+                                     collection_date),
+        assigned: assigned_grouping_ids.include?(grouping_id)
       }
 
       base[:start_time] = I18n.l(start_time) if self.is_timed && !start_time.nil?

@@ -8,7 +8,9 @@
 
 ### ✨ New features and improvements
 - Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
+- Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
 - Updated links to refer to new documentation website (#8049)
+- Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
@@ -23,6 +25,7 @@
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
 - Add pagination to Admin Users table for performance (#7997)
 - Added support for all annotation types for POST /add_annotations (#8007)
+- Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
@@ -34,6 +37,9 @@
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
+### 📚 Documentation changes
+- Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
+
 ### 🔧 Internal changes
 - Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
@@ -41,6 +47,7 @@
 - Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)
 - Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
 - Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
+- Refactored `GroupsController#create_groups_when_students_work_alone` and `GroupsController#upload` to use ActionCable websockets instead of polling to report `CreateGroupsJob` status. (#8020)
 - Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)

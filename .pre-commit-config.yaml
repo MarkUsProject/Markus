@@ -17,18 +17,18 @@ repos:
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
   -   repo: https://github.com/rbubley/mirrors-prettier
-      rev: v3.8.3
+      rev: v3.9.4
       hooks:
         - id: prettier
           types_or: [javascript, jsx, css, scss, html]
   -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v17.12.0
+      rev: v17.14.0
       hooks:
         - id: stylelint
           additional_dependencies: [
-              "stylelint@16.11.0",
+              "stylelint@17.14.0",
               "postcss-scss@4.0.9",
-              "stylelint-config-sass-guidelines@12.1.0",
+              "stylelint-config-sass-guidelines@13.0.0",
               "postcss@8.4.49",
             ]
           args: ["--fix"]
@@ -39,7 +39,7 @@ repos:
               app/assets/stylesheets/common/_reset.scss
             )$
   - repo: https://github.com/rubocop/rubocop
-    rev: v1.87.0
+    rev: v1.88.1
     hooks:
       - id: rubocop
         args: ["--autocorrect"]
@@ -52,12 +52,12 @@ repos:
             Vagrantfile
           )$
         additional_dependencies:
-          - rubocop-rails:2.33.4
+          - rubocop-rails:2.36.0
           - rubocop-performance:1.26.1
           - rubocop-factory_bot:2.28.0
-          - rubocop-rspec:3.2.0
+          - rubocop-rspec:3.10.2
           - rubocop-rspec_rails:2.32.0
-          - rubocop-capybara:2.22.1
+          - rubocop-capybara:3.0.0
   - repo: local
     hooks:
       - id: erb_lint
@@ -83,6 +83,9 @@ repos:
           - i18n-tasks
 
 exclude: vendor
+
+default_language_version:
+  node: "24.18.0"
 
 ci:
   autoupdate_schedule: monthly
