@@ -190,6 +190,7 @@ class ExamTemplatesController < ApplicationController
           group_data = {}
 
           log.split_pages.each do |page|
+            # TODO: make status non-nil.
             if page.status == 'FIXED' || page.status&.start_with?('ERROR')
               page_data << {
                 raw_page_number: page.raw_page_number,
@@ -201,18 +202,14 @@ class ExamTemplatesController < ApplicationController
             end
 
             next if page.group_id.nil?
-            group_data[page.group_id] ||= { group: page.group.group_name, pages_seen: Set.new }
-            group_data[page.group_id][:pages_seen] << page.exam_page_number if page.exam_page_number
+            group_data[page.group.group_name] ||= Set.new
+            group_data[page.group.group_name] << page.exam_page_number if page.exam_page_number
           end
 
           num_pages = log.exam_template.num_pages
-          group_data = group_data.values.map do |group|
-            missing_pages = num_pages - group[:pages_seen].size
-            {
-              group: group[:group],
-              complete: missing_pages == 0,
-              missing_pages: missing_pages
-            }
+          group_data = group_data.filter_map do |group_name, pages_seen|
+            missing_pages = (1..num_pages).to_a - pages_seen.to_a
+            { group: group_name, missing_pages: missing_pages } unless missing_pages.empty?
           end
 
           {
