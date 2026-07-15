@@ -377,10 +377,9 @@ describe ExamTemplatesController do
                                      params: { assignment_id: exam_template.assignment.id, course_id: course.id }
           end
 
-          it 'reports the group as complete with 0 missing pages' do
+          it 'excludes the group from group_data since it has no missing pages' do
             entry = group_data_for(response).find { |g| g['group'] == group.group_name }
-            expect(entry['complete']).to be true
-            expect(entry['missing_pages']).to eq 0
+            expect(entry).to be_nil
           end
         end
 
@@ -396,10 +395,9 @@ describe ExamTemplatesController do
                                      params: { assignment_id: exam_template.assignment.id, course_id: course.id }
           end
 
-          it 'reports the group as incomplete with the correct missing page count' do
+          it 'reports the group with the correct missing page numbers' do
             entry = group_data_for(response).find { |g| g['group'] == group.group_name }
-            expect(entry['complete']).to be false
-            expect(entry['missing_pages']).to eq(exam_template.num_pages - pages_scanned)
+            expect(entry['missing_pages']).to eq(((pages_scanned + 1)..exam_template.num_pages).to_a)
           end
         end
       end
