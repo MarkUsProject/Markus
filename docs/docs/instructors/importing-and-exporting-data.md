@@ -402,7 +402,7 @@ Only CSV files are supported.
 
 #### (Assignments) Assigning graders to groups
 
-Each CSV row should consist of the group name followed by a list of TA user names.
+Each CSV row should consist of the group name followed by a list of grader usernames. Each grader may be either a course grader or a course instructor.
 
 Example:
 
@@ -415,7 +415,7 @@ group_0004,grader_user_1
 
 #### (Assignments) Assigning graders to marking criteria
 
-Each CSV row should consist of the criterion name followed by a list of TA user names.
+Each CSV row should consist of the criterion name followed by a list of grader usernames. Each grader may be either a course grader or a course instructor.
 
 ```csv
 Question1_proof_structure,grader_user_1
@@ -427,7 +427,7 @@ Question3_proof_by_contradiction,grader_user_4
 
 #### (Marks Spreadsheets) Assigning graders to students
 
-Each CSV row should consist of the student user name followed by a list of TA user names.
+Each CSV row should consist of the student username followed by a list of course grader usernames. Instructors cannot be assigned as graders for marks spreadsheets.
 
 ```csv
 student_user_1,grader_user_1
