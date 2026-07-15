@@ -4,6 +4,9 @@ module ApplicationCable
 
     authorize :role, through: :current_role
     authorize :real_user, through: :real_user
+    authorize :assignment, through: :assignment
+    authorize :grouping, through: :grouping
+    authorize :submission, through: :submission
     before_subscribe :authorize_channel
     before_subscribe :verify_authorized
 
@@ -11,6 +14,10 @@ module ApplicationCable
 
     def authorize_channel
       @authorization_checked = true
+      if current_role.nil?
+        reject
+        return
+      end
       authorize! to: authorization_rule, with: authorization_policy
     rescue ActionPolicy::Unauthorized
       reject
@@ -46,6 +53,14 @@ module ApplicationCable
 
     def assignment
       course&.assignments&.find_by(id: params[:assignment_id])
+    end
+
+    def grouping
+      assignment&.groupings&.find_by(id: params[:grouping_id])
+    end
+
+    def submission
+      grouping&.submissions&.find_by(id: params[:submission_id])
     end
   end
 end
