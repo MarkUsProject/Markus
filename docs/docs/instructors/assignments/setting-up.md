@@ -6,19 +6,13 @@ grand_parent: Instructors
 nav_order: 1
 ---
 # Setting Up an Assignment
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Initial Setup](#initial-setup)
-    - [Properties](#properties)
-    - [Required Files](#required-files)
-    - [Group Properties](#group-properties)
-    - [Late Submission Policy](#late-submission-policy)
-    - [Re-mark Requests](#re-mark-requests)
-    - [Saving Changes](#saving-changes)
-- [What Students Will See](#what-students-will-see)
-- [Modifying An Assignment After Creation](#modifying-an-assignment-after-creation)
-- [Uploading and Downloading an Existing Assignment](#uploading-and-downloading-an-existing-assignment)
+- TOC
+{:toc}
 
 ## Initial Setup
 

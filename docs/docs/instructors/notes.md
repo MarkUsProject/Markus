@@ -5,15 +5,13 @@ parent: Instructors
 nav_order: 10
 ---
 # Notes
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Notes Page](notes-page)
-- [Note Types](note-types)
-    - [Student Note](student-note)
-    - [Grouping Note](grouping-note)
-    - [Assignment Note](assignment-note)
-- [Notes Table](notes-table)
+- TOC
+{:toc}
 
 ## Notes Page
 

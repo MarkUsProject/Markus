@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 6
 ---
 # Action Policy Style Guide
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## About
 

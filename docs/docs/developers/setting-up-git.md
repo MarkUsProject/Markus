@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 7
 ---
 # MarkUs, Git and GitHub: How it Works
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Installation
 

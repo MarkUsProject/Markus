@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 3
 ---
 # Developer Guide: Set Up with Docker
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 If you want to get started on working on MarkUs quickly and painlessly, this is the way to do it.
 

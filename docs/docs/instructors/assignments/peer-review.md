@@ -6,6 +6,13 @@ grand_parent: Instructors
 nav_order: 11
 ---
 # Peer Review Assignments
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 MarkUs supports *peer review*-based assignments that allow students to provide feedback on the work of other students.
 In MarkUs, peer reviews are conducted in two phases.

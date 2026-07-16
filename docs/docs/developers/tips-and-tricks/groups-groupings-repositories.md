@@ -6,6 +6,13 @@ grand_parent: Developers
 nav_order: 2
 ---
 # Groups, Groupings and Repositories
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Assignment Group Models
 

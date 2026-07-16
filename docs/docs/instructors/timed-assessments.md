@@ -5,12 +5,13 @@ parent: Instructors
 nav_order: 3
 ---
 # Timed Assessments
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [How it Works](#how-it-works)
-- [Creating and Updating](#creating-and-updating)
-- [How Extensions and Penalty Periods Interact](#how-extensions-and-penalty-periods-interact)
+- TOC
+{:toc}
 
 ## How it Works
 

@@ -5,6 +5,13 @@ parent: Instructors
 nav_order: 1
 ---
 # Instructor Frequently Asked Questions
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## How do I upgrade a grader to an instructor?
 

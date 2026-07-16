@@ -6,11 +6,13 @@ grand_parent: Instructors
 nav_order: 9
 ---
 # Remark Requests
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Viewing Requests](#viewing-requests)
-- [Responding to a Remark Request](#responding-to-a-remark-request)
+- TOC
+{:toc}
 
 ## Viewing Requests
 

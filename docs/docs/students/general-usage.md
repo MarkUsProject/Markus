@@ -5,10 +5,13 @@ parent: Students
 nav_order: 3
 ---
 # General Usage
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Using the File Manager](#using-the-file-manager)
+- TOC
+{:toc}
 
 ## Using the File Manager
 

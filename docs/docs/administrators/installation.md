@@ -5,6 +5,13 @@ nav_order: 2
 parent: Administrators
 ---
 # Installation
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 The following are instructions to set up a production server for MarkUs.
 

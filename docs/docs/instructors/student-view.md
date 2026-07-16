@@ -5,10 +5,13 @@ parent: Instructors
 nav_order: 6
 ---
 # Student View
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [View as Another User](#view-as-another-user)
+- TOC
+{:toc}
 
 ## View as Another User
 

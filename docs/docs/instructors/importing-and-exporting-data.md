@@ -5,6 +5,13 @@ parent: Instructors
 nav_order: 9
 ---
 # Bulk Upload and Download Data Feature
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 When needing to upload or download files, users are able to upload and download a grouped set of data contained in a CSV file(or in some cases also a YML file).
 

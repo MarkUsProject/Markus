@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 2
 ---
 # Set Up with Vagrant
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Downloading and Installing
 

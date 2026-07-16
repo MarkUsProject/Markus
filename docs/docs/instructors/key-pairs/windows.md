@@ -6,6 +6,13 @@ grand_parent: Instructors
 nav_order: 1
 ---
 # Windows Key-Pair Generation Instructions
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Step 1: Install Git
 

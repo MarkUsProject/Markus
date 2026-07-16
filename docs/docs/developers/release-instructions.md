@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 5
 ---
 # Release Instructions
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## When reviewing a pull request (PR)
 

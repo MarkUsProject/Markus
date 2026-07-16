@@ -6,14 +6,13 @@ grand_parent: Instructors
 nav_order: 10
 ---
 # Remark Requests
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [How it Works](#how-it-works)
-- [Uploading Files](#uploading-files)
-- [Creating Rules](#creating-rules)
-- [Managing Changes after the Assignment has Started](#managing-changes-after-the-assignment-has-started)
-- [See Assigned Starter Files](#see-assigned-starter-files)
+- TOC
+{:toc}
 
 ## How it Works
 
