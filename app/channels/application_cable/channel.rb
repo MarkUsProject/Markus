@@ -41,7 +41,7 @@ module ApplicationCable
     end
 
     def real_user
-      connection.current_user
+      connection.real_user
     end
 
     def course
