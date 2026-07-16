@@ -39,6 +39,7 @@
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
+- Allow new instructors without existing courses to create a course via LTI launch (#8061)
 
 ### 📚 Documentation changes
 - Made documentation site table-of-contents/section listings consistent (#8062)
