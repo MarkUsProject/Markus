@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 8
 ---
 # Developer Guide: Configure VSCode
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 To configure your development environment on VSCode the following steps are required:
 

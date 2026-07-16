@@ -5,6 +5,13 @@ parent: Instructors
 nav_order: 4
 ---
 # Scanned Assignments/Exams
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 MarkUs scanned assignments allow instructors to administer in-person exams on paper and then upload these tests to MarkUs for grading.
 This process involves five major steps:

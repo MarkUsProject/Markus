@@ -6,6 +6,13 @@ grand_parent: Developers
 nav_order: 3
 ---
 # Annotations
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 When submitted work is graded by a TA, or viewed later on by the student that submitted it, each submitted file may have one or more *annotations* from the TA. (We use the term "annotations" to distinguish that idea from *comments*, since students could have lots of comments in their code that a TA would want to annotate.)
 

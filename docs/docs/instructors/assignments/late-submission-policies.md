@@ -6,13 +6,15 @@ grand_parent: Instructors
 nav_order: 2
 ---
 # Late Submission Policies
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Accept No Late Submissions](#accept-no-late-submissions)
-- [Automatically Deduct Grace Credits](#automatically-deduct-grace-credits)
-- [Use Penalty Decay Formula](#use-penalty-decay-formula)
-- [Set Manual Penalty Periods](#set-manual-penalty-periods)
+- TOC
+{:toc}
+
+## Introduction
 
 When setting up an assignment, MarkUs allows you to choose one of 4 different methods to handle late assignments:
 

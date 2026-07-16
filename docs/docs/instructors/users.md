@@ -5,17 +5,13 @@ parent: Instructors
 nav_order: 7
 ---
 # Managing Users
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Student Accounts](#student-accounts)
-    - [New Student Account](#new-student-account)
-    - [Remove Student Account](#remove-student-account)
-    - [Grace Credits](#grace-credits)
-    - [Other Actions](#other-actions)
-- [Grader Accounts](#grader-accounts)
-- [Sections](#sections)
-- [instructor Accounts](#instructor-accounts)
+- TOC
+{:toc}
 
 ## Student Accounts
 

@@ -6,19 +6,13 @@ grand_parent: Instructors
 nav_order: 4
 ---
 # Setting Up Assignment Criteria
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Initial Setup](#initial-setup)
-- [Criterion Types](#criterion-types)
-    - [Editing Window](#editing-window)
-    - [Flexible Type](#flexible-type)
-    - [Checkbox Type](#checkbox-type)
-    - [Rubric Type](#rubric-type)
-- [Reordering Criteria and Visibility](#reordering-criteria-and-visibility)
-    - [Reordering Criteria](#reordering-criteria)
-    - [Visibility](#visibility)
-- [Learn More](#learn-more)
+- TOC
+{:toc}
 
 ## Initial Setup
 

@@ -6,6 +6,13 @@ grand_parent: Instructors
 nav_order: 2
 ---
 # Linux / OSX Key-pair Generation Instructions
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Step 1: Generate a new SSH key for MarkUs
 

@@ -6,31 +6,13 @@ grand_parent: Instructors
 nav_order: 7
 ---
 # Automated Testing
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [How it works](#how-it-works)
-- [Initial Setup](#initial-setup)
-    - [Test Files](#test-files)
-- [Testers](#testers)
-    - [Test Groups](#test-groups)
-    - [Shared Fields](#shared-fields)
-    - [Tester Types](#tester-types)
-        - [Python](#python)
-        - [Java](#java)
-        - [Racket](#racket)
-        - [PyTa](#pyta)
-        - [Haskell](#haskell)
-        - [Jupyter](#jupyter)
-        - [R](#r)
-        - [Custom](#custom)
-- [Student-Run Tests](#student-run-tests)
-- [Running Tests](#running-tests)
-    - [Submissions Table Run](#submissions-table-run)
-    - [Test Results Tab](#test-results-tab)
-    - [Criterion Auto-Complete](#criterion-auto-complete)
-- [Test Runs Status](#test-runs-status)
-- [Inspecting group information during testing](#inspecting-group-information-during-testing)
+- TOC
+{:toc}
 
 ## How it works
 

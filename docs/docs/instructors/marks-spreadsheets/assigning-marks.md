@@ -6,17 +6,13 @@ grand_parent: Instructors
 nav_order: 2
 ---
 # Using a Marks Spreadsheet
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Grades Tab](#grades-tab)
-    - [Columns](#columns)
-    - [Releasing Marks](#releasing-marks)
-    - [Unreleasing Marks](#unreleasing-marks)
-    - [Summary Statistics](#summary-statistics)
-- [Graders Tab](#graders-tab)
-
-> 🗒️ **NOTE:** Make sure you have read the [set-up page](setting-up.md) for marks spreadsheets before proceeding with this section.
+- TOC
+{:toc}
 
 ## Grades Tab
 
