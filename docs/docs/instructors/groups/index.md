@@ -6,11 +6,13 @@ has_children: true
 nav_order: 8
 ---
 # Managing Group Members
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Manage Groups Page](#manage-groups-page)
-- [Groups Actions](#groups-actions)
+- TOC
+{:toc}
 
 ## Manage Groups Page
 

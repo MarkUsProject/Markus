@@ -5,6 +5,13 @@ nav_order: 3
 parent: Administrators
 ---
 # Configuration Settings
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 *new in version 1.12.0*: Custom configuration settings for MarkUs can be set by adding a `config/settings.local.yml` file.
 Values in this file are described below and will override any default values in the `config/settings.yml` or the environment specific files in `config/settings`.

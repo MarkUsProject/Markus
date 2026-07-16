@@ -6,15 +6,13 @@ grand_parent: Instructors
 nav_order: 6
 ---
 # Deductive Annotations
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [What are Deductive Annotations?](#what-are-deductive-annotations)
-- [Setting up the annotation category](#setting-up-the-annotation-category)
-- [Setting up annotations](#setting-up-annotations)
-- [Deductive annotations in the interface](#deductive-annotations-in-the-interface)
-- [Applying deductive annotations and creating on the fly annotations](#applying-deductive-annotations-and-creating-on-the-fly-annotations)
-- [Overridden deductive annotations](#overridden-deductive-annotations)
+- TOC
+{:toc}
 
 ## What are Deductive Annotations?
 

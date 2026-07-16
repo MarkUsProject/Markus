@@ -6,16 +6,13 @@ grand_parent: Instructors
 nav_order: 8
 ---
 # Releasing Grades
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Info](#info)
-- [Releasing Grades from Submissions Table](#releasing-grades-from-submissions-table)
-- [Managing Release Tokens](#managing-release-tokens)
-- [Releasing Grades from Grading View](#releasing-grades-from-grading-view)
-- [Unreleasing Grades](#unreleasing-grades)
-
-> 🗒️ **NOTE:** This page is about releasing grades for an **assignment**. If you wish to learn about releasing grades for a Marks Spreadsheet, please see the [Marks Spreadsheet](../marks-spreadsheets/assigning-marks.md) page.
+- TOC
+{:toc}
 
 ## Info
 
@@ -24,6 +21,8 @@ Once results have been released, they cannot be changed.
 However, an instructor can also *Unrelease Marks* to modify the grading.
 
 > 🗒️ **NOTE:** Only instructors may release/unrelease results. Once TAs are done grading, they should communicate with their instructor that the grading is complete and ready to be released.
+
+> 🗒️ **NOTE:** This page is about releasing grades for an **assignment**. If you wish to learn about releasing grades for a Marks Spreadsheet, please see the [Marks Spreadsheet](../marks-spreadsheets/assigning-marks.md) page.
 
 ## Releasing Grades from Submissions Table
 

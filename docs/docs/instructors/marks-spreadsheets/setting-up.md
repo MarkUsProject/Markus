@@ -6,13 +6,13 @@ grand_parent: Instructors
 nav_order: 1
 ---
 # Setting Up a Marks Spreadsheet
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Setup](#setup)
-    - [Properties](#properties)
-    - [Columns](#columns)
-- [Save](#save)
+- TOC
+{:toc}
 
 ## Setup
 
