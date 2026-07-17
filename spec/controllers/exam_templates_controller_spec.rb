@@ -342,18 +342,64 @@ describe ExamTemplatesController do
     end
 
     describe '#view_logs' do
-      render_views
-      before do
- get_as user, :view_logs, format: 'js', params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+      context 'when format is js' do
+        render_views
+        before do
+          get_as user, :view_logs, format: 'js',
+                                   params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+        end
+
+        it('should respond with 200') { expect(response).to have_http_status :ok }
+
+        it 'passes template division data to init_upload_scans_form' do
+          expect(response.body).to include('upload_scans_form')
+          expect(response.body).to include('template_division_count')
+          expect(response.body).to include('init_upload_scans_form(examTemplateData)')
+          expect(response.body).to include(exam_template.id.to_s)
+        end
       end
 
-      it('should respond with 200') { expect(response).to have_http_status :ok }
+      context 'when format is json' do
+        let(:split_pdf_log) { create(:split_pdf_log, exam_template: exam_template) }
+        let(:group) { create(:group, course: course) }
 
-      it 'passes template division data to init_upload_scans_form' do
-        expect(response.body).to include('upload_scans_form')
-        expect(response.body).to include('template_division_count')
-        expect(response.body).to include('init_upload_scans_form(examTemplateData)')
-        expect(response.body).to include(exam_template.id.to_s)
+        def group_data_for(response)
+          response.parsed_body.first['group_data']
+        end
+
+        context 'when a group has every expected page scanned' do
+          before do
+            (1..exam_template.num_pages).each do |page_num|
+              create(:split_page, split_pdf_log: split_pdf_log, group: group,
+                                  exam_page_number: page_num, status: 'Saved to complete directory')
+            end
+            get_as user, :view_logs, format: 'json',
+                                     params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+          end
+
+          it 'excludes the group from group_data since it has no missing pages' do
+            entry = group_data_for(response).find { |g| g['group'] == group.group_name }
+            expect(entry).to be_nil
+          end
+        end
+
+        context 'when a group is partially scanned' do
+          let(:pages_scanned) { 4 }
+
+          before do
+            (1..pages_scanned).each do |page_num|
+              create(:split_page, split_pdf_log: split_pdf_log, group: group,
+                                  exam_page_number: page_num, status: 'Saved to incomplete directory')
+            end
+            get_as user, :view_logs, format: 'json',
+                                     params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+          end
+
+          it 'reports the group with the correct missing page numbers' do
+            entry = group_data_for(response).find { |g| g['group'] == group.group_name }
+            expect(entry['missing_pages']).to eq(((pages_scanned + 1)..exam_template.num_pages).to_a)
+          end
+        end
       end
     end
 
