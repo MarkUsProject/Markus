@@ -5,12 +5,10 @@ module ApplicationCable
     authorize :role, through: :current_role
     authorize :real_user, through: :real_user
     before_subscribe :authorize_channel
-    before_subscribe :verify_authorized
 
     private
 
     def authorize_channel
-      @authorization_checked = true
       if current_role.nil?
         reject
         return
@@ -18,10 +16,6 @@ module ApplicationCable
       authorize! to: authorization_rule, with: authorization_policy
     rescue ActionPolicy::Unauthorized
       reject
-    end
-
-    def verify_authorized
-      raise "Missing authorization in #{self.class}" unless @authorization_checked
     end
 
     def implicit_authorization_target
