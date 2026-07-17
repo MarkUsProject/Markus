@@ -31,7 +31,7 @@
 ### 🐛 Bug fixes
 - Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
-- Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
+- Fixed broken checkbox in the header of the selection column for tables with row selection enabled. (#8037)
 - Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
@@ -51,7 +51,7 @@
 - Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
 - Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
 - Refactored `GroupsController#create_groups_when_students_work_alone` and `GroupsController#upload` to use ActionCable websockets instead of polling to report `CreateGroupsJob` status. (#8020)
-- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8018)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)
 - Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
