@@ -6,6 +6,13 @@ grand_parent: Developers
 nav_order: 1
 ---
 # ActionMailer in MarkUs
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 The Rails ActionMailer is used in MarkUs to send automated emails when grouping submissions are released, grade entry forms are released, and students invite other students to groupings. These calls to the mailer are in the files `submissions_helper.rb`, `grade_entry_forms_controller.rb`, and `groups_controller.rb` respectively. Students opt in to receiving emails by default, but can choose to unsubscribe by changing their preferences through two attributes: `receives_results_emails` and `receives_invite_emails`.
 

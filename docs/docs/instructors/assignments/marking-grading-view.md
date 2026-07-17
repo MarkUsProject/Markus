@@ -6,28 +6,13 @@ grand_parent: Instructors
 nav_order: 5
 ---
 # Marking an Assignment (Grading View)
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Prepare to Grade](#prepare-to-grade)
-- [View Submitted Files](#view-submitted-files)
-- [Grading Bar](#grading-bar)
-- [Filter Submissions](#filter-submissions)
-- [Download](#download)
-- [Print](#print)
-- [Annotations](#annotations)
-    - [Creating an Annotation](#creating-an-annotation)
-    - [Annotations Tab](#annotations-tab)
-- [Marks and Summary](#marks-and-summary)
-    - [Marks](#marks)
-    - [Summary](#summary)
-        - [Bonuses and Deductions](#bonuses-and-deductions)
-- [Tags/Notes](#tagsnotes)
-    - [Tags](#tags)
-        - [Current Tags vs Available Tags](#current-tags-vs-available-tags)
-    - [Notes](#notes)
-- [Automated Testing](#automated-testing)
-- [Releasing Marks](#releasing-marks)
+- TOC
+{:toc}
 
 ## Prepare to Grade
 

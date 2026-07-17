@@ -5,23 +5,13 @@ parent: Developers
 nav_order: 4
 ---
 # Writing Tests
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Testing with RSpec](#testing-with-rspec)
-    - [How to Run Specifications](#how-to-run-specifications)
-    - [Naming Conventions](#naming-conventions)
-    - [Helper Gems](#helper-gems)
-    - [Model Specifications](#model-specifications)
-    - [Controller Specifications](#controller-specifications)
-    - [System Specifications](#system-specifications)
-    - [General Tips](#general-tips)
-- [Testing with Jest](#testing-with-jest)
-    - [How to Run Jest Specifications](#how-to-run-jest-specifications)
-    - [Jest Configurations](#jest-configurations)
-    - [Jest Naming Conventions](#jest-naming-conventions)
-    - [Example Tests](#example-tests)
-    - [Tips](#tips)
+- TOC
+{:toc}
 
 ## Testing with RSpec
 

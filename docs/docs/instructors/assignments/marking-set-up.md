@@ -6,16 +6,13 @@ grand_parent: Instructors
 nav_order: 3
 ---
 # Marking an Assignment (Set-Up)
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Setting Up a Grader Account](#setting-up-a-grader-account)
-- [Submissions Table](#submissions-table)
-- [Collecting an Assignment](#collecting-an-assignment)
-- [Marking State](#marking-state)
-- [Grading View](#grading-view)
-
-> 🗒️ **NOTE:** Before you will be able to perform any numerical marking (i.e. assigning groups a numerical grade) you must set up at least one [criterion](marking-criteria.md) for your assignment.
+- TOC
+{:toc}
 
 ## Setting up a Grader Account
 
@@ -95,3 +92,5 @@ There are six different marking states for a submission:
 ## Grading View
 
 Once you have collected an assignment, you may begin grading. Please see the [Grading View](marking-grading-view.md) page for instructions.
+
+> 🗒️ **NOTE:** Before you will be able to perform any numerical marking (i.e. assigning groups a numerical grade) you must set up at least one [criterion](marking-criteria.md) for your assignment.

@@ -5,6 +5,13 @@ parent: Technical Guides
 nav_order: 2
 ---
 # Learning Tools Interoperability (LTI)
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 >**Note**: LTI functionality is not enabled by default, and must be enabled by a system administrator.
 

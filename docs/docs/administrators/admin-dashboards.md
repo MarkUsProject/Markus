@@ -5,13 +5,13 @@ nav_order: 1
 parent: Administrators
 ---
 # Admin Dashboards
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Navigating to the Administration Page](#navigating-to-the-administration-page)
-- [Monitoring Dashboards](#monitoring-dashboards)
-- [Managing Courses](#managing-courses)
-- [Managing Users](#managing-users)
+- TOC
+{:toc}
 
 ## Navigating to the Administration Page
 
