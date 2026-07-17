@@ -39,6 +39,7 @@
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
+- Allow new instructors without existing courses to create a course via LTI launch (#8061)
 
 ### 📚 Documentation changes
 - Made documentation site table-of-contents/section listings consistent (#8062)
@@ -46,6 +47,7 @@
 
 ### 🔧 Internal changes
 - Refactored Action Cable channel authorization into `channel.rb` superclass (#8054)
+- Removed dead code in repository files (#8065)
 - Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
 - Upgraded Babel to v8 (#8041)
