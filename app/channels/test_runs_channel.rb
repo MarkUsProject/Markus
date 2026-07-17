@@ -7,6 +7,8 @@ class TestRunsChannel < ApplicationCable::Channel
     stream_for current_user
   end
 
+  def unsubscribed; end
+
   private
 
   def implicit_authorization_target
@@ -28,6 +30,4 @@ class TestRunsChannel < ApplicationCable::Channel
   def submission
     grouping&.submissions&.find_by(id: params[:submission_id])
   end
-
-  def unsubscribed; end
 end
