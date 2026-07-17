@@ -8,6 +8,7 @@
 
 ### ✨ New features and improvements
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
+- Added a table showing incomplete papers and their missing page numbers when uploading exam scans (#8051)
 - Updated links to refer to new documentation website (#8049)
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
