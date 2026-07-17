@@ -217,15 +217,6 @@ class MemoryRepository < Repository::AbstractRepository
     @closed
   end
 
-  # Converts a pathname to an absolute pathname
-  def expand_path(file_name, dir_string = '/')
-    expanded = File.expand_path(file_name, dir_string)
-    if RUBY_PLATFORM.match?(/(:?mswin|mingw)/) # only if the platform is Windows
-      expanded = expanded[2..-1] # remove the drive letter ('D:')
-    end
-    expanded
-  end
-
   def self.update_permissions_file(permissions)
     permissions.each do |repo_loc, users|
       @@permissions[repo_loc] = users
@@ -366,57 +357,5 @@ class MemoryRepository < Repository::AbstractRepository
       end
     end
     false
-  end
-
-  # gets the "closest matching" revision from the revision-timestamp
-  # mapping
-  def get_revision_number_by_timestamp(wanted_timestamp, path = nil)
-    if @timestamps_revisions.empty?
-      raise 'No revisions, so no timestamps.'
-    end
-
-    all_timestamps_list = []
-    remaining_timestamps_list = []
-    @timestamps_revisions.each_key do |time_dump|
-      all_timestamps_list.push(Marshal.load(time_dump)) # rubocop:disable Security/MarshalLoad
-      remaining_timestamps_list.push(Marshal.load(time_dump)) # rubocop:disable Security/MarshalLoad
-    end
-
-    # find closest matching timestamp
-    mapping = {}
-    first_timestamp_found = false
-    old_diff = 0
-    # find first valid revision
-    all_timestamps_list.each do |best_match|
-      remaining_timestamps_list.shift
-      old_diff = wanted_timestamp - best_match
-      mapping[old_diff.to_s] = best_match
-      if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(best_match)].revision_at_path(path))
-        first_timestamp_found = true
-        break
-      end
-    end
-
-    # find all other valid revision
-    remaining_timestamps_list.each do |curr_timestamp|
-      new_diff = wanted_timestamp - curr_timestamp
-      mapping[new_diff.to_s] = curr_timestamp
-      if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(curr_timestamp)].revision_at_path(path))
-        if (old_diff <= 0 && new_diff <= 0) ||
-          (old_diff <= 0 && new_diff > 0) ||
-          (new_diff <= 0 && old_diff > 0)
-          old_diff = [old_diff, new_diff].max
-        else
-          old_diff = [old_diff, new_diff].min
-        end
-      end
-    end
-
-    if first_timestamp_found
-      wanted_timestamp = mapping[old_diff.to_s]
-      @timestamps_revisions[Marshal.dump(wanted_timestamp)]
-    else
-      @current_revision
-    end
   end
 end
