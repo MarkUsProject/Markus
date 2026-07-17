@@ -10,6 +10,11 @@ class GroupsChannel < ApplicationCable::Channel
 
   private
 
+  def authorize_channel
+    reject && return if assignment.nil?
+    super
+  end
+
   def implicit_authorization_target
     assignment
   end
