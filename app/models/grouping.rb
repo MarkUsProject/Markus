@@ -142,17 +142,17 @@ class Grouping < ApplicationRecord
   # which is a parallel array to +ta_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, weightings_arr, assignment)
-    weightings = Array(ta_ids).map(&:to_i).zip(weightings_arr).to_h
+    # Create a hash of TA's to the number of groups they are supposed to mark
+    total = weightings_arr.sum
+    weightings = {}
+    ta_ids.each_with_index do |group, index|
+      weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).round
+    end
 
-    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, ta_ids_|
-      total = ta_ids_.sum { |ta_id| weightings[ta_id] || 0 }
-      next [] if total.zero?
-
-      assignment_counts = ta_ids_.index_with do |ta_id|
-        ((weightings[ta_id] || 0).to_f / total * grouping_ids_.length).round
-      end
-      ta_ids_ = ta_ids_.sort_by { |ta_id| assignment_counts[ta_id] }
-                       .flat_map { |ta_id| [ta_id] * assignment_counts[ta_id] }
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, _|
+      # Create 1 TA for each group they are supposed to be assigned to
+      ta_ids = ta_ids.sort_by { |ta| weightings[ta] }
+      ta_ids_ = ta_ids.flat_map { |ta_id| [ta_id] * weightings[ta_id] }
       # Assign TAs in a round-robin fashion to a list of random groupings.
       grouping_ids_.shuffle.zip(ta_ids_.cycle).reject { |pair| pair.include?(nil) }
     end

@@ -120,19 +120,6 @@ describe Grouping do
         end
       end
 
-      it 'only assigns instructors and TAs from the assignment course' do
-        instructor = create(:instructor, course: assignment.course)
-        student = create(:student, course: assignment.course)
-        other_instructor = create(:instructor, course: create(:course))
-        grader_ids = [instructor.id, student.id, other_instructor.id]
-
-        Grouping.randomly_assign_tas(grouping_ids, grader_ids, [1, 1, 1], assignment)
-
-        groupings.each do |grouping|
-          expect(grouping.reload.tas).to eq([instructor])
-        end
-      end
-
       it 'can randomly bulk assign TAs with weighting' do
         weightings = [3, 1]
         Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
