@@ -1225,7 +1225,7 @@ describe GroupsController do
         expect(response).to have_http_status(:not_found)
       end
 
-      it 'returns a not_found status if next grouping is nil' do
+      it 'redirects to the groups index if next grouping is nil' do
         post_as instructor, :assign_student_and_next, params: { course_id: course.id,
                                                                 assignment_id: assignment.id,
                                                                 assignment: assignment.id,
@@ -1233,7 +1233,8 @@ describe GroupsController do
                                                                 s_id: student1.id,
                                                                 g_id: grouping1.id,
                                                                 format: :json }
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:success)
+        expect(response.parsed_body['redirect']).to eq(course_assignment_groups_path(course, assignment))
       end
 
       context 'when assigning inactive students' do

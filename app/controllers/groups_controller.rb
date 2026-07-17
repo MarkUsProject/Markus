@@ -204,7 +204,7 @@ class GroupsController < ApplicationController
     # TODO: make this a member route in a new GroupingsController
     @grouping = Grouping.joins(:assignment).where('assessments.course_id': current_course.id).find(params[:g_id])
     @assignment = @grouping.assignment
-    unless params[:skip]
+    if params[:skip].blank?
       # if the user has selected a name from the dropdown, s_id is set
       if params[:s_id].present?
         student = current_course.students.find(params[:s_id])
@@ -240,7 +240,14 @@ class GroupsController < ApplicationController
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
     if next_grouping.nil?
-      head :not_found
+      num_valid = @assignment.get_num_valid
+      num_total = @assignment.groupings.size
+      if num_valid == num_total
+        flash_message(:success, t('exam_templates.assign_scans.done'))
+      else
+        flash_message(:warning, t('exam_templates.assign_scans.not_all_submissions_collected'))
+      end
+      render json: { redirect: course_assignment_groups_path(current_course, @assignment) }
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|

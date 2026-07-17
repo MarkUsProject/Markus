@@ -245,12 +245,15 @@ Matching test papers to students is done manually by instructors, after submissi
 
     ![Scanned Exam Assign Scans Link](/images/scanned-exam-assign-scans-link.png)
 
-2. You'll be taken to a new page that displays the first page for the group. Type in the student's identifying information and press "Save" to match the paper to the student.
+2. You'll be taken to a new page that displays the first page for the group.
 
     ![Scanned Exam Assign Scans](/images/scanned-exam-assign-scans-page.png)
 
-    - *Tip*: MarkUs supports search by student name, user name, or student number.
-    - *Tip*: If the student does not appear in the autofill, you can also enter the student's full name into this field before saving. Note that this must be their first and last names as listed in the students table.
+    - If [automatic matching](#automatic-matching-of-student-papers) is enabled for this exam template and MarkUs found one or more similar students based on the handwritten field, a list of suggested students will appear above the search field. Click a suggestion to immediately assign that student to the paper.
+    - Otherwise (or if none of the suggestions are correct), type the student's identifying information into the search field and press "Assign" to match the paper to the student.
+        - *Tip*: MarkUs supports search by student name, user name, or student number.
+        - *Tip*: If the student does not appear in the autofill, you can also enter the student's full name into this field before pressing "Assign". Note that this must be their first and last names as listed in the students table.
+    - If a paper can't be matched to any student (for example, it's blank or illegible), press "Skip" to move on to the next paper without assigning it. You can come back to a skipped paper later from the "Groups" tab.
 3. You'll be automatically taken to the next unmatched group. Repeat this process until all groups are matched.
 
 There is also the option to do Automatic matching again of test papers to students.

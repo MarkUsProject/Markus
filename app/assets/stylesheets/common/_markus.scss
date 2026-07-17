@@ -607,6 +607,10 @@ kbd {
       width: 29.5%;
     }
 
+    &.pdfContainerParent {
+      padding: 1em 0;
+    }
+
     // TODO: decide whether to adopt this style more broadly
     // (currently only used in assignments/show and assignments/peer_review)
     &.block {
