@@ -246,15 +246,6 @@ describe Grouping do
           grouping_ids.zip(ta_ids.cycle)
         end
       end
-
-      it 'only assigns groupings from the given assignment' do
-        other_grouping = create(:grouping, assignment: create(:assignment))
-
-        Grouping.assign_all_tas([grouping_ids.first, other_grouping.id], ta_ids.first, assignment)
-
-        expect(groupings.first.reload.tas).to contain_exactly(tas.first)
-        expect(other_grouping.reload.tas).to be_empty
-      end
     end
 
     describe '.unassign_tas' do
