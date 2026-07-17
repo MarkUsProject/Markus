@@ -191,7 +191,7 @@ class Grouping < ApplicationRecord
   def self.assign_tas(grouping_ids, ta_ids, assignment)
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
     # Only use IDs that identify existing model instances.
-    ta_ids = assignment.course.graders.where(id: ta_ids).ids
+    ta_ids = assignment.course.course_staff.where(id: ta_ids).ids
     grouping_ids = assignment.groupings.where(id: grouping_ids).ids
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership

@@ -44,15 +44,15 @@ class TaMembership < Membership
     end
     new_ta_memberships = []
     groupings = assignment.groupings.joins(:group).pluck('groups.group_name', :id).to_h
-    graders = assignment.course.graders.joins(:user).pluck('users.user_name', :id).to_h
+    course_staff = assignment.course.course_staff.joins(:user).pluck('users.user_name', :id).to_h
     result = MarkusCsv.parse(csv_data) do |row|
       raise CsvInvalidLineError if row.empty?
       raise CsvInvalidLineError if groupings[row[0]].nil?
 
       row.drop(1).each do |grader_name|
-        unless graders[grader_name].nil?
+        unless course_staff[grader_name].nil?
           new_ta_memberships << {
-            role_id: graders[grader_name],
+            role_id: course_staff[grader_name],
             grouping_id: groupings[row[0]],
             type: 'TaMembership'
           }

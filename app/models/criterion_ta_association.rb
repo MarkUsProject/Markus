@@ -54,13 +54,13 @@ class CriterionTaAssociation < ApplicationRecord
       criterion = criteria.find { |crit| crit.name == criterion_name }
       raise CsvInvalidLineError if criterion.nil?
 
-      course_graders = assignment.course.graders
-      unless ta_user_names.all? { |g| course_graders.joins(:user).exists?('users.user_name': g) }
+      course_staff = assignment.course.course_staff
+      unless ta_user_names.all? { |g| course_staff.joins(:user).exists?('users.user_name': g) }
         raise CsvInvalidLineError
       end
 
       ta_user_names.each do |user_name|
-        ta_id = course_graders.joins(:user).find_by('users.user_name': user_name).id
+        ta_id = course_staff.joins(:user).find_by('users.user_name': user_name).id
         new_ta_mappings << {
           criterion_id: criterion.id,
           ta_id: ta_id,

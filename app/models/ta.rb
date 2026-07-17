@@ -30,7 +30,7 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Ta < Role
-  include GraderRole
+  include CourseStaffRole
 
   has_one :grader_permission, dependent: :destroy, foreign_key: :role_id, inverse_of: :ta
   before_create :create_grader_permission

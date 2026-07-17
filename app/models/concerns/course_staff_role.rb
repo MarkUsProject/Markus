@@ -1,4 +1,4 @@
-module GraderRole
+module CourseStaffRole
   extend ActiveSupport::Concern
 
   included do

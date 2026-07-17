@@ -73,7 +73,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     grader_ids = params[:graders] || []
     if grader_ids.blank? && params[:global_actions] != 'assign_sections'
-      grader_ids = current_course.graders.joins(:user).where('users.user_name': params[:grader_user_names]).ids
+      grader_ids = current_course.course_staff.joins(:user).where('users.user_name': params[:grader_user_names]).ids
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request
@@ -90,7 +90,7 @@ class GradersController < ApplicationController
 
     if %w[assign random_assign].include? params[:global_actions]
       inactive_graders_hash =
-        current_course.graders.joins(:user).where(roles: { hidden: true }).pluck(:id, :user_name)
+        current_course.course_staff.joins(:user).where(roles: { hidden: true }).pluck(:id, :user_name)
                       .map { |x| [x[0], x[1]] }.to_h
 
       inactive_graders_for_flash = inactive_graders_hash.select { |k| grader_ids.include? k }

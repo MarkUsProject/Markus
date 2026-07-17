@@ -30,7 +30,7 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Instructor < Role
-  include GraderRole
+  include CourseStaffRole
 
   after_create { Repository.get_class.update_permissions }
   after_destroy { Repository.get_class.update_permissions }
