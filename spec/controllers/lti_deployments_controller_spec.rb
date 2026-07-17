@@ -202,6 +202,23 @@ describe LtiDeploymentsController do
         expect(response).to have_http_status(:forbidden)
       end
     end
+
+    context 'as a user with no existing courses' do
+      let(:new_instructor_user) { create(:end_user) }
+
+      before do
+        post_as new_instructor_user, :create_course, params: course_params
+      end
+
+      it 'creates the course' do
+        expect(Course.find_by(name: expected_name)).not_to be_nil
+      end
+
+      it 'creates an instructor role for the user' do
+        course = Course.find_by(name: expected_name)
+        expect(Role.find_by(user: new_instructor_user, course: course, type: 'Instructor')).not_to be_nil
+      end
+    end
   end
 
   describe '#public_jwk' do

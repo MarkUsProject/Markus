@@ -1,13 +1,16 @@
 <%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('lti-selector').addEventListener('click', () => {
-      const formElem = document.getElementById('lti-course-table');
-      if (getComputedStyle(formElem).display === 'none') {
-        formElem.style.display = 'block';
-      } else {
-        formElem.style.display = 'none';
-      }
-    })
+    const selector = document.getElementById('lti-selector');
+    if (selector) {
+      selector.addEventListener('click', () => {
+        const formElem = document.getElementById('lti-course-table');
+        if (getComputedStyle(formElem).display === 'none') {
+          formElem.style.display = 'block';
+        } else {
+          formElem.style.display = 'none';
+        }
+      })
+    }
   })
 <% end %>
 <div class="lti-flash">
@@ -48,6 +51,6 @@
     <% end %>
     </div>
     <div id='selector-or-container' class=""><h4 id="selector-or"><%= I18n.t('or').upcase %></h4></div>
-    <%= render partial: 'new_course' %>
   <% end %>
+  <%= render partial: 'new_course' %>
 </div>
