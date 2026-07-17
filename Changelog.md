@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Fixed escaping of HTML annotation `start_node` and `end_node` attributes (#8064)
 
 ### 🚨 Breaking changes
 
