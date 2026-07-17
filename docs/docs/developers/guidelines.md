@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 1
 ---
 # Guidelines for MarkUs Development
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Motivation
 

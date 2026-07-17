@@ -6,12 +6,13 @@ grand_parent: Instructors
 nav_order: 12
 ---
 # Assigning Graders
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Graders Tab](#graders-tab)
-    - [Table Info](#table-info)
-    - [Assigning](#assigning)
+- TOC
+{:toc}
 
 ## Graders Tab
 

@@ -7,7 +7,9 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Improved the Assign Scans page: OCR suggestions now appear above the manual entry form and clicking one assigns the student directly, "Skip group" is now a button instead of a checkbox, the Members list is hidden when empty, and the progress bar shows "x of y assigned" (#8059)
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
+- Added a table showing incomplete papers and their missing page numbers when uploading exam scans (#8051)
 - Updated links to refer to new documentation website (#8049)
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
@@ -27,8 +29,9 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
-- Fixed broken checkbox in the header of the selection column for tables with row selection enabled.
+- Fixed broken checkbox in the header of the selection column for tables with row selection enabled. (#8037)
 - Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
@@ -37,6 +40,7 @@
 - Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 📚 Documentation changes
+- Made documentation site table-of-contents/section listings consistent (#8062)
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
@@ -48,7 +52,7 @@
 - Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
 - Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
 - Refactored `GroupsController#create_groups_when_students_work_alone` and `GroupsController#upload` to use ActionCable websockets instead of polling to report `CreateGroupsJob` status. (#8020)
-- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8017)
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8018)
 - Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
 - Upgraded to Rails v8.1.3 (#8015)
 - Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)

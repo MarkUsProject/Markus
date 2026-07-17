@@ -6,13 +6,13 @@ grand_parent: Instructors
 nav_order: 13
 ---
 # Grades
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Grades Tab](#grades-tab)
-    - [Summary Table](#summary-table)
-    - [Uploading Grades by CSV](#uploading-grades-by-csv)
-    - [Summary Statistics](#summary-statistics)
+- TOC
+{:toc}
 
 ## Grades Tab
 

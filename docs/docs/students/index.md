@@ -5,17 +5,13 @@ nav_order: 3
 has_children: true
 ---
 # Student Guide
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [How to Form Groups](#how-to-form-groups)
-- [Download Starter Files](#download-starter-files)
-- [Submitting Work for an Assessment](#submitting-work-for-an-assessment)
-- [View Results](#view-results)
-- [Submit a Remark Request](#submit-a-remark-request)
-- [Timed Assessments](#timed-assessments)
-- [Email Settings](#email-settings)
-- [Key Pairs](#key-pairs)
+- TOC
+{:toc}
 
 ## How to Form Groups
 
