@@ -251,6 +251,25 @@ jobs:
           parallel: true
           file: coverage/lcov.info
 
+  run_brakeman:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+      - name: Set up ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.4
+      - name: Run brakeman with reviewdog
+        uses: reviewdog/action-brakeman@v2.19.2
+        with:
+          brakeman_version: gemfile
+          reporter: github-pr-check
+
   finish:
     needs: [test_rspec, test_jest]
     if: github.event.pull_request.draft == false

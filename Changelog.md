@@ -46,6 +46,7 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Resolved/ignored Brakeman warnings and added Brakeman to CI checks (#8066)
 - Removed dead code in repository files (#8065)
 - Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
