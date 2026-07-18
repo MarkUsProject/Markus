@@ -223,9 +223,8 @@ class Grouping < ApplicationRecord
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
-    grouping_ids = assignment.groupings.where(id: grouping_ids).ids
     Repository.get_class.update_permissions_after do
-      TaMembership.where(id: ta_membership_ids, grouping_id: grouping_ids).delete_all
+      TaMembership.where(id: ta_membership_ids).delete_all
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)

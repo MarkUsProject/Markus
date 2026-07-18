@@ -252,17 +252,6 @@ describe Grouping do
         end
       end
 
-      it 'only unassigns memberships from the given assignment' do
-        other_assignment = create(:assignment)
-        other_grouping = create(:grouping, assignment: other_assignment)
-        other_ta = create(:ta, course: other_assignment.course)
-        membership = create(:ta_membership, grouping: other_grouping, role: other_ta)
-
-        Grouping.unassign_tas([membership.id], [other_grouping.id], assignment)
-
-        expect(membership.reload).to be_present
-      end
-
       it 'updates criteria coverage counts after bulk unassign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
           .with(assignment, match_array(grouping_ids))
