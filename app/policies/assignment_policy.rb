@@ -6,7 +6,7 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :show?, :peer_review?, to: :student?
   alias_rule :starter_file?, :download_starter_file_mappings?, :download_sample_starter_files?,
              :populate_starter_file_manager?, to: :read_starter_files?
-  authorize :assessment, :test_run_id, :assignment, optional: true
+  authorize :assessment, :test_run_id, optional: true
 
   def index?
     true
