@@ -69,7 +69,7 @@ module AutomatedTestsHelper
         criterion_name = extra_data_specs['criterion']
         criterion = assignment.ta_criteria.find_by(name: criterion_name)
         if criterion_name.present? && criterion.nil?
-          flash_message(:warning, I18n.t('automated_tests.no_criteria', name: criterion_name))
+          raise I18n.t('automated_tests.no_criteria', name: criterion_name)
         end
         fields = { name: test_group_name, display_output: display_output,
                    criterion_id: criterion&.id, autotest_settings: test_group_specs,

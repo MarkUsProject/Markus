@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -144,10 +145,10 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.annotation_categories (
     id integer NOT NULL,
-    annotation_category_name text,
+    annotation_category_name text NOT NULL,
     "position" integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     flexible_criterion_id bigint
 );
@@ -181,8 +182,8 @@ CREATE TABLE public.annotation_texts (
     id integer NOT NULL,
     content text,
     annotation_category_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     creator_id integer,
     last_editor_id integer,
     deduction double precision
@@ -217,25 +218,27 @@ CREATE TABLE public.annotations (
     id integer NOT NULL,
     line_start integer,
     line_end integer,
-    annotation_text_id integer,
-    submission_file_id integer,
+    annotation_text_id integer NOT NULL,
+    submission_file_id integer NOT NULL,
     x1 integer,
     x2 integer,
     y1 integer,
     y2 integer,
     type character varying,
-    annotation_number integer,
+    annotation_number integer NOT NULL,
     is_remark boolean DEFAULT false NOT NULL,
     page integer,
     column_start integer,
     column_end integer,
     creator_type character varying,
     creator_id integer,
-    result_id integer,
+    result_id integer NOT NULL,
     start_node character varying,
     end_node character varying,
     start_offset integer,
-    end_offset integer
+    end_offset integer,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -278,12 +281,14 @@ CREATE TABLE public.ar_internal_metadata (
 CREATE TABLE public.assessment_section_properties (
     id integer NOT NULL,
     due_date timestamp without time zone,
-    section_id integer,
-    assessment_id bigint,
+    section_id integer NOT NULL,
+    assessment_id bigint NOT NULL,
     start_time timestamp without time zone,
     is_hidden boolean,
     visible_on timestamp(6) without time zone,
-    visible_until timestamp(6) without time zone
+    visible_until timestamp(6) without time zone,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -356,9 +361,9 @@ ALTER SEQUENCE public.assessments_id_seq OWNED BY public.assessments.id;
 CREATE TABLE public.assignment_files (
     id integer NOT NULL,
     filename character varying NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    assessment_id bigint
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    assessment_id bigint NOT NULL
 );
 
 
@@ -388,7 +393,7 @@ ALTER SEQUENCE public.assignment_files_id_seq OWNED BY public.assignment_files.i
 
 CREATE TABLE public.assignment_properties (
     id integer NOT NULL,
-    assessment_id bigint,
+    assessment_id bigint NOT NULL,
     group_min integer DEFAULT 1 NOT NULL,
     group_max integer DEFAULT 1 NOT NULL,
     student_form_groups boolean DEFAULT false NOT NULL,
@@ -462,7 +467,9 @@ CREATE TABLE public.autotest_settings (
     id bigint NOT NULL,
     url character varying NOT NULL,
     api_key character varying NOT NULL,
-    schema character varying NOT NULL
+    schema character varying NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -551,8 +558,8 @@ CREATE TABLE public.criteria_assignment_files_joins (
     id integer NOT NULL,
     criterion_id integer NOT NULL,
     assignment_file_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -601,11 +608,11 @@ ALTER SEQUENCE public.criteria_id_seq OWNED BY public.criteria.id;
 
 CREATE TABLE public.criterion_ta_associations (
     id integer NOT NULL,
-    ta_id integer,
-    criterion_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    assessment_id bigint
+    ta_id integer NOT NULL,
+    criterion_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    assessment_id bigint NOT NULL
 );
 
 
@@ -646,7 +653,7 @@ CREATE TABLE public.exam_templates (
     crop_y numeric,
     crop_width numeric,
     crop_height numeric,
-    assessment_id bigint
+    assessment_id bigint NOT NULL
 );
 
 
@@ -710,12 +717,12 @@ ALTER SEQUENCE public.extensions_id_seq OWNED BY public.extensions.id;
 
 CREATE TABLE public.extra_marks (
     id integer NOT NULL,
-    result_id integer,
+    result_id integer NOT NULL,
     description character varying,
     extra_mark double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    unit character varying
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    unit character varying NOT NULL
 );
 
 
@@ -783,8 +790,8 @@ CREATE TABLE public.grace_period_deductions (
     id integer NOT NULL,
     membership_id integer,
     deduction integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -815,12 +822,12 @@ ALTER SEQUENCE public.grace_period_deductions_id_seq OWNED BY public.grace_perio
 CREATE TABLE public.grade_entry_items (
     id integer NOT NULL,
     name character varying NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    out_of double precision,
-    "position" integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    out_of double precision NOT NULL,
+    "position" integer NOT NULL,
     bonus boolean DEFAULT false NOT NULL,
-    assessment_id bigint
+    assessment_id bigint NOT NULL
 );
 
 
@@ -851,9 +858,9 @@ ALTER SEQUENCE public.grade_entry_items_id_seq OWNED BY public.grade_entry_items
 CREATE TABLE public.grade_entry_students (
     id integer NOT NULL,
     released_to_student boolean DEFAULT false NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    assessment_id bigint,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    assessment_id bigint NOT NULL,
     role_id bigint NOT NULL
 );
 
@@ -883,9 +890,11 @@ ALTER SEQUENCE public.grade_entry_students_id_seq OWNED BY public.grade_entry_st
 --
 
 CREATE TABLE public.grade_entry_students_tas (
-    grade_entry_student_id integer,
-    ta_id integer,
-    id integer NOT NULL
+    grade_entry_student_id integer NOT NULL,
+    ta_id integer NOT NULL,
+    id integer NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -918,7 +927,9 @@ CREATE TABLE public.grader_permissions (
     manage_submissions boolean DEFAULT false NOT NULL,
     manage_assessments boolean DEFAULT false NOT NULL,
     run_tests boolean DEFAULT false NOT NULL,
-    role_id bigint NOT NULL
+    role_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -947,11 +958,11 @@ ALTER SEQUENCE public.grader_permissions_id_seq OWNED BY public.grader_permissio
 
 CREATE TABLE public.grades (
     id integer NOT NULL,
-    grade_entry_item_id integer,
-    grade_entry_student_id integer,
+    grade_entry_item_id integer NOT NULL,
+    grade_entry_student_id integer NOT NULL,
     grade double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     last_updated_by_id bigint
 );
 
@@ -983,7 +994,9 @@ ALTER SEQUENCE public.grades_id_seq OWNED BY public.grades.id;
 CREATE TABLE public.grouping_starter_file_entries (
     id bigint NOT NULL,
     grouping_id bigint NOT NULL,
-    starter_file_entry_id bigint NOT NULL
+    starter_file_entry_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1013,8 +1026,8 @@ ALTER SEQUENCE public.grouping_starter_file_entries_id_seq OWNED BY public.group
 CREATE TABLE public.groupings (
     id integer NOT NULL,
     group_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     instructor_approved boolean DEFAULT false NOT NULL,
     is_collected boolean DEFAULT false NOT NULL,
     criteria_coverage_count integer DEFAULT 0,
@@ -1051,7 +1064,9 @@ ALTER SEQUENCE public.groupings_id_seq OWNED BY public.groupings.id;
 
 CREATE TABLE public.groupings_tags (
     tag_id integer NOT NULL,
-    grouping_id integer NOT NULL
+    grouping_id integer NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1061,9 +1076,11 @@ CREATE TABLE public.groupings_tags (
 
 CREATE TABLE public.groups (
     id integer NOT NULL,
-    group_name character varying,
+    group_name character varying NOT NULL,
     repo_name character varying,
-    course_id bigint NOT NULL
+    course_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1127,10 +1144,10 @@ ALTER SEQUENCE public.job_messengers_id_seq OWNED BY public.job_messengers.id;
 
 CREATE TABLE public.key_pairs (
     id integer NOT NULL,
-    user_id integer,
-    public_key character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    user_id integer NOT NULL,
+    public_key character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -1365,8 +1382,8 @@ ALTER SEQUENCE public.lti_users_id_seq OWNED BY public.lti_users.id;
 CREATE TABLE public.marking_schemes (
     id integer NOT NULL,
     name character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     course_id bigint NOT NULL
 );
 
@@ -1397,10 +1414,10 @@ ALTER SEQUENCE public.marking_schemes_id_seq OWNED BY public.marking_schemes.id;
 
 CREATE TABLE public.marking_weights (
     id integer NOT NULL,
-    marking_scheme_id integer,
+    marking_scheme_id integer NOT NULL,
     weight numeric,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL
 );
 
@@ -1431,11 +1448,11 @@ ALTER SEQUENCE public.marking_weights_id_seq OWNED BY public.marking_weights.id;
 
 CREATE TABLE public.marks (
     id integer NOT NULL,
-    result_id integer,
-    criterion_id integer,
+    result_id integer NOT NULL,
+    criterion_id integer NOT NULL,
     mark double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     override boolean DEFAULT false NOT NULL,
     last_updated_by_id bigint
 );
@@ -1468,8 +1485,8 @@ ALTER SEQUENCE public.marks_id_seq OWNED BY public.marks.id;
 CREATE TABLE public.memberships (
     id integer NOT NULL,
     membership_status character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     grouping_id integer NOT NULL,
     type character varying,
     role_id bigint NOT NULL
@@ -1504,8 +1521,8 @@ CREATE TABLE public.notes (
     id integer NOT NULL,
     notes_message text NOT NULL,
     creator_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     noteable_type character varying NOT NULL,
     noteable_id integer NOT NULL
 );
@@ -1570,13 +1587,13 @@ ALTER SEQUENCE public.peer_reviews_id_seq OWNED BY public.peer_reviews.id;
 
 CREATE TABLE public.periods (
     id integer NOT NULL,
-    submission_rule_id integer,
+    submission_rule_id integer NOT NULL,
     deduction double precision,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     hours double precision,
     "interval" double precision,
-    submission_rule_type character varying
+    submission_rule_type character varying NOT NULL
 );
 
 
@@ -1606,11 +1623,11 @@ ALTER SEQUENCE public.periods_id_seq OWNED BY public.periods.id;
 
 CREATE TABLE public.results (
     id integer NOT NULL,
-    submission_id integer,
-    marking_state character varying,
+    submission_id integer NOT NULL,
+    marking_state character varying NOT NULL,
     overall_comment text,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     released_to_students boolean DEFAULT false NOT NULL,
     remark_request_submitted_at timestamp without time zone,
     view_token character varying NOT NULL,
@@ -1692,7 +1709,9 @@ CREATE TABLE public.schema_migrations (
 CREATE TABLE public.section_starter_file_groups (
     id bigint NOT NULL,
     section_id bigint NOT NULL,
-    starter_file_group_id bigint NOT NULL
+    starter_file_group_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1721,9 +1740,9 @@ ALTER SEQUENCE public.section_starter_file_groups_id_seq OWNED BY public.section
 
 CREATE TABLE public.sections (
     id integer NOT NULL,
-    name character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     course_id bigint NOT NULL
 );
 
@@ -1791,7 +1810,7 @@ CREATE TABLE public.split_pages (
     exam_page_number integer,
     filename character varying,
     status character varying,
-    split_pdf_log_id integer,
+    split_pdf_log_id integer NOT NULL,
     group_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1826,15 +1845,15 @@ CREATE TABLE public.split_pdf_logs (
     id integer NOT NULL,
     uploaded_when timestamp without time zone,
     error_description character varying,
-    filename character varying,
-    num_groups_in_complete integer,
-    num_groups_in_incomplete integer,
-    num_pages_qr_scan_error integer,
-    original_num_pages integer,
+    filename character varying NOT NULL,
+    num_groups_in_complete integer NOT NULL,
+    num_groups_in_incomplete integer NOT NULL,
+    num_pages_qr_scan_error integer NOT NULL,
+    original_num_pages integer NOT NULL,
     qr_code_found boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    exam_template_id integer,
+    exam_template_id integer NOT NULL,
     role_id bigint NOT NULL
 );
 
@@ -1866,7 +1885,9 @@ ALTER SEQUENCE public.split_pdf_logs_id_seq OWNED BY public.split_pdf_logs.id;
 CREATE TABLE public.starter_file_entries (
     id bigint NOT NULL,
     starter_file_group_id bigint NOT NULL,
-    path character varying NOT NULL
+    path character varying NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1898,7 +1919,9 @@ CREATE TABLE public.starter_file_groups (
     assessment_id bigint NOT NULL,
     entry_rename character varying DEFAULT ''::character varying NOT NULL,
     use_rename boolean DEFAULT false NOT NULL,
-    name character varying NOT NULL
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1927,11 +1950,13 @@ ALTER SEQUENCE public.starter_file_groups_id_seq OWNED BY public.starter_file_gr
 
 CREATE TABLE public.submission_files (
     id integer NOT NULL,
-    submission_id integer,
-    filename character varying,
+    submission_id integer NOT NULL,
+    filename character varying NOT NULL,
     path character varying DEFAULT '/'::character varying NOT NULL,
     is_converted boolean DEFAULT false NOT NULL,
-    error_converting boolean DEFAULT false NOT NULL
+    error_converting boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -1962,8 +1987,8 @@ ALTER SEQUENCE public.submission_files_id_seq OWNED BY public.submission_files.i
 CREATE TABLE public.submission_rules (
     id integer NOT NULL,
     type character varying DEFAULT 'NoLateSubmissionRule'::character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     assessment_id bigint NOT NULL,
     penalty_type character varying DEFAULT 'percentage'::character varying
 );
@@ -1995,15 +2020,16 @@ ALTER SEQUENCE public.submission_rules_id_seq OWNED BY public.submission_rules.i
 
 CREATE TABLE public.submissions (
     id integer NOT NULL,
-    grouping_id integer,
-    created_at timestamp without time zone,
+    grouping_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
     submission_version integer,
     submission_version_used boolean DEFAULT false NOT NULL,
     revision_identifier text,
     revision_timestamp timestamp without time zone,
     remark_request text,
     remark_request_timestamp timestamp without time zone,
-    is_empty boolean DEFAULT true NOT NULL
+    is_empty boolean DEFAULT true NOT NULL,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -2036,7 +2062,9 @@ CREATE TABLE public.tags (
     name character varying NOT NULL,
     description character varying,
     assessment_id bigint,
-    role_id bigint NOT NULL
+    role_id bigint NOT NULL,
+    created_at timestamp(6) without time zone,
+    updated_at timestamp(6) without time zone
 );
 
 
@@ -2066,7 +2094,7 @@ ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
 
 CREATE TABLE public.template_divisions (
     id integer NOT NULL,
-    exam_template_id integer,
+    exam_template_id integer NOT NULL,
     start integer NOT NULL,
     "end" integer NOT NULL,
     label character varying NOT NULL,
@@ -2213,8 +2241,8 @@ CREATE TABLE public.test_results (
     status text NOT NULL,
     marks_earned double precision DEFAULT 0.0 NOT NULL,
     output text DEFAULT ''::text NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     marks_total double precision DEFAULT 0.0 NOT NULL,
     "time" bigint,
     test_group_result_id bigint NOT NULL,
@@ -2288,11 +2316,11 @@ ALTER SEQUENCE public.test_runs_id_seq OWNED BY public.test_runs.id;
 CREATE TABLE public.users (
     id integer NOT NULL,
     user_name character varying NOT NULL,
-    last_name character varying,
-    first_name character varying,
+    last_name character varying NOT NULL,
+    first_name character varying NOT NULL,
     type character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     api_key character varying,
     email character varying,
     id_number character varying,
@@ -3247,10 +3275,10 @@ CREATE UNIQUE INDEX groupings_u1 ON public.groupings USING btree (assessment_id,
 
 
 --
--- Name: index_annotation_categories_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_annotation_categories_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_annotation_categories_on_assessment_id ON public.annotation_categories USING btree (assessment_id);
+CREATE UNIQUE INDEX index_annotation_categories_on_assessment_id_and_name ON public.annotation_categories USING btree (assessment_id, annotation_category_name);
 
 
 --
@@ -3289,6 +3317,13 @@ CREATE INDEX index_assessments_on_course_id ON public.assessments USING btree (c
 
 
 --
+-- Name: index_assessments_on_parent_assessment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_assessments_on_parent_assessment_id ON public.assessments USING btree (parent_assessment_id);
+
+
+--
 -- Name: index_assessments_on_short_identifier_and_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3300,13 +3335,6 @@ CREATE UNIQUE INDEX index_assessments_on_short_identifier_and_course_id ON publi
 --
 
 CREATE INDEX index_assessments_on_type_and_short_identifier ON public.assessments USING btree (type, short_identifier);
-
-
---
--- Name: index_assignment_files_on_assessment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_assignment_files_on_assessment_id ON public.assignment_files USING btree (assessment_id);
 
 
 --
@@ -3345,10 +3373,10 @@ CREATE UNIQUE INDEX index_courses_on_name ON public.courses USING btree (name);
 
 
 --
--- Name: index_criteria_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_criteria_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_criteria_on_assessment_id ON public.criteria USING btree (assessment_id);
+CREATE UNIQUE INDEX index_criteria_on_assessment_id_and_name ON public.criteria USING btree (assessment_id, name);
 
 
 --
@@ -3366,10 +3394,10 @@ CREATE INDEX index_criterion_ta_associations_on_ta_id ON public.criterion_ta_ass
 
 
 --
--- Name: index_exam_templates_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_exam_templates_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_exam_templates_on_assessment_id ON public.exam_templates USING btree (assessment_id);
+CREATE UNIQUE INDEX index_exam_templates_on_assessment_id_and_name ON public.exam_templates USING btree (assessment_id, name);
 
 
 --
@@ -3432,7 +3460,7 @@ CREATE UNIQUE INDEX index_grade_entry_students_tas ON public.grade_entry_student
 -- Name: index_grader_permissions_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_grader_permissions_on_role_id ON public.grader_permissions USING btree (role_id);
+CREATE UNIQUE INDEX index_grader_permissions_on_role_id ON public.grader_permissions USING btree (role_id);
 
 
 --
@@ -3450,10 +3478,10 @@ CREATE INDEX index_grades_on_last_updated_by_id ON public.grades USING btree (la
 
 
 --
--- Name: index_grouping_starter_file_entries_on_grouping_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_grouping_starter_file_entries_on_grouping_and_entry; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_grouping_starter_file_entries_on_grouping_id ON public.grouping_starter_file_entries USING btree (grouping_id);
+CREATE UNIQUE INDEX index_grouping_starter_file_entries_on_grouping_and_entry ON public.grouping_starter_file_entries USING btree (grouping_id, starter_file_entry_id);
 
 
 --
@@ -3506,6 +3534,13 @@ CREATE INDEX index_lti_clients_on_course_id ON public.lti_clients USING btree (c
 
 
 --
+-- Name: index_lti_clients_on_host_and_client_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_lti_clients_on_host_and_client_id ON public.lti_clients USING btree (host, client_id);
+
+
+--
 -- Name: index_lti_deployments_on_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3513,10 +3548,10 @@ CREATE INDEX index_lti_deployments_on_course_id ON public.lti_deployments USING 
 
 
 --
--- Name: index_lti_deployments_on_lti_client_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_lti_deployments_on_lti_client_id_and_lms_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_lti_deployments_on_lti_client_id ON public.lti_deployments USING btree (lti_client_id);
+CREATE UNIQUE INDEX index_lti_deployments_on_lti_client_id_and_lms_course_id ON public.lti_deployments USING btree (lti_client_id, lms_course_id);
 
 
 --
@@ -3527,24 +3562,10 @@ CREATE INDEX index_lti_line_items_on_assessment_id ON public.lti_line_items USIN
 
 
 --
--- Name: index_lti_line_items_on_lti_deployment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_lti_line_items_on_lti_deployment_id ON public.lti_line_items USING btree (lti_deployment_id);
-
-
---
 -- Name: index_lti_line_items_on_lti_deployment_id_and_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_lti_line_items_on_lti_deployment_id_and_assessment_id ON public.lti_line_items USING btree (lti_deployment_id, assessment_id);
-
-
---
--- Name: index_lti_services_on_lti_deployment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_lti_services_on_lti_deployment_id ON public.lti_services USING btree (lti_deployment_id);
 
 
 --
@@ -3555,17 +3576,10 @@ CREATE UNIQUE INDEX index_lti_services_on_lti_deployment_id_and_service_type ON 
 
 
 --
--- Name: index_lti_users_on_lti_client_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_lti_users_on_lti_client_id_and_lti_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_lti_users_on_lti_client_id ON public.lti_users USING btree (lti_client_id);
-
-
---
--- Name: index_lti_users_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_lti_users_on_user_id ON public.lti_users USING btree (user_id);
+CREATE UNIQUE INDEX index_lti_users_on_lti_client_id_and_lti_user_id ON public.lti_users USING btree (lti_client_id, lti_user_id);
 
 
 --
@@ -3573,13 +3587,6 @@ CREATE INDEX index_lti_users_on_user_id ON public.lti_users USING btree (user_id
 --
 
 CREATE UNIQUE INDEX index_lti_users_on_user_id_and_lti_client_id ON public.lti_users USING btree (user_id, lti_client_id);
-
-
---
--- Name: index_marking_schemes_on_course_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_marking_schemes_on_course_id ON public.marking_schemes USING btree (course_id);
 
 
 --
@@ -3611,10 +3618,10 @@ CREATE INDEX index_marks_on_last_updated_by_id ON public.marks USING btree (last
 
 
 --
--- Name: index_marks_on_result_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_marks_on_result_id_and_criterion_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_marks_on_result_id ON public.marks USING btree (result_id);
+CREATE UNIQUE INDEX index_marks_on_result_id_and_criterion_id ON public.marks USING btree (result_id, criterion_id);
 
 
 --
@@ -3629,13 +3636,6 @@ CREATE INDEX index_memberships_on_role_id ON public.memberships USING btree (rol
 --
 
 CREATE INDEX index_notes_on_creator_id ON public.notes USING btree (creator_id);
-
-
---
--- Name: index_peer_reviews_on_result_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_peer_reviews_on_result_id ON public.peer_reviews USING btree (result_id);
 
 
 --
@@ -3685,13 +3685,6 @@ CREATE INDEX index_roles_on_course_id ON public.roles USING btree (course_id);
 --
 
 CREATE INDEX index_roles_on_section_id ON public.roles USING btree (section_id);
-
-
---
--- Name: index_roles_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_roles_on_user_id ON public.roles USING btree (user_id);
 
 
 --
@@ -3779,10 +3772,10 @@ CREATE INDEX index_starter_file_entries_on_starter_file_group_id ON public.start
 
 
 --
--- Name: index_starter_file_groups_on_assessment_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_starter_file_groups_on_assessment_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_starter_file_groups_on_assessment_id ON public.starter_file_groups USING btree (assessment_id);
+CREATE UNIQUE INDEX index_starter_file_groups_on_assessment_id_and_name ON public.starter_file_groups USING btree (assessment_id, name);
 
 
 --
@@ -3803,7 +3796,7 @@ CREATE INDEX index_submission_files_on_submission_id ON public.submission_files 
 -- Name: index_submission_rules_on_assessment_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_submission_rules_on_assessment_id ON public.submission_rules USING btree (assessment_id);
+CREATE UNIQUE INDEX index_submission_rules_on_assessment_id ON public.submission_rules USING btree (assessment_id);
 
 
 --
@@ -3828,10 +3821,10 @@ CREATE INDEX index_tags_on_role_id ON public.tags USING btree (role_id);
 
 
 --
--- Name: index_template_divisions_on_exam_template_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_template_divisions_on_exam_template_id_and_label; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_template_divisions_on_exam_template_id ON public.template_divisions USING btree (exam_template_id);
+CREATE UNIQUE INDEX index_template_divisions_on_exam_template_id_and_label ON public.template_divisions USING btree (exam_template_id, label);
 
 
 --
@@ -3870,10 +3863,10 @@ CREATE INDEX index_test_groups_on_criterion_id ON public.test_groups USING btree
 
 
 --
--- Name: index_test_results_on_test_group_result_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_test_results_on_test_group_result_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_test_results_on_test_group_result_id ON public.test_results USING btree (test_group_result_id);
+CREATE UNIQUE INDEX index_test_results_on_test_group_result_id_and_name ON public.test_results USING btree (test_group_result_id, name);
 
 
 --
@@ -3909,6 +3902,20 @@ CREATE INDEX index_test_runs_on_test_batch_id ON public.test_runs USING btree (t
 --
 
 CREATE UNIQUE INDEX index_users_on_api_key ON public.users USING btree (api_key);
+
+
+--
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
+
+
+--
+-- Name: index_users_on_id_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_id_number ON public.users USING btree (id_number);
 
 
 --
@@ -4007,6 +4014,14 @@ ALTER TABLE ONLY public.grouping_starter_file_entries
 
 
 --
+-- Name: lti_deployments fk_rails_0587f17288; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_deployments
+    ADD CONSTRAINT fk_rails_0587f17288 FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
 -- Name: key_pairs fk_rails_07749372b3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4031,6 +4046,14 @@ ALTER TABLE ONLY public.groups
 
 
 --
+-- Name: annotation_texts fk_rails_113a699958; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annotation_texts
+    ADD CONSTRAINT fk_rails_113a699958 FOREIGN KEY (creator_id) REFERENCES public.roles(id);
+
+
+--
 -- Name: marking_weights fk_rails_15c421fa93; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4039,11 +4062,27 @@ ALTER TABLE ONLY public.marking_weights
 
 
 --
+-- Name: assessment_section_properties fk_rails_1d7f406bed; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assessment_section_properties
+    ADD CONSTRAINT fk_rails_1d7f406bed FOREIGN KEY (section_id) REFERENCES public.sections(id);
+
+
+--
 -- Name: peer_reviews fk_rails_1e5d815725; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.peer_reviews
     ADD CONSTRAINT fk_rails_1e5d815725 FOREIGN KEY (result_id) REFERENCES public.results(id);
+
+
+--
+-- Name: marking_weights fk_rails_207b1ceb94; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.marking_weights
+    ADD CONSTRAINT fk_rails_207b1ceb94 FOREIGN KEY (marking_scheme_id) REFERENCES public.marking_schemes(id);
 
 
 --
@@ -4087,6 +4126,22 @@ ALTER TABLE ONLY public.template_divisions
 
 
 --
+-- Name: annotation_texts fk_rails_30b7e34fef; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annotation_texts
+    ADD CONSTRAINT fk_rails_30b7e34fef FOREIGN KEY (last_editor_id) REFERENCES public.roles(id);
+
+
+--
+-- Name: submissions fk_rails_357336692c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submissions
+    ADD CONSTRAINT fk_rails_357336692c FOREIGN KEY (grouping_id) REFERENCES public.groupings(id);
+
+
+--
 -- Name: test_runs fk_rails_3c9d686a0f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4100,6 +4155,14 @@ ALTER TABLE ONLY public.test_runs
 
 ALTER TABLE ONLY public.tags
     ADD CONSTRAINT fk_rails_4562903764 FOREIGN KEY (role_id) REFERENCES public.roles(id);
+
+
+--
+-- Name: grades fk_rails_4b76d9331b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grades
+    ADD CONSTRAINT fk_rails_4b76d9331b FOREIGN KEY (grade_entry_student_id) REFERENCES public.grade_entry_students(id);
 
 
 --
@@ -4127,11 +4190,27 @@ ALTER TABLE ONLY public.feedback_files
 
 
 --
+-- Name: grade_entry_students_tas fk_rails_57182dc786; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_students_tas
+    ADD CONSTRAINT fk_rails_57182dc786 FOREIGN KEY (ta_id) REFERENCES public.roles(id);
+
+
+--
 -- Name: test_group_results fk_rails_5ad5ab0a6d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.test_group_results
     ADD CONSTRAINT fk_rails_5ad5ab0a6d FOREIGN KEY (test_group_id) REFERENCES public.test_groups(id);
+
+
+--
+-- Name: notes fk_rails_5d4a723a34; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notes
+    ADD CONSTRAINT fk_rails_5d4a723a34 FOREIGN KEY (creator_id) REFERENCES public.roles(id);
 
 
 --
@@ -4159,6 +4238,14 @@ ALTER TABLE ONLY public.grouping_starter_file_entries
 
 
 --
+-- Name: lti_deployments fk_rails_700ad4f1c1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_deployments
+    ADD CONSTRAINT fk_rails_700ad4f1c1 FOREIGN KEY (lti_client_id) REFERENCES public.lti_clients(id);
+
+
+--
 -- Name: test_results fk_rails_706edea285; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4180,6 +4267,14 @@ ALTER TABLE ONLY public.exam_templates
 
 ALTER TABLE ONLY public.assessments
     ADD CONSTRAINT fk_rails_79e107ee61 FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
+-- Name: criterion_ta_associations fk_rails_7a0d4fe2f5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criterion_ta_associations
+    ADD CONSTRAINT fk_rails_7a0d4fe2f5 FOREIGN KEY (ta_id) REFERENCES public.roles(id);
 
 
 --
@@ -4215,6 +4310,22 @@ ALTER TABLE ONLY public.peer_reviews
 
 
 --
+-- Name: lti_users fk_rails_8c221c7d3d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_users
+    ADD CONSTRAINT fk_rails_8c221c7d3d FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: criterion_ta_associations fk_rails_8ce5f38173; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criterion_ta_associations
+    ADD CONSTRAINT fk_rails_8ce5f38173 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: test_runs fk_rails_8d1eefeaa6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4239,6 +4350,14 @@ ALTER TABLE ONLY public.starter_file_entries
 
 
 --
+-- Name: submission_rules fk_rails_94ce06df92; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_rules
+    ADD CONSTRAINT fk_rails_94ce06df92 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: split_pages fk_rails_9ea6507e1b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4247,11 +4366,27 @@ ALTER TABLE ONLY public.split_pages
 
 
 --
+-- Name: assessment_section_properties fk_rails_a1281a0028; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assessment_section_properties
+    ADD CONSTRAINT fk_rails_a1281a0028 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
 -- Name: split_pdf_logs fk_rails_a3bcef9f4d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.split_pdf_logs
     ADD CONSTRAINT fk_rails_a3bcef9f4d FOREIGN KEY (exam_template_id) REFERENCES public.exam_templates(id);
+
+
+--
+-- Name: grace_period_deductions fk_rails_a425869910; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grace_period_deductions
+    ADD CONSTRAINT fk_rails_a425869910 FOREIGN KEY (membership_id) REFERENCES public.memberships(id);
 
 
 --
@@ -4287,6 +4422,38 @@ ALTER TABLE ONLY public.memberships
 
 
 --
+-- Name: grades fk_rails_ad0732ef40; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grades
+    ADD CONSTRAINT fk_rails_ad0732ef40 FOREIGN KEY (grade_entry_item_id) REFERENCES public.grade_entry_items(id);
+
+
+--
+-- Name: grade_entry_students fk_rails_ae72733e62; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_students
+    ADD CONSTRAINT fk_rails_ae72733e62 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
+
+
+--
+-- Name: assessments fk_rails_b2750d590e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assessments
+    ADD CONSTRAINT fk_rails_b2750d590e FOREIGN KEY (parent_assessment_id) REFERENCES public.assessments(id);
+
+
+--
+-- Name: criteria_assignment_files_joins fk_rails_b60e5e1ad7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criteria_assignment_files_joins
+    ADD CONSTRAINT fk_rails_b60e5e1ad7 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
+
+
+--
 -- Name: test_runs fk_rails_bb3bcd4524; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4319,6 +4486,14 @@ ALTER TABLE ONLY public.roles
 
 
 --
+-- Name: test_groups fk_rails_c147c92aff; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_groups
+    ADD CONSTRAINT fk_rails_c147c92aff FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
+
+
+--
 -- Name: grader_permissions fk_rails_c40f429065; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4340,6 +4515,14 @@ ALTER TABLE ONLY public.marks
 
 ALTER TABLE ONLY public.section_starter_file_groups
     ADD CONSTRAINT fk_rails_d988dc43a3 FOREIGN KEY (starter_file_group_id) REFERENCES public.starter_file_groups(id);
+
+
+--
+-- Name: annotations fk_rails_da86df1ca6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annotations
+    ADD CONSTRAINT fk_rails_da86df1ca6 FOREIGN KEY (result_id) REFERENCES public.results(id);
 
 
 --
@@ -4383,11 +4566,27 @@ ALTER TABLE ONLY public.grades
 
 
 --
+-- Name: grade_entry_students_tas fk_rails_eb93ffce42; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_students_tas
+    ADD CONSTRAINT fk_rails_eb93ffce42 FOREIGN KEY (grade_entry_student_id) REFERENCES public.grade_entry_students(id);
+
+
+--
 -- Name: grade_entry_students fk_rails_ec5b13f7ac; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.grade_entry_students
     ADD CONSTRAINT fk_rails_ec5b13f7ac FOREIGN KEY (role_id) REFERENCES public.roles(id);
+
+
+--
+-- Name: criterion_ta_associations fk_rails_f2f5f90ba7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.criterion_ta_associations
+    ADD CONSTRAINT fk_rails_f2f5f90ba7 FOREIGN KEY (criterion_id) REFERENCES public.criteria(id);
 
 
 --
@@ -4399,11 +4598,27 @@ ALTER TABLE ONLY public.criteria
 
 
 --
+-- Name: lti_users fk_rails_f4e2e2b28c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.lti_users
+    ADD CONSTRAINT fk_rails_f4e2e2b28c FOREIGN KEY (lti_client_id) REFERENCES public.lti_clients(id);
+
+
+--
 -- Name: test_runs fk_rails_f712000ed8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.test_runs
     ADD CONSTRAINT fk_rails_f712000ed8 FOREIGN KEY (submission_id) REFERENCES public.submissions(id);
+
+
+--
+-- Name: grade_entry_items fk_rails_f80c7b41a3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.grade_entry_items
+    ADD CONSTRAINT fk_rails_f80c7b41a3 FOREIGN KEY (assessment_id) REFERENCES public.assessments(id);
 
 
 --
@@ -4453,6 +4668,12 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260703000001'),
+('20260703000000'),
+('20260621000001'),
+('20260621000000'),
+('20260530200000'),
+('20260526021351'),
 ('20260415150142'),
 ('20260326174749'),
 ('20260325180720'),

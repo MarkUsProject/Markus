@@ -21,6 +21,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (criterion_id => criteria.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TestGroup < ApplicationRecord
@@ -35,6 +36,8 @@ class TestGroup < ApplicationRecord
 
   validates :name, presence: true
   validates :display_output, presence: true
+  validates :autotest_settings, exclusion: { in: [nil] }
+  validates :position, presence: true
   validate :courses_should_match
 
   def to_json(*_args)

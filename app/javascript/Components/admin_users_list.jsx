@@ -5,32 +5,59 @@ import {selectFilter} from "./Helpers/table_helpers";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-class AdminUsersList extends React.Component {
+export class AdminUsersList extends React.Component {
   constructor() {
     super();
     this.state = {
       users: [],
+      pages: 0,
       loading: true,
+      page: 0,
+      pageSize: 100,
     };
+    this.previousFiltered = "[]";
+    this.previousSorted = "[]";
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
+  fetchDataServerSide = state => {
+    this.setState({loading: true});
+    const currentFilteredStr = JSON.stringify(state.filtered);
+    const currentSortedStr = JSON.stringify(state.sorted);
 
-  fetchData = () => {
-    fetch(Routes.admin_users_path(), {
-      headers: {
-        Accept: "application/json",
-      },
-    })
+    let targetPage = state.page;
+    if (this.previousFiltered !== currentFilteredStr || this.previousSorted !== currentSortedStr) {
+      targetPage = 0;
+      this.previousFiltered = currentFilteredStr;
+      this.previousSorted = currentSortedStr;
+    }
+
+    fetch(
+      Routes.admin_users_path({
+        page: targetPage + 1,
+        per_page: state.pageSize,
+        sorted: currentSortedStr,
+        filtered: currentFilteredStr,
+      }),
+      {
+        headers: {Accept: "application/json"},
+      }
+    )
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
+        if (response.ok) return response.json();
+        throw new Error("Failed to fetch grid data");
       })
       .then(data => {
-        this.setState({users: data, loading: false});
+        this.setState({
+          users: data && data.users ? data.users : [],
+          pages: data && data.total_pages ? data.total_pages : 1,
+          loading: false,
+          page: targetPage,
+          pageSize: state.pageSize,
+        });
+      })
+      .catch(err => {
+        console.error("Pagination error:", err);
+        this.setState({users: [], pages: 1, loading: false});
       });
   };
 
@@ -73,13 +100,6 @@ class AdminUsersList extends React.Component {
           return I18n.t("activerecord.models.end_user.one");
         }
       },
-      filterMethod: (filter, row) => {
-        if (filter.value === "all") {
-          return true;
-        } else {
-          return filter.value === row[filter.id];
-        }
-      },
       Filter: selectFilter,
       filterOptions: [
         {
@@ -113,11 +133,21 @@ class AdminUsersList extends React.Component {
   render() {
     return (
       <ReactTable
+        manual
         data={this.state.users}
+        pages={this.state.pages}
+        page={this.state.page}
+        pageSize={this.state.pageSize}
         columns={this.columns}
         filterable
+        showPagination={true}
+        showPaginationBottom={true}
+        showPageSizeOptions={false}
+        defaultPageSize={100}
         defaultSorted={[{id: "user_name"}]}
         loading={this.state.loading}
+        onFetchData={this.fetchDataServerSide}
+        onPageChange={page => this.setState({page})}
       />
     );
   }

@@ -23,12 +23,14 @@
 # Indexes
 #
 #  index_assessments_on_course_id                       (course_id)
+#  index_assessments_on_parent_assessment_id            (parent_assessment_id) UNIQUE
 #  index_assessments_on_short_identifier_and_course_id  (short_identifier,course_id) UNIQUE
 #  index_assessments_on_type_and_short_identifier       (type,short_identifier)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (parent_assessment_id => assessments.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Assessment < ApplicationRecord
@@ -65,6 +67,9 @@ class Assessment < ApplicationRecord
   validate :visible_dates_are_valid
   validates :description, presence: true
   validates :is_hidden, inclusion: { in: [true, false] }
+  validates :show_total, inclusion: { in: [true, false] }
+  validates :type, presence: true
+  validates :message, exclusion: { in: [nil] }
   validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/ }
 
   def self.type

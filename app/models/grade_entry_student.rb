@@ -7,9 +7,9 @@
 #
 #  id                  :integer          not null, primary key
 #  released_to_student :boolean          default(FALSE), not null
-#  created_at          :datetime
-#  updated_at          :datetime
-#  assessment_id       :bigint
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  assessment_id       :bigint           not null
 #  role_id             :bigint           not null
 #
 # Indexes
@@ -18,6 +18,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (assessment_id => assessments.id)
 #  fk_rails_...  (role_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
@@ -36,7 +37,7 @@ class GradeEntryStudent < ApplicationRecord
 
   has_many :grade_entry_items, through: :grades
 
-  has_many :grade_entry_student_tas
+  has_many :grade_entry_student_tas, dependent: :destroy
   has_many :tas, through: :grade_entry_student_tas
 
   has_one :user, through: :role
@@ -74,6 +75,7 @@ class GradeEntryStudent < ApplicationRecord
     assign_tas(student_ids, ta_ids, form) do |grade_entry_student_ids, tids|
       # Assign TAs in a round-robin fashion to a list of random grade entry
       # students.
+      next [] if tids.empty?
       grade_entry_student_ids.shuffle.zip(tids.cycle)
     end
   end

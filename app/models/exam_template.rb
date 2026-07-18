@@ -15,11 +15,11 @@
 #  num_pages         :integer          not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  assessment_id     :bigint
+#  assessment_id     :bigint           not null
 #
 # Indexes
 #
-#  index_exam_templates_on_assessment_id  (assessment_id)
+#  index_exam_templates_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
 # Foreign Keys
 #
@@ -40,6 +40,8 @@ class ExamTemplate < ApplicationRecord
             length: { maximum: 20 }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
+  validates :automatic_parsing, inclusion: { in: [true, false] }
+  validates :cover_fields, exclusion: { in: [nil] }
 
   has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy

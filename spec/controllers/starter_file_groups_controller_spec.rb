@@ -105,7 +105,7 @@ describe StarterFileGroupsController do
       let(:filename) { 'q3.txt' }
 
       it 'should download a file with a warning message' do
-        expect(response.body).to eq I18n.t('student.submission.missing_file', file_name: filename)
+        expect(response.body).to eq I18n.t('submissions.student.missing_file', file_name: filename)
       end
     end
 
@@ -113,7 +113,7 @@ describe StarterFileGroupsController do
       let(:filename) { '../../q2.txt' }
 
       it 'should download a file with a warning message' do
-        expect(response.body).to eq(I18n.t('student.submission.missing_file', file_name: 'q2.txt'))
+        expect(response.body).to eq(I18n.t('submissions.student.missing_file', file_name: 'q2.txt'))
       end
     end
   end

@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
 import {AnnotationManager} from "./annotation_manager";
+import {FileSelector} from "./file_selector";
 import {FileViewer} from "./file_viewer";
 import {DownloadSubmissionModal} from "./download_submission_modal";
 import mime from "mime/lite";
@@ -28,8 +27,11 @@ export class SubmissionFilePanel extends React.Component {
       focusLine: null,
       annotationFocus: undefined,
       visibleAnnotations: [],
+      // Counts deliberate file picks so the PDF viewer can tell a user opening a
+      // different file (reset scroll) from an automatic refresh on a submission
+      // switch (keep scroll).
+      userFileSelectionCount: 0,
     };
-    this.submissionFileViewer = React.createRef();
   }
 
   componentDidMount() {
@@ -98,7 +100,9 @@ export class SubmissionFilePanel extends React.Component {
         a => a.submission_file_id === submission_file_id
       );
     }
-    this.setState({selectedFile, visibleAnnotations});
+    // Clear focus carried over from a previously selected annotation; leaving it
+    // set would keep targeting the old result after a submission switch.
+    this.setState({selectedFile, visibleAnnotations, focusLine: null, annotationFocus: undefined});
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
@@ -150,12 +154,13 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   selectFile = (file, id, type, focusLine, annotationFocus) => {
-    this.setState({
+    this.setState(prevState => ({
       selectedFile: [file, id, type],
       focusLine: focusLine,
       annotationFocus: annotationFocus,
       visibleAnnotations: this.props.annotations.filter(a => a.submission_file_id === id),
-    });
+      userFileSelectionCount: prevState.userFileSelectionCount + 1,
+    }));
     localStorage.setItem("file", file);
   };
 
@@ -222,7 +227,6 @@ export class SubmissionFilePanel extends React.Component {
         </div>
         <div key="codeviewer" className="text-viewer-container" id="codeviewer">
           <FileViewer
-            ref={this.submissionFileViewer}
             handleFileTypeUpdate={this.handleFileTypeUpdate}
             assignment_id={this.props.assignment_id}
             submission_id={this.props.submission_id}
@@ -231,6 +235,7 @@ export class SubmissionFilePanel extends React.Component {
             selectedFile={submission_file_id}
             selectedFileURL={this.getFileDownloadURL(submission_file_id)}
             selectedFileType={this.state.selectedFile ? this.state.selectedFile[2] : null}
+            userFileSelectionCount={this.state.userFileSelectionCount}
             annotations={this.state.visibleAnnotations}
             focusLine={this.state.focusLine}
             annotationFocus={this.state.annotationFocus}
@@ -240,118 +245,6 @@ export class SubmissionFilePanel extends React.Component {
           />
         </div>
       </React.Fragment>
-    );
-  }
-}
-
-// Component for the file selector.
-export class FileSelector extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expanded: null,
-    };
-  }
-
-  // Convert a nested hash into a nested <ul>.
-  hashToHTMLList = (hash, expanded) => {
-    let dirs = [];
-    let newExpanded, displayStyle;
-    if (expanded === null) {
-      newExpanded = null;
-      displayStyle = "none";
-    } else if (hash["name"] === "") {
-      newExpanded = expanded;
-      displayStyle = "block";
-    } else {
-      newExpanded = expanded.slice(1);
-      displayStyle = hash["name"] === expanded[0] ? "block" : "none";
-    }
-
-    for (let d in hash["directories"]) {
-      if (hash["directories"].hasOwnProperty(d)) {
-        let dir = hash["directories"][d];
-        dirs.push(
-          <li
-            className="nested-submenu"
-            key={dir.path.join("/")}
-            onClick={e => this.selectDirectory(e, dir.path)}
-          >
-            <a key={`${dir.path.join("/")}-a`}>{dir.name}</a>
-            {this.hashToHTMLList(dir, newExpanded)}
-          </li>
-        );
-      }
-    }
-
-    return (
-      <ul className="nested-folder" style={{display: displayStyle}}>
-        {dirs}
-        {hash["files"].map(f => {
-          const [name, id, type] = f;
-          const fullPath = hash.path.concat([name]).join("/");
-          return (
-            <li
-              className="file_item"
-              key={fullPath}
-              onClick={e => this.selectFile(e, fullPath, id, type)}
-            >
-              <a key={`${fullPath}-a`}>{f[0]}</a>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  };
-
-  selectFile = (e, fullPath, id, type) => {
-    e.stopPropagation();
-    this.props.onSelectFile(fullPath, id, type);
-    this.setState({expanded: null});
-  };
-
-  selectDirectory = (e, path) => {
-    e.stopPropagation();
-    this.setState({expanded: path});
-  };
-
-  expandFileSelector = path => {
-    this.setState({expanded: path});
-  };
-
-  render() {
-    const fileSelector = this.hashToHTMLList(this.props.fileData, this.state.expanded);
-    let arrow, expand;
-    if (this.state.expanded !== null) {
-      arrow = <FontAwesomeIcon className="arrow-up" icon="fa-chevron-up" />;
-      expand = null;
-    } else {
-      arrow = <FontAwesomeIcon className="arrow-down" icon="fa-chevron-down" />;
-      expand = [];
-    }
-    let selectorLabel;
-    if (!this.props.fileData.files.length && !Object.keys(this.props.fileData.directories).length) {
-      selectorLabel = I18n.t("submissions.no_files_available");
-    } else if (this.props.selectedFile !== null) {
-      selectorLabel = this.props.selectedFile[0];
-    } else {
-      selectorLabel = "";
-    }
-
-    return (
-      <div
-        className="dropdown"
-        onClick={e => {
-          e.stopPropagation();
-          this.expandFileSelector(expand);
-        }}
-        onBlur={() => this.expandFileSelector(null)}
-        tabIndex={-1}
-      >
-        <a>{selectorLabel}</a>
-        {arrow}
-        {this.state.expanded && <div>{fileSelector}</div>}
-      </div>
     );
   }
 }

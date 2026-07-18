@@ -6,17 +6,17 @@
 #  id                 :integer          not null, primary key
 #  mark               :float
 #  override           :boolean          default(FALSE), not null
-#  created_at         :datetime
-#  updated_at         :datetime
-#  criterion_id       :integer
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  criterion_id       :integer          not null
 #  last_updated_by_id :bigint
-#  result_id          :integer
+#  result_id          :integer          not null
 #
 # Indexes
 #
-#  index_marks_on_criterion_id        (criterion_id)
-#  index_marks_on_last_updated_by_id  (last_updated_by_id)
-#  index_marks_on_result_id           (result_id)
+#  index_marks_on_criterion_id                (criterion_id)
+#  index_marks_on_last_updated_by_id          (last_updated_by_id)
+#  index_marks_on_result_id_and_criterion_id  (result_id,criterion_id) UNIQUE
 #
 # Foreign Keys
 #

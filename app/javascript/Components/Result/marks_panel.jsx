@@ -1,4 +1,5 @@
 import React from "react";
+import Mousetrap from "mousetrap";
 
 import CheckboxCriterionInput from "./checkbox_criterion_input";
 import FlexibleCriterionInput from "./flexible_criterion_input";
@@ -60,9 +61,27 @@ export class MarksPanel extends React.Component {
 
   componentDidMount() {
     if (!this.props.released_to_students) {
-      // Expose the whole component for keyboard shortcuts
-      window.marksPanel = this;
+      const isTextSelected = () =>
+        "getSelection" in window && window.getSelection().type === "Range";
+      Mousetrap.bind("shift+up", e => {
+        if (!isTextSelected()) {
+          e.preventDefault();
+          this.prevCriterion();
+          return false;
+        }
+      });
+      Mousetrap.bind("shift+down", e => {
+        if (!isTextSelected()) {
+          e.preventDefault();
+          this.nextCriterion();
+          return false;
+        }
+      });
     }
+  }
+
+  componentWillUnmount() {
+    Mousetrap.unbind(["shift+up", "shift+down"]);
   }
 
   componentDidUpdate(prevProps) {

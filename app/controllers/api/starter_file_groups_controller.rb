@@ -1,6 +1,8 @@
 module Api
   # Api controller for starter file groups
   class StarterFileGroupsController < MainApiController
+    DEFAULT_FIELDS = [:id, :name, :entry_rename, :use_rename, :assessment_id].freeze
+
     def create
       assignment = Assignment.find_by(id: params[:assignment_id])
       other_params = params.permit(:entry_rename, :use_rename, :name).to_h.symbolize_keys
@@ -43,16 +45,16 @@ module Api
     def index
       assignment = Assignment.find_by(id: params[:assignment_id])
       respond_to do |format|
-        format.xml { render xml: assignment.starter_file_groups.to_xml(skip_types: 'true') }
-        format.json { render json: assignment.starter_file_groups.to_json }
+        format.xml { render xml: assignment.starter_file_groups.to_xml(only: DEFAULT_FIELDS, skip_types: 'true') }
+        format.json { render json: assignment.starter_file_groups.to_json(only: DEFAULT_FIELDS) }
       end
     end
 
     def show
       starter_file_group = record
       respond_to do |format|
-        format.xml { render xml: starter_file_group.to_xml(skip_types: 'true') }
-        format.json { render json: starter_file_group.to_json }
+        format.xml { render xml: starter_file_group.to_xml(only: DEFAULT_FIELDS, skip_types: 'true') }
+        format.json { render json: starter_file_group.to_json(only: DEFAULT_FIELDS) }
       end
     end
 

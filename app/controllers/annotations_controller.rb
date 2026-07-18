@@ -5,7 +5,6 @@ class AnnotationsController < ApplicationController
     result = Result.find(params[:result_id])
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
-    rmd_convert = submission_file.is_rmd? && Rails.application.config.rmd_convert_enabled
 
     base_attributes = {
       submission_file_id: submission_file.id,
@@ -16,44 +15,12 @@ class AnnotationsController < ApplicationController
       result_id: params[:result_id]
     }
 
-    if submission_file.is_supported_image?
-      @annotation = result.annotations.create(
-        type: 'ImageAnnotation',
-        x1: params[:x1],
-        y1: params[:y1],
-        x2: params[:x2],
-        y2: params[:y2],
-        **base_attributes
-      )
-    elsif submission_file.is_pdf?
-      @annotation = result.annotations.create(
-        type: 'PdfAnnotation',
-        x1: params[:x1],
-        y1: params[:y1],
-        x2: params[:x2],
-        y2: params[:y2],
-        page: params[:page],
-        **base_attributes
-      )
-    elsif submission_file.is_pynb? || rmd_convert
-      @annotation = result.annotations.create!(
-        type: 'HtmlAnnotation',
-        start_node: params[:start_node],
-        start_offset: params[:start_offset],
-        end_node: params[:end_node],
-        end_offset: params[:end_offset],
-        **base_attributes
-      )
-    else
-      @annotation = result.annotations.create(
-        type: 'TextAnnotation',
-        line_start: params[:line_start],
-        line_end: params[:line_end],
-        column_start: params[:column_start],
-        column_end: params[:column_end],
-        **base_attributes
-      )
-    end
+    annotation_class = submission_file.annotation_class
+    @annotation = result.annotations.create!(
+      type: annotation_class.name,
+      **params.to_unsafe_h.slice(*annotation_class.required_fields).symbolize_keys,
+      **base_attributes
+    )
     render :create
   end
 
@@ -61,7 +28,6 @@ class AnnotationsController < ApplicationController
     result = Result.find(params[:result_id])
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
-    rmd_convert = submission_file.is_rmd? && Rails.application.config.rmd_convert_enabled
 
     d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
 
@@ -90,44 +56,12 @@ class AnnotationsController < ApplicationController
       is_remark: !result.remark_request_submitted_at.nil?,
       submission_file_id: submission_file.id
     }
-    if submission_file.is_supported_image?
-      @annotation = result.annotations.create!(
-        type: 'ImageAnnotation',
-        x1: params[:x1],
-        x2: params[:x2],
-        y1: params[:y1],
-        y2: params[:y2],
-        **base_attributes
-      )
-    elsif submission_file.is_pdf?
-      @annotation = result.annotations.create!(
-        type: 'PdfAnnotation',
-        x1: params[:x1],
-        x2: params[:x2],
-        y1: params[:y1],
-        y2: params[:y2],
-        page: params[:page],
-        **base_attributes
-      )
-    elsif submission_file.is_pynb? || rmd_convert
-      @annotation = result.annotations.create!(
-        type: 'HtmlAnnotation',
-        start_node: params[:start_node],
-        start_offset: params[:start_offset],
-        end_node: params[:end_node],
-        end_offset: params[:end_offset],
-        **base_attributes
-      )
-    else
-      @annotation = result.annotations.create!(
-        type: 'TextAnnotation',
-        line_start: params[:line_start],
-        line_end: params[:line_end],
-        column_start: params[:column_start],
-        column_end: params[:column_end],
-        **base_attributes
-      )
-    end
+    annotation_class = submission_file.annotation_class
+    @annotation = result.annotations.create!(
+      type: annotation_class.name,
+      **params.to_unsafe_h.slice(*annotation_class.required_fields).symbolize_keys,
+      **base_attributes
+    )
   end
 
   def destroy

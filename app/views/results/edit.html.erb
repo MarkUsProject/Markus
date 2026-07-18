@@ -11,7 +11,8 @@
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
           role: '<%= @current_role.class.name %>',
           user_id: '<%= @current_role.id %>',
-          rmd_convert_enabled: <%= Rails.application.config.rmd_convert_enabled %>
+          rmd_convert_enabled: <%= Rails.application.config.rmd_convert_enabled %>,
+          scanned_exam: <%= @assignment.scanned_exam %>
         }
       );
 

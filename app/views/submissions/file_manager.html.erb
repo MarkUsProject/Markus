@@ -8,6 +8,8 @@
           course_id: <%= @current_course.id %>,
           assignment_id: <%= @assignment.id %>,
           grouping_id: <%= @grouping.id %>,
+          show_late_submit_confirmation: <%= @show_late_submit_confirmation %>,
+          submission_rule: "<%= @assignment.submission_rule.type %>",
           readOnly: <%= !@assignment.allow_web_submits %>,
           enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
           enableUrlSubmit: <%= @grouping.assignment.url_submit %>,

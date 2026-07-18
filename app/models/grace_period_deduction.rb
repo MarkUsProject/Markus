@@ -5,13 +5,17 @@
 #
 #  id            :integer          not null, primary key
 #  deduction     :integer
-#  created_at    :datetime
-#  updated_at    :datetime
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #  membership_id :integer
 #
 # Indexes
 #
 #  index_grace_period_deductions_on_membership_id  (membership_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (membership_id => memberships.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GracePeriodDeduction < ApplicationRecord

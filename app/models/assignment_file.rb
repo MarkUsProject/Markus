@@ -5,13 +5,12 @@
 #
 #  id            :integer          not null, primary key
 #  filename      :string           not null
-#  created_at    :datetime
-#  updated_at    :datetime
-#  assessment_id :bigint
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  assessment_id :bigint           not null
 #
 # Indexes
 #
-#  index_assignment_files_on_assessment_id               (assessment_id)
 #  index_assignment_files_on_assessment_id_and_filename  (assessment_id,filename) UNIQUE
 #
 # Foreign Keys

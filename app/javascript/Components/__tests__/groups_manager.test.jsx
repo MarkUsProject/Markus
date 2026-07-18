@@ -1,7 +1,23 @@
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import {GroupsManager} from "../groups_manager";
 import {beforeEach, describe, expect, it} from "@jest/globals";
 import {getTimeExtension} from "../Helpers/table_helpers";
+
+const mockCreateSubscription = jest.fn();
+const mockRenderFlashMessages = jest.fn();
+
+jest.mock("../../channels/consumer", () => ({
+  __esModule: true,
+  default: {
+    subscriptions: {
+      create: (...args) => mockCreateSubscription(...args),
+    },
+  },
+}));
+
+jest.mock("../../common/flash", () => ({
+  renderFlashMessages: (...args) => mockRenderFlashMessages(...args),
+}));
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
@@ -66,6 +82,11 @@ const studentMock = [
   },
 ];
 
+beforeEach(() => {
+  mockCreateSubscription.mockClear();
+  mockRenderFlashMessages.mockClear();
+});
+
 describe("GroupsManager", () => {
   let filter_method = null;
   let wrapper = React.createRef();
@@ -94,6 +115,66 @@ describe("GroupsManager", () => {
     // wait for page to load and render content
     await screen.findByText("abcd").catch(err => err);
     // to view screen render: screen.debug(undefined, 300000)
+  });
+
+  describe("websocket updates", () => {
+    it("subscribes to group creation job status updates", () => {
+      expect(mockCreateSubscription).toHaveBeenCalledWith(
+        {channel: "GroupsChannel", course_id: 1, assignment_id: 2},
+        expect.objectContaining({
+          connected: expect.any(Function),
+          disconnected: expect.any(Function),
+          received: expect.any(Function),
+        })
+      );
+
+      const callbacks = mockCreateSubscription.mock.calls[0][1];
+      callbacks.connected();
+      callbacks.disconnected();
+    });
+
+    it("renders flash messages from websocket status updates", () => {
+      const callbacks = mockCreateSubscription.mock.calls[0][1];
+      const cases = [
+        [{status: "queued"}, {notice: I18n.t("job.status.queued")}],
+        [{status: "completed"}, {success: I18n.t("job.status.completed")}],
+        [{status: "failed"}, {error: I18n.t("job.status.failed.no_message")}],
+        [
+          {status: "failed", exception: {message: "boom"}},
+          {error: I18n.t("job.status.failed.message", {error: "boom"})},
+        ],
+        [
+          {status: "working", progress: 1, total: 2, warning_message: "warn"},
+          {notice: I18n.t("poll_job.create_groups_job", {progress: 1, total: 2}), warning: "warn"},
+        ],
+      ];
+
+      cases.forEach(([data, expectedMessage]) => {
+        mockRenderFlashMessages.mockClear();
+        callbacks.received(data);
+        expect(mockRenderFlashMessages).toHaveBeenCalledWith(expectedMessage);
+      });
+    });
+
+    it("refreshes data when the websocket update requests a table update", () => {
+      const callbacks = mockCreateSubscription.mock.calls[0][1];
+      wrapper.current.fetchData = jest.fn();
+
+      callbacks.received({update_table: true});
+
+      expect(wrapper.current.fetchData).toHaveBeenCalled();
+      expect(mockRenderFlashMessages).not.toHaveBeenCalled();
+    });
+
+    it("requests individual group creation without eagerly refreshing data", () => {
+      const getSpy = jest.spyOn($, "get").mockReturnValue({});
+      wrapper.current.createAllGroups();
+
+      expect(getSpy).toHaveBeenCalledWith({
+        url: Routes.create_groups_when_students_work_alone_course_assignment_groups_path(1, 2),
+      });
+      getSpy.mockRestore();
+    });
   });
 
   describe("DueDateExtensions", () => {
@@ -160,5 +241,77 @@ describe("GroupsManager", () => {
         });
       });
     });
+  });
+});
+
+describe("For the GroupsManager's group name search", () => {
+  beforeEach(async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        templates: [],
+        groups: groupMock,
+        exam_templates: [],
+        students: studentMock,
+        clone_assignments: [],
+      }),
+    });
+    const props = {
+      course_id: 1,
+      timed: false,
+      assignment_id: 2,
+      scanned_exam: false,
+      examTemplates: [],
+      times: ["weeks", "days", "hours", "minutes"],
+    };
+    render(<GroupsManager {...props} />);
+    await screen.findByText("c6scriab");
+  });
+
+  it("is case-insensitive by default", () => {
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "C6"}});
+
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
+  });
+
+  it("matches case-insensitively when given exact case", () => {
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "c6"}});
+
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
+  });
+
+  it("becomes case-sensitive when the toggle is checked", () => {
+    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "C6"}});
+
+    expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
+  });
+
+  it("returns to case-insensitive when toggled back off", () => {
+    const toggle = screen.getByTestId("group_name_case_sensitive");
+    fireEvent.click(toggle); // on
+    fireEvent.click(toggle); // off again
+
+    const groupSearch = screen.getByRole("textbox", {
+      name: `${I18n.t("search")} ${I18n.t("activerecord.models.group.one")}`,
+    });
+    fireEvent.change(groupSearch, {target: {value: "C6"}});
+
+    expect(screen.getByText("c6scriab")).toBeInTheDocument();
+    expect(screen.queryByText("group2")).not.toBeInTheDocument();
   });
 });

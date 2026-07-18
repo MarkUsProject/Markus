@@ -1,5 +1,63 @@
 # Changelog
 
+## [unreleased]
+
+### 🛡️ Security
+
+### 🚨 Breaking changes
+
+### ✨ New features and improvements
+
+### 🐛 Bug fixes
+
+### 📚 Documentation changes
+
+### 🔧 Internal changes
+
+## [v2.10.1]
+
+### 🛡️ Security
+- Fixed escaping of HTML annotation `start_node` and `end_node` attributes (#8064)
+
+### ✨ New features and improvements
+- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
+- Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
+- Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
+- Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
+- Preserved PDF scroll position when switching between submissions while grading scanned exams (#8004)
+- Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
+- Added GET and PATCH /overall_comment API routes (#7963)
+- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+- Add pagination to Admin Users table for performance (#7997)
+- Added support for all annotation types for POST /add_annotations (#8007)
+
+### 🐛 Bug fixes
+- Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
+- Fixed broken checkbox in the header of the selection column for tables with row selection enabled. (#8037)
+- Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
+- Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
+- Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
+- Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
+- Fixed autotester spec upload when spec contains non-existent criterion (#7998)
+- Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
+
+### 🔧 Internal changes
+- Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)
+- Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
+- Refactored `GroupsController#create_groups_when_students_work_alone` and `GroupsController#upload` to use ActionCable websockets instead of polling to report `CreateGroupsJob` status. (#8020)
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8018)
+- Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
+- Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
+- Added release automation scripts (#7914)
+- Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
+- Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
+- Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
+- Added `NOT NULL` constraint on `groups.group_name` (#7975)
+- Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
+- Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
+- Simplified Chart.js usage: removed the `DataChart` wrapper component, converted `chart_config.js` to an ES module, and replaced `registerables` with a minimal set of Chart.js components (#7987)
+- Bump jwt from 2.10.3 to 3.2.0 (#8039)
+
 ## [v2.10.0]
 
 ### ✨ New features and improvements

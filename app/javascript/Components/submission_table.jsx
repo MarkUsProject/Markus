@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
 import {
+  caseSensitiveIncludes,
+  caseSensitiveTextFilter,
   dateSort,
   markingStateColumn,
   selectFilter,
@@ -112,14 +114,18 @@ class RawSubmissionTable extends React.Component {
   };
 
   groupNameFilter = (filter, row) => {
-    if (filter.value) {
+    const {filterValue, caseSensitive} = filter.value;
+    if (filterValue) {
       // Check group name
-      if (row._original.group_name.includes(filter.value)) {
+      if (caseSensitiveIncludes(row._original.group_name, filterValue, caseSensitive)) {
         return true;
       }
       // Check member names
       return (
-        row._original.members && row._original.members.some(name => name.includes(filter.value))
+        row._original.members &&
+        row._original.members.some(member =>
+          caseSensitiveIncludes(member[0], filterValue, caseSensitive)
+        )
       );
     } else {
       return true;
@@ -154,6 +160,7 @@ class RawSubmissionTable extends React.Component {
         }
       },
       minWidth: 170,
+      Filter: caseSensitiveTextFilter,
       filterMethod: this.groupNameFilter,
     },
     {

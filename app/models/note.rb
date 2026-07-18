@@ -6,14 +6,18 @@
 #  id            :integer          not null, primary key
 #  noteable_type :string           not null
 #  notes_message :text             not null
-#  created_at    :datetime
-#  updated_at    :datetime
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #  creator_id    :integer          not null
 #  noteable_id   :integer          not null
 #
 # Indexes
 #
 #  index_notes_on_creator_id  (creator_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (creator_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Note < ApplicationRecord

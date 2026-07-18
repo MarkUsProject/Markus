@@ -1,6 +1,7 @@
 import React from "react";
 import {getMarkingStates, selectFilter} from "./Helpers/table_helpers";
 
+import AssignmentGradesUploadModal from "./Modals/assignment_grades_upload_modal";
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 import LtiGradeModal from "./Modals/send_lti_grades_modal";
 import {createColumnHelper} from "@tanstack/react-table";
@@ -20,6 +21,7 @@ export class AssignmentSummaryTable extends React.Component {
       marking_states: markingStates,
       markingStateFilter: "all",
       showDownloadTestsModal: false,
+      showGradesUploadModal: false,
       showLtiGradeModal: false,
       lti_deployments: [],
       columnFilters: [{id: "inactive", value: false}],
@@ -359,6 +361,10 @@ export class AssignmentSummaryTable extends React.Component {
     this.setState({showDownloadTestsModal: true});
   };
 
+  onGradesUploadModal = () => {
+    this.setState({showGradesUploadModal: true});
+  };
+
   onLtiGradeModal = () => {
     this.setState({showLtiGradeModal: true});
   };
@@ -431,6 +437,10 @@ export class AssignmentSummaryTable extends React.Component {
                   {I18n.t("download")}
                 </button>
               </form>
+              <button type="button" name="upload" onClick={this.onGradesUploadModal}>
+                <i className="fa-solid fa-upload" aria-hidden="true" />
+                {I18n.t("upload")}
+              </button>
               {this.state.enable_test && (
                 <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
                   {I18n.t("download_the", {
@@ -461,6 +471,13 @@ export class AssignmentSummaryTable extends React.Component {
           getRowCanExpand={() => true}
           renderSubComponent={renderSubComponent}
           loading={this.state.loading}
+        />
+        <AssignmentGradesUploadModal
+          course_id={this.props.course_id}
+          assignment_id={this.props.assignment_id}
+          encodings={this.props.encodings || []}
+          isOpen={this.state.showGradesUploadModal}
+          onRequestClose={() => this.setState({showGradesUploadModal: false})}
         />
         <DownloadTestResultsModal
           course_id={this.props.course_id}

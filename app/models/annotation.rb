@@ -4,7 +4,7 @@
 # Table name: annotations
 #
 #  id                 :integer          not null, primary key
-#  annotation_number  :integer
+#  annotation_number  :integer          not null
 #  column_end         :integer
 #  column_start       :integer
 #  creator_type       :string
@@ -21,10 +21,12 @@
 #  x2                 :integer
 #  y1                 :integer
 #  y2                 :integer
-#  annotation_text_id :integer
+#  created_at         :datetime
+#  updated_at         :datetime
+#  annotation_text_id :integer          not null
 #  creator_id         :integer
-#  result_id          :integer
-#  submission_file_id :integer
+#  result_id          :integer          not null
+#  submission_file_id :integer          not null
 #
 # Indexes
 #
@@ -35,12 +37,13 @@
 #
 #  fk_annotations_annotation_texts  (annotation_text_id => annotation_texts.id)
 #  fk_annotations_submission_files  (submission_file_id => submission_files.id)
+#  fk_rails_...                     (result_id => results.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Annotation < ApplicationRecord
   belongs_to :submission_file
   belongs_to :annotation_text
-  belongs_to :creator, polymorphic: true
+  belongs_to :creator, polymorphic: true, optional: true
   belongs_to :result
 
   has_one :course, through: :submission_file
@@ -65,6 +68,12 @@ class Annotation < ApplicationRecord
 
   before_destroy :check_if_released
   after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
+
+  # The union of every annotation subclass's location fields, used to detect annotation
+  # params that belong to a different type than the one being created.
+  def self.location_fields
+    [TextAnnotation, ImageAnnotation, PdfAnnotation, HtmlAnnotation].flat_map(&:required_fields).uniq
+  end
 
   def modify_mark_with_deduction
     criterion = self.annotation_text.annotation_category.flexible_criterion
