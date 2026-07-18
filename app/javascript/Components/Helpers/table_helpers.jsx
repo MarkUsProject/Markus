@@ -127,10 +127,16 @@ export function caseSensitiveIncludes(haystack, needle, caseSensitive) {
  * which stores `{filterValue, caseSensitive}` as the filter value. Empty
  * filters match every row.
  */
-export function caseSensitiveStringFilterMethod(filter, row) {
-  const {filterValue, caseSensitive} = filter.value;
+// export function caseSensitiveStringFilterMethod(filter, row) {
+//   const {filterValue, caseSensitive} = filter.value;
+//   if (!filterValue) return true;
+//   return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
+// }
+export function caseSensitiveStringFilterMethod(row, columnId, filterValue) {
   if (!filterValue) return true;
-  return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
+  const {value, caseSensitive} = filterValue;
+  if (!value) return true;
+  return caseSensitiveIncludes(row.getValue(columnId), value, caseSensitive);
 }
 
 /**
