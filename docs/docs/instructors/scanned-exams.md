@@ -219,11 +219,12 @@ After your test is complete, you should scan all test papers (saving the scans a
 
 ### Finalizing submissions
 
-When you are done uploading all scanned files and fixing all QR code parsing errors, you are ready to finalize the scanned files for grading.
-This is done by *collecting* the submissions:
+As soon as all pages for a paper are accounted for (either via bulk upload or by fixing the last pending error for that paper), MarkUs will automatically collect the submission for that group. Grading for this paper can begin without any additional action.
 
-1. Go to the "Submissions" tab and select all rows.
-2. Press the "Collect Submissions" button (do this only *after* you are sure you've scanned all test papers and fixed all parsing errors).
+If a paper is still missing pages, or you need to recollect one after fixing an error on it *after* it was collected, you can still collect submissions manually:
+
+1. Go to the "Submissions" tab and select relevant rows.
+2. Press the "Collect Submissions" button. If a paper was previously collected, check "Recollect previously collected submissions?" in the dialog, or it will be silently skipped.
 
     ![Scanned Exam Collect All](/images/scanned-exam-collect-all.png)
 
