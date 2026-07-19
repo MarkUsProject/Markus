@@ -122,16 +122,11 @@ export function caseSensitiveIncludes(haystack, needle, caseSensitive) {
 }
 
 /**
- * filterMethod that matches `row[filter.id]` against the filter's search text
- * with the filter's own case sensitivity. Pair with `caseSensitiveTextFilter`,
- * which stores `{filterValue, caseSensitive}` as the filter value. Empty
- * filters match every row.
+ * TanStack v8 filterFn that matches a column's value against the filter's
+ * search text with the filter's own case sensitivity. Pair with
+ * `CaseSensitiveSearchFilter`, which stores `{value, caseSensitive}` as the
+ * filter value. Empty filters match every row.
  */
-// export function caseSensitiveStringFilterMethod(filter, row) {
-//   const {filterValue, caseSensitive} = filter.value;
-//   if (!filterValue) return true;
-//   return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
-// }
 export function caseSensitiveStringFilterMethod(row, columnId, filterValue) {
   if (!filterValue) return true;
   const {value, caseSensitive} = filterValue;
@@ -140,12 +135,12 @@ export function caseSensitiveStringFilterMethod(row, columnId, filterValue) {
 }
 
 /**
- * A Filter component pairing a text input with an "Aa" checkbox toggle for
- * case-sensitive matching. It owns both the search text and the toggle,
- * passing them to the table together via `onChange` as
+ * react-table v6 Filter component pairing a text input with an "Aa" checkbox
+ * toggle for case-sensitive matching. It owns both the search text and the
+ * toggle, passing them to the table together via `onChange` as
  * `{filterValue, caseSensitive}`. Matching defaults to case-insensitive. Pair
- * with `caseSensitiveStringFilterMethod`, or a custom filterMethod that reads
- * `filter.value.filterValue` and `filter.value.caseSensitive`.
+ * with a custom filterMethod that reads `filter.value.filterValue` and
+ * `filter.value.caseSensitive`.
  */
 export function caseSensitiveTextFilter({filter, onChange, column}) {
   const filterValue = filter ? filter.value.filterValue : "";
