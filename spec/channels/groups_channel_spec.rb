@@ -7,7 +7,7 @@ describe GroupsChannel do
     let(:user) { role.user }
 
     before do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id, assignment_id: assignment.id)
     end
 
@@ -25,7 +25,7 @@ describe GroupsChannel do
     let(:user) { role.user }
 
     before do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id, assignment_id: assignment.id)
     end
 
@@ -40,7 +40,7 @@ describe GroupsChannel do
     let(:user) { role.user }
 
     before do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id, assignment_id: assignment.id)
     end
 
@@ -54,7 +54,7 @@ describe GroupsChannel do
     let(:user) { role.user }
 
     before do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id, assignment_id: assignment.id)
     end
 

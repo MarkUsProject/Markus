@@ -5,7 +5,7 @@ describe ExamTemplatesChannel do
     let!(:user) { role.user }
 
     before do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id)
     end
 
@@ -30,7 +30,7 @@ describe ExamTemplatesChannel do
     let!(:user) { role.user }
 
     before do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id)
     end
 
@@ -46,13 +46,13 @@ describe ExamTemplatesChannel do
     let!(:user) { role.user }
 
     it 'should not subscribe to the channel for the course it cannot access' do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course.id)
       expect(subscription).to be_rejected
     end
 
     it 'should subscribe to and have a stream for the channel for the course it can access' do
-      stub_connection(current_user: user)
+      stub_connection(current_user: user, real_user: user)
       subscribe(course_id: course2.id)
       expect(subscription).to be_confirmed
       expect(subscription).to have_stream_for(user)
