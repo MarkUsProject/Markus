@@ -94,7 +94,7 @@ class User < ApplicationRecord
       # In general, the external password validation program should exit with 0 for success
       # and exit with any other integer for failure.
       validate_script = auth_type == AUTHENTICATE_LOCAL ? Settings.validate_file : Settings.remote_validate_file
-      pipe = IO.popen("'#{validate_script}'", 'w+') # quotes to avoid choking on spaces
+      pipe = IO.popen([validate_script.to_s], 'w+') # array form avoids invoking a shell
       to_stdin = [login, password, ip].compact.join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
