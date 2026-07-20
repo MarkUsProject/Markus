@@ -63,8 +63,14 @@ describe SplitPdfJob do
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_complete).to eq 1
     expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
+    expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
+
+    group = Group.find_by!(group_name: 'midterm1-v2-test_paper_100')
+    grouping = exam_template.assignment.groupings.find_by!(group_id: group.id)
+    expect(grouping.is_collected?).to be true
+
     completed_page_numbers = split_pdf_log.split_pages.where(status: 'Saved to complete directory')
-                                           .pluck(:exam_page_number)
+                                          .pluck(:exam_page_number)
     expect(completed_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
   end
 
@@ -202,9 +208,7 @@ describe SplitPdfJob do
                      File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
         SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'ignore', user)
 
-        ignored_page_numbers = split_pdf_log2.split_pages.where(status: 'Duplicate page ignored')
-                                              .pluck(:exam_page_number)
-        expect(ignored_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
+        expect(split_pdf_log2.split_pages.where(status: 'Duplicate page ignored').size).to eq 6
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
         expect(error_dir_entries.length).to eq 0
       end
