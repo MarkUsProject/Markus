@@ -5,7 +5,7 @@ describe CollectSubmissionsChannel do
 
     context 'when a course is passed in on subscription' do
       before do
-        stub_connection(current_user: current_user)
+        stub_connection(current_user: current_user, real_user: current_user)
         subscribe course_id: instructor.course_id
       end
 
@@ -22,7 +22,7 @@ describe CollectSubmissionsChannel do
 
     context 'when a course is not passed in on subscription' do
       it 'should fail' do
-        stub_connection(current_user: current_user)
+        stub_connection(current_user: current_user, real_user: current_user)
         subscribe course_id: nil
         expect(subscription).to be_rejected
       end
@@ -30,7 +30,7 @@ describe CollectSubmissionsChannel do
 
     context 'when the course passed in, in conjunction with the current_user, don\'t identify a role' do
       it 'should fail' do
-        stub_connection(current_user: current_user)
+        stub_connection(current_user: current_user, real_user: current_user)
         subscribe course_id: -1
         expect(subscription).to be_rejected
       end
@@ -42,7 +42,7 @@ describe CollectSubmissionsChannel do
     let!(:current_user) { student.user }
 
     it 'should reject the subscription' do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
       subscribe course_id: student.course_id
       expect(subscription).to be_rejected
     end
