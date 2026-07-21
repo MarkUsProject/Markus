@@ -200,7 +200,10 @@ module Api
       assignment = record
       content = nil
       if params[:specs].is_a? ActionController::Parameters
-        content = params[:specs].permit!.to_h
+        # to_unsafe_h is used to bind arbitrary JSON to content.
+        # The JSON validation currently occurs only on the autotesting server.
+        # TODO: perform JSON validation on the MarkUs side.
+        content = params[:specs].to_unsafe_h
       elsif params[:specs].is_a? String
         begin
           content = JSON.parse params[:specs]
