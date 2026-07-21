@@ -30,6 +30,7 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Prevented grader assignment and unassignment operations from modifying groupings belonging to other assignments (#8072)
 - Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
 - Fixed broken checkbox in the header of the selection column for tables with row selection enabled. (#8037)
