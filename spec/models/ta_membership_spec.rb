@@ -12,12 +12,11 @@ describe TaMembership do
     expect(create(:ta_membership, role: create(:instructor))).to be_valid
   end
 
-  it 'does not allow admin roles to be graders' do
+  it 'allows admin roles as instructors' do
     grouping = create(:grouping)
     admin_role = create(:admin_role, course: grouping.assignment.course)
 
-    expect { create(:ta_membership, grouping: grouping, role: admin_role) }
-      .to raise_error(ActiveRecord::RecordInvalid)
+    expect(create(:ta_membership, grouping: grouping, role: admin_role)).to be_valid
   end
 
   it 'should not belong to an student' do

@@ -22,14 +22,14 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class TaMembership < Membership
-  validate :must_be_a_grader
+  validate :must_be_course_staff
 
   after_create { Repository.get_class.update_permissions }
   after_destroy { Repository.get_class.update_permissions }
 
-  def must_be_a_grader
-    if role && !role.is_a?(Ta) && !role.instance_of?(Instructor)
-      errors.add(:base, :not_grader)
+  def must_be_course_staff
+    if role && !role.is_a?(Ta) && !role.is_a?(Instructor)
+      errors.add(:base, :not_course_staff)
       false
     end
   end

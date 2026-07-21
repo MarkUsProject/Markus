@@ -14,13 +14,13 @@ nav_order: 3
 - TOC
 {:toc}
 
-## Setting up a Grader Account
+## Setting up a TA Account
 
-Anyone other than a course instructor who needs to grade student work must have a "Grader" account. For example, if a course has 4 TAs who will all grade work, you must set up 4 separate Grader accounts—one for each TA.
+Anyone other than a course instructor who needs to grade student work must have a "TA" account. For example, if a course has 4 TAs who will all grade work, you must set up 4 separate TA accounts, one for each TA.
 
-Course instructors do not require separate Grader accounts. They can be assigned directly to groups or marking criteria from an assignment's [Graders tab](assigning-graders.md), which can be useful for distributing and tracking marking work.
+Course instructors do not require separate TA accounts. They can be assigned directly to groups or marking criteria from an assignment's [Graders tab](assigning-graders.md), which can be useful for distributing and tracking marking work.
 
-For information on setting up a "Grader" account please see "[Grader Accounts](../users.md#grader-accounts)".
+For information on setting up a "TA" account please see "[TA Accounts](../users.md#grader-accounts)".
 
 ## Submissions Table
 

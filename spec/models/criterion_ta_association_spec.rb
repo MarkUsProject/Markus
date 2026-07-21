@@ -26,13 +26,12 @@ describe CriterionTaAssociation do
       expect(association.errors.of_kind?(:ta, :invalid)).to be true
     end
 
-    it 'does not allow admin roles to be graders' do
+    it 'allows admin roles as instructors' do
       criterion = create(:rubric_criterion)
       admin_role = create(:admin_role, course: criterion.assignment.course)
       association = build(:criterion_ta_association, criterion: criterion, ta: admin_role)
 
-      expect(association).not_to be_valid
-      expect(association.errors.of_kind?(:ta, :invalid)).to be true
+      expect(association).to be_valid
     end
   end
 

@@ -16,9 +16,9 @@ nav_order: 12
 
 ## Graders Tab
 
-The Graders tab can be used to assign graders to specific student groups and marking criteria. For assignments, both course graders and course instructors are available for assignment. Assigning an instructor can be useful for distributing and tracking marking work, but does not restrict the access they already have as an instructor.
+The Graders tab can be used to assign graders to specific student groups and marking criteria. For assignments, both course TAs and course instructors are available for assignment. Assigning an instructor can be useful for distributing and tracking marking work, but does not restrict the access they already have as an instructor.
 
-For marks spreadsheets, graders can be assigned to individual students, but instructors are not included as assignable graders.
+> 🗒️ **NOTE:** For marks spreadsheets, TAs can be assigned to individual students, but instructors are not included as assignable graders.
 
 To assign a grader, navigate to the "Graders" tab by clicking on Assignments -> Graders:
 
@@ -26,7 +26,7 @@ To assign a grader, navigate to the "Graders" tab by clicking on Assignments -> 
 
 ### Table Info
 
-When you arrive at the "Manage Graders" page you will see a table of assignable graders. For assignments, this table contains both graders and instructors:
+When you arrive at the "Manage Graders" page you will see a table of assignable graders. For assignments, this table contains both TAs and instructors:
 
 ![Graders Table](/images/graders-graders-table.png)
 
@@ -71,4 +71,4 @@ Graders can also be assigned to mark individual criteria from the "Criteria" tab
 
 ![Criteria](/images/graders-criteria.png)
 
-For course graders, this limits editing to their assigned criteria. They can still see all marks for the group unless "Only show assigned criteria to graders" is selected as well. Course instructors retain access to all criteria; assigning criteria to an instructor records the marking allocation and contributes to coverage tracking.
+For course TAs, this limits editing to their assigned criteria. They can still see all marks for the group unless "Only show assigned criteria to graders" is selected as well. Course instructors retain access to all criteria; assigning criteria to an instructor records the marking allocation and contributes to coverage tracking.
