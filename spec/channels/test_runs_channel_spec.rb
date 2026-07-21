@@ -24,7 +24,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when the student cannot run tests' do
@@ -44,7 +44,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when the ta cannot run tests' do
@@ -66,7 +66,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when the instructor cannot run tests' do
@@ -90,7 +90,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when course_id is nil' do

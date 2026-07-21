@@ -12,7 +12,10 @@ class AutomatedTestsController < ApplicationController
 
   def update
     assignment = Assignment.find(params[:assignment_id])
-    test_specs = params[:schema_form_data].permit!.to_h
+    # to_unsafe_h is used to bind arbitrary JSON to test_specs.
+    # The JSON validation currently occurs only on the autotesting server.
+    # TODO: perform JSON validation on the MarkUs side.
+    test_specs = params[:schema_form_data].to_unsafe_h
     begin
       assignment.update! assignment_params
     rescue StandardError => e
