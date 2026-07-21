@@ -120,6 +120,16 @@ describe Grouping do
         end
       end
 
+      it 'uses only TAs retained by assign_tas when calculating weights' do
+        student = create(:student, course: assignment.course)
+
+        Grouping.randomly_assign_tas(grouping_ids, [ta_ids.first, student.id], [1, 3], assignment)
+
+        groupings.each do |grouping|
+          expect(grouping.reload.tas).to contain_exactly(tas.first)
+        end
+      end
+
       it 'can randomly bulk assign TAs with weighting' do
         weightings = [3, 1]
         Grouping.randomly_assign_tas(grouping_ids, ta_ids, weightings, assignment)
