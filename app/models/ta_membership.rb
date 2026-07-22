@@ -28,7 +28,8 @@ class TaMembership < Membership
   after_destroy { Repository.get_class.update_permissions }
 
   def must_be_course_staff
-    if role && !role.is_a?(Ta) && !role.is_a?(Instructor)
+    # Use instance_of? to exclude AdminRole, which is a subclass of Instructor.
+    if role && !role.is_a?(Ta) && !role.instance_of?(Instructor)
       errors.add(:base, :not_course_staff)
       false
     end

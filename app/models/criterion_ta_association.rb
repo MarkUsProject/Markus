@@ -81,7 +81,8 @@ class CriterionTaAssociation < ApplicationRecord
   private
 
   def must_be_course_staff
-    errors.add(:ta, :invalid) if ta && !ta.is_a?(Ta) && !ta.is_a?(Instructor)
+    # Use instance_of? to exclude AdminRole, which is a subclass of Instructor.
+    errors.add(:ta, :invalid) if ta && !ta.is_a?(Ta) && !ta.instance_of?(Instructor)
   end
 
   def add_assignment_reference
