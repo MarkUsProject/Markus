@@ -87,7 +87,10 @@ class SplitPdfJob < ApplicationJob
           qr_file_location = File.join(raw_dir, "#{split_page_id}.jpg")
           img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
           img.destroy!
-          matches[i] = code_regex.match(RTesseract.new(qr_file_location).to_s)
+          # OCR occasionally inserts spurious whitespace (e.g. "midterm1" -> "midterm 1"); exam template
+          # names and generated codes never contain whitespace, so it's always safe to strip it here.
+          ocr_text = RTesseract.new(qr_file_location).to_s.gsub(/\s+/, '')
+          matches[i] = code_regex.match(ocr_text)
         end
       end
 
