@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab (#8074)
 - Improved the Assign Scans page: OCR suggestions now appear above the manual entry form and clicking one assigns the student directly, "Skip group" is now a button instead of a checkbox, the Members list is hidden when empty, and the progress bar shows "x of y assigned" (#8059)
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
 - Added a table showing incomplete papers and their missing page numbers when uploading exam scans (#8051)
