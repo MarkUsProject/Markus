@@ -30,6 +30,7 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
 - Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
 - Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
 - Fixed broken checkbox in the header of the selection column for tables with row selection enabled. (#8037)

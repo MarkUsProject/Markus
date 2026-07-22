@@ -161,6 +161,7 @@ class ExamScanErrorsTable extends React.Component {
     {
       Header: "Status",
       accessor: "status",
+      className: "-wrap",
       Cell: row => {
         if (row.value === "FIXED") {
           return row.value;
