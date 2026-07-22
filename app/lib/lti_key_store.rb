@@ -54,9 +54,17 @@ module LtiKeyStore
   end
 
   # Optional explicit override, e.g. Settings.lti.rotation.current_key = 'lti_key_20260101T000000Z.pem'
+  # Raises rather than silently falling back to the newest key: pinning is a
+  # deliberate operator action (typically compromise response), so quietly
+  # signing with a different key would defeat the point and hide the mistake.
   def explicit_current
     name = Settings.lti&.rotation&.current_key
-    name && File.join(key_dir, name)
+    return if name.nil?
+
+    path = File.join(key_dir, name)
+    raise "Pinned LTI signing key not found: #{path} (check Settings.lti.rotation.current_key)" unless File.exist?(path)
+
+    path
   end
 
   # Creation time encoded in the filename (UTC); falls back to mtime.
@@ -87,14 +95,18 @@ module LtiKeyStore
   end
 
   # Delete retired keys past the overlap window. A key is retired when its
-  # successor was created; the current signer (index 0) is never pruned.
+  # successor was created. Neither the newest key nor a key pinned via
+  # Settings.lti.rotation.current_key is ever pruned -- deleting the current
+  # signer would leave MarkUs unable to sign.
   def prune!
     overlap = Settings.lti.rotation.overlap_days.days
     paths = key_paths
+    pinned = explicit_current
     now = Time.now.utc
 
     paths.each_with_index.filter_map do |path, i|
       next if i.zero?
+      next if pinned && path == pinned
 
       age = now - created_at(paths[i - 1])
       next unless age > overlap
