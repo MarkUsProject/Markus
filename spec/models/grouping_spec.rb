@@ -243,6 +243,17 @@ describe Grouping do
           grouping_ids.zip(ta_ids.cycle)
         end
       end
+
+      it 'only assigns groupings from the given assignment' do
+        other_grouping = create(:grouping, assignment: create(:assignment))
+
+        Grouping.assign_tas([grouping_ids.first, other_grouping.id], ta_ids.first, assignment) do |ids, role_ids|
+          ids.product(role_ids)
+        end
+
+        expect(groupings.first.reload.tas).to contain_exactly(tas.first)
+        expect(other_grouping.reload.tas).to be_empty
+      end
     end
 
     describe '.unassign_tas' do
@@ -260,6 +271,22 @@ describe Grouping do
           grouping.reload
           expect(grouping.tas).to be_empty
         end
+      end
+
+      it 'only unassigns memberships from the given assignment' do
+        membership = create(:ta_membership, grouping: groupings.first, role: tas.first)
+        other_assignment = create(:assignment)
+        other_grouping = create(:grouping, assignment: other_assignment)
+        other_membership = create(:ta_membership, grouping: other_grouping)
+
+        Grouping.unassign_tas(
+          [membership.id, other_membership.id],
+          [groupings.first.id, other_grouping.id],
+          assignment
+        )
+
+        expect { membership.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(other_membership.reload).to be_present
       end
 
       it 'updates criteria coverage counts after bulk unassign TAs' do

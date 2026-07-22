@@ -192,7 +192,7 @@ class Grouping < ApplicationRecord
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).ids
-    grouping_ids = Grouping.where(id: grouping_ids).ids
+    grouping_ids = assignment.groupings.where(id: grouping_ids).ids
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
                       .where(grouping_id: grouping_ids, role_id: ta_ids)
@@ -223,8 +223,9 @@ class Grouping < ApplicationRecord
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
+    grouping_ids = assignment.groupings.where(id: grouping_ids).ids
     Repository.get_class.update_permissions_after do
-      TaMembership.where(id: ta_membership_ids).delete_all
+      TaMembership.where(id: ta_membership_ids, grouping_id: grouping_ids).delete_all
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
