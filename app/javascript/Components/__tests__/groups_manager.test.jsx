@@ -27,6 +27,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
 const groupMock = [
   {
+    _id: 22,
     group_name: "c6scriab",
     inactive: false,
     instructor_approved: true,
@@ -47,6 +48,7 @@ const groupMock = [
     section: "",
   },
   {
+    _id: 16,
     group_name: "group2",
     inactive: false,
     instructor_approved: true,
@@ -70,13 +72,38 @@ const groupMock = [
       weeks: 0,
     },
   },
+  {
+    _id: 17,
+    group_name: "group3",
+    inactive: false,
+    instructor_approved: true,
+    members: [
+      {
+        0: "student2",
+        1: "inviter",
+        2: false,
+        display_label: "(inviter)",
+      },
+    ],
+    section: "",
+    extension: {
+      apply_penalty: false,
+      days: 1,
+      grouping_id: 17,
+      hours: 0,
+      id: 52,
+      minutes: 0,
+      note: "",
+      weeks: 0,
+    },
+  },
 ];
 const studentMock = [
   {
     assigned: true,
     first_name: "coolStudent",
     hidden: false,
-    id: 8,
+    _id: 8,
     last_name: "Alberic",
     user_name: "student1",
   },
@@ -88,7 +115,6 @@ beforeEach(() => {
 });
 
 describe("GroupsManager", () => {
-  let filter_method = null;
   let wrapper = React.createRef();
 
   beforeEach(async () => {
@@ -112,9 +138,7 @@ describe("GroupsManager", () => {
       times: ["weeks", "days", "hours", "minutes"],
     };
     render(<GroupsManager {...props} ref={wrapper} />);
-    // wait for page to load and render content
-    await screen.findByText("abcd").catch(err => err);
-    // to view screen render: screen.debug(undefined, 300000)
+    await screen.findByText("c6scriab");
   });
 
   describe("websocket updates", () => {
@@ -178,10 +202,14 @@ describe("GroupsManager", () => {
   });
 
   describe("DueDateExtensions", () => {
-    beforeEach(() => {
-      filter_method =
-        wrapper.current.groupsTable.wrapped.checkboxTable.props.columns[5].filterMethod;
-    });
+    const findExtensionFilter = () =>
+      screen
+        .getAllByRole("combobox")
+        .find(select =>
+          Array.from(select.options).some(
+            option => option.value === I18n.t("groups.groups_without_extension")
+          )
+        );
 
     it("append (late submissions accepted) to assignments with extensions", async () => {
       const groupWithExtension = groupMock[1];
@@ -191,55 +219,40 @@ describe("GroupsManager", () => {
       expect(await screen.getByRole("link", {name: searchTerm})).toBeInTheDocument();
     });
 
-    it("returns true when the selected value is all", () => {
-      expect(filter_method({value: "all"})).toEqual(true);
+    it("shows all groups when extension filter is All", () => {
+      expect(screen.getByText("c6scriab")).toBeInTheDocument();
+      expect(screen.getByText("group2")).toBeInTheDocument();
+      expect(screen.getByText("group3")).toBeInTheDocument();
     });
 
-    describe("withExtension: false", () => {
-      it("returns true when assignments without an extension are present", () => {
-        const rowMock = {_original: {extension: {}}};
-        const filterOptionsMock = JSON.stringify({withExtension: false});
-        expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(true);
+    it("filters to groups without an extension", () => {
+      fireEvent.change(findExtensionFilter(), {
+        target: {value: I18n.t("groups.groups_without_extension")},
       });
-      it("returns false when assignments with an extension are present", () => {
-        const rowMock = {_original: {extension: {hours: 1}}};
-        const filterOptionsMock = JSON.stringify({withExtension: false});
-        expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-      });
+
+      expect(screen.getByText("c6scriab")).toBeInTheDocument();
+      expect(screen.queryByText("group2")).not.toBeInTheDocument();
+      expect(screen.queryByText("group3")).not.toBeInTheDocument();
     });
 
-    describe("withExtension: true", () => {
-      describe("withLateSubmission: true", () => {
-        it("returns true when assignments have a late submission rule applied", () => {
-          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({withExtension: true, withLateSubmission: true});
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(true);
-        });
-        it("returns false when assignments are missing an extension", () => {
-          const rowMock = {_original: {extension: {apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({withExtension: true, withLateSubmission: true});
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-        });
+    it("filters to groups with late submission extensions", () => {
+      fireEvent.change(findExtensionFilter(), {
+        target: {value: I18n.t("groups.groups_with_extension.with_late_submission")},
       });
-      describe("withLateSubmission: false", () => {
-        it("returns true when assignments are missing an extension", () => {
-          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({
-            withExtension: true,
-            withLateSubmission: false,
-          });
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-        });
 
-        it("returns false when assignments have a late submission rule applied", () => {
-          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({
-            withExtension: true,
-            withLateSubmission: false,
-          });
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-        });
+      expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+      expect(screen.getByText("group2")).toBeInTheDocument();
+      expect(screen.queryByText("group3")).not.toBeInTheDocument();
+    });
+
+    it("filters to groups with extensions without late submission", () => {
+      fireEvent.change(findExtensionFilter(), {
+        target: {value: I18n.t("groups.groups_with_extension.without_late_submission")},
       });
+
+      expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+      expect(screen.queryByText("group2")).not.toBeInTheDocument();
+      expect(screen.getByText("group3")).toBeInTheDocument();
     });
   });
 });
