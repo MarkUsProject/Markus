@@ -75,6 +75,23 @@ describe LtiKeyStore do
         expect(LtiKeyStore.current_key.to_pem).to eq(pinned.to_pem)
       end
     end
+
+    context 'when the pinned key does not exist' do
+      it 'raises an error naming the missing file' do
+        write_key(1.day.ago)
+        allow(Settings.lti.rotation).to receive(:current_key).and_return('lti_key_nonexistent.pem')
+
+        expect { LtiKeyStore.current_key }.to raise_error(/lti_key_nonexistent\.pem/)
+      end
+
+      it 'does not silently fall back to the newest key' do
+        newest = OpenSSL::PKey::RSA.new(2048)
+        write_key(1.day.ago, key: newest)
+        allow(Settings.lti.rotation).to receive(:current_key).and_return('lti_key_nonexistent.pem')
+
+        expect { LtiKeyStore.current_key }.to raise_error(/Pinned LTI signing key not found/)
+      end
+    end
   end
 
   describe '.public_jwks' do
@@ -217,6 +234,27 @@ describe LtiKeyStore do
 
       LtiKeyStore.prune!
       expect { LtiKeyStore.prune! }.not_to(change { LtiKeyStore.key_paths.length })
+    end
+
+    it 'never prunes the pinned key, even when newer keys exist' do
+      pinned_path = write_key(60.days.ago)
+      write_key(30.days.ago)
+      write_key(1.day.ago)
+      allow(Settings.lti.rotation).to receive(:current_key).and_return(File.basename(pinned_path))
+
+      LtiKeyStore.prune!
+      expect(LtiKeyStore.key_paths).to include(pinned_path)
+    end
+
+    it 'can still sign after pruning when an older key is pinned' do
+      pinned = OpenSSL::PKey::RSA.new(2048)
+      pinned_path = write_key(60.days.ago, key: pinned)
+      write_key(30.days.ago)
+      write_key(1.day.ago)
+      allow(Settings.lti.rotation).to receive(:current_key).and_return(File.basename(pinned_path))
+
+      LtiKeyStore.prune!
+      expect(LtiKeyStore.current_key.to_pem).to eq(pinned.to_pem)
     end
   end
 

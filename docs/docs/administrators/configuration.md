@@ -313,7 +313,7 @@ lti:
     max_age_days: # rotate the current key once it is older than this many days
     overlap_days: # keep a rotated-out key published for this many days before deleting it
     key_dir: # (optional) absolute path to the directory holding the key files (if null, a subdirectory under the default_root_path will be used)
-    current_key: # (optional) file name of a specific key to sign with, overriding the default of signing with the newest key
+    current_key: # (optional) file name of a specific key to sign with, overriding the default of signing with the newest key (the file must exist in the key directory)
 ```
 
 When `enabled` is true, the `LtiKeyMaintenanceJob` runs daily. It generates a new key once the current one is older than `max_age_days`, and deletes any key that has been rotated out for longer than `overlap_days`. The current signing key is never deleted.
