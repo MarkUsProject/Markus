@@ -13,9 +13,17 @@ class GenerateJob < ApplicationJob
           qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
           qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
           alignment = page_num.even? ? :right : :left
-          render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false)
-          draw_text(qrcode_content,
-                    at: [alignment == :left ? 140 : bounds.width - 140 - qrcode_content.length * 6, bounds.height - 30])
+          qr_dot_size = 3.0
+          qr_margin_modules = 4
+          qr_extent = (qrcode.modules.length + 2 * qr_margin_modules) * qr_dot_size
+          text_gap = 6
+          render_qr_code(qrcode, align: alignment, dot: qr_dot_size, stroke: false)
+          text_x = if alignment == :left
+                     qr_extent + text_gap
+                   else
+                     bounds.width - qr_extent - text_gap - qrcode_content.length * 6
+                   end
+          draw_text(qrcode_content, at: [text_x, bounds.height - 30])
         end
       end
       combine_pdf_qr = CombinePDF.parse(pdf.render)
