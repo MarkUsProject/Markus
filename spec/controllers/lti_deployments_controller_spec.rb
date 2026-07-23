@@ -102,6 +102,16 @@ describe LtiDeploymentsController do
         lti_deployment.reload
         expect(lti_deployment.resource_link_id).to eq(test_rlid)
       end
+
+      it 'populates the course start date from the term' do
+        expect(Course.find_by(name: expected_name).start_at).to eq(Time.zone.local(2026, 9, 1))
+      end
+
+      it 'populates the course end date from the term' do
+        # Column is timestamp(6): end_of_day nanoseconds are truncated to microseconds on write
+        expect(Course.find_by(name: expected_name).end_at)
+          .to be_within(1.second).of(Time.zone.local(2026, 12, 31).end_of_day)
+      end
     end
 
     context 'with an SCS term' do
@@ -130,6 +140,30 @@ describe LtiDeploymentsController do
         }
         expect(Course.find_by(name: 'CSC108-DEFAULT-TERM')).not_to be_nil
       end
+
+      it 'creates the course with unset dates' do
+        post_as instructor, :create_course, params: {
+          id: lti_deployment.id,
+          name: 'csc108',
+          display_name: 'CSC108'
+        }
+        course = Course.find_by(name: 'CSC108-DEFAULT-TERM')
+        expect([course.start_at, course.end_at]).to eq([nil, nil])
+      end
+    end
+
+    context 'when the adapter file does not implement get_course_dates' do
+      before do
+        allow(LtiConfig).to receive(:respond_to?).and_call_original
+        allow(LtiConfig).to receive(:respond_to?).with(:get_course_dates).and_return(false)
+        session[:lti_deployment_id] = lti_deployment.id
+        post_as instructor, :create_course, params: course_params
+      end
+
+      it 'creates the course with unset dates' do
+        course = Course.find_by(name: expected_name)
+        expect([course.start_at, course.end_at]).to eq([nil, nil])
+      end
     end
 
     context 'as an admin user' do
@@ -150,6 +184,10 @@ describe LtiDeploymentsController do
         course = Course.find_by(name: expected_name)
         expect(Role.find_by(user: admin_user, course: course, type: 'AdminRole')).not_to be_nil
       end
+
+      it 'populates the course dates from the term' do
+        expect(Course.find_by(name: expected_name).start_at).to eq(Time.zone.local(2026, 9, 1))
+      end
     end
 
     context 'when a course already exists' do
@@ -166,6 +204,12 @@ describe LtiDeploymentsController do
       it 'does redirect to choose_course' do
         post_as instructor, :create_course, params: course_params
         expect(response).to have_http_status(:found)
+      end
+
+      it 'leaves the existing course dates untouched' do
+        post_as instructor, :create_course, params: course_params
+        course = Course.find_by(name: expected_name)
+        expect([course.start_at, course.end_at]).to eq([nil, nil])
       end
     end
 
