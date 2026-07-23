@@ -349,6 +349,7 @@ class SplitPdfJob < ApplicationJob
         repo.reload_non_bare_repo  # Unclear why, but this is needed to prevent a "bare index" error for new groups
         repo.commit(txn)
       end
+      exam_template.collect_if_complete(grouping)
     end
     num_complete
   end

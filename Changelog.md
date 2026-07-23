@@ -9,6 +9,7 @@
 
 ### ✨ New features and improvements
 - Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
+- Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
 - Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
 - Improved the Assign Scans page: OCR suggestions now appear above the manual entry form and clicking one assigns the student directly, "Skip group" is now a button instead of a checkbox, the Members list is hidden when empty, and the progress bar shows "x of y assigned" (#8059)
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
