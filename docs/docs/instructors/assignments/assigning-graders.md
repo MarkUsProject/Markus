@@ -16,7 +16,9 @@ nav_order: 12
 
 ## Graders Tab
 
-The graders tab can be used to assign graders to specific students. Once you assign a grader to a student, they will be able to perform all the same actions as the instructor account (including releasing marks). However, they may only perform these actions on students that have been assigned to them.
+The Graders tab can be used to assign graders to specific student groups and marking criteria. For assignments, both course TAs and course instructors are available for assignment. Assigning an instructor can be useful for distributing and tracking marking work, but does not restrict the access they already have as an instructor.
+
+> 🗒️ **NOTE:** For marks spreadsheets, TAs can be assigned to individual students, but instructors are not included as assignable graders.
 
 To assign a grader, navigate to the "Graders" tab by clicking on Assignments -> Graders:
 
@@ -24,42 +26,42 @@ To assign a grader, navigate to the "Graders" tab by clicking on Assignments -> 
 
 ### Table Info
 
-When you arrive at the "Manage Graders" page you will see a table of graders:
+When you arrive at the "Manage Graders" page you will see a table of assignable graders. For assignments, this table contains both TAs and instructors:
 
 ![Graders Table](/images/graders-graders-table.png)
 
 - **User Name:** The username of the grader.
 - **Name:** The full name of the grader.
-- **Students:** The number of students currently assigned to that grader for this spreadsheet.
+- **Groups:** The number of student groups currently assigned to that grader for the assignment.
 
-You will also see a table of students:
+You will also see a table of student groups:
 
 ![Students Table](/images/graders-student-table.png)
 
-- **Section:** The lecture section the student is in.
-- **User Name:** The username of the student.
-- **Name:** The full name of the student.
-- **Graders:** The user names of the graders currently assigned to that student.
+- **Section:** The lecture section associated with the group, when sections are configured.
+- **Group Name:** The name of the student group. For individual assignments, this is the student's username.
+- **Graders:** The usernames of the graders currently assigned to that group.
+- **Coverage:** When graders are assigned to individual criteria, the number of criteria covered by the group's assigned graders.
 
 ### Assigning
 
-There are three actions you may perform in terms of assigning/ unassigning:
+There are three actions you may perform when assigning or unassigning graders:
 
-**1.  Assign grader(s):** To perform this action you must select a grader from the grader table and at least one student from the student table by clicking on their check boxes. Then, click the "Assign grader(s)" button:
+**1. Assign grader(s):** To perform this action you must select a grader from the grader table and at least one group from the groups table by clicking on their checkboxes. Then, click the "Assign grader(s)" button:
 
 ![Assign Graders](/images/graders-assign.png)
 
-Once this is done, the name of the grader will appear in the "Graders" column of the students who they will be able to mark:
+Once this is done, the name of the grader will appear in the "Graders" column of the selected groups:
 
 ![Assigned Grader](/images/graders-assigned.png)
 
-**2. Randomly assign grader(s):** This does the same thing as "Assign grader(s)" but it randomly assigns the graders (as opposed to you choosing who goes where). If multiple graders are selected the randomizer will assign the graders students as evenly as possible by default (e.g. 3 graders, 10 students, each graders will receive 3, 3, and 4 students respectively).
+**2. Randomly assign grader(s):** This does the same thing as "Assign grader(s)" but randomly distributes the selected groups. If multiple graders are selected, the randomizer assigns the groups as evenly as possible by default (for example, with 3 graders and 10 groups, the graders receive 3, 3, and 4 groups respectively).
 
-Upon clicking the button, a modal will pop up prompting you to assign weightings to each grader. Once this is submitted, the randomizer will assign graders so that they have as close to the ratio's specified as possible (i.e. 3 graders, 10 students, with weightings 1, 2, 0.33 should result in a grader with 3 students, a grader with 6 students, and a grader with 1 student).
+Upon clicking the button, a modal will prompt you to assign a weighting to each grader. Once submitted, the randomizer assigns groups as close to the specified ratio as possible (for example, 3 graders and 10 groups with weightings 1, 2, and 0.33 should result in graders receiving approximately 3, 6, and 1 groups).
 
 ![Randomizer Modal](/images/assignment-randomizer-modal.png)
 
-**3. Unassign grader(s):**  This action will unassign graders that have already been assigned to students. To unassign a grader, you must select the student to which they are assigned, select the grader's row in the graders column and then click on the "Unassign grader(s)" button:
+**3. Unassign grader(s):** This action unassigns graders that have already been assigned to groups. Select the groups and graders, then click the "Unassign grader(s)" button:
 
 ![Unassign Graders](/images/graders-unassign.png)
 
@@ -69,4 +71,4 @@ Graders can also be assigned to mark individual criteria from the "Criteria" tab
 
 ![Criteria](/images/graders-criteria.png)
 
-This will make sure that a grader can only edit the criteria they have been assigned. However, the grader will still be able to see all marks for the student unless the "Only show assigned criteria to graders" is selected as well.
+For course TAs, this limits editing to their assigned criteria. They can still see all marks for the group unless "Only show assigned criteria to graders" is selected as well. Course instructors retain access to all criteria; assigning criteria to an instructor records the marking allocation and contributes to coverage tracking.
