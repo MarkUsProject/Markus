@@ -27,6 +27,7 @@
 - Add pagination to Admin Users table for performance (#7997)
 - Added support for all annotation types for POST /add_annotations (#8007)
 - Added GET /test_runs API route (#8055)
+- Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 
 ### 🐛 Bug fixes
 - Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
