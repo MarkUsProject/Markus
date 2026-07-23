@@ -97,7 +97,7 @@ export class FilterModal extends React.Component {
   };
 
   renderAssignedGradersOnlyToggle = () => {
-    if (this.context.role !== "Ta" || !this.props.can_manage_submissions) {
+    if (!["Instructor", "Ta"].includes(this.context.role) || !this.props.can_manage_submissions) {
       return null;
     }
     const assignedGradersOnly = this.props.filterData.assignedGradersOnly !== false;

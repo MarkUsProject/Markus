@@ -2,13 +2,16 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
+      <%# AdminRole is an Instructor subclass but cannot be assigned as a grader. %>
       makeAssignmentSummary(
         document.getElementById('statistics-react'),
         {
           course_id: <%= @current_course.id %>,
           assessment_id: <%= @assignment.id %>,
           is_instructor: <%= @current_role.instructor? %>,
-          can_view_assigned_submissions_only: <%= @current_role.ta? && allowed_to?(:manage_submissions?, @current_role) %>,
+          can_view_assigned_submissions_only: <%= @current_role.instance_of?(Instructor) ||
+                                                  (@current_role.ta? &&
+                                                   allowed_to?(:manage_submissions?, @current_role)) %>,
           initial_show_assigned_submissions_only: <%= @current_role.ta? %>,
           encodings: <%= raw @encodings.to_json %>
         }

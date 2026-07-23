@@ -68,7 +68,7 @@ From here you may:
     - **Tags**: You can select multiple tags (see [Tags](#tags)) to filter all submissions that have at least one of the specified tags associated with them.
     - **Section**: Filter submissions using the section of the associated group's inviter.
     - **Graders**: Instructors can select multiple graders to filter all submissions that have at least one of the specified graders assigned to them.
-    - **Submission Scope**: Graders with the "Manage submissions" permission can choose whether the "Next" and "Previous" buttons navigate through "My assigned submissions" or "All submissions". The "My assigned submissions" option is enabled by default. Graders without this permission continue to navigate only their assigned submissions.
+    - **Submission Scope**: Instructors and graders with the "Manage submissions" permission can choose whether the "Next" and "Previous" buttons navigate through "My assigned submissions" or "All submissions". Instructors start with "All submissions" selected, while graders start with "My assigned submissions" selected. Graders without this permission continue to navigate only their assigned submissions.
     - **Annotation**: Text that must be present in an annotation (see [Annotations](#annotations)) for the submission.
     - **Total Mark**: You can specify minimum and/or maximum total mark values to define a range and filter all submissions with total marks within the specified range (inclusive).
     - **Total Extra Marks**: You can specify minimum and/or maximum total extra marks values to define a range and filter all submissions with total extra  marks within the specified range (inclusive).
@@ -76,8 +76,6 @@ From here you may:
         - Select a criterion from the dropdown and click the "Add Criterion Filter" button. The criterion will show up on the list below.
         - Specify min and/or max values to define a range for that criterion.
         - Add more criteria if needed.
-    - **Navigation Scope**: Graders with the **Manage submissions** permission can use the **"Only assigned submissions"** checkbox to control which submissions the "Next" and "Previous" buttons navigate through. When checked, navigation stays within submissions assigned to the grader. When unchecked, navigation can move through all submissions for the assignment. Graders without this permission remain limited to their assigned submissions and do not see this option. Instructors continue to navigate all submissions.
-
 All options will be restored to their default states when the "Clear All" button is clicked.
 After the modal is closed, submissions navigable using the "Next" and "Previous" buttons from the
 Grading Bar will be filtered and ordered according to the specified options.

@@ -2026,6 +2026,33 @@ describe ResultsController do
       it_behaves_like 'ta and instructor #next_grouping with filters'
       it_behaves_like 'instructor and ta #next_grouping with different orderings'
 
+      context 'when the instructor is assigned as a grader' do
+        let(:instructor) { create(:instructor, course: grouping1.course) }
+
+        before do
+          grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+          grouping2.group.update!(group_name: "navigation-scope-2-#{grouping2.id}")
+          grouping3.group.update!(group_name: "navigation-scope-3-#{grouping3.id}")
+          create(:ta_membership, role: instructor, grouping: grouping1)
+          create(:ta_membership, role: instructor, grouping: grouping3)
+        end
+
+        it 'returns an unassigned grouping by default' do
+          get :next_grouping, params: { course_id: grouping1.course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id, direction: 1 }
+
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+
+        it 'returns the next assigned grouping when assigned-only navigation is enabled' do
+          get :next_grouping, params: { course_id: grouping1.course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { assignedGradersOnly: true } }
+
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+      end
+
       context 'filter by tas' do
         let(:ta1) { create(:ta) }
         let(:ta2) { create(:ta) }
@@ -2080,6 +2107,27 @@ describe ResultsController do
       let(:groupings) { [grouping1, grouping2, grouping3] }
 
       before { groupings }
+
+      context 'when the instructor is assigned as a grader' do
+        let(:instructor) { create(:instructor, course: grouping1.course) }
+
+        before do
+          create(:ta_membership, role: instructor, grouping: grouping1)
+          create(:ta_membership, role: instructor, grouping: grouping3)
+        end
+
+        it 'returns only assigned groupings when assigned-only navigation is enabled' do
+          get :get_filtered_grouping_ids, params: {
+            course_id: grouping1.course.id,
+            id: grouping1.current_result.id,
+            filterData: { assignedGradersOnly: true }
+          }
+          returned_grouping_ids = response.parsed_body.pluck('grouping_id')
+
+          expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+          expect(returned_grouping_ids).not_to include(grouping2.id)
+        end
+      end
 
       it 'returns results ordered by group name by default' do
         get :get_filtered_grouping_ids, params: { course_id: course.id, id: grouping1.current_result.id }

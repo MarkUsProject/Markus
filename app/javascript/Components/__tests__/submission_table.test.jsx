@@ -96,8 +96,11 @@ describe("For the SubmissionTable's display of inactive groups", () => {
 });
 
 describe("For the SubmissionTable's display of assigned submissions", () => {
+  let component;
+  let groups_sample;
+
   beforeEach(async () => {
-    const groups_sample = [
+    groups_sample = [
       {
         _id: 1,
         max_mark: 21.0,
@@ -134,7 +137,7 @@ describe("For the SubmissionTable's display of assigned submissions", () => {
       }),
     });
 
-    render(
+    component = render(
       <SubmissionTable
         assignment_id={1}
         course_id={1}
@@ -175,6 +178,39 @@ describe("For the SubmissionTable's display of assigned submissions", () => {
     fireEvent.click(screen.getByTestId("show_assigned_submissions_only"));
     expect(screen.getByText("assigned_group")).toBeInTheDocument();
     expect(screen.queryByText("unassigned_group")).not.toBeInTheDocument();
+  });
+
+  it("initially displays all submissions when assigned-only is disabled", async () => {
+    component.unmount();
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        groupings: groups_sample,
+        sections: {},
+      }),
+    });
+
+    render(
+      <SubmissionTable
+        assignment_id={1}
+        course_id={1}
+        show_grace_tokens={true}
+        show_sections={true}
+        is_timed={false}
+        is_scanned_exam={false}
+        release_with_urls={false}
+        can_collect={true}
+        can_run_tests={false}
+        can_view_assigned_submissions_only={true}
+        initial_show_assigned_submissions_only={false}
+        defaultFiltered={[{id: "", value: ""}]}
+      />
+    );
+    await screen.findByText("unassigned_group");
+
+    expect(screen.getByTestId("show_assigned_submissions_only")).not.toBeChecked();
+    expect(screen.getByText("assigned_group")).toBeInTheDocument();
   });
 });
 

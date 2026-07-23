@@ -27,10 +27,10 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
-const INITIAL_FILTER_MODAL_STATE = {
+const initialFilterModalState = role => ({
   ascending: true,
   orderBy: "group_name",
-  assignedGradersOnly: true,
+  assignedGradersOnly: role === "Ta",
   annotationText: "",
   tas: [],
   tags: [],
@@ -45,11 +45,12 @@ const INITIAL_FILTER_MODAL_STATE = {
     max: "",
   },
   criteria: {},
-};
+});
 
-class Result extends React.Component {
+export class Result extends React.Component {
   constructor(props) {
     super(props);
+    this.initialFilterModalState = initialFilterModalState(props.role);
 
     this.state = {
       annotation_categories: [],
@@ -63,7 +64,7 @@ class Result extends React.Component {
       result_id: props.result_id,
       grouping_id: props.grouping_id,
       can_release: false,
-      filterData: INITIAL_FILTER_MODAL_STATE,
+      filterData: this.initialFilterModalState,
       isCreateTagModalOpen: false,
       prefetchedIds: null, // Array of { result_id, grouping_id }
       prefetchedIndex: -1, // Current position in prefetched list
@@ -98,11 +99,12 @@ class Result extends React.Component {
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
 
-    this.refreshFilterData();
-    // Prefetch grouping IDs for client-side navigation (skip if already valid)
-    if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
-      this.fetchGroupingIds();
-    }
+    this.refreshFilterData(() => {
+      // Prefetch grouping IDs for client-side navigation (skip if already valid)
+      if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
+        this.fetchGroupingIds();
+      }
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -161,7 +163,7 @@ class Result extends React.Component {
 
   syncSection = (sectionSelection, sectionData) => {
     if (!sectionData.includes(sectionSelection) && sectionSelection !== "") {
-      this.updateFilterData({section: INITIAL_FILTER_MODAL_STATE["section"]});
+      this.updateFilterData({section: this.initialFilterModalState["section"]});
     }
   };
 
@@ -919,21 +921,44 @@ class Result extends React.Component {
     });
   };
 
-  refreshFilterData = () => {
-    const storedFilter = localStorage.getItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`
-    );
+  filterStorageKey = () => `${this.props.user_id}_${this.state.assignment_id}_filterData`;
+
+  refreshFilterData = onComplete => {
+    const filterStorageKey = this.filterStorageKey();
+    const submissionScopeVersionKey = `${filterStorageKey}_submissionScopeVersion`;
+    const initializeInstructorSubmissionScope =
+      this.props.role === "Instructor" && localStorage.getItem(submissionScopeVersionKey) !== "1";
+    const storedFilter = localStorage.getItem(filterStorageKey);
     let parsed_filter;
     try {
       parsed_filter = JSON.parse(storedFilter);
     } catch (e) {
       parsed_filter = null;
     }
+    let filterData;
     if (parsed_filter) {
-      this.setState({filterData: parsed_filter});
+      if (initializeInstructorSubmissionScope) {
+        parsed_filter = {...parsed_filter, assignedGradersOnly: false};
+      }
+      filterData = parsed_filter;
     } else {
-      this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
+      filterData = this.initialFilterModalState;
     }
+    if (!parsed_filter || initializeInstructorSubmissionScope) {
+      localStorage.setItem(filterStorageKey, JSON.stringify(filterData));
+    }
+    if (initializeInstructorSubmissionScope) {
+      localStorage.setItem(submissionScopeVersionKey, "1");
+    }
+
+    const filterChanged = JSON.stringify(this.state.filterData) !== JSON.stringify(filterData);
+    this.setState(
+      {
+        filterData,
+        ...(filterChanged ? {prefetchedIds: null, prefetchedIndex: -1} : {}),
+      },
+      onComplete
+    );
   };
 
   updateFilterData = new_filters => {
@@ -941,23 +966,17 @@ class Result extends React.Component {
     this.setState({filterData: filters, prefetchedIds: null, prefetchedIndex: -1}, () => {
       this.fetchGroupingIds();
     });
-    localStorage.setItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(filters)
-    );
+    localStorage.setItem(this.filterStorageKey(), JSON.stringify(filters));
   };
 
   resetFilterData = () => {
     this.setState(
-      {filterData: INITIAL_FILTER_MODAL_STATE, prefetchedIds: null, prefetchedIndex: -1},
+      {filterData: this.initialFilterModalState, prefetchedIds: null, prefetchedIndex: -1},
       () => {
         this.fetchGroupingIds();
       }
     );
-    localStorage.setItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(INITIAL_FILTER_MODAL_STATE)
-    );
+    localStorage.setItem(this.filterStorageKey(), JSON.stringify(this.initialFilterModalState));
   };
 
   handleCreateTagButtonClick = () => {

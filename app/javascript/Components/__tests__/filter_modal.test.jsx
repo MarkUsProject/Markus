@@ -413,6 +413,38 @@ describe("FilterModal", () => {
         expect(props.updateFilterData).toHaveBeenCalled();
       });
     });
+
+    describe("Submission scope", () => {
+      it("should not render the submission scope options without manage submissions permission", () => {
+        expect(screen.queryByTestId("assigned-graders-only")).not.toBeInTheDocument();
+      });
+
+      it("should render submission scope radio buttons with all submissions selected by default", () => {
+        component.unmount();
+        props.can_manage_submissions = true;
+        props.filterData.assignedGradersOnly = false;
+        renderInResultContext(<FilterModal {...props} />, {role: "Instructor"});
+
+        const myAssignedSubmissions = screen.getByLabelText(
+          I18n.t("results.filters.my_assigned_submissions")
+        );
+        const allSubmissions = screen.getByLabelText(I18n.t("results.filters.all_submissions"));
+
+        expect(myAssignedSubmissions).not.toBeChecked();
+        expect(allSubmissions).toBeChecked();
+      });
+
+      it("should update filter data when my assigned submissions is selected", () => {
+        component.unmount();
+        props.can_manage_submissions = true;
+        props.filterData.assignedGradersOnly = false;
+        renderInResultContext(<FilterModal {...props} />, {role: "Instructor"});
+
+        fireEvent.click(screen.getByLabelText(I18n.t("results.filters.my_assigned_submissions")));
+
+        expect(props.updateFilterData).toHaveBeenCalledWith({assignedGradersOnly: true});
+      });
+    });
   });
 
   describe("A Ta", () => {
