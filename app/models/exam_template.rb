@@ -317,11 +317,7 @@ class ExamTemplate < ApplicationRecord
     return if grouping.is_collected?
     return unless paper_complete?(grouping.group)
     group = grouping.group
-    begin
-      Repository.get_class.access(group.repo_path) { |_repo| nil }
-    rescue StandardError
-      group.build_repository
-    end
+    group.build_repository unless Repository.get_class.repository_exists?(group.repo_path)
     SubmissionsJob.perform_now([grouping], apply_late_penalty: false)
   end
 

@@ -263,8 +263,8 @@ describe ExamTemplatesController do
       end
 
       it 'does not collect the submission when the paper is still incomplete' do
-        group = Group.find_by(group_name: "#{exam_template.name}_paper_#{copy_number}")
-        grouping = exam_template.assignment.groupings.find_by(group_id: group.id)
+        group = Group.find_by!(group_name: "#{exam_template.name}_paper_#{copy_number}")
+        grouping = exam_template.assignment.groupings.find_by!(group_id: group.id)
         expect(grouping.is_collected?).to be false
       end
 
@@ -354,7 +354,7 @@ describe ExamTemplatesController do
  create(:group, group_name: "#{exam_template.name}_paper_#{copy_number}",
                 repo_name: "#{exam_template.name}_paper_#{copy_number}", course: course)
       end
-      let(:grouping) { create(:grouping, group: group, assignment: exam_template.assignment) }
+      let!(:grouping) { create(:grouping, group: group, assignment: exam_template.assignment) }
       let(:split_pdf_log) { create(:split_pdf_log, exam_template: exam_template) }
       let(:split_page) do
  create(:split_page, split_pdf_log: split_pdf_log, group: group, exam_page_number: page_number)
@@ -362,7 +362,6 @@ describe ExamTemplatesController do
       let(:split_page_id) { split_page.id }
 
       before do
-        grouping
         (2..6).each do |n|
           create(:split_page, split_pdf_log: split_pdf_log, group: group,
                               exam_page_number: n, status: 'Saved to incomplete directory')
