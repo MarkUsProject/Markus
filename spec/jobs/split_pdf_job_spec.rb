@@ -64,6 +64,14 @@ describe SplitPdfJob do
     expect(split_pdf_log.num_groups_in_complete).to eq 1
     expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
     expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
+
+    group = Group.find_by!(group_name: 'midterm1-v2-test_paper_100')
+    grouping = exam_template.assignment.groupings.find_by!(group_id: group.id)
+    expect(grouping.is_collected?).to be true
+
+    completed_page_numbers = split_pdf_log.split_pages.where(status: 'Saved to complete directory')
+                                          .pluck(:exam_page_number)
+    expect(completed_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
   end
 
   it 'correctly splits a PDF with one test paper with two pages upside-down' do
@@ -83,7 +91,9 @@ describe SplitPdfJob do
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_complete).to eq 1
     expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
-    expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
+    completed_page_numbers = split_pdf_log.split_pages.where(status: 'Saved to complete directory')
+                                           .pluck(:exam_page_number)
+    expect(completed_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
   end
 
   it 'correctly splits a PDF with one test paper with three pages having an unparseable QR code but parseable text' do
@@ -103,7 +113,9 @@ describe SplitPdfJob do
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_complete).to eq 1
     expect(split_pdf_log.num_pages_qr_scan_error).to eq 0
-    expect(split_pdf_log.split_pages.where(status: 'Saved to complete directory').count).to eq 6
+    completed_page_numbers = split_pdf_log.split_pages.where(status: 'Saved to complete directory')
+                                           .pluck(:exam_page_number)
+    expect(completed_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
   end
 
   it 'correctly splits a PDF with one test paper with cover page having an unparseable QR code' do
@@ -124,7 +136,9 @@ describe SplitPdfJob do
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1
     expect(split_pdf_log.num_pages_qr_scan_error).to eq 1
     expect(split_pdf_log.split_pages.where(status: 'ERROR: QR code not found').count).to eq 1
-    expect(split_pdf_log.split_pages.where(status: 'Saved to incomplete directory').count).to eq 5
+    incomplete_page_numbers = split_pdf_log.split_pages.where(status: 'Saved to incomplete directory')
+                                            .pluck(:exam_page_number)
+    expect(incomplete_page_numbers).to contain_exactly(2, 3, 4, 5, 6)
 
     # Check that error pages were saved correctly.
     error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
@@ -166,7 +180,9 @@ describe SplitPdfJob do
                      File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
         SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'error', user)
 
-        expect(split_pdf_log2.split_pages.where('status LIKE ?', '%already exists').size).to eq 6
+        error_page_numbers = split_pdf_log2.split_pages.where('status LIKE ?', '%already exists')
+                                            .pluck(:exam_page_number)
+        expect(error_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
         expect(error_dir_entries.length).to eq 6
       end
@@ -178,7 +194,9 @@ describe SplitPdfJob do
                      File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log2.id}.pdf")
         SplitPdfJob.perform_now(exam_template, '', split_pdf_log2, filename, instructor, 'overwrite', user)
 
-        expect(split_pdf_log2.split_pages.where('status LIKE ?', '%Overwritten%').size).to eq 6
+        overwritten_page_numbers = split_pdf_log2.split_pages.where('status LIKE ?', '%Overwritten%')
+                                                  .pluck(:exam_page_number)
+        expect(overwritten_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
         error_dir_entries = Dir.entries(File.join(exam_template.base_path, 'error')) - %w[. ..]
         expect(error_dir_entries.length).to eq 0
       end

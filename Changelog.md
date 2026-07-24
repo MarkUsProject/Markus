@@ -8,21 +8,19 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab (#8074)
+- Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
+- Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
+- Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
 - Improved the Assign Scans page: OCR suggestions now appear above the manual entry form and clicking one assigns the student directly, "Skip group" is now a button instead of a checkbox, the Members list is hidden when empty, and the progress bar shows "x of y assigned" (#8059)
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
 - Added a table showing incomplete papers and their missing page numbers when uploading exam scans (#8051)
 - Updated links to refer to new documentation website (#8049)
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
-- Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
-- Migrated `SummaryPanel` component to React Table V8 (#8019)
-- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
 - Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
 - Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
 - Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
 - Preserved PDF scroll position when switching between submissions while grading scanned exams (#8004)
-- Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET and PATCH /overall_comment API routes (#7963)
 - Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
@@ -31,6 +29,7 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
 - Prevented grader assignment and unassignment operations from modifying groupings belonging to other assignments (#8072)
 - Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
 - Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
@@ -49,6 +48,10 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
+- Migrated `SummaryPanel` component to React Table V8 (#8019)
+- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
+- Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
 - Resolved/ignored Brakeman warnings and added Brakeman to CI checks (#8066)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
 - Removed dead code in repository files (#8065)

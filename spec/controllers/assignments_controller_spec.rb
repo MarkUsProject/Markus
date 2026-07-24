@@ -1603,6 +1603,21 @@ describe AssignmentsController do
         end
       end
 
+      context 'with an instructor assigned as a grader' do
+        before do
+          @grader = create(:instructor, course: assignment.course)
+          Grouping.assign_all_tas([assignment.groupings.first], [@grader.id], assignment)
+          get_as role, :grade_distribution, params: params
+        end
+
+        it 'includes grading data for the instructor' do
+          labels = response.parsed_body['ta_data']['datasets'].pluck('label')
+
+          expect(response).to have_http_status(:ok)
+          expect(labels).to include(a_string_including(@grader.display_name))
+        end
+      end
+
       context 'with multiple TAs and memberships' do
         let(:ta2) { create(:ta) }
 

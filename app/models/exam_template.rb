@@ -254,6 +254,7 @@ class ExamTemplate < ApplicationRecord
 
         repo.commit(txn)
       end
+      collect_if_complete(grouping)
     end
   end
 
@@ -302,6 +303,22 @@ class ExamTemplate < ApplicationRecord
   # any changes to template divisions should be rejected once exams have been uploaded
   def exam_been_uploaded?
     self.split_pdf_logs.exists?
+  end
+
+  def missing_pages(group)
+    (1..num_pages).to_a - group.split_pages.pluck(:exam_page_number)
+  end
+
+  def paper_complete?(group)
+    missing_pages(group).empty?
+  end
+
+  def collect_if_complete(grouping)
+    return if grouping.is_collected?
+    return unless paper_complete?(grouping.group)
+    group = grouping.group
+    group.build_repository unless Repository.get_class.repository_exists?(group.repo_path)
+    SubmissionsJob.perform_now([grouping], apply_late_penalty: false)
   end
 
   private

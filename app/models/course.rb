@@ -34,6 +34,7 @@ class Course < ApplicationRecord
   has_many :roles
   has_many :instructors
   has_many :tas
+  has_many :course_staff, -> { where(type: %w[Instructor Ta]) }, class_name: 'Role', inverse_of: :course
   has_many :students
   has_many :marking_schemes
   has_many :tags, through: :roles
