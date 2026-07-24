@@ -1,5 +1,14 @@
 (function () {
   let intervalId;
+  let sessionExpired = false;
+
+  $(document).ajaxError((event, xhr) => {
+    if (xhr.status === 403) {
+      sessionExpired = true;
+      stopPolling();
+    }
+  });
+
   const domContentLoadedCB = () => {
     startPolling();
   };
@@ -27,7 +36,9 @@
       stopPolling();
     } else {
       checkTimeout();
-      startPolling();
+      if (!sessionExpired) {
+        startPolling();
+      }
     }
   });
 })();
