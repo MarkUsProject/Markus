@@ -262,6 +262,12 @@ describe ExamTemplatesController do
                           page_number: page_number }
       end
 
+      it 'does not collect the submission when the paper is still incomplete' do
+        group = Group.find_by!(group_name: "#{exam_template.name}_paper_#{copy_number}")
+        grouping = exam_template.assignment.groupings.find_by!(group_id: group.id)
+        expect(grouping.is_collected?).to be false
+      end
+
       context 'when the split page id does not exist' do
         let(:split_page_id) { -1 }
 
@@ -338,6 +344,60 @@ describe ExamTemplatesController do
           expect(flash[:error]).not_to be_empty
           expect(response.body).to eq("#{split_page_id}.pdf")
         end
+      end
+    end
+
+    describe '#fix_error completing a paper' do
+      let(:copy_number) { 1 }
+      let(:page_number) { 1 }
+      let(:group) do
+ create(:group, group_name: "#{exam_template.name}_paper_#{copy_number}",
+                repo_name: "#{exam_template.name}_paper_#{copy_number}", course: course)
+      end
+      let!(:grouping) { create(:grouping, group: group, assignment: exam_template.assignment) }
+      let(:split_pdf_log) { create(:split_pdf_log, exam_template: exam_template) }
+      let(:split_page) do
+ create(:split_page, split_pdf_log: split_pdf_log, group: group, exam_page_number: page_number)
+      end
+      let(:split_page_id) { split_page.id }
+
+      before do
+        (2..6).each do |n|
+          create(:split_page, split_pdf_log: split_pdf_log, group: group,
+                              exam_page_number: n, status: 'Saved to incomplete directory')
+        end
+
+        filename = "#{split_page_id}.pdf"
+        error_file = File.join(exam_template.base_path, 'error', filename)
+        complete_page = File.join(exam_template.base_path, 'complete', copy_number.to_s, page_number.to_s)
+        incomplete_page = File.join(exam_template.base_path, 'incomplete', copy_number.to_s, page_number.to_s)
+        incomplete_dir = File.join(exam_template.base_path, 'incomplete', copy_number.to_s)
+        renamed_page_pdf = File.join(incomplete_dir, "#{page_number}.pdf")
+
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with(error_file).and_return(true)
+
+        allow(File).to receive(:exist?).with(complete_page).and_return(false)
+        allow(File).to receive(:exist?).with(incomplete_page).and_return(false)
+        allow(File).to receive(:exist?).with(renamed_page_pdf).and_return(false)
+
+        allow(FileUtils).to receive(:mv).and_call_original
+        allow(FileUtils).to receive(:mv).with(error_file, incomplete_dir)
+        allow(File).to receive(:rename).and_call_original
+        allow(File).to receive(:rename).with(File.join(incomplete_dir, filename), renamed_page_pdf)
+
+        post_as user, :fix_error,
+                params: { course_id: course.id,
+                          id: exam_template.id,
+                          commit: 'Save',
+                          split_page_id: split_page_id,
+                          copy_number: copy_number,
+                          page_number: page_number,
+                          split_pdf_log_id: split_pdf_log.id }
+      end
+
+      it 'automatically collects the submission' do
+        expect(grouping.reload.is_collected?).to be true
       end
     end
 
