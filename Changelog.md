@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab (#8074)
 - Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
 - Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
 - Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
