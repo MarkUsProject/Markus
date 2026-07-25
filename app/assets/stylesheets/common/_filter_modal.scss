@@ -22,14 +22,24 @@
     margin: 5px;
   }
 
-  .submission-scope-options {
+  .grader-scope-filters {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    width: $dropdown-horizontal;
   }
 
-  .submission-scope-option label {
-    margin-left: 4px;
+  .submission-scope-options {
+    display: flex;
+    gap: 20px;
+  }
+
+  .submission-scope-option {
+    align-items: center;
+    display: flex;
+
+    label {
+      margin-left: 4px;
+    }
   }
 
   .order {

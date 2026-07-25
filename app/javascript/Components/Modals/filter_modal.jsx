@@ -347,8 +347,10 @@ export class FilterModal extends React.Component {
                 </div>
               </div>
               <div className={"modal-container"}>
-                {this.renderTasDropdown()}
-                {this.renderAssignedGradersOnlyToggle()}
+                <div className={"grader-scope-filters"}>
+                  {this.renderTasDropdown()}
+                  {this.renderAssignedGradersOnlyToggle()}
+                </div>
                 <div className={"annotation-input"}>
                   <p>{I18n.t("activerecord.models.annotation.one")}</p>
                   <input
