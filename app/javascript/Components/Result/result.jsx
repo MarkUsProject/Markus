@@ -16,6 +16,7 @@ import {ResultContext} from "./result_context";
 import {annotation_context_menu} from "./context_menu";
 import {AnnotationText} from "../../common/annotations/annotation_text";
 import {get_html_annotation_range} from "../../common/annotations/html_annotations";
+import {getFilterStorageKey, getInitialFilterData, restoreFilterData} from "./filter_data";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -27,30 +28,10 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
-const initialFilterModalState = role => ({
-  ascending: true,
-  orderBy: "group_name",
-  assignedGradersOnly: role === "Ta",
-  annotationText: "",
-  tas: [],
-  tags: [],
-  section: "",
-  markingState: "",
-  totalMarkRange: {
-    min: "",
-    max: "",
-  },
-  totalExtraMarkRange: {
-    min: "",
-    max: "",
-  },
-  criteria: {},
-});
-
-export class Result extends React.Component {
+class Result extends React.Component {
   constructor(props) {
     super(props);
-    this.initialFilterModalState = initialFilterModalState(props.role);
+    this.initialFilterModalState = getInitialFilterData(props.role);
 
     this.state = {
       annotation_categories: [],
@@ -921,35 +902,11 @@ export class Result extends React.Component {
     });
   };
 
-  filterStorageKey = () => `${this.props.user_id}_${this.state.assignment_id}_filterData`;
+  filterStorageKey = () => getFilterStorageKey(this.props.user_id, this.state.assignment_id);
 
   refreshFilterData = onComplete => {
     const filterStorageKey = this.filterStorageKey();
-    const submissionScopeVersionKey = `${filterStorageKey}_submissionScopeVersion`;
-    const initializeInstructorSubmissionScope =
-      this.props.role === "Instructor" && localStorage.getItem(submissionScopeVersionKey) !== "1";
-    const storedFilter = localStorage.getItem(filterStorageKey);
-    let parsed_filter;
-    try {
-      parsed_filter = JSON.parse(storedFilter);
-    } catch (e) {
-      parsed_filter = null;
-    }
-    let filterData;
-    if (parsed_filter) {
-      if (initializeInstructorSubmissionScope) {
-        parsed_filter = {...parsed_filter, assignedGradersOnly: false};
-      }
-      filterData = parsed_filter;
-    } else {
-      filterData = this.initialFilterModalState;
-    }
-    if (!parsed_filter || initializeInstructorSubmissionScope) {
-      localStorage.setItem(filterStorageKey, JSON.stringify(filterData));
-    }
-    if (initializeInstructorSubmissionScope) {
-      localStorage.setItem(submissionScopeVersionKey, "1");
-    }
+    const filterData = restoreFilterData(this.props.role, filterStorageKey);
 
     const filterChanged = JSON.stringify(this.state.filterData) !== JSON.stringify(filterData);
     this.setState(
