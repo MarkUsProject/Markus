@@ -16,7 +16,7 @@ import {ResultContext} from "./result_context";
 import {annotation_context_menu} from "./context_menu";
 import {AnnotationText} from "../../common/annotations/annotation_text";
 import {get_html_annotation_range} from "../../common/annotations/html_annotations";
-import {getFilterStorageKey, getInitialFilterData, restoreFilterData} from "./filter_data";
+import {getInitialFilterData, restoreFilterData} from "./filter_data";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -80,12 +80,11 @@ class Result extends React.Component {
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
 
-    this.refreshFilterData(() => {
-      // Prefetch grouping IDs for client-side navigation (skip if already valid)
-      if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
-        this.fetchGroupingIds();
-      }
-    });
+    const filterChanged = this.refreshFilterData();
+    // Prefetch grouping IDs for client-side navigation (skip if already valid)
+    if (!filterChanged && (!this.state.prefetchedIds || this.shouldRefetchIds())) {
+      this.fetchGroupingIds();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -902,20 +901,16 @@ class Result extends React.Component {
     });
   };
 
-  filterStorageKey = () => getFilterStorageKey(this.props.user_id, this.state.assignment_id);
+  filterStorageKey = () => `${this.props.user_id}_${this.state.assignment_id}_filterData`;
 
-  refreshFilterData = onComplete => {
-    const filterStorageKey = this.filterStorageKey();
-    const filterData = restoreFilterData(this.props.role, filterStorageKey);
+  refreshFilterData = () => {
+    const filterData = restoreFilterData(this.props.role, this.filterStorageKey());
 
     const filterChanged = JSON.stringify(this.state.filterData) !== JSON.stringify(filterData);
-    this.setState(
-      {
-        filterData,
-        ...(filterChanged ? {prefetchedIds: null, prefetchedIndex: -1} : {}),
-      },
-      onComplete
-    );
+    if (filterChanged) {
+      this.updateFilterData(filterData);
+    }
+    return filterChanged;
   };
 
   updateFilterData = new_filters => {

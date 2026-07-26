@@ -1,3 +1,9 @@
+/**
+ * Return the default submission filters for the given role.
+ *
+ * @param {string} role The user's course role.
+ * @returns {object} The default filter data.
+ */
 export const getInitialFilterData = role => ({
   ascending: true,
   orderBy: "group_name",
@@ -18,35 +24,21 @@ export const getInitialFilterData = role => ({
   criteria: {},
 });
 
-export const getFilterStorageKey = (userId, assignmentId) => `${userId}_${assignmentId}_filterData`;
-
+/**
+ * Restore saved submission filters, filling in missing values with the current defaults.
+ *
+ * @param {string} role The user's course role.
+ * @param {string} filterStorageKey The local storage key containing the saved filters.
+ * @returns {object} The restored filter data.
+ */
 export const restoreFilterData = (role, filterStorageKey) => {
-  const submissionScopeVersionKey = `${filterStorageKey}_submissionScopeVersion`;
-  const initializeInstructorSubmissionScope =
-    role === "Instructor" && localStorage.getItem(submissionScopeVersionKey) !== "1";
   const storedFilter = localStorage.getItem(filterStorageKey);
-  let filterData;
+  let filterData = {};
   try {
-    filterData = JSON.parse(storedFilter);
+    filterData = JSON.parse(storedFilter) || {};
   } catch (e) {
-    filterData = null;
-  }
-  const hasValidStoredFilter = Boolean(filterData);
-
-  if (hasValidStoredFilter) {
-    if (initializeInstructorSubmissionScope) {
-      filterData = {...filterData, assignedGradersOnly: false};
-    }
-  } else {
-    filterData = getInitialFilterData(role);
+    // Use the current defaults if the saved filter data is invalid.
   }
 
-  if (!hasValidStoredFilter || initializeInstructorSubmissionScope) {
-    localStorage.setItem(filterStorageKey, JSON.stringify(filterData));
-  }
-  if (initializeInstructorSubmissionScope) {
-    localStorage.setItem(submissionScopeVersionKey, "1");
-  }
-
-  return filterData;
+  return {...getInitialFilterData(role), ...filterData};
 };
