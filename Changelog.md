@@ -9,6 +9,7 @@
 
 ### ✨ New features and improvements
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
+- Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)
 - Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
 - Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
 - Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
