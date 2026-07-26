@@ -1,7 +1,7 @@
 export const defaultSearchPlaceholderText = () => I18n.t("table.search");
 
 export default function CaseSensitiveSearchFilter({column, filterValue}) {
-  let caseSensitive;
+  let caseSensitive = filterValue?.caseSensitive ?? false;
   return (
     <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
       <input
