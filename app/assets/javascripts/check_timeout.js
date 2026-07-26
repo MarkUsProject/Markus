@@ -3,7 +3,7 @@
   let sessionExpired = false;
 
   $(document).ajaxError((event, xhr) => {
-    if (xhr.status === 403) {
+    if (xhr.status === 401) {
       sessionExpired = true;
       stopPolling();
     }
