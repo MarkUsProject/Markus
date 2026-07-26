@@ -2,13 +2,6 @@
   let intervalId;
   let sessionExpired = false;
 
-  $(document).ajaxError((event, xhr) => {
-    if (xhr.status === 401) {
-      sessionExpired = true;
-      stopPolling();
-    }
-  });
-
   const domContentLoadedCB = () => {
     startPolling();
   };
@@ -27,7 +20,21 @@
   };
 
   const checkTimeout = () => {
-    $.get(Routes.check_timeout_main_index_path());
+    fetch(Routes.check_timeout_main_index_path())
+      .then(response => {
+        if (response.status === 401) {
+          sessionExpired = true;
+          stopPolling();
+          return;
+        }
+
+        return response.text();
+      })
+      .then(script => {
+        if (script) {
+          eval(script);
+        }
+      });
   };
 
   document.addEventListener("DOMContentLoaded", domContentLoadedCB);

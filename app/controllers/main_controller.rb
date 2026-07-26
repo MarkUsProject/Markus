@@ -3,7 +3,7 @@
 class MainController < ApplicationController
   include ApplicationHelper
 
-  protect_from_forgery with: :exception, except: [:login, :page_not_found]
+  protect_from_forgery with: :exception, except: [:login, :page_not_found, :check_timeout]
 
   # check for authorization
   skip_before_action :check_course_switch, only: [:login, :page_not_found, :check_timeout, :login_remote_auth, :about,
