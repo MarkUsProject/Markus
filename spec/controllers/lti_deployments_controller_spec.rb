@@ -114,6 +114,26 @@ describe LtiDeploymentsController do
       end
     end
 
+    context 'with a year-long term' do
+      let!(:lti_deployment) do
+        create(:lti_deployment, lms_course_name: 'csc108', lms_term_name: '2026 Fall-Winter')
+      end
+
+      before do
+        session[:lti_deployment_id] = lti_deployment.id
+        post_as instructor, :create_course, params: course_params
+      end
+
+      it 'starts the course in September' do
+        expect(Course.find_by(name: expected_name).start_at).to eq(Time.zone.local(2026, 9, 1))
+      end
+
+      it 'ends the course in April of the following year' do
+        expect(Course.find_by(name: expected_name).end_at)
+          .to be_within(1.second).of(Time.zone.local(2027, 4, 30).end_of_day)
+      end
+    end
+
     context 'with an SCS term' do
       let!(:lti_deployment) { create(:lti_deployment, :scs_winter, lms_course_name: 'csc108') }
 
