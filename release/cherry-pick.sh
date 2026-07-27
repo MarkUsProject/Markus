@@ -49,6 +49,14 @@ stop() {
   exit 1
 }
 
+# Abort the in-progress cherry-pick and record the current $PR as skipped.
+# Caller must `continue` the loop afterwards.
+skip_pr() {
+  git cherry-pick --skip 2>/dev/null
+  success "#$PR — already on release, skipped"
+  SKIPPED="${SKIPPED:+$SKIPPED,}$PR"
+}
+
 # Show hook diff and stop for user review
 stop_for_hook_review() {
   local hook_diff="$1"
@@ -111,9 +119,7 @@ while IFS= read -r entry; do
   CHERRY_OUT=$(git cherry-pick -m1 "$SHA" 2>&1) || {
     # Empty commit — PR already on release via different path
     if [[ "$CHERRY_OUT" =~ (empty|nothing.*to\ commit) ]]; then
-      git cherry-pick --skip 2>/dev/null
-      success "#$PR — already on release, skipped"
-      SKIPPED="${SKIPPED:+$SKIPPED,}$PR"
+      skip_pr
       continue
     fi
 
@@ -124,9 +130,7 @@ while IFS= read -r entry; do
       HOOK_DIFF=$(git diff 2>/dev/null)
       [[ -n "$HOOK_DIFF" ]] && stop_for_hook_review "$HOOK_DIFF"
       # No conflicts, no hook changes — truly empty commit
-      git cherry-pick --skip 2>/dev/null
-      success "#$PR — already on release, skipped"
-      SKIPPED="${SKIPPED:+$SKIPPED,}$PR"
+      skip_pr
       continue
     fi
 
@@ -172,9 +176,7 @@ while IFS= read -r entry; do
       [[ -n "$HOOK_DIFF" ]] && stop_for_hook_review "$HOOK_DIFF"
       # No hook changes — commit became empty after resolution (PR already applied)
       git checkout -- . 2>/dev/null
-      git cherry-pick --skip 2>/dev/null
-      success "#$PR — already on release, skipped"
-      SKIPPED="${SKIPPED:+$SKIPPED,}$PR"
+      skip_pr
       continue
     fi
     success "#$PR — auto-resolved ($(echo "$CONFLICTED_FILES" | paste -sd, -))"
