@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
 - Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)
 - Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
 - Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
