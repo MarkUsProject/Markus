@@ -145,6 +145,7 @@ class SplitPdfJob < ApplicationJob
           m_logger.log(status)
           split_page_updates << {
             id: split_page_id,
+            split_pdf_log_id: split_pdf_log.id,
             status: status,
             group_id: nil,
             exam_page_number: nil
@@ -156,6 +157,7 @@ class SplitPdfJob < ApplicationJob
           m_logger.log(status)
           split_page_updates << {
             id: split_page_id,
+            split_pdf_log_id: split_pdf_log.id,
             status: status,
             group_id: nil,
             exam_page_number: nil
@@ -166,6 +168,7 @@ class SplitPdfJob < ApplicationJob
           m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           split_page_updates << {
             id: split_page_id,
+            split_pdf_log_id: split_pdf_log.id,
             status: status,
             group_id: group_id,
             exam_page_number: m[:page_num].to_i
@@ -173,7 +176,7 @@ class SplitPdfJob < ApplicationJob
         end
       end
       SplitPage.upsert_all(split_page_updates, returning: false)
-      num_complete = save_pages(exam_template, partial_exams, on_duplicate)
+      num_complete = save_pages(exam_template, partial_exams, split_pdf_log, on_duplicate)
       num_incomplete = partial_exams.length - num_complete
 
       split_pdf_log.update(
@@ -210,7 +213,7 @@ class SplitPdfJob < ApplicationJob
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, on_duplicate = nil)
+  def save_pages(exam_template, partial_exams, split_pdf_log, on_duplicate = nil)
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
@@ -258,7 +261,7 @@ class SplitPdfJob < ApplicationJob
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         end
         # update status of page
-        split_page_updates << { id: split_page_id, status: status }
+        split_page_updates << { id: split_page_id, split_pdf_log_id: split_pdf_log.id, status: status }
       end
       SplitPage.upsert_all(split_page_updates, returning: false)
 

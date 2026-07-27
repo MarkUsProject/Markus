@@ -7,6 +7,8 @@
 # Table name: section_starter_file_groups
 #
 #  id                    :bigint           not null, primary key
+#  created_at            :datetime
+#  updated_at            :datetime
 #  section_id            :bigint           not null
 #  starter_file_group_id :bigint           not null
 #

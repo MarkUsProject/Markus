@@ -11,8 +11,6 @@ export class BinaryViewer extends React.PureComponent {
   }
 
   componentDidMount() {
-    // Notify the parent component that the file content is loading.
-    this.props.setLoadingCallback(true);
     // The URL has updated, so the content needs to be fetched using the new URL.
     this.fetchContent(this.props.url)
       .then(content =>
@@ -28,7 +26,6 @@ export class BinaryViewer extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (this.props.url && this.props.url !== prevProps.url) {
       this.setState({getAnyway: false});
-      this.props.setLoadingCallback(true);
       this.fetchContent(this.props.url)
         .then(content =>
           this.setState({content: content}, () => this.props.setLoadingCallback(false))

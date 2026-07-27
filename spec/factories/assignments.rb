@@ -152,8 +152,12 @@ FactoryBot.define do
     assignment_properties_attributes { { has_peer_review: true } }
   end
 
-  factory :peer_review_assignment, parent: :assignment do
-    association :parent_assignment, factory: :assignment_with_peer_review
+  # assignment_with_peer_review's after_save callback auto-creates the PR assignment,
+  # so we return that record instead of creating a second one (which would violate the
+  # unique index on assessments.parent_assessment_id).
+  factory :peer_review_assignment, class: 'Assignment' do
+    skip_create
+    initialize_with { create(:assignment_with_peer_review).pr_assignment }
   end
 
   # This creates an assignment and peer review assignment, and also creates the

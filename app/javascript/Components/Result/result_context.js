@@ -9,4 +9,5 @@ export const ResultContext = React.createContext({
   course_id: null,
   role: null,
   is_reviewer: null,
+  scanned_exam: false,
 });

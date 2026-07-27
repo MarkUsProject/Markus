@@ -50,6 +50,8 @@
 #                                                                   PATCH    /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files/:id(.:format)              api/feedback_files#update
 #                                                                   PUT      /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files/:id(.:format)              api/feedback_files#update
 #                                                                   DELETE   /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files/:id(.:format)              api/feedback_files#destroy
+#                       overall_comment_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/overall_comment(.:format)                       api/groups#overall_comment
+#                                                                   PATCH    /api/courses/:course_id/assignments/:assignment_id/groups/:id/overall_comment(.:format)                       api/groups#overall_comment
 #                           annotations_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/annotations(.:format)                           api/groups#annotations
 #                       add_annotations_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/add_annotations(.:format)                       api/groups#add_annotations
 #                           add_members_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/add_members(.:format)                           api/groups#add_members
@@ -620,6 +622,10 @@ Rails.application.routes.draw do
             patch 'extension'
             delete 'extension'
           end
+          member do
+            get 'overall_comment'
+            patch 'overall_comment'
+          end
         end
         resources :starter_file_groups, only: [:index, :create]
         member do
@@ -783,6 +789,7 @@ Rails.application.routes.draw do
         get 'peer_review'
         get 'populate_starter_file_manager'
         get 'summary'
+        post 'upload_grades'
         get 'batch_runs'
         post 'set_boolean_graders_options'
         get 'stop_test'

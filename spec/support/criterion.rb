@@ -245,7 +245,7 @@ shared_examples 'a criterion' do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
                 grouping = create(:grouping, assignment: criterion.assignment)
-                Criterion.assign_all_tas([[criterion.id, criterion.class.to_s]], tas.map(&:id), criterion.assignment)
+                Criterion.assign_all_tas([criterion.id], tas.map(&:id), criterion.assignment)
                 create_ta_memberships(grouping, tas)
               end
 

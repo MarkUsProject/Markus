@@ -1,6 +1,7 @@
 shared_examples 'zip file download' do
   let(:dirs) { [] }
   let(:files) { {} }
+
   before do
     FileUtils.rm_rf assignment.autotest_files_dir
     FileUtils.mkdir_p assignment.autotest_files_dir

@@ -1,7 +1,8 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {CourseSummaryTable} from "./course_summaries_table";
-import {DataChart} from "./Helpers/data_chart";
+import {Bar} from "react-chartjs-2";
+import {chartScales} from "./Helpers/chart_helpers";
 
 class GradesSummaryDisplay extends React.Component {
   // Colors for chart are based on constants.css file, with modifications for opacity.
@@ -90,12 +91,18 @@ class GradesSummaryDisplay extends React.Component {
           student={this.props.student}
         />
         <fieldset className="data-chart-container">
-          <DataChart
-            labels={this.state.graph_labels}
-            datasets={this.state.datasets}
-            xTitle={I18n.t("activerecord.models.assessment.one")}
-            yTitle={I18n.t("activerecord.models.mark.one") + " (%)"}
-            legend={true}
+          <Bar
+            data={{labels: this.state.graph_labels, datasets: this.state.datasets}}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {legend: {display: true}},
+              scales: chartScales(
+                I18n.t("activerecord.models.assessment.one"),
+                I18n.t("activerecord.models.mark.one") + " (%)"
+              ),
+            }}
+            height={500}
           />
         </fieldset>
       </div>

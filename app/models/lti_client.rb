@@ -12,13 +12,15 @@
 #
 # Indexes
 #
-#  index_lti_clients_on_course_id  (course_id)
+#  index_lti_clients_on_course_id           (course_id)
+#  index_lti_clients_on_host_and_client_id  (host,client_id) UNIQUE
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiClient < ApplicationRecord
   has_many :lti_deployments
   has_many :lti_users
-  validates :client_id, uniqueness: { scope: :host }
+  validates :client_id, presence: true, uniqueness: { scope: :host }
+  validates :host, presence: true
   include Rails.application.routes.url_helpers
 
   KEY_PATH = File.join(Settings.file_storage.lti || File.join(Settings.file_storage.default_root_path, 'lti',

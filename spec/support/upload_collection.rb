@@ -1,6 +1,7 @@
 shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], background: false,
                                                      route_name: :upload, uploader: :instructor|
   let!(:user) { create(uploader) }
+
   before do
     @initial_count = model_count
   end

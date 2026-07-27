@@ -935,6 +935,7 @@ describe Grouping do
       let(:assignment) { create(:timed_assignment) }
       let(:due_date) { due_date_obj.due_date || assignment.due_date }
       let(:start_time) { due_date_obj.start_time || assignment.start_time }
+
       context 'before the grouping has started' do
         it 'should return the due date' do
           expect(grouping.due_date).to be_within(1.second).of(due_date)

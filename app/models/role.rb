@@ -20,7 +20,6 @@
 #
 #  index_roles_on_course_id              (course_id)
 #  index_roles_on_section_id             (section_id)
-#  index_roles_on_user_id                (user_id)
 #  index_roles_on_user_id_and_course_id  (user_id,course_id) UNIQUE
 #
 # Foreign Keys
@@ -52,7 +51,11 @@ class Role < ApplicationRecord
   has_many :last_updated_grades, class_name: 'Grade', foreign_key: 'last_updated_by_id', inverse_of: :last_updated_by,
                                  dependent: :nullify
 
-  validates :type, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
+  validates :type, presence: true, format: { with: /\AStudent|Instructor|Ta|AdminRole\z/ }
+  validates :grace_credits, presence: true
+  validates :hidden, inclusion: { in: [true, false] }
+  validates :receives_invite_emails, inclusion: { in: [true, false] }
+  validates :receives_results_emails, inclusion: { in: [true, false] }
   validates :user_id, uniqueness: { scope: :course_id }
   after_update_commit :update_repo_permissions
 

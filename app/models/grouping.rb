@@ -10,8 +10,8 @@
 #  start_time              :datetime
 #  starter_file_changed    :boolean          default(FALSE), not null
 #  test_tokens             :integer          default(0), not null
-#  created_at              :datetime
-#  updated_at              :datetime
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
 #  assessment_id           :bigint           not null
 #  group_id                :integer          not null
 #
@@ -124,6 +124,8 @@ class Grouping < ApplicationRecord
   has_one :course, through: :assignment
 
   validates :is_collected, inclusion: { in: [true, false] }
+  validates :instructor_approved, inclusion: { in: [true, false] }
+  validates :starter_file_changed, inclusion: { in: [true, false] }
 
   validates :test_tokens, presence: true
   validates :test_tokens, numericality: { greater_than_or_equal_to: 0, only_integer: true }

@@ -4,19 +4,12 @@
 
 <%= content_for :modal_content do %>
 
-  <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script',
-                             upload_id: 'upload_file',
-                             button_id: 'upload',
-                             nonce: true %>
-
   <p>
     <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: 'students') %>
   </p>
   <%= form_tag upload_course_students_path(@current_course), { multipart: true } do %>
     <div>
-      <%= file_field_tag 'upload_file', accept: '.csv' %>
+      <%= file_field_tag 'upload_file', required: true, accept: '.csv' %>
     </div>
 
     <div>
@@ -27,8 +20,7 @@
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),
                      data: { disable_with: t(:uploading_please_wait) },
-                     id: 'upload',
-                     disabled: true %>
+                     id: 'upload' %>
       <input type='reset' id='upload' value='<%= t(:cancel) %>'>
     </section>
   <% end %>

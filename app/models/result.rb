@@ -4,15 +4,15 @@
 # Table name: results
 #
 #  id                          :integer          not null, primary key
-#  marking_state               :string
+#  marking_state               :string           not null
 #  overall_comment             :text
 #  released_to_students        :boolean          default(FALSE), not null
 #  remark_request_submitted_at :datetime
 #  view_token                  :string           not null
 #  view_token_expiry           :datetime
-#  created_at                  :datetime
-#  updated_at                  :datetime
-#  submission_id               :integer
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  submission_id               :integer          not null
 #
 # Indexes
 #
@@ -47,6 +47,7 @@ class Result < ApplicationRecord
   validates :marking_state, inclusion: { in: MARKING_STATES.values }
 
   validates :released_to_students, inclusion: { in: [true, false] }
+  validates :view_token, presence: true
 
   before_update :check_for_released
 
@@ -444,11 +445,17 @@ class Result < ApplicationRecord
 
   private
 
-  # Do not allow the marking state to be changed to incomplete if the result is released
+  # Do not allow certain fields to be changed when the result is released
   def check_for_released
-    if released_to_students && marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
-      errors.add(:base, :marks_released)
-      throw(:abort)
+    if released_to_students
+      if marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
+        errors.add(:base, :marks_released)
+        throw(:abort)
+      end
+      if overall_comment_changed?
+        errors.add(:overall_comment, :marks_released)
+        throw(:abort)
+      end
     end
     true
   end

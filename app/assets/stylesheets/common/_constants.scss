@@ -7,6 +7,7 @@
   --darker-orange: #ee6415;
   --disabled_text: #b5b5b5;
   --disabled_area: #eaeaea;
+  --fonts: 'Open Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
   --gridline: #46464640;
   --key_words_color: var(--primary_one);
   --light_alert: #ffe9ac;
@@ -61,7 +62,7 @@ $sharp-line: var(--sharp_line);
 // not sure what this does...
 $darker-orange: var(--darker-orange);
 
-$fonts: 'Open Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
+$fonts: var(--fonts);
 $mono-fonts: 'Consolas', 'Courier New', Courier, mono, serif;
 $radius: var(--radius);
 $time-quick: 0.25s;

@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_lti_services_on_lti_deployment_id                   (lti_deployment_id)
 #  index_lti_services_on_lti_deployment_id_and_service_type  (lti_deployment_id,service_type) UNIQUE
 #
 # Foreign Keys
@@ -28,4 +27,5 @@ class LtiService < ApplicationRecord
   belongs_to :lti_deployment
   validates :service_type, inclusion: { in: LTI_SERVICES.values }
   validates :service_type, uniqueness: { scope: :lti_deployment_id }
+  validates :url, presence: true
 end

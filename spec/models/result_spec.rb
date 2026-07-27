@@ -67,6 +67,26 @@ describe Result do
         end
       end
     end
+
+    context 'check_for_released' do
+      before { result.update!(released_to_students: true) }
+
+      it 'does not allow marking_state to be changed to incomplete' do
+        result.marking_state = Result::MARKING_STATES[:incomplete]
+        expect(result.save).to be false
+        expect(result.errors[:base]).to be_present
+      end
+
+      it 'does not allow overall_comment to be changed' do
+        result.overall_comment = 'new comment'
+        expect(result.save).to be false
+        expect(result.errors[:overall_comment]).to be_present
+      end
+
+      it 'allows other fields to be updated' do
+        expect { result.regenerate_view_token }.not_to raise_error
+      end
+    end
   end
 
   shared_context 'get subtotal context' do

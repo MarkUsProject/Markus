@@ -6,10 +6,10 @@
 #  id          :integer          not null, primary key
 #  description :string
 #  extra_mark  :float
-#  unit        :string
-#  created_at  :datetime
-#  updated_at  :datetime
-#  result_id   :integer
+#  unit        :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  result_id   :integer          not null
 #
 # Indexes
 #

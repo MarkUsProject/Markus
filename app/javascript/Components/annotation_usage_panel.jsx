@@ -3,6 +3,8 @@ import ReactTable from "react-table";
 import {createRoot} from "react-dom/client";
 import ReactDOM from "react-dom";
 
+import {caseSensitiveIncludes, caseSensitiveTextFilter} from "./Helpers/table_helpers";
+
 class AnnotationUsagePanel extends React.Component {
   constructor(props) {
     super(props);
@@ -37,12 +39,16 @@ class AnnotationUsagePanel extends React.Component {
       },
       sortable: false,
       Aggregated: row => "(" + row.value + ")",
+      Filter: caseSensitiveTextFilter,
       filterMethod: (filter, row) => {
-        if (row._subRows === undefined) {
-          return row[filter.id].toLowerCase().includes(filter.value.toLowerCase());
+        const {filterValue, caseSensitive} = filter.value;
+        if (!filterValue) {
+          return true;
+        } else if (row._subRows === undefined) {
+          return caseSensitiveIncludes(row[filter.id], filterValue, caseSensitive);
         } else {
           return row._subRows.some(sr =>
-            sr["group_name"].toLowerCase().includes(filter.value.toLowerCase())
+            caseSensitiveIncludes(sr["group_name"], filterValue, caseSensitive)
           );
         }
       },
@@ -121,3 +127,5 @@ export function makeAnnotationUsagePanel(elem, props) {
   const root = createRoot(elem);
   return root.render(<AnnotationUsagePanel {...props} />);
 }
+
+export {AnnotationUsagePanel};

@@ -56,9 +56,6 @@ import Jcrop from "jcrop";
 window.Jcrop = Jcrop;
 
 // chart.js
-import {Chart, registerables} from "chart.js";
-Chart.register(...registerables);
-window.Chart = Chart;
 import "./common/chart_config";
 
 // flatpickr

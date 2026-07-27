@@ -5,10 +5,12 @@
 #
 #  id               :integer          not null, primary key
 #  error_converting :boolean          default(FALSE), not null
-#  filename         :string
+#  filename         :string           not null
 #  is_converted     :boolean          default(FALSE), not null
 #  path             :string           default("/"), not null
-#  submission_id    :integer
+#  created_at       :datetime
+#  updated_at       :datetime
+#  submission_id    :integer          not null
 #
 # Indexes
 #
@@ -33,6 +35,7 @@ class SubmissionFile < ApplicationRecord
   validates :path, presence: true
 
   validates :is_converted, inclusion: { in: [true, false] }
+  validates :error_converting, inclusion: { in: [true, false] }
 
   def is_supported_image?
     # Here you can add more image types to support
@@ -50,6 +53,17 @@ class SubmissionFile < ApplicationRecord
 
   def is_rmd?
     File.extname(filename).casecmp('.rmd')&.zero?
+  end
+
+  # The annotation class (single-table-inheritance subclass) appropriate for this file,
+  # derived from its type. Mirrors the logic used when creating annotations in the UI
+  # (see AnnotationsController), and is the single source of truth for that mapping.
+  def annotation_class
+    return ImageAnnotation if is_supported_image?
+    return PdfAnnotation if is_pdf?
+    return HtmlAnnotation if is_pynb? || (is_rmd? && Rails.application.config.rmd_convert_enabled)
+
+    TextAnnotation
   end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936

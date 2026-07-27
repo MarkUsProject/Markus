@@ -8,11 +8,13 @@
 #  manage_assessments :boolean          default(FALSE), not null
 #  manage_submissions :boolean          default(FALSE), not null
 #  run_tests          :boolean          default(FALSE), not null
+#  created_at         :datetime
+#  updated_at         :datetime
 #  role_id            :bigint           not null
 #
 # Indexes
 #
-#  index_grader_permissions_on_role_id  (role_id)
+#  index_grader_permissions_on_role_id  (role_id) UNIQUE
 #
 # Foreign Keys
 #
@@ -22,4 +24,8 @@
 class GraderPermission < ApplicationRecord
   belongs_to :ta, class_name: 'Ta', foreign_key: :role_id, inverse_of: :grader_permission
   has_one :course, through: :ta
+
+  validates :manage_assessments, inclusion: { in: [true, false] }
+  validates :manage_submissions, inclusion: { in: [true, false] }
+  validates :run_tests, inclusion: { in: [true, false] }
 end

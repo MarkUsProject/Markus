@@ -4,9 +4,10 @@ function hideMenu() {
 
 function initMenu() {
   /* Menu toggle for mobile views */
-  document.getElementById("mobile_menu").addEventListener(
+  document.getElementById("menu_icon").addEventListener(
     "click",
-    () => {
+    event => {
+      event.preventDefault();
       document.body.classList.toggle("show_menu");
     },
     false

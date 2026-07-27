@@ -231,6 +231,7 @@ export class ImageViewer extends React.PureComponent {
               this.adjustPictureSize();
               this.rotateImage();
               this.display_annotations();
+              this.props.setLoadingCallback(false);
             }}
             alt={I18n.t("results.cant_display_image")}
           />

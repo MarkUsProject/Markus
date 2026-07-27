@@ -21,7 +21,7 @@
 #
 # Indexes
 #
-#  index_criteria_on_assessment_id  (assessment_id)
+#  index_criteria_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
 # Foreign Keys
 #
@@ -44,12 +44,17 @@ class Criterion < ApplicationRecord
 
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
-  has_many :test_groups
+  has_many :test_groups, dependent: :nullify
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :assessment_id }
 
   validates :bonus, inclusion: { in: [true, false] }
+  validates :type, presence: true
+  validates :position, presence: true
+  validates :ta_visible, inclusion: { in: [true, false] }
+  validates :peer_visible, inclusion: { in: [true, false] }
+  validates :description, exclusion: { in: [nil] }
 
   validates :max_mark, presence: true
   validates :max_mark, numericality: { greater_than: 0 }
@@ -66,6 +71,10 @@ class Criterion < ApplicationRecord
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
 
+  def export_name
+    bonus? ? "#{name} (#{Criterion.human_attribute_name(:bonus)})" : name
+  end
+
   def update_assigned_groups_count
     result = criterion_ta_associations.flat_map do |cta|
       cta.ta.get_groupings_by_assignment(assignment)
@@ -79,6 +88,7 @@ class Criterion < ApplicationRecord
   def self.randomly_assign_tas(criterion_ids, ta_ids, assignment)
     assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
+      next [] if t_ids.empty?
       shuffled_criterion_ids = c_ids.shuffle
       shuffled_criterion_ids.zip(t_ids.cycle).map(&:flatten)
     end

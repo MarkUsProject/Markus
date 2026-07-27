@@ -84,6 +84,28 @@ describe AutotestSpecsJob do
 
         it_behaves_like 'autotest specs job'
       end
+
+      context 'when the spec contains an invalid criterion name' do
+        subject { AutotestSpecsJob.perform_now(host_with_port, assignment, bad_specs) }
+
+        let(:bad_specs) do
+          { 'testers' => [{ 'test_data' => [{ 'extra_info' => {
+            'criterion' => 'nonexistent_criterion'
+          } }] }] }
+        end
+
+        it 'raises with the invalid criterion name' do
+          expect { subject }.to raise_error(/Unable to find a criterion with name/)
+        end
+
+        it 'does not persist any test groups' do
+          expect do
+                     subject
+          rescue StandardError
+                     nil
+          end.not_to(change { assignment.test_groups.count })
+        end
+      end
     end
   end
 end

@@ -1,7 +1,9 @@
 import React from "react";
+import Modal from "react-modal";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {DataChart} from "../Helpers/data_chart";
+import {Bar} from "react-chartjs-2";
+import {chartScales} from "../Helpers/chart_helpers";
 import {ResultContext} from "./result_context";
 
 export class SummaryPanel extends React.Component {
@@ -38,6 +40,7 @@ export class SummaryPanel extends React.Component {
       datasets: [],
       labels: [],
       chartLegend: false,
+      showMarksChart: false,
       criterionColumns: this.criterionColumns(props.remark_submitted),
       extraMarksColumns: this.extraMarksColumns(props.released_to_students),
     };
@@ -53,7 +56,7 @@ export class SummaryPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.marks_modal = new ModalMarkus("#marks_chart");
+    Modal.setAppElement("body");
   }
 
   toggleMarksChart = () => {
@@ -76,15 +79,20 @@ export class SummaryPanel extends React.Component {
         datasets: [this.oldMarkDataSet, this.markDataSet],
         labels: labels,
         chartLegend: true,
+        showMarksChart: true,
       });
     } else {
       this.setState({
         datasets: [this.markDataSet],
         labels: labels,
         chartLegend: false,
+        showMarksChart: true,
       });
     }
-    this.marks_modal.open();
+  };
+
+  closeMarksChart = () => {
+    this.setState({showMarksChart: false});
   };
 
   criterionColumns = remark_submitted => [
@@ -315,15 +323,24 @@ export class SummaryPanel extends React.Component {
             {I18n.t("results.marks_chart")}
           </button>
         </p>
-        <aside className="markus-dialog data-chart-container" id={"marks_chart"} style={style}>
-          <DataChart
-            labels={this.state.labels}
-            datasets={this.state.datasets}
-            xTitle={this.state.xTitle}
-            yTitle={this.state.yTitle}
-            legend={this.state.chartLegend}
+        <Modal
+          className="react-modal markus-dialog data-chart-container"
+          id={"marks_chart"}
+          isOpen={this.state.showMarksChart}
+          onRequestClose={this.closeMarksChart}
+          style={{content: style}}
+        >
+          <Bar
+            data={{labels: this.state.labels, datasets: this.state.datasets}}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {legend: {display: this.state.chartLegend}},
+              scales: chartScales(this.state.xTitle, this.state.yTitle),
+            }}
+            height={500}
           />
-        </aside>
+        </Modal>
         <ReactTable
           columns={this.state.criterionColumns}
           data={this.props.criterionSummaryData}

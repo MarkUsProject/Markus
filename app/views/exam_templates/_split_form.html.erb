@@ -1,4 +1,5 @@
-<%= form_with url: split_course_assignment_exam_templates_path(@current_course),
+<%= form_with id: 'upload_scans_form',
+              url: split_course_assignment_exam_templates_path(@current_course),
               method: :patch,
               authenticity_token: true,
               multipart: true do |f| %>
@@ -6,7 +7,8 @@
     <%= f.label :exam_template_id, ExamTemplate.model_name.human %>
     <%= f.select :exam_template_id,
                  options_from_collection_for_select(@exam_templates, 'id', 'name'),
-                 required: true %>
+                 {required: true},
+                 {id: 'exam_template_dropdown'} %>
     <%= f.label :pdf_to_split, t('exam_templates.upload_scans.instruction') %>
     <%= f.file_field :pdf_to_split, required: true, accept: 'application/pdf' %>
   </div>

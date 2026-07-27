@@ -41,6 +41,7 @@ class TestRun < ApplicationRecord
 
   has_one :course, through: :role
 
+  validates :status, presence: true
   validate :courses_should_match
   validate :autotest_test_id_uniqueness
   before_save :unset_autotest_test_id

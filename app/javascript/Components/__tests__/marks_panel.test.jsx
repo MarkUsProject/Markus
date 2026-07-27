@@ -149,7 +149,7 @@ describe("MarksPanel", () => {
     expect(secondCriterion).toHaveClass("active-criterion");
   });
 
-  it("navigates to next criterion using window.marksPanel.nextCriterion", async () => {
+  it("navigates to next criterion using shift+down keybinding", async () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,
@@ -181,8 +181,15 @@ describe("MarksPanel", () => {
 
     expect(firstCriterion).toHaveClass("active-criterion");
 
-    // Navigate to next
-    window.marksPanel.nextCriterion();
+    // Dispatch to the focused input (radio button auto-focused by CheckboxCriterionInput).
+    // This goes through Mousetrap's stopCallback, which must be patched (via jest_after_env_setup.js)
+    // to allow shift+down through form inputs, otherwise the handler is silently blocked.
+    fireEvent.keyDown(document.activeElement || document, {
+      shiftKey: true,
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -190,7 +197,7 @@ describe("MarksPanel", () => {
     });
   });
 
-  it("navigates to previous criterion using window.marksPanel.prevCriterion", async () => {
+  it("navigates to previous criterion using shift+up keybinding", async () => {
     const props = {
       ...basicProps,
       assigned_criteria: null,
@@ -222,7 +229,12 @@ describe("MarksPanel", () => {
 
     expect(firstCriterion).toHaveClass("active-criterion");
 
-    window.marksPanel.prevCriterion();
+    fireEvent.keyDown(document.activeElement || document, {
+      shiftKey: true,
+      key: "ArrowUp",
+      keyCode: 38,
+      which: 38,
+    });
 
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
@@ -847,5 +859,81 @@ describe("RubricCriterionInput", () => {
     const selectedRow = screen.getByText("level 2").closest("tr");
     expect(selectedRow).toHaveClass("selected");
     expect(selectedRow).not.toHaveClass("active-rubric");
+  });
+
+  it("navigates to next rubric level with down keybinding when active", async () => {
+    const props = {...basicProps, active: true, mark: 1};
+    render(<RubricCriterionInput {...props} />);
+
+    const level1Row = screen.getByText("level 1").closest("tr");
+    const level2Row = screen.getByText("level 2").closest("tr");
+    expect(level1Row).toHaveClass("active-rubric");
+
+    fireEvent.keyDown(document.activeElement || document, {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
+
+    await waitFor(() => {
+      expect(level1Row).not.toHaveClass("active-rubric");
+      expect(level2Row).toHaveClass("active-rubric");
+    });
+  });
+
+  it("wraps to the last level when pressing up from the first level", async () => {
+    const props = {...basicProps, active: true, mark: 1};
+    render(<RubricCriterionInput {...props} />);
+
+    const level1Row = screen.getByText("level 1").closest("tr");
+    const level2Row = screen.getByText("level 2").closest("tr");
+    expect(level1Row).toHaveClass("active-rubric");
+
+    fireEvent.keyDown(document.activeElement || document, {key: "ArrowUp", keyCode: 38, which: 38});
+
+    await waitFor(() => {
+      expect(level1Row).not.toHaveClass("active-rubric");
+      expect(level2Row).toHaveClass("active-rubric");
+    });
+  });
+
+  it("selects the hovered level on enter keybinding when active", async () => {
+    const props = {...basicProps, active: true, mark: null};
+    render(<RubricCriterionInput {...props} />);
+
+    // First level is initially hovered; move down to second level
+    fireEvent.keyDown(document.activeElement || document, {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
+    await waitFor(() => {
+      expect(screen.getByText("level 2").closest("tr")).toHaveClass("active-rubric");
+    });
+
+    fireEvent.keyDown(document.activeElement || document, {key: "Enter", keyCode: 13, which: 13});
+
+    await waitFor(() => {
+      expect(basicProps.updateMark).toHaveBeenCalledWith(basicProps.id, 2);
+    });
+  });
+
+  it("does not navigate rubric levels when criterion is unassigned", async () => {
+    const props = {...basicProps, active: true, unassigned: true, mark: 1};
+    render(<RubricCriterionInput {...props} />);
+
+    const level1Row = screen.getByText("level 1").closest("tr");
+    const level2Row = screen.getByText("level 2").closest("tr");
+    expect(level1Row).toHaveClass("active-rubric");
+
+    fireEvent.keyDown(document.activeElement || document, {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
+
+    // No keybinding is registered for unassigned criteria
+    expect(level1Row).toHaveClass("active-rubric");
+    expect(level2Row).not.toHaveClass("active-rubric");
   });
 });

@@ -1,21 +1,36 @@
 describe Group do
   describe 'validations' do
-    subject { build(:group) }
+    subject { create(:group) }
 
     it { is_expected.to belong_to(:course) }
 
     it { is_expected.to validate_presence_of(:group_name) }
-    it { is_expected.to validate_uniqueness_of(:group_name).scoped_to(:course_id) }
+
+    it 'validates that group_name is unique scoped to course_id' do
+      course = create(:course)
+      create(:group, group_name: 'duplicate-name', course: course)
+      duplicate = build(:group, group_name: 'duplicate-name', course: course)
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:group_name]).to be_present
+    end
+
+    it 'allows the same group_name across different courses' do
+      course1 = create(:course)
+      course2 = create(:course)
+      create(:group, group_name: 'shared-name', course: course1)
+      group = build(:group, group_name: 'shared-name', course: course2)
+      expect(group).to be_valid
+    end
 
     it { is_expected.not_to allow_value('Mike !Ooh').for(:group_name) }
     it { is_expected.not_to allow_value('A!a.sa').for(:group_name) }
     it { is_expected.to allow_value('Ads_ -hb').for(:group_name) }
     it { is_expected.to allow_value('-22125-k1lj42_').for(:group_name) }
 
-    it { is_expected.to allow_value('Mike !Ooh').for(:repo_name) }
-    it { is_expected.to allow_value('A!a.sa').for(:repo_name) }
-    it { is_expected.to allow_value('Ads_ -hb').for(:repo_name) }
-    it { is_expected.to allow_value('-22125-k1lj42_').for(:repo_name) }
+    it { is_expected.to allow_value('Mike !Ooh').for(:repo_name).on(:create) }
+    it { is_expected.to allow_value('A!a.sa').for(:repo_name).on(:create) }
+    it { is_expected.to allow_value('Ads_ -hb').for(:repo_name).on(:create) }
+    it { is_expected.to allow_value('-22125-k1lj42_').for(:repo_name).on(:create) }
 
     it do
       expect(subject).not_to allow_value('Mike !Ooh').for(:repo_name).on(:update)

@@ -5,6 +5,7 @@ describe TestRunsChannel do
         { token_start_date: 1.hour.ago, enable_student_tests: true, remote_autotest_settings_id: 1,
           tokens_per_period: 1 })
     end
+
     before do
       subscribe course_id: role.course_id, assignment_id: assignment.id
     end

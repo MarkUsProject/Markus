@@ -45,7 +45,7 @@
 #  vcs_submit                       :boolean          default(FALSE), not null
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  assessment_id                    :bigint
+#  assessment_id                    :bigint           not null
 #  default_starter_file_group_id    :bigint
 #  remote_autotest_settings_id      :integer
 #
@@ -110,6 +110,12 @@ class AssignmentProperties < ApplicationRecord
   end
 
   validates :scanned_exam, inclusion: { in: [true, false] }
+  validates :allow_remarks, inclusion: { in: [true, false] }
+  validates :anonymize_groups, inclusion: { in: [true, false] }
+  validates :hide_unassigned_criteria, inclusion: { in: [true, false] }
+  validates :is_timed, inclusion: { in: [true, false] }
+  validates :starter_files_after_due, inclusion: { in: [true, false] }
+  validates :release_with_urls, inclusion: { in: [true, false] }
 
   validate :minimum_number_of_groups
 

@@ -17,8 +17,13 @@
 #
 # Indexes
 #
-#  index_lti_deployments_on_course_id      (course_id)
-#  index_lti_deployments_on_lti_client_id  (lti_client_id)
+#  index_lti_deployments_on_course_id                        (course_id)
+#  index_lti_deployments_on_lti_client_id_and_lms_course_id  (lti_client_id,lms_course_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (lti_client_id => lti_clients.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class LtiDeployment < ApplicationRecord
@@ -26,7 +31,9 @@ class LtiDeployment < ApplicationRecord
   belongs_to :lti_client
   has_many :lti_services, dependent: :destroy
   has_many :lti_line_items, dependent: :destroy
-  validates :lms_course_id, uniqueness: { scope: :lti_client }, allow_nil: true
+  validates :external_deployment_id, presence: true
+  validates :lms_course_id, presence: true, uniqueness: { scope: :lti_client }
+  validates :lms_course_name, presence: true
   # See LTI documentation for full lists of scopes/claims/roles
   # https://www.imsglobal.org/spec/lti/v1p3
   LTI_SCOPES = { names_role: 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',

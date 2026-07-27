@@ -7,20 +7,22 @@
 #  api_key      :string
 #  display_name :string           not null
 #  email        :string
-#  first_name   :string
+#  first_name   :string           not null
 #  id_number    :string
-#  last_name    :string
+#  last_name    :string           not null
 #  locale       :string           default("en"), not null
 #  theme        :integer          default("light"), not null
 #  time_zone    :string           not null
 #  type         :string
 #  user_name    :string           not null
-#  created_at   :datetime
-#  updated_at   :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
 #  index_users_on_api_key    (api_key) UNIQUE
+#  index_users_on_email      (email) UNIQUE
+#  index_users_on_id_number  (id_number) UNIQUE
 #  index_users_on_user_name  (user_name) UNIQUE
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
@@ -45,7 +47,7 @@ class User < ApplicationRecord
   has_many :lti_users, dependent: :destroy
   validates :type, format: { with: /\AEndUser|AutotestUser|AdminUser\z/ }
 
-  validates :user_name, :last_name, :first_name, :time_zone, :display_name, presence: true
+  validates :user_name, :last_name, :first_name, :time_zone, :display_name, :theme, presence: true
   validates :user_name, uniqueness: true
   validates :email, uniqueness: { allow_nil: true }
   validates :id_number, uniqueness: { allow_nil: true }

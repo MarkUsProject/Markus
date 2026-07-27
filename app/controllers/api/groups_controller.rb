@@ -238,52 +238,88 @@ module Api
         return page_not_found('Marking for that submission is already completed')
       end
 
+      annots = annotations_params
+      submission_files = result.submission.submission_files.index_by(&:filename)
+
       annotation_texts = []
       annotations = []
       count = result.submission.annotations.count + 1
       annotation_category = nil
-      submission_file = nil
-      params[:annotations].each_with_index do |annot_params, i|
-        if annot_params[:annotation_category_name].nil?
-          annotation_category_id = nil
-        else
-          name = annot_params[:annotation_category_name]
-          if annotation_category.nil? || annotation_category.annotation_category_name != name
-            annotation_category = assignment.annotation_categories.find_or_create_by(
-              annotation_category_name: name
-            )
+      error_message = nil
+
+      ActiveRecord::Base.transaction do
+        annots.each_with_index do |annot_params, i|
+          submission_file = submission_files[annot_params[:filename]]
+          if submission_file.nil?
+            error_message = "Submission file not found: #{annot_params[:filename]}"
+            raise ActiveRecord::Rollback
           end
-          annotation_category_id = annotation_category.id
-        end
-        if submission_file.nil? || submission_file.filename != annot_params[:filename]
-          submission_file = result.submission.submission_files.find_by(filename: annot_params[:filename])
+
+          expected_class = submission_file.annotation_class
+          required = expected_class.required_fields
+          requested = annot_params[:type].presence
+          if requested && requested != expected_class.name
+            error_message = "Annotation type '#{requested}' does not match the type " \
+                            "of file '#{annot_params[:filename]}'"
+            raise ActiveRecord::Rollback
+          end
+
+          missing = required.select { |field| annot_params[field].blank? }
+          if missing.any?
+            error_message = "Missing required fields for #{expected_class.name}: #{missing.join(', ')}"
+            raise ActiveRecord::Rollback
+          end
+
+          extra = (Annotation.location_fields - required).select { |field| annot_params[field].present? }
+          if extra.any?
+            error_message = "Unexpected fields for #{expected_class.name}: #{extra.join(', ')}"
+            raise ActiveRecord::Rollback
+          end
+
+          if annot_params[:annotation_category_name].nil?
+            annotation_category_id = nil
+          else
+            name = annot_params[:annotation_category_name]
+            if annotation_category.nil? || annotation_category.annotation_category_name != name
+              annotation_category = assignment.annotation_categories.find_or_create_by(
+                annotation_category_name: name
+              )
+            end
+            annotation_category_id = annotation_category.id
+          end
+
+          annotation_texts << {
+            content: annot_params[:content],
+            annotation_category_id: annotation_category_id,
+            creator_id: current_role.id,
+            last_editor_id: current_role.id
+          }
+          annotations << {
+            type: expected_class.name,
+            **annot_params.slice(*required).to_h.symbolize_keys,
+            annotation_text_id: nil,
+            submission_file_id: submission_file.id,
+            creator_id: current_role.id,
+            creator_type: current_role.type,
+            is_remark: !result.remark_request_submitted_at.nil?,
+            annotation_number: count + i,
+            result_id: result.id
+          }
         end
 
-        annotation_texts << {
-          content: annot_params[:content],
-          annotation_category_id: annotation_category_id,
-          creator_id: current_role.id,
-          last_editor_id: current_role.id
-        }
-        annotations << {
-          line_start: annot_params[:line_start],
-          line_end: annot_params[:line_end],
-          column_start: annot_params[:column_start],
-          column_end: annot_params[:column_end],
-          annotation_text_id: nil,
-          submission_file_id: submission_file.id,
-          creator_id: current_role.id,
-          creator_type: current_role.type,
-          is_remark: !result.remark_request_submitted_at.nil?,
-          annotation_number: count + i,
-          result_id: result.id
-        }
+        imported = AnnotationText.insert_all! annotation_texts
+        imported.rows.zip(annotations) do |t, a|
+          a[:annotation_text_id] = t[0]
+        end
+        # Each annotation type has a different set of location columns, and insert_all! requires
+        # uniform keys, so insert one type at a time.
+        annotations.group_by { |annotation| annotation[:type] }.each_value do |rows|
+          Annotation.insert_all!(rows)
+        end
       end
-      imported = AnnotationText.insert_all! annotation_texts
-      imported.rows.zip(annotations) do |t, a|
-        a[:annotation_text_id] = t[0]
-      end
-      TextAnnotation.insert_all! annotations
+
+      return add_annotations_error(error_message) if error_message
+
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
@@ -466,6 +502,34 @@ module Api
       end
     end
 
+    def overall_comment
+      result = grouping&.current_result
+      return page_not_found('No submission exists for that group') if result.nil?
+
+      case request.method
+      when 'GET'
+        respond_to do |format|
+          format.xml do
+            render xml: { overall_comment: result.overall_comment }.to_xml(root: 'result', skip_types: 'true')
+          end
+          format.json { render json: { overall_comment: result.overall_comment } }
+        end
+      when 'PATCH'
+        if has_missing_params?([:overall_comment])
+          render 'shared/http_status', locals: { code: '422', message:
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: :unprocessable_content
+          return
+        end
+        if result.update(overall_comment: params[:overall_comment])
+          head :ok
+        else
+          render 'shared/http_status',
+                 locals: { code: '422', message: result.errors.full_messages.first },
+                 status: :unprocessable_content
+        end
+      end
+    end
+
     private
 
     def assignment
@@ -479,15 +543,31 @@ module Api
     end
 
     def annotations_params
-      params.require(annotations: [
+      params.expect(annotations: [[
         :annotation_category_name,
-        :column_end,
-        :column_start,
         :content,
         :filename,
+        :type,
+        :line_start,
         :line_end,
-        :line_start
-      ])
+        :column_start,
+        :column_end,
+        :x1,
+        :y1,
+        :x2,
+        :y2,
+        :page,
+        :start_node,
+        :start_offset,
+        :end_node,
+        :end_offset
+      ]])
+    end
+
+    def add_annotations_error(message)
+      render 'shared/http_status',
+             locals: { code: '422', message: message },
+             status: :unprocessable_content
     end
 
     def time_delta_params

@@ -7,10 +7,10 @@
 #  deduction            :float
 #  hours                :float
 #  interval             :float
-#  submission_rule_type :string
-#  created_at           :datetime
-#  updated_at           :datetime
-#  submission_rule_id   :integer
+#  submission_rule_type :string           not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  submission_rule_id   :integer          not null
 #
 # Indexes
 #

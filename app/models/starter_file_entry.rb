@@ -6,6 +6,8 @@
 #
 #  id                    :bigint           not null, primary key
 #  path                  :string           not null
+#  created_at            :datetime
+#  updated_at            :datetime
 #  starter_file_group_id :bigint           not null
 #
 # Indexes
@@ -20,6 +22,7 @@
 class StarterFileEntry < ApplicationRecord
   belongs_to :starter_file_group
   has_one :course, through: :starter_file_group
+  validates :path, presence: true
   validate :entry_exists, if: :starter_file_group
 
   has_many :grouping_starter_file_entries, dependent: :destroy

@@ -4,16 +4,22 @@
 # Table name: criterion_ta_associations
 #
 #  id            :integer          not null, primary key
-#  created_at    :datetime
-#  updated_at    :datetime
-#  assessment_id :bigint
-#  criterion_id  :integer
-#  ta_id         :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  assessment_id :bigint           not null
+#  criterion_id  :integer          not null
+#  ta_id         :integer          not null
 #
 # Indexes
 #
 #  index_criterion_ta_associations_on_criterion_id  (criterion_id)
 #  index_criterion_ta_associations_on_ta_id         (ta_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (criterion_id => criteria.id)
+#  fk_rails_...  (ta_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class CriterionTaAssociation < ApplicationRecord

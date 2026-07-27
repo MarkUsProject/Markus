@@ -37,7 +37,7 @@ describe("BinaryViewer", () => {
     expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
   });
 
-  it("should call loading callbacks before and after loading", async () => {
+  it("should call loading callback after loading", async () => {
     fetchMock.mockOnce(successfulFetchResp);
 
     render(<BinaryViewer {...props} />);
@@ -45,9 +45,8 @@ describe("BinaryViewer", () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
 
-      expect(loadingCallback.mock.calls).toHaveLength(2);
-      expect(loadingCallback.mock.calls[0][0]).toBe(true);
-      expect(loadingCallback.mock.calls[1][0]).toBe(false);
+      expect(loadingCallback.mock.calls).toHaveLength(1);
+      expect(loadingCallback.mock.calls[0][0]).toBe(false);
 
       expect(errorCallback.mock.calls).toHaveLength(0);
     });
@@ -65,9 +64,8 @@ describe("BinaryViewer", () => {
         I18n.t("submissions.oversize_submission_file")
       );
 
-      expect(loadingCallback.mock.calls).toHaveLength(2);
-      expect(loadingCallback.mock.calls[0][0]).toBe(true);
-      expect(loadingCallback.mock.calls[1][0]).toBe(false);
+      expect(loadingCallback.mock.calls).toHaveLength(1);
+      expect(loadingCallback.mock.calls[0][0]).toBe(false);
     });
   });
 

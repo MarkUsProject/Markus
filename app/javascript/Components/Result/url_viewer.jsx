@@ -25,7 +25,6 @@ export class URLViewer extends React.Component {
     if (!this.props.url) {
       return;
     }
-    this.props.setLoadingCallback(true);
     fetch(this.props.url)
       .then(response => response.text())
       .then(content =>

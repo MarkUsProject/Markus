@@ -163,6 +163,7 @@ describe AutotestResultsJob do
           let(:test_runs) { [test_run1, test_run2, test_run3] }
           let(:student) { grouping.inviter.user }
           let(:student2) { create(:student).user }
+
           before do
             allow_any_instance_of(TestRun).to receive(:update_results!)
             allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
@@ -209,6 +210,7 @@ describe AutotestResultsJob do
           let(:test_run3) { create(:test_run, grouping: grouping, status: :in_progress) }
           let(:test_runs) { [test_run1, test_run2, test_run3] }
           let(:student) { grouping.inviter.user }
+
           it 'should not broadcast anything' do
             allow_any_instance_of(TestRun).to receive(:update_results!)
             allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)

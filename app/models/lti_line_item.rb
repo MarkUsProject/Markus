@@ -13,7 +13,6 @@
 # Indexes
 #
 #  index_lti_line_items_on_assessment_id                        (assessment_id)
-#  index_lti_line_items_on_lti_deployment_id                    (lti_deployment_id)
 #  index_lti_line_items_on_lti_deployment_id_and_assessment_id  (lti_deployment_id,assessment_id) UNIQUE
 #
 # Foreign Keys
@@ -26,4 +25,5 @@ class LtiLineItem < ApplicationRecord
   belongs_to :assessment
   belongs_to :lti_deployment
   validates :assessment, uniqueness: { scope: :lti_deployment_id }
+  validates :lti_line_item_id, presence: true
 end

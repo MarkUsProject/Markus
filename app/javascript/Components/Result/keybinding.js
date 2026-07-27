@@ -1,6 +1,24 @@
 // Open the keyboard shortcuts help modal
 import Mousetrap from "mousetrap";
 
+// Allow navigation keybindings to fire even when a form input has focus.
+// Mousetrap suppresses all bindings on inputs by default to avoid interfering
+// with typing, but these combos don't produce characters so suppression is wrong.
+// shift+n is intentionally excluded so it stays blocked while typing.
+const _originalStopCallback = Mousetrap.prototype.stopCallback;
+Mousetrap.prototype.stopCallback = function (e, element, combo) {
+  const allowedOnInputs = [
+    "shift+up",
+    "shift+down",
+    "shift+left",
+    "shift+right",
+    "ctrl+shift+right",
+    "alt+enter",
+  ];
+  if (allowedOnInputs.includes(combo)) return false;
+  return _originalStopCallback.call(this, e, element, combo);
+};
+
 export function bind_keybindings() {
   Mousetrap.bind("?", function () {
     modal_help.open();
@@ -30,78 +48,6 @@ export function bind_keybindings() {
     // Don't override range selection keybindings
     if (!is_text_selected()) {
       $(".button.random-incomplete-submission")[0].click();
-    }
-  });
-
-  // Go to the previous criterion with shift + up
-  Mousetrap.bind("shift+up", function (e) {
-    if (!is_text_selected()) {
-      e.preventDefault();
-      window.marksPanel.prevCriterion();
-      return false;
-    }
-  });
-
-  // Go to the next criterion with shift + down
-  Mousetrap.bind("shift+down", function (e) {
-    if (!is_text_selected()) {
-      e.preventDefault();
-      window.marksPanel.nextCriterion();
-      return false;
-    }
-  });
-
-  // When on rubric criterion, use the arrow keys to hover over the next rubric
-  Mousetrap.bind("up", function (e) {
-    let $current_criteria = $(".active-criterion");
-    if (
-      $current_criteria.length &&
-      $current_criteria.hasClass("rubric_criterion") &&
-      !$current_criteria.hasClass("unassigned")
-    ) {
-      e.preventDefault();
-      let $selected = $(".active-rubric");
-      if ($selected.length) {
-        let $next = $selected.parent().prev();
-        if (!$next.length) {
-          // if no next element exists, loop back to the last of the list
-          $next = $selected.parent().siblings().last();
-        }
-        $selected.removeClass("active-rubric");
-        $next.children().addClass("active-rubric");
-      }
-      return false;
-    }
-  });
-
-  // When on rubric criteria, use the arrow keys to hover over the next rubric
-  Mousetrap.bind("down", function (e) {
-    let $current_criteria = $(".active-criterion");
-    if (
-      $current_criteria.length &&
-      $current_criteria.hasClass("rubric_criterion") &&
-      !$current_criteria.hasClass("unassigned")
-    ) {
-      e.preventDefault();
-      let $selected = $(".active-rubric");
-      if ($selected.length) {
-        let $next = $selected.parent().next();
-        if (!$next.length) {
-          // if no next element exists, loop back to the front of the list
-          $next = $selected.parent().siblings().first();
-        }
-        $selected.removeClass("active-rubric");
-        $next.children().addClass("active-rubric");
-      }
-      return false;
-    }
-  });
-
-  // When enter is pressed, and there is an active rubric selected, trigger select and collapse
-  Mousetrap.bind("enter", function (e) {
-    if ($(".active-rubric").length) {
-      e.preventDefault();
-      $(".active-rubric")[0].click();
     }
   });
 

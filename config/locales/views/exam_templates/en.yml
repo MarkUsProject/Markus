@@ -98,6 +98,7 @@ en:
       instruction: Replace template file
       success: Exam Template has been successfully updated
     upload_scans:
+      confirmation_dialog: The selected exam template has no template divisions assigned to it. Are you sure you would like to proceed?
       failure: Scans failed to upload
       instruction: Papers to upload (.pdf)
       invalid: Invalid file type

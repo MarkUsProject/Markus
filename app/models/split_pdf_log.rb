@@ -5,16 +5,16 @@
 #
 #  id                       :integer          not null, primary key
 #  error_description        :string
-#  filename                 :string
-#  num_groups_in_complete   :integer
-#  num_groups_in_incomplete :integer
-#  num_pages_qr_scan_error  :integer
-#  original_num_pages       :integer
+#  filename                 :string           not null
+#  num_groups_in_complete   :integer          not null
+#  num_groups_in_incomplete :integer          not null
+#  num_pages_qr_scan_error  :integer          not null
+#  original_num_pages       :integer          not null
 #  qr_code_found            :boolean          default(FALSE), not null
 #  uploaded_when            :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  exam_template_id         :integer
+#  exam_template_id         :integer          not null
 #  role_id                  :bigint           not null
 #
 # Indexes
@@ -39,6 +39,7 @@ class SplitPdfLog < ApplicationRecord
   validates :num_groups_in_complete, :num_groups_in_complete, :num_pages_qr_scan_error, :original_num_pages,
             numericality: { greater_than_or_equal_to: 0,
                             only_integer: true }
+  validates :qr_code_found, inclusion: { in: [true, false] }
 
   validate :courses_should_match
 
