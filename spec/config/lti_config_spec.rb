@@ -104,24 +104,80 @@ describe LtiConfig do
 
     context 'when parsing the SIS ID term code' do
       it 'decodes a Fall term code' do
-        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20259'
+        deployment.lms_course_sourcedid = 'ABC123H1-F-LEC0101-20259'
         expect(dates).to eq([Time.zone.local(2025, 9, 1), Time.zone.local(2025, 12, 31).end_of_day])
       end
 
       it 'decodes a Winter term code' do
-        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20261'
+        deployment.lms_course_sourcedid = 'ABC123H1-S-LEC0101-20261'
         expect(dates).to eq([Time.zone.local(2026, 1, 1), Time.zone.local(2026, 4, 30).end_of_day])
       end
 
       it 'decodes a 2-digit month and crosses the year boundary' do
-        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-202511'
+        deployment.lms_course_sourcedid = 'ABC123H1-F-LEC0101-202511'
         expect(dates).to eq([Time.zone.local(2025, 11, 1), Time.zone.local(2026, 2, 28).end_of_day])
       end
 
       it 'wins over a disagreeing term name' do
-        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20259'
+        deployment.lms_course_sourcedid = 'ABC123H1-F-LEC0101-20259'
         deployment.lms_term_name = 'Winter 2030'
         expect(dates.first).to eq(Time.zone.local(2025, 9, 1))
+      end
+    end
+
+    context 'when the course spans a full year' do
+      it 'spans Sep to Apr for a Y session with a Fall term code' do
+        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20269'
+        expect(dates).to eq([Time.zone.local(2026, 9, 1), Time.zone.local(2027, 4, 30).end_of_day])
+      end
+
+      it 'starts the previous Sep for a Y session with a Winter term code' do
+        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20251'
+        expect(dates).to eq([Time.zone.local(2024, 9, 1), Time.zone.local(2025, 4, 30).end_of_day])
+      end
+
+      it 'matches a lowercase y session' do
+        deployment.lms_course_sourcedid = 'lsm999y1-y-LEC0101-20269'
+        expect(dates).to eq([Time.zone.local(2026, 9, 1), Time.zone.local(2027, 4, 30).end_of_day])
+      end
+
+      it 'keeps a Y session Summer term to a single term' do
+        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20255'
+        expect(dates).to eq([Time.zone.local(2025, 5, 1), Time.zone.local(2025, 8, 31).end_of_day])
+      end
+
+      it 'spans Sep to Apr for a Fall-Winter term name' do
+        deployment.lms_term_name = '2026 Fall-Winter'
+        expect(dates).to eq([Time.zone.local(2026, 9, 1), Time.zone.local(2027, 4, 30).end_of_day])
+      end
+
+      it 'spans Sep to Apr for a Fall/Winter term name' do
+        deployment.lms_term_name = 'Fall/Winter 2026'
+        expect(dates).to eq([Time.zone.local(2026, 9, 1), Time.zone.local(2027, 4, 30).end_of_day])
+      end
+
+      it 'reads the year-long session from the SIS ID over a single-term term name' do
+        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20269'
+        deployment.lms_term_name = 'Fall 2026'
+        expect(dates.last).to eq(Time.zone.local(2027, 4, 30).end_of_day)
+      end
+
+      it 'falls back to a Fall-Winter term name when the SIS ID is malformed' do
+        deployment.lms_course_sourcedid = '$CourseSection.sourcedId'
+        deployment.lms_term_name = '2026 Fall-Winter'
+        expect(dates).to eq([Time.zone.local(2026, 9, 1), Time.zone.local(2027, 4, 30).end_of_day])
+      end
+
+      it 'ignores a Fall-Winter term name when the SIS ID reports a single term' do
+        deployment.lms_course_sourcedid = 'ABC123H1-F-LEC0101-20269'
+        deployment.lms_term_name = '2026 Fall-Winter'
+        expect(dates.last).to eq(Time.zone.local(2026, 12, 31).end_of_day)
+      end
+
+      it 'ignores a Y session when a malformed term code sends it to the term name' do
+        deployment.lms_course_sourcedid = 'LSM999Y1-Y-LEC0101-20250'
+        deployment.lms_term_name = 'Fall 2026'
+        expect(dates).to eq([Time.zone.local(2026, 9, 1), Time.zone.local(2026, 12, 31).end_of_day])
       end
     end
 
