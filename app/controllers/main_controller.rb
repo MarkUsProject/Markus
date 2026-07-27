@@ -123,7 +123,11 @@ class MainController < ApplicationController
   end
 
   def check_timeout
-    head :ok unless check_imminent_expiry
+    if session_expired?
+      head :unauthorized
+    else
+      render json: { time_remaining: session_time_remaining }
+    end
   end
 
   def refresh_session
