@@ -148,9 +148,11 @@ module SessionHandler
     Time.zone.parse(session[:timeout]) < Time.current
   end
 
-  def check_imminent_expiry
-    return false if remote_auth?
-    !session[:timeout].nil? && (Time.zone.parse(session[:timeout]) - Time.current) <= 5.minutes
+  def session_time_remaining
+    return 0 if remote_auth?
+    return 0 if session[:timeout].nil?
+
+    (Time.zone.parse(session[:timeout]) - Time.current).to_i
   end
 
   # Clear this current user's session set by this app
