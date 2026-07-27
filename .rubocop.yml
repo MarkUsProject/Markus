@@ -11,6 +11,7 @@ AllCops:
     - 'db/migrate/.*'
     - 'db/schema.rb'
     - 'lib/repo/test/.*'
+    - 'release/.*'
     - 'Vagrantfile'
   NewCops: enable
   SuggestExtensions: false

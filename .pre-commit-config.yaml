@@ -49,6 +49,7 @@ repos:
             db/migrate/.*|
             db/schema.rb|
             lib/repo/test/.*|
+            release/.*|
             Vagrantfile
           )$
         additional_dependencies:
