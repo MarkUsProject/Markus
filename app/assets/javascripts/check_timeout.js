@@ -28,11 +28,20 @@
           return;
         }
 
-        return response.text();
+        return response.json();
       })
-      .then(script => {
-        if (script) {
-          eval(script);
+      .then(data => {
+        if (!data) return;
+
+        if (data.time_remaining <= 300) {
+          timeout_imminent_modal.open();
+
+          $("#timeout-imminent-modal-close")
+            .off("click")
+            .on("click", function () {
+              refreshOrLogout();
+              timeout_imminent_modal.close();
+            });
         }
       });
   };

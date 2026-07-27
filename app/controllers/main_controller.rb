@@ -3,7 +3,7 @@
 class MainController < ApplicationController
   include ApplicationHelper
 
-  protect_from_forgery with: :exception, except: [:login, :page_not_found, :check_timeout]
+  protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
   # check for authorization
   skip_before_action :check_course_switch, only: [:login, :page_not_found, :check_timeout, :login_remote_auth, :about,
@@ -125,8 +125,8 @@ class MainController < ApplicationController
   def check_timeout
     if session_expired?
       head :unauthorized
-    elsif !check_imminent_expiry
-      head :ok
+    else
+      render json: { time_remaining: session_time_remaining }
     end
   end
 
