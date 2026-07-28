@@ -30,17 +30,45 @@ def enrich_pr(pull)
   pull['files_changed'] = fetch_pr_files(pull['number'])
   sha = pull.dig('mergeCommit', 'oid')
   pull['merge_commit'] = sha
-  pull['already_in_release'] = sha.present? && ancestor_of_release?(sha)
+  pull['already_in_release'] = !sha.to_s.empty? && ancestor_of_release?(sha)
 end
 
+# Query the milestone's PRs directly from GitHub's database via GraphQL rather
+# than `gh pr list --search`, whose backing search index can lag hours behind
+# milestone edits. Shape mirrors the old gh output: number, title, mergedAt,
+# mergeCommit{oid}, author{login}.
+MILESTONE_QUERY = <<~GRAPHQL
+  query($owner: String!, $name: String!, $milestone: String!) {
+    repository(owner: $owner, name: $name) {
+      milestones(query: $milestone, first: 10) {
+        nodes {
+          title
+          pullRequests(first: 100, states: MERGED) {
+            nodes {
+              number
+              title
+              mergedAt
+              mergeCommit { oid }
+              author { login }
+            }
+          }
+        }
+      }
+    }
+  }
+GRAPHQL
+
 def fetch_milestone_prs(version)
+  owner, name = ReleaseHelpers::REPO.split('/')
   raw = ReleaseHelpers.run_stripped(
-    'gh', 'pr', 'list', '--repo', ReleaseHelpers::REPO,
-    '--state', 'merged', '--search', "milestone:#{version}",
-    '--json', 'number,title,mergedAt,mergeCommit,author',
-    '--jq', 'sort_by(.mergedAt)', '--limit', '100'
+    'gh', 'api', 'graphql', '-f', "query=#{MILESTONE_QUERY}",
+    '-F', "owner=#{owner}", '-F', "name=#{name}", '-F', "milestone=#{version}"
   )
-  prs = JSON.parse(raw)
+  nodes = JSON.parse(raw).dig('data', 'repository', 'milestones', 'nodes') || []
+  milestone = nodes.find { |m| m['title'] == version }
+  pr_nodes = milestone&.dig('pullRequests', 'nodes') || []
+  warn "Warning: milestone #{version} hit the 100-PR query cap — some PRs may be missing" if pr_nodes.length >= 100
+  prs = pr_nodes.sort_by { |pr| pr['mergedAt'] }
   warn "Warning: No merged PRs found in milestone #{version}" if prs.empty?
   prs.each { |pr| enrich_pr(pr) }
 end
@@ -64,7 +92,7 @@ def earlier_prs(prs, current, timestamps)
 end
 
 def detect_dependencies(pending_prs)
-  timestamps = pending_prs.to_h { |pr| [pr['number'], Time.zone.parse(pr['mergedAt'])] }
+  timestamps = pending_prs.to_h { |pr| [pr['number'], Time.parse(pr['mergedAt'])] }
   pending_prs.each do |pr|
     earlier = earlier_prs(pending_prs, pr, timestamps)
     overlapping = earlier.select { |o| pr['files_changed'].intersect?(o['files_changed']) }
@@ -96,8 +124,8 @@ def build_order(remaining, by_num)
 end
 
 def topo_sort(pending_prs)
-  by_num = pending_prs.index_by { |pr| pr['number'] }
-  remaining = pending_prs.pluck('number')
+  by_num = pending_prs.to_h { |pr| [pr['number'], pr] }
+  remaining = pending_prs.map { |pr| pr['number'] }
   build_order(remaining, by_num)
 end
 
@@ -105,6 +133,44 @@ end
 def build_cherry_pick_order(pending_prs)
   detect_dependencies(pending_prs)
   topo_sort(pending_prs)
+end
+
+def diff_release_to_master(*paths)
+  ReleaseHelpers.run_stripped('git', 'diff', 'origin/release..origin/master', '--', *paths)
+end
+
+def dependency_changes
+  dep_diff = diff_release_to_master('Gemfile', 'Gemfile.lock', 'package.json', 'package-lock.json')
+  settings_diff = diff_release_to_master('markus.control', 'config/settings.yml')
+  dep_line_count = dep_diff.lines.count { |l| l.start_with?('+', '-') }
+  {
+    'summary' => dep_diff.empty? ? 'No dependency changes' : "Dependency files changed (#{dep_line_count} lines)",
+    'settings' => settings_diff.empty? ? 'No settings changes' : 'Settings files changed — notify sysadmin'
+  }
+end
+
+def pr_summary(pull)
+  { 'number' => pull['number'], 'title' => pull['title'], 'author' => pull.dig('author', 'login'),
+    'merged_at' => pull['mergedAt'], 'merge_commit' => pull['merge_commit'],
+    'files_changed' => pull['files_changed'], 'already_in_release' => pull['already_in_release'],
+    'dependencies' => pull['dependencies'] || [] }
+end
+
+def skipped_entry(pull)
+  { 'ref' => pull['merge_commit'], 'number' => pull['number'], 'reason' => 'Already ancestor of release branch' }
+end
+
+def build_result(version, prs, order)
+  {
+    'version' => version,
+    'timestamp' => Time.now.utc.iso8601,
+    'release_branch_tip' => ReleaseHelpers.run_stripped('git', 'log', 'origin/release', '--oneline', '-1'),
+    'milestone_prs' => prs.map { |pr| pr_summary(pr) },
+    'non_pr_commits' => find_non_pr_commits,
+    'proposed_cherry_pick_order' => order,
+    'skipped' => prs.select { |pr| pr['already_in_release'] }.map { |pr| skipped_entry(pr) },
+    'dependency_changes' => dependency_changes
+  }
 end
 
 # --- Main ---
@@ -126,36 +192,4 @@ prs = fetch_milestone_prs(version)
 pending = prs.reject { |pr| pr['already_in_release'] }
 order = build_cherry_pick_order(pending)
 
-dep_diff = ReleaseHelpers.run_stripped(
-  'git', 'diff', 'origin/release..origin/master', '--',
-  'Gemfile', 'Gemfile.lock', 'package.json', 'package-lock.json'
-)
-settings_diff = ReleaseHelpers.run_stripped(
-  'git', 'diff', 'origin/release..origin/master', '--',
-  'markus.control', 'config/settings.yml'
-)
-
-dep_line_count = dep_diff.lines.count { |l| l.start_with?('+', '-') }
-
-result = {
-  'version' => version,
-  'timestamp' => Time.now.utc.iso8601,
-  'release_branch_tip' => ReleaseHelpers.run_stripped('git', 'log', 'origin/release', '--oneline', '-1'),
-  'milestone_prs' => prs.map do |pr|
-    { 'number' => pr['number'], 'title' => pr['title'], 'author' => pr.dig('author', 'login'),
-      'merged_at' => pr['mergedAt'], 'merge_commit' => pr['merge_commit'],
-      'files_changed' => pr['files_changed'], 'already_in_release' => pr['already_in_release'],
-      'dependencies' => pr['dependencies'] || [] }
-  end,
-  'non_pr_commits' => find_non_pr_commits,
-  'proposed_cherry_pick_order' => order,
-  'skipped' => prs.select { |pr| pr['already_in_release'] }.map do |pr|
-    { 'ref' => pr['merge_commit'], 'number' => pr['number'], 'reason' => 'Already ancestor of release branch' }
-  end,
-  'dependency_changes' => {
-    'summary' => dep_diff.empty? ? 'No dependency changes' : "Dependency files changed (#{dep_line_count} lines)",
-    'settings' => settings_diff.empty? ? 'No settings changes' : 'Settings files changed — notify sysadmin'
-  }
-}
-
-puts JSON.pretty_generate(result)
+puts JSON.pretty_generate(build_result(version, prs, order))
