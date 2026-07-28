@@ -7,6 +7,9 @@ describe AutotestRunJob do
   let(:role) { create(:instructor) }
 
   before do
+    # MARKUS_URL overrides host_with_port when set, so unset it here to keep these
+    # expectations independent of the developer's environment.
+    stub_const('ENV', ENV.to_h.except('MARKUS_URL'))
     allow_any_instance_of(AutotestSetting).to(
       receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
     )
@@ -307,6 +310,28 @@ describe AutotestRunJob do
             end
             subject
           end
+        end
+      end
+
+      context 'file_url host' do
+        it 'uses MARKUS_URL when set, since the autotester may not reach the browser-facing host' do
+          stub_const('ENV', ENV.to_h.merge('MARKUS_URL' => 'http://autotest-reachable:3000'))
+          expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
+            urls = JSON.parse(net_obj.body)['test_data'].pluck('file_url')
+            expect(urls).to all(start_with('http://autotest-reachable:3000/'))
+            dummy_return
+          end
+          subject
+        end
+
+        it 'falls back to host_with_port when MARKUS_URL is set but empty' do
+          stub_const('ENV', ENV.to_h.merge('MARKUS_URL' => ''))
+          expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|
+            urls = JSON.parse(net_obj.body)['test_data'].pluck('file_url')
+            expect(urls).to all(start_with("#{host_with_port}/"))
+            dummy_return
+          end
+          subject
         end
       end
     end
