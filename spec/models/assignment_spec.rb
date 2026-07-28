@@ -1971,6 +1971,20 @@ describe Assignment do
         expect(data.pluck(:_id)).to match_array(groupings.map(&:id))
       end
 
+      context 'when the instructor is assigned as a grader' do
+        let(:instructor) { create(:instructor, course: assignment.course) }
+
+        before { create(:ta_membership, grouping: groupings.first, role: instructor) }
+
+        it 'identifies assigned groupings while still returning all groupings' do
+          data_by_grouping_id = data.index_by { |group| group[:_id] }
+
+          expect(data.size).to eq groupings.size
+          expect(data_by_grouping_id[groupings.first.id][:assigned]).to be true
+          expect(data_by_grouping_id[groupings.second.id][:assigned]).to be false
+        end
+      end
+
       it 'should include the group name' do
         expect(data.pluck(:group_name)).to match_array(groupings.map { |g| g.group.group_name })
       end
@@ -2397,6 +2411,23 @@ describe Assignment do
           expect(data).not_to be_empty
           expect(data[0]).to be_a Hash
           expect(data[0].keys).to match_array expected_keys
+        end
+
+        context 'when the instructor is assigned as a grader' do
+          let(:assigned_instructor) { create(:instructor, course: assignment_tag.course) }
+
+          before { create(:ta_membership, grouping: groupings.first, role: assigned_instructor) }
+
+          it 'identifies assigned groupings while still returning all groupings' do
+            data = assignment_tag.summary_json(assigned_instructor)[:data]
+            data_by_group_name = data.index_by { |group| group[:group_name] }
+            assigned_group_name = groupings.first.group.group_name
+            unassigned_group_name = groupings.second.group.group_name
+
+            expect(data.size).to eq groupings.size
+            expect(data_by_group_name[assigned_group_name][:assigned]).to be true
+            expect(data_by_group_name[unassigned_group_name][:assigned]).to be false
+          end
         end
 
         it 'has group with members' do

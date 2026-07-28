@@ -54,7 +54,7 @@ en:
         one: 1 assigned submission
         other: "%{count} assigned submissions"
         zero: 0 assigned submissions
-      display_assigned_only: Display assigned submissions only
+      display_assigned_only: Display only my assigned submissions
       display_inactive: Display inactive groups
     help:
       browse:

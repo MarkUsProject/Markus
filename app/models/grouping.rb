@@ -855,14 +855,16 @@ class Grouping < ApplicationRecord
 
   def navigation_results(current_role, filter_data)
     results = self.assignment.current_results
-    if current_role.ta?
+    # Use instance_of? to exclude AdminRole, which cannot be assigned as a grader.
+    if current_role.instance_of?(Instructor) || current_role.ta?
       can_manage_submissions = allowed_to?(
         :manage_submissions?,
         current_role,
         context: { role: current_role, user: current_role.user, real_user: current_role.user }
       )
 
-      if !can_manage_submissions || filter_data.fetch('assignedGradersOnly', true).to_s != 'false'
+      assigned_only = filter_data.fetch('assignedGradersOnly', current_role.ta?).to_s != 'false'
+      if !can_manage_submissions || assigned_only
         results = results.joins(grouping: :memberships).where('memberships.role_id': current_role.id)
       end
     end

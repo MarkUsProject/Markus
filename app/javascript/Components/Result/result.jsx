@@ -16,6 +16,7 @@ import {ResultContext} from "./result_context";
 import {annotation_context_menu} from "./context_menu";
 import {AnnotationText} from "../../common/annotations/annotation_text";
 import {get_html_annotation_range} from "../../common/annotations/html_annotations";
+import {getInitialFilterData, restoreFilterData} from "./filter_data";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -27,29 +28,10 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
-const INITIAL_FILTER_MODAL_STATE = {
-  ascending: true,
-  orderBy: "group_name",
-  assignedGradersOnly: true,
-  annotationText: "",
-  tas: [],
-  tags: [],
-  section: "",
-  markingState: "",
-  totalMarkRange: {
-    min: "",
-    max: "",
-  },
-  totalExtraMarkRange: {
-    min: "",
-    max: "",
-  },
-  criteria: {},
-};
-
 class Result extends React.Component {
   constructor(props) {
     super(props);
+    this.initialFilterModalState = getInitialFilterData(props.role);
 
     this.state = {
       annotation_categories: [],
@@ -63,7 +45,7 @@ class Result extends React.Component {
       result_id: props.result_id,
       grouping_id: props.grouping_id,
       can_release: false,
-      filterData: INITIAL_FILTER_MODAL_STATE,
+      filterData: this.initialFilterModalState,
       isCreateTagModalOpen: false,
       prefetchedIds: null, // Array of { result_id, grouping_id }
       prefetchedIndex: -1, // Current position in prefetched list
@@ -98,9 +80,9 @@ class Result extends React.Component {
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
 
-    this.refreshFilterData();
+    const filterChanged = this.refreshFilterData();
     // Prefetch grouping IDs for client-side navigation (skip if already valid)
-    if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
+    if (!filterChanged && (!this.state.prefetchedIds || this.shouldRefetchIds())) {
       this.fetchGroupingIds();
     }
   }
@@ -161,7 +143,7 @@ class Result extends React.Component {
 
   syncSection = (sectionSelection, sectionData) => {
     if (!sectionData.includes(sectionSelection) && sectionSelection !== "") {
-      this.updateFilterData({section: INITIAL_FILTER_MODAL_STATE["section"]});
+      this.updateFilterData({section: this.initialFilterModalState["section"]});
     }
   };
 
@@ -919,21 +901,16 @@ class Result extends React.Component {
     });
   };
 
+  filterStorageKey = () => `${this.props.user_id}_${this.state.assignment_id}_filterData`;
+
   refreshFilterData = () => {
-    const storedFilter = localStorage.getItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`
-    );
-    let parsed_filter;
-    try {
-      parsed_filter = JSON.parse(storedFilter);
-    } catch (e) {
-      parsed_filter = null;
+    const filterData = restoreFilterData(this.props.role, this.filterStorageKey());
+
+    const filterChanged = JSON.stringify(this.state.filterData) !== JSON.stringify(filterData);
+    if (filterChanged) {
+      this.updateFilterData(filterData);
     }
-    if (parsed_filter) {
-      this.setState({filterData: parsed_filter});
-    } else {
-      this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
-    }
+    return filterChanged;
   };
 
   updateFilterData = new_filters => {
@@ -941,23 +918,17 @@ class Result extends React.Component {
     this.setState({filterData: filters, prefetchedIds: null, prefetchedIndex: -1}, () => {
       this.fetchGroupingIds();
     });
-    localStorage.setItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(filters)
-    );
+    localStorage.setItem(this.filterStorageKey(), JSON.stringify(filters));
   };
 
   resetFilterData = () => {
     this.setState(
-      {filterData: INITIAL_FILTER_MODAL_STATE, prefetchedIds: null, prefetchedIndex: -1},
+      {filterData: this.initialFilterModalState, prefetchedIds: null, prefetchedIndex: -1},
       () => {
         this.fetchGroupingIds();
       }
     );
-    localStorage.setItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(INITIAL_FILTER_MODAL_STATE)
-    );
+    localStorage.setItem(this.filterStorageKey(), JSON.stringify(this.initialFilterModalState));
   };
 
   handleCreateTagButtonClick = () => {

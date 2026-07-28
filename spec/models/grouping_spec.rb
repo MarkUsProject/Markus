@@ -1682,8 +1682,8 @@ describe Grouping do
   end
 
   describe '#get_next_group as instructor' do
-    let(:role) { create(:instructor) }
     let(:assignment) { create(:assignment) }
+    let(:role) { create(:instructor, course: assignment.course) }
     let(:groupings_collected) { [true, true] }
 
     before do
@@ -1729,6 +1729,33 @@ describe Grouping do
         groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.last.get_next_grouping(role, true)
         expect(new_grouping.group_id).to eq(groupings.first.group_id)
+      end
+    end
+
+    context 'when the instructor is assigned as a grader' do
+      let(:groupings_collected) { [true, true, true] }
+
+      before do
+        ordered_groupings = assignment.groupings.joins(:group).order(:group_name)
+        create(:ta_membership, grouping: ordered_groupings.first, role: role)
+        create(:ta_membership, grouping: ordered_groupings.last, role: role)
+      end
+
+      it 'navigates all groupings by default' do
+        ordered_groupings = assignment.groupings.joins(:group).order(:group_name)
+
+        expect(ordered_groupings.first.get_next_grouping(role, false)).to eq(ordered_groupings.second)
+      end
+
+      it 'navigates only assigned groupings when assigned-only navigation is enabled' do
+        ordered_groupings = assignment.groupings.joins(:group).order(:group_name)
+        next_grouping = ordered_groupings.first.get_next_grouping(
+          role,
+          false,
+          { 'assignedGradersOnly' => 'true' }
+        )
+
+        expect(next_grouping).to eq(ordered_groupings.last)
       end
     end
   end
@@ -1878,7 +1905,7 @@ describe Grouping do
     let(:assignment) { grouping1.assignment }
 
     context 'when role is an instructor' do
-      let(:role) { create(:instructor) }
+      let(:role) { create(:instructor, course: assignment.course) }
 
       it 'returns all groupings ordered by group name ascending with correct keys' do
         result = grouping1.get_filtered_ordered_ids(role)
@@ -1893,6 +1920,21 @@ describe Grouping do
         expected_ids = [grouping1, grouping2, grouping3].sort_by { |g| g.group.group_name }.reverse
                                                         .map { |g| g.current_result.id }
         expect(result.pluck(:result_id)).to eq(expected_ids)
+      end
+
+      context 'when the instructor is assigned as a grader' do
+        before do
+          create(:ta_membership, grouping: grouping1, role: role)
+          create(:ta_membership, grouping: grouping3, role: role)
+        end
+
+        it 'returns only assigned groupings when assigned-only navigation is enabled' do
+          result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'true' })
+          returned_grouping_ids = result.pluck(:grouping_id)
+
+          expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+          expect(returned_grouping_ids).not_to include(grouping2.id)
+        end
       end
 
       it 'orders by submission_date when specified' do
@@ -1940,6 +1982,16 @@ describe Grouping do
         returned_ids = result.pluck(:result_id)
         expect(returned_ids).to include(grouping2.current_result.id, grouping3.current_result.id)
         expect(returned_ids).not_to include(grouping1.current_result.id)
+      end
+    end
+
+    context 'when role is an admin' do
+      let(:role) { create(:admin_role, course: assignment.course) }
+
+      it 'does not apply the instructor assigned-only submission scope' do
+        result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'true' })
+
+        expect(result.pluck(:grouping_id)).to match_array([grouping1.id, grouping2.id, grouping3.id])
       end
     end
 

@@ -592,10 +592,14 @@ class Assignment < Assessment
   def summary_json(user)
     return {} unless user.instructor? || user.ta?
     is_instructor = user.instructor?
+    assigned_grouping_ids = self.groupings
+                                .joins(:memberships)
+                                .where('memberships.role_id': user.id)
+                                .ids
+                                .to_set
 
     if is_instructor
       groupings = self.groupings
-      assigned_grouping_ids = Set.new
       grader_data_agg = Arel.sql('json_agg(json_build_array(users.user_name, users.first_name, users.last_name))')
       graders = groupings.joins(tas: :user)
                          .group(:id)
@@ -609,11 +613,6 @@ class Assignment < Assessment
                                                   'lti_deployments.lms_course_name')
       lti_deployments.each { |deployment| deployment.transform_keys! { |key| key.to_s.split('.')[-1] } }
     else
-      assigned_grouping_ids = self.groupings
-                                  .joins(:memberships)
-                                  .where('memberships.role_id': user.id)
-                                  .ids
-                                  .to_set
       groupings = if user.grader_permission.manage_submissions
                     self.groupings
                   else
@@ -1475,23 +1474,23 @@ class Assignment < Assessment
   # Retrieve data for submissions table.
   # Uses joins and pluck rather than includes to improve query speed.
   def current_submission_data(current_role)
+    return [] unless current_role.instructor? || current_role.ta?
+
+    assigned_grouping_ids = self.groupings
+                                .joins(:memberships)
+                                .where('memberships.role_id': current_role.id)
+                                .ids
+                                .to_set
+
     if current_role.instructor?
       groupings = self.groupings
-    elsif current_role.ta?
-      assigned_grouping_ids = self.groupings
-                                  .joins(:memberships)
-                                  .where('memberships.role_id': current_role.id)
-                                  .ids
-                                  .to_set
+    else
       groupings = if current_role.grader_permission.manage_submissions
                     self.groupings
                   else
                     self.groupings.where(id: assigned_grouping_ids)
                   end
-    else
-      return []
     end
-    assigned_grouping_ids ||= Set.new
 
     data = groupings
            .left_outer_joins(:group, :current_submission_used)
