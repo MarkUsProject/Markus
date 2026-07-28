@@ -34,6 +34,14 @@ def change_lines(diff_text)
            .reject { |l| l.start_with?('+++', '---') }
 end
 
+# Gemfile.lock base versions differ between release and master, so removed
+# lines always mismatch — compare additions only for those files.
+def comparable_lines(lines, file)
+  return lines.select { |l| l.start_with?('+') } if ADDITIONS_ONLY_FILES.include?(file)
+
+  lines
+end
+
 # --- Main ---
 
 pr_number = ARGV[0]
@@ -58,16 +66,11 @@ missing = pr_files - cherry_files
 shared = cherry_files & pr_files
 
 pr_full_diff = ReleaseHelpers.run('gh', 'pr', 'diff', pr_number, '--repo', ReleaseHelpers::REPO)
-comparable_lines = ->(lines, file) do
-  return lines.select { |l| l.start_with?('+') } if ADDITIONS_ONLY_FILES.include?(file)
-
-  lines
-end
 
 mismatched = shared.reject do |file|
   cherry = change_lines(ReleaseHelpers.run('git', 'diff', 'HEAD~1..HEAD', '--', file))
   original = change_lines(extract_file_diff(pr_full_diff, file))
-  comparable_lines.call(cherry, file).sort == comparable_lines.call(original, file).sort
+  comparable_lines(cherry, file).sort == comparable_lines(original, file).sort
 end
 
 if [extra, missing, mismatched].any? { |s| !s.empty? }
