@@ -110,8 +110,8 @@ def build_order(remaining, by_num)
 end
 
 def topological_sort(pending_prs)
-  by_num = pending_prs.index_by { |pr| pr['number'] }
-  remaining = pending_prs.pluck('number')
+  by_num = pending_prs.to_h { |pr| [pr['number'], pr] }
+  remaining = pending_prs.map { |pr| pr['number'] }
   build_order(remaining, by_num)
 end
 
@@ -217,7 +217,7 @@ linear = [
   { 'number' => 2, 'mergedAt' => '2026-01-02', 'merge_commit' => 'b', 'dependencies' => [1] },
   { 'number' => 3, 'mergedAt' => '2026-01-03', 'merge_commit' => 'c', 'dependencies' => [2] }
 ]
-assert_eq 'linear: 1,2,3', topological_sort(linear).pluck('number'), [1, 2, 3]
+assert_eq 'linear: 1,2,3', topological_sort(linear).map { |o| o['number'] }, [1, 2, 3]
 
 diamond = [
   { 'number' => 1, 'mergedAt' => '2026-01-01', 'merge_commit' => 'a', 'dependencies' => [] },
@@ -225,7 +225,7 @@ diamond = [
   { 'number' => 3, 'mergedAt' => '2026-01-03', 'merge_commit' => 'c', 'dependencies' => [1] },
   { 'number' => 4, 'mergedAt' => '2026-01-04', 'merge_commit' => 'd', 'dependencies' => [2, 3] }
 ]
-nums = topological_sort(diamond).pluck('number')
+nums = topological_sort(diamond).map { |o| o['number'] }
 assert_eq 'diamond: first is 1', nums[0], 1
 assert_eq 'diamond: last is 4', nums[3], 4
 assert 'diamond: 2 before 4', nums.index(2) < nums.index(4)
@@ -236,7 +236,7 @@ independent = [
   { 'number' => 1, 'mergedAt' => '2026-01-01', 'merge_commit' => 'a', 'dependencies' => [] },
   { 'number' => 2, 'mergedAt' => '2026-01-02', 'merge_commit' => 'b', 'dependencies' => [] }
 ]
-assert_eq 'independent: date order', topological_sort(independent).pluck('number'), [1, 2, 3]
+assert_eq 'independent: date order', topological_sort(independent).map { |o| o['number'] }, [1, 2, 3]
 
 cycle = [
   { 'number' => 1, 'mergedAt' => '2026-01-01', 'merge_commit' => 'a', 'dependencies' => [2] },
@@ -244,10 +244,10 @@ cycle = [
 ]
 result = topological_sort(cycle)
 assert_eq 'cycle: 2 items', result.length, 2
-assert_eq 'cycle: chronological fallback', result.pluck('number'), [1, 2]
+assert_eq 'cycle: chronological fallback', result.map { |o| o['number'] }, [1, 2]
 
 single = [{ 'number' => 1, 'mergedAt' => '2026-01-01', 'merge_commit' => 'a', 'dependencies' => [] }]
-assert_eq 'single PR', topological_sort(single).pluck('number'), [1]
+assert_eq 'single PR', topological_sort(single).map { |o| o['number'] }, [1]
 
 assert_eq 'empty input', topological_sort([]), []
 
@@ -272,7 +272,7 @@ diff = <<~DIFF
 DIFF
 
 assert 'file1 extraction', extract_file_diff(diff, 'file1.rb').include?('+added')
-assert 'file1 excludes file2', extract_file_diff(diff, 'file1.rb').exclude?('+new')
+assert 'file1 excludes file2', !extract_file_diff(diff, 'file1.rb').include?('+new')
 assert 'file2 extraction', extract_file_diff(diff, 'file2.rb').include?('+new')
 assert_eq 'missing file', extract_file_diff(diff, 'nope.rb'), ''
 
