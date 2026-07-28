@@ -40,5 +40,5 @@ export const restoreFilterData = (role, filterStorageKey) => {
     // Use the current defaults if the saved filter data is invalid.
   }
 
-  return {...getInitialFilterData(role), ...filterData};
+  return $.extend(true, {}, getInitialFilterData(role), filterData);
 };

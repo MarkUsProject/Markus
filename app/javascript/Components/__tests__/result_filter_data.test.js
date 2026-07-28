@@ -30,6 +30,21 @@ describe("Result filter data", () => {
     expect(filterData.assignedGradersOnly).toBe(false);
   });
 
+  it("fills in missing nested saved values with the role defaults", () => {
+    localStorage.setItem(
+      filterStorageKey,
+      JSON.stringify({
+        totalMarkRange: {min: "5"},
+        totalExtraMarkRange: {max: "2"},
+      })
+    );
+
+    const filterData = restoreFilterData("Instructor", filterStorageKey);
+
+    expect(filterData.totalMarkRange).toEqual({min: "5", max: ""});
+    expect(filterData.totalExtraMarkRange).toEqual({min: "", max: "2"});
+  });
+
   it("restores an instructor's saved scope", () => {
     localStorage.setItem(
       filterStorageKey,

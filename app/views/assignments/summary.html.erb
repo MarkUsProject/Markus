@@ -9,7 +9,8 @@
           course_id: <%= @current_course.id %>,
           assessment_id: <%= @assignment.id %>,
           is_instructor: <%= @current_role.instructor? %>,
-          can_view_assigned_submissions_only: <%= @current_role.instance_of?(Instructor) ||
+          can_view_assigned_submissions_only: <%= (@current_role.instance_of?(Instructor) &&
+                                                   @assignment.ta_memberships.exists?(role_id: @current_role.id)) ||
                                                   (@current_role.ta? &&
                                                    allowed_to?(:manage_submissions?, @current_role)) %>,
           initial_show_assigned_submissions_only: <%= @current_role.ta? %>,

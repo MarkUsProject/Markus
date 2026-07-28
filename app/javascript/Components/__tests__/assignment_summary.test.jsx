@@ -167,6 +167,10 @@ describe("For the AssignmentSummaryTable's display of assigned submissions", () 
     ).toEqual("1 assigned submission");
   });
 
+  it("uses the instructor-specific assigned submissions label", () => {
+    expect(screen.getByLabelText("Display only my assigned submissions")).toBeInTheDocument();
+  });
+
   it("initially displays only assigned submissions", () => {
     expect(screen.getByTestId("show_assigned_submissions_only")).toBeChecked();
     expect(screen.queryByText(/^assigned_group/)).toBeInTheDocument();

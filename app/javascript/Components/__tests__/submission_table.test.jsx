@@ -162,6 +162,10 @@ describe("For the SubmissionTable's display of assigned submissions", () => {
     ).toEqual("1 assigned submission");
   });
 
+  it("uses the instructor-specific assigned submissions label", () => {
+    expect(screen.getByLabelText("Display only my assigned submissions")).toBeInTheDocument();
+  });
+
   it("initially displays only assigned submissions", () => {
     expect(screen.getByText("assigned_group")).toBeInTheDocument();
     expect(screen.queryByText("unassigned_group")).not.toBeInTheDocument();
@@ -211,6 +215,38 @@ describe("For the SubmissionTable's display of assigned submissions", () => {
 
     expect(screen.getByTestId("show_assigned_submissions_only")).not.toBeChecked();
     expect(screen.getByText("assigned_group")).toBeInTheDocument();
+  });
+
+  it("does not display the assigned submissions filter when it is unavailable", async () => {
+    component.unmount();
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        groupings: groups_sample,
+        sections: {},
+      }),
+    });
+
+    render(
+      <SubmissionTable
+        assignment_id={1}
+        course_id={1}
+        show_grace_tokens={true}
+        show_sections={true}
+        is_timed={false}
+        is_scanned_exam={false}
+        release_with_urls={false}
+        can_collect={true}
+        can_run_tests={false}
+        can_view_assigned_submissions_only={false}
+        initial_show_assigned_submissions_only={false}
+        defaultFiltered={[{id: "", value: ""}]}
+      />
+    );
+    await screen.findByText("unassigned_group");
+
+    expect(screen.queryByTestId("show_assigned_submissions_only")).not.toBeInTheDocument();
   });
 });
 

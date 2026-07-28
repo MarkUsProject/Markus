@@ -43,7 +43,7 @@ If students are not allowed to work in groups, then under the "Group" column you
 - The **"Total Mark"** column lists the group's mark once a grader has started entering marks for the assignment (default is 0).
 - The **"Tags"** column lists any tags created for the submission.
 
-Instructors and TAs with the **Manage submissions** permission can use the **"Display assigned submissions only"** checkbox to switch between all submissions and only the submissions assigned to them. The checkbox is cleared by default for instructors and selected by default for TAs. TAs without this permission remain limited to their assigned submissions and do not see this control.
+Instructors with at least one assigned submission and TAs with the **Manage submissions** permission can use the **"Display only my assigned submissions"** checkbox to switch between all submissions and only the submissions assigned to them. The checkbox is cleared by default for instructors and selected by default for TAs. TAs without this permission remain limited to their assigned submissions and do not see this control.
 
 ## Collecting an Assignment
 
