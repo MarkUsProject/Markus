@@ -317,15 +317,27 @@ class Grouping < ApplicationRecord
     # overloading invite() to accept members arg as both a string and a array
     members = [members] unless members.instance_of?(Array) # put a string in an array
     all_errors = []
+    already_invited = Set.new
     members.each do |m|
       m = m.strip
-      user = course.students.joins(:user).find_by('users.user_name': m)
+      user_name = false
+      if m.include?('@') # email
+        user = course.students.joins(:user).find_by('users.email': m)
+      else
+        user = course.students.joins(:user).find_by('users.user_name': m)
+        user_name = true
+      end
       begin
         if user.nil?
-          raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
+          if user_name
+            raise I18n.t('groups.invite_member.errors.user_name_not_found', user_name: m)
+          else
+            raise I18n.t('groups.invite_member.errors.email_not_found', email: m)
+          end
         end
-        if invoked_by_instructor || self.can_invite?(user)
+        if already_invited.exclude?(user.id) && (invoked_by_instructor || self.can_invite?(user))
           self.add_member(user, set_membership_status)
+          already_invited.add(user.id)
         end
       rescue StandardError => e
         all_errors << e.message

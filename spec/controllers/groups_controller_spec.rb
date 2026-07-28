@@ -980,7 +980,7 @@ describe GroupsController do
                                                        students: [diff_course_student.id],
                                                        global_actions: 'assign' }
         expect(response).to have_http_status(:bad_request)
-        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.not_found',
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.user_name_not_found',
                                                      user_name: diff_course_student.user_name))
       end
 

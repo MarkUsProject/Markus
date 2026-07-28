@@ -4,15 +4,15 @@
 
     function invite() {
       invite_modal.open();
-      document.getElementById('invite_member').value = '';
-      document.getElementById('invite_member').focus();
+      document.getElementById('invite_member_by_user_name').value = '';
+      document.getElementById('invite_member_by_email').value = '';
       $('#invite-student-modal-close').click(function() {
         invite_modal.close();
         document.getElementById('working').style.display = 'none';
       })
-      $('#invite-student-form').on("submit", function() {
-        document.getElementById('working').style.display = '';
-      })
+      // $('#invite-student-form').on("submit", function() {
+      //   document.getElementById('working').style.display = '';
+      // })
     }
     document.addEventListener("DOMContentLoaded", function() {
       invite_modal = new ModalMarkus('#invite_dialog');
@@ -231,15 +231,48 @@
                  { id: 'invite-student-form' }) do %>
       <h2><%= t('groups.members.invite') %></h2>
       <p><%= t('groups.members.invite_instructions') %></p>
-      <label for='invite_member'><%= User.human_attribute_name(:user_name).pluralize %></label>
-      <%= text_field_tag 'invite_member', nil, required: true, autocomplete: 'off' %>
-
+      <div style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5em 0.75em; align-items: center;">
+        <label for='invite_member_by_user_name'><%= User.human_attribute_name(:user_name).pluralize %></label>
+        <%= text_field_tag 'invite_member_by_user_name', nil, required: false, autocomplete: 'off' %>
+        <label for='invite_member_by_email'><%= User.human_attribute_name(:email).pluralize %></label>
+        <%= text_field_tag 'invite_member_by_email', nil, required: false, autocomplete: 'off' %>
+      </div>
       <section class='dialog-actions'>
-        <%= submit_tag t('groups.members.invite') %>
+        <%= submit_tag t('groups.members.invite'), data: { disable_with: false } %>
         <input type='reset'
                value='<%= t(:cancel) %>'
                id="invite-student-modal-close">
       </section>
+    <% end %>
+
+    <%= javascript_tag nonce: true do %>
+      document.getElementById("invite-student-form").addEventListener('submit', function(e)  {
+        const usernames_label = document.getElementById("invite_member_by_user_name");
+        const emails_label = document.getElementById("invite_member_by_email");
+        if (usernames_label.value === "" && emails_label.value === "") {
+          e.preventDefault();
+          alert("You need to enter at least one user name or email");
+          return;
+        }
+
+        const emails = emails_label.value.split(',').map(e => e.trim()).filter(e => e !== '');
+        const is_email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const any_incorrectly_formatted_emails = emails.some( n => !is_email.test(n));
+
+        const usernames = usernames_label.value.split(',').map(e => e.trim()).filter(e => e !== '');
+        const any_incorrectly_formatted_usernames = usernames.some(u => u.includes('@'));
+
+        if (any_incorrectly_formatted_emails || any_incorrectly_formatted_usernames) {
+          if (emails.length > 0 && any_incorrectly_formatted_emails) {
+            alert("One or more emails entered is incorrectly formatted");
+          }
+          if (usernames.length > 0 && any_incorrectly_formatted_usernames) {
+            alert("One or more usernames entered is incorrectly formatted");
+          }
+          e.preventDefault();
+          document.getElementById('working').style.display = 'none';
+        }
+      })
     <% end %>
   </aside>
 <% end %>
