@@ -261,10 +261,10 @@
 
         if (any_incorrectly_formatted_emails || any_incorrectly_formatted_usernames) {
           if (emails.length > 0 && any_incorrectly_formatted_emails) {
-            alert("One or more emails entered is incorrectly formatted");
+            alert(<%= t('groups.invite_member.errors.incorrectly_formatted_emails') %>);
           }
           if (usernames.length > 0 && any_incorrectly_formatted_usernames) {
-            alert("One or more usernames entered is incorrectly formatted");
+            alert(<%= t('groups.invite_member.errors.incorrectly_formatted_user_names') %>);
           }
           e.preventDefault();
           document.getElementById('working').style.display = 'none';

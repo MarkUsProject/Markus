@@ -44,6 +44,8 @@ en:
         group_max_reached: 'Could not invite %{user_name}: group maximum has been reached.'
         inactive_grader: Cannot assign inactive grader(s) %{user_names}.
         inactive_student: 'Could not invite %{user_name}: this student is inactive.'
+        incorrectly_formatted_emails: One or more emails entered is incorrectly formatted.
+        incorrectly_formatted_user_names: One or more usernames entered is incorrectly formatted.
         inviting_self: You cannot invite yourself to your own group.
         need_to_create_group: You must create a group before you can invite members.
         not_same_section: 'Could not invite %{user_name}: this student is not in your section.'
