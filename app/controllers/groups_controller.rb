@@ -494,7 +494,6 @@ class GroupsController < ApplicationController
         redirect_to course_assignment_path(current_course, @assignment)
         return
       end
-      Rails.logger.debug { "this is a debug message: #{to_invite}" }
       errors = @grouping.invite(to_invite)
       errors = errors.uniq
       if errors.blank?
