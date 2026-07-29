@@ -70,7 +70,7 @@ Complexity:
     - 2.0
 ```
 
-> 🗒️ **Note:** Annotations can be blank, annotation category names cannot be blank.
+> 🗒️ **NOTE:** Annotations can be blank, annotation category names cannot be blank.
 
 ## Assignments
 
@@ -109,7 +109,7 @@ The remaining fields are optional.
 - `is_hidden`
 - `vcs_submit`
 
-> 🗒️ **Note:** If the uploaded file contains a short identifier that is already used, the existing assignment is updated with the corresponding uploaded settings.
+> 🗒️ **NOTE:** If the uploaded file contains a short identifier that is already used, the existing assignment is updated with the corresponding uploaded settings.
 
 ### Assignment Grades
 
@@ -159,8 +159,8 @@ These fields are specific to certain types of criteria:
 
 - `description`: string (flexible and checkbox criteria only)
 
-> 🗒️ **Note:**
-
+> 🗒️ **NOTE:**
+>
 > 1. Criteria may not be uploaded if grades have already been released.
 > 2. Uploading criteria deletes existing criteria **and any associated marks**.
 > 3. The order of criteria for the assignment is the same as the order of criteria in the uploaded file.
@@ -221,9 +221,9 @@ Every row of the CSV file should have the following format:
     - Each group name must be at most 30 characters long, and consist only of alphanumeric characters, hyphens, underscores, and spaces.
 - All subsequent entries are user names of students who are members of this group.
 
-> 🗒️ **Note:** A student must belong to at most one group for the assignment. So the same student user name cannot appear in two different rows in your uploaded file, nor can the file contain a student who is already be a member of an existing group.
+> 🗒️ **NOTE:** A student must belong to at most one group for the assignment. So the same student user name cannot appear in two different rows in your uploaded file, nor can the file contain a student who is already be a member of an existing group.
 
-> :vhs: **Deprecation Notice** prior to version 1.12.0: The second entry in a row is the the repository name, this cannot be blank, and must also be *unique across all assignments*. This field was removed in version 1.12.0 as repository names can no longer be set by the user.
+> 📼 **Deprecation Notice** prior to version 1.12.0: The second entry in a row is the repository name, this cannot be blank, and must also be *unique across all assignments*. This field was removed in version 1.12.0 as repository names can no longer be set by the user.
 
 ## Marks Spreadsheet Grades
 
@@ -270,7 +270,7 @@ However, you can select "*Overwrite existing grades and columns?*" when uploadin
 1. Any existing columns that do not appear in the uploaded file are **deleted** (as are any grades for those columns).
 2. Any existing grade for a column is overwritten---*even when the uploaded entry is blank*. That is, it is possible to delete an existing grade by uploading a file with a blank entry for that student and column.
 
-Note: even when "Overwrite existing grades and columns?" is checked, students who do not appear in the uploaded file remain unchanged.
+> 🗒️ **NOTE:** Even when "Overwrite existing grades and columns?" is checked, students who do not appear in the uploaded file remain unchanged.
 
 ## Peer Reviews
 
@@ -284,7 +284,7 @@ Only CSV files are supported.
 
 Each line of the CSV file should have the reviewee group name followed by one or more reviewer group names.
 
-Note: when students are working individually, their corresponding group name is simply their user name.
+> 🗒️ **NOTE:** When students are working individually, their corresponding group name is simply their user name.
 
 ## Students
 
@@ -305,11 +305,11 @@ The following fields are listed with the key names in the YML file, and in the o
 - `id_number`: the id number of the student
 - `email`: the email address of the student
 
-> 🗒️ **Note:**
-
+> 🗒️ **NOTE:**
+>
 > 1. If an uploaded CSV row contains a user name that already exists, then that student's information is updated. Only the student's `section_name` can be updated in this way.
 > 2. When updating an existing student, if the `section_name`, `id_number`, or `email` field is blank, then any existing data for that field will be removed!
-> 3. Uploaded CSV files need only contain data in the the `username` column. All other columns except `section_name` will be ignored. Only Admin users may change the `last_name`, `first_name`, `id_number`, and `email` values for a student.
+> 3. Uploaded CSV files need only contain data in the `username` column. All other columns except `section_name` will be ignored. Only Admin users may change the `last_name`, `first_name`, `id_number`, and `email` values for a student.
 
 ### Upload and Download Feature
 
@@ -346,8 +346,8 @@ user_name_ta2,last_name_ta2,first_name_ta2
 user_name_ta3,last_name_ta3,first_name_ta3
 ```
 
-> 🗒️ **Note:**
-
+> 🗒️ **NOTE:**
+>
 > 1. If an uploaded CSV row contains a user name that already exists, then that TA's information is updated.
 > 2. When updating an existing TA, if the `email` field is blank, then any existing email address for that TA will be removed!
 
@@ -442,8 +442,8 @@ student_user_2,grader_user_2
 student_user_1,grader_user_1,grader_user_2
 ```
 
-> 🗒️ **Note:**
-
+> 🗒️ **NOTE:**
+>
 > 1. Any row with non-existent grader usernames will be ignored.
 > 2. Any row with non-existent group name/criterion name/student user name will be ignored.
 
@@ -480,10 +480,11 @@ In addition, the zip file has three folders that contain:
     - Every uploaded starter file located in folders corresponding to which starter file group each file belongs to.
         - Every starter file group does not need a corresponding folder. In such a case, the group is assumed to have no starter files.
 - An assignment's automated test settings (`automated_tests_config_files`) which includes:
-    - An automated test specs json file.
+    - An automated test specs JSON file.
     - A folder containing every uploaded test file.
         - This is an optional folder. If it does not exist, that means there are no test files.
 
-> **Important:**
+> ❗ **IMPORTANT:**
+>
 > While the contents of the yml files and folders can be extracted and modified for offline configuration, this is NOT
 > recommended and may result in the assignment being unable to be copied over.

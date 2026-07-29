@@ -29,11 +29,11 @@ Please see below for MarkUs specific security approaches:
 ### File Upload
 
 - All files uploaded by users should have their filename and filepath sanitized so that files are only written to disk in approved locations.
-- Files should be written to disk with minimal permissions (ie. do not make uploaded files executable!)
+- Files should be written to disk with minimal permissions (i.e. do not make uploaded files executable!)
 
 ### Input Validation
 
-- User input (eg. form fields) should always be validated in both the browser and again when the request is received by the server.
+- User input (e.g. form fields) should always be validated in both the browser and again when the request is received by the server.
 - In the browser, use [client-side form validation](https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation).
 - Use validations on model attributes on the server side. In some cases, additional input validation may be required in controller methods as well.
 
@@ -41,19 +41,19 @@ Please see below for MarkUs specific security approaches:
 
 MarkUs uses content security policies (CSP) help prevent XSS and CSS injection attacks and are defined in `content_security_policy.rb` initializer file using Rails' [CSP DSL](https://edgeguides.rubyonrails.org/security.html#content-security-policy).
 
-In some cases, MarkUs depends on external code that violates it's CSP. In these cases, it is may be necessary to temporarily override these policies for specific routes. Avoid this if at all possible by using dependencies that do not violate the CSPs outlined in `content_security_policy.rb` but if you absolutely have to:
+In some cases, MarkUs depends on external code that violates it's CSP. In these cases, it may be necessary to temporarily override these policies for specific routes. Avoid this if at all possible by using dependencies that do not violate the CSPs outlined in `content_security_policy.rb` but if you absolutely have to:
 
 - Only change the policies for the routes that require it. For example, do not change a policy for all routes in a controller if the change is only necessary for one or two routes.
 - Change the policies so that they ensure the maximum amount of protection. For example, do not permit content from all https sources if only content from a single url is required.
 
 #### Writing code to comply with CSP
 
-MarkUs' CSP do not permit certain elements to appear in the DOM as they pose a security risk. Please see below for alternative (more secure) ways of writing html and js code:
+MarkUs' CSP do not permit certain elements to appear in the DOM as they pose a security risk. Please see below for alternative (more secure) ways of writing HTML and js code:
 
-- Do not include inline style attributes in DOM elements. Make sure all styling is done in css files.
-- Do not add styles in html files using `<style>` tags.
-- Do not include javascript as a string in onclick/onchange/etc. attributes. Instead add event listeners in a javascript file.
-- Do not add javascript to html files using `<script>` tags:
+- Do not include inline style attributes in DOM elements. Make sure all styling is done in CSS files.
+- Do not add styles in HTML files using `<style>` tags.
+- Do not include JavaScript as a string in onclick/onchange/etc. attributes. Instead, add event listeners in a JavaScript file.
+- Do not add JavaScript to HTML files using `<script>` tags:
 
 ## Security Testing Guidelines
 
@@ -61,7 +61,7 @@ These guidelines are based on the [OWASP Top Ten Web Application Vulnerabilities
 
 ### A1 - Cross Site Scripting (XSS)
 
-XSS flaws occur whenever an application takes user supplied data and sends it to a web browser without first validating or encoding that content. XSS allows attackers to execute script in the victim's browser which can hijack user sessions, deface web sites, possibly introduce worms, etc.* ([link](http://www.owasp.org/index.php/Top_10_2007-Cross_Site_Scripting))
+XSS flaws occur whenever an application takes user supplied data and sends it to a web browser without first validating or encoding that content. XSS allows attackers to execute script in the victim's browser which can hijack user sessions, deface websites, possibly introduce worms, etc.* ([link](http://www.owasp.org/index.php/Top_10_2007-Cross_Site_Scripting))
 
 Testing for XSS consists of the following:
 
@@ -97,7 +97,7 @@ This is a serious issue in general, but for MarkUs it's somewhat mitigated by th
 
 A direct object reference occurs when a developer exposes a reference to an internal implementation object, such as a file, directory, database record, or key, as a URL or form parameter. Attackers can manipulate those references to access other objects without authorization.* ([link](http://www.owasp.org/index.php/Top_10_2007-Insecure_Direct_Object_Reference))
 
-The use of MVC frameworks like Rails protects against the most common of DOR attacks involving database records. In regards to testing, OWASP states that "The goal is to verify that the application does not allow direct object references to be manipulated by an attacker." This is done by reviewing the code for instances of direct reference, and manually testing for things like incorrect filesystem access. The classic example here is tampering with a form to request the file `../../../../etc/passwd`.
+The use of MVC frameworks like Rails protects against the most common of DOR attacks involving database records. In regard to testing, OWASP states that "The goal is to verify that the application does not allow direct object references to be manipulated by an attacker." This is done by reviewing the code for instances of direct reference, and manually testing for things like incorrect filesystem access. The classic example here is tampering with a form to request the file `../../../../etc/passwd`.
 
 This is an important area for MarkUs to be tested in, as it involves a lot of files uploaded to the application.
 
@@ -132,7 +132,7 @@ This is one of the less serious issues on its own, but information gleaned from 
 
 Account credentials and session tokens are often not properly protected. Attackers compromise passwords, keys, or authentication tokens to assume other users' identities.* ([link](http://www.owasp.org/index.php/Top_10_2007-Broken_Authentication_and_Session_Management))
 
-Authentication mechanisms should never validate anything on the client side, as an attacker can circumvent such validation. It is advisable to use the built-in session management system for your framework; excercise great caution when extending it or working around it. Things to watch out for and test regarding session management: use of guessable session IDs, failure to correctly expire sessions, and storage of private session variables in the client side browser.
+Authentication mechanisms should never validate anything on the client side, as an attacker can circumvent such validation. It is advisable to use the built-in session management system for your framework; exercise great caution when extending it or working around it. Things to watch out for and test regarding session management: use of guessable session IDs, failure to correctly expire sessions, and storage of private session variables in the client side browser.
 
 In situations like MarkUs where there is an external auth mechanism in place, it's worth looking at denial of service conditions - what if someone hits the login page with a script repeatedly? Will this crash the login server?
 
@@ -156,7 +156,7 @@ The two key takeaways from this issue are:
 
 2. Don't write your own cryptographic functions. Ever.
 
-This is a fairly serious issue for an application which is likely to be use on a hostile network. The UTOR campus wireless is one such network.
+This is a fairly serious issue for an application which is likely to be used on a hostile network. The UTOR campus wireless is one such network.
 
 ### A10 - Failure to Restrict URL Access
 

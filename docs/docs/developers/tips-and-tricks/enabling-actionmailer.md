@@ -24,7 +24,7 @@ When using the ActionMailer features of MarkUs, the MarkUs administrators config
 
 1. Create a file in the `config` folder with the name `settings.local.yml`. This file allows you to configure Rails and/or MarkUs settings specifically for your local MarkUs instance.
 
-    **Note**: This new file will not be tracked by git. Any settings you configure in this file will not (and should not) be committed.
+    > 🗒 ️**NOTE:** This new file will not be tracked by git. Any settings you configure in this file will not (and should not) be committed.
 
 2. Ensure your `config/settings.local.yml` file contains the following settings:
 

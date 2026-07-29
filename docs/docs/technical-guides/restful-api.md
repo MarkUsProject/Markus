@@ -81,7 +81,7 @@ Which would result in the following output:
 
 The filter parameter is commonly used when multiple records are expected, this parameter will filter the records so that only those that match the filter are returned.
 
-For example, if a route returns multiple user records, you may choose to filter on the first name by passing the following parameter (formatted as json):
+For example, if a route returns multiple user records, you may choose to filter on the first name by passing the following parameter (formatted as JSON):
 
 ```json
 {"filter": {"first_name": "Steve"}}
@@ -91,36 +91,36 @@ and only users with the first name "Steve" will be returned
 
 #### fields
 
-The fields parameter is commonly used when multiple fields per record are expected, this parameter will filter the fields so that only the requested fields are returned. By default all fields are returned.
+The fields parameter is commonly used when multiple fields per record are expected, this parameter will filter the fields so that only the requested fields are returned. By default, all fields are returned.
 
-For example, if a route normally returns the following user record:
-
-```json
-{
-  "id": 1,
-  "user_name": "a",
-  "last_name": "instructor",
-  "first_name": "instructor",
-  "type": "EndUser",
-  "email": null,
-  "id_number": null
-}
-```
-
-but you only care about the id and user_name fields you can pass the following parameter (formatted as json):
-
-```json
-{"fields": ["id", "user_name"]}
-```
-
-and the route will now return the following instead:
-
-```json
-{
-  "id": 1,
-  "user_name": "a"
-}
-```
+> ▶️ **EXAMPLE:** If a route normally returns the following user record:
+>
+>```json
+>{
+>  "id": 1,
+>  "user_name": "a",
+>  "last_name": "instructor",
+>  "first_name": "instructor",
+>  "type": "EndUser",
+>  "email": null,
+>  "id_number": null
+>}
+>```
+>
+>but you only care about the id and user_name fields you can pass the following parameter (formatted as JSON):
+>
+>```json
+>{"fields": ["id", "user_name"]}
+>```
+>
+>and the route will now return the following instead:
+>
+>```json
+>{
+>  "id": 1,
+>  "user_name": "a"
+>}
+>```
 
 ### GET /api/users
 
@@ -142,7 +142,7 @@ and the route will now return the following instead:
 }]
 ```
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### POST /api/users
 
@@ -156,7 +156,7 @@ NOTE: this method is only available to AdminUser users
     - email (string)
     - id_number (string)
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### PUT /api/users/update_by_username
 
@@ -169,7 +169,7 @@ NOTE: this method is only available to AdminUser users
     - email (string)
     - id_number (string)
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### GET /api/users/:id
 
@@ -191,7 +191,7 @@ NOTE: this method is only available to AdminUser users
 }
 ```
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### PUT /api/users/:id
 
@@ -202,7 +202,7 @@ NOTE: this method is only available to AdminUser users
     - email (string)
     - id_number (string)
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### GET /api/courses
 
@@ -225,7 +225,7 @@ NOTE: this method is only available to AdminUser users
 ]
 ```
 
-NOTE: If not an AdminUser, this will only return courses where the current user is enrolled as an Instructor
+> 🗒️ **NOTE:** If not an AdminUser, this will only return courses where the current user is enrolled as an Instructor
 
 ### POST /api/courses
 
@@ -235,7 +235,7 @@ NOTE: If not an AdminUser, this will only return courses where the current user 
     - is_hidden (boolean)
     - display_name (string)
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### GET /api/courses/:id
 
@@ -256,7 +256,7 @@ NOTE: this method is only available to AdminUser users
 }
 ```
 
-NOTE: If not an AdminUser, this will only return courses where the current user is enrolled as an Instructor
+> 🗒️ **NOTE:** If not an AdminUser, this will only return courses where the current user is enrolled as an Instructor
 
 ### PUT /api/courses/:id
 
@@ -268,13 +268,13 @@ NOTE: If not an AdminUser, this will only return courses where the current user 
     - start_at (datetime)
     - end_at (datetime)
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### PUT /api/courses/:id/update_autotest_url
 
 - description: Update or set the url of the server running the [automated test software](https://github.com/MarkUsProject/markus-autotesting) for this course
 - required parameters:
-    - url (string: well formed URL)
+    - url (string: well-formed URL)
 
 NOTE: this method is only available to AdminUser users
 
@@ -282,13 +282,13 @@ NOTE: this method is only available to AdminUser users
 
 - description: Test whether MarkUs can connect to the server running the [automated test software](https://github.com/MarkUsProject/markus-autotesting) for this course.
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### PUT /api/courses/:id/reset_autotest_connection
 
 - description: Resend all automated test settings (for each assignment) to the [automated test software](https://github.com/MarkUsProject/markus-autotesting) for this course and get an updated schema.
 
-NOTE: this method is only available to AdminUser users
+> 🗒️ **NOTE:** This method is only available to AdminUser users
 
 ### GET /api/courses/:course_id/roles
 
@@ -325,7 +325,7 @@ NOTE: this method is only available to AdminUser users
     - hidden (boolean)
     - section_name (string: name of a Section for the given course)
 
-NOTE: the "AdminRole" type can only be used by AdminUser users
+> 🗒️ **NOTE:** The "AdminRole" type can only be used by AdminUser users
 
 ### POST /api/courses/:course_id/roles/create_or_unhide
 
@@ -338,7 +338,7 @@ NOTE: the "AdminRole" type can only be used by AdminUser users
     - hidden (boolean)
     - section_name (string: name of a Section for the given course)
 
-NOTE: the "AdminRole" type can only be used by AdminUser users
+> 🗒️ **NOTE:** The "AdminRole" type can only be used by AdminUser users
 
 ## PUT /api/courses/:course_id/roles/update_by_username
 
@@ -506,7 +506,7 @@ curl -H "Authorization: MarkUsAuth YourAuthKey" \
 
 Returns the same JSON structure but with only the matching students in the `students` array.
 
-NOTE: `total_grade` is only included when `show_total` is `true`. Students with no grades have an empty `grades` object (`{}`). Hidden students are excluded.
+> 🗒️ **NOTE:** `total_grade` is only included when `show_total` is `true`. Students with no grades have an empty `grades` object (`{}`). Hidden students are excluded.
 
 ### PUT api/courses/:course_id/grade_entry_forms/:id
 
@@ -722,7 +722,7 @@ NOTE: `total_grade` is only included when `show_total` is `true`. Students with 
     - id (integer)
     - course_id (integer)
 
-NOTE: this is only available to authorised instructors (or admins)
+> 🗒️ **NOTE:** This is only available to authorised instructors (or admins)
 
 ### GET /api/courses/:course_id/assignments/:id/test_files
 
@@ -765,9 +765,9 @@ NOTE: this is only available to authorised instructors (or admins)
 
 - description: Update the autotesting settings for this assignment
 - required parameters:
-    - specs (json string : see the `GET test_specs` description above for an example of the expected format)
+    - specs (JSON string : see the `GET test_specs` description above for an example of the expected format)
 
-NOTE: This will also send the updated specs to the server running the autotester
+> 🗒️ **NOTE:** This will also send the updated specs to the server running the autotester
 
 ### POST /api/courses/:course_id/assignments/:id/submit_file
 
@@ -777,11 +777,13 @@ NOTE: This will also send the updated specs to the server running the autotester
     - mime_type (string)
     - file_content (string or binary data)
 
-NOTE: This route is for STUDENT USE ONLY.
+> 🗒️ **NOTE:** This route is for STUDENT USE ONLY.
 
-NOTE: the filename string can include a nested path if the file should be added in a subfolder (ex: "filename=some/nested/dir/submission.txt")
+> 🗒️ **NOTE:** The filename string can include a nested path if the file should be added in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
-NOTE: not all parent directories need to exist in order to create a nested file. For example, if "filename=some/nested/dir/submission.txt"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created as well.
+> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested file.
+>
+> For example, if "filename=some/nested/dir/submission.txt"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created as well.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups
 
@@ -970,12 +972,12 @@ NOTE: not all parent directories need to exist in order to create a nested file.
 
 The annotation type is derived from the file being annotated:
 
-| File | Extension(s) | Annotation type |
-|------|--------------|-----------------|
-| Image | `.jpeg`, `.jpg`, `.gif`, `.png`, `.heic`, `.heif` | `ImageAnnotation` |
-| PDF | `.pdf` | `PdfAnnotation` |
-| Notebook / R Markdown | `.ipynb`, `.Rmd` (when R Markdown conversion is enabled) | `HtmlAnnotation` |
-| Anything else | — | `TextAnnotation` |
+| File                  | Extension(s)                                             | Annotation type   |
+|-----------------------|----------------------------------------------------------|-------------------|
+| Image                 | `.jpeg`, `.jpg`, `.gif`, `.png`, `.heic`, `.heif`        | `ImageAnnotation` |
+| PDF                   | `.pdf`                                                   | `PdfAnnotation`   |
+| Notebook / R Markdown | `.ipynb`, `.Rmd` (when R Markdown conversion is enabled) | `HtmlAnnotation`  |
+| Anything else         | —                                                        | `TextAnnotation`  |
 
 The location fields required for each annotation type are:
 
@@ -1025,9 +1027,9 @@ The location fields required for each annotation type are:
 }
 ```
 
-NOTE: The `type` parameter is optional. When omitted, the type is derived from the file (see the table above). When provided, it must agree with the file — for example, you cannot create a `PdfAnnotation` on a `.py` file. A mismatch returns a 422.
+> 🗒️ **NOTE:** The `type` parameter is optional. When omitted, the type is derived from the file (see the table above). When provided, it must agree with the file — for example, you cannot create a `PdfAnnotation` on a `.py` file. A mismatch returns a 422.
 
-NOTE: The entire request is validated before any annotation is created. If any annotation in the list is invalid — an unknown `type`, a `type`/file mismatch, an unknown `filename`, or a missing required location field for the type — the request is rejected with a 422 and no annotations are created.
+> 🗒️ **NOTE:** The entire request is validated before any annotation is created. If any annotation in the list is invalid — an unknown `type`, a `type`/file mismatch, an unknown `filename`, or a missing required location field for the type — the request is rejected with a 422 and no annotations are created.
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:id/add_members
 
@@ -1048,7 +1050,9 @@ NOTE: The entire request is validated before any annotation is created. If any a
 - required paramters:
     - "criteria name" (integer)
 
-NOTE: "criteria name" is not the actual name of the parameter but should be replaced by the name of a criteria created for the given assignment. For example, if a criteria exists with the name "code_style", and you want to set the mark for that criteria for the given group to 9, then include the paramter "code_style=9".
+> 🗒️ **NOTE:** "criteria name" is not the actual name of the parameter but should be replaced by the name of a criteria created for the given assignment.
+>
+> For example, if a criteria exists with the name "code_style", and you want to set the mark for that criteria for the given group to 9, then include the parameter "code_style=9".
 
 ### PUT /api/courses/:course_id/assignments/:assignment_id/groups/:id/update_marking_state
 
@@ -1069,7 +1073,7 @@ NOTE: "criteria name" is not the actual name of the parameter but should be repl
 - required parameters:
     - filename (string)
 
-NOTE: the filename string can include a nested path if the file to remove is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
+> 🗒️ **NOTE:** The filename string can include a nested path if the file to remove is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
 ### DELETE /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files/remove_folder
 
@@ -1077,7 +1081,7 @@ NOTE: the filename string can include a nested path if the file to remove is in 
 - required parameters:
     - folder_path (string)
 
-NOTE: the folder_path string can include a nested path if the folder to remove is in a subfolder (ex: "folder_path=some/nested/dir/")
+> 🗒️ **NOTE:** The folder_path string can include a nested path if the folder to remove is in a subfolder (ex: "folder_path=some/nested/dir/")
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files/create_folders
 
@@ -1085,9 +1089,11 @@ NOTE: the folder_path string can include a nested path if the folder to remove i
 - required parameters:
     - folder_path (string)
 
-NOTE: the folder_path string can include a nested path if the folder should be added in a subfolder (ex: "folder_path=some/nested/dir/")
+> 🗒️ **NOTE:** The folder_path string can include a nested path if the folder should be added in a subfolder (ex: "folder_path=some/nested/dir/")
 
-NOTE: not all parent directories need to exist in order to create a nested directory. For example, if "folder_path=some/nested/dir/"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created.
+> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested directory.
+>
+> For example, if "folder_path=some/nested/dir/"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created.
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files
 
@@ -1097,9 +1103,11 @@ NOTE: not all parent directories need to exist in order to create a nested direc
     - mime_type (string)
     - file_content (string or binary data)
 
-NOTE: the filename string can include a nested path if the file should be added in a subfolder (ex: "filename=some/nested/dir/submission.txt")
+> 🗒️ **NOTE:** The filename string can include a nested path if the file should be added in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
-NOTE: not all parent directories need to exist in order to create a nested file. For example, if "filename=some/nested/dir/submission.txt"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created as well.
+> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested file.
+>
+> For example, if "filename=some/nested/dir/submission.txt"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created as well.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files
 
@@ -1108,11 +1116,11 @@ NOTE: not all parent directories need to exist in order to create a nested file.
     - filename (string)
     - collected (boolean)
 
-NOTE: the filename string can include a nested path if the requested file is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
+> 🗒️ **NOTE:** The filename string can include a nested path if the requested file is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
-NOTE: if the collected parameter included, the collected version of the group's submission is downloaded. Otherwise the most recent verstion is downloaded
+> 🗒️ **NOTE:** Tf the collected parameter included, the collected version of the group's submission is downloaded. Otherwise, the most recent version is downloaded
 
-NOTE: if the filename parameter is given, only the content from a single file will be downloaded. Otherwise, a zip archive containing the entire submission will be downloaded.
+> 🗒️ **NOTE:** If the filename parameter is given, only the content from a single file will be downloaded. Otherwise, a zip archive containing the entire submission will be downloaded.
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files
 
@@ -1122,9 +1130,9 @@ NOTE: if the filename parameter is given, only the content from a single file wi
     - mime_type (string)
     - file_content (string or binary data)
 
-NOTE: adding feedback files to subdirectories is currently not supported
+> 🗒️ **NOTE:** Adding feedback files to subdirectories is currently not supported
 
-NOTE: the size of file_content must not exceed 1 GB.
+> 🗒️ **NOTE:** The size of file_content must not exceed 1 GB.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files
 
@@ -1168,10 +1176,10 @@ NOTE: the size of file_content must not exceed 1 GB.
     - apply_late_penalty (boolean)
     - retain_existing_grading (boolean)
 
-NOTE: collect_current value meanings:
-
-- true: collect most recent files submitted, regardless of assignment due date or late period.
-- false: collect most recent files submitted before the due date, including any late period.
+> 🗒️ **NOTE:** collect_current value meanings:
+>
+>- *true*: collect most recent files submitted, regardless of assignment due date or late period.
+>- *false*: collect most recent files submitted before the due date, including any late period.
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/add_test_results
 
@@ -1279,11 +1287,11 @@ NOTE: collect_current value meanings:
 }
 ```
 
-NOTE: This endpoint creates a TestRun record with associated test results, annotations, feedback files, and tags. All operations are performed atomically within a transaction.
+> 🗒️ **NOTE:** This endpoint creates a TestRun record with associated test results, annotations, feedback files, and tags. All operations are performed atomically within a transaction.
 
-NOTE: The request body is validated against a schema and must not exceed 10MB in size.
+> 🗒️ **NOTE:** The request body is validated against a schema and must not exceed 10MB in size.
 
-NOTE: Authentication is required via API key. The authenticated user's role is used as the creator of the test run.
+> 🗒️ **NOTE:** Authentication is required via API key. The authenticated user's role is used as the creator of the test run.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups/:id/test_results
 
@@ -1310,13 +1318,13 @@ NOTE: Authentication is required via API key. The authenticated user's role is u
 }
 ```
 
-NOTE: This endpoint returns only the most recent test run results for the group, not historical test runs.
+> 🗒️ **NOTE:** This endpoint returns only the most recent test run results for the group, not historical test runs.
 
-NOTE: Results are grouped by test group name (the keys in the JSON object are test group names).
+> 🗒️ **NOTE:** Results are grouped by test group name (the keys in the JSON object are test group names).
 
-NOTE: Supports XML responses by setting the `Accept` header to `application/xml` or using the `.xml` extension.
+> 🗒️ **NOTE:** Supports XML responses by setting the `Accept` header to `application/xml` or using the `.xml` extension.
 
-NOTE: Returns 404 if the group has no test results.
+> 🗒️ **NOTE:** Returns `404` if the group has no test results.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups/:id/test_runs
 
@@ -1406,7 +1414,7 @@ NOTE: Returns 404 if the group has no test results.
 - required parameters:
     - overall_comment
 
-NOTE: Returns 422 if the assignment results have been released to students
+> 🗒️ **NOTE:** Returns `422` if the assignment results have been released to students
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/extension
 
@@ -1421,7 +1429,7 @@ NOTE: Returns 422 if the assignment results have been released to students
         - apply_penalty (boolean, optional)
         - note (string, optional)
 
-NOTE: for time_delta, at least one of the following is required: weeks, days, hours, minutes.
+> 🗒️ **NOTE:** For time_delta, at least one of the following is required: weeks, days, hours, minutes.
 
 ### PATCH /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/extension
 
@@ -1436,7 +1444,7 @@ NOTE: for time_delta, at least one of the following is required: weeks, days, ho
         - apply_penalty (boolean, optional)
         - note (string, optional)
 
-NOTE: for time_delta, at least one of the following is required: weeks, days, hours, minutes.
+> 🗒️ **NOTE:** For time_delta, at least one of the following is required: weeks, days, hours, minutes.
 
 ### DELETE /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/extension
 
@@ -1490,7 +1498,7 @@ NOTE: for time_delta, at least one of the following is required: weeks, days, ho
     - entry_rename (string)
     - use_rename (boolean)
 
-NOTE: if use_rename is true then files (or folders) assigned as starter files from this starter file group will be renamed to the value of entry_rename when the students download the starter files (see the [starter file documentation](../instructors/assignments/starter-files.md) for more details)
+> 🗒️ **NOTE:** If use_rename is true then files (or folders) assigned as starter files from this starter file group will be renamed to the value of entry_rename when the students download the starter files (see the [starter file documentation](../instructors/assignments/starter-files.md) for more details)
 
 ### GET /api/courses/:course_id/starter_file_groups/:id
 
@@ -1541,7 +1549,7 @@ NOTE: if use_rename is true then files (or folders) assigned as starter files fr
     - filename (string)
     - file_content (string or binary data)
 
-NOTE: the filename string can include a nested path if the given file is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
+> 🗒️ **NOTE:** The filename string can include a nested path if the given file is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
 ### POST /api/courses/:course_id/starter_file_groups/:id/create_folder
 
@@ -1549,7 +1557,7 @@ NOTE: the filename string can include a nested path if the given file is in a su
 - required parameters:
     - folder_path (string)
 
-NOTE: the folder_path string can include a nested path if the folder should be added in a subfolder (ex: "folder_path=some/nested/dir/")
+> 🗒️ **NOTE:** The folder_path string can include a nested path if the folder should be added in a subfolder (ex: "folder_path=some/nested/dir/")
 
 ### DELETE /api/courses/:course_id/starter_file_groups/:id/remove_file
 
@@ -1557,7 +1565,7 @@ NOTE: the folder_path string can include a nested path if the folder should be a
 - required parameters:
     - filename (string)
 
-NOTE: the filename string can include a nested path if the requested file is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
+> 🗒️ **NOTE:** The filename string can include a nested path if the requested file is in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
 ### DELETE /api/courses/:course_id/starter_file_groups/:id/remove_folder
 
@@ -1565,7 +1573,7 @@ NOTE: the filename string can include a nested path if the requested file is in 
 - required parameters:
     - folder_path (string)
 
-NOTE: the folder_path string can include a nested path if the folder to be removed is in a subfolder (ex: "folder_path=some/nested/dir/")
+> 🗒️ **NOTE:** The folder_path string can include a nested path if the folder to be removed is in a subfolder (ex: "folder_path=some/nested/dir/")
 
 ### GET /api/courses/:course_id/starter_file_groups/:id/download_entries
 
@@ -1581,7 +1589,7 @@ NOTE: the folder_path string can include a nested path if the folder to be remov
 ### DELETE /api/courses/:course_id/sections/:id
 
 - description: Delete the section uniquely identified by the given course and section id's.
-- NOTE: The section must be non-empty (must not have any students).
+> 🗒️ **NOTE:** The section must be non-empty (must not have any students).
 
 ### PUT /api/courses/:course_id/sections/:id
 

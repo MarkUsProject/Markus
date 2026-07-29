@@ -29,8 +29,8 @@ The first step in marking an assignment is to collect the assignment. To do this
 Here you will see a table of all the groups that have been formed (see [How Students Form Groups](../../students/index.md) and [Managing Group Repositories](../groups/index.md)):
 
 | ![Submissions Table Part 1](/images/submissions-table.png) |
-|--------------:|
-| *First three columns shown* |
+|-----------------------------------------------------------:|
+|                                *First three columns shown* |
 
 If students are not allowed to work in groups, then under the "Group" column you will simply see a student's username (as opposed to the group number and a list of usernames). The rest of the table contains information about each group and their submission for that assignment.
 
@@ -78,7 +78,7 @@ An instructor can bypass the collection process to manually select which version
 
 There are six different marking states for a submission:
 
- 1. **Not Collected** - The group has been formed and may have submit work already but nothing has been collected by any TA or instructor. All groups should have this status until the deadline to submit (with grace token extension) has passed.
+ 1. **Not Collected** - The group has been formed and may have submitted work already but nothing has been collected by any TA or instructor. All groups should have this status until the deadline to submit (with grace token extension) has passed.
  2. **In Progress** - Either a TA or an instructor has collected the submission and is currently working on grading the assignment.
  3. **Complete** - The grading of the assignment has been completed but the mark has not yet been released to the group.
  4. **Released** - The mark has been released to the group along with any annotations that have been made.
