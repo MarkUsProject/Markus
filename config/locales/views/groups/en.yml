@@ -40,12 +40,11 @@ en:
         already_grouped: 'Could not invite %{user_name}: this student is already a member of a group.'
         already_pending: 'Could not invite %{user_name}: this student already has a pending invitation for this group.'
         email_not_found: No student with email '%{email}' could be found.
+        empty_text_field: You need to enter at least one user name or email.
         extension_exists: You cannot modify a group with an extension to the due date. Please contact your instructor if you wish to make changes.
         group_max_reached: 'Could not invite %{user_name}: group maximum has been reached.'
         inactive_grader: Cannot assign inactive grader(s) %{user_names}.
         inactive_student: 'Could not invite %{user_name}: this student is inactive.'
-        incorrectly_formatted_emails: One or more emails entered is incorrectly formatted.
-        incorrectly_formatted_user_names: One or more usernames entered is incorrectly formatted.
         inviting_self: You cannot invite yourself to your own group.
         need_to_create_group: You must create a group before you can invite members.
         not_same_section: 'Could not invite %{user_name}: this student is not in your section.'
@@ -64,7 +63,7 @@ en:
         not_found: No available membership found for this student and group.
       invitations: Group invitations
       invite: Invite student(s)
-      invite_instructions: Enter one or more student user names, separated by commas.
+      invite_instructions: Enter one or more student user names and/or emails, separated by commas.
       invited_by: You have been invited to a group by %{inviter_display_name}.
       join: Join Group
       member_disinvited: Member disinvited.

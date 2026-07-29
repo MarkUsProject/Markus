@@ -488,8 +488,15 @@ class GroupsController < ApplicationController
       return
     end
     if flash_allowance(:error, allowance_to(:invite_member?, @grouping)).value
-      to_invite = params[:invite_member_by_user_name].split(',') + params[:invite_member_by_email].split(',')
+      to_invite = params[:invite_member].to_s.split(',').compact_blank
+      if to_invite.empty?
+        flash_message(:error, I18n.t('groups.invite_member.errors.empty_text_field'))
+        redirect_to course_assignment_path(current_course, @assignment)
+        return
+      end
+      Rails.logger.debug { "this is a debug message: #{to_invite}" }
       errors = @grouping.invite(to_invite)
+      errors = errors.uniq
       if errors.blank?
         already_invited = Set.new
         to_invite.each do |invitee|
