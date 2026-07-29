@@ -32,21 +32,18 @@ This section allows you to set the name and due date for the assignment as well 
 
 ![Properties](/images/assignment-creation-properties-field.png)
 
-**1. Short Identifier**: This is the title that will be used in MarkUs menus and will be the default repository name. Because it is used as a directory name, ensure that it does not contain any spaces.
-**2. Assignment description**: This is the longer, more descriptive name of the assignment used as its full title.
-**3. Message**: This section allows you to include any additional information the students may need to know about the assignment.
-**4. Due Date**: This section lets you set the due date for the assignment. You are able to configure the time (down to the minute) at which you would like the assignment to be due. The due date will be visible to students when they view the assignment. Note that the due date may be changed later on (ex/ to accommodate class-wide extensions). Changing the due date after submissions have been collected will not affect submitted assignments.
-
-**5. Visibility:** Controls when students can see the assignment:
-
+1. **Short Identifier**: This is the title that will be used in MarkUs menus and will be the default repository name. Because it is used as a directory name, ensure that it does not contain any spaces.
+2. **Assignment description**: This is the longer, more descriptive name of the assignment used as its full title.
+3. **Message**: This section allows you to include any additional information the students may need to know about the assignment.
+4. **Due Date**: This section lets you set the due date for the assignment. You are able to configure the time (down to the minute) at which you would like the assignment to be due. The due date will be visible to students when they view the assignment. Note that the due date may be changed later on (ex/ to accommodate class-wide extensions). Changing the due date after submissions have been collected will not affect submitted assignments.
+5. **Visibility:** Controls when students can see the assignment:
 - **Hidden**: Students cannot see this assignment
 - **Visible**: Students can always see this assignment
 - **Visible on/until**: Assignment is only visible between specified start and end datetimes
-
-**6. Section-Specific Settings:** Checking the "Enable section specific settings" box will allow you to set different due dates and visibility settings for different lecture sections. Each section can override the default due date and visibility settings.
+6. **Section-Specific Settings:** Checking the "Enable section specific settings" box will allow you to set different due dates and visibility settings for different lecture sections. Each section can override the default due date and visibility settings.
 > 🗒️ **NOTE:** Students not assigned to any section will only be allowed to form groups with other students not assigned to any section.
 
-**7. Check boxes:** The rest of this section includes check boxes that may be selected or deselected depending on your preferences. Note that in order for students to submit online, the "Allow students to submit through the web interface" box must be checked. If you prefer students to submit through a version control system, then uncheck the "web interface" box and select "version control system".
+7. **Checkboxes:** The rest of this section includes check boxes that may be selected or deselected depending on your preferences. Note that in order for students to submit online, the "Allow students to submit through the web interface" box must be checked. If you prefer students to submit through a version control system, then uncheck the "web interface" box and select "version control system".
 
 If you wish to allow students to submit URLs check the "Allow students to submit URLs" box. This is especially useful if you plan on requiring students to submit videos or large files since preview support is available for content from YouTube and Google Drive/Docs.
 > 🗒️ **NOTE:**
@@ -81,9 +78,7 @@ This section allows you to enable and configure settings for students to work in
 - You may specify a minimum and maximum number of students per group.
 - Group names are always auto-generated if students are forming their own groups.
 - You can create groups manually or by uploading a file in the "Groups" tab once an assignment has been created (please see the "[Managing Group Members](../groups/index.md)" page for more information).
-
-- If the "Persist groups from previous assignment" box is selected, then a previous assignment must be selected from the drop down list. This list is automatically populated from any previously created assignments for the course. Checking this option will allow you to use the same groups and group repositories from previous assignments. See the "[Managing Group Repositories](../groups/index.md)" page for more information.
-
+- If the "Persist groups from previous assignment" box is selected, then a previous assignment must be selected from the drop-down list. This list is automatically populated from any previously created assignments for the course. Checking this option will allow you to use the same groups and group repositories from previous assignments. See the "[Managing Group Repositories](../groups/index.md)" page for more information.
 - If you would like to see what students need to do to form their own groups once you have configured all the settings, please see the "[How Students Form Groups](../../students/index.md)" page.
 
 ### Late Submission Policy
@@ -93,7 +88,7 @@ However, MarkUs supports a few different late submission policies, which you can
 
 ### Re-mark Requests
 
-This section lets you choose if you wish to allow re-mark requests. If you do, then a re-mark request due date may be specified by choosing a date from the drop down calendar. Specific instructions for the students may also be included in the "Remark Request Instructions" section.
+This section lets you choose if you wish to allow re-mark requests. If you do, then a re-mark request due date may be specified by choosing a date from the drop-down calendar. Specific instructions for the students may also be included in the "Remark Request Instructions" section.
 
 ![Website Remark Requests](/images/assignment-remark-requests.png)
 
@@ -101,11 +96,11 @@ This section lets you choose if you wish to allow re-mark requests. If you do, t
 
 Once all the required fields are completed (along with any other fields you choose to fill out), click the `Submit` button at the bottom of the change to create the assignment.
 
-If an assignment is created in error or you wish to delete an assignment, this can be done by navigating to the "Properties" tab of the assignment you wish to delete and checking the "Hide assignment from students" box:
+If an assignment is created in error, or you wish to delete an assignment, this can be done by navigating to the "Properties" tab of the assignment you wish to delete and checking the "Hide assignment from students" box:
 
 ![Website Deleting Assignment](/images/assignments-hide-checkbox.png)
 
-Although this does not delete the assignment from your dashboard, it does remove it from all of the student accounts. Students will neither be able to see nor access deleted assignments.
+Although this does not delete the assignment from your dashboard, it does remove it from all student accounts. Students will neither be able to see nor access deleted assignments.
 
 ## What Students Will See
 

@@ -17,9 +17,9 @@ nav_order: 7
 
 ### New Student Account
 
-To add a new student, navigate to the Students tab of MarkUs (Users -> Students)
+To add a new student, navigate to the Students tab of MarkUs (Users → Students)
 
-Once here, you will see a table with all the students listed for your course. The table will give you all the student's basic information as well as the number of grace credits they have left and whether or not they are Active or Inactive.
+Once here, you will see a table with all the students listed for your course. The table will give you all the student's basic information as well as the number of grace credits they have left and whether they are Active or Inactive.
 
 To add a new student click on the "Add a student" link at the top right hand corner of the page:
 
@@ -38,11 +38,11 @@ The page contains the following fields to be filled out:
 
 Once you've filled out the required fields, don't forget to hit save to create your student account!
 
-If you wish to modify a student account that has already been created, click on the "Edit" hyperlink and you will be brought to the student's "Edit a Student" page (same as "Add a Student").
+If you wish to modify a student account that has already been created, click on the "Edit" hyperlink, and you will be brought to the student's "Edit a Student" page (same as "Add a Student").
 
 The "edit" page also contains a status dropdown menu that allows you to change the status of a student to either "Active" or "Inactive". "Active" students can access and interact with a course as normal whereas an "Inactive" students cannot. "Inactive" students cannot view or interact with a course and cannot access their git repositories from when they were active. Any submissions, grades, and other data they provided however, before becoming "Inactive" will still remain.
 
-Note that a student can only be added to a course if that user already exists in the database. If you see the error message "End user must exist" this means that a user with that user name has not been added yet. Please contact the MarkUs administrator to get that user added to the MarkUs database.
+> 🗒️ **NOTE:** A student can only be added to a course if that user already exists in the database. If you see the error message "End user must exist" this means that a user with that user name has not been added yet. Please contact the MarkUs administrator to get that user added to the MarkUs database.
 
 ### Remove Student Account
 
@@ -54,7 +54,7 @@ To remove a student, you can select the "Remove" link from the student listing t
 
 Grace credits are used to allow students to [extend assignment deadlines](assignments/late-submission-policies.md#automatically-deduct-grace-credits).
 
-To modify the number of grace credits a student has, select the student's check box from the left hand side of the page. If you need to modify a group's total, make sure you select all the students in the group. Then, make sure you have the "Give grace credits" action selected from the drop down menu:
+To modify the number of grace credits a student has, select the student's check box from the left hand side of the page. If you need to modify a group's total, make sure you select all the students in the group. Then, make sure you have the "Give grace credits" action selected from the drop-down menu:
 
 ![Give grace credits](/images/users-add-grace-tokens.png)
 
@@ -64,7 +64,7 @@ A count of the number of grace credits a student has left can be seen in the "Gr
 
 ### Other Actions
 
-Three actions other than assigning grace credits may be performed from the drop down menu:
+Three actions other than assigning grace credits may be performed from the drop-down menu:
 
 - **Update section**: This allows you to update the section for the selected student(s). The available options are a "no section" - if you want to remove the students from their current section - and the existing sections for the course.
 
@@ -77,7 +77,7 @@ Don't forget to click the "Apply" button to save your changes.
 
 ## Grader Accounts
 
-To set up a "Grader" account avigate to the "Users" section of MarkUs and click on the "Graders" tab
+To set up a "Grader" account, navigate to the "Users" section of MarkUs and click on the "Graders" tab.
 
 This page allows you to view a table of all the current graders set up for this course. Each row of the table includes the grader's username, first and last name(s), an email address and an actions column. To add a new grader click on the "Add a Grader" link on the top right hand corner of the page:
 
@@ -105,7 +105,7 @@ By default, graders are not allowed to do anything other than view and grade stu
 
 ## Sections
 
-The "Sections" tab allows you to manage the lecture sections for your course. To add a new lecture section, first navigate to the "Sections" tab of MarkUs (Users -> Sections).
+The "Sections" tab allows you to manage the lecture sections for your course. To add a new lecture section, first navigate to the "Sections" tab of MarkUs (Users → Sections).
 
 Here you will see a list of all the lecture sections currently created for your course. The number in parentheses following each section represents the number of students in that section:
 
@@ -117,11 +117,11 @@ Clicking on the name of the lecture section will allow you to see a list of all 
 
 ## Instructor Accounts
 
-To see a list of all the Instructor accounts associated with the course, navigate to the "instructorns" tab (Users -> Instructors).
+To see a list of all the Instructor accounts associated with the course, navigate to the "instructors" tab (Users → Instructors).
 
 Here you will see a table with all the instructor information. If you wish to edit instructor information, click on the "Edit" hyperlink under the "Actions" column. You are allowed to change your username here but must request a password change from the system admin.
 
-Instructors can also see their status in the course (either "Active" to "Inactive"). Much like students and graders, "Active" instructors are able to access and manage their course as usual whereas an "Inactive" instructor cannot interact or access anything related to the cours. Any data associated with them however, will still remain. An instructor's status can only be changed by an admin.
+Instructors can also see their status in the course (either "Active" to "Inactive"). Much like students and graders, "Active" instructors are able to access and manage their course as usual whereas an "Inactive" instructor cannot interact or access anything related to the course. Any data associated with them however, will still remain. An instructor's status can only be changed by an admin.
 
 To add an instructor account, click on the "Add an Instructor" hyperlink in the top right hand corner of the page. You will be brought to the "Add an Instructor" page where you may fill out the required information:
 

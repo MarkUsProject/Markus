@@ -15,9 +15,9 @@ nav_order: 3
 
 ## How it Works
 
-Timed assessments differ from regular assignments in that they do not have a fixed due date before which a student must complete the assignment. Instead the instructor specifies a range of times between which the student must start the assignment. After the student has started the assignment, they have a specified number of hours and minutes to complete the assignment before it is due.
+Timed assessments differ from regular assignments in that they do not have a fixed due date before which a student must complete the assignment. Instead, the instructor specifies a range of times between which the student must start the assignment. After the student has started the assignment, they have a specified number of hours and minutes to complete the assignment before it is due.
 
-For example, a timed assessment may specify a 24 hour period when an assignment must be completed and may give a student 2 hours to complete it. A student may choose to start the assignment at 11am (during that 24 hour period) and will therefore have until 1pm to finish. Another student may choose to start at 3pm and therefore will have until 5pm.
+> ▶️ **EXAMPLE:** A timed assessment may specify a 24-hour period when an assignment must be completed and may give a student 2 hours to complete it. A student may choose to start the assignment at 11am (during that 24-hour period) and will therefore have until 1pm to finish. Another student may choose to start at 3pm and therefore will have until 5pm.
 
 ## Creating and Updating
 
@@ -44,8 +44,8 @@ The "Properties" section contains three relevant sections that differ from a reg
 
 If a [late submission policy](assignments/late-submission-policies.md) has been set, the policy will be applied after the duration has expired.
 
-For example, if a timed assessment has a duration of 2 hours and a policy that deducts 10% for the first hour past the due date. A student who submits after 2.5 hours will receive a 10% penalty.
+> ▶️ **EXAMPLE:** If a timed assessment has a duration of 2 hours and a policy that deducts 10% for the first hour past the due date. A student who submits after 2.5 hours will receive a 10% penalty.
 
 If a group has been given an [extension](groups/index.md#give-a-group-an-extension) for this timed assessment, the extension will also apply after the duration.
 
-For example, a group with an extension of 1 hour for a timed assessment with a duration of 2 hours will have 3 hours to complete the assessment without penalty.
+> ▶️ **EXAMPLE:** A group with an extension of 1 hour for a timed assessment with a duration of 2 hours will have 3 hours to complete the assessment without penalty.
