@@ -781,8 +781,8 @@ Returns the same JSON structure but with only the matching students in the `stud
 
 > 🗒️ **NOTE:** The filename string can include a nested path if the file should be added in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
-> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested file. 
-> 
+> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested file.
+>
 > For example, if "filename=some/nested/dir/submission.txt"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created as well.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups
@@ -1050,8 +1050,8 @@ The location fields required for each annotation type are:
 - required paramters:
     - "criteria name" (integer)
 
-> 🗒️ **NOTE:** "criteria name" is not the actual name of the parameter but should be replaced by the name of a criteria created for the given assignment. 
-> 
+> 🗒️ **NOTE:** "criteria name" is not the actual name of the parameter but should be replaced by the name of a criteria created for the given assignment.
+>
 > For example, if a criteria exists with the name "code_style", and you want to set the mark for that criteria for the given group to 9, then include the parameter "code_style=9".
 
 ### PUT /api/courses/:course_id/assignments/:assignment_id/groups/:id/update_marking_state
@@ -1091,8 +1091,8 @@ The location fields required for each annotation type are:
 
 > 🗒️ **NOTE:** The folder_path string can include a nested path if the folder should be added in a subfolder (ex: "folder_path=some/nested/dir/")
 
-> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested directory. 
-> 
+> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested directory.
+>
 > For example, if "folder_path=some/nested/dir/"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created.
 
 ### POST /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files
@@ -1105,8 +1105,8 @@ The location fields required for each annotation type are:
 
 > 🗒️ **NOTE:** The filename string can include a nested path if the file should be added in a subfolder (ex: "filename=some/nested/dir/submission.txt")
 
-> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested file. 
-> 
+> 🗒️ **NOTE:** Not all parent directories need to exist in order to create a nested file.
+>
 > For example, if "filename=some/nested/dir/submission.txt"  and "some/" doesn't exist yet, then "some/", "some/nested", and "some/nested/dir" will all be created as well.
 
 ### GET /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/submission_files

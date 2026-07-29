@@ -485,6 +485,6 @@ In addition, the zip file has three folders that contain:
         - This is an optional folder. If it does not exist, that means there are no test files.
 
 > ❗ **IMPORTANT:**
-> 
+>
 > While the contents of the yml files and folders can be extracted and modified for offline configuration, this is NOT
 > recommended and may result in the assignment being unable to be copied over.

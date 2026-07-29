@@ -114,7 +114,7 @@ Where:
 > ⚠️ **WARNING:** You may only add/remove/modify files in the assignment subdirectories. Any commits that contain changes to any other file will be rejected by MarkUs when pushed.
 
 > ▶️ **EXAMPLE:**
-> 
+>
 > To submit a file to `assignment_other`, create a file in the `assignment_other/` subdirectory and push the changes back to MarkUs.
 
 #### Enable Client Hooks

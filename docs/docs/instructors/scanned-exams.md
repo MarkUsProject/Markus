@@ -253,7 +253,7 @@ Matching test papers to students is done manually by instructors, after submissi
     - If [automatic matching](#automatic-matching-of-student-papers) is enabled for this exam template and MarkUs found one or more similar students based on the handwritten field, a list of suggested students will appear above the search field. Click a suggestion to immediately assign that student to the paper.
     - Otherwise (or if none of the suggestions are correct), type the student's identifying information into the search field and press "Assign" to match the paper to the student.
       > 💡 **TIP:** MarkUs supports search by student name, user name, or student number.
-      
+
       > 💡 **TIP:** If the student does not appear in the autofill, you can also enter the student's full name into this field before pressing "Assign". Note that this must be their first and last names as listed in the students table.
     - If a paper can't be matched to any student (for example, it's blank or illegible), press "Skip" to move on to the next paper without assigning it. You can come back to a skipped paper later from the "Groups" tab.
 3. You'll be automatically taken to the next unmatched group. Repeat this process until all groups are matched.

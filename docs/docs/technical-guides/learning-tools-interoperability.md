@@ -45,9 +45,9 @@ and also choose to delete an association between the LMS and MarkUs.
 ![LTI Course Settings](/images/lti-course-settings.png)
 
 > **NOTE:**
-> 
+>
 > Destroying an LTI association will also destroy any LTI assignment settings on MarkUs. However, it will *not* destroy any data that has been sent from MarkUs to the LMS.
-> 
+>
 > If an association is reestablished, any assignment's LTI settings must be re-created, and will create *new* LMS gradebook items.
 
 ### Roster Synchronization
@@ -69,7 +69,7 @@ If you believe MarkUs should be installed in your course, but it does not appear
 contact your Canvas administrators.
 
 > **NOTE:**
-> 
+>
 > The additional navigation item will only be visible to instructors and administrators (not students).
 
 #### Associating your Canvas Course with your MarkUs course

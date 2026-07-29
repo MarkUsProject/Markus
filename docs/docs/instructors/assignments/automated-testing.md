@@ -214,7 +214,7 @@ In Racket, each test file must be added separately with the appropriate test sui
    3. Distribute the notebook to your students.
    4. Take a copy of the same notebook you distributed and add new test cells to this notebook. The notebook will be executed in order so test cells for a given question should be added below the cells that students will fill in for that same question.
 
-   To indicate that a cell is a test cell, the first line of the cell should be a comment where the first word of the comment is "test". The rest of the comment can be a description of the test or be blank. The rest of the cell should contain test code. A test will fail if an error is raised, and will pass if no error is raised (the same rules when writing test functions for [pytest](https://docs.pytest.org/) tests). 
+   To indicate that a cell is a test cell, the first line of the cell should be a comment where the first word of the comment is "test". The rest of the comment can be a description of the test or be blank. The rest of the cell should contain test code. A test will fail if an error is raised, and will pass if no error is raised (the same rules when writing test functions for [pytest](https://docs.pytest.org/) tests).
   > ▶️ **EXAMPLE:** the following cell is a test that will fail:
   >
   >   ```py
