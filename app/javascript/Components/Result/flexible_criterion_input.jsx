@@ -13,6 +13,7 @@ export default function FlexibleCriterionInput({
   expanded,
   findDeductiveAnnotation,
   id,
+  last_updated_by,
   mark,
   max_mark,
   name,
@@ -216,6 +217,11 @@ export default function FlexibleCriterionInput({
         </span>
         {listDeductions()}
         {renderOldMark()}
+        {!released_to_students && last_updated_by && (
+          <div className="last-updated-by">
+            {I18n.t("results.last_updated_by", {name: last_updated_by})}
+          </div>
+        )}
       </div>
     </li>
   );
@@ -229,6 +235,7 @@ FlexibleCriterionInput.propTypes = {
   expanded: PropTypes.bool.isRequired,
   findDeductiveAnnotation: PropTypes.func.isRequired,
   id: PropTypes.number.isRequired,
+  last_updated_by: PropTypes.string,
   mark: PropTypes.number,
   max_mark: PropTypes.number.isRequired,
   oldMark: PropTypes.object,
