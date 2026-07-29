@@ -35,7 +35,7 @@ Once at the settings page, click on an existing annotation category, or create o
 - When changing an annotation category's associated criterion, the deductions for annotations in the category will be scaled according to the change in the maximum marks of the criteria.
 - When first choosing a criterion for an annotation category that already has annotations, the pre-existing annotations will have their deduction values set to 0.0.
 - To stop an annotation category from being associated with a flexible criterion, select the `None` option in the drop-down.
-> ⚠️ **WARNING** *You will lose the deduction value for every annotation in the category, and marks that have been calculated with those deductions will no longer take into account those deducted points.*
+  > ⚠️ **WARNING** *You will lose the deduction value for every annotation in the category, and marks that have been calculated with those deductions will no longer take into account those deducted points.*
 - You may **not** change the configuration for, or delete, an annotation category when deductive annotations of that category have been applied to released results. The input becomes disabled.
 
 ## Setting up annotations

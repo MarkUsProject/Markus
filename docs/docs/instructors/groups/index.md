@@ -34,7 +34,7 @@ The table on the right side of the page contains the names and memberships of al
 
 Toggle the "Display inactive students" checkbox to see inactive students and groups. An **inactive group** is a group where all the members are inactive. Once you have the checkbox toggled, you can use the search function in either tables to quickly identify inactive students and groups.
 
-![Search inactive](/images/search-inactive-students-groups.PNG)
+![Search inactive](/images/search-inactive-students-groups.png)
 
 In the right table, group_0010 shows up because one of its members is inactive. It is **not** an inactive group.
 

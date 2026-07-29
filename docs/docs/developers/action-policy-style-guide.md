@@ -29,7 +29,7 @@ Policy files can be found under: `app/policies`
 
 Policy translation files can be found under: `config/locales/policies`
 
-rspec tests can be found under: `spec/policies`
+RSpec tests can be found under: `spec/policies`
 
 ## Guidelines for writing policies
 
@@ -175,7 +175,7 @@ allowed_to?(:index?, context: { submission: Submission.find(10) })
 
 ### Writing Tests
 
-rspec tests written for policies should use [Action Policies' rspec DSL](https://actionpolicy.evilmartians.io/#/testing?id=rspec-dsl).
+RSpec tests written for policies should use [Action Policies' rspec DSL](https://actionpolicy.evilmartians.io/#/testing?id=rspec-dsl).
 
 For clarity, we prefer to not nest `succeed` or `failed` blocks within each other. For example, the following two test classes are functionally equivalent but the second one is preferred:
 

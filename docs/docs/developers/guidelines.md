@@ -65,7 +65,7 @@ Rails:
 - <http://guides.rubyonrails.org/>
 - <http://www.caliban.org/ruby/rubyguide.shtml>
 
-rspec:
+RSpec:
 
 - <https://www.rubyguides.com/2018/07/rspec-tutorial/>
 - <https://www.betterspecs.org/>

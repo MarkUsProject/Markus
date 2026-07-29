@@ -28,7 +28,7 @@ Part way down, Jamie notices that c9doej forgot to free some memory that had bee
 
 Jamie presses the submit button, and the lines that Jamie had highlighted glows a different colour than the rest of the source code. When Jamie moves the mouse cursor over the glowing code, a little box pops up to display Jamie's message.
 
-Later on, when all  assignments have been marked and returned, c9doej logs in to check his grade. Scanning through his code, he sees the glowing lines. He hovers his mouse over the lines and reads Jamie's message. "Of course!", thinks c9doej, "I knew that. Won't make that mistake twice."
+Later on, when all assignments have been marked and returned, c9doej logs in to check his grade. Scanning through his code, he sees the glowing lines. He hovers his mouse over the lines and reads Jamie's message. "Of course!", thinks c9doej, "I knew that. Won't make that mistake twice."
 
 ## Annotations: The Rules
 

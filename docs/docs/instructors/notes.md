@@ -55,7 +55,7 @@ An assignment note allows a grader or an instructor to create a note about an en
 
 From here you will be able to select the assignment to which the note applies and add a note message.
 
-> 🗒️ **NOTE:** Every note type is can be created from this page. However, the only type of note that is CANNOT be created on the notes page is a grouping note. Please see the [notes](assignments/marking-grading-view.md#notes) section of the "Marking an Assignment" page for detailed instructions.
+> 🗒️ **NOTE:** Every note type can be created from this page. However, the only type of note that CANNOT be created on the notes page is a grouping note. Please see the [notes](assignments/marking-grading-view.md#notes) section of the "Marking an Assignment" page for detailed instructions.
 
 ## Notes Table
 

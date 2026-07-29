@@ -269,7 +269,7 @@ system temporary path is world-writable: /tmp
 /tmp is world-writable: /tmp
 . is not writable: /app
 Exiting
-/usr/lib/ruby/3.0.0/tmpdir.rb:39:in `tmpdir`: could not find a temporary directory (ArgumentError)
+/usr/lib/ruby/3.0.0/tmpdir.rb:39:in `tmpdir': could not find a temporary directory (ArgumentError)
 [...stacktrace]
 ```
 
@@ -308,7 +308,7 @@ When the `rails` container is started, postgres database migrations will be auto
 2023-09-15 11:47:03 StandardError: An error has occurred, this and all later migrations canceled:
 2023-09-15 11:47:03
 2023-09-15 11:47:03 PG::DuplicateTable: ERROR:  relation "users" already exists
-2023-09-15 11:47:03 /app/db/migrate/20080729160237_create_users.rb:3:in `up`
+2023-09-15 11:47:03 /app/db/migrate/20080729160237_create_users.rb:3:in `up'
 2023-09-15 11:47:03
 2023-09-15 11:47:03 Caused by:
 2023-09-15 11:47:03 ActiveRecord::StatementInvalid: PG::DuplicateTable: ERROR:  relation "users" already exists

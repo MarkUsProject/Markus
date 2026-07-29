@@ -77,7 +77,7 @@ Don't forget to click the "Apply" button to save your changes.
 
 ## Grader Accounts
 
-To set up a "Grader" account Navigate to the "Users" section of MarkUs and click on the "Graders" tab
+To set up a "Grader" account, navigate to the "Users" section of MarkUs and click on the "Graders" tab.
 
 This page allows you to view a table of all the current graders set up for this course. Each row of the table includes the grader's username, first and last name(s), an email address and an actions column. To add a new grader click on the "Add a Grader" link on the top right hand corner of the page:
 
