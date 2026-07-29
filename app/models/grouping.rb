@@ -322,7 +322,7 @@ class Grouping < ApplicationRecord
       m = m.strip
       user_name = false
       if m.include?('@') # email
-        user = course.students.joins(:user).find_by('users.email': m)
+        user = course.students.joins(:user).find_by('lower(users.email) = ?', m.downcase)
       else
         user = course.students.joins(:user).find_by('users.user_name': m)
         user_name = true

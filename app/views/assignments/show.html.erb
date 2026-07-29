@@ -10,6 +10,9 @@
         invite_modal.close();
         document.getElementById('working').style.display = 'none';
       })
+      $('#invite-student-form').on("submit", function() {
+      document.getElementById('working').style.display = '';
+      })
     }
     document.addEventListener("DOMContentLoaded", function() {
       invite_modal = new ModalMarkus('#invite_dialog');
