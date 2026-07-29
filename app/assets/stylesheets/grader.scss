@@ -141,6 +141,13 @@
   }
 }
 
+.last-updated-by {
+  color: $line;
+  font-style: italic;
+  margin-top: 0.2em;
+  opacity: 0.65;
+}
+
 .criterion-description {
   float: left;
 }
