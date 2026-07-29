@@ -49,7 +49,7 @@ and also choose to delete an association between the LMS and MarkUs.
 >
 =======
 > 🗒️ **NOTE:**
-> 
+>
 >>>>>>> 6e64f0150 (Addressed comments.)
 > Destroying an LTI association will also destroy any LTI assignment settings on MarkUs. However, it will *not* destroy any data that has been sent from MarkUs to the LMS.
 >
