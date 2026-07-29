@@ -45,7 +45,7 @@ A grouping note allows a grader or an instructor to create a note about the subm
 
 ![Grouping Note](/images/note-form-group.png)
 
-From here you will be able to select the assignment and the group to which the note applies. Note that the group must have already been created for it to appear in the drop down list. Please see TODO INSERT LINK TO CREATING A GROUP PAGE for more information on creating groups. If groups are not allowed then the "Group" drop-down list will simply show a list of all the active students.
+From here you will be able to select the assignment and the group to which the note applies. Note that the group must have already been created for it to appear in the drop-down list. Please see TODO INSERT LINK TO CREATING A GROUP PAGE for more information on creating groups. If groups are not allowed then the "Group" drop-down list will simply show a list of all the active students.
 
 ### Assignment Note
 
@@ -55,7 +55,7 @@ An assignment note allows a grader or an instructor to create a note about an en
 
 From here you will be able to select the assignment to which the note applies and add a note message.
 
-> 🗒️ **NOTE:** Every note type is able to be created from this page. However, the only type of note that is able to be created NOT on the notes page is a grouping note. Please see the [notes](assignments/marking-grading-view.md#notes) section of the "Marking an Assignment" page for detailed instructions.
+> 🗒️ **NOTE:** Every note type is can be created from this page. However, the only type of note that is CANNOT be created on the notes page is a grouping note. Please see the [notes](assignments/marking-grading-view.md#notes) section of the "Marking an Assignment" page for detailed instructions.
 
 ## Notes Table
 

@@ -26,7 +26,7 @@ However, an instructor can also *Unrelease Marks* to modify the grading.
 
 ## Releasing Grades from Submissions Table
 
-To release marks, you must first navigate to the "Submissions" tab of the assignment for which you would like to have marks released (Assignments -> Submissions):
+To release marks, you must first navigate to the "Submissions" tab of the assignment for which you would like to have marks released (Assignments → Submissions):
 
 ![Submissions Tab](/images/submissions-tab.png)
 
@@ -36,7 +36,7 @@ You may only release the marks of groups who's marking state is "Complete".
 
 For a marking state to be "Complete" you must have input a mark or selected a value for every criterion.  Once the marking is done, you must select the "Set to Complete" button in the grading view to finalize completion.
 
-Once a marking state is set to "Complete" it is fairly easy to release the marks to your students. First, select the assignments you wish to release. You may select individual assignments by clicking on their specific specific check boxes, or select them all at once by clicking on the check box in the titles row.
+Once a marking state is set to "Complete" it is fairly easy to release the marks to your students. First, select the assignments you wish to release. You may select individual assignments by clicking on their specific checkboxes, or select them all at once by clicking on the checkbox in the titles row.
 
 Once you've selected at least one group, the "Release Marks" button should light up in the top right hand corner:
 

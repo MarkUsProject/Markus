@@ -28,7 +28,7 @@ Part way down, Jamie notices that c9doej forgot to free some memory that had bee
 
 Jamie presses the submit button, and the lines that Jamie had highlighted glows a different colour than the rest of the source code. When Jamie moves the mouse cursor over the glowing code, a little box pops up to display Jamie's message.
 
-Later on, when all of the assignments have been marked and returned, c9doej logs in to check his grade. Scanning through his code, he sees the glowing lines. He hovers his mouse over the lines and reads Jamie's message. "Of course!", thinks c9doej, "I knew that. Won't make that mistake twice."
+Later on, when all  assignments have been marked and returned, c9doej logs in to check his grade. Scanning through his code, he sees the glowing lines. He hovers his mouse over the lines and reads Jamie's message. "Of course!", thinks c9doej, "I knew that. Won't make that mistake twice."
 
 ## Annotations: The Rules
 
@@ -64,7 +64,7 @@ There are three models that deal with annotations: `AnnotationCategory`, `Annota
 
 The code that handles the client-side Annotation behaviour can be found here:
 
-/public/javascripts/SourceCodeGlower
+`/public/javascripts/SourceCodeGlower`
 
 Inside is a series of files - each file defines a particular JavaScript Class. Here is a description of the files/classes, and how they function with each other:
 
@@ -72,7 +72,7 @@ Inside is a series of files - each file defines a particular JavaScript Class. H
 
 The current client-side approach to Syntax Highlighting is something I figured might change over time. We might upgrade the Syntax Highlighter to a newer version for better performance, or change to a different library completely (perhaps a server side one).
 
-Because of the possibility of change, I did my best to decouple the Syntax Highlighter from the Source Code Glower. That way, if we did end up changing the Syntax Highlighter library, all of the necessary changes would have to be made in a single file, and the rest of the system should still be OK.
+Because of the possibility of change, I did my best to decouple the Syntax Highlighter from the Source Code Glower. That way, if we did end up changing the Syntax Highlighter library, all necessary changes would have to be made in a single file, and the rest of the system should still be OK.
 
 SourceCodeAdapter is an abstract class. Here is a list of the responsibilities for any implementation of SourceCodeAdapter:
 
@@ -80,7 +80,7 @@ SourceCodeAdapter is an abstract class. Here is a list of the responsibilities f
 
 - To return an Enumerable collection of SourceCodeLine's (a class that I'll discuss in the next section) from that DOM element, using the method getSourceNodes().
 
-- Given some DOM element X, to determine whether or not X is in the currently highlighted source code, and to return the DOM element that represents the root of a SourceCodeLine. The method for this is getRootFromSelection(some\_node). This is important for determining which lines are selected after highlighting the source with the mouse cursor.
+- Given some DOM element X, to determine whether X is in the currently highlighted source code, and to return the DOM element that represents the root of a SourceCodeLine. The method for this is getRootFromSelection(some\_node). This is important for determining which lines are selected after highlighting the source with the mouse cursor.
 
 - To perform any run-time hackery on the syntax highlighter DOM element, using applyMods().
 
@@ -154,19 +154,19 @@ This class represents the Annotation Label in the client-side memory. Its main r
 
 This class is in charge of displaying collections of Annotations on the screen. Annotation Labels are displayed in a dynamically generated DIV that is appended to a parent\_node that is attached to the constructor. This generated DIV is hidden until needed, and is styled with CSS class "annotation\_label\_display".
 
-The two variables LABEL\_DISPLAY\_X\_OFFSET and LABEL\_DISPLAY\_Y\_OFFSET offset where the annotation display appears in relation to the mouse cursor.
+The two variables `LABEL\_DISPLAY\_X\_OFFSET and LABEL\_DISPLAY\_Y\_OFFSET` offset where the annotation display appears in relation to the mouse cursor.
 
 ##### AnnotationLabelManager.js
 
 The AnnotationLabelManager is similar to the SourceCodeLineManager - it stores annotation labels within itself based on annotation\_ids. It has the following methods:
 
-- annotationLabelExists(annotation\_label\_id) - returns true/false based on whether or not an annotation\_label is registered at annotation\_label\_id.
+- annotationLabelExists(annotation\_label\_id) - returns true/false based on whether an annotation\_label is registered at annotation\_label\_id.
 
 - getAnnotationLabel(annotation\_label\_id) - returns the Annotation Label registered under annotation\_label\_id
 
 - addAnnotationLabel(annotation\_label) - interrogates an Annotation Label for its ID, and attempts to add it to the internal collection of Annotation Labels. If an Annotation Label already exists at the given ID, an exception is thrown.
 
-- getAllAnnotationLabels() - returns an array of all of the Annotation Labels
+- getAllAnnotationLabels() - returns an array of all Annotation Labels
 
 ##### SourceCodeLineAnnotations.js
 
@@ -198,13 +198,13 @@ I'm just going to list off the methods for this object one by one, giving a desc
 
 - setRelationships() - replace the collection of source code line / annotation label relationships
 
-- relationshipExists(annotation\_id, line\_num, annotation\_label\_id) - returns true or false based on whether or not a relationship exists between a line\_number, an annotation\_label\_id, and an annotation\_id
+- relationshipExists(annotation\_id, line\_num, annotation\_label\_id) - returns true or false based on whether a relationship exists between a line\_number, an annotation\_label\_id, and an annotation\_id
 
 - removeRelationship(annotation\_id, line\_num, annotation\_label\_id) - removes the relationship between an annotation\_id, line\_num, and annotation\_label\_id.
 
 - getAnnotationLabelsForLineNum(line\_num) - given a line number, return all annotation labels associated with that source code line
 
-- hasAnnotation(line\_num) - returns true/false based on whether or not a source code line has any annotations connected to it
+- hasAnnotation(line\_num) - returns true/false based on whether a source code line has any annotations connected to it
 
 - hideLabel() - hide the AnnotationLabelDisplayer dynamically generated div
 
@@ -216,11 +216,11 @@ As of this writing, we're still using Syntax Highlighter 1.5.1. Therefore, we ha
 
 This behaviour is triggered here:
 
-/app/views/annotations/\_codeviewer.html.erb (NOTE - this may have been moved after this was written...I know there was talk of refactoring the grader out of the annotations controller)
+`/app/views/annotations/\_codeviewer.html.erb` (NOTE - this may have been moved after this was written...I know there was talk of refactoring the grader out of the annotations' controller)
 
 Once the dp.SyntaxHighlighter.HighlightAll('code') call is complete, sourceCodeReady() is called. This function is currently in the grader view code here:
 
-/app/views/annotations/grader.html.erb (again, note that this may have been moved - see above for \_codeviewer)
+`/app/views/annotations/grader.html.erb` (again, note that this may have been moved - see above for \_codeviewer)
 
 ##### SourceCodeReady()
 
@@ -234,6 +234,6 @@ Finally, the SourceCodeLineAnnotations object is created using the SourceCodeLin
 
 ##### line\_annotations
 
-line\_annotations is called and manipulated by basic Javascript functions: add\_annotation\_label, add\_annotation, remove\_annotation, update\_annotation\_label.
+line\_annotations is called and manipulated by basic JavaScript functions: add\_annotation\_label, add\_annotation, remove\_annotation, update\_annotation\_label.
 
 And that's how the annotations more or less work.

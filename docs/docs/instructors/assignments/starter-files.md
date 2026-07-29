@@ -62,13 +62,13 @@ For timed assessments, starter files will not be visible until the student has s
 
 ## Managing Changes after the Assignment has Started
 
-If a group has already been created for this assignment and you modify the starter files on this page you will see a warning at the top of the page:
+If a group has already been created for this assignment, and you modify the starter files on this page you will see a warning at the top of the page:
 
 ![Starter Files Warning](/images/starter-files-warning.png)
 
 Students may choose to download the new version of their starter code (with any additional changes applied) when they view [the assignment on MarkUs](../../students/index.md).
 
-If you make changes to the starter files themselves (ie. adding/removing/modifying files) only those students who have been assigned starter files that have changed will see this warning. On the other hand, if you make a change to how starter files are distributed (ie. make a change to the "Starter File Assignment Rules" form), all students will be notified of the change.
+If you make changes to the starter files themselves (i.e. adding/removing/modifying files) only those students who have been assigned starter files that have changed will see this warning. On the other hand, if you make a change to how starter files are distributed (i.e. make a change to the "Starter File Assignment Rules" form), all students will be notified of the change.
 
 If you make changes to starter files or changes to how the files are distributed, MarkUs will do its best to make sure that any groups that already have assigned starter files already change as little as possible. For example, if the current starter file rule is "Assign the default starter file group to all students" and a group has been created already, changing the starter file rule to "Randomly select one starter file group" will leave the group with the starter files they have already been assigned instead of randomly choosing them new ones. However, any new groups that are created from that point on will be assigned a group randomly. This is to minimize the changes to starter files that any single group will see.
 

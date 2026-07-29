@@ -24,7 +24,7 @@ If you want to get started on working on MarkUs quickly and painlessly, this is 
 
 This will download a fairly large (3GB) Debian box from the internet, so go [take a walk](http://news.stanford.edu/news/2014/april/walking-vs-sitting-042414.html) or something. This box has GNOME, PostgreSQL, git, and all of MarkUs’s other dependencies installed. When the download is complete, VirtualBox will run the box in headless mode.
 
-**NOTE:** If, for some reason, it fails and complains about SSH, you most likely have timed out. Check your internet connection attempt to limit network activity to `vagrant up`.
+> 🗒️ **NOTE:** If, for some reason, it fails and complains about SSH, you most likely have timed out. Check your internet connection attempt to limit network activity to `vagrant up`.
 
 ## Connecting to your box
 
@@ -32,7 +32,7 @@ Next, run `vagrant ssh` to connect to the virtual machine. (If it asks you for a
 
 Note: On Windows you may find that you need to put the private key in the same directory as the Vagrantfile.
 
-**NOTE:** It is possible to set up the virtual machine to share folders with the host machine, but in our experience, this is too slow to be a good work environment, and sometimes doesn't work at all.  If you do want to enable shared folders, you can check out that [vagrant documentation](http://docs.vagrantup.com/v2/synced-folders/).  We have found it more effective to work with files locally using RubyMine and deploy/upload to the vagrant box when you want to try things out.
+> 🗒️ **NOTE:** It is possible to set up the virtual machine to share folders with the host machine, but in our experience, this is too slow to be a good work environment, and sometimes doesn't work at all.  If you do want to enable shared folders, you can check out that [vagrant documentation](http://docs.vagrantup.com/v2/synced-folders/).  We have found it more effective to work with files locally using RubyMine and deploy/upload to the vagrant box when you want to try things out.
 
 Finally, run `markus` from the project directory.
 
@@ -40,14 +40,14 @@ You should now be able to access the site from your host machine's browser at `h
 
 The default instructor user is `instructor` with any non-empty password. Look at `db/seeds.rb` for other users.
 
-If you are using RubyMine then you should jump down to the set up instructions for RubyMine below before proceeding to the next step.
+If you are using RubyMine then you should jump down to the set-up instructions for RubyMine below before proceeding to the next step.
 
 ## Using RubyMine
 
 1. Install [RubyMine](https://www.jetbrains.com/ruby/), and then run it.
 2. When RubyMine runs, select `Open`, or `File > Open`, and navigate to your cloned MarkUs folder on your local machine.
 
-    **NOTE**: RubyMine will tell you that there are missing gems to be installed, it is okay to ignore this.
+    > 🗒️ **NOTE**: RubyMine will tell you that there are missing gems to be installed, it is okay to ignore this.
 3. Open `File > Settings` (on Windows) or `RubyMine > Preferences` (on OSX) where we will configure some different settings.
 
     1) In `Tools > Vagrant`, set the *Instance folder* to your Markus directory on your local machine and leave the *Provider* as "Default".
@@ -98,21 +98,21 @@ If you are using RubyMine then you should jump down to the set up instructions f
 7. In the same window under `Excluded Paths`, add the following sets of paths.
 
     **Deployment paths**:
-    - /Markus/.bundle
-    - /Markus/.byebug_history
-    - /Markus/config/database.yml
-    - /Markus/data/dev
-    - /Markus/log
-    - /Markus/node_modules
-    - /Markus/public/javascripts
-    - /Markus/public/packs
-    - /Markus/public/packs-test
-    - /Markus/vendor/bundle
-    - /Markus/lib/scanner/venv
+    - `/Markus/.bundle`
+    - `/Markus/.byebug_history`
+    - `/Markus/config/database.yml`
+    - `/Markus/data/dev`
+    - `/Markus/log`
+    - `/Markus/node_modules`
+    - `/Markus/public/javascripts`
+    - `/Markus/public/packs`
+    - `/Markus/public/packs-test`
+    - `/Markus/vendor/bundle`
+    - `/Markus/lib/scanner/venv`
 
     **Local paths** (MARKUS_ROOT is the location of your MarkUs repo):
-    - MARKUS_ROOT/.vagrant
-    - MARKUS_ROOT/config/dummy_validate.sh
+    - `MARKUS_ROOT/.vagrant`
+    - `MARKUS_ROOT/config/dummy_validate.sh`
 
 8. Click `OK` to save your changes and close the window.
 

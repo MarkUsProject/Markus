@@ -32,9 +32,9 @@ The table on the right side of the page contains the names and memberships of al
 
 ### View inactive students
 
-Toggle the "Display inactive students checkbox to see inactive students and groups. An **inactive group** is a group where all the members are inactive. Once you have the checkbox toggled, you can use the search function in either tables to quickly identify inactive students and groups.
+Toggle the "Display inactive students" checkbox to see inactive students and groups. An **inactive group** is a group where all the members are inactive. Once you have the checkbox toggled, you can use the search function in either tables to quickly identify inactive students and groups.
 
-![Search inactive](/images/search-inactive-students-groups.png)
+![Search inactive](/images/search-inactive-students-groups.PNG)
 
 In the right table, group_0010 shows up because one of its members is inactive. It is **not** an inactive group.
 
@@ -81,4 +81,4 @@ Extensions can be specified in any combination of weeks, days, and hours. Additi
 
 To edit an existing extension for a group, click the link in the "Due Date Extension" column that replaces the + icon once an extension has been added.
 
-> 🗒️ **Note:** Duration extensions can also be specified here for [Timed Assessments](../timed-assessments.md). Duration extensions are specified in hours and minutes.
+> 🗒️ **NOTE:** Duration extensions can also be specified here for [Timed Assessments](../timed-assessments.md). Duration extensions are specified in hours and minutes.

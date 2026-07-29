@@ -48,7 +48,7 @@ rails:
   log_level: # log level (one of: debug info warn error fatal unknown)
   cache_store: # cache store name (redis_cache_store is recommended because MarkUs already uses redis elsewhere)
   active_job:
-    queue_adapter: # queue adapter name (supported by ActiveJob::QueueAdapters) (resque is recommended because MarkUs already uses redis elsewhere)
+    queue_adapter: # queue adapter name (supported by ActiveJob::QueueAdapters) (Resque is recommended because MarkUs already uses redis elsewhere)
   assets:
     prefix: # relative path from the rails root to write compiled assets to
   active_record:
@@ -64,7 +64,7 @@ rails:
     perform_deliveries: # boolean indicating whether to send mail or not
     deliver_later_queue_name: # name of queue used to send mail as a background job
     sendmail_settings: # (required if delivery_method == sendmail) hash containing sendmail settings
-    smtp_settings: # (required if delivery_method == smtp) hash containing smtp settings
+    smtp_settings: # (required if delivery_method == SMTP) hash containing SMTP settings
     file_settings: # (required if delivery_method == file) hash containing file settings
   active_support:
     deprecation: # string indicating where to write deprecation warnings (See ActiveSupport::Deprecation::Behavior for details)
@@ -107,7 +107,7 @@ student_csv_order: # column order of student csv upload file (choices are: user_
 jupyter_server:
   hosts: # list of host names of servers running jupyterhub that are allowed to connect to this instance of MarkUs
 repository:
-  type: # repository type used to store student submissions. Choose from 'git', 'mem'. 'git' is preferred since 'mem' is not persistant and should only be used for testing.
+  type: # repository type used to store student submissions. Choose from 'git', 'mem'. 'git' is preferred since 'mem' is not persistent and should only be used for testing.
   url: # base url used to remotely access a repository over http/https
   ssh_url: # (required if enable_key_storage == true) base url used to remotely access a repository over ssh
   is_repository_admin: # boolean indicating whether MarkUs manages repositories
@@ -137,11 +137,11 @@ rails_performance:
   enabled: # boolean whether to enable the rails performance dashboard (See the "Admin Guide" page for more information about this dashboard)
   duration: # duration in minutes for rails performance to store data for monitoring
 exception_notification:
-  enabled: # boolean indicating whether to enable email notifactions when errors occur (See "Error Notification Emails" below for more details)
+  enabled: # boolean indicating whether to enable email notifications when errors occur (See "Error Notification Emails" below for more details)
   sender: # email address string with which to email error notifications
   sender_display_name: # sender display name for recipients to see
   email_prefix: # string text to prefix to the error subject line that summarizes the error
-  recipients: # list of string email addresses who will recieve error notification emails
+  recipients: # list of string email addresses who will receive error notification emails
 file_storage:
   default_root_path: # absolute path to a directory where MarkUs can write and store files
   scanned_exams: # (optional) absolute path to a directory where MarkUs can store scanned exam files (if null, a subdirectory under the default_root_path will be used)
@@ -162,7 +162,7 @@ queue:
 
 setting. If you would like to use different queue names for different background jobs, you can specify additional keys (the background job name written in snake case) under the `queue:` key.
 
-For example, the following conifguration:
+For example, the following configuration:
 
 ```yaml
 queue:
@@ -242,7 +242,7 @@ Additionally, MarkUs can be set to restrict remote logins based on username and/
 
 ### Logout redirect
 
-The `logout_redirect` setting determines where the user will be redirected when they logout of MarkUs. It can be one of `DEFAULT`, `NONE`, or a URL.
+The `logout_redirect` setting determines where the user will be redirected when they log out of MarkUs. It can be one of `DEFAULT`, `NONE`, or a URL.
 
 - `DEFAULT`: the user will be redirected to MarkUs' login page
 - `NONE`: MarkUs will render a 404 error page
@@ -250,7 +250,7 @@ The `logout_redirect` setting determines where the user will be redirected when 
 
 ## Environment variables
 
-All of the settings described above can also be set using environment variables. Environment variables start with `MARKUS__` followed by each nested yaml key separated by `__`. For example,
+All settings described above can also be set using environment variables. Environment variables start with `MARKUS__` followed by each nested YAML key separated by `__`. For example,
 
 ```sh
 MARKUS__REDIS__URL=redis://localhost:6379/1
@@ -273,11 +273,11 @@ RAILS_RELATIVE_URL_ROOT=/csc108 bundle exec rails server
 
 ## Error Notification Emails
 
-If you wish to be informed when a user encounters a server error whilst using MarkUs, you can configure MarkUs to send you an email whenever such an error event happens along with its details. To do so, under the `exception_notification` settings, set the `enabled` setting to true. Be sure to then specify a `sender` email address and a list of `recipients` addresses. You can also optionally set a `sender_display_name` and an `email_prefix`.
+If you wish to be informed when a user encounters a server error whilst using MarkUs, you can configure MarkUs to email you whenever such an error event happens along with its details. To do so, under the `exception_notification` settings, set the `enabled` setting to true. Be sure to then specify a `sender` email address and a list of `recipients` addresses. You can also optionally set a `sender_display_name` and an `email_prefix`.
 
-Note that in order for this feature to work, you **must** have ActionMailer [configured](https://guides.rubyonrails.org/action_mailer_basics.html) to send emails. This means that you must select an ActionMailer `delivery_method` with the appropriate settings and you must also set `perform_deliveries` to true. You will be unable to send or recieve error notification emails otherwise.
+Note that in order for this feature to work, you **must** have ActionMailer [configured](https://guides.rubyonrails.org/action_mailer_basics.html) to send emails. This means that you must select an ActionMailer `delivery_method` with the appropriate settings, and you must also set `perform_deliveries` to true. You will be unable to send or receive error notification emails otherwise.
 
-This feature informs you of all uncaught exceptions that occur in the MarkUs backend. In order to possibly avoid filling recipient inboxes with a lot of the same error notifications, email notifications are sent after every `2**n` occurences of the same error. For more details, visit the [exception notification](https://github.com/smartinez87/exception_notification) gem homepage with which we use to provide you this feature.
+This feature informs you of all uncaught exceptions that occur in the MarkUs backend. In order to possibly avoid filling recipient inboxes with a lot of the same error notifications, email notifications are sent after every `2**n` occurrences of the same error. For more details, visit the [exception notification](https://github.com/smartinez87/exception_notification) gem homepage with which we use to provide you this feature.
 
 ## LTI Settings
 
@@ -289,7 +289,7 @@ If you wish to use Learning Tools Interoperability (LTI) with MarkUs, you'll nee
 - `lti.token_endpoint` must be the url used to generate an LTI credentials token for the external platform.
 - `lti.sync_schedule` must be a cron schedule dictating when MarkUs should attempt to automatically sync its roster via LTI.
 
-You must also create a private key for generating Javascript Web Tokens to sign LTI requests.
+You must also create a private key for generating JavaScript Web Tokens to sign LTI requests.
 A private key can be automatically created with the `markus:lti_key` rake task.
 
 If you wish to filter course creation requests from LTI deployments, add the following keys:

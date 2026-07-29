@@ -67,15 +67,15 @@ To the right of the grade distribution chart is a set of statistics that give a 
 - **Number of groups:** The number of groups created for this assignment. This is also the expected total number of submissions (assuming all groups have a submission).
 - **Number of students in a group:** The number of students that are in a group out of all active students in the course.
 - **Number of submissions collected:** The number of submissions that have been collected for marking out of the expected total number of submissions.
-- **Number of submissions graded:** The number of submissions that have been collected and have recieved a mark out of the expected total number of submissions.
-- **Average:** The average point grade of submissions for the given assignment (including submissions which recieved a zero) out of the maximum possible mark.
-- **Median:** The median grade of submissions for the given assignment (including submissions which recieved a zero) out of the maximum possible mark.
-- **Standard deviation:** The point grade standard deviation of submissions for the given assignment (including submissions which recieved a zero). In brackets next to this statistic is the standard deviation of submissions given as a percentage grade.
-- **Number of fails:** How many graded submissions recieved a failing grade (i.e. recieved a grade under 50%) out of the expected total number of submissions.
-- **Number of zeros:** How many graded submissions recieved a grade of zero out of the expected total number of submissions.
-- **Remark requests completed:** How many remark requests have been completed out of the total number of remark requests recieved. This statistic will only show if you have enabled remark requests for the given assignment.
+- **Number of submissions graded:** The number of submissions that have been collected and have received a mark out of the expected total number of submissions.
+- **Average:** The average point grade of submissions for the given assignment (including submissions which received a zero) out of the maximum possible mark.
+- **Median:** The median grade of submissions for the given assignment (including submissions which received a zero) out of the maximum possible mark.
+- **Standard deviation:** The point grade standard deviation of submissions for the given assignment (including submissions which received a zero). In brackets next to this statistic is the standard deviation of submissions given as a percentage grade.
+- **Number of fails:** How many graded submissions received a failing grade (i.e. received a grade under 50%) out of the expected total number of submissions.
+- **Number of zeros:** How many graded submissions received a grade of zero out of the expected total number of submissions.
+- **Remark requests completed:** How many remark requests have been completed out of the total number of remark requests received. This statistic will only show if you have enabled remark requests for the given assignment.
 
-> 🗒️ **Note:** In brackets, next to each of the statistics that are shown as a fraction, is the same statistic fraction but displayed as a percentage instead.
+> 🗒️ **NOTE:** In brackets, next to each of the statistics that are shown as a fraction, is the same statistic fraction but displayed as a percentage instead.
 
 #### Criteria Distribution
 
@@ -85,7 +85,7 @@ Below the grade distribution chart, you can further analyze the distribution of 
 
 Each criterion corresponds to a colour shown in the labels just above the graph. By default, all grade data for criteria are hidden. In order to reveal the grade distribution for a specific criterion, simply click on the labels of all the criteria you wish to view and compare.
 
-To help you get a quick overview of student performance for each criterion, next to the criteria distribution graph is a table that shows each criterion along with the average grade received for that criterion. Clicking on the drop down arrow next to each criterion will reveal additional summary statistics for that particular criterion.
+To help you get a quick overview of student performance for each criterion, next to the criteria distribution graph is a table that shows each criterion along with the average grade received for that criterion. Clicking on the drop-down arrow next to each criterion will reveal additional summary statistics for that particular criterion.
 
 ![Criterion Grade Distribution Table](/images/criteria-summary-stats-table.png)
 
@@ -94,9 +94,9 @@ The additional criterion statistics currently shown are:
 - **Average:** The average grade received for the given criterion.
 - **Median:** The median grade received for the given criterion.
 - **Standard deviation:** The point grade standard deviation for the given criterion. The percentage standard deviation for the given criterion is shown in brackets next to this statistic.
-- **Number of zeros:** The number of submissions which recieved a grade of zero on the given criterion.
+- **Number of zeros:** The number of submissions which received a grade of zero on the given criterion.
 
-> 🗒️ **Note:** All statistics include submissions which have been marked as complete and have a grade for the given criterion. This includes submissions that received a mark of zero on the criterion. Submissions need not be released to students in order for them to be included in the statistics.
+> 🗒️ **NOTE:** All statistics include submissions which have been marked as complete and have a grade for the given criterion. This includes submissions that received a mark of zero on the criterion. Submissions need not be released to students in order for them to be included in the statistics.
 
 #### Grader Distribution
 

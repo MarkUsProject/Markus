@@ -16,7 +16,7 @@ nav_order: 5
 
 ## Prepare to Grade
 
-Once you have [collected](marking-set-up.md#collecting-an-assignment) an assignment you may begin grading. This is most likely the part of the process that will take the most time as it is here where you will be able to evaluate the work that the students have done. To get to the grading view, ensure you are in the "Submissions" tab of the appropriate assignment and click on the on the name of the group who's work you wish to grade (the group name will turn into a blue hyperlink once the assignment has been collected).
+Once you have [collected](marking-set-up.md#collecting-an-assignment) an assignment you may begin grading. This is most likely the part of the process that will take the most time as it is here where you will be able to evaluate the work that the students have done. To get to the grading view, ensure you are in the "Submissions" tab of the appropriate assignment and click on the name of the group whose work you wish to grade (the group name will turn into a blue hyperlink once the assignment has been collected).
 
 ![Ready for Grading](/images/submission-table-collected-rows.png)
 
@@ -24,7 +24,7 @@ After doing this, you'll be taken to the grading view, where you will be able to
 
 ## View Submitted Files
 
-When you first enter the grading view, most of the screen will be used to display the files that a group has submit for the assignment. To switch between files click on the blue drop-down arrow beside the title of the file you're currently viewing to see a list of all the files that have been submitted:
+When you first enter the grading view, most of the screen will be used to display the files that a group has submitted for the assignment. To switch between files click on the blue drop-down arrow beside the title of the file you're currently viewing to see a list of all the files that have been submitted:
 
 ![See Files in Grading](/images/grade-view-file-dropdown.png)
 
@@ -80,7 +80,7 @@ All options will be restored to their default states when the "Clear All" button
 After the modal is closed, submissions navigable using the "Next" and "Previous" buttons from the
 Grading Bar will be filtered and ordered according to the specified options.
 
-Note: When multiple filters are applied, the filtered submissions only include those that satisfy all the selected filters simultaneously.
+> 🗒️ **NOTE:** When multiple filters are applied, the filtered submissions only include those that satisfy all the selected filters simultaneously.
 
 ## Download
 
@@ -143,7 +143,7 @@ This will open the following modal:
 
 ![Create Annotation Window Latex Tab](/images/grade-view-annotation-modal-latex.png)
 
-From this window you will be able to type out a comment for the students to see. Since the annotation field supports basic LaTeX and markdown commands, a preview is in the second tab so that you may see what your annotation will look like when released. Don't worry if it isn't perfect as there is an option to edit later! An annotation category may be specified from the drop-down list under "Annotation Category". (See the [Annotations](deductive-annotations.md) page for information on creating annotation categories) Once finished, be sure to click on the "Create Annotation" button to save your annotation!
+From this window you will be able to type out a comment for the students to see. Since the annotation field supports basic LaTeX and Markdown commands, a preview is in the second tab so that you may see what your annotation will look like when released. Don't worry if it isn't perfect as there is an option to edit later! An annotation category may be specified from the drop-down list under "Annotation Category". (See the [Annotations](deductive-annotations.md) page for information on creating annotation categories) Once finished, be sure to click on the "Create Annotation" button to save your annotation!
 
 ### Quick Annotations
 
@@ -155,7 +155,7 @@ You can also quickly annotate with an emoji. After selecting a particular region
 
 In order to view all the annotation you (or anyone) has created for a submission, navigate to the annotations tab of the submission
 
-Once here, you will first see a section where you may add in any overall comments you have for the assignment. Once again, LaTeX and markdown commands are supported, so there is a preview window available:
+Once here, you will first see a section where you may add in any overall comments you have for the assignment. Once again, LaTeX and Markdown commands are supported, so there is a preview window available:
 
 ![Overall Comments](/images/grade-view-annotations-tab.png)
 
@@ -181,13 +181,13 @@ The Marks and Summary tabs are located to the right of the viewing screen and ar
 
 ### Marks
 
-The Marks tab will list all of the criteria that were created in the [Marking Scheme](marking-criteria.md):
+The Marks tab will list all criteria that were created in the [Marking Scheme](marking-criteria.md):
 
 ![Marks Tab](/images/grade-view-criteria-tab.png)
 
 It is here where you are able to select specific criteria to assign marks. In the above image, you can see examples of the [checkbox type](marking-criteria.md#checkbox-type) and [rubric type](marking-criteria.md#rubric-type) criteria. The marks tab has three buttons at the top which do the following:
 
- 1. **Expand All** - This button expands all of the criteria to allow you to see descriptions and full rubrics.
+ 1. **Expand All** - This button expands all criteria to allow you to see descriptions and full rubrics.
  2. **Expand Unmarked** - This button does the same thing as the "Expand All" button but only expands unmarked criteria. It is advised to click this button before moving on to the next submission to see if there are any criteria that have been missed.
  3. **Collapse All** - This button collapses the criteria into their condensed versions.
 
@@ -227,7 +227,7 @@ When you're finished click the "Save" button and your tag will appear in the "Cu
 
 **Available Tags:** Tags that have been created but do not apply to the current submission. These will NOT be visible in the tags column for that submission.
 
-> 🗒️ **NOTE:** All tags are available to be added to any submission within an assignment. To switch a tag from "Current" to "Available" simply click on the tag and it will switch positions.
+> 🗒️ **NOTE:** All tags are available to be added to any submission within an assignment. To switch a tag from "Current" to "Available" simply click on the tag, and it will switch positions.
 
 > ⚠️ **WARNING:** Once a tag has been created, it may not be deleted! (Tags can be set to "available" in order to make them "inactive")
 

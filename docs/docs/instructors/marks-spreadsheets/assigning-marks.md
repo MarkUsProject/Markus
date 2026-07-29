@@ -16,7 +16,7 @@ nav_order: 2
 
 ## Grades Tab
 
-In the grades tab you will be able to interact with your created spreadsheet. To navigate to to the "Grades" tab of your spreadsheet click on Assignments -> Grades:
+In the grades tab you will be able to interact with your created spreadsheet. To navigate to the "Grades" tab of your spreadsheet click on Assignments → Grades:
 
 ![Grades Tab](/images/marks-spreadsheet-grade-tab.png)
 
@@ -27,7 +27,7 @@ The grades tab will automatically load all the active students in your course in
 The marks spreadsheet contains a number of columns:
 
 - **User Name:** Contains the username of the student (the name they use to log into MarkUs)
-- **Section:** Contains the lecture section of the student. If no lecture section has been specified, then the field will be blank. Students may be placed into lecture sections from the "Users" page (See the "[Users](../users.md)" page for more information).
+- **Section:** Contains the lecture section of the student. If no lecture section has been specified, then the field will be blank. Students may be placed into lecture sections from the "[Users](../users.md)" page.
 - **First Name:** The first name of the student.
 - **Last Name:** The last name of the student.
 - **Column(s):** This is the main feature of the spreadsheet. You will now see the columns that you have created previously:
@@ -43,7 +43,7 @@ The marks spreadsheet contains a number of columns:
 
 ### Releasing Marks
 
-Once you create a spreadsheet, students will be able to see that there is a spreadsheet for their course but they will not be able to see their individual marks until you release them. To do this, click the checkbox of the rows of the students who's marks you'd like to release. You may select all the rows at once by clicking the top left checkbox and then click on the "Release Marks" button:
+Once you create a spreadsheet, students will be able to see that there is a spreadsheet for their course, but they will not be able to see their individual marks until you release them. To do this, click the checkbox of the rows of the students whose marks you'd like to release. You may select all the rows at once by clicking the top left checkbox and then click on the "Release Marks" button:
 
 The "State" column should now say "Released" for all the marks that have been successfully released (you may need to refresh the page). Once this procedure is complete the students will be able to see their marks for each column and their total (if specified).
 
@@ -74,10 +74,10 @@ To the right of the grade distribution chart is a set of statistics that give a 
 - **Average:** The average total point grade for the given marks spreadsheet.
 - **Median:** The median total grade for the given marks spreadsheet.
 - **Standard deviation:** The total point grade standard deviation for the given marks spreadsheet. In brackets next to this statistic is the standard deviation given as a percentage.
-- **Number of fails:** How many graded students recieved a failing total grade (i.e. recieved a grade under 50%) for the given marks spreadsheet.
-- **Number of zeros:** How many graded students recieved a total grade of zero for the given marks spreadsheet.
+- **Number of fails:** How many graded students received a failing total grade (i.e. received a grade under 50%) for the given marks spreadsheet.
+- **Number of zeros:** How many graded students received a total grade of zero for the given marks spreadsheet.
 
-> 🗒️ **Note:** In brackets, next to each of the statistics that are shown as a fraction, is the same statistic fraction but displayed as a percentage instead. All marks shown include students that recieve a total grade of zero but does not include students who have a null total grade. Students which have a null grade for certain columns but have at least one valid column mark will have their null grade in the other columns be treated as a zero for the purposes of calculating their total grade
+> 🗒️ **NOTE:** In brackets, next to each of the statistics that are shown as a fraction, is the same statistic fraction but displayed as a percentage instead. All marks shown include students that receive a total grade of zero but does not include students who have a null total grade. Students which have a null grade for certain columns but have at least one valid column mark will have their null grade in the other columns be treated as a zero for the purposes of calculating their total grade
 
 #### Column Grade Distribution
 
@@ -87,7 +87,7 @@ Below the grade distribution chart, you can further analyze the distribution of 
 
 Each column corresponds to a colour shown in the labels just above the graph.
 
-To help you get a quick overview of student performance for each column, next to the column distribution graph is a table that shows each column along with the average grade received for that column. Clicking on the drop down arrow next to each column will reveal additional summary statistics for that particular column.
+To help you get a quick overview of student performance for each column, next to the column distribution graph is a table that shows each column along with the average grade received for that column. Clicking on the drop-down arrow next to each column will reveal additional summary statistics for that particular column.
 
 ![Marks Spreadsheet Column Summary Stats](/images/marks-spreadsheet-column-distribution-stats.png)
 
@@ -96,14 +96,10 @@ The additional column statistics currently shown are:
 - **Average:** The average grade received for the given column.
 - **Median:** The median grade received for the given column.
 - **Standard deviation:** The point grade standard deviation for the given column. The percentage standard deviation for the given column is shown in brackets next to this statistic.
-- **Number of zeros:** The number of submissions which recieved a grade of zero on the given column.
+- **Number of zeros:** The number of submissions which received a grade of zero on the given column.
 
-> 🗒️ **Note:** All statistics include students that have recieved a valid grade for the given column. This includes students that received a mark of zero.
+> 🗒️ **NOTE:** All statistics include students that have received a valid grade for the given column. This includes students that received a mark of zero.
 
 ## Graders Tab
 
 See [this page](../assignments/assigning-graders.md) for instructions on how to assign graders.
-
-## TODO
-
-- [x] Insert Link to "users" page under "columns"

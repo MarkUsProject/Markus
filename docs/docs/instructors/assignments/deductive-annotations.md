@@ -24,7 +24,7 @@ You must have already created a flexible criterion to which you want to associat
 
 ![Get to annotation settings for an assignment](/images/deductive_annotations_gifs/get_to_settings.gif)
 
-Once at the settings page, click on an existing annotation category, or create one. Under annotation category name, there will be a drop down selector for a flexible criterion. Select the criterion you wish to deduct marks from with annotations belonging to this category, and remember to save your choice.
+Once at the settings page, click on an existing annotation category, or create one. Under annotation category name, there will be a drop-down selector for a flexible criterion. Select the criterion you wish to deduct marks from with annotations belonging to this category, and remember to save your choice.
 
 ![Select a criterion for an annotation category](/images/deductive_annotations_gifs/selecting_criterion.gif)
 
@@ -34,8 +34,8 @@ Once at the settings page, click on an existing annotation category, or create o
 - Only flexible criteria can be linked to an annotation category, not rubric criteria or checkbox criteria.
 - When changing an annotation category's associated criterion, the deductions for annotations in the category will be scaled according to the change in the maximum marks of the criteria.
 - When first choosing a criterion for an annotation category that already has annotations, the pre-existing annotations will have their deduction values set to 0.0.
-- To stop an annotation category from being associated with a flexible criterion, select the `None` option in the drop down.
-⚠️ **WARNING** *You will lose the deduction value for every annotation in the category, and marks that have been calculated with those deductions will no longer take into account those deducted points.*
+- To stop an annotation category from being associated with a flexible criterion, select the `None` option in the drop-down.
+> ⚠️ **WARNING** *You will lose the deduction value for every annotation in the category, and marks that have been calculated with those deductions will no longer take into account those deducted points.*
 - You may **not** change the configuration for, or delete, an annotation category when deductive annotations of that category have been applied to released results. The input becomes disabled.
 
 ## Setting up annotations
@@ -53,7 +53,7 @@ Once an associated criterion has been selected, individual annotations can be co
 
 ## Deductive annotations in the interface
 
-Deductive annotations appear in the marking interface similarly to regular annotations, with some differences. Annotation categories that are linked to a flexible criterion display their criterion's name in square brackets after their own name in the annotation categories panel. When the drop down is selected for those categories which have an associated criterion, each annotation option has a red deduction value to the right of it, with the exception of annotations that have a value of zero for their deduction.
+Deductive annotations appear in the marking interface similarly to regular annotations, with some differences. Annotation categories that are linked to a flexible criterion display their criterion's name in square brackets after their own name in the annotation categories panel. When the drop-down is selected for those categories which have an associated criterion, each annotation option has a red deduction value to the right of it, with the exception of annotations that have a value of zero for their deduction.
 
 ![Selecting an annotation in the dropdown](/images/deductive_annotations_gifs/drop_down_marking.gif)
 
