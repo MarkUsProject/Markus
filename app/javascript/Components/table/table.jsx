@@ -31,9 +31,9 @@ export const rowNumberColumn = columnHelper.display({
       #
     </span>
   ),
-  size: 42,
-  minSize: 42,
-  maxSize: 42,
+  size: 40,
+  minSize: 40,
+  maxSize: 40,
   enableResizing: false,
   enableSorting: false,
   enableHiding: false,
