@@ -1,8 +1,8 @@
 import React from "react";
 import TableCell from "./table_cell";
-import {ROW_NUMBER_COLUMN_ID, SELECTION_COLUMN_ID} from "./table";
+import {SELECTION_COLUMN_ID} from "./table";
 
-function TableRow({row, rowNumber, isSelected, isGrouped, isExpanded, renderSubComponent}) {
+function TableRow({row, isSelected, isGrouped, isExpanded, renderSubComponent}) {
   return (
     <div className="rt-tr-group" role="rowgroup">
       <div className="rt-tr -odd" role="row">
@@ -17,7 +17,6 @@ function TableRow({row, rowNumber, isSelected, isGrouped, isExpanded, renderSubC
               isSelected={cellSelection}
               isExpanded={isExpanded}
               key={cell.id}
-              rowNumber={cell.column.columnDef.id === ROW_NUMBER_COLUMN_ID ? rowNumber : null}
               width={cell.column.getSize()}
             />
           );
@@ -34,7 +33,6 @@ export default React.memo(
     // react-table creates new row objects when filter values change.
     // We compare row.original rather than row to determine whether to re-render.
     prev.row.original === next.row.original &&
-    prev.rowNumber === next.rowNumber &&
     prev.isSelected === next.isSelected &&
     prev.isExpanded === next.isExpanded &&
     prev.columnSizing === next.columnSizing &&

@@ -130,10 +130,6 @@ function searchInputs() {
   return screen.getAllByPlaceholderText(defaultSearchPlaceholderText());
 }
 
-function rowNumbers(table) {
-  return Array.from(table.querySelectorAll(".rt-tbody .rt-row-number"), cell => cell.textContent);
-}
-
 async function clickHeader(headerText) {
   await user.click(screen.getByText(headerText));
 }
@@ -182,19 +178,18 @@ describe("tests for the table component", () => {
       expectRowsInTableInOrder(table, columns, data);
     });
 
-    it("shows row numbers as the first column", () => {
-      const {table, data} = renderTableWithMockData();
+    it("shows positional row numbers without adding a table column", () => {
+      const {table} = renderTableWithMockData();
+      const tableElement = table.querySelector(".Table");
       const header = table.querySelector(".rt-thead.-header");
       const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
 
-      expect(header.querySelector(".rt-th:first-child")).toHaveClass("rt-row-number");
-      expect(
-        within(header).getByRole("columnheader", {name: I18n.t("table.row_number")})
-      ).toBeInTheDocument();
-      expect(rowNumbers(table)).toEqual(data.map((_, index) => String(index + 1)));
-      tableRows.forEach(tableRow =>
-        expect(tableRow.querySelector(".rt-td:first-child")).toHaveClass("rt-row-number")
-      );
+      expect(tableElement.style.getPropertyValue("--row-number-gutter-width")).toBe("40px");
+      expect(header.querySelectorAll(".rt-th")).toHaveLength(mockColumns().length);
+      tableRows.forEach(tableRow => {
+        expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(mockColumns().length);
+        expect(tableRow.querySelector(".rt-row-number")).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -246,17 +241,17 @@ describe("tests for the table component", () => {
       }
     });
 
-    it("updates row numbers to match the sorted order", async () => {
+    it("sorts row contents without adding a row-number column", async () => {
       const {table, columns, data} = renderTableWithMockData();
 
       await clickHeader(columns[0].header);
       await clickHeader(columns[0].header);
 
       const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
-      tableRows.forEach((tableRow, index) => {
-        expect(tableRow.querySelector(".rt-row-number")).toHaveTextContent(String(index + 1));
-      });
       expect(within(tableRows[0]).getByText(data[data.length - 1].col1)).toBeInTheDocument();
+      tableRows.forEach(tableRow =>
+        expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(columns.length)
+      );
     });
   });
 
@@ -298,7 +293,7 @@ describe("tests for the table component", () => {
         ],
         columns
       );
-      expect(rowNumbers(table)).toEqual(["1", "2"]);
+      expect(table.querySelectorAll(".rt-tbody .rt-tr")).toHaveLength(2);
     });
 
     it("resets the filter when the search query is erased", async () => {

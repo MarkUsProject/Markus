@@ -119,10 +119,7 @@ describe("For the StudentTable's display of students", () => {
     const student_in_one_row = student => {
       const rows = screen.getAllByRole("row");
       for (let row of rows) {
-        const cells = Array.from(
-          row.querySelectorAll(".rt-td:not(.rt-row-number)"),
-          c => c.textContent
-        );
+        const cells = Array.from(row.querySelectorAll(".rt-td"), c => c.textContent);
         if (cells[1] === student.user_name) {
           expect(cells[2]).toEqual(student.first_name);
           expect(cells[3]).toEqual(student.last_name);

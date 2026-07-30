@@ -21,28 +21,8 @@ export const defaultNoDataText = () => I18n.t("table.no_data");
 
 const columnHelper = createColumnHelper();
 export const SELECTION_COLUMN_ID = "select";
-export const ROW_NUMBER_COLUMN_ID = "row_number";
 const FILTER_VARIANT_SELECT = "select";
-
-export const rowNumberColumn = columnHelper.display({
-  id: ROW_NUMBER_COLUMN_ID,
-  header: () => (
-    <span aria-label={I18n.t("table.row_number")} title={I18n.t("table.row_number")}>
-      #
-    </span>
-  ),
-  size: 40,
-  minSize: 40,
-  maxSize: 40,
-  enableResizing: false,
-  enableSorting: false,
-  enableHiding: false,
-  meta: {
-    className: "rt-row-number",
-    headerClassName: "rt-row-number",
-  },
-  cell: () => null,
-});
+const ROW_NUMBER_GUTTER_WIDTH = 40;
 
 export const expanderColumn = columnHelper.display({
   id: "expander",
@@ -156,7 +136,7 @@ export default function Table({
     if (renderSubComponent || renderSubRows) {
       cols = [expanderColumn, ...cols];
     }
-    return [rowNumberColumn, ...cols];
+    return cols;
   }, [columns, enableRowSelection, renderSubComponent, renderSubRows]);
 
   const table = useReactTable({
@@ -194,10 +174,11 @@ export default function Table({
   });
 
   const centerTotalSize = table.getCenterTotalSize();
+  const tableTotalSize = centerTotalSize + ROW_NUMBER_GUTTER_WIDTH;
   const rows = table.getRowModel().rows;
 
   const tableHeaders = (
-    <div className="rt-thead -header" style={{minWidth: centerTotalSize}}>
+    <div className="rt-thead -header" style={{minWidth: tableTotalSize}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -222,7 +203,7 @@ export default function Table({
     [table, finalColumns]
   );
   const tableFilters = showFilters && (
-    <div className="rt-thead -filters" style={{minWidth: centerTotalSize}}>
+    <div className="rt-thead -filters" style={{minWidth: tableTotalSize}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -244,15 +225,20 @@ export default function Table({
   );
 
   return (
-    <div className="Table -highlight" style={{maxHeight: "500px"}}>
+    <div
+      className="Table -highlight"
+      style={{
+        maxHeight: "500px",
+        "--row-number-gutter-width": `${ROW_NUMBER_GUTTER_WIDTH}px`,
+      }}
+    >
       <div className="rt-table" role="grid">
         {tableHeaders}
         {tableFilters}
-        <div className="rt-tbody" style={{minWidth: centerTotalSize}}>
-          {rows.map((row, index) => (
+        <div className="rt-tbody" style={{minWidth: tableTotalSize}}>
+          {rows.map(row => (
             <TableRow
               row={row}
-              rowNumber={index + 1}
               isExpanded={row.getIsExpanded()}
               isGrouped={row.getIsGrouped()}
               isSelected={row.getIsSelected()}

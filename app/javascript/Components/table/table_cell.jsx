@@ -1,7 +1,7 @@
 import React from "react";
 import {flexRender} from "@tanstack/react-table";
 
-function TableCell({cell, rowNumber, width}) {
+function TableCell({cell, width}) {
   const metaClass = cell.column.columnDef.meta?.className || "";
   return (
     <div
@@ -13,7 +13,7 @@ function TableCell({cell, rowNumber, width}) {
         maxWidth: cell.column.columnDef.maxSize || "none",
       }}
     >
-      {rowNumber ?? flexRender(cell.column.columnDef.cell, cell.getContext())}
+      {flexRender(cell.column.columnDef.cell, cell.getContext())}
     </div>
   );
 }
