@@ -21,7 +21,28 @@ export const defaultNoDataText = () => I18n.t("table.no_data");
 
 const columnHelper = createColumnHelper();
 export const SELECTION_COLUMN_ID = "select";
+export const ROW_NUMBER_COLUMN_ID = "row_number";
 const FILTER_VARIANT_SELECT = "select";
+
+export const rowNumberColumn = columnHelper.display({
+  id: ROW_NUMBER_COLUMN_ID,
+  header: () => (
+    <span aria-label={I18n.t("table.row_number")} title={I18n.t("table.row_number")}>
+      #
+    </span>
+  ),
+  size: 42,
+  minSize: 42,
+  maxSize: 42,
+  enableResizing: false,
+  enableSorting: false,
+  enableHiding: false,
+  meta: {
+    className: "rt-row-number",
+    headerClassName: "rt-row-number",
+  },
+  cell: () => null,
+});
 
 export const expanderColumn = columnHelper.display({
   id: "expander",
@@ -135,7 +156,7 @@ export default function Table({
     if (renderSubComponent || renderSubRows) {
       cols = [expanderColumn, ...cols];
     }
-    return cols;
+    return [rowNumberColumn, ...cols];
   }, [columns, enableRowSelection, renderSubComponent, renderSubRows]);
 
   const table = useReactTable({
@@ -173,6 +194,7 @@ export default function Table({
   });
 
   const centerTotalSize = table.getCenterTotalSize();
+  const rows = table.getRowModel().rows;
 
   const tableHeaders = (
     <div className="rt-thead -header" style={{minWidth: centerTotalSize}}>
@@ -227,9 +249,10 @@ export default function Table({
         {tableHeaders}
         {tableFilters}
         <div className="rt-tbody" style={{minWidth: centerTotalSize}}>
-          {table.getRowModel().rows.map(row => (
+          {rows.map((row, index) => (
             <TableRow
               row={row}
+              rowNumber={index + 1}
               isExpanded={row.getIsExpanded()}
               isGrouped={row.getIsGrouped()}
               isSelected={row.getIsSelected()}
@@ -241,7 +264,7 @@ export default function Table({
               columns={finalColumns}
             />
           ))}
-          {loading && table.getRowModel().rows.length > 0 && (
+          {loading && rows.length > 0 && (
             <div
               className="loading-spinner"
               style={{
@@ -267,7 +290,7 @@ export default function Table({
               />
             </div>
           )}
-          {!table.getRowModel().rows.length &&
+          {!rows.length &&
             (loading ? (
               <div className="loading-spinner">
                 <Grid

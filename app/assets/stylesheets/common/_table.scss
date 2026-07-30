@@ -242,6 +242,12 @@
     text-align: center;
   }
 
+  .rt-row-number {
+    font-size: 0.85em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
   .rt-expander {
     display: inline-block;
     position: relative;

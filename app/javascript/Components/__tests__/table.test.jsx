@@ -130,6 +130,10 @@ function searchInputs() {
   return screen.getAllByPlaceholderText(defaultSearchPlaceholderText());
 }
 
+function rowNumbers(table) {
+  return Array.from(table.querySelectorAll(".rt-tbody .rt-row-number"), cell => cell.textContent);
+}
+
 async function clickHeader(headerText) {
   await user.click(screen.getByText(headerText));
 }
@@ -176,6 +180,21 @@ describe("tests for the table component", () => {
       const {table, columns, data} = renderTableWithMockData();
 
       expectRowsInTableInOrder(table, columns, data);
+    });
+
+    it("shows row numbers as the first column", () => {
+      const {table, data} = renderTableWithMockData();
+      const header = table.querySelector(".rt-thead.-header");
+      const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
+
+      expect(header.querySelector(".rt-th:first-child")).toHaveClass("rt-row-number");
+      expect(
+        within(header).getByRole("columnheader", {name: I18n.t("table.row_number")})
+      ).toBeInTheDocument();
+      expect(rowNumbers(table)).toEqual(data.map((_, index) => String(index + 1)));
+      tableRows.forEach(tableRow =>
+        expect(tableRow.querySelector(".rt-td:first-child")).toHaveClass("rt-row-number")
+      );
     });
   });
 
@@ -226,6 +245,19 @@ describe("tests for the table component", () => {
         expectRowsInTableInOrder(table, columns, data);
       }
     });
+
+    it("updates row numbers to match the sorted order", async () => {
+      const {table, columns, data} = renderTableWithMockData();
+
+      await clickHeader(columns[0].header);
+      await clickHeader(columns[0].header);
+
+      const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
+      tableRows.forEach((tableRow, index) => {
+        expect(tableRow.querySelector(".rt-row-number")).toHaveTextContent(String(index + 1));
+      });
+      expect(within(tableRows[0]).getByText(data[data.length - 1].col1)).toBeInTheDocument();
+    });
   });
 
   describe("filtering", () => {
@@ -246,7 +278,7 @@ describe("tests for the table component", () => {
     });
 
     it("filters data", async () => {
-      const {columns} = renderTableWithMockData();
+      const {table, columns} = renderTableWithMockData();
       columns.pop();
 
       const inputs = searchInputs();
@@ -266,6 +298,7 @@ describe("tests for the table component", () => {
         ],
         columns
       );
+      expect(rowNumbers(table)).toEqual(["1", "2"]);
     });
 
     it("resets the filter when the search query is erased", async () => {

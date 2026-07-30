@@ -20,7 +20,10 @@ describe("For the InstructorTable's display of instructors", () => {
     const instructors_in_one_row = instructor => {
       const rows = screen.getAllByRole("row");
       for (let row of rows) {
-        const cells = Array.from(row.childNodes).map(c => c.textContent);
+        const cells = Array.from(
+          row.querySelectorAll(".rt-td:not(.rt-row-number)"),
+          c => c.textContent
+        );
         if (cells[0] === instructor.user_name) {
           expect(cells[1]).toEqual(instructor.first_name);
           expect(cells[2]).toEqual(instructor.last_name);
