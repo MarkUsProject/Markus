@@ -819,7 +819,7 @@ describe Grouping do
 
       describe '#invite' do
         context 'invoked by instructor' do
-          it 'adds students by username in any scenario possible when invoked by instructor' do
+          it 'adds students by username in any scenario possible' do
             members = [@student01.user_name, @student02.user_name]
             @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(@grouping.accepted_student_memberships.count).to eq(2)
@@ -842,7 +842,7 @@ describe Grouping do
             expect(@grouping.accepted_student_memberships.count).to eq(1)
           end
 
-          it 'adds students by email in any scenario possible when invoked by instructor' do
+          it 'adds students by email in any scenario possible' do
             members = [@student01.email, @student02.email]
             @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(@grouping.accepted_student_memberships.count).to eq(2)
@@ -871,7 +871,7 @@ describe Grouping do
             expect(@grouping.accepted_student_memberships.count).to eq(1)
           end
 
-          it 'adds different students by both username and email in any scenario possible when invoked by instructor' do
+          it 'adds different students by both username and email in any scenario possible' do
             members = [@student01.user_name, @student02.email]
             @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(@grouping.accepted_student_memberships.count).to eq(2)
