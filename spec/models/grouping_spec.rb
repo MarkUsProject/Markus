@@ -818,10 +818,73 @@ describe Grouping do
       end
 
       describe '#invite' do
-        it 'adds students in any scenario possible when invoked by instructor' do
-          members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
-          expect(@grouping.accepted_student_memberships.count).to eq(2)
+        context 'invoked by instructor' do
+          it 'adds students by username in any scenario possible when invoked by instructor' do
+            members = [@student01.user_name, @student02.user_name]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+
+          it 'returns an error when no student matching the username entered could be found' do
+            members = ['test123']
+            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
+            )
+          end
+
+          it 'returns an error for the unknown username but still adds the known student' do
+            members = ['test123', @student01.user_name]
+            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
+            )
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'adds students by email in any scenario possible when invoked by instructor' do
+            members = [@student01.email, @student02.email]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+
+          it 'adds a student by email regardless of the case entered' do
+            members = [@student01.email.upcase]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'returns an error when no student matching the email entered could be found' do
+            members = ['test@example.com']
+            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
+            )
+          end
+
+          it 'returns an error for the unknown email but still adds the known student' do
+            members = ['test@example.com', @student01.email]
+            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
+            )
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'adds different students by both username and email in any scenario possible when invoked by instructor' do
+            members = [@student01.user_name, @student02.email]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+        end
+
+        context 'invoked by student' do
+          it 'adds one student when both the username and email are provided for that student' do
+            members = [@student01.email, @student01.user_name]
+            errors = @grouping.invite(members)
+            expect(errors).to be_empty
+            expect(@grouping.student_memberships.count).to eq(1)
+          end
         end
       end
     end

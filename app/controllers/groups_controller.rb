@@ -501,7 +501,7 @@ class GroupsController < ApplicationController
         to_invite.each do |invitee|
           invitee = invitee.strip
           if invitee.include?('@') # inviting by email
-            invited_user = current_course.students.joins(:user).find_by('users.email': invitee)
+            invited_user = current_course.students.joins(:user).find_by('lower(users.email) = ?', invitee.downcase)
           else # inviting by username
             invited_user = current_course.students.joins(:user).find_by('users.user_name': invitee)
           end

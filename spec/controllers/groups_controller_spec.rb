@@ -1365,7 +1365,7 @@ describe GroupsController do
 
     describe 'POST #invite_member' do
       before do
-        create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
+        @grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
       end
 
       around { |example| perform_enqueued_jobs(&example) }
@@ -1402,6 +1402,66 @@ describe GroupsController do
           post_as @current_student, :invite_member,
                   params: { course_id: course.id, invite_member: @student.user_name, assignment_id: @assignment.id }
         end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
+
+      it 'should send an email to a student invited by email' do
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: @student.email, assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(@grouping.pending_students).to include(@student)
+      end
+
+      it 'should send an email to a student invited by email regardless of the case entered' do
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: @student.email.upcase,
+                            assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(@grouping.pending_students).to include(@student)
+      end
+
+      it 'should send one email to a student named by both their username and their email' do
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: "#{@student.user_name},#{@student.email}",
+                            assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(@grouping.student_memberships.count).to eq(2)
+      end
+
+      it 'should send an email to each student when one is invited by username and the other by email' do
+        @another_student = create(:student, user: create(:end_user, user_name: 'c9test3'))
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.email}",
+                            assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(2)
+      end
+
+      it 'should report an error and send no email when no student has the email entered' do
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: 'nobody@example.com',
+                            assignment_id: @assignment.id }
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+        expect(flash[:error]).to have_message(
+          I18n.t('groups.invite_member.errors.email_not_found', email: 'nobody@example.com')
+        )
+      end
+
+      it 'should report an error when the invite field is empty' do
+        post_as @current_student, :invite_member,
+                params: { course_id: course.id, invite_member: '', assignment_id: @assignment.id }
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.empty_text_field'))
+        expect(@grouping.student_memberships.count).to eq(1)
+      end
+
+      it 'should report an error when the invite field contains only commas' do
+        post_as @current_student, :invite_member,
+                params: { course_id: course.id, invite_member: ',,,,', assignment_id: @assignment.id }
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.empty_text_field'))
+        expect(@grouping.student_memberships.count).to eq(1)
       end
     end
 
