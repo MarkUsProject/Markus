@@ -21,7 +21,7 @@ If you want to get started on working on MarkUs quickly and painlessly, this is 
 
     - If you are given a choice of which operating system to use, select *Ubuntu 22.04*.
 
-2. If you are using **Windows** or **MacOS** you will need to install Docker by following the instructions on [this page](https://docs.docker.com/get-docker/). If you are using **Linux**, you will need to install [Docker Engine](https://docs.docker.com/engine/install/). (On Linux, Docker Desktop is known to cause issues with MarkUs, so it is important that you install Docker Engine and not Docker Desktop. If you already have Docker Desktop installed, see Q6.)
+2. If you are using **Windows** or **macOS** you will need to install Docker by following the instructions on [this page](https://docs.docker.com/get-docker/). If you are using **Linux**, you will need to install [Docker Engine](https://docs.docker.com/engine/install/). (On Linux, Docker Desktop is known to cause issues with MarkUs, so it is important that you install Docker Engine and not Docker Desktop. If you already have Docker Desktop installed, see Q6.)
 
     - On Windows, make sure you've selected the "WSL 2 backend" tab under "System Requirements" and follow those instructions.
     - On Linux, also follow the instructions on "Manage Docker as a non-root user" [here](https://docs.docker.com/install/linux/linux-postinstall/).
@@ -128,9 +128,9 @@ We strongly recommend RubyMine (a JetBrains IDE) for all MarkUs development. If 
 
 3. Complete the setup steps under [Docker: Enable Docker Support JetBrains guide](https://www.jetbrains.com/help/ruby/docker.html#enable_docker).
 
-4. To configure RubyMine to use a remote Ruby interpreter from the Docker image: [JetBrains guide](https://www.jetbrains.com/help/ruby/configuring-language-interpreter.html#add_remote_ruby_interpreter). Use `rails` as the service. After you've selected this interpreter, RubyMine will take some time to index all of the Ruby gems (libraries); you'll see "Indexing"... at the bottom of the RubyMine window.
+4. To configure RubyMine to use a remote Ruby interpreter from the Docker image: [JetBrains guide](https://www.jetbrains.com/help/ruby/configuring-language-interpreter.html#add_remote_ruby_interpreter). Use `rails` as the service. After you've selected this interpreter, RubyMine will take some time to index all Ruby gems (libraries); you'll see "Indexing"... at the bottom of the RubyMine window.
 
-    If this doesn't work, please make sure you're using the latest version of RubyMine (Help -> Check for Updates...).
+    If this doesn't work, please make sure you're using the latest version of RubyMine (Help → Check for Updates...).
 
 5. To configure RubyMine to connect to the PostgreSQL database that MarkUs uses for development, first make sure the MarkUs server is running (by doing a `docker compose run...` as above). Then follow [these instructions](https://www.jetbrains.com/help/idea/running-a-dbms-image.html#6aa07130) in RubyMine to connect to the PostgreSQL server running as the 'postgres' docker-compose service. Note that you do not need to create a new container so you should only need to follow the instructions under "Connect to the PostgreSQL server".
 
@@ -145,8 +145,8 @@ We strongly recommend RubyMine (a JetBrains IDE) for all MarkUs development. If 
 We use [pre-commit](https://pre-commit.com/) to run automated checks on code before each commit. To set this up on your local computer (*not* in a Docker container):
 
 1. First, install Python 3.
-2. Then, install the pre-commit library: `$ python3 -m pip install pre-commit` (or just `python` instead of `python3`, depending on your Python executable. Homebrew Python might [block](https://peps.python.org/pep-0668/) the above command. If this fails, run `brew install pipx` -> `pipx install pre-commit`.
-3. Finally, in the `Markus` folder run `$ pre-commit install`. This will install all of the Markus pre-commit hooks.
+2. Then, install the pre-commit library: `$ python3 -m pip install pre-commit` (or just `python` instead of `python3`), depending on your Python executable. Homebrew Python might [block](https://peps.python.org/pep-0668/) the above command. If this fails, run `brew install pipx` -> `pipx install pre-commit`.
+3. Finally, in the `Markus` folder run `$ pre-commit install`. This will install all Markus pre-commit hooks.
 
 After this, these checks will run every time you make a commit. If all checks pass, the commit will proceed as normal. If a check fails, the commit *does not* occur, and there are two possibilities:
 
@@ -222,11 +222,11 @@ To stop the documentation server, press `Ctrl + C`/`⌘ + C` in the terminal.
 9. Now, open a shell in the MarkUs docker container: `docker compose run --rm rails bash`.
 10. Execute the following commands in the MarkUs container.
     1. Create sample autotesting assignments: `rails db:autotest`.
-    2. (*The MarkUs server and autotest containers be running when you run these commands.*) Run tests for every sample autotesting asignment: `MARKUS_URL=<URL> rails db:autotest_run`, where `<URL>` is in the form `http://<DOMAIN>:3000`, and `<DOMAIN>` is the domain you used in Step 7 (e.g., `host.docker.internal`).
+    2. (*The MarkUs server and autotest containers be running when you run these commands.*) Run tests for every sample autotesting assignment: `MARKUS_URL=<URL> rails db:autotest_run`, where `<URL>` is in the form `http://<DOMAIN>:3000`, and `<DOMAIN>` is the domain you used in Step 7 (e.g., `host.docker.internal`).
 
         If you get an error when running this command, see "Running tests manually" below.
 
-Now when you visit MarkUs in the web browser, you should see the new assignments that were created, the autotest settings (under Settings -> Automated Testing), and a sample submission with autotest results.
+Now when you visit MarkUs in the web browser, you should see the new assignments that were created, the autotest settings (under Settings → Automated Testing), and a sample submission with autotest results.
 
 ### Running tests manually
 
@@ -254,7 +254,7 @@ I'm writing frontend code. The files I've changed should according to the Webpac
 
 1. My changes are valid and should be displayed from the URL I'm accessing.
 2. There are no errors in the webpack container's logs.
-3. If I run `npm run build-dev` in the webpack container's console directly, it succeeds and I'm able to see my changes afterwards.
+3. If I run `npm run build-dev` in the webpack container's console directly, it succeeds, and I'm able to see my changes afterwards.
 
 ### A1
 
@@ -273,7 +273,7 @@ Exiting
 [...stacktrace]
 ```
 
-after following the setup guide step by step. I've looked into my host setup and confirmed that my `/tmp`'s permissions are correct (i.e. on Linux you can expect a 1777, on mac it might be a symbolic link to `/private/tmp`, latter of which would also be a 1777). For the second warning/error, I've found that my Markus container's `/app` is owned by `root`, not `markus`.
+after following the setup guide step by step. I've looked into my host setup and confirmed that my `/tmp`'s permissions are correct (i.e. on Linux you can expect a 1777, on Mac it might be a symbolic link to `/private/tmp`, latter of which would also be a 1777). For the second warning/error, I've found that my Markus container's `/app` is owned by `root`, not `markus`.
 
 ### A2
 
@@ -298,7 +298,7 @@ Since this is not a wide-spread issue, it's more reasonable to have the setup li
 
 ### Q3
 
-When the `rails` container is started, postgres' database migrations will be auto applied because of the line `bundle exec rails db:prepare` in `entrypoint-dev-rails.sh`. Sometimes migrations fail - sometimes outright when you first start the container with `docker compose up rails`, other times when you successfully create your `rails` container, then make some data change to markus (i.e. adding a new assignment tag) or shut down and restart the `rails` container - like
+When the `rails` container is started, postgres database migrations will be auto applied because of the line `bundle exec rails db:prepare` in `entrypoint-dev-rails.sh`. Sometimes migrations fail - sometimes outright when you first start the container with `docker compose up rails`, other times when you successfully create your `rails` container, then make some data change to markus (i.e. adding a new assignment tag) or shut down and restart the `rails` container - like
 
 ```MARKDOWN
 ...
