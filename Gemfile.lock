@@ -496,7 +496,7 @@ GEM
     ruby-progressbar (1.13.0)
     ruby-rc4 (0.1.5)
     ruby2_keywords (0.0.5)
-    rubyzip (3.2.2)
+    rubyzip (3.4.1)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
     rugged (1.9.0)
@@ -628,7 +628,7 @@ DEPENDENCIES
   rspec-rails (~> 8.0.4)
   rtesseract
   ruby-lsp
-  rubyzip
+  rubyzip (~> 3.4.1)
   rugged
   selenium-webdriver
   shoulda-callback-matchers (~> 1.1.1)
