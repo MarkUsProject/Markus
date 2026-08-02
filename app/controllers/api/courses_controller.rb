@@ -11,17 +11,19 @@ module Api
       else
         courses = get_collection(current_user.visible_courses)
       end
+      fields = get_fields || return
       respond_to do |format|
-        format.xml { render xml: courses.to_xml(only: DEFAULT_FIELDS, root: 'courses', skip_types: 'true') }
-        format.json { render json: courses.to_json(only: DEFAULT_FIELDS) }
+        format.xml { render xml: courses.to_xml(only: fields, root: 'courses', skip_types: 'true') }
+        format.json { render json: courses.to_json(only: fields) }
       end
     end
 
     def show
       course = current_course
+      fields = get_fields || return
       respond_to do |format|
-        format.xml { render xml: course.to_xml(only: DEFAULT_FIELDS, root: 'course', skip_types: 'true') }
-        format.json { render json: course.to_json(only: DEFAULT_FIELDS) }
+        format.xml { render xml: course.to_xml(only: fields, root: 'course', skip_types: 'true') }
+        format.json { render json: course.to_json(only: fields) }
       end
     end
 
