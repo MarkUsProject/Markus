@@ -35,6 +35,7 @@
 
 ### 🔧 Internal changes
 - Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)
+- Suppressed CodeQL scanning false positives (#8101)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
 - Resolved/ignored Brakeman warnings and added Brakeman to CI checks (#8066)

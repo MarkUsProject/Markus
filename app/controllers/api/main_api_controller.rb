@@ -7,6 +7,7 @@ module Api
     include ActionPolicy::Controller
 
     before_action :check_format, :check_record, :authenticate
+    # codeql[rb/csrf-protection-disabled] -- authenticated via header token, not cookies, so CSRF does not apply
     skip_before_action :verify_authenticity_token
 
     authorize :real_user, through: :real_user
