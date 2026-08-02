@@ -34,6 +34,7 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Suppressed CodeQL scanning false positives (#8101)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
 - Resolved/ignored Brakeman warnings and added Brakeman to CI checks (#8066)
