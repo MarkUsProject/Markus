@@ -50,6 +50,9 @@
         <%= label_tag :upside_down,
                       t('exam_templates.assign_errors.upside_down') %>
         <%= check_box_tag :upside_down, 'upside_down', false %>
+        <%= label_tag :rotate90,
+                      t('exam_templates.assign_errors.rotate90') %>
+        <%= check_box_tag :rotate90, 'rotate90', false %>
       </div>
       <p>
         <%= submit_tag t('save'), data: { disable_with: t('save') } %>
