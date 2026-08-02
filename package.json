@@ -64,7 +64,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom-worker": "^0.3.0",
     "mini-css-extract-plugin": "^2.9.2",
-    "postcss": "^8.5.23",
+    "postcss": "^8.5.24",
     "postcss-loader": "^8.2.1",
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
