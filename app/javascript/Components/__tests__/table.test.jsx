@@ -178,13 +178,23 @@ describe("tests for the table component", () => {
       expectRowsInTableInOrder(table, columns, data);
     });
 
-    it("shows positional row numbers without adding a table column", () => {
+    it("does not show row numbers by default", () => {
       const {table} = renderTableWithMockData();
+      const tableElement = table.querySelector(".Table");
+
+      expect(tableElement).not.toHaveClass("-show-row-numbers");
+    });
+
+    it("shows positional row numbers without adding a table column when enabled", () => {
+      const {table} = renderTableWithMockData({showRowNumbers: true});
       const tableElement = table.querySelector(".Table");
       const header = table.querySelector(".rt-thead.-header");
       const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
 
-      expect(tableElement.style.getPropertyValue("--row-number-gutter-width")).toBe("40px");
+      expect(tableElement).toHaveClass("-show-row-numbers");
+      expect(table.querySelector(".rt-tbody").style.minWidth).toContain(
+        "var(--row-number-gutter-width)"
+      );
       expect(header.querySelectorAll(".rt-th")).toHaveLength(mockColumns().length);
       tableRows.forEach(tableRow => {
         expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(mockColumns().length);
@@ -242,7 +252,7 @@ describe("tests for the table component", () => {
     });
 
     it("sorts row contents without adding a row-number column", async () => {
-      const {table, columns, data} = renderTableWithMockData();
+      const {table, columns, data} = renderTableWithMockData({showRowNumbers: true});
 
       await clickHeader(columns[0].header);
       await clickHeader(columns[0].header);

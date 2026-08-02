@@ -22,7 +22,6 @@ export const defaultNoDataText = () => I18n.t("table.no_data");
 const columnHelper = createColumnHelper();
 export const SELECTION_COLUMN_ID = "select";
 const FILTER_VARIANT_SELECT = "select";
-const ROW_NUMBER_GUTTER_WIDTH = 40;
 
 export const expanderColumn = columnHelper.display({
   id: "expander",
@@ -94,6 +93,7 @@ export default function Table({
   columnFilters: externalColumnFilters,
   onColumnFiltersChange: externalOnColumnFiltersChange,
   onRowSelectionChange,
+  showRowNumbers = false,
 }) {
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
@@ -174,11 +174,13 @@ export default function Table({
   });
 
   const centerTotalSize = table.getCenterTotalSize();
-  const tableTotalSize = centerTotalSize + ROW_NUMBER_GUTTER_WIDTH;
+  const tableMinWidth = showRowNumbers
+    ? `calc(${centerTotalSize}px + var(--row-number-gutter-width))`
+    : centerTotalSize;
   const rows = table.getRowModel().rows;
 
   const tableHeaders = (
-    <div className="rt-thead -header" style={{minWidth: tableTotalSize}}>
+    <div className="rt-thead -header" style={{minWidth: tableMinWidth}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -203,7 +205,7 @@ export default function Table({
     [table, finalColumns]
   );
   const tableFilters = showFilters && (
-    <div className="rt-thead -filters" style={{minWidth: tableTotalSize}}>
+    <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -226,16 +228,13 @@ export default function Table({
 
   return (
     <div
-      className="Table -highlight"
-      style={{
-        maxHeight: "500px",
-        "--row-number-gutter-width": `${ROW_NUMBER_GUTTER_WIDTH}px`,
-      }}
+      className={`Table -highlight${showRowNumbers ? " -show-row-numbers" : ""}`}
+      style={{maxHeight: "500px"}}
     >
       <div className="rt-table" role="grid">
         {tableHeaders}
         {tableFilters}
-        <div className="rt-tbody" style={{minWidth: tableTotalSize}}>
+        <div className="rt-tbody" style={{minWidth: tableMinWidth}}>
           {rows.map(row => (
             <TableRow
               row={row}
