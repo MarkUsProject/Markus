@@ -46,8 +46,10 @@ export class ImageViewer extends React.PureComponent {
             convert({buffer: inputBuffer, format: "JPEG", quality: 1})
           )
         )
-        .then(conversionResult => new Blob([conversionResult], {type: "image/jpeg"}))
-        .then(blob => URL.createObjectURL(blob))
+        .then(conversionResult => {
+          const blob = new Blob([conversionResult], {type: "image/jpeg"});
+          return URL.createObjectURL(blob);
+        })
         .then(JPEGObjectURL => this.setState({url: JPEGObjectURL}));
     } else {
       return new Promise(() => this.setState({url: this.props.url}));
