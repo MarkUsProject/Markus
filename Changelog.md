@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
 - Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
 - Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)

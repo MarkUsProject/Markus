@@ -11,7 +11,7 @@ en:
       fix_errors: Fix
       help: Manually enter paper copy number and page number for pages where QR code scanning failed.
       page_number: Page Number
-      rotate90: Rotate Page 90°?
+      rotate90: Rotate 90° right
       upside_down: Page Upside Down?
     assign_scans:
       assign: Assign

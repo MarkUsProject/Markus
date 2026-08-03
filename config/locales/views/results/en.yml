@@ -24,7 +24,6 @@ en:
     collapse_all: Collapse All
     copy_text: copy text to clipboard
     current_mark: Current mark
-    current_rotation: Current rotation (Clockwise) = %{rotation}°
     current_zoom_level: 'Current Zoom Level: %{level} %'
     delete_extra_mark_confirm: Are you sure you want to remove this extra mark?
     expand_all: Expand All
@@ -84,7 +83,7 @@ en:
       submit_confirm: You will not be able to see your results until remarking is finished. Are you sure you want to submit your remark request now?
       submitted_on: Remark request was submitted on %{time}.
     results_for: Results for
-    rotate_image: Rotate 90°
+    rotate_image: Rotate 90° right
     set_to_complete: Set to Complete
     set_to_incomplete: Set to Incomplete
     submission_info: Submission Info

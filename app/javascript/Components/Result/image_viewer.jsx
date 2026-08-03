@@ -201,10 +201,6 @@ export class ImageViewer extends React.PureComponent {
     return (
       <React.Fragment>
         <p key={"image_toolbar"}>
-          {I18n.t("results.current_rotation", {rotation: this.state.rotation})}
-          <button onClick={this.addRotation} className={"inline-button"}>
-            {I18n.t("results.rotate_image")}
-          </button>
           {I18n.t("results.current_zoom_level", {
             level: Math.floor(this.state.zoom * 100),
           })}
@@ -213,6 +209,9 @@ export class ImageViewer extends React.PureComponent {
           </button>
           <button onClick={this.zoomOut} className={"inline-button"}>
             {I18n.t("results.zoom_out_image")}-
+          </button>
+          <button onClick={this.addRotation} className={"inline-button"}>
+            {I18n.t("results.rotate_image")}
           </button>
         </p>
         <div id="image_container" key={"image_container"}>
