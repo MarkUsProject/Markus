@@ -181,7 +181,7 @@ class ExamTemplate < ApplicationRecord
         new_pdf = CombinePDF.new
         pdf = CombinePDF.load(error_file_new_name)
         pdf.pages.each do |page|
-          page[:Rotate] = page[:Rotate].to_f - rotation
+          page[:Rotate] = page[:Rotate].to_f + rotation
           new_pdf << page.fix_rotation
         end
         File.binwrite(error_file_new_name, new_pdf.to_pdf)
