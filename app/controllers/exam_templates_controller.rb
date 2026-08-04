@@ -292,9 +292,10 @@ class ExamTemplatesController < ApplicationController
       filename = "#{split_page_id}.pdf"
       upside_down = params[:upside_down]
       rotate90 = params[:rotate90]
+      rotate90_left = params[:rotate90_left]
 
       begin
-        exam_template.fix_error(filename, copy_number, page_number, upside_down, rotate90)
+        exam_template.fix_error(filename, copy_number, page_number, upside_down, rotate90, rotate90_left)
       rescue StandardError => e
         flash_now(:error, e.message)
         render plain: "#{params[:split_page_id]}.pdf"

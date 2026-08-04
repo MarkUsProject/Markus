@@ -230,6 +230,7 @@ export class PDFViewer extends React.PureComponent {
       <React.Fragment>
         <div className="toolbar">
           <div className="toolbar-actions">
+            {I18n.t("results.current_rotation", {rotation: this.state.rotation})}
             <button onClick={this.rotate} className={"inline-button"}>
               {I18n.t("results.rotate_image")}
             </button>
