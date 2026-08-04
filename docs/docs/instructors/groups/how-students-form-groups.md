@@ -29,4 +29,4 @@ Once the inviter has invited someone, they will appear under the inviter's "Your
 
 Once the student's group meets the minimum member requirements for the assignment, they will be allowed to submit files for the assignment.
 
-> ⚠️ **WARNING:** When adding other students to a group, the inviter must type in their teammate's exact username (case-sensitive) or their email (case-insensitive) not their first/last name.
+> ⚠️ **WARNING:** When adding other students to a group, the inviter must type in their teammate's exact username (case-sensitive) or their email (case-insensitive), not their first/last name.

@@ -35,7 +35,7 @@ Once you have invited someone, they will appear under the "Group invitations" li
 
 Once a group meets the minimum member requirements for the assignment, you will be allowed to submit files for the assignment.
 
-> ⚠️ **WARNING:** When adding other students to a group, the inviter must type in their teammate's exact username (case-sensitive) or their email (case-insensitive) not their first/last name.
+> ⚠️ **WARNING:** When adding other students to a group, the inviter must type in their teammate's exact username (case-sensitive) or their email (case-insensitive), not their first/last name.
 
 ## Download Starter Files
 
