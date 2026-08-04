@@ -47,15 +47,24 @@
                              min: 1,
                              max: @split_pdf_log.exam_template.num_pages,
                              required: true %>
-        <%= label_tag :upside_down,
-                      t('exam_templates.assign_errors.upside_down') %>
-        <%= check_box_tag :upside_down, 'upside_down', false %>
-        <%= label_tag :rotate90,
-                      t('exam_templates.assign_errors.rotate90') %>
-        <%= check_box_tag :rotate90, 'rotate90', false %>
-        <%= label_tag :rotate90_left,
-                      t('exam_templates.assign_errors.rotate90_left') %>
-        <%= check_box_tag :rotate90_left, 'rotate90_left', false %>
+        <span class="label"><%= t('exam_templates.assign_errors.rotation') %></span>
+        <span>
+          <%= hidden_field_tag :rotation, 0 %>
+          <%= button_tag type: 'button',
+                         id: 'rotate90_left',
+                         class: 'inline-button rotation-button',
+                         title: t('exam_templates.assign_errors.rotate90_left'),
+                         aria: { label: t('exam_templates.assign_errors.rotate90_left') } do %>
+            <i class="fa-solid fa-rotate-left no-padding" aria-hidden="true"></i>
+          <% end %>
+          <%= button_tag type: 'button',
+                         id: 'rotate90_right',
+                         class: 'inline-button rotation-button',
+                         title: t('exam_templates.assign_errors.rotate90_right'),
+                         aria: { label: t('exam_templates.assign_errors.rotate90_right') } do %>
+            <i class="fa-solid fa-rotate-right no-padding" aria-hidden="true"></i>
+          <% end %>
+        </span>
       </div>
       <p>
         <%= submit_tag t('save'), data: { disable_with: t('save') } %>

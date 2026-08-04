@@ -357,14 +357,12 @@ describe ExamTemplatesController do
                           copy_number: copy_number,
                           page_number: page_number,
                           split_pdf_log_id: split_pdf_log.id,
-                          rotate90: rotate90,
-                          rotate90_left: rotate90_left }
+                          rotation: rotation }
       end
 
       let(:copy_number) { 1 }
       let(:page_number) { 1 }
-      let(:rotate90) { nil }
-      let(:rotate90_left) { nil }
+      let(:rotation) { '0' }
       let(:group) do
  create(:group, group_name: "#{exam_template.name}_paper_#{copy_number}",
                 repo_name: "#{exam_template.name}_paper_#{copy_number}", course: course)
@@ -409,7 +407,7 @@ describe ExamTemplatesController do
       end
 
       context 'when rotating a sideways page to the right' do
-        let(:rotate90) { 'rotate90' }
+        let(:rotation) { '90' }
 
         it 'rotates the page 90 degrees clockwise' do
           page = CombinePDF.create_page
@@ -424,14 +422,29 @@ describe ExamTemplatesController do
       end
 
       context 'when rotating a sideways page to the left' do
-        let(:rotate90_left) { 'rotate90_left' }
+        let(:rotation) { '270' }
 
         it 'rotates the page 90 degrees counterclockwise' do
           page = CombinePDF.create_page
           pdf = instance_double(CombinePDF::PDF, pages: [page])
           allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
           allow(page).to receive(:[]=).and_call_original
-          expect(page).to receive(:[]=).with(:Rotate, -90.0).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 270.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
+      end
+
+      context 'when rotating an upside-down page' do
+        let(:rotation) { '180' }
+
+        it 'rotates the page 180 degrees' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 180.0).and_call_original
           expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
 
           fix_error

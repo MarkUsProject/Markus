@@ -7,9 +7,8 @@ function getFile(filename, pdfViewer) {
   $('#copy_number').val('');
   $('#page_number').val('');
   $('#page_number_list').empty();
-  $('#upside_down')[0].checked = false;
-  $('#rotate90')[0].checked = false;
-  $('#rotate90_left')[0].checked = false;
+  $('#rotation').val(0);
+  pdfViewer.pagesRotation = 0;
   $('#info_form input[type=submit]').prop('disabled', false);
   $('#split_page_id').val(filename.split('.')[0])
   var path = Routes.download_error_file_course_exam_template_path(
@@ -61,18 +60,18 @@ document.addEventListener("DOMContentLoaded", function() {
     pdfViewer.currentScaleValue = 'page-fit';
   });
 
-  $('#upside_down').click(function () {
-    pdfViewer.pagesRotation = (pdfViewer.pagesRotation + 180) % 360;
-  });
-
-  $('#rotate90').click(function () {
-    const rotation = this.checked ? 90 : -90;
-    pdfViewer.pagesRotation = (pdfViewer.pagesRotation + rotation + 360) % 360;
-  });
+  function rotatePage(degrees) {
+    const rotation = (Number($('#rotation').val()) + degrees + 360) % 360;
+    $('#rotation').val(rotation);
+    pdfViewer.pagesRotation = rotation;
+  }
 
   $('#rotate90_left').click(function () {
-    const rotation = this.checked ? -90 : 90;
-    pdfViewer.pagesRotation = (pdfViewer.pagesRotation + rotation + 360) % 360;
+    rotatePage(-90);
+  });
+
+  $('#rotate90_right').click(function () {
+    rotatePage(90);
   });
 
   $('#copy_number').on('keyup', function () {
