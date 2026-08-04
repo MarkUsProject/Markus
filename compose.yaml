@@ -42,6 +42,7 @@ services:
     command: bundle exec rails server -b 0.0.0.0
     environment:
       - RAILS_RELATIVE_URL_ROOT=/csc108
+      - JUPYTER_FETCH_ORIGIN=http://host.docker.internal:8889
       - PGDATABASE=markus_development
       - PGDATABASETEST=markus_test
       - MARKUS_URL=http://host.docker.internal:3000 # used by the tasks in autotest.rake
@@ -49,8 +50,10 @@ services:
       - CAPYBARA_SERVER_PORT=${CAPYBARA_SERVER_PORT:-3434}
       - CAPYBARA_SERVER_HOST=${CAPYBARA_SERVER_HOST:-0.0.0.0}
       - PLAYWRIGHT_BROWSERS_PATH=/app/tmp/pw-browsers
+      - JUPYTER_DEV_USERNAME=c5anthei
     extra_hosts:
       - localhost:host-gateway
+      - "host.docker.internal:host-gateway"
     ports:
       - '3000:3000'
     volumes:

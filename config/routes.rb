@@ -1104,3 +1104,7 @@ Rails.application.routes.draw do
 
   match '*path', controller: 'main', action: 'page_not_found', via: :all
 end
+
+namespace :jupyter do
+  post 'submit', to: 'submissions#submit'
+end
