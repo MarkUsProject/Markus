@@ -497,7 +497,7 @@ class GroupsController < ApplicationController
       errors = @grouping.invite(to_invite)
       errors = errors.uniq
       if errors.blank?
-        already_invited = Set.new
+        already_emailed = Set.new
         to_invite.each do |invitee|
           invitee = invitee.strip
           if invitee.include?('@') # inviting by email
@@ -505,12 +505,12 @@ class GroupsController < ApplicationController
           else # inviting by username
             invited_user = current_course.students.joins(:user).find_by('users.user_name': invitee)
           end
-          # ensure we haven't already invited this user in a previous iteration
-          if invited_user&.receives_invite_emails? && already_invited.exclude?(invited_user.id)
+          # ensure we haven't already emailed this user in a previous iteration
+          if invited_user&.receives_invite_emails? && already_emailed.exclude?(invited_user.id)
             NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
                                     grouping: @grouping).grouping_invite_email.deliver_later
-            already_invited.add(invited_user.id)
+            already_emailed.add(invited_user.id)
           end
         end
         flash_message(:success, I18n.t('groups.invite_member.success'))
