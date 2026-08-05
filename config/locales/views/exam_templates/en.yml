@@ -13,7 +13,7 @@ en:
       page_number: Page Number
       rotate90_left: Rotate 90° left
       rotate90_right: Rotate 90° right
-      rotation: Page Orientation
+      rotation: Fix Page Orientation
     assign_scans:
       assign: Assign
       display_inactive: Display inactive students
