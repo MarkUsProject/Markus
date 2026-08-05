@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Replaced weak MD5 hashing used for API key generation with SHA-256 hashing (#8104)
 
 ### 🚨 Breaking changes
 
