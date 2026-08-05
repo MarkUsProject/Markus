@@ -9,8 +9,7 @@ function getFile(filename, pdfViewer) {
   $('#page_number_list').empty();
   $('#upside_down')[0].checked = false;
   $('#info_form input[type=submit]').prop('disabled', false);
-  $('#split_page_id').val(filename.split('.')[0])
-  var path = Routes.download_error_file_course_exam_template_path(
+  $('#split_page_id').val(filename.split('.')[0])  var path = Routes.download_error_file_course_exam_template_path(
     <%= @current_course.id %>,
     <%= @exam_template.id %>,
     { file_name: filename, show_in_browser: true }
