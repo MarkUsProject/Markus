@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added row numbers to the course summaries table (#8108)
 - Added row numbers to tables using React Table v8, allowing users to identify row positions after sorting and filtering (#8089)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
 - Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
