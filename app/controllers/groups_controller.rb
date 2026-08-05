@@ -6,7 +6,7 @@ class GroupsController < ApplicationController
   layout 'assignment_content'
 
   content_security_policy only: [:assign_scans] do |p|
-    p.img_src :self, :blob
+    p.img_src :self
   end
 
   # Group administration functions -----------------------------------------
