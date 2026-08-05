@@ -471,6 +471,7 @@ export class AssignmentSummaryTable extends React.Component {
             });
           }}
           loading={this.state.loading}
+          showRowNumbers
         />
         <AssignmentGradesUploadModal
           course_id={this.props.course_id}
