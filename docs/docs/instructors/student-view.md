@@ -17,7 +17,7 @@ nav_order: 6
 
 An instructor user can choose to view MarkUs from the perspective of a student or grader user by selecting the "Switch Role" icon.
 
-This icon can be found at the top right corner of any page in MarkUs. If a "Log Out" link is visible, the icon can be found beside that link.
+This icon can be found in the top right corner of any page in MarkUs. If a "Log Out" link is visible, the icon can be found beside that link.
 
 ![Switch Role](/images/switch-role.png)
 

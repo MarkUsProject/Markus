@@ -21,7 +21,7 @@ Install the dev containers [extension](https://marketplace.visualstudio.com/item
 
 ### Create a `devcontainer` Configuration
 
-Devcontainer files define the vscode environment inside a docker container. It allows us to configure VSCode extensions, environment definitions, etc when running VSCode inside the docker container.
+Devcontainer files define the VS Code environment inside a docker container. It allows us to configure VSCode extensions, environment definitions, etc when running VSCode inside the docker container.
 
 Place the following file: `devcontainer.json` at the root of your project inside a `.devcontainer` folder.
 
@@ -68,15 +68,15 @@ Place the following file: `devcontainer.json` at the root of your project inside
 
 Brief explanation of what is happening above:
 
-- On startup, let's open up VSCode inside the `/app` folder of our appplication by defining our workspace folder `workspaceFolder` to point to the `/app` directory of our container.
+- On startup, let's open up VSCode inside the `/app` folder of our application by defining our workspace folder `workspaceFolder` to point to the `/app` directory of our container.
 - We are installing `ruby-lsp` and `gitlens`, both VSCode extensions inside the dev container and specifying their configuration, such as ignoring certain folders from indexing specific paths. Notice that when we open up markus outside the dev container, these extensions will be absent.
-- Force the `listen` gem to poll for changes by setting the `LISTEN_POLLING` flag. This removes flakyness in our autoreloading.
+- Force the `listen` gem to poll for changes by setting the `LISTEN_POLLING` flag. This removes flakiness in our auto reloading.
 
 ### Enable the `ruby-lsp` Gem
 
-To enable modern programming features such as `go-to`, `code completion`, etc, an LSP server is required, which the default RubyMine IDE already comes preconfigured with. To work eficiently in VSCode we must enable the optionally defined `ruby-lsp` gem.
+To enable modern programming features such as `go-to`, `code completion`, etc, an LSP server is required, which the default RubyMine IDE already comes preconfigured with. To work efficiently in VSCode we must enable the optionally defined `ruby-lsp` gem.
 
-To install optional gem groups, we must pass in the `BUNDLE_WITH` enviroment variable with the optional groups we wish to install.
+To install optional gem groups, we must pass in the `BUNDLE_WITH` environment variable with the optional groups we wish to install.
 
 Inside the `docker-compose.override.yml`, we must define the following environment variable:
 
@@ -90,4 +90,4 @@ When must then run: `docker compose run --rm deps-updater` to install the depend
 
 ## Execution
 
-To run your code inside the dev container extension open up the command palette, either by pressing down `cmd + Shift + P` (on MAC OS) or by going to `view > Command Palette` and typing in `Dev Containers: Reopen in Container`
+To run your code inside the dev container extension open up the command palette, either by pressing down `cmd + Shift + P` (on macOS) or by going to `view > Command Palette` and typing in `Dev Containers: Reopen in Container`

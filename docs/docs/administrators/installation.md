@@ -43,7 +43,7 @@ git checkout release
 
 Install system dependencies:
 
-Note that on ubuntu 20.04 the default nodejs version is less than the required node version for MarkUs (version 18). In order to install the correct version of nodejs, first run the `node_setup.sh` script:
+Note that on ubuntu 20.04 the default Node.js version is less than the required node version for MarkUs (version 18). In order to install the correct version of Node.js, first run the `node_setup.sh` script:
 
 ```sh
 curl https://deb.nodesource.com/setup_18.x -o node_setup.sh
@@ -65,7 +65,7 @@ Install [bundler](https://bundler.io/) as a system gem:
 gem install bundler -v 2.3.17
 ```
 
-Update the default configuration options for imagemagick so that it will allow reading pdf files:
+Update the default configuration options for ImageMagick so that it will allow reading PDF files:
 
 ```sh
 sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
@@ -111,7 +111,7 @@ If these dependencies are installed, it will enable [automatic matching of stude
 pip install -r requirements-jupyter.txt
 ```
 
-If these dependencies are installed, MarkUs will render jupyter notebook files as html (converted using nbconvert), otherwise it will render them as plain text.
+If these dependencies are installed, MarkUs will render jupyter notebook files as HTML (converted using nbconvert), otherwise it will render them as plain text.
 
 ### Configure MarkUs settings
 
@@ -165,7 +165,7 @@ RAILS_ENV=production ./bin/bundle exec rails assets:precompile
 
 ## Configuring the web server
 
-MarkUs will run a [puma web server](https://puma.io/) on localhost but to make it accessible on the internet you will need to run your own web server (such as [apache](https://httpd.apache.org/) or [nginx](https://www.nginx.com/)).
+MarkUs will run a [puma web server](https://puma.io/) on localhost but to make it accessible on the internet you will need to run your own web server (such as [Apache](https://httpd.apache.org/) or [nginx](https://www.nginx.com/)).
 
 Here are a few things to consider when setting up the configuration files for your web server (all examples are for Apache configuration, you will have to look up the nginx equivalent if necessary):
 
@@ -175,7 +175,7 @@ Here are a few things to consider when setting up the configuration files for yo
     - the user name value is forwarded in the request header as the "HTTP_X_FORWARDED_USER" key
     - authentication is optional: since MarkUs supports both local and remote authentication, we don't want to force a user to use the remote authentication option if they can also log in with the local option.
 
-  For example, you might have the following snippet in your apache config file when using [shibboleth](https://www.shibboleth.net/) for remote authentication, making all routes under '/' optionally protected by shibboleth authentication and forwarding the "user" variable from the shibboleth authetication to the header:
+  For example, you might have the following snippet in your Apache config file when using [shibboleth](https://www.shibboleth.net/) for remote authentication, making all routes under '/' optionally protected by shibboleth authentication and forwarding the "user" variable from the shibboleth authentication to the header:
 
   ```xml
   <Location "/">
@@ -193,7 +193,7 @@ Here are a few things to consider when setting up the configuration files for yo
 
 ## Git access
 
-MarkUs stores student submissions in bare repositories on disk, if your MarkUs instance is using git repositories and you would like your users to be able to clone/pull/push to those git repositories from the command line (or local git client), you need to set up access to the git repos over SSH or HTTPS.
+MarkUs stores student submissions in bare repositories on disk, if your MarkUs instance is using git repositories, and you would like your users to be able to clone/pull/push to those git repositories from the command line (or local git client), you need to set up access to the git repos over SSH or HTTPS.
 
 ### Git over SSH
 
@@ -246,7 +246,7 @@ Then, you should set up the `markus` user (that you created [previously](#create
 
    Then setting `MARKUS_REPO_LOC_PATTERN=/some/directory/markus/(instance)/data/prod/repos` will mean that requests for repositories at either instance will be discovered properly.
 
-5. update the sshd settings so that when users ssh as the `markus` user they will only be allowed to run git commands (and only on repositories that they have access to as determined by the `.access` file or the check_repo_permissions function (see [Git over HTTPS](#git-over-https) for details). Append the following to the `/etc/ssh/sshd_config` file:
+5. update the SSHD settings so that when users ssh as the `markus` user they will only be allowed to run git commands (and only on repositories that they have access to as determined by the `.access` file) or the check_repo_permissions function (see [Git over HTTPS](#git-over-https) for details). Append the following to the `/etc/ssh/sshd_config` file:
 
     ```text
     Match User markus
@@ -256,7 +256,7 @@ Then, you should set up the `markus` user (that you created [previously](#create
       AuthorizedKeysCommandUser markus
     ```
 
-   - where `/path/to/markus/root/` is the path to the root of the MarkUs source code so that `/path/to/markus/root/lib/repo/authorized_key_command.sh` points to the `authorized_key_command.sh` script. You may have to change the `authorized_key_command.sh` file to be owned by the user that is running the sshd process (usually root). Feel free to also move the `authorized_key_command.sh` file elsewhere on disk if that is more convenient.
+   - where `/path/to/markus/root/` is the path to the root of the MarkUs source code so that `/path/to/markus/root/lib/repo/authorized_key_command.sh` points to the `authorized_key_command.sh` script. You may have to change the `authorized_key_command.sh` file to be owned by the user that is running the SSHD process (usually root). Feel free to also move the `authorized_key_command.sh` file elsewhere on disk if that is more convenient.
 
 6. start (or restart) the `sshd` process so that the new configuration settings get picked up
 
@@ -289,7 +289,7 @@ Then, you should set up the `markus` user (that you created [previously](#create
 
        For example, if your Markus instance is running at the url `my.server.com/something` then the service name in the `.pg_service.conf` should be `[something]`.
 
-       Note that this means that the urls that clients will use to access the repositories will also include this relative url root (ie. the `ssh_url` configuration setting should be set to something like: `'ssh://markus@my.server.com/something'`)
+       Note that this means that the urls that clients will use to access the repositories will also include this relative url root (i.e. the `ssh_url` configuration setting should be set to something like: `'ssh://markus@my.server.com/something'`)
 
      - if your MarkUs instance does not use a relative url root, the service name should be `[markus]`. If you would like to change this service name then you need to set the `DEFAULT_SERVICE` environment variable to the new name in the `/home/markus/.ssh/rc` file.
 
@@ -316,11 +316,11 @@ ScriptAlias /git/ /usr/lib/git-core/git-http-backend/
 
 (where you have previously set up an external authorization script called authorizegit in your Apache configuration)
 
-Your authorization script should first authenticate the user and then it can check whether the user is authorized to view a given git repository using either the `check_repo_permissions.rb` script or the `.access` file (deprecated):
+Your authorization script should first authenticate the user, and then it can check whether the user is authorized to view a given git repository using either the `check_repo_permissions.rb` script or the `.access` file (deprecated):
 
 ##### User authorization using the check_repo_permissions function
 
-When setting up authorization protocols for this access, your authorization script should check who has permission to access which git repos by calling the `check_repo_permissions` postgresql function. This function takes 3 arguments:
+When setting up authorization protocols for this access, your authorization script should check who has permission to access which git repos by calling the `check_repo_permissions` postgreSQL function. This function takes 3 arguments:
 
 - the user name of the user requesting access to the instance
 - the course name
@@ -334,9 +334,9 @@ echo "SELECT check_repo_permissions(:'user_name', :'course_name', :'repo_name')"
 
 ##### User authorization using the .access file (DEPRECATED)
 
-When setting up autorization protocols for this access, your authorization script should check who has permission to which git repos by inspecting the `.access` file in the repository storage directory (see the [configuration settings](configuration.md#markus-settings)).
+When setting up authorization protocols for this access, your authorization script should check who has permission to which git repos by inspecting the `.access` file in the repository storage directory (see the [configuration settings](configuration.md#markus-settings)).
 
-Each row of this file is a comma delimited and contains a relative path from the repository storage directory to a specific repository on disk followed by a list of user names of people who have access to this repository. For example, if [`file_storage.repos`](configuration.md#markus-settings) is `/some/path/to/repos/` and the `.access` file contains:
+Each row of this file is a comma-delimited and contains a relative path from the repository storage directory to a specific repository on disk followed by a list of user names of people who have access to this repository. For example, if [`file_storage.repos`](configuration.md#markus-settings) is `/some/path/to/repos/` and the `.access` file contains:
 
 ```csv
 blah/group1.git,user1,user2
@@ -349,7 +349,7 @@ Then user1 should have permission to access repos at `/some/path/to/repos/blah/g
 ##### additional configuration settings
 
 Finally, make sure that the `repository.url` configuration option is set up so that users will see the correct url to access their git repositories.
-For example, if your server's domain is `https://my.host.com` and you're using the example apache configuration above, you should set the following configuration:
+For example, if your server's domain is `https://my.host.com` and you're using the example Apache configuration above, you should set the following configuration:
 
 ```yaml
 repository:
@@ -368,13 +368,13 @@ Running MarkUs requires 3 processes which can be started with the following comm
   RAILS_ENV=production ./bin/bundle exec rails server -e production
   ```
 
-- to start resque (runs background jobs):
+- to start Resque (runs background jobs):
 
   ```sh
   RAILS_ENV=production QUEUES=* ./bin/bundle exec rails environment resque:work
   ```
 
-- to start resque scheduler (schedules background jobs for later execution):
+- to start Resque scheduler (schedules background jobs for later execution):
 
   ```sh
   RAILS_ENV=production QUEUES=* ./bin/bundle exec rails environment resque:scheduler
@@ -408,7 +408,7 @@ RAILS_ENV=production ./bin/rails db:admin
 
 ### Enabling autotesting
 
-The autotester can be installed seperately from MarkUs on a different server (or the same one if you'd prefer). Here are the autotester [Installation instructions](https://github.com/MarkUsProject/markus-autotesting/blob/release/README.md).
+The autotester can be installed separately from MarkUs on a different server (or the same one if you'd prefer). Here are the autotester [Installation instructions](https://github.com/MarkUsProject/markus-autotesting/blob/release/README.md).
 
 Once the autotester has been set up, you must register each course that uses autotesting by providing the URL of the autotester through the API using the `api/courses/<course_id>/update_autotest_url` route.
 

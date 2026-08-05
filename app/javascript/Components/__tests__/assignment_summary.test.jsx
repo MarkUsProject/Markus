@@ -82,6 +82,10 @@ describe("For the AssignmentSummaryTable's display of inactive groups", () => {
     );
   });
 
+  it("shows row numbers", () => {
+    expect(document.querySelector(".Table")).toHaveClass("-show-row-numbers");
+  });
+
   it("initially does not contain the inactive group", () => {
     expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
   });

@@ -29,16 +29,16 @@ This will display the "Upload" modal where you will be able to browse for files 
 
 If the "unzip all zip files in place" checkbox is selected, all files with the extension `.zip` will be unzipped after they are uploaded. This is useful if you want to upload a nested folder structure without having to create each subfolder one at a time.
 
-For example, if you want to upload a bunch of files in the following configuration:
-
-```text
-dir1
-└── dir2
-    ├── file.png
-    └── file.hs
-```
-
-You're probably better off zipping `dir1` and uploading the zipfile with the "unzip all zip files in place" checkbox selected.
+> ▶️ **EXAMPLE:** If you want to upload a bunch of files in the following configuration:
+>
+>```text
+>dir1
+>└── dir2
+>    ├── file.png
+>    └── file.hs
+>```
+>
+>You're probably better off zipping `dir1` and uploading the zipfile with the "unzip all zip files in place" checkbox selected.
 
 You also have the option to add folders one at a time. To do so, click on the "Add Folder" hyperlink on the right side of the page:
 
@@ -50,7 +50,7 @@ This will create a new folder in the "Test Files" table which you will be able t
 
 Make sure you press Enter after naming your folder to save it. You may not move files that have already been uploaded into the folder however you may upload files into the folder by clicking on the folder name and selecting the "Add New File" button. Once a folder has been selected, the normal file icon will change to a folder with a page sticking out. Simply click again on the folder name to deselect it.
 
-When a file has been added to a folder it will not be visible unless you have the folder open. To open a folder, simply click on its name and you will be able to see all the files it contains:
+When a file has been added to a folder it will not be visible unless you have the folder open. To open a folder, simply click on its name, and you will be able to see all the files it contains:
 
 ![Files in Folder Example](/images/file-manager-open-folder.png)
 

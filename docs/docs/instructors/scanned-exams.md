@@ -58,11 +58,11 @@ To create a new scanned assignment:
 
     ![Scanned Exam Template Edit Page](/images/scanned-exam-template-sample-edit-page.png)
 
-    - *Note*: To save your changes click on the "Save" button underneath the Template Divisions section
+   > 🗒️ **NOTE:** To save your changes click on the "Save" button underneath the Template Divisions section
 
 MarkUs supports a scanned assignment with more than one test version (for example, if your course has multiple sections, and different test versions for each section).
 You may repeat steps 3-4 to create different exam templates for each test version.
-*Note*: Every exam template must have a unique name.
+> 🗒️ **NOTE:** Every exam template must have a unique name.
 
 ### Exam format requirements
 
@@ -71,7 +71,7 @@ MarkUs has the following requirements for exam papers used as exam templates:
 1. The exam paper must be uploaded as a PDF file.
 2. The paper must have a *top margin of 2 inches*. This space is required for a QR code.
 
-    <!-- - *Tip*: You accommodate this larger top margin, you can choose to design your test using legal paper size instead of letter/A4 paper size. -->
+    > 💡 **TIP:** You accommodate this larger top margin, you can choose to design your test using legal paper size instead of letter/A4 paper size.
 
 3. The paper's *first page* must contain space for students to include their name or other identifying information.
 
@@ -79,17 +79,17 @@ MarkUs has the following requirements for exam papers used as exam templates:
 
 ### Automatic matching of student papers
 
-*Note*: this feature is optional and may not be enabled for your MarkUs instance. Contact your system administrator to enable this feature.
+> 🗒️ **NOTE:** this feature is optional and may not be enabled for your MarkUs instance. Contact your system administrator to enable this feature.
 
 MarkUs supports automatic matching of student papers based on student user names or ID numbers written on the cover page of a test.
 If this feature is enabled, MarkUs will attempt to scan a portion of the test cover page and parse handwritten corresponding to either a student's user name or ID number attempt to match the test paper to a student in the course.
 
-*Note*: this feature is meant to assist, but not replace, the manual matching process described below. MarkUs may be unable to correctly parse this information from the test cover page, or it may be written incorrectly and not match any students.
+> 🗒️ *NOTE:** this feature is meant to assist, but not replace, the manual matching process described below. MarkUs may be unable to correctly parse this information from the test cover page, or it may be written incorrectly and not match any students.
 
 Automatic matching is configured separately for each exam template.
 To enable and use the automatic matching feature for an exam template:
 
-1. Go to the Settings -> Exam Templates tab, and find the exam template.
+1. Go to the Settings → Exam Templates tab, and find the exam template.
     - Ensure that your exam template has a *rectangular grid* for where students should enter their user name or id number (see our [sample file](https://github.com/MarkUsProject/Markus/blob/master/db/data/scanned_exams/midterm1-v2-test.pdf) for an example).
 
 2. Under the "Automatic Student Matching" field, select the "Automatically match students to uploaded scanned exams" option.
@@ -102,7 +102,7 @@ To enable and use the automatic matching feature for an exam template:
 
     ![Scanned Exam Template Matching Area](/images/scanned-exam-template-matching-area.png)
 
-    b. On the drop down, select whether to match the information on the students' user name or id number. You must choose one or the other; MarkUs does not support matching on both.
+    b. On the drop-down, select whether to match the information on the students' user name or id number. You must choose one or the other; MarkUs does not support matching on both.
 
     ![Scanned Exam Template Matching Info](/images/scanned-exam-template-matching-info.png)
 
@@ -112,7 +112,7 @@ To enable and use the automatic matching feature for an exam template:
 
 5. Then after giving the test, follow the instructions under "Uploading completed test papers" below. As part of that process, MarkUs will automatically parse and handwriting in the selected region, and attempt to match it against the selected student field (user name or id number). You can view the results of this matching under the "Groups" tab, and match the remaining test papers to students by following the instructions under "Matching test papers to students" below.
 
-    **Note**: MarkUs takes a conservative approach, and will only match students if there is an exact match on the handwritten field.
+    > 🗒️ **NOTE:** MarkUs takes a conservative approach, and will only match students if there is an exact match on the handwritten field.
 
 #### Known limitations
 
@@ -137,13 +137,14 @@ You can do so in MarkUs by following these steps:
     - Number of copies: the number of test copies to generate.
     - Start index: the starting number for the first test copy. This index increases by 1 for each test copy.
 
-    For example, if "Number of copies" is 10 and "Start index" is 1, you'll generate ten test copies, numbered 1 through 10.
+    > ▶️ **EXAMPLE:** If "Number of copies" is 10 and "Start index" is 1, you'll generate ten test copies, numbered 1 through 10.
 5. Press the "Generate" button. MarkUs will generate a PDF file for you to download, containing the generated test copies.
 
     - Each generated test copy has a QR code at the top of the page, with a text code beside it in the form `<template name>-<copy number>-<page number>`.
     - It is safe to generate the same file and even the same copy number more than once. However, you should be careful to not give the same test copy to more than one student!
 
-*Note*: if "number of copies" is more than 1, the downloaded file will contain multiple copies of the test paper.
+> 🗒️ **NOTE:** If "number of copies" is more than 1, the downloaded file will contain multiple copies of the test paper.
+
 If you intend to have your printer staple each paper, you will need to configure your printer to split the PDF, or split the PDF manually into individual paper files before sending them for printing.
 
 ## Uploading completed test papers
@@ -152,19 +153,18 @@ After your test is complete, you should scan all test papers (saving the scans a
 
 1. **Before** uploading any scanned files to MarkUs, you need to configure *template divisions* for each exam template you specified.
     A template division specifies a mapping of test page number to question (e.g., Question 1 appears on page 2, and Question 2 appears on pages 2-3).
-    When processing scanned test papers, MarkUs will groups pages by template divisions to make it easier to grade the same question across all submissions.
+    When processing scanned test papers, MarkUs will group pages by template divisions to make it easier to grade the same question across all submissions.
     If you upload scans for an exam template that has no template divisions, MarkUs will show a confirmation dialog and ask whether you want to proceed anyway.
 
     ![Scanned Exam Template Division Sample](/images/scanned-exam-template-division-sample.png)
 
-    Notes on template divisions:
-
-    - The first page is assumed to be a cover page that will be grouped into a special file called "COVER.pdf". It therefore, cannot be grouped into a template division.
-    - The "Start" and "End" fields are both inclusive.
-      So if a question appears on a single page, use that page number for both the "Start" and "End".
-    - If a page contains more than one question, you should specify one template division for both questions (e.g., with a label "Q1-Q2").
-    - Any pages (besides the first) that are not included in any template divisions will be grouped into a special file called "EXTRA.pdf". This is useful if you provide additional pages for students to use during the test.
-    - You can also put all pages (not including the first page) into a single template division. Such a template division should go from page 2 until the last page number in the test.
+    > 🗒️ **Notes on template divisions:**
+    >
+    >- The first page is assumed to be a cover page that will be grouped into a special file called "COVER.pdf". It therefore, cannot be grouped into a template division.
+    >- The "Start" and "End" fields are both inclusive. So if a question appears on a single page, use that page number for both the "Start" and "End".
+    >- If a page contains more than one question, you should specify one template division for both questions (e.g., with a label "Q1-Q2").
+    >- Any pages (besides the first) that are not included in any template divisions will be grouped into a special file called "EXTRA.pdf". This is useful if you provide additional pages for students to use during the test.
+    >- You can also put all pages (not including the first page) into a single template division. Such a template division should go from page 2 until the last page number in the test.
 
 2. After configuring the template divisions, you are ready to upload the scanned test papers.
     To do so:
@@ -173,11 +173,11 @@ After your test is complete, you should scan all test papers (saving the scans a
 
     ![Scanned Exam Upload Page Link](/images/scanned-exam-upload-page-link.png)
 
-    b. Select which exam template you want MarkUs to use when processing the pdf.
+    b. Select which exam template you want MarkUs to use when processing the PDF.
 
     ![Scanned Exam Upload Scans Select](/images/scanned-exam-upload-scans-select.png)
 
-    c. Select the pdf file containing the scanned test papers you wish to upload.
+    c. Select the PDF file containing the scanned test papers you wish to upload.
 
     ![Scanned Exam Upload Scans PDF Select](/images/scanned-exam-upload-scans-pdf-select.png)
 
@@ -191,7 +191,7 @@ After your test is complete, you should scan all test papers (saving the scans a
       - **Duplicated pages are marked as errors**: when an uploaded page is a duplicate of an existing page,
         the existing page is preserved and the uploaded page is marked as an error and can be reviewed manually.
 
-    e. Double check that you have template divisions assigned to the selected template before proceeding or you will be met with a note informing you that there are no template divisions assigned to the selected template.
+    e. Double check that you have template divisions assigned to the selected template before proceeding, or you will be met with a note informing you that there are no template divisions assigned to the selected template.
 
     f. Press "Upload". MarkUs will then process the uploaded file, scanning QR codes and grouping pages by their exam number and by template division.
 
@@ -232,13 +232,13 @@ If a paper is still missing pages, or you need to recollect one after fixing an 
 
 This will allow grading to begin, and for instructors to match each test paper with the corresponding student.
 
-*Note*: Unlike timed or normal assignments, collecting submissions for scanned exams ignores due dates. This means that when collecting submissions for scanned exams, by default the latest submission will always be collected even if it is submitted past the due date for the scanned exam. If you wish to override this behaviour, you can still [manually override the default collection process](assignments/marking-set-up.md#overriding-the-default-collection-process).
+> 🗒️ **NOTE:** Unlike timed or normal assignments, collecting submissions for scanned exams ignores due dates. This means that when collecting submissions for scanned exams, by default the latest submission will always be collected even if it is submitted past the due date for the scanned exam. If you wish to override this behaviour, you can still [manually override the default collection process](assignments/marking-set-up.md#overriding-the-default-collection-process).
 
 ## Grading the scanned assignments
 
 After the scanned test papers have been collected, you can assign graders and [grade submissions just like regular assignments](assignments/marking-grading-view.md).
 
-**Note**: grading can begin even if students aren't yet matched to test papers.
+> 🗒️ **NOTE:** grading can begin even if students aren't yet matched to test papers.
 
 ## Matching test papers to students
 
@@ -254,8 +254,9 @@ Matching test papers to students is done manually by instructors, after submissi
 
     - If [automatic matching](#automatic-matching-of-student-papers) is enabled for this exam template and MarkUs found one or more similar students based on the handwritten field, a list of suggested students will appear above the search field. Click a suggestion to immediately assign that student to the paper.
     - Otherwise (or if none of the suggestions are correct), type the student's identifying information into the search field and press "Assign" to match the paper to the student.
-        - *Tip*: MarkUs supports search by student name, user name, or student number.
-        - *Tip*: If the student does not appear in the autofill, you can also enter the student's full name into this field before pressing "Assign". Note that this must be their first and last names as listed in the students table.
+      > 💡 **TIP:** MarkUs supports search by student name, user name, or student number.
+
+      > 💡 **TIP:** If the student does not appear in the autofill, you can also enter the student's full name into this field before pressing "Assign". Note that this must be their first and last names as listed in the students table.
     - If a paper can't be matched to any student (for example, it's blank or illegible), press "Skip" to move on to the next paper without assigning it. You can come back to a skipped paper later from the "Groups" tab.
 3. You'll be automatically taken to the next unmatched group. Repeat this process until all groups are matched.
 

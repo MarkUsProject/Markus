@@ -140,7 +140,7 @@ class User < ApplicationRecord
   end
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
-  # which is in turn MD5 digested and Base64 encoded so that it doesn't
+  # which is then SHA-256 hashed and Base64 encoded so that it doesn't
   # include bad HTTP characters.
   #
   # TODO: If we end up using this heavily we should probably let this key
@@ -148,10 +148,9 @@ class User < ApplicationRecord
   # automatically generated.
   def reset_api_key
     key = generate_api_key
-    md5 = Digest::MD5.new
-    md5.update(key)
-    # base64 encode md5 hash
-    self.update(api_key: Base64.encode64(md5.to_s).strip)
+
+    # base64 encode SHA-256 hash
+    self.update(api_key: Digest::SHA256.base64digest(key))
   end
 
   def admin_courses
