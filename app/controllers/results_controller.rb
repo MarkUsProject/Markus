@@ -5,10 +5,7 @@ class ResultsController < ApplicationController
   authorize :criterion_id, through: :criterion_id_param
 
   content_security_policy only: [:edit, :view_marks] do |p|
-    # required because heic2any uses libheif which calls
-    # eval (javascript) and creates an image as a blob.
-    # TODO: remove this when possible
-    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    # required because heic-convert creates an image as a blob
     p.img_src :self, :blob
     p.frame_src(*SubmissionsController::PERMITTED_IFRAME_SRC)
   end
