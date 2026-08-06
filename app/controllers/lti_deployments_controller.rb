@@ -270,8 +270,8 @@ class LtiDeploymentsController < ApplicationController
   def check_lti_launch_role
     return if Array(session[:lti_privileged_deployments]).include?(record&.id)
 
-    render 'shared/http_status',
-           locals: { code: '403', message: I18n.t('lti.launch_required') },
-           status: :forbidden, layout: false
+    @title = I18n.t('lti.launch_required_title')
+    @message = I18n.t('lti.launch_required')
+    render 'message', status: :forbidden
   end
 end
