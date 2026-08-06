@@ -33,6 +33,12 @@ describe Api::CoursesController do
           keys = Hash.from_xml(response.body).dig('courses', 'course').keys.map(&:to_sym)
           expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
         end
+
+        it 'should return only requested fields' do
+          get :index, params: { fields: %w[id name] }
+          keys = Hash.from_xml(response.body).dig('courses', 'course').keys
+          expect(keys).to match_array(%w[id name])
+        end
       end
 
       context 'with multiple courses' do
@@ -92,6 +98,12 @@ describe Api::CoursesController do
           get :index
           keys = response.parsed_body&.first&.keys&.map(&:to_sym)
           expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
+        end
+
+        it 'should return only requested fields' do
+          get :index, params: { fields: %w[id name] }
+          keys = response.parsed_body&.first&.keys
+          expect(keys).to match_array(%w[id name])
         end
       end
 
@@ -185,6 +197,12 @@ describe Api::CoursesController do
 
         expect(Time.zone.parse(response.parsed_body['start_at'])).to be_within(1.second).of(start_time)
         expect(Time.zone.parse(response.parsed_body['end_at'])).to be_within(1.second).of(end_time)
+      end
+
+      it 'returns only requested fields' do
+        get :show, params: { id: course.id, fields: %w[id name] }
+
+        expect(response.parsed_body.keys).to match_array(%w[id name])
       end
     end
 

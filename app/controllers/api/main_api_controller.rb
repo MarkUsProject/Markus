@@ -81,6 +81,20 @@ module Api
       end
     end
 
+    def get_fields
+      return self.class::DEFAULT_FIELDS if params[:fields].blank?
+
+      fields = params.permit(fields: [])[:fields]&.map { |field| field.to_s.to_sym }
+      fields = fields&.intersection(self.class::DEFAULT_FIELDS)
+      if fields.blank?
+        render 'shared/http_status', locals: { code: '422', message:
+          'Invalid or malformed parameter values' }, status: :unprocessable_content
+        false
+      else
+        fields
+      end
+    end
+
     # Checks that the symbols provided in the array aren't blank in the params
     def has_missing_params?(required_params)
       required_params.each do |param|

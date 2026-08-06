@@ -9,11 +9,12 @@ module Api
     # Optional: filter, fields
     def index
       users = get_collection(visible_users) || return
+      fields = get_fields || return
 
       respond_to do |format|
-        format.xml { render xml: users.to_xml(only: DEFAULT_FIELDS, root: :users, skip_types: true) }
+        format.xml { render xml: users.to_xml(only: fields, root: :users, skip_types: true) }
         format.json do
-          render json: users.pluck_to_hash(*DEFAULT_FIELDS)
+          render json: users.pluck_to_hash(*fields)
         end
       end
     end
@@ -70,9 +71,10 @@ module Api
         render 'shared/http_status', locals: { code: '404', message:
           'No user exists with that id' }, status: :not_found
       else
+        fields = get_fields || return
         respond_to do |format|
-          format.xml { render xml: user.to_xml(only: DEFAULT_FIELDS, root: :user, skip_types: true) }
-          format.json { render json: user.to_json(only: DEFAULT_FIELDS) }
+          format.xml { render xml: user.to_xml(only: fields, root: :user, skip_types: true) }
+          format.json { render json: user.to_json(only: fields) }
         end
       end
     end
