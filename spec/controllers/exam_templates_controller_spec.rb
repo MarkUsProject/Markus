@@ -348,8 +348,21 @@ describe ExamTemplatesController do
     end
 
     describe '#fix_error completing a paper' do
+      subject(:fix_error) do
+        post_as user, :fix_error,
+                params: { course_id: course.id,
+                          id: exam_template.id,
+                          commit: 'Save',
+                          split_page_id: split_page_id,
+                          copy_number: copy_number,
+                          page_number: page_number,
+                          split_pdf_log_id: split_pdf_log.id,
+                          rotation: rotation }
+      end
+
       let(:copy_number) { 1 }
       let(:page_number) { 1 }
+      let(:rotation) { '0' }
       let(:group) do
  create(:group, group_name: "#{exam_template.name}_paper_#{copy_number}",
                 repo_name: "#{exam_template.name}_paper_#{copy_number}", course: course)
@@ -360,6 +373,8 @@ describe ExamTemplatesController do
  create(:split_page, split_pdf_log: split_pdf_log, group: group, exam_page_number: page_number)
       end
       let(:split_page_id) { split_page.id }
+      let(:incomplete_dir) { File.join(exam_template.base_path, 'incomplete', copy_number.to_s) }
+      let(:renamed_page_pdf) { File.join(incomplete_dir, "#{page_number}.pdf") }
 
       before do
         (2..6).each do |n|
@@ -371,8 +386,6 @@ describe ExamTemplatesController do
         error_file = File.join(exam_template.base_path, 'error', filename)
         complete_page = File.join(exam_template.base_path, 'complete', copy_number.to_s, page_number.to_s)
         incomplete_page = File.join(exam_template.base_path, 'incomplete', copy_number.to_s, page_number.to_s)
-        incomplete_dir = File.join(exam_template.base_path, 'incomplete', copy_number.to_s)
-        renamed_page_pdf = File.join(incomplete_dir, "#{page_number}.pdf")
 
         allow(File).to receive(:exist?).and_call_original
         allow(File).to receive(:exist?).with(error_file).and_return(true)
@@ -385,19 +398,57 @@ describe ExamTemplatesController do
         allow(FileUtils).to receive(:mv).with(error_file, incomplete_dir)
         allow(File).to receive(:rename).and_call_original
         allow(File).to receive(:rename).with(File.join(incomplete_dir, filename), renamed_page_pdf)
-
-        post_as user, :fix_error,
-                params: { course_id: course.id,
-                          id: exam_template.id,
-                          commit: 'Save',
-                          split_page_id: split_page_id,
-                          copy_number: copy_number,
-                          page_number: page_number,
-                          split_pdf_log_id: split_pdf_log.id }
       end
 
       it 'automatically collects the submission' do
+        fix_error
+
         expect(grouping.reload.is_collected?).to be true
+      end
+
+      context 'when rotating a sideways page to the right' do
+        let(:rotation) { '90' }
+
+        it 'rotates the page 90 degrees clockwise' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 90.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
+      end
+
+      context 'when rotating a sideways page to the left' do
+        let(:rotation) { '270' }
+
+        it 'rotates the page 90 degrees counterclockwise' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 270.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
+      end
+
+      context 'when rotating an upside-down page' do
+        let(:rotation) { '180' }
+
+        it 'rotates the page 180 degrees' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 180.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
       end
     end
 
