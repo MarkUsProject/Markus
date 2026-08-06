@@ -409,6 +409,14 @@ fieldset {
   > input[type='checkbox'] {
     margin-top: 0.2em;
   }
+
+  .rotation-button {
+    height: 2.25em;
+    min-width: 2.25em;
+    padding: 0;
+    vertical-align: middle;
+    width: 2.25em;
+  }
 }
 
 .disable {
