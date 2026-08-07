@@ -38,8 +38,10 @@ class CreateGroupsJob < ApplicationJob
                                                invoked_by_instructor: true)
             errors += invite_errors
           end
-          invite_errors, _ = grouping.invite(others.map(&:user_name), StudentMembership::STATUSES[:accepted])
-          errors += invite_errors
+          if others.present?
+            invite_errors, _ = grouping.invite(others.map(&:user_name), StudentMembership::STATUSES[:accepted])
+            errors += invite_errors
+          end
           unless errors.empty?
             msg = errors.join("\n")
             status.update(warning_message: [status[:warning_message], msg].compact.join("\n"))
