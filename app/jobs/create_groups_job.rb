@@ -34,10 +34,12 @@ class CreateGroupsJob < ApplicationJob
             end
             errors += group.errors.full_messages if group.errors.present?
             grouping = Grouping.find_or_create_by(group: group, assignment: assignment)
-            errors += grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter],
-                                      invoked_by_instructor: true)
+            invite_errors, _ = grouping.invite(inviter.user_name, StudentMembership::STATUSES[:inviter],
+                                               invoked_by_instructor: true)
+            errors += invite_errors
           end
-          errors += grouping.invite(others.map(&:user_name), StudentMembership::STATUSES[:accepted])
+          invite_errors, _ = grouping.invite(others.map(&:user_name), StudentMembership::STATUSES[:accepted])
+          errors += invite_errors
           unless errors.empty?
             msg = errors.join("\n")
             status.update(warning_message: [status[:warning_message], msg].compact.join("\n"))

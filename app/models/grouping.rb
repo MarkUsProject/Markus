@@ -318,6 +318,9 @@ class Grouping < ApplicationRecord
     members = [members] unless members.instance_of?(Array) # put a string in an array
     all_errors = []
     already_invited = Set.new
+    if members.empty?
+      return [[I18n.t('groups.invite_member.errors.empty_text_field')], already_invited]
+    end
     members.each do |m|
       m = m.strip
       user_name = false
@@ -335,15 +338,15 @@ class Grouping < ApplicationRecord
             raise I18n.t('groups.invite_member.errors.email_not_found', email: m)
           end
         end
-        if already_invited.exclude?(user.id) && (invoked_by_instructor || self.can_invite?(user))
+        if already_invited.exclude?(user) && (invoked_by_instructor || self.can_invite?(user))
           self.add_member(user, set_membership_status)
-          already_invited.add(user.id)
+          already_invited.add(user)
         end
       rescue StandardError => e
         all_errors << e.message
       end
     end
-    all_errors
+    [all_errors, already_invited]
   end
 
   # Add a new member to base

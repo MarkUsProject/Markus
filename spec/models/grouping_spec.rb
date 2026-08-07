@@ -52,7 +52,7 @@ describe Grouping do
       end
 
       it 'cannot be invited by students' do
-        errors = grouping.invite(hidden.user.user_name)
+        errors, _ = grouping.invite(hidden.user.user_name)
         expect(errors).not_to be_empty
         expect(errors.first).to include('inactive')
         expect(grouping.memberships.count).to eq(0)
@@ -827,7 +827,7 @@ describe Grouping do
 
           it 'returns an error when no student matching the username entered could be found' do
             members = ['test123']
-            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(errors).to contain_exactly(
               I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
             )
@@ -835,7 +835,7 @@ describe Grouping do
 
           it 'returns an error for the unknown username but still adds the known student' do
             members = ['test123', @student01.user_name]
-            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(errors).to contain_exactly(
               I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
             )
@@ -856,7 +856,7 @@ describe Grouping do
 
           it 'returns an error when no student matching the email entered could be found' do
             members = ['test@example.com']
-            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(errors).to contain_exactly(
               I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
             )
@@ -864,7 +864,7 @@ describe Grouping do
 
           it 'returns an error for the unknown email but still adds the known student' do
             members = ['test@example.com', @student01.email]
-            errors = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
             expect(errors).to contain_exactly(
               I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
             )
@@ -881,7 +881,7 @@ describe Grouping do
         context 'invoked by student' do
           it 'adds one student when both the username and email are provided for that student' do
             members = [@student01.email, @student01.user_name]
-            errors = @grouping.invite(members)
+            errors, _ = @grouping.invite(members)
             expect(errors).to be_empty
             expect(@grouping.student_memberships.count).to eq(1)
           end

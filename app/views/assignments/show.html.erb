@@ -233,6 +233,7 @@
       <p><%= t('groups.members.invite_instructions') %></p>
       <label for='invite_member'><%= t('groups.members.invite_label') %></label>
       <%= text_area_tag 'invite_member', nil, required: true, autocomplete: 'off' %>
+
       <section class='dialog-actions'>
         <%= submit_tag t('groups.members.invite'), data: { disable_with: false } %>
         <input type='reset'

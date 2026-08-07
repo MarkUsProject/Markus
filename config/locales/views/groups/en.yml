@@ -63,7 +63,7 @@ en:
         not_found: No available membership found for this student and group.
       invitations: Group invitations
       invite: Invite student(s)
-      invite_instructions: Enter one or more student user names and/or emails, separated by commas.
+      invite_instructions: Enter one or more student user names and/or emails, separated by commas, spaces, or newlines.
       invite_label: User names / Emails
       invited_by: You have been invited to a group by %{inviter_display_name}.
       join: Join Group

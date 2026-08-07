@@ -488,29 +488,15 @@ class GroupsController < ApplicationController
       return
     end
     if flash_allowance(:error, allowance_to(:invite_member?, @grouping)).value
-      to_invite = params[:invite_member].to_s.split(',').compact_blank
-      if to_invite.empty?
-        flash_message(:error, I18n.t('groups.invite_member.errors.empty_text_field'))
-        redirect_to course_assignment_path(current_course, @assignment)
-        return
-      end
-      errors = @grouping.invite(to_invite)
+      to_invite = params[:invite_member].to_s.split(/[,\s]+/).compact_blank
+      errors, invited = @grouping.invite(to_invite)
       errors = errors.uniq
       if errors.blank?
-        already_emailed = Set.new
-        to_invite.each do |invitee|
-          invitee = invitee.strip
-          if invitee.include?('@') # inviting by email
-            invited_user = current_course.students.joins(:user).find_by('lower(users.email) = ?', invitee.downcase)
-          else # inviting by username
-            invited_user = current_course.students.joins(:user).find_by('users.user_name': invitee)
-          end
-          # ensure we haven't already emailed this user in a previous iteration
-          if invited_user&.receives_invite_emails? && already_emailed.exclude?(invited_user.id)
+        invited.each do |student|
+          if student.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
-                                    invited: invited_user,
+                                    invited: student,
                                     grouping: @grouping).grouping_invite_email.deliver_later
-            already_emailed.add(invited_user.id)
           end
         end
         flash_message(:success, I18n.t('groups.invite_member.success'))
@@ -727,7 +713,7 @@ class GroupsController < ApplicationController
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
-    errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
+    errors, _ = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
     if errors.present?
