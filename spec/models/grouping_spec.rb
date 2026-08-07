@@ -819,6 +819,14 @@ describe Grouping do
 
       describe '#invite' do
         context 'invoked by instructor' do
+          it 'returns an error when no members are provided' do
+            errors, invited = @grouping.invite([], StudentMembership::STATUSES[:accepted],
+                                               invoked_by_instructor: true)
+            expect(errors).to contain_exactly(I18n.t('groups.invite_member.errors.empty_text_field'))
+            expect(invited).to be_empty
+            expect(@grouping.accepted_student_memberships.count).to eq(0)
+          end
+
           it 'adds students by username in any scenario possible' do
             members = [@student01.user_name, @student02.user_name]
             @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)

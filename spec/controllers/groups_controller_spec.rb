@@ -1386,6 +1386,28 @@ describe GroupsController do
         end.to change { ActionMailer::Base.deliveries.count }.by(2)
       end
 
+      it 'should invite students separated by newlines' do
+        @another_student = create(:student, user: create(:end_user, user_name: 'c9test3'))
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id,
+                            invite_member: "#{@student.user_name}\n#{@another_student.user_name}",
+                            assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(2)
+        expect(@grouping.pending_students).to include(@student, @another_student)
+      end
+
+      it 'should invite students separated by spaces' do
+        @another_student = create(:student, user: create(:end_user, user_name: 'c9test3'))
+        expect do
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id,
+                            invite_member: "#{@student.user_name} #{@another_student.user_name}",
+                            assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(2)
+        expect(@grouping.pending_students).to include(@student, @another_student)
+      end
+
       it 'should not send an email to every student invited to a grouping if some have emails disabled' do
         @another_student = create(:student,
                                   user: create(:end_user, user_name: 'c9test3'), receives_invite_emails: false)
@@ -1460,6 +1482,13 @@ describe GroupsController do
       it 'should report an error when the invite field contains only commas' do
         post_as @current_student, :invite_member,
                 params: { course_id: course.id, invite_member: ',,,,', assignment_id: @assignment.id }
+        expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.empty_text_field'))
+        expect(@grouping.student_memberships.count).to eq(1)
+      end
+
+      it 'should report an error when the invite field contains only whitespace' do
+        post_as @current_student, :invite_member,
+                params: { course_id: course.id, invite_member: " \n\t ", assignment_id: @assignment.id }
         expect(flash[:error]).to have_message(I18n.t('groups.invite_member.errors.empty_text_field'))
         expect(@grouping.student_memberships.count).to eq(1)
       end
