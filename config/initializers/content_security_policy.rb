@@ -15,7 +15,7 @@ Rails.application.configure do
 
     policy.object_src :none
     policy.style_src_elem :self   # <style> elements and <link> stylesheets; nonce added below
-    policy.style_src_attr :unsafe_inline  # style="..." attributes (required by Jcrop, jQuery UI, etc.)
+    policy.style_src_attr :unsafe_inline  # style="..." attributes (required by jQuery UI, etc.)
 
     # child-src is the worker-src fallback for Safari < 16; blob: is required for blob image URLs
     # created by URL.createObjectURL on pages that render converted images.
