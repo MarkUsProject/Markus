@@ -58,6 +58,7 @@
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Migrated asset pipeline from Sprockets to Propshaft (#7970)
 - Added missing foreign keys in seed data (#8006)
+- Updated to Rails v8.1.3.1 (#8113)
 
 ## [v2.10.1]
 
