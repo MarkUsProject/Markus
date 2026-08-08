@@ -484,15 +484,14 @@ class GroupsController < ApplicationController
       return
     end
     if flash_allowance(:error, allowance_to(:invite_member?, @grouping)).value
-      to_invite = params[:invite_member].split(',')
-      errors = @grouping.invite(to_invite)
+      to_invite = params[:invite_member].to_s.split(/[,\s]+/).compact_blank
+      errors, invited = @grouping.invite(to_invite)
+      errors = errors.uniq
       if errors.blank?
-        to_invite.each do |i|
-          i = i.strip
-          invited_user = current_course.students.joins(:user).find_by('users.user_name': i)
-          if invited_user&.receives_invite_emails?
+        invited.each do |student|
+          if student.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
-                                    invited: invited_user,
+                                    invited: student,
                                     grouping: @grouping).grouping_invite_email.deliver_later
           end
         end
@@ -710,7 +709,7 @@ class GroupsController < ApplicationController
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
-    errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
+    errors, _ = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
     if errors.present?

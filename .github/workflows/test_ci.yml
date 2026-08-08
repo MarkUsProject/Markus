@@ -103,14 +103,14 @@ jobs:
           ruby-version: ruby-3.4
           bundler-cache: true
       - name: Set up node and cache packages
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
       - name: Install npm packages
         run: npm ci
       - name: Install python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Get pip cache dir
@@ -281,7 +281,7 @@ jobs:
         run: |
           bundle exec rake javascript:build
       - name: Set up node and cache packages
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm

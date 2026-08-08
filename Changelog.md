@@ -8,6 +8,9 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
+- Added row numbers to the course summaries table (#8108)
+- Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
 - Added row numbers to tables using React Table v8, allowing users to identify row positions after sorting and filtering (#8089)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
 - Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
@@ -37,6 +40,7 @@
 
 ### 🔧 Internal changes
 - Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb`
+- Replaced `jcrop` with `cropperjs` for the exam template cover page crop selector (#8114)
 - Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)
 - Suppressed CodeQL scanning false positives (#8101)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
@@ -57,6 +61,7 @@
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Migrated asset pipeline from Sprockets to Propshaft (#7970)
 - Added missing foreign keys in seed data (#8006)
+- Updated to Rails v8.1.3.1 (#8113)
 
 ## [v2.10.1]
 
