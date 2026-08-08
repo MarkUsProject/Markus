@@ -7,10 +7,6 @@ class ExamTemplatesController < ApplicationController
 
   layout 'assignment_content'
 
-  content_security_policy only: [:assign_errors] do |p|
-    p.img_src :self
-  end
-
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @exam_templates = @assignment.exam_templates.order(:created_at).includes(:template_divisions)

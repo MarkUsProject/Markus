@@ -5,10 +5,6 @@ class GroupsController < ApplicationController
   before_action { authorize! }
   layout 'assignment_content'
 
-  content_security_policy only: [:assign_scans] do |p|
-    p.img_src :self
-  end
-
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
