@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
 - Added row numbers to the course summaries table (#8108)
 - Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
 - Added row numbers to tables using React Table v8, allowing users to identify row positions after sorting and filtering (#8089)
