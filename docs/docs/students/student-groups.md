@@ -15,7 +15,7 @@ Context: two students, Alice and Bob, are working together in a group for assign
 
 2. (Alice) In the Group Information pane on the right, click on the `Create` button.
 
-3. (Alice) After the page refreshes, click on the Invite button. Enter the Bob's username and press `Submit`.
+3. (Alice) After the page refreshes, click on the Invite button. Enter Bob's username or email and press `Submit`.
 
     **Warning**: At this point, Bob has been invited to the group, but that doesn't mean Bob is in the group! Even if Alice submits work, only she will get a mark; Bob won't if he hasn't accepted the invitation.
 
