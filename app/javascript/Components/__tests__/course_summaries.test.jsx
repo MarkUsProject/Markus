@@ -20,6 +20,14 @@ describe("For each CourseSummaries' loading status", () => {
   });
 });
 
+describe("CourseSummaryTable row numbers", () => {
+  it("shows row numbers", () => {
+    const {container} = render(<CourseSummaryTable />);
+
+    expect(container.querySelector(".Table")).toHaveClass("-show-row-numbers");
+  });
+});
+
 describe("CourseSummaryTable show/hide inactive students", () => {
   it("toggles the checkbox UI state when clicked", async () => {
     render(<CourseSummaryTable />);

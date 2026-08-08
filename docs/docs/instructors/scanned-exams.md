@@ -211,7 +211,9 @@ After your test is complete, you should scan all test papers (saving the scans a
     ![Scanned Exam Upload Log Fix](/images/scanned-exam-upload-log-fix.png)
 
     b. You'll be taken to a new screen where you can see the scanned page and text label, and input the copy number and page number. (The text label is in the form `<template name>-<copy number>-<page number>`.)
-        You can also specify if the page was scanned upside down, so that MarkUs will reorient the page when displaying it for graders.
+        You can also correct the page orientation before saving.
+        Use the "Rotate 90° left" and "Rotate 90° right" arrow buttons to rotate the page counterclockwise or clockwise. Click either button twice to rotate an upside-down page 180°.
+        The preview updates after each click so you can verify the orientation before saving.
 
     ![Scanned Exam Assign Errors](/images/scanned-exam-assign-errors-page.png)
 

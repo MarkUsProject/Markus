@@ -3,10 +3,14 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Replaced weak MD5 hashing used for API key generation with SHA-256 hashing (#8104)
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added row numbers to the course summaries table (#8108)
+- Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
+- Added row numbers to tables using React Table v8, allowing users to identify row positions after sorting and filtering (#8089)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
 - Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
 - Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)
@@ -34,6 +38,7 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)
 - Suppressed CodeQL scanning false positives (#8101)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)

@@ -126,7 +126,7 @@ class ExamTemplate < ApplicationRecord
                               current_user)
   end
 
-  def fix_error(filename, exam_num, page_num, upside_down)
+  def fix_error(filename, exam_num, page_num, rotation = 0)
     error_file = File.join(
       base_path, 'error', filename
     )
@@ -176,10 +176,11 @@ class ExamTemplate < ApplicationRecord
       error_file_old_name = File.join(incomplete_dir, filename)
       error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
       File.rename(error_file_old_name, error_file_new_name)
-      if upside_down
+      unless rotation.zero?
         new_pdf = CombinePDF.new
         pdf = CombinePDF.load(error_file_new_name)
         pdf.pages.each do |page|
+          page[:Rotate] = page[:Rotate].to_f + rotation
           new_pdf << page.fix_rotation
         end
         File.binwrite(error_file_new_name, new_pdf.to_pdf)
