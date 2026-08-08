@@ -1393,12 +1393,6 @@ nav {
   flex-direction: column;
 }
 
-// Jcrop styling
-.jcrop-holder,
-.jcrop-holder div {
-  margin: 0;
-}
-
 // Styling for criteria/index.html
 .edit-rubric-criterion {
   display: flex;
@@ -1536,13 +1530,9 @@ canvas {
   padding: 0;
   transform: translate(-70px, 0);
   width: 40px;
-  z-index: 800; // jcrop uses z-index of 690
+  z-index: 800; // cropper.js elements use a lower z-index
 }
 
 .crop-scale-button > svg {
   padding-right: 0;
-}
-
-.jcrop-centered {
-  display: inline-block;
 }
