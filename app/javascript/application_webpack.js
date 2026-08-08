@@ -51,9 +51,10 @@ import translations from "translations.json";
 window.I18n = new I18n(translations);
 window.I18n.locale = I18N_LOCALE;
 
-// JCrop
-import Jcrop from "jcrop";
-window.Jcrop = Jcrop;
+// Cropper.js
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
+window.Cropper = Cropper;
 
 // chart.js
 import "./common/chart_config";
