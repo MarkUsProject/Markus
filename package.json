@@ -6,7 +6,7 @@
     "@fortawesome/free-regular-svg-icons": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
-    "@rails/actioncable": "^8.1.300",
+    "@rails/actioncable": "^8.1.301",
     "@rails/ujs": "^7.1.3-4",
     "@rjsf/core": "^6.7.1",
     "@rjsf/validator-ajv8": "^6.7.1",
