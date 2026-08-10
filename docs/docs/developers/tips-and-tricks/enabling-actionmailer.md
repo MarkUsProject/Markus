@@ -6,6 +6,13 @@ grand_parent: Developers
 nav_order: 1
 ---
 # ActionMailer in MarkUs
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 The Rails ActionMailer is used in MarkUs to send automated emails when grouping submissions are released, grade entry forms are released, and students invite other students to groupings. These calls to the mailer are in the files `submissions_helper.rb`, `grade_entry_forms_controller.rb`, and `groups_controller.rb` respectively. Students opt in to receiving emails by default, but can choose to unsubscribe by changing their preferences through two attributes: `receives_results_emails` and `receives_invite_emails`.
 
@@ -17,7 +24,7 @@ When using the ActionMailer features of MarkUs, the MarkUs administrators config
 
 1. Create a file in the `config` folder with the name `settings.local.yml`. This file allows you to configure Rails and/or MarkUs settings specifically for your local MarkUs instance.
 
-    **Note**: This new file will not be tracked by git. Any settings you configure in this file will not (and should not) be committed.
+    > 🗒 ️**NOTE:** This new file will not be tracked by git. Any settings you configure in this file will not (and should not) be committed.
 
 2. Ensure your `config/settings.local.yml` file contains the following settings:
 

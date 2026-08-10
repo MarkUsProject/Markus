@@ -6,22 +6,21 @@ grand_parent: Instructors
 nav_order: 3
 ---
 # Marking an Assignment (Set-Up)
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Setting Up a Grader Account](#setting-up-a-grader-account)
-- [Submissions Table](#submissions-table)
-- [Collecting an Assignment](#collecting-an-assignment)
-- [Marking State](#marking-state)
-- [Grading View](#grading-view)
+- TOC
+{:toc}
 
-> 🗒️ **NOTE:** Before you will be able to perform any numerical marking (i.e. assigning groups a numerical grade) you must set up at least one [criterion](marking-criteria.md) for your assignment.
+## Setting up a TA Account
 
-## Setting up a Grader Account
+Anyone other than a course instructor who needs to grade student work must have a "TA" account. For example, if a course has 4 TAs who will all grade work, you must set up 4 separate TA accounts, one for each TA.
 
-If anyone other than the course instructor wants to be able to grade a student (or group's) work, they must have a "Grader" account. This means if a course has 4 TAs and everyone wants to be able to grade work, you must set up 4 separate "Grader" accounts - one for each TA. The course instructor does not require a separate account for grading as all marking can also be done from the admin account.
+Course instructors do not require separate TA accounts. They can be assigned directly to groups or marking criteria from an assignment's [Graders tab](assigning-graders.md), which can be useful for distributing and tracking marking work.
 
-For information on setting up a "Grader" account please see "[Grader Accounts](../users.md#grader-accounts)".
+For information on setting up a "TA" account please see "[TA Accounts](../users.md#grader-accounts)".
 
 ## Submissions Table
 
@@ -32,8 +31,8 @@ The first step in marking an assignment is to collect the assignment. To do this
 Here you will see a table of all the groups that have been formed (see [How Students Form Groups](../../students/index.md) and [Managing Group Repositories](../groups/index.md)):
 
 | ![Submissions Table Part 1](/images/submissions-table.png) |
-|--------------:|
-| *First three columns shown* |
+|-----------------------------------------------------------:|
+|                                *First three columns shown* |
 
 If students are not allowed to work in groups, then under the "Group" column you will simply see a student's username (as opposed to the group number and a list of usernames). The rest of the table contains information about each group and their submission for that assignment.
 
@@ -44,7 +43,7 @@ If students are not allowed to work in groups, then under the "Group" column you
 - The **"Total Mark"** column lists the group's mark once a grader has started entering marks for the assignment (default is 0).
 - The **"Tags"** column lists any tags created for the submission.
 
-Graders with the **Manage submissions** permission can view all submissions for an assignment from this table. These graders can use the **"Display assigned submissions only"** checkbox to switch between all submissions and only the submissions assigned to them. Graders without this permission remain limited to their assigned submissions and do not see this control. Instructors continue to view all submissions.
+Instructors with at least one assigned submission and TAs with the **Manage submissions** permission can use the **"Display only my assigned submissions"** checkbox to switch between all submissions and only the submissions assigned to them. The checkbox is cleared by default for instructors and selected by default for TAs. TAs without this permission remain limited to their assigned submissions and do not see this control.
 
 ## Collecting an Assignment
 
@@ -83,7 +82,7 @@ An instructor can bypass the collection process to manually select which version
 
 There are six different marking states for a submission:
 
- 1. **Not Collected** - The group has been formed and may have submit work already but nothing has been collected by any TA or instructor. All groups should have this status until the deadline to submit (with grace token extension) has passed.
+ 1. **Not Collected** - The group has been formed and may have submitted work already but nothing has been collected by any TA or instructor. All groups should have this status until the deadline to submit (with grace token extension) has passed.
  2. **In Progress** - Either a TA or an instructor has collected the submission and is currently working on grading the assignment.
  3. **Complete** - The grading of the assignment has been completed but the mark has not yet been released to the group.
  4. **Released** - The mark has been released to the group along with any annotations that have been made.
@@ -93,3 +92,5 @@ There are six different marking states for a submission:
 ## Grading View
 
 Once you have collected an assignment, you may begin grading. Please see the [Grading View](marking-grading-view.md) page for instructions.
+
+> 🗒️ **NOTE:** Before you will be able to perform any numerical marking (i.e. assigning groups a numerical grade) you must set up at least one [criterion](marking-criteria.md) for your assignment.

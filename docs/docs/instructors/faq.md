@@ -5,6 +5,13 @@ parent: Instructors
 nav_order: 1
 ---
 # Instructor Frequently Asked Questions
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## How do I upgrade a grader to an instructor?
 
@@ -41,7 +48,7 @@ For an **assignment**: unrelease the assignment, then make the desired changes, 
 For a **marks spreadsheet**: you can change the mark directly in the table, or upload
 a CSV file to update the marks. Unreleasing and re-releasing is possible, but not necessary.
 
-## How do I checkout all submissions for an assignment?
+## How do I check out all submissions for an assignment?
 
 Before assignments have been collected (e.g., for doing an autotesting dry run):
 
@@ -51,7 +58,7 @@ You can extract the repository urls directly from there.
 After assignments have been collected - uses **correct revision number automatically**:
 
 1. Go to the Submissions table and click on "Repository Checkout File".
-2. The downloaded file is a script you can use to checkout all student submissions,
+2. The downloaded file is a script you can use to check out all student submissions,
 with the correct revision numbers (with respect to the assignment due date).
 
 ## How do I delete an assignment?

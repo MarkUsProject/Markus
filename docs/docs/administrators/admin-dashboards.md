@@ -5,13 +5,13 @@ nav_order: 1
 parent: Administrators
 ---
 # Admin Dashboards
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Navigating to the Administration Page](#navigating-to-the-administration-page)
-- [Monitoring Dashboards](#monitoring-dashboards)
-- [Managing Courses](#managing-courses)
-- [Managing Users](#managing-users)
+- TOC
+{:toc}
 
 ## Navigating to the Administration Page
 
@@ -23,7 +23,7 @@ If you navigate away from the Administration Page and wish to return, click on t
 
 ![Markus Admin Tab](/images/markus-admin-tab.png)
 
-**Note**: Ensure that you are viewing MarkUs as an admin and have not switched roles. Otherwise, you will be unable to access the "Administration" tab.
+> 🗒️ **Note**: Ensure that you are viewing MarkUs as an admin and have not switched roles. Otherwise, you will be unable to access the "Administration" tab.
 
 ## Monitoring Dashboards
 
@@ -31,7 +31,7 @@ From the MarkUs Administration home page, you can view a list of dashboards. The
 
 ### Resque
 
-The Resque dashboard allows you to easily monitor monitor queues, jobs, and workers for MarkUs' background jobs. To access this dashboard click on the `Resque dashboard` link.
+The Resque dashboard allows you to easily monitor queues, jobs, and workers for MarkUs' background jobs. To access this dashboard click on the `Resque dashboard` link.
 
 ![Resque Link](/images/markus-admin-resque-link.png)
 
@@ -41,13 +41,13 @@ This tool allows you to monitor the status of each worker, display information a
 
 ### Rails Performance
 
-The Rails Performance dashboard allows you to monitor and visualize information regarding request traffic and MarkUs' response times. To enable this dashboard, in the MarkUs [settings yaml file](configuration.md#markus-settings) ensure you set the `enabled` setting under `rails_performance` to true. Once you have confirmed the MarkUs server was started with this setting enabled, log in to the MarkUs Administration home page. You will see a link to the `Rails Performance dashboard`.
+The Rails Performance dashboard allows you to monitor and visualize information regarding request traffic and MarkUs' response times. To enable this dashboard, in the MarkUs [settings YAML file](configuration.md#markus-settings) ensure you set the `enabled` setting under `rails_performance` to true. Once you have confirmed the MarkUs server was started with this setting enabled, log in to the MarkUs Administration home page. You will see a link to the `Rails Performance dashboard`.
 
 ![Rails Performance Link](/images/markus-admin-rails-performance-link.png)
 
 ![Rails Performance Dashboard](/images/markus-admin-rails-performance-dashboard.png)
 
-This tool allows you to monitor and visualize information surrounding each request that is made to MarkUs. You can view the time it took for MarkUs to respond to each request, how many requests per minute MarkUs recieves, any 500 errors that occurred and the most common requests MarkUs recieves. This dashboard is currently supported through the `rails_performance` gem. For more information about what you can access see the Rails Performance [homepage](https://github.com/igorkasyanchuk/rails_performance).
+This tool allows you to monitor and visualize information surrounding each request that is made to MarkUs. You can view the time it took for MarkUs to respond to each request, how many requests per minute MarkUs receives, any 500 errors that occurred and the most common requests MarkUs receives. This dashboard is currently supported through the `rails_performance` gem. For more information about what you can access see the Rails Performance [homepage](https://github.com/igorkasyanchuk/rails_performance).
 
 ## Managing Courses
 
@@ -70,7 +70,7 @@ Doing so will take you to the course's dashboard page where you can view and acc
 
 ### Creating and editing a course
 
-In order to create a course, click on the "Create Course" link located at the top right corner of the page.
+In order to create a course, click on the "Create Course" link located in the top right corner of the page.
 
 ![Markus Course New Link](/images/markus-admin-course-new-link.png)
 
@@ -84,7 +84,7 @@ This will redirect you to a page where you can specify the following course prop
 - **Maximum File Size (bytes)**: The maximum file size (in bytes) that users are allowed to upload to MarkUs.
 - **Course Visibility**: Selecting "hidden" will hide the course from students in a course. Graders and instructors for the course can still see and manage the course as usual.
 
-After clicking "Save", the course will be created and you will be taken back to the list of all courses.
+After clicking "Save", the course will be created, and you will be taken back to the list of all courses.
 
 If you later wish to modify the properties of a course you can reach any course's edit page by going to the list of all courses and clicking on the "edit" action of the course you wish to modify.
 
@@ -115,7 +115,7 @@ This will take you to a page that lists data about every admin and end user.
 
 ### Creating and Editing Users
 
-In order to create a new user, click on the "Create User" link located at the top right corner of the page.
+In order to create a new user, click on the "Create User" link located in the top right corner of the page.
 
 ![Markus User New Link](/images/markus-admin-user-new-link.png)
 
@@ -142,7 +142,7 @@ This will take you to the user's edit page, where you can update the same proper
 
 ### Bulk Uploading of End Users
 
-If you plan on creating many end users, you may find it convenient to instead upload a list of users for markus to create. To do this, click on the "Upload End Users" link located at the top right corner of the page.
+If you plan on creating many end users, you may find it convenient to instead upload a list of users for markus to create. To do this, click on the "Upload End Users" link located in the top right corner of the page.
 
 ![Markus User CSV Upload Link](/images/markus-admin-user-csv-upload-link.png)
 

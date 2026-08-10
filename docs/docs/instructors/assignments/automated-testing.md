@@ -6,35 +6,17 @@ grand_parent: Instructors
 nav_order: 7
 ---
 # Automated Testing
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [How it works](#how-it-works)
-- [Initial Setup](#initial-setup)
-    - [Test Files](#test-files)
-- [Testers](#testers)
-    - [Test Groups](#test-groups)
-    - [Shared Fields](#shared-fields)
-    - [Tester Types](#tester-types)
-        - [Python](#python)
-        - [Java](#java)
-        - [Racket](#racket)
-        - [PyTa](#pyta)
-        - [Haskell](#haskell)
-        - [Jupyter](#jupyter)
-        - [R](#r)
-        - [Custom](#custom)
-- [Student-Run Tests](#student-run-tests)
-- [Running Tests](#running-tests)
-    - [Submissions Table Run](#submissions-table-run)
-    - [Test Results Tab](#test-results-tab)
-    - [Criterion Auto-Complete](#criterion-auto-complete)
-- [Test Runs Status](#test-runs-status)
-- [Inspecting group information during testing](#inspecting-group-information-during-testing)
+- TOC
+{:toc}
 
 ## How it works
 
-MarkUs automatically tests student submissions using test files uploaded by an instructor by sending botht the test files and the student's submission to an automated testing server, running the test files against the student's submission and reporting the results back to MarkUs.
+MarkUs automatically tests student submissions using test files uploaded by an instructor by sending both the test files and the student's submission to an automated testing server, running the test files against the student's submission and reporting the results back to MarkUs.
 
 Tests are run by placing [files uploaded by the instructor](#test-files) and files submitted by the student in the same directory and running each test file specified by the instructor.
 
@@ -74,11 +56,11 @@ The tests will be run with the following file structure in place:
     └── data.yml
 ```
 
-> 🗒️ **Note:** instructor files are copied after student files so if two files have the same name, the file uploaded by the instructor will ovewrite the one uploaded by the student.
+> 🗒️ **NOTE:** instructor files are copied after student files so if two files have the same name, the file uploaded by the instructor will overwrite the one uploaded by the student.
 
 ## Initial Setup
 
-MarkUs's automated testing feature allows student submissions to be tested against code uploaded by the instructor. To set-up automated testing for an assignment, navigate to the "Automated Testing" tab of MarkUs (Assignments -> Settings -> Automated Testing):
+MarkUs's automated testing feature allows student submissions to be tested against code uploaded by the instructor. To set up automated testing for an assignment, navigate to the "Automated Testing" tab of MarkUs (Assignments → Settings → Automated Testing):
 
 ![Automated Testing Navigation](/images/automated-testing-tab.png)
 
@@ -86,7 +68,7 @@ In order for the auto-testing feature to be enabled for the assignment, you must
 
 ![Enable tests for this assignment](/images/automated-testing-enable-check.png)
 
-> 🗒️ **NOTE:** If the "Enable tests for this assignment" check-box does not show up or is unclickable, contact your system administrator and they may enable the feature for you.
+> 🗒️ **NOTE:** If the "Enable tests for this assignment" check-box does not show up or is unclickable, contact your system administrator, and they may enable the feature for you.
 
 ## Test Files
 
@@ -96,15 +78,15 @@ See the [Using the File Manager](General-Usage#using-the-file-manager.md) sectio
 
 ## Testers
 
-Specify which tester language to use by clicking on the drop down menu located to the right of the "*Tester Type*" text and selecting one of the testing languages supported by the MarkUs autotester:
+Specify which tester language to use by clicking on the drop-down menu located to the right of the "*Tester Type*" text and selecting one of the testing languages supported by the MarkUs autotester:
 
 ![Tester Type Drop Down](/images/automated-testing-tester-select.png)
 
-If the assignment requires **multiple languages** and you wish to run tests in all of them, you will need a new tester for each new language. To add a new tester click the green + icon at the bottom of the Testers section. You may delete an existing tester using the red x at the top right of the Tester section.
+If the assignment requires **multiple languages**, and you wish to run tests in all of them, you will need a new tester for each new language. To add a new tester click the green + icon at the bottom of the Testers section. You may delete an existing tester using the red x at the top right of the Tester section.
 
 ### Test Groups
 
-Tests are organized into groups which in turn can be associated with [Criteria](marking-criteria.md). Each test group can be associated with exactly one criteria and the results from the test will [automatically fill in the results](#criterion-auto-complete) when the tests finish.
+Tests are organized into groups which in turn can be associated with [Criteria](marking-criteria.md). Each test group can be associated with exactly one criterion and the results from the test will [automatically fill in the results](#criterion-auto-complete) when the tests finish.
 
 Click on the green plus button under the "*Test Groups*" section of your specific tester type to create a new group:
 
@@ -131,7 +113,7 @@ This section lists all the fields that are common to all testers:
 
     > 🗒️ **NOTE:** ALL the tests specified in a file will be run. If you wish to have tests in a separate group, you must put them in a separate file.
 
-    > :arrow_forward: **EXAMPLE:** For a python tester, select one or more unittest or pytest files; for a java tester, select one or more Junit files. Do NOT select fixtures or data files if they do not contain tests themselves.
+    > ▶️ **EXAMPLE:** For a python tester, select one or more unittest or pytest files; for a java tester, select one or more Junit files. Do NOT select fixtures or data files if they do not contain tests themselves.
 
 - **Category:** Select the type of user you wish to be allowed to run this test group. If you wish for both students and yourself (instructor) to be able to run tests in this group, hold down the "Ctrl" button and click on both the "instructor" and "student" lines.
 
@@ -156,17 +138,17 @@ This section lists all the fields that are common to all testers:
 
 - **Package requirements:** In this section you may specify additional PyPi(<https://pypi.org/>) packages required by your tests. The regular `pip install` syntax is supported. Use a space to separate different packages.
 
-  > :arrow_forward: **EXAMPLE:** `hypothesis>=5.29 pandas==1.0.0 pygame`
+  > ▶️ **EXAMPLE:** `hypothesis>=5.29 pandas==1.0.0 pygame`
 
 - **Package requirements file:** Along with your test files, you may also upload a [requirements file](https://pip.pypa.io/en/stable/reference/requirements-file-format/) and specify its name here to install packages.
 
 - **Test runner:*** Allows you to select your unit testing framework (MarkUs currently supports pytest or unittest).
 
-- **Output verbosity:** Allows you to select how much information is displayed in the "Output" column of the test results section. Different verbosities will be able to be selected depending on the specified test runner. Please see the appropriate framework documentation for more information on output verbosity ([pytest](https://docs.pytest.org/en/stable/usage.html#modifying-python-traceback-printing), [unittest](https://docs.python.org/3/library/unittest.html))
+- **Output verbosity:** Allows you to select how much information is displayed in the "Output" column of the test results section. Different verbosity will be able to be selected depending on the specified test runner. Please see the appropriate framework documentation for more information on output verbosity ([pytest](https://docs.pytest.org/en/stable/usage.html#modifying-python-traceback-printing), [unittest](https://docs.python.org/3/library/unittest.html))
 
 #### Java
 
-- **Java Class Path**: `:` delimited list of paths to include in the java class path when compiling java files tests. Each path should be a relative path from the root of the test directory. Whatever string is written here will be be passed to the `javac` and `java` commands as the value of the `--classpath` flag when compiling and running tests.
+- **Java Class Path**: `:` delimited list of paths to include in the java class path when compiling java files tests. Each path should be a relative path from the root of the test directory. Whatever string is written here will be passed to the `javac` and `java` commands as the value of the `--classpath` flag when compiling and running tests.
 
 - **Java Sources (glob)**: relative path or glob from the root of the test directory indicating the location of `.java` files to compile when running tests. For example, if you upload two files: `Test.java` and `subdir/Helper.java` where `Test.java` depends on `subdir/Helper.java` but tests only exist in `Test.java`, make sure that `subdir/Helper.java` is included in the java sources or else a classfile will not get created for the `Helper` dependency.
 
@@ -188,19 +170,18 @@ In Racket, each test file must be added separately with the appropriate test sui
 
 - **Maximum mark:** This section will determine the mark associated with the PyTA test. Whatever number you enter here will be the mark a student receives for a perfect test. Every error detected by PyTA will reduce the student's mark by 1 down to a minumum of 0.
 
-- **PyTA configuration:** Select an uploaded file that contains configuration options for PyTA. This should be a json file that, when loaded as a python dictionary, can be passed to the `config` keyword argument for the [`check_all`](https://github.com/pyta-uoft/pyta/blob/45504df2f448754c4db4bdc38de65e0ced7cb791/python_ta/__init__.py#L52) function. This dictionary can contain any of the [Pylint option and switches](http://pylint.pycqa.org/en/latest/technical_reference/features.html) and any of the [PyTA specific configuration options](https://github.com/pyta-uoft/pyta/blob/master/python_ta/config/.pylintrc).
+- **PyTA configuration:** Select an uploaded file that contains configuration options for PyTA. This should be a JSON file that, when loaded as a python dictionary, can be passed to the `config` keyword argument for the [`check_all`](https://github.com/pyta-uoft/pyta/blob/45504df2f448754c4db4bdc38de65e0ced7cb791/python_ta/__init__.py#L52) function. This dictionary can contain any of the [Pylint option and switches](http://pylint.pycqa.org/en/latest/technical_reference/features.html) and any of the [PyTA specific configuration options](https://github.com/pyta-uoft/pyta/blob/master/python_ta/config/.pylintrc).
 
-    For example, a config file that tells PyTA to ignore some pylint checks and to allow some additional import statements might look like:
-
- ```json
- {
-   "extra-imports": [
-     "typing",
-     "random"
-   ],
-   "disable": ["E9997", "E9959", "C0412"]
- }
- ```
+  > ▶️ **EXAMPLE:** a config file that tells PyTA to ignore some pylint checks and to allow some additional import statements might look like:
+  > ```json
+  > {
+  > "extra-imports": [
+  >   "typing",
+  >   "random"
+  > ],
+  > "disable": ["E9997", "E9959", "C0412"]
+  > }
+  > ```
 
 - **Upload annotations:** If this checkbox is selected, any errors and warnings discovered by PyTA will be added as annotations to the submitted files.
 
@@ -216,7 +197,7 @@ In Racket, each test file must be added separately with the appropriate test sui
 
 - **Package requirements:** In this section you may specify additional [PyPi](https://pypi.org/) packages required by your tests. The regular `pip install` syntax is supported. Use a space to separate different packages.
 
-    > :arrow_forward: **EXAMPLE:** `hypothesis>=5.29 pandas==1.0.0 pygame`
+    > ▶️ **EXAMPLE:** `hypothesis>=5.29 pandas==1.0.0 pygame`
 
 - **Package requirements file:** Along with your test files, you may also upload a [requirements file](https://pip.pypa.io/en/stable/reference/requirements-file-format/) and specify its name here to install packages.
 
@@ -233,12 +214,13 @@ In Racket, each test file must be added separately with the appropriate test sui
    3. Distribute the notebook to your students.
    4. Take a copy of the same notebook you distributed and add new test cells to this notebook. The notebook will be executed in order so test cells for a given question should be added below the cells that students will fill in for that same question.
 
-   To indicate that a cell is a test cell, the first line of the cell should be a comment where the first word of the comment is "test". The rest of the comment can be a description of the test or be blank. The rest of the cell should contain test code. A test will fail if an error is raised, and will pass if no error is raised (the same rules when writing test functions for [pytest](https://docs.pytest.org/) tests. For example, the following cell is a test that will fail:
-
-   ```py
-   # test that 1 equals 2
-   assert 1 == 2
-   ```
+   To indicate that a cell is a test cell, the first line of the cell should be a comment where the first word of the comment is "test". The rest of the comment can be a description of the test or be blank. The rest of the cell should contain test code. A test will fail if an error is raised, and will pass if no error is raised (the same rules when writing test functions for [pytest](https://docs.pytest.org/) tests).
+  > ▶️ **EXAMPLE:** the following cell is a test that will fail:
+  >
+  >   ```py
+  >   # test that 1 equals 2
+  >   assert 1 == 2
+  >   ```
 
    You can choose to run an additional test by selecting the "Test that files can be merged" checkbox. This will validate that the "Test file" and "Student file" that you have selected can be successfully merged using the [`check`](https://github.com/MarkUsProject/autotest-helpers/tree/main/notebook_helper#merger) function. If the two files can be successfully merged, the autotester reports a successful test, otherwise it reports a failed test. If the "Test that files can be merged" checkbox is not selected, this test will not be run. Either way, the autotester will *try* to merge the files and report the results.
 
@@ -266,7 +248,7 @@ You may customize this feature using the following settings:
 
 - **Tokens per group** This will allow you to set a limit on the number of times each group may run the test suite. If you wish for there to be no limit click the "Unlimited tokens" checkbox. Running one test costs one token.
 
- > 🗒️ **NOTE:** If students are working in a group then they all share one token pool. For example, if student A and student B are in a group and they are given 8 tokens, they can only run 8 tests total (i.e. if student A tests their submission 6 times, student B can only test the submission 2 more times).
+ > 🗒️ **NOTE:** If students are working in a group then they all share one token pool. For example, if student A and student B are in a group, and they are given 8 tokens, they can only run 8 tests total (i.e. if student A tests their submission 6 times, student B can only test the submission 2 more times).
 
 - **Tokens available on**  This allows you to set the date and time of when you would like the students to begin testing. If you wish for the students to begin testing immediately simply set this field to the current date and time.
 
@@ -288,7 +270,7 @@ Once the automated testing feature has been enabled, a new clickable box (Run Te
 
 ### Test Results Tab
 
-To view the results of a test, you must first navigate to the "Test Results" tab of the specific assignment you wish to view. From the Submissions tab, click on the name of the group who's assignment you wish to inspect:
+To view the results of a test, you must first navigate to the "Test Results" tab of the specific assignment you wish to view. From the Submissions tab, click on the name of the group whose assignment you wish to inspect:
 
 ![aaaautotest name](/images/submission-table-navigate-to-results.png)
 
@@ -365,7 +347,7 @@ MarkUs makes information about the group who submitted the code that is being te
 
 The environment variable `MARKUS_GROUP` contains the name of the group that submitted the code that is currently being tested.
 
-The environment variable `MARKUS_STARTER_FILES` contains a json string containing an array of dictionaries containing two key/value pairs. The first key is "starter_file_group" which maps to the the starter file group name and the other is "starter_file_path" which maps to the starter file path.
+The environment variable `MARKUS_STARTER_FILES` contains a JSON string containing an array of dictionaries containing two key/value pairs. The first key is "starter_file_group" which maps to the starter file group name and the other is "starter_file_path" which maps to the starter file path.
 
 Both are visible to the process that runs the tests.
 

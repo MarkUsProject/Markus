@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 6
 ---
 # Action Policy Style Guide
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## About
 
@@ -22,7 +29,7 @@ Policy files can be found under: `app/policies`
 
 Policy translation files can be found under: `config/locales/policies`
 
-Rspec tests can be found under: `spec/policies`
+RSpec tests can be found under: `spec/policies`
 
 ## Guidelines for writing policies
 
@@ -36,7 +43,7 @@ MarkUs tries to use [resourceless authorization](https://actionpolicy.evilmartia
 
 Instead, we can define an [`implicit_authorization_target`](https://actionpolicy.evilmartians.io/#/behaviour?id=implicit-authorization-target) method for each controller.
 
-By default, controllers will inherit this method from `ApplicationController` but in some cases it may be necessary to override this method for a subclass. For example, if a controller does not have a corresponding model, the default `implicit_authorization_target` will need to be overwritten since it assumes the existance of that model.
+By default, controllers will inherit this method from `ApplicationController` but in some cases it may be necessary to override this method for a subclass. For example, if a controller does not have a corresponding model, the default `implicit_authorization_target` will need to be overwritten since it assumes the existence of that model.
 
 ### Policy names should reflect their purpose
 
@@ -60,7 +67,9 @@ If a policy function is used for some other purpose (determine whether a user ha
 
 For example, a policy that checks whether a student is allowed to work alone in a group is named `work_alone?`. A good rule when trying to think of policy names is: does the name make sense if inserted into the sentence:
 
-"Is this user allowed to \_\_\_\_\_\_?"
+```text
+"Is this user allowed to ______?"
+```
 
 ### All policy functions must have a failure reason
 
@@ -102,7 +111,7 @@ class ExamplePolicy < ApplicationPolicy
 end
 ```
 
-If the `index?` policy fails the error messages will be: `["You don't have access to the index route.", "You are not an instructor user"]` becuase both the `index?` and `instructor?` policies are called.
+If the `index?` policy fails the error messages will be: `["You don't have access to the index route.", "You are not an instructor user"]` because both the `index?` and `instructor?` policies are called.
 
 Scenario 2:
 
@@ -120,7 +129,7 @@ end
 
 If the `index?` policy fails the error messages will be: `["You don't have access to the index route."]` because only the `index?` policy is called.
 
-Note that failure reasons will only be added if `check?` or `allowed_to?` is called in the original policy class. For example:
+> 🗒️ **NOTE:** that failure reasons will only be added if `check?` or `allowed_to?` is called in the original policy class. For example:
 
 ```ruby
 class ExamplePolicy < ApplicationPolicy
@@ -166,7 +175,7 @@ allowed_to?(:index?, context: { submission: Submission.find(10) })
 
 ### Writing Tests
 
-Rspec tests written for policies should use [Action Policies' Rspec DSL](https://actionpolicy.evilmartians.io/#/testing?id=rspec-dsl).
+RSpec tests written for policies should use [Action Policies' rspec DSL](https://actionpolicy.evilmartians.io/#/testing?id=rspec-dsl).
 
 For clarity, we prefer to not nest `succeed` or `failed` blocks within each other. For example, the following two test classes are functionally equivalent but the second one is preferred:
 

@@ -4,7 +4,7 @@
  * Used in the assign_scans view for exam template processing
  */
 
-export function updateOcrSuggestions(ocrMatch, suggestions = []) {
+export function updateOcrSuggestions(ocrMatch, suggestions = [], onSelect) {
   const container = $("#ocr_suggestions");
   container.empty();
 
@@ -57,9 +57,7 @@ export function updateOcrSuggestions(ocrMatch, suggestions = []) {
     content.append(infoElem);
 
     content.on("click", function () {
-      $("#student_id").val(suggestion.id);
-      $("#names").val(suggestion.display_name);
-      $("#names").focus();
+      onSelect(suggestion);
     });
 
     item.append(content);

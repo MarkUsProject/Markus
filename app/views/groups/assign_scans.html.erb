@@ -14,6 +14,9 @@
         minLength: 1,
         select: function (event, ui) {
           $("#student_id").val(ui.item.id);
+        },
+        open: function () {
+          $(this).autocomplete("widget").outerWidth($(this).outerWidth());
         }
       }).data("ui-autocomplete")._renderItem = function (ul, item) {
         return $("<li>")
@@ -22,8 +25,8 @@
             `<span>${item.id_number} | ${item.user_name}</span></div>`)
           .appendTo(ul);
       };
-      $("#assign_student").submit(function (e) {
-        e.preventDefault();
+      function submitAssignment() {
+        $("#assign_student button").prop("disabled", true);
         const queryString = $("#assign_student").serialize();
         const url = "assign_student_and_next";
         const requestUrl = `${url}?${queryString}`;
@@ -37,21 +40,42 @@
               return response.json();
             }
           })
-          .then((data) => parseNextScan(data));
+          .then((data) => parseNextScan(data))
+          .finally(() => {
+            $("#assign_student button").prop("disabled", false);
+          });
+      }
+
+      $("#assign_student").submit(function (e) {
+        e.preventDefault();
+        submitAssignment();
+      });
+
+      $("#skip_group").on("click", function () {
+        $("#skip").val("1");
+        submitAssignment();
       });
 
       function parseNextScan(data) {
+        if (data.redirect) {
+          window.location.href = data.redirect;
+          return;
+        }
         $("#group_members").empty();
         for (var i = 0; i < data.students.length; i++) {
           $("#group_members").append("<p>" + data.students[i] + "</p>")
         }
+        $("#group_members_section").toggleClass("no-display", data.students.length === 0);
         $("#assign_student").find("input").val("");
-        $("#assign_student").find("#skip").val("1").prop('checked', false);
         let current_group = $("#grouping_id").val();
         update_bar(data.num_valid, data.num_total);
 
         // Update OCR suggestions
-        updateOcrSuggestions(data.ocr_match, data.ocr_suggestions);
+        updateOcrSuggestions(data.ocr_match, data.ocr_suggestions, function (suggestion) {
+          $("#student_id").val(suggestion.id);
+          $("#names").val(suggestion.display_name);
+          submitAssignment();
+        });
 
         // Anytime we advance to another assignment
         if (data.grouping_id !== current_group) {
@@ -76,7 +100,7 @@
         container: container,
       });
       eventBus.on('pagesinit', function() {
-        pdfViewer.currentScaleValue = 'page-fit';
+        pdfViewer.currentScaleValue = 'page-width';
       });
       parseNextScan(<%= raw @data.to_json %>);
     }
@@ -85,8 +109,9 @@
 
   })();
 
-  function update_bar(v) {
+  function update_bar(v, total) {
     $('#progress-meter').attr('value', v);
+    $('#progress-text').text(I18n.t('exam_templates.assign_scans.progress', {valid: v, total: total}));
   }
 <% end %>
 <% content_for :title do %>
@@ -107,6 +132,10 @@
       high="<%= @assignment.get_num_collected * 0.75 %>"
       optimum="<%= @assignment.get_num_collected %>">
     </meter>
+    <span id="progress-text">
+      <%= t('exam_templates.assign_scans.progress', valid: @assignment.get_num_valid,
+                                                      total: @assignment.groupings.size) %>
+    </span>
     &nbsp;|&nbsp;
     <%= link_to t('groups.manage_groups'), course_assignment_groups_path(@current_course, @assignment) %>
 <% end %>
@@ -120,33 +149,36 @@
   <div class='pane slim-fixed'>
     <div>
       <h2 id="group_name"></h2>
-      <form id="assign_student">
-        <input id="names" name="names" type="text" placeholder="<%= User.human_attribute_name(:full_name) %>"
-               autocomplete="off">
-        <input id="student_id" name="s_id" type="hidden">
-        <input id="grouping_id" name="g_id" value="" type="hidden">
-
-        <p>
-          <input type="checkbox" name="skip" id="skip" value="1">
-          <label for="skip"><%= t('exam_templates.assign_scans.skip_group') %></label>
-          &nbsp;&nbsp;
-          <input type="checkbox" name="display_inactive" id="display_inactive">
-          <label for="display_inactive"><%= t('exam_templates.assign_scans.display_inactive') %></label>
-        </p>
-        <p>
-          <button type="submit"><%= t('save') %></button>
-        </p>
-      </form>
 
       <!-- OCR Suggestions Section -->
       <div id="ocr_suggestions" class="ocr-suggestions-container no-display">
         <!-- Will be populated by JavaScript -->
       </div>
 
-      <h3>
-        <%= Group.human_attribute_name(:student_memberships) %>
-      </h3>
-      <div id="group_members">
+      <form id="assign_student">
+        <input id="names" name="names" type="text"
+               placeholder="<%= t('exam_templates.assign_scans.search_placeholder') %>"
+               autocomplete="off" required>
+        <input id="student_id" name="s_id" type="hidden">
+        <input id="grouping_id" name="g_id" value="" type="hidden">
+        <input id="skip" name="skip" type="hidden" value="">
+
+        <p>
+          <input type="checkbox" name="display_inactive" id="display_inactive">
+          <label for="display_inactive"><%= t('exam_templates.assign_scans.display_inactive') %></label>
+        </p>
+        <p>
+          <button type="submit"><%= t('exam_templates.assign_scans.assign') %></button>
+          <button type="button" id="skip_group"><%= t('exam_templates.assign_scans.skip_group') %></button>
+        </p>
+      </form>
+
+      <div id="group_members_section" class="no-display">
+        <h3>
+          <%= Group.human_attribute_name(:student_memberships) %>
+        </h3>
+        <div id="group_members">
+        </div>
       </div>
     </div>
   </div>

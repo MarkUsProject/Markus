@@ -87,6 +87,7 @@ module Admin
 
         if SEARCHABLE_FIELDS.include?(f['id'])
           term = "%#{User.sanitize_sql_like(f['value'].strip)}%"
+          # codeql[rb/sql-injection] -- f['id'] is allow-listed against SEARCHABLE_FIELDS above
           scope = scope.where("#{f['id']} ILIKE ?", term)
         elsif f['id'] == 'type' && f['value'] != 'all'
           scope = scope.where(type: f['value'])
@@ -111,6 +112,7 @@ module Admin
 
       return scope.order(:user_name) if order_clauses.empty?
 
+      # codeql[rb/sql-injection] -- each clause's field name is allow-listed against SORTABLE_FIELDS above
       scope.order(Arel.sql(order_clauses.join(', ')))
     end
 

@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 1
 ---
 # Guidelines for MarkUs Development
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Motivation
 
@@ -26,16 +33,16 @@ When developing MarkUs, make sure to follow the following steps (where appropria
 
 - **Do** use Rails tools (such as [generators](http://wiki.rubyonrails.org/rails/pages/AvailableGenerators)) when appropriate in order to have code-stubs generated and for [migrations](http://guides.rubyonrails.org/migrations.html)
 - **Do** use the [debugger](http://guides.rubyonrails.org/debugging_rails_applications.html).
-- **Do** document your code appropriately. Add or update method-level and class-level docstrings as required. You can assume that the reader is familiar with Ruby and Rails. If your code requires more extensive documentation, you may wish to add or update a Wiki page. Remember, once you are done with your work and you leave the project, new developers should be able to use what you have contributed without a lot of effort.
+- **Do** document your code appropriately. Add or update method-level and class-level docstrings as required. You can assume that the reader is familiar with Ruby and Rails. If your code requires more extensive documentation, you may wish to add or update a Wiki page. Remember, once you are done with your work, and you leave the project, new developers should be able to use what you have contributed without a lot of effort.
 - **Do** ask for help. Ask questions commenting on your pull requests, emailing or in talking to the maintainers in person (if you can). But don't wait until the project is almost finished; problems can often be resolved quickly by sharing your code and asking questions.
 - **Do** write tests! (see the [guides](#guides) for testing guides)
 
 ### DON'Ts
 
-1. **Don't** mark your pull request as "Ready for review" until you're entirely happy with it. Go, have a break and come back to your code after a while. Questions you should ask yourself are: Is my controller code really controller code, or should it be moved to a model? Is there a simpler solution? Can Rails help with what I am trying to achieve?
-2. **Don't** mull over problems alone for hours/days. Sometimes it's better to consult somebody else: two pairs of eyes see more than one. Maybe somebody else has had a similar problem, etc. Go ask questions!
-3. **Don't** fight Rails (it'll beat you). Sometimes Rails' "magic" is irritating. However, you are better off *using* rather then fighting it!
-4. **Don't** use absolute paths/url's in any code (use `url_for` instead). *Always* let Rails generate URLs. You have to assume that there are more than one MarkUs applications running on a server, once deployed. Rails does a really good job on this, so use it.
+- **Don't** mark your pull request as "Ready for review" until you're entirely happy with it. Go, have a break and come back to your code after a while. Questions you should ask yourself are: Is my controller code really controller code, or should it be moved to a model? Is there a simpler solution? Can Rails help with what I am trying to achieve?
+- **Don't** mull over problems alone for hours/days. Sometimes it's better to consult somebody else: two pairs of eyes see more than one. Maybe somebody else has had a similar problem, etc. Go ask questions!
+- **Don't** fight Rails (it'll beat you). Sometimes Rails' "magic" is irritating. However, you are better off *using* rather than fighting it!
+- **Don't** use absolute paths/URL's in any code (use `url_for` instead). *Always* let Rails generate URLs. You have to assume that there are more than one MarkUs applications running on a server, once deployed. Rails does a really good job on this, so use it.
 
 ## Code Styleguide
 
@@ -58,7 +65,7 @@ Rails:
 - <http://guides.rubyonrails.org/>
 - <http://www.caliban.org/ruby/rubyguide.shtml>
 
-Rspec:
+RSpec:
 
 - <https://www.rubyguides.com/2018/07/rspec-tutorial/>
 - <https://www.betterspecs.org/>

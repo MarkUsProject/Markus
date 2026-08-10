@@ -8,8 +8,16 @@ describe TaMembership do
     expect(create(:ta_membership, role: create(:ta))).to be_valid
   end
 
-  it 'should not belong to an instructor' do
-    expect { create(:ta_membership, role: create(:instructor)) }.to raise_error(ActiveRecord::RecordInvalid)
+  it 'can belong to an instructor' do
+    expect(create(:ta_membership, role: create(:instructor))).to be_valid
+  end
+
+  it 'does not allow admin roles to be graders' do
+    grouping = create(:grouping)
+    admin_role = create(:admin_role, course: grouping.assignment.course)
+
+    expect { create(:ta_membership, grouping: grouping, role: admin_role) }
+      .to raise_error(ActiveRecord::RecordInvalid)
   end
 
   it 'should not belong to an student' do
@@ -48,6 +56,15 @@ describe TaMembership do
 
       expect { TaMembership.from_csv(assignment, csv_data, false) }
         .to change { TaMembership.count }.by(1)
+    end
+
+    it 'creates memberships for instructors' do
+      instructor = create(:instructor, course: assignment.course)
+      csv_data = "#{grouping.group.group_name},#{instructor.user_name}"
+
+      expect { TaMembership.from_csv(assignment, csv_data, false) }
+        .to change { TaMembership.count }.by(1)
+      expect(grouping.reload.tas).to include(instructor)
     end
   end
 end

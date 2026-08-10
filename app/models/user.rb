@@ -94,7 +94,7 @@ class User < ApplicationRecord
       # In general, the external password validation program should exit with 0 for success
       # and exit with any other integer for failure.
       validate_script = auth_type == AUTHENTICATE_LOCAL ? Settings.validate_file : Settings.remote_validate_file
-      pipe = IO.popen("'#{validate_script}'", 'w+') # quotes to avoid choking on spaces
+      pipe = IO.popen([validate_script.to_s], 'w+') # array form avoids invoking a shell
       to_stdin = [login, password, ip].compact.join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
@@ -140,7 +140,7 @@ class User < ApplicationRecord
   end
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
-  # which is in turn MD5 digested and Base64 encoded so that it doesn't
+  # which is then SHA-256 hashed and Base64 encoded so that it doesn't
   # include bad HTTP characters.
   #
   # TODO: If we end up using this heavily we should probably let this key
@@ -148,10 +148,9 @@ class User < ApplicationRecord
   # automatically generated.
   def reset_api_key
     key = generate_api_key
-    md5 = Digest::MD5.new
-    md5.update(key)
-    # base64 encode md5 hash
-    self.update(api_key: Base64.encode64(md5.to_s).strip)
+
+    # base64 encode SHA-256 hash
+    self.update(api_key: Digest::SHA256.base64digest(key))
   end
 
   def admin_courses

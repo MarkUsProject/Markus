@@ -11,10 +11,7 @@ class SubmissionsController < ApplicationController
 
   PERMITTED_IFRAME_SRC = ([:self] + %w[https://www.youtube.com https://drive.google.com https://docs.google.com]).freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
-    # required because heic2any uses libheif which calls
-    # eval (javascript) and creates an image as a blob.
-    # TODO: remove this when possible
-    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    # required because heic-convert creates an image as a blob
     p.img_src :self, :blob
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end

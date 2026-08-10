@@ -6,8 +6,9 @@
 - `midterm_scan_100.pdf` contains a single test paper with the pages in a mixed order.
   These pages should all be scanned correctly.
 - `midterm_scan_101.pdf` contains a single test paper with the pages in a mixed order, and pages 3 and 4 are upside down.
-  The two pages will cause an error (QR code not found) but the other four pages should be processed correctly.
-- `midterm_scan_102.pdf` contains a single test paper with pages 2, 5, and 6 having an unparseable QR code.
+  All six pages should be scanned successfully; the QR scanner detects the orientation and MarkUs rotates the page
+  automatically.
+- `midterm_scan_102.pdf` contains a single test paper with page 2 having an unparseable QR code.
 - `midterm_scan_103.pdf` contains a single test paper with page 1 (the cover page) having an unparseable QR code.
 - `midterm_scan_104.pdf` contains a single test paper with pages 1-5 having an unparseable QR code.
 - `test-auto-parse-scan-blank.pdf` contains a single test paper with a blank student number field on the cover page

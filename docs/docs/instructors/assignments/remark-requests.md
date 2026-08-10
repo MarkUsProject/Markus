@@ -6,11 +6,13 @@ grand_parent: Instructors
 nav_order: 9
 ---
 # Remark Requests
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Viewing Requests](#viewing-requests)
-- [Responding to a Remark Request](#responding-to-a-remark-request)
+- TOC
+{:toc}
 
 ## Viewing Requests
 
@@ -18,13 +20,13 @@ If remark requests are enabled for an assignment, a student may [submit a reques
 
 ## Responding to a Remark Request
 
-The remark request can be viewd from the "Remark Request" tab of on the Grading View page.
+The remark request can be viewed from the "Remark Request" tab of on the Grading View page.
 
 ![Remark Request Tab](/images/grade-view-remark-request-comments.png)
 
 The request submission date as well as any notes provided by the student when making the request will be shown here.
 
-The instructor may choose to submit overall comments on the request as well (markdown and latex markup is supported).
+The instructor may choose to submit overall comments on the request as well (Markdown and latex markup is supported).
 
 ### Remarking
 

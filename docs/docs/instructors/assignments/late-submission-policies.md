@@ -6,13 +6,15 @@ grand_parent: Instructors
 nav_order: 2
 ---
 # Late Submission Policies
+{: .no_toc }
 
-## Table of Contents
+## Table of contents
+{: .no_toc .text-delta }
 
-- [Accept No Late Submissions](#accept-no-late-submissions)
-- [Automatically Deduct Grace Credits](#automatically-deduct-grace-credits)
-- [Use Penalty Decay Formula](#use-penalty-decay-formula)
-- [Set Manual Penalty Periods](#set-manual-penalty-periods)
+- TOC
+{:toc}
+
+## Introduction
 
 When setting up an assignment, MarkUs allows you to choose one of 4 different methods to handle late assignments:
 
@@ -57,7 +59,7 @@ Additional time periods are added by clicking the "Add late period" button and r
 
 When grading a late submission, the penalty will be automatically applied to the group's mark, but will not decrease the mark below 0. This penalty will appear in the "Summary" tab of the grading view.
 
-Penalties are applied as a percentage of the total mark. For example, a 10% penalty for an assignment out of 90 total marks will reduce a group's overall score by 9 marks. If a group would have received 55/90 before the penalty is deducted, they will receive 46/90 after the penalty is deducted.
+Penalties are applied as a percentage of the total mark. For example, a 10% penalty for an assignment out of 90 total marks will reduce a group's overall score by 9 marks. If a group had received 55/90 before the penalty is deducted, they will receive 46/90 after the penalty is deducted.
 
 ## Set Manual Penalty Periods
 
@@ -68,8 +70,8 @@ This option allows you to set percentage/marks penalty amounts for specified tim
 You must select a **Penalty Type** to determine how penalties are calculated (default is Percentage of assignment total):
 
 - **Percentage of assignment total**: Deduct a percentage of the total possible marks for the assignment (e.g., 5%)
-- **Marks**: Deduct a fixed number of marks (e.g., 5 marks)
 - **Percentage of earned mark**: Deduct a percentage of the student's earned mark (e.g., 5% of their score)
+- **Marks**: Deduct a fixed number of marks (e.g., 5 marks)
 
 The deduction unit displayed next to the input field will automatically update based on your selection (% for percentage types, marks for the marks option).
 
@@ -81,4 +83,4 @@ Note that for each late submission method, in order for the "From" and "To" time
 
 These deductions will be applied automatically, as with the "Penalty Decay Formula" option.
 
-Penalties are applied as a percentage of the total mark. For example, a 10% penalty for an assignment out of 90 total marks will reduce a groups's overall score by 9 marks. If a group would have received 55/90 before the penalty is deducted, they will receive 46/90 after the penalty is deducted.
+Penalties are applied as a percentage of the total mark. For example, a 10% penalty for an assignment out of 90 total marks will reduce a group's overall score by 9 marks. If a group had received 55/90 before the penalty is deducted, they will receive 46/90 after the penalty is deducted.

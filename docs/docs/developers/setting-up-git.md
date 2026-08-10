@@ -5,6 +5,13 @@ parent: Developers
 nav_order: 7
 ---
 # MarkUs, Git and GitHub: How it Works
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Installation
 
@@ -12,7 +19,7 @@ First, you'll need to [install Git](https://git-scm.com/downloads) onto your com
 If you already have Git installed, we recommend [updating to the latest version](https://confluence.atlassian.com/bitbucketserver/installing-and-upgrading-git-776640906.html).
 
 **Important**: if you are developing MarkUs on Windows, you should be using WSL to manage your repository, which means you'll need to [Install Git on WSL](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git) instead of on Windows directly.
-All of the commands on this page should be run in the WSL 2 terminal (e.g., Ubuntu 20.04), not the regular Windows terminal (cmd.exe).
+All commands on this page should be run in the WSL 2 terminal (e.g., Ubuntu 20.04), not the regular Windows terminal (cmd.exe).
 
 ## Overview
 
@@ -65,7 +72,7 @@ Note that the following few paragraphs might be a bit confusing. Hang in there, 
 
 The steps involved until your code ends up in the main MarkUs repository are the following:
 
-1. Create and switch to a feature branch based on up to date local master branch
+1. Create and switch to a feature branch based on up-to-date local master branch
 
     ```console
     git branch issue-1234
@@ -110,7 +117,7 @@ You, as a developer, will be mainly working on the locally cloned MarkUs Git rep
 
 ### Keeping Your Local Code Up-To-Date
 
-Also note the dashed arrow coming from the main ("upstream") MarkUs Git repository and pointing to your local clone of your personal MarkUs Github fork. This arrow represents interaction you have to do to keep up-to-date with the authoritative MarkUs repository, which is constantly being updated by other developers on the MarkUs team. (More on how you can do this later.)
+Also note the dashed arrow coming from the main ("upstream") MarkUs Git repository and pointing to your local clone of your personal MarkUs GitHub fork. This arrow represents interaction you have to do to keep up-to-date with the authoritative MarkUs repository, which is constantly being updated by other developers on the MarkUs team. (More on how you can do this later.)
 
 This subsection describes the steps you need to take to make sure your local repository is up-to-date. Generally, your `master` branch should mirror the contents of `upstream/master`, the master branch of the main MarkUs repository. Remember that **you should be doing all development on local feature branches, NOT your local master branch**! This makes merging as painless as possible.
 
@@ -130,7 +137,7 @@ If this sounds too confusing for you, don't worry, we are here to help.
     git pull upstream master
     ```
 
-    Note: if you've followed our advice and done your development only on feature branches, this step shouldn't produce any merge errors!
+    > 🗒️ **NOTE:** if you've followed our advice and done your development only on feature branches, this step shouldn't produce any merge errors!
 
 4. If you're currently working on a feature branch, switch back to that branch and merge the new changes in. This step might require some manual merging.
 

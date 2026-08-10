@@ -82,6 +82,10 @@ describe("For the AssignmentSummaryTable's display of inactive groups", () => {
     );
   });
 
+  it("shows row numbers", () => {
+    expect(document.querySelector(".Table")).toHaveClass("-show-row-numbers");
+  });
+
   it("initially does not contain the inactive group", () => {
     expect(screen.queryByText(/group_0001/)).not.toBeInTheDocument();
   });
@@ -99,43 +103,47 @@ describe("For the AssignmentSummaryTable's display of inactive groups", () => {
 });
 
 describe("For the AssignmentSummaryTable's display of assigned submissions", () => {
+  let component;
+  let groupsSample;
+
   beforeEach(async () => {
+    groupsSample = [
+      {
+        group_name: "assigned_group",
+        section: null,
+        members: [["c6scriab", "Scriabin", "Alexander", false]],
+        tags: [],
+        graders: [["c9varoqu", "Nelle", "Varoquaux"]],
+        marking_state: "released",
+        final_grade: 12.0,
+        criteria: {},
+        max_mark: "21.0",
+        result_id: 1,
+        submission_id: 1,
+        total_extra_marks: null,
+        assigned: true,
+      },
+      {
+        group_name: "unassigned_group",
+        section: null,
+        members: [["g8butter", "Butterworth", "George", false]],
+        tags: [],
+        graders: [],
+        marking_state: "released",
+        final_grade: 7.0,
+        criteria: {},
+        max_mark: "21.0",
+        result_id: 2,
+        submission_id: 2,
+        total_extra_marks: null,
+        assigned: false,
+      },
+    ];
     fetch.mockReset();
     fetch.mockResolvedValueOnce({
       ok: true,
       json: jest.fn().mockResolvedValueOnce({
-        data: [
-          {
-            group_name: "assigned_group",
-            section: null,
-            members: [["c6scriab", "Scriabin", "Alexander", false]],
-            tags: [],
-            graders: [["c9varoqu", "Nelle", "Varoquaux"]],
-            marking_state: "released",
-            final_grade: 12.0,
-            criteria: {},
-            max_mark: "21.0",
-            result_id: 1,
-            submission_id: 1,
-            total_extra_marks: null,
-            assigned: true,
-          },
-          {
-            group_name: "unassigned_group",
-            section: null,
-            members: [["g8butter", "Butterworth", "George", false]],
-            tags: [],
-            graders: [],
-            marking_state: "released",
-            final_grade: 7.0,
-            criteria: {},
-            max_mark: "21.0",
-            result_id: 2,
-            submission_id: 2,
-            total_extra_marks: null,
-            assigned: false,
-          },
-        ],
+        data: groupsSample.map(group => ({...group})),
         criteriaColumns: [],
         numAssigned: 1,
         numMarked: 1,
@@ -144,7 +152,7 @@ describe("For the AssignmentSummaryTable's display of assigned submissions", () 
       }),
     });
 
-    render(
+    component = render(
       <AssignmentSummaryTable
         assignment_id={1}
         course_id={1}
@@ -161,6 +169,10 @@ describe("For the AssignmentSummaryTable's display of assigned submissions", () 
     expect(
       screen.getByTestId("show_assigned_submissions_only_tooltip").getAttribute("title")
     ).toEqual("1 assigned submission");
+  });
+
+  it("uses the instructor-specific assigned submissions label", () => {
+    expect(screen.getByLabelText("Display only my assigned submissions")).toBeInTheDocument();
   });
 
   it("initially displays only assigned submissions", () => {
@@ -182,6 +194,37 @@ describe("For the AssignmentSummaryTable's display of assigned submissions", () 
 
     expect(screen.queryByText(/^assigned_group/)).toBeInTheDocument();
     expect(screen.queryByText(/unassigned_group/)).not.toBeInTheDocument();
+  });
+
+  it("initially displays all submissions when assigned-only is disabled", async () => {
+    component.unmount();
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        data: groupsSample.map(group => ({...group})),
+        criteriaColumns: [],
+        numAssigned: 1,
+        numMarked: 1,
+        enableTest: false,
+        ltiDeployments: [],
+      }),
+    });
+
+    render(
+      <AssignmentSummaryTable
+        assignment_id={1}
+        course_id={1}
+        is_instructor={true}
+        lti_deployments={[]}
+        can_view_assigned_submissions_only={true}
+        initial_show_assigned_submissions_only={false}
+      />
+    );
+    await screen.findByText("unassigned_group", {exact: false});
+
+    expect(screen.getByTestId("show_assigned_submissions_only")).not.toBeChecked();
+    expect(screen.queryByText(/^assigned_group/)).toBeInTheDocument();
   });
 });
 

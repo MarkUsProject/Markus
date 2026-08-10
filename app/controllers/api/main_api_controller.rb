@@ -7,6 +7,7 @@ module Api
     include ActionPolicy::Controller
 
     before_action :check_format, :check_record, :authenticate
+    # codeql[rb/csrf-protection-disabled] -- authenticated via header token, not cookies, so CSRF does not apply
     skip_before_action :verify_authenticity_token
 
     authorize :real_user, through: :real_user
@@ -67,15 +68,16 @@ module Api
     #
     # Renders an error message and returns false if the filters are malformed
     def get_collection(collection)
-      filter_params = params[:filter] ? params[:filter].permit(self.class::DEFAULT_FIELDS) : {}
-      if params[:filter].present? && filter_params.empty?
+      return collection.order(:id) if params[:filter].blank?
+
+      filter_params = params[:filter].permit(self.class::DEFAULT_FIELDS).to_h.symbolize_keys
+                                     .slice(*self.class::DEFAULT_FIELDS)
+      if filter_params.empty?
         render 'shared/http_status', locals: { code: '422', message:
           'Invalid or malformed parameter values' }, status: :unprocessable_content
         false
-      elsif filter_params.empty?
-        collection.order(:id)
       else
-        collection.order(:id).where(**filter_params)
+        collection.order(:id).where(filter_params)
       end
     end
 

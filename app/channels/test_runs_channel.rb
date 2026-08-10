@@ -1,27 +1,33 @@
 class TestRunsChannel < ApplicationCable::Channel
-  def subscribed
-    course = Course.find_by(id: params[:course_id])
-    role = Role.find_by(user: current_user, course: course)
-    if role.nil?
-      reject
-      return
-    end
-    assignment = course&.assignments&.find_by(id: params[:assignment_id])
-    grouping = assignment&.groupings&.find_by(id: params[:grouping_id])
-    submission = grouping&.submissions&.find_by(id: params[:submission_id])
+  authorize :assignment, through: :assignment
+  authorize :grouping, through: :grouping
+  authorize :submission, through: :submission
 
-    unless allowed_to?(:run_tests?, role, context: {
-      real_user: current_user,
-      role: role,
-      assignment: assignment,
-      grouping: grouping,
-      submission: submission
-    })
-      reject
-      return
-    end
+  def subscribed
     stream_for current_user
   end
 
   def unsubscribed; end
+
+  private
+
+  def implicit_authorization_target
+    current_role
+  end
+
+  def authorization_rule
+    :run_tests?
+  end
+
+  def assignment
+    course&.assignments&.find_by(id: params[:assignment_id])
+  end
+
+  def grouping
+    assignment&.groupings&.find_by(id: params[:grouping_id])
+  end
+
+  def submission
+    grouping&.submissions&.find_by(id: params[:submission_id])
+  end
 end

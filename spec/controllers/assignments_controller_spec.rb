@@ -735,9 +735,42 @@ describe AssignmentsController do
 
     describe 'When the role is instructor' do
       let(:role) { create(:instructor) }
-      let(:assignment) { create(:assignment) }
+      let(:assignment) { create(:assignment, course: course) }
 
       it_behaves_like 'An authorized role viewing assignment summary'
+
+      context 'when rendering the assigned-submissions filter' do
+        render_views
+
+        subject(:send_request) do
+          get_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'html'
+        end
+
+        context 'when the instructor is assigned to this assignment' do
+          before do
+            grouping = create(:grouping, assignment: assignment)
+            create(:ta_membership, grouping: grouping, role: role)
+            send_request
+          end
+
+          it 'enables the assigned-submissions filter' do
+            expect(response.body).to match(/can_view_assigned_submissions_only:\s+true/)
+          end
+        end
+
+        context 'when the instructor is assigned only to another assignment' do
+          before do
+            other_assignment = create(:assignment, course: course)
+            grouping = create(:grouping, assignment: other_assignment)
+            create(:ta_membership, grouping: grouping, role: role)
+            send_request
+          end
+
+          it 'does not enable the assigned-submissions filter' do
+            expect(response.body).to match(/can_view_assigned_submissions_only:\s+false/)
+          end
+        end
+      end
     end
 
     describe 'When the role is grader' do
@@ -1600,6 +1633,21 @@ describe AssignmentsController do
           data = data_response['data']
           ta = assignment.tas[index]
           expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
+        end
+      end
+
+      context 'with an instructor assigned as a grader' do
+        before do
+          @grader = create(:instructor, course: assignment.course)
+          Grouping.assign_all_tas([assignment.groupings.first], [@grader.id], assignment)
+          get_as role, :grade_distribution, params: params
+        end
+
+        it 'includes grading data for the instructor' do
+          labels = response.parsed_body['ta_data']['datasets'].pluck('label')
+
+          expect(response).to have_http_status(:ok)
+          expect(labels).to include(a_string_including(@grader.display_name))
         end
       end
 

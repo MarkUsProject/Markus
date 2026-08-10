@@ -1,20 +1,29 @@
 class GroupsChannel < ApplicationCable::Channel
+  authorize :assignment, through: :assignment
   def subscribed
-    course = Course.find_by(id: params[:course_id])
-    assignment = course&.assignments&.find_by(id: params[:assignment_id])
-    role = Role.find_by(user: current_user, course: course)
-    if assignment.nil? || role.nil?
-      reject
-      return
-    end
-    unless allowed_to?(:manage?, assignment, context: { real_user: current_user, role: role })
-      reject
-      return
-    end
     stream_for current_user
   end
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+  end
+
+  private
+
+  def authorize_channel
+    reject && return if assignment.nil?
+    super
+  end
+
+  def implicit_authorization_target
+    assignment
+  end
+
+  def authorization_rule
+    :manage?
+  end
+
+  def assignment
+    course&.assignments&.find_by(id: params[:assignment_id])
   end
 end

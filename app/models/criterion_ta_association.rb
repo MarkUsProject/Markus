@@ -23,7 +23,7 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class CriterionTaAssociation < ApplicationRecord
-  belongs_to :ta
+  belongs_to :ta, class_name: 'Role'
   validates_associated :ta
 
   belongs_to :criterion
@@ -36,6 +36,7 @@ class CriterionTaAssociation < ApplicationRecord
   has_one :course, through: :assignment
 
   validate :courses_should_match
+  validate :must_be_course_staff
 
   def self.from_csv(assignment, csv_data, remove_existing)
     criteria = assignment.ta_criteria.includes(:criterion_ta_associations)
@@ -48,18 +49,19 @@ class CriterionTaAssociation < ApplicationRecord
     new_ta_mappings = []
     result = MarkusCsv.parse(csv_data) do |row|
       raise CsvInvalidLineError if row.empty?
-      criterion_name, *ta_user_names = row
+      criterion_name, *staff_user_names = row
 
       criterion = criteria.find { |crit| crit.name == criterion_name }
       raise CsvInvalidLineError if criterion.nil?
 
-      course_tas = assignment.course.tas
-      unless ta_user_names.all? { |g| course_tas.joins(:user).exists?('users.user_name': g) }
-        raise CsvInvalidLineError
+      course_staff = assignment.course.course_staff
+      all_staff_exist = staff_user_names.all? do |staff_user_name|
+        course_staff.joins(:user).exists?('users.user_name': staff_user_name)
       end
+      raise CsvInvalidLineError unless all_staff_exist
 
-      ta_user_names.each do |user_name|
-        ta_id = course_tas.joins(:user).find_by('users.user_name': user_name).id
+      staff_user_names.each do |user_name|
+        ta_id = course_staff.joins(:user).find_by('users.user_name': user_name).id
         new_ta_mappings << {
           criterion_id: criterion.id,
           ta_id: ta_id,
@@ -77,6 +79,11 @@ class CriterionTaAssociation < ApplicationRecord
   end
 
   private
+
+  def must_be_course_staff
+    # Use instance_of? to exclude AdminRole, which is a subclass of Instructor.
+    errors.add(:ta, :invalid) if ta && !ta.is_a?(Ta) && !ta.instance_of?(Instructor)
+  end
 
   def add_assignment_reference
     self.assignment = criterion.assignment
