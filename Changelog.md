@@ -39,6 +39,7 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Refactored annotation routes to respond with JSON rather than Javascript (#8127)
 - Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb`
 - Replaced `jcrop` with `cropperjs` for the exam template cover page crop selector (#8114)
 - Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)

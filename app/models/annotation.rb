@@ -105,6 +105,28 @@ class Annotation < ApplicationRecord
     data
   end
 
+  # Serializes this annotation for the Result component. When the annotation carries a
+  # deduction that isn't overridden, also includes the updated mark/subtotal/total so
+  # the front end can reflect the deduction without a full refetch.
+  def to_json(current_role: nil)
+    data = { annotation: get_data(include_creator: true) }
+
+    criterion = annotation_text.annotation_category&.flexible_criterion
+    mark = result.marks.find_by(criterion: criterion)
+    unless annotation_text.deduction.nil? || annotation_text.deduction == 0 || mark.override
+      grader_id = current_role&.instructor? ? nil : current_role&.id
+      data[:mark_update] = {
+        criterion_id: criterion.id,
+        mark: mark.mark,
+        subtotal: result.get_subtotal,
+        total: result.get_total_mark,
+        num_marked: result.grouping.assignment.get_num_marked(grader_id)
+      }
+    end
+
+    data.to_json
+  end
+
   private
 
   # check if the submission file is associated with a remark result or a released result
