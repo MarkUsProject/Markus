@@ -38,6 +38,12 @@ logging:
 autotest:
   max_batch_size: 10
 
+jupyter_server:
+  hosts:
+    - "http://localhost:8888"
+    - "http://127.0.0.1:8888"
+  api_origin: "http://host.docker.internal:8888"
+
 lti:
   adapter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>
   domains: <%= %w[host.docker.internal] %>

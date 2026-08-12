@@ -1099,9 +1099,9 @@ Rails.application.routes.draw do
   post 'main/about', controller: 'main', action: 'about'
   post 'main/logout', controller: 'main', action: 'logout'
 
-  match '*path', controller: 'main', action: 'page_not_found', via: :all
-end
+  namespace :jupyter do
+    post 'submit', to: 'jupyter_submissions#submit'
+  end
 
-namespace :jupyter do
-  post 'submit', to: 'submissions#submit'
+  match '*path', controller: 'main', action: 'page_not_found', via: :all
 end

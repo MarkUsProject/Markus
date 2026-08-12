@@ -38,6 +38,7 @@ puma:
 
 jupyter_server:
   hosts: []
+  api_origin:
 
 queues:
   default: DEFAULT_QUEUE
