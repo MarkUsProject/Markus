@@ -207,11 +207,6 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def create_course
-    if record.course.present?
-      redirect_to course_path(record.course)
-      return
-    end
-
     if LtiConfig.respond_to?(:allowed_to_create_course?) && !LtiConfig.allowed_to_create_course?(record)
       @title = I18n.t('lti.course_creation_denied')
       @message = format(
