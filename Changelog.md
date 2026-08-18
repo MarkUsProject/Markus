@@ -28,6 +28,7 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Fixed API user and course endpoints ignoring the optional fields parameter
 - Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
 - Prevented grader assignment and unassignment operations from modifying groupings belonging to other assignments (#8072)
 - Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
