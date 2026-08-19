@@ -167,12 +167,8 @@ class ResultsController < ApplicationController
                           'marks.override AS override',
                           'criteria.bonus AS bonus']
           if can_view_grader_info
-            marks_relation = marks_relation
-                               .joins('LEFT OUTER JOIN roles last_updated_by_roles ' \
-                                      'ON last_updated_by_roles.id = marks.last_updated_by_id')
-                               .joins('LEFT OUTER JOIN users last_updated_by_users ' \
-                                      'ON last_updated_by_users.id = last_updated_by_roles.user_id')
-            marks_fields << 'last_updated_by_users.display_name AS last_updated_by'
+            marks_relation = marks_relation.left_outer_joins(marks: { last_updated_by: :user })
+            marks_fields << 'users.display_name AS last_updated_by'
           end
           marks_info = marks_relation.pluck_to_hash(*marks_fields).group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes

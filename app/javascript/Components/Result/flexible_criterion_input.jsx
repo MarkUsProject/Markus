@@ -217,7 +217,7 @@ export default function FlexibleCriterionInput({
         </span>
         {listDeductions()}
         {renderOldMark()}
-        {!released_to_students && last_updated_by && (
+        {last_updated_by && (
           <div className="last-updated-by">
             {I18n.t("results.last_updated_by", {name: last_updated_by})}
           </div>
