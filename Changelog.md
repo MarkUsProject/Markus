@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#8057)
 - Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
 - Added row numbers to the course summaries table (#8108)
 - Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
