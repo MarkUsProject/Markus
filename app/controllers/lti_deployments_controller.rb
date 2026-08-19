@@ -223,7 +223,7 @@ class LtiDeploymentsController < ApplicationController
       redirect_to choose_course_lti_deployment_path
       return
     end
-    start_at, end_at = LtiConfig.get_course_dates(record) if LtiConfig.respond_to?(:get_course_dates)
+    start_at, end_at = LtiConfig.respond_to?(:get_course_dates) ? LtiConfig.get_course_dates(record) : nil
     new_course.update!(display_name: params['display_name'], is_hidden: true,
                        start_at: start_at, end_at: end_at)
     if current_user.admin_user?
