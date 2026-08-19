@@ -644,6 +644,12 @@ Returns the same JSON structure but with only the matching students in the `stud
     - token_start_date (string: that can be parsed into a Ruby DateTime object)
     - has_peer_review (boolean)
     - starter_file_type (one of "simple", "sections", "shuffle", "group")
+    - submission_rule_type (one of "NoLateSubmission", "PenaltyPeriod", "GracePeriod", "PenaltyDecayPeriod")
+      - "GracePeriod", "PenaltyPeriod", and "PenaltyDecayPeriod" require submission_rule_periods to be provided.
+    - submission_rule_periods (list of hashes: keys depend on the submission_rule_type):
+      - GracePeriod: requires key "hours" for each period
+      - PenaltyPeriod: requires keys "hours" and "deduction" for each period
+      - PenaltyDecayPeriod: requires keys "hours", "deduction", and "interval" for each period
 
 ### GET /api/courses/:course_id/assignments/:id
 
@@ -714,6 +720,12 @@ Returns the same JSON structure but with only the matching students in the `stud
     - token_start_date (string: that can be parsed into a Ruby DateTime object)
     - has_peer_review (boolean)
     - starter_file_type (one of "simple", "sections", "shuffle", "group")
+    - submission_rule_type (one of "NoLateSubmission", "PenaltyPeriod", "GracePeriod", "PenaltyDecayPeriod")
+      - "GracePeriod", "PenaltyPeriod", and "PenaltyDecayPeriod" require submission_rule_periods to be provided.
+    - submission_rule_periods (list of hashes: keys depend on the submission_rule_type):
+      - GracePeriod: requires key "hours" for each period
+      - PenaltyPeriod: requires keys "hours" and "deduction" for each period
+      - PenaltyDecayPeriod: requires keys "hours", "deduction", and "interval" for each period
 
 ### DELETE /api/courses/:course_id/assignments/:id
 
