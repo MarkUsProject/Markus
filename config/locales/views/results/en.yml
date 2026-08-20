@@ -53,6 +53,7 @@ en:
       previous_level: Select previous level
       toggle_compact: Toggle fullscreen
       when_rubric: "(When on rubric) "
+    last_updated_by: Last updated by %{name}
     late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
     marks_chart: Marks Chart
     marks_released: The marks have been released. You cannot change the grades.

@@ -650,6 +650,7 @@ class Result extends React.Component {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark.override = data.mark_override;
+          newMark.last_updated_by = data.last_updated_by;
           return newMark;
         } else {
           return markData;
