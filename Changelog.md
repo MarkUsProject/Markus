@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Displayed who last updated a mark to TAs and instructors in the grading view (#8131)
 - Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#8057)
 - Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
 - Added row numbers to the course summaries table (#8108)
