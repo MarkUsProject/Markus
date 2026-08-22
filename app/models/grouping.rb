@@ -69,7 +69,7 @@ class Grouping < ApplicationRecord
            class_name: 'Student',
            through: :accepted_student_memberships,
            source: :role
-  has_many :submissions
+  has_many :submissions, dependent: :restrict_with_error
   has_one :current_submission_used,
           -> { where submission_version_used: true },
           class_name: 'Submission',
@@ -484,13 +484,6 @@ class Grouping < ApplicationRecord
         membership.save
       end
     end
-  end
-
-  def delete_grouping
-    Repository.get_class.update_permissions_after(only_on_request: true) do
-      student_memberships.includes(:role).find_each(&:destroy)
-    end
-    self.destroy
   end
 
   # Removes the member rejected by its membership id
