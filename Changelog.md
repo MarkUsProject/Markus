@@ -45,6 +45,7 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Updated `pdfjs-dist` to v6.2.108 (#8135)
 - Refactored annotation routes to respond with JSON rather than Javascript (#8127)
 - Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb`
 - Replaced `jcrop` with `cropperjs` for the exam template cover page crop selector (#8114)
