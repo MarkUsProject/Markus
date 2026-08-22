@@ -28,6 +28,9 @@ export class PDFViewer extends React.PureComponent {
     this.pdfViewer = new pdfjsViewer.PDFViewer({
       eventBus: this.eventBus,
       container: this.pdfContainer.current,
+      // Text selection conflicts with dragging out annotation regions while grading.
+      // 0 is TextLayerMode.DISABLE (pdfjsViewer doesn't export the enum).
+      textLayerMode: this.props.released_to_students ? undefined : 0,
     });
     window.pdfViewer = this; // For fixing display when pane width changes
 
@@ -67,7 +70,7 @@ export class PDFViewer extends React.PureComponent {
   }
 
   loadPDFFile = () => {
-    pdfjs.getDocument(this.props.url).promise.then(pdfDocument => {
+    pdfjs.getDocument({url: this.props.url}).promise.then(pdfDocument => {
       this.pdfViewer.setDocument(pdfDocument);
       this.props.setLoadingCallback(false);
     });
