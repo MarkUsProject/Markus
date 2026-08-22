@@ -22,7 +22,6 @@ class GroupsController < ApplicationController
   end
 
   def remove_group
-    # When a success div exists we can return successfully removed groups
     assignment = current_course.assignments.find(params[:assignment_id])
     groupings = assignment.groupings.where(id: params[:grouping_id])
     errors = []
