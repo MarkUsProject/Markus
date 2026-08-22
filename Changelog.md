@@ -36,6 +36,7 @@
 - Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
 - Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
 - Allow new instructors without existing courses to create a course via LTI launch (#8061)
+- Enforce privileged LTI launch role for course linking and creation- (#8130)
 
 ### 📚 Documentation changes
 - Made documentation site table-of-contents/section listings consistent (#8062)
