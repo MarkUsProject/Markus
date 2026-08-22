@@ -56,12 +56,14 @@ export const selectionColumn = columnHelper.display({
     }, [table.getIsSomeRowsSelected(), table.getIsAllRowsSelected()]);
 
     return (
-      <input
-        ref={checkboxRef}
-        type="checkbox"
-        checked={table.getIsAllRowsSelected()}
-        onChange={table.getToggleAllRowsSelectedHandler()}
-      />
+      <div style={{textAlign: "center"}}>
+        <input
+          ref={checkboxRef}
+          type="checkbox"
+          checked={table.getIsAllRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      </div>
     );
   },
   size: 30,
@@ -69,12 +71,14 @@ export const selectionColumn = columnHelper.display({
   enableResizing: false,
   enableSorting: false,
   cell: ({row}) => (
-    <input
-      type="checkbox"
-      checked={row.getIsSelected()}
-      disabled={!row.getCanSelect()}
-      onChange={row.getToggleSelectedHandler()}
-    />
+    <div style={{textAlign: "center"}}>
+      <input
+        type="checkbox"
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect()}
+        onChange={row.getToggleSelectedHandler()}
+      />
+    </div>
   ),
 });
 
