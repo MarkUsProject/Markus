@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Enforced restriction on grouping deletion when submissions exist (#8134)
 - Improved table selection column styling, fixed table overflow in containers, and hid unused scrollbars (#8133)
 - Displayed who last updated a mark to TAs and instructors in the grading view (#8131)
 - Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#8057)
@@ -32,6 +33,7 @@
 - Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Fixed bulk grouping deletion assignment scoping (#8134)
 - Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
 - Prevented grader assignment and unassignment operations from modifying groupings belonging to other assignments (#8072)
 - Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)

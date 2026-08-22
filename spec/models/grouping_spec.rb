@@ -5,7 +5,7 @@ describe Grouping do
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }
-    it { is_expected.to have_many(:submissions) }
+    it { is_expected.to have_many(:submissions).dependent(:restrict_with_error) }
     it { is_expected.to have_many(:notes) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
     it { is_expected.to have_one(:course) }
@@ -225,14 +225,6 @@ describe Grouping do
       it 'updates repository permissions exactly once after bulk assign TAs' do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
         Grouping.assign_all_tas([], grouping_ids, assignment)
-      end
-    end
-
-    describe '.delete_grouping' do
-      it 'makes an attempt to update repository permissions when deleting a group' do
-        g = groupings
-        expect(Repository.get_class).to receive(:update_permissions_after)
-        g[0].delete_grouping
       end
     end
 
@@ -807,6 +799,30 @@ describe Grouping do
             expect(@grouping.has_submission?).to be true
             expect(@grouping.current_submission_used).to eq(@submission5)
           end
+        end
+      end
+    end
+
+    describe '#destroy' do
+      context 'when the grouping has a submission' do
+        before { create(:version_used_submission, grouping: @grouping) }
+
+        it 'does not destroy the grouping' do
+          expect { @grouping.destroy }.not_to(change { Grouping.exists?(@grouping.id) })
+        end
+
+        it 'adds an error to the grouping' do
+          @grouping.destroy
+          expect(@grouping.errors.full_messages).to include(
+            I18n.t('activerecord.errors.models.grouping.attributes.base.restrict_dependent_destroy.has_many',
+                   record: 'submissions')
+          )
+        end
+      end
+
+      context 'when the grouping has no submission' do
+        it 'destroys the grouping' do
+          expect { @grouping.destroy }.to change { Grouping.exists?(@grouping.id) }.from(true).to(false)
         end
       end
     end
