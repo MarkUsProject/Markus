@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Improved table selection column styling, fixed table overflow in containers, and hid unused scrollbars (#8133)
 - Displayed who last updated a mark to TAs and instructors in the grading view (#8131)
 - Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#8057)
 - Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
