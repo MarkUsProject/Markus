@@ -22,23 +22,14 @@ class GroupsController < ApplicationController
   end
 
   def remove_group
-    # When a success div exists we can return successfully removed groups
-    groupings = Grouping.where(id: params[:grouping_id])
+    assignment = current_course.assignments.find(params[:assignment_id])
+    groupings = assignment.groupings.where(id: params[:grouping_id])
     errors = []
-    @removed_groupings = []
     Repository.get_class.update_permissions_after(only_on_request: true) do
       groupings.each do |grouping|
-        grouping.student_memberships.each do |member|
-          grouping.remove_member(member.id)
+        unless grouping.destroy
+          errors.push(grouping.group.group_name)
         end
-      end
-    end
-    groupings.each do |grouping|
-      if grouping.has_submission?
-        errors.push(grouping.group.group_name)
-      else
-        grouping.delete_grouping
-        @removed_groupings.push(grouping)
       end
     end
     if errors.any?
@@ -444,8 +435,8 @@ class GroupsController < ApplicationController
   end
 
   def destroy
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_role.accepted_grouping_for(@assignment.id)
+    @assignment = current_course.assignments.find(params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:id])
     m_logger = MarkusLogger.instance
     if @grouping.nil?
       m_logger.log('Failed to delete group, since no accepted group for this user existed.' \
@@ -554,8 +545,6 @@ class GroupsController < ApplicationController
       students = Student.where(id: student_ids)
 
       case params[:global_actions]
-      when 'delete'
-        delete_groupings(groupings)
       when 'invalid'
         invalidate_groupings(groupings)
       when 'valid'
@@ -651,24 +640,6 @@ class GroupsController < ApplicationController
   # Given a list of grouping, sets their group status to valid if possible
   def validate_groupings(groupings)
     groupings.each(&:validate_grouping)
-  end
-
-  # Deletes the given list of groupings if possible. Removes each member first.
-  def delete_groupings(groupings)
-    # If any groupings have a submission raise an error.
-    if groupings.any?(&:has_submission?)
-      raise I18n.t('groups.could_not_delete') # should add names of grouping we could not delete
-    else
-      # Remove each student from every group.
-      Repository.get_class.update_permissions_after(only_on_request: true) do
-        groupings.each do |grouping|
-          grouping.student_memberships.each do |mem|
-            grouping.remove_member(mem.id)
-          end
-          grouping.delete_grouping
-        end
-      end
-    end
   end
 
   # Adds students to grouping. `groupings` should be an array with
