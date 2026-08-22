@@ -29,6 +29,7 @@
 - Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET /test_runs API route (#8055)
+- Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 
 ### 🐛 Bug fixes
 - Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
