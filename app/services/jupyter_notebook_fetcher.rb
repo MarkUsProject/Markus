@@ -88,12 +88,11 @@ class JupyterNotebookFetcher
                    .map { |part| URI.encode_www_form_component(part) }
                    .join('/')
 
-
     uri = URI.join(
       "#{@origin}#{@base_url}",
       "api/contents/#{encoded_path}"
     )
-    
+
     uri.query = URI.encode_www_form(content: '1')
     uri
   end

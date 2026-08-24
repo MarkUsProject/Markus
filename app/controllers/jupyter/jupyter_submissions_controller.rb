@@ -21,7 +21,7 @@ module Jupyter
       payload = params
 
       Rails.logger.info(
-        "[Jupyter::JupyterSubmissionsController] Incoming payload: " \
+        '[Jupyter::JupyterSubmissionsController] Incoming payload: ' \
         "#{payload.to_unsafe_h.except('controller', 'action').inspect}"
       )
 
@@ -70,7 +70,7 @@ module Jupyter
       )
 
       Rails.logger.info(
-        "[Jupyter::JupyterSubmissionsController] " \
+        '[Jupyter::JupyterSubmissionsController] ' \
         "Submitting #{destination_path} " \
         "for user=#{user.user_name}, " \
         "course_id=#{course.id}, " \
@@ -108,28 +108,24 @@ module Jupyter
           format: jupyter_file[:format]
         }
       }, status: :ok
-
     rescue JupyterIdentityFetcher::IdentityError => e
       render json: {
         status: 'error',
         message: e.message,
         error_class: e.class.name
       }, status: :unauthorized
-
     rescue JupyterNotebookFetcher::FetchError => e
       render json: {
         status: 'error',
         message: e.message,
         error_class: e.class.name
       }, status: :bad_gateway
-
     rescue ActiveRecord::RecordNotFound, ArgumentError => e
       render json: {
         status: 'error',
         message: e.message,
         error_class: e.class.name
       }, status: :not_found
-
     rescue StandardError => e
       Rails.logger.error(
         "[Jupyter::JupyterSubmissionsController] #{e.class}: #{e.message}"
@@ -142,7 +138,6 @@ module Jupyter
         message: e.message,
         error_class: e.class.name
       }, status: :internal_server_error
-
     ensure
       submitted_file&.close
       submitted_file&.unlink
@@ -154,7 +149,7 @@ module Jupyter
       username = resolve_jupyter_username!(jupyter_info)
 
       Rails.logger.info(
-        "[Jupyter::JupyterSubmissionsController] " \
+        '[Jupyter::JupyterSubmissionsController] ' \
         "Jupyter token resolved to username=#{username.inspect}"
       )
 
@@ -173,7 +168,7 @@ module Jupyter
         course_id = payload['course_id'].to_i
 
         Rails.logger.info(
-          "[Jupyter::JupyterSubmissionsController] " \
+          '[Jupyter::JupyterSubmissionsController] ' \
           "Looking up course by id=#{course_id}"
         )
 
@@ -188,7 +183,7 @@ module Jupyter
       end
 
       Rails.logger.info(
-        "[Jupyter::JupyterSubmissionsController] " \
+        '[Jupyter::JupyterSubmissionsController] ' \
         "Looking up course by name=#{course_name.inspect}"
       )
 
@@ -207,7 +202,7 @@ module Jupyter
         assignment_id = payload['assignment_id'].to_i
 
         Rails.logger.info(
-          "[Jupyter::JupyterSubmissionsController] " \
+          '[Jupyter::JupyterSubmissionsController] ' \
           "Looking up assignment id=#{assignment_id} " \
           "inside course id=#{course.id}"
         )
@@ -232,7 +227,7 @@ module Jupyter
         short_identifier = payload['assignment'].to_s.strip
 
         Rails.logger.info(
-          "[Jupyter::JupyterSubmissionsController] " \
+          '[Jupyter::JupyterSubmissionsController] ' \
           "Looking up assignment short_identifier=#{short_identifier.inspect} " \
           "inside course id=#{course.id}"
         )
