@@ -102,8 +102,9 @@ RUN mkdir -p /bundle \
              /app/tmp \
              /app/node_modules \
              /app/log \
-             /app/venv && \
-             chown -R ${USER}:${USER} /bundle /app
+             /app/venv \
+             /jekyll && \
+             chown -R ${USER}:${USER} /bundle /app /jekyll
 
 USER $USER
 

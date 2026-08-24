@@ -14,7 +14,7 @@
 #
 # Indexes
 #
-#  index_template_divisions_on_exam_template_id  (exam_template_id)
+#  index_template_divisions_on_exam_template_id_and_label  (exam_template_id,label) UNIQUE
 #
 # Foreign Keys
 #

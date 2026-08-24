@@ -3,6 +3,22 @@ import {GroupsManager} from "../groups_manager";
 import {beforeEach, describe, expect, it} from "@jest/globals";
 import {getTimeExtension} from "../Helpers/table_helpers";
 
+const mockCreateSubscription = jest.fn();
+const mockRenderFlashMessages = jest.fn();
+
+jest.mock("../../channels/consumer", () => ({
+  __esModule: true,
+  default: {
+    subscriptions: {
+      create: (...args) => mockCreateSubscription(...args),
+    },
+  },
+}));
+
+jest.mock("../../common/flash", () => ({
+  renderFlashMessages: (...args) => mockRenderFlashMessages(...args),
+}));
+
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
     return null;
@@ -11,6 +27,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 
 const groupMock = [
   {
+    _id: 22,
     group_name: "c6scriab",
     inactive: false,
     instructor_approved: true,
@@ -31,6 +48,7 @@ const groupMock = [
     section: "",
   },
   {
+    _id: 16,
     group_name: "group2",
     inactive: false,
     instructor_approved: true,
@@ -54,20 +72,49 @@ const groupMock = [
       weeks: 0,
     },
   },
+  {
+    _id: 17,
+    group_name: "group3",
+    inactive: false,
+    instructor_approved: true,
+    members: [
+      {
+        0: "student2",
+        1: "inviter",
+        2: false,
+        display_label: "(inviter)",
+      },
+    ],
+    section: "",
+    extension: {
+      apply_penalty: false,
+      days: 1,
+      grouping_id: 17,
+      hours: 0,
+      id: 52,
+      minutes: 0,
+      note: "",
+      weeks: 0,
+    },
+  },
 ];
 const studentMock = [
   {
     assigned: true,
     first_name: "coolStudent",
     hidden: false,
-    id: 8,
+    _id: 8,
     last_name: "Alberic",
     user_name: "student1",
   },
 ];
 
+beforeEach(() => {
+  mockCreateSubscription.mockClear();
+  mockRenderFlashMessages.mockClear();
+});
+
 describe("GroupsManager", () => {
-  let filter_method = null;
   let wrapper = React.createRef();
 
   beforeEach(async () => {
@@ -91,16 +138,78 @@ describe("GroupsManager", () => {
       times: ["weeks", "days", "hours", "minutes"],
     };
     render(<GroupsManager {...props} ref={wrapper} />);
-    // wait for page to load and render content
-    await screen.findByText("abcd").catch(err => err);
-    // to view screen render: screen.debug(undefined, 300000)
+    await screen.findByText("c6scriab");
+  });
+
+  describe("websocket updates", () => {
+    it("subscribes to group creation job status updates", () => {
+      expect(mockCreateSubscription).toHaveBeenCalledWith(
+        {channel: "GroupsChannel", course_id: 1, assignment_id: 2},
+        expect.objectContaining({
+          connected: expect.any(Function),
+          disconnected: expect.any(Function),
+          received: expect.any(Function),
+        })
+      );
+
+      const callbacks = mockCreateSubscription.mock.calls[0][1];
+      callbacks.connected();
+      callbacks.disconnected();
+    });
+
+    it("renders flash messages from websocket status updates", () => {
+      const callbacks = mockCreateSubscription.mock.calls[0][1];
+      const cases = [
+        [{status: "queued"}, {notice: I18n.t("job.status.queued")}],
+        [{status: "completed"}, {success: I18n.t("job.status.completed")}],
+        [{status: "failed"}, {error: I18n.t("job.status.failed.no_message")}],
+        [
+          {status: "failed", exception: {message: "boom"}},
+          {error: I18n.t("job.status.failed.message", {error: "boom"})},
+        ],
+        [
+          {status: "working", progress: 1, total: 2, warning_message: "warn"},
+          {notice: I18n.t("poll_job.create_groups_job", {progress: 1, total: 2}), warning: "warn"},
+        ],
+      ];
+
+      cases.forEach(([data, expectedMessage]) => {
+        mockRenderFlashMessages.mockClear();
+        callbacks.received(data);
+        expect(mockRenderFlashMessages).toHaveBeenCalledWith(expectedMessage);
+      });
+    });
+
+    it("refreshes data when the websocket update requests a table update", () => {
+      const callbacks = mockCreateSubscription.mock.calls[0][1];
+      wrapper.current.fetchData = jest.fn();
+
+      callbacks.received({update_table: true});
+
+      expect(wrapper.current.fetchData).toHaveBeenCalled();
+      expect(mockRenderFlashMessages).not.toHaveBeenCalled();
+    });
+
+    it("requests individual group creation without eagerly refreshing data", () => {
+      const getSpy = jest.spyOn($, "get").mockReturnValue({});
+      wrapper.current.createAllGroups();
+
+      expect(getSpy).toHaveBeenCalledWith({
+        url: Routes.create_groups_when_students_work_alone_course_assignment_groups_path(1, 2),
+      });
+      getSpy.mockRestore();
+    });
   });
 
   describe("DueDateExtensions", () => {
-    beforeEach(() => {
-      filter_method =
-        wrapper.current.groupsTable.wrapped.checkboxTable.props.columns[5].filterMethod;
-    });
+    const findExtensionFilter = () =>
+      screen
+        .getAllByRole("combobox")
+        .find(select =>
+          Array.from(select.options).some(
+            option => option.value === I18n.t("groups.groups_without_extension")
+          )
+        );
 
     it("append (late submissions accepted) to assignments with extensions", async () => {
       const groupWithExtension = groupMock[1];
@@ -110,55 +219,40 @@ describe("GroupsManager", () => {
       expect(await screen.getByRole("link", {name: searchTerm})).toBeInTheDocument();
     });
 
-    it("returns true when the selected value is all", () => {
-      expect(filter_method({value: "all"})).toEqual(true);
+    it("shows all groups when extension filter is All", () => {
+      expect(screen.getByText("c6scriab")).toBeInTheDocument();
+      expect(screen.getByText("group2")).toBeInTheDocument();
+      expect(screen.getByText("group3")).toBeInTheDocument();
     });
 
-    describe("withExtension: false", () => {
-      it("returns true when assignments without an extension are present", () => {
-        const rowMock = {_original: {extension: {}}};
-        const filterOptionsMock = JSON.stringify({withExtension: false});
-        expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(true);
+    it("filters to groups without an extension", () => {
+      fireEvent.change(findExtensionFilter(), {
+        target: {value: I18n.t("groups.groups_without_extension")},
       });
-      it("returns false when assignments with an extension are present", () => {
-        const rowMock = {_original: {extension: {hours: 1}}};
-        const filterOptionsMock = JSON.stringify({withExtension: false});
-        expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-      });
+
+      expect(screen.getByText("c6scriab")).toBeInTheDocument();
+      expect(screen.queryByText("group2")).not.toBeInTheDocument();
+      expect(screen.queryByText("group3")).not.toBeInTheDocument();
     });
 
-    describe("withExtension: true", () => {
-      describe("withLateSubmission: true", () => {
-        it("returns true when assignments have a late submission rule applied", () => {
-          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({withExtension: true, withLateSubmission: true});
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(true);
-        });
-        it("returns false when assignments are missing an extension", () => {
-          const rowMock = {_original: {extension: {apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({withExtension: true, withLateSubmission: true});
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-        });
+    it("filters to groups with late submission extensions", () => {
+      fireEvent.change(findExtensionFilter(), {
+        target: {value: I18n.t("groups.groups_with_extension.with_late_submission")},
       });
-      describe("withLateSubmission: false", () => {
-        it("returns true when assignments are missing an extension", () => {
-          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({
-            withExtension: true,
-            withLateSubmission: false,
-          });
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-        });
 
-        it("returns false when assignments have a late submission rule applied", () => {
-          const rowMock = {_original: {extension: {hours: 1, apply_penalty: true}}};
-          const filterOptionsMock = JSON.stringify({
-            withExtension: true,
-            withLateSubmission: false,
-          });
-          expect(filter_method({value: filterOptionsMock}, rowMock)).toEqual(false);
-        });
+      expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+      expect(screen.getByText("group2")).toBeInTheDocument();
+      expect(screen.queryByText("group3")).not.toBeInTheDocument();
+    });
+
+    it("filters to groups with extensions without late submission", () => {
+      fireEvent.change(findExtensionFilter(), {
+        target: {value: I18n.t("groups.groups_with_extension.without_late_submission")},
       });
+
+      expect(screen.queryByText("c6scriab")).not.toBeInTheDocument();
+      expect(screen.queryByText("group2")).not.toBeInTheDocument();
+      expect(screen.getByText("group3")).toBeInTheDocument();
     });
   });
 });

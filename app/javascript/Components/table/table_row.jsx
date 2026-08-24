@@ -1,25 +1,28 @@
 import React from "react";
 import TableCell from "./table_cell";
+import {SELECTION_COLUMN_ID} from "./table";
 
-function TableRow({row, isSelected, isExpanded, renderSubComponent}) {
+function TableRow({row, isSelected, isGrouped, isExpanded, renderSubComponent}) {
   return (
     <div className="rt-tr-group" role="rowgroup">
       <div className="rt-tr -odd" role="row">
         {row.getVisibleCells().map(cell => {
           // Only pass isSelected to the selection column. This prevents other cells from re-rendering
           // if the row selection status changes.
-          const cellSelection = cell.column.columnDef.id === "select" ? isSelected : null;
+          const cellSelection =
+            cell.column.columnDef.id === SELECTION_COLUMN_ID ? isSelected : null;
           return (
             <TableCell
               cell={cell}
               isSelected={cellSelection}
+              isExpanded={isExpanded}
               key={cell.id}
               width={cell.column.getSize()}
             />
           );
         })}
       </div>
-      {isExpanded && <div>{renderSubComponent({row})}</div>}
+      {isExpanded && !isGrouped && <div>{renderSubComponent({row})}</div>}
     </div>
   );
 }
@@ -32,5 +35,6 @@ export default React.memo(
     prev.row.original === next.row.original &&
     prev.isSelected === next.isSelected &&
     prev.isExpanded === next.isExpanded &&
-    prev.columnSizing === next.columnSizing
+    prev.columnSizing === next.columnSizing &&
+    prev.columns === next.columns
 );

@@ -172,11 +172,6 @@ module Repository
       raise NotImplementedError
     end
 
-    # Converts a pathname to an absolute pathname
-    def expand_path(file_name, dir_string)
-      raise NotImplementedError
-    end
-
     # This function allows a cached value of non_bare_repo to be cleared.
     # Currently only implemented in GitRepository.
     def reload_non_bare_repo

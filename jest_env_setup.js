@@ -11,3 +11,5 @@ window.$ = window.jQuery = global.jQuery = global.$ = $;
 import {I18n} from "i18n-js";
 import translations from "translations.json";
 window.I18n = new I18n(translations);
+
+global.DOCS_URL = "http://localhost:4000";

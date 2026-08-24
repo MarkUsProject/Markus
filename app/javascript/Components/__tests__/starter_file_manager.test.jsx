@@ -1,8 +1,6 @@
 import {StarterFileManager} from "../starter_file_manager";
 import {render, screen, fireEvent, act} from "@testing-library/react";
 
-import React from "react";
-
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
     return null;

@@ -21,7 +21,7 @@
 #
 # Indexes
 #
-#  index_criteria_on_assessment_id  (assessment_id)
+#  index_criteria_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
 # Foreign Keys
 #
@@ -44,7 +44,7 @@ class Criterion < ApplicationRecord
 
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
-  has_many :test_groups
+  has_many :test_groups, dependent: :nullify
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :assessment_id }
@@ -70,6 +70,10 @@ class Criterion < ApplicationRecord
 
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
+
+  def export_name
+    bonus? ? "#{name} (#{Criterion.human_attribute_name(:bonus)})" : name
+  end
 
   def update_assigned_groups_count
     result = criterion_ta_associations.flat_map do |cta|
@@ -114,7 +118,7 @@ class Criterion < ApplicationRecord
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
-    ta_ids = Ta.where(id: ta_ids).ids
+    ta_ids = assignment.course.course_staff.where(id: ta_ids).ids
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation

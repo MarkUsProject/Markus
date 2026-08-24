@@ -11,7 +11,6 @@
 #
 # Indexes
 #
-#  index_marking_schemes_on_course_id           (course_id)
 #  index_marking_schemes_on_course_id_and_name  (course_id,name) UNIQUE
 #
 # Foreign Keys

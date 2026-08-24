@@ -77,7 +77,36 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
+  confirmWhenLate = () => {
+    if (this.props.show_late_submit_confirmation) {
+      switch (this.props.submission_rule) {
+        case "GracePeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.grace_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+        case "PenaltyDecayPeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.penalty_decay_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+        case "PenaltyPeriodSubmissionRule":
+          return confirm(
+            I18n.t(
+              "activerecord.attributes.penalty_period_submission_rule.upload_late_confirmation_dialog"
+            )
+          );
+      }
+    }
+    return true;
+  };
+
   handleCreateUrl = (url, url_text) => {
+    if (!this.confirmWhenLate()) {
+      return;
+    }
     this.setState({showURLModal: false});
     const data_to_upload = {
       new_url: url,
@@ -99,6 +128,10 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleCreateFiles = (files, path, unzip, renameTo = "") => {
+    if (!this.confirmWhenLate()) {
+      return;
+    }
+
     if (
       !this.props.starterFileChanged ||
       confirm(I18n.t("assignments.starter_file.upload_confirmation"))
@@ -306,8 +339,10 @@ class SubmissionFileManager extends React.Component {
           <h2>{I18n.t("activerecord.attributes.assignment.assignment_files")}</h2>
           <p>
             {this.state.numberOfMissingFiles === 0
-              ? I18n.t("student.submission.all_files_submitted")
-              : I18n.t("student.submission.missing_files", {file: this.state.numberOfMissingFiles})}
+              ? I18n.t("submissions.student.all_files_submitted")
+              : I18n.t("submissions.student.missing_files", {
+                  file: this.state.numberOfMissingFiles,
+                })}
           </p>
           {this.state.requiredFiles.map(filename => {
             return (

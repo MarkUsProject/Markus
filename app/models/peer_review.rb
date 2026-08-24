@@ -11,7 +11,6 @@
 #
 # Indexes
 #
-#  index_peer_reviews_on_result_id                  (result_id)
 #  index_peer_reviews_on_result_id_and_reviewer_id  (result_id,reviewer_id) UNIQUE
 #  index_peer_reviews_on_reviewer_id                (reviewer_id)
 #

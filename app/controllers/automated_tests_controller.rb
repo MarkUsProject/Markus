@@ -12,7 +12,10 @@ class AutomatedTestsController < ApplicationController
 
   def update
     assignment = Assignment.find(params[:assignment_id])
-    test_specs = params[:schema_form_data].permit!.to_h
+    # to_unsafe_h is used to bind arbitrary JSON to test_specs.
+    # The JSON validation currently occurs only on the autotesting server.
+    # TODO: perform JSON validation on the MarkUs side.
+    test_specs = params[:schema_form_data].to_unsafe_h
     begin
       assignment.update! assignment_params
     rescue StandardError => e
@@ -127,7 +130,7 @@ class AutomatedTestsController < ApplicationController
     if file_path.present? && File.exist?(file_path)
       send_file_download file_path, filename: filename
     else
-      render plain: t('student.submission.missing_file', file_name: params[:file_name])
+      render plain: t('submissions.student.missing_file', file_name: params[:file_name])
     end
   end
 
@@ -168,12 +171,12 @@ class AutomatedTestsController < ApplicationController
           end
         else
           if f.size > assignment.course.max_file_size
-            flash_now(:error, t('student.submission.file_too_large',
+            flash_now(:error, t('submissions.student.file_too_large',
                                 file_name: f.original_filename,
                                 max_size: (assignment.course.max_file_size / 1_000_000.00).round(2)))
             next
           elsif f.size == 0
-            flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+            flash_now(:warning, t('submissions.student.empty_file_warning', file_name: f.original_filename))
           end
           file_path = FileHelper.checked_join(autotest_files_path, f.original_filename)
           if file_path.nil?

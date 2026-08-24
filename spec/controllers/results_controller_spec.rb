@@ -4,7 +4,7 @@ describe ResultsController do
   let(:assignment) { create(:assignment) }
   let(:student) { create(:student, grace_credits: 2) }
   let(:instructor) { create(:instructor) }
-  let(:ta) { create(:ta) }
+  let(:ta) { create(:ta, course: course) }
   let(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: student) }
   let(:submission) { create(:version_used_submission, grouping: grouping) }
   let(:incomplete_result) { submission.current_result }
@@ -1444,6 +1444,23 @@ describe ResultsController do
      :update_view_token_expiry,
      :download_view_tokens].each { |route_name| test_unauthorized(route_name) }
     it_behaves_like 'showing json data', true
+
+    context 'when a criterion has been graded' do
+      let(:criterion) { create(:rubric_criterion, assignment: assignment) }
+      let(:mark) { create(:rubric_mark, result: complete_result, criterion: criterion, last_updated_by: instructor) }
+
+      before do
+        allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+        mark
+        get :show, params: { course_id: complete_result.course.id, id: complete_result.id, format: :json }
+      end
+
+      it 'does not include the name of the grader who last updated the mark' do
+        mark_data = response.parsed_body['marks'].find { |m| m['id'] == criterion.id }
+        expect(mark_data).not_to have_key('last_updated_by')
+      end
+    end
+
     describe '#view_token_check' do
       subject { get :view_token_check, params: params }
 
@@ -2026,6 +2043,33 @@ describe ResultsController do
       it_behaves_like 'ta and instructor #next_grouping with filters'
       it_behaves_like 'instructor and ta #next_grouping with different orderings'
 
+      context 'when the instructor is assigned as a grader' do
+        let(:instructor) { create(:instructor, course: grouping1.course) }
+
+        before do
+          grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+          grouping2.group.update!(group_name: "navigation-scope-2-#{grouping2.id}")
+          grouping3.group.update!(group_name: "navigation-scope-3-#{grouping3.id}")
+          create(:ta_membership, role: instructor, grouping: grouping1)
+          create(:ta_membership, role: instructor, grouping: grouping3)
+        end
+
+        it 'returns an unassigned grouping by default' do
+          get :next_grouping, params: { course_id: grouping1.course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id, direction: 1 }
+
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+        end
+
+        it 'returns the next assigned grouping when assigned-only navigation is enabled' do
+          get :next_grouping, params: { course_id: grouping1.course.id, grouping_id: grouping1.id,
+                                        id: grouping1.current_result.id,
+                                        direction: 1, filterData: { assignedGradersOnly: true } }
+
+          expect(response.parsed_body['next_grouping']['id']).to eq(grouping3.id)
+        end
+      end
+
       context 'filter by tas' do
         let(:ta1) { create(:ta) }
         let(:ta2) { create(:ta) }
@@ -2080,6 +2124,27 @@ describe ResultsController do
       let(:groupings) { [grouping1, grouping2, grouping3] }
 
       before { groupings }
+
+      context 'when the instructor is assigned as a grader' do
+        let(:instructor) { create(:instructor, course: grouping1.course) }
+
+        before do
+          create(:ta_membership, role: instructor, grouping: grouping1)
+          create(:ta_membership, role: instructor, grouping: grouping3)
+        end
+
+        it 'returns only assigned groupings when assigned-only navigation is enabled' do
+          get :get_filtered_grouping_ids, params: {
+            course_id: grouping1.course.id,
+            id: grouping1.current_result.id,
+            filterData: { assignedGradersOnly: true }
+          }
+          returned_grouping_ids = response.parsed_body.pluck('grouping_id')
+
+          expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+          expect(returned_grouping_ids).not_to include(grouping2.id)
+        end
+      end
 
       it 'returns results ordered by group name by default' do
         get :get_filtered_grouping_ids, params: { course_id: course.id, id: grouping1.current_result.id }
@@ -2175,6 +2240,34 @@ describe ResultsController do
     it_behaves_like 'show result with old_total'
 
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
+
+    it 'reports that the TA cannot manage submissions by default' do
+      create(:ta_membership, role: ta, grouping: grouping)
+      get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+      expect(response.parsed_body['can_manage_submissions']).to be false
+    end
+
+    context 'when a criterion has been graded' do
+      before do
+        create(:ta_membership, role: ta, grouping: grouping)
+        rubric_mark.update!(last_updated_by: ta)
+        get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+      end
+
+      it 'includes the name of the grader who last updated the mark' do
+        mark_data = response.parsed_body['marks'].find { |m| m['id'] == rubric_criterion.id }
+        expect(mark_data['last_updated_by']).to eq ta.display_name
+      end
+    end
+
+    context 'with manage submissions permission' do
+      let(:ta) { create(:ta, course: course, manage_submissions: true) }
+
+      it 'reports that the TA can manage submissions' do
+        get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+        expect(response.parsed_body['can_manage_submissions']).to be true
+      end
+    end
 
     context 'when groups information is anonymized' do
       let(:data) { response.parsed_body }
@@ -2579,6 +2672,30 @@ describe ResultsController do
             end
           end
         end
+
+        context 'when the TA can manage submissions' do
+          let(:ta) { create(:ta, course: grouping1.course, manage_submissions: true) }
+
+          before do
+            grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+            grouping4.group.update!(group_name: "navigation-scope-2-#{grouping4.id}")
+            grouping2.group.update!(group_name: "navigation-scope-3-#{grouping2.id}")
+          end
+
+          it 'returns an unassigned grouping when assigned-only navigation is disabled' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { assignedGradersOnly: false } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping4.id)
+          end
+
+          it 'returns the next assigned grouping when assigned-only navigation is enabled' do
+            get :next_grouping, params: { course_id: course.id, grouping_id: grouping1.id,
+                                          id: grouping1.current_result.id,
+                                          direction: 1, filterData: { assignedGradersOnly: true } }
+            expect(response.parsed_body['next_grouping']['id']).to eq(grouping2.id)
+          end
+        end
       end
 
       context 'accessing get_filtered_grouping_ids' do
@@ -2588,6 +2705,19 @@ describe ResultsController do
           returned_grouping_ids = data.pluck('grouping_id')
           expect(returned_grouping_ids).not_to include(grouping4.id)
           expect(returned_grouping_ids.length).to eq(3)
+        end
+
+        context 'when the TA can manage submissions' do
+          let(:ta) { create(:ta, course: grouping1.course, manage_submissions: true) }
+
+          it 'returns all groupings when assigned-only navigation is disabled' do
+            get :get_filtered_grouping_ids, params: { course_id: course.id,
+                                                      id: grouping1.current_result.id,
+                                                      filterData: { assignedGradersOnly: false } }
+            data = response.parsed_body
+            returned_grouping_ids = data.pluck('grouping_id')
+            expect(returned_grouping_ids).to include(grouping1.id, grouping2.id, grouping3.id, grouping4.id)
+          end
         end
       end
     end

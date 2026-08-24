@@ -13,7 +13,6 @@
 # Indexes
 #
 #  index_lti_line_items_on_assessment_id                        (assessment_id)
-#  index_lti_line_items_on_lti_deployment_id                    (lti_deployment_id)
 #  index_lti_line_items_on_lti_deployment_id_and_assessment_id  (lti_deployment_id,assessment_id) UNIQUE
 #
 # Foreign Keys

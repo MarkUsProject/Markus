@@ -43,6 +43,7 @@ jupyter_server:
     - "http://localhost:8888"
     - "http://127.0.0.1:8888"
   api_origin: "http://host.docker.internal:8888"
+docs_url: http://localhost:4000
 
 lti:
   adapter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>

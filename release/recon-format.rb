@@ -14,7 +14,7 @@
 require 'json'
 
 data = JSON.parse($stdin.read)
-prs = data['milestone_prs'].index_by { |p| p['number'] }
+prs = data['milestone_prs'].to_h { |p| [p['number'], p] }
 order = data['proposed_cherry_pick_order']
 skipped = data['skipped']
 
@@ -42,7 +42,7 @@ when '--order'
   order.each { |item| puts "#{item['number']}:#{item['ref']}" }
 
 when '--pr-list'
-  puts order.pluck('number').join(',')
+  puts order.map { |o| o['number'] }.join(',')
 
 when '--pr-body'
   puts "## Release #{data['version']}"

@@ -11,7 +11,6 @@
 #
 # Indexes
 #
-#  index_assignment_files_on_assessment_id               (assessment_id)
 #  index_assignment_files_on_assessment_id_and_filename  (assessment_id,filename) UNIQUE
 #
 # Foreign Keys

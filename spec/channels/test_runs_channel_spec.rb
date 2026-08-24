@@ -5,6 +5,7 @@ describe TestRunsChannel do
         { token_start_date: 1.hour.ago, enable_student_tests: true, remote_autotest_settings_id: 1,
           tokens_per_period: 1 })
     end
+
     before do
       subscribe course_id: role.course_id, assignment_id: assignment.id
     end
@@ -23,7 +24,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when the student cannot run tests' do
@@ -43,7 +44,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when the ta cannot run tests' do
@@ -65,7 +66,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when the instructor cannot run tests' do
@@ -89,7 +90,7 @@ describe TestRunsChannel do
     let(:current_user) { role.user }
 
     before do
-      stub_connection(current_user: current_user)
+      stub_connection(current_user: current_user, real_user: current_user)
     end
 
     context 'when course_id is nil' do

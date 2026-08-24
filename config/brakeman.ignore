@@ -1,0 +1,626 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "2ad13c4eff6064abf566e983249d552693d29e4d8abf0d6d2b63578425588372",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/jobs/auto_match_job.rb",
+      "line": 46,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "Open3.capture2(Rails.application.config.python, \"-m\", \"markus_exam_matcher\", \"char\", File.join(File.join(exam_template.base_path, \"raw\"), \"#{grouping.id}_info.jpg\"), \"--char_type\", (\"digit\" or \"letter\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutoMatchJob",
+        "method": "perform"
+      },
+      "user_input": "grouping.id",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": "This command does not contain unsafe user input"
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "4af944d921aa4d6066cb20f18d3c5d054cf79dc7e38f13da307dfb7d4877c53e",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/submissions_controller.rb",
+      "line": 954,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "Open3.capture3(*[Rails.application.config.python, \"-m\", \"nbconvert\", \"--to\", \"html\", \"--stdin\", \"--output\", (Pathname.new(\"tmp/notebook_html_cache\") + \"#{unique_path}.html\").to_s, \"--TemplateExporter.extra_template_basedirs=#{Rails.root.join(\"lib/jupyter-notebook\")}\", \"--template\", \"markus-html-template\"], :stdin_data => JSON.generate(JSON.parse(file_contents)))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "SubmissionsController",
+        "method": "notebook_to_html"
+      },
+      "user_input": "unique_path",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": "This command does not contain unsafe user input"
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "ffdb057890f049e309d1f7950de5ce7c5924d4b82b490dfad58791da483e44be",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/submissions_controller.rb",
+      "line": 982,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "Open3.capture3(*[\"pandoc\", \"-o\", Rails.root.join(Pathname.new(\"tmp/rmd_html_cache\").join(\"#{unique_path}.html\")).to_s, \"--to=html\", \"-f\", \"markdown-raw_html\"], :stdin_data => file_contents)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "SubmissionsController",
+        "method": "rmd_to_html"
+      },
+      "user_input": "unique_path",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": "This command does not contain unsafe user input"
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "0c37f97390c4864fca313cfa4878eb1fda864235d54d61043eb13eafae2e7fe1",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/automated_tests_controller.rb",
+      "line": 185,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.mkdir_p(File.dirname(FileHelper.checked_join(FileHelper.checked_join(Assignment.find(params[:assignment_id]).autotest_files_dir, (params[:path] or \"\")), f.original_filename)))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutomatedTestsController",
+        "method": "upload_files"
+      },
+      "user_input": "params[:path]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is built through nested FileHelper.checked_join calls, which reject any resolved path outside assignment.autotest_files_dir via File.expand_path(...).start_with?(...)."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "2cb9681e56ea813344fc4f6fa110601703bb68cbe5a4ea2fba432b7ae3b7aef1",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/groups_controller.rb",
+      "line": 594,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(File.join(\"tmp\", (\"#{Assignment.find(params[:assignment_id]).short_identifier}-starter-files-#{current_role.user_name}\" + \".zip\")), :filename => File.basename(File.join(\"tmp\", (\"#{Assignment.find(params[:assignment_id]).short_identifier}-starter-files-#{current_role.user_name}\" + \".zip\"))))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "GroupsController",
+        "method": "download_starter_file"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).short_identifier",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Built from Assignment#short_identifier and the authenticated user's user_name, both restricted to /\\A[a-zA-Z0-9\\-_ ]+\\z/ by model validation, so path traversal characters cannot appear."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "32b57eb00ccafe2bc906e85fd14e374acd1f582843c40b9360dc9ebe286b0203",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/automated_tests_controller.rb",
+      "line": 201,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.rm_rf(FileHelper.checked_join(Assignment.find(params[:assignment_id]).autotest_files_dir, f))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutomatedTestsController",
+        "method": "upload_files"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).autotest_files_dir",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside assignment.autotest_files_dir."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "3da999f3ea9a0e0777eb97e0c977c51fd1ed8c029036f4a223e7741661f32092",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/api/submission_files_controller.rb",
+      "line": 96,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Pathname.new(params[:folder_path])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::SubmissionFilesController",
+        "method": "create_folders"
+      },
+      "user_input": "params[:folder_path]",
+      "confidence": "High",
+      "cwe_id": [
+        22
+      ],
+      "note": "params[:folder_path] is passed into RepositoryHelper#add_folder, which rejects any resolved path outside the assignment's repository_folder via File.expand_path(...).start_with?(...) before use."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "46f1c12933f82579ff28f641a101d8483a8d95a3b38e92e62eb0665c3874ffef",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/submissions_controller.rb",
+      "line": 417,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Pathname.new(FileHelper.checked_join((current_role.accepted_grouping_for(params[:assignment_id]) or Assignment.find(params[:assignment_id]).groupings.find(params[:grouping_id])).assignment.repository_folder, (params[:path] or \"/\").gsub(/^\\//, \"\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "SubmissionsController",
+        "method": "update_files"
+      },
+      "user_input": "params[:path]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside the assignment's repository_folder."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "49d452a7aa0bde4be4d14f6468bb1e08a186d1716134f2fe9148311d5b8426a2",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/api/submission_files_controller.rb",
+      "line": 74,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file((Pathname.new(\"tmp\") + \"#{Assignment.find_by(:id => params[:assignment_id]).short_identifier}_#{Group.find_by(:id => params[:group_id]).group_name}_#{current_user.user_name}_#{(\"collected\" or \"latest\")}.zip\"), :disposition => \"inline\", :filename => \"#{Assignment.find_by(:id => params[:assignment_id]).short_identifier}_#{Group.find_by(:id => params[:group_id]).group_name}_#{current_user.user_name}_#{(\"collected\" or \"latest\")}.zip\".to_s)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::SubmissionFilesController",
+        "method": "index"
+      },
+      "user_input": "Group.find_by(:id => params[:group_id]).group_name",
+      "confidence": "High",
+      "cwe_id": [
+        22
+      ],
+      "note": "Built from Assignment#short_identifier and Group#group_name, both restricted to /\\A[a-zA-Z0-9\\-_ ]+\\z/ by model validation, so path traversal characters cannot appear."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "5800d650ce2cb41d087a27e9b267727e834da193d28e4f402f9c486c5bc30109",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/submissions_controller.rb",
+      "line": 744,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "[Format Error]",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "SubmissionsController",
+        "method": "downloads"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).short_identifier",
+      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
+      "note": "Built from Assignment#short_identifier, Group#group_name (both validated to /\\A[a-zA-Z0-9\\-_ ]+\\z/), and a revision_identifier that is only reachable here after repo.get_revision successfully resolves it to an existing revision (otherwise rescued and the request is redirected)."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "5ab0a005eebd54e94e8e85b051d253c4097e03fcce140c37699fdc4f3f920c54",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/api/submission_files_controller.rb",
+      "line": 60,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.rm_f((Pathname.new(\"tmp\") + \"#{Assignment.find_by(:id => params[:assignment_id]).short_identifier}_#{Group.find_by(:id => params[:group_id]).group_name}_#{current_user.user_name}_#{(\"collected\" or \"latest\")}.zip\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::SubmissionFilesController",
+        "method": "index"
+      },
+      "user_input": "Group.find_by(:id => params[:group_id]).group_name",
+      "confidence": "High",
+      "cwe_id": [
+        22
+      ],
+      "note": "Built from Assignment#short_identifier and Group#group_name, both restricted to /\\A[a-zA-Z0-9\\-_ ]+\\z/ by model validation, so path traversal characters cannot appear."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "669932b7d6fc21bd09e17d9f5cd3bcce8097e2402dd22dcb0a92133e262ba1d0",
+      "check_name": "SendFile",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/exam_templates_controller.rb",
+      "line": 109,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(FileHelper.checked_join(record.tmp_path, params[:file_name]), :filename => params[:file_name], :type => \"application/pdf\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ExamTemplatesController",
+        "method": "download_generate"
+      },
+      "user_input": "params[:file_name]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside record.tmp_path."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "67e186357c0ca1a32d5668fed5ea720bbe9b0a3592f8013e70455de105d3f226",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/api/submission_files_controller.rb",
+      "line": 124,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Pathname.new(Grouping.find_by(:group_id => params[:group_id], :assessment_id => params[:assignment_id]).assignment.repository_folder)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::SubmissionFilesController",
+        "method": "remove_file"
+      },
+      "user_input": "Grouping.find_by(:group_id => params[:group_id], :assessment_id => params[:assignment_id]).assignment.repository_folder",
+      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
+      "note": "repository_folder is an instructor-configured Assignment attribute, and the subsequent RepositoryHelper#remove_files call re-validates the resolved path stays within it via File.expand_path(...).start_with?(...)."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "77015673e54b6bbbd9f8b1eca89fcf089e80978292a675962723d3446158587f",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/api/starter_file_groups_controller.rb",
+      "line": 154,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.rm_rf(FileHelper.checked_join(record.path, params[:folder_path]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::StarterFileGroupsController",
+        "method": "remove_folder"
+      },
+      "user_input": "params[:folder_path]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside record.path."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "7ea5e2b1b9c218f3e480c08aa2ba1418fec7caae758cb057e5504a0f12c1d352",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/automated_tests_controller.rb",
+      "line": 209,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "File.delete(FileHelper.checked_join(Assignment.find(params[:assignment_id]).autotest_files_dir, f))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutomatedTestsController",
+        "method": "upload_files"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).autotest_files_dir",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside assignment.autotest_files_dir."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "8581d641c995eab2200a50719ab2b52b5bf0c5a2d2d934488349d792d048bb4e",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/api/starter_file_groups_controller.rb",
+      "line": 129,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "File.delete(FileHelper.checked_join(record.path, params[:filename]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::StarterFileGroupsController",
+        "method": "remove_file"
+      },
+      "user_input": "params[:filename]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside record.path."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "8a46cdfa0ec4f96f07264a6095871651a164d9b4f3584646ca2098f61a6246d5",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/automated_tests_controller.rb",
+      "line": 143,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Assignment.find(params[:assignment_id]).zip_automated_test_files(current_role), :filename => File.basename(Assignment.find(params[:assignment_id]).zip_automated_test_files(current_role)))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutomatedTestsController",
+        "method": "download_files"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).zip_automated_test_files(current_role)",
+      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
+      "note": "zip_automated_test_files builds the path from Assignment#short_identifier and the authenticated user's user_name, both restricted to /\\A[a-zA-Z0-9\\-_ ]+\\z/ by model validation."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "94c4d136641a50058979daa4163e981e08e1e98bd15012e4e61f62755d5b97b8",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/automated_tests_controller.rb",
+      "line": 98,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Pathname.new(Assignment.find(params[:assignment_id]).autotest_files_dir)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutomatedTestsController",
+        "method": "populate_autotest_manager"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).autotest_files_dir",
+      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
+      "note": "autotest_files_dir is a derived path (assignment.autotest_path + a constant subdirectory), not built from raw request params."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "a81feb5fa4065f16670d61948e002a35fdce9e5dfe4295a658a3af531de74d20",
+      "check_name": "SendFile",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/exam_templates_controller.rb",
+      "line": 284,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(FileHelper.checked_join(record.base_path, \"error\", params[:file_name]), :filename => params[:file_name], :type => \"application/pdf\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ExamTemplatesController",
+        "method": "download_error_file"
+      },
+      "user_input": "params[:file_name]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside record.base_path."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "b3910f19bd28a4c9dee8fd15cb480533b57eda713632b148cd7fa98aa6892143",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/api/starter_file_groups_controller.rb",
+      "line": 105,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.mkdir_p(FileHelper.checked_join(record.path, params[:folder_path]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::StarterFileGroupsController",
+        "method": "create_folder"
+      },
+      "user_input": "params[:folder_path]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is validated by FileHelper.checked_join, which rejects any resolved path outside record.path."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "b3d45b87a5b25d3035b4a7a8b1acd6b440dba38dec5efe77b3510d01b114edb6",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/submissions_controller.rb",
+      "line": 698,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(zipped_grouping_file_name(Assignment.find(params[:assignment_id])), :disposition => \"inline\", :filename => File.basename(zipped_grouping_file_name(Assignment.find(params[:assignment_id]))))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "SubmissionsController",
+        "method": "download_zipped_file"
+      },
+      "user_input": "Assignment.find(params[:assignment_id])",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "zipped_grouping_file_name builds the path from Assignment#short_identifier and the authenticated user's user_name, both restricted to /\\A[a-zA-Z0-9\\-_ ]+\\z/ by model validation."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "c404599eb160b43f756f34f1c6d9fe91b718ca33d9e5489beec7aff23437a80f",
+      "check_name": "SendFile",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/exam_templates_controller.rb",
+      "line": 272,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(File.join(record.base_path, \"raw\", \"raw_upload_#{record.split_pdf_logs.find(params[:split_pdf_log_id]).id}.pdf\"), :filename => record.split_pdf_logs.find(params[:split_pdf_log_id]).filename, :type => \"application/pdf\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ExamTemplatesController",
+        "method": "download_raw_split_file"
+      },
+      "user_input": "params[:split_pdf_log_id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "The actual file path is built from split_pdf_log.id (an integer primary key of a record already scoped and located via ActiveRecord#find), not from the raw params value. params[:split_pdf_log_id] is only used as a lookup key and raises RecordNotFound if invalid."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "d739cccf474fb73f142d20411cadd4c49c357d666e2a7004a50c2debb8f1528d",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/groups_controller.rb",
+      "line": 590,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.rm_rf(File.join(\"tmp\", (\"#{Assignment.find(params[:assignment_id]).short_identifier}-starter-files-#{current_role.user_name}\" + \".zip\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "GroupsController",
+        "method": "download_starter_file"
+      },
+      "user_input": "Assignment.find(params[:assignment_id]).short_identifier",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Built from Assignment#short_identifier and the authenticated user's user_name, both restricted to /\\A[a-zA-Z0-9\\-_ ]+\\z/ by model validation, so path traversal characters cannot appear."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "d787870ba3135b06619b9faa9160be8c67251600b2bbcd74cd73f502b8319556",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/automated_tests_controller.rb",
+      "line": 170,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.mkdir_p(FileHelper.checked_join(FileHelper.checked_join(Assignment.find(params[:assignment_id]).autotest_files_dir, (params[:path] or \"\")), f))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AutomatedTestsController",
+        "method": "upload_files"
+      },
+      "user_input": "params[:path]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is built through nested FileHelper.checked_join calls, which reject any resolved path outside assignment.autotest_files_dir."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "df9dc66d8a862274af421955e9c84200c9dd04aec1c0a5cf9037a4dddae52c47",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/api/submission_files_controller.rb",
+      "line": 152,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Pathname.new(Grouping.find_by(:group_id => params[:group_id], :assessment_id => params[:assignment_id]).assignment.repository_folder)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::SubmissionFilesController",
+        "method": "remove_folder"
+      },
+      "user_input": "Grouping.find_by(:group_id => params[:group_id], :assessment_id => params[:assignment_id]).assignment.repository_folder",
+      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
+      "note": "repository_folder is an instructor-configured Assignment attribute, and the subsequent RepositoryHelper#remove_folders call re-validates the resolved path stays within it via File.expand_path(...).start_with?(...)."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "fcb0121661cdd4302cacdc87849474845731c2ecba78bc0c21cd07ca1f654d81",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/api/submission_files_controller.rb",
+      "line": 97,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Pathname.new(Grouping.find_by(:group_id => params[:group_id], :assessment_id => params[:assignment_id]).assignment.repository_folder)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::SubmissionFilesController",
+        "method": "create_folders"
+      },
+      "user_input": "Grouping.find_by(:group_id => params[:group_id], :assessment_id => params[:assignment_id]).assignment.repository_folder",
+      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
+      "note": "params[:folder_path] is passed into RepositoryHelper#add_folder, which rejects any resolved path outside the assignment's repository_folder via File.expand_path(...).start_with?(...) before use."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "fe044bbe33a574b17ad1186ee37c270f8341264f2fedd4dcc89d7ddc43eff7ea",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/starter_file_groups_controller.rb",
+      "line": 62,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.mkdir_p(FileHelper.checked_join(FileHelper.checked_join(record.path, params[:path].to_s), f))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "StarterFileGroupsController",
+        "method": "update_files"
+      },
+      "user_input": "params[:path].to_s",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "Path is built through nested FileHelper.checked_join calls, which reject any resolved path outside record.path."
+    }
+  ],
+  "brakeman_version": "8.0.4"
+}

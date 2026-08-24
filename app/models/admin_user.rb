@@ -21,6 +21,8 @@
 # Indexes
 #
 #  index_users_on_api_key    (api_key) UNIQUE
+#  index_users_on_email      (email) UNIQUE
+#  index_users_on_id_number  (id_number) UNIQUE
 #  index_users_on_user_name  (user_name) UNIQUE
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective

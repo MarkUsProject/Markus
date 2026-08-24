@@ -54,4 +54,38 @@ describe("SummaryPanel", () => {
       expect(screen.queryByTestId("marks-chart")).not.toBeInTheDocument();
     });
   });
+
+  it("does not show the Old Mark column when remark_submitted is set to false", () => {
+    renderInResultContext(<SummaryPanel {...props} />, {is_reviewer: false});
+    expect(screen.queryByText("Old Mark")).not.toBeInTheDocument();
+  });
+
+  it("shows the Old Mark column when remark_submitted is set to true", () => {
+    props.criterionSummaryData = [
+      {criterion: "Question 1", mark: 8, max_mark: 10, old_mark: {mark: 6}},
+    ];
+    props.remark_submitted = true;
+    renderInResultContext(<SummaryPanel {...props} />, {is_reviewer: false});
+    expect(screen.getByText("Old Mark")).toBeInTheDocument();
+  });
+
+  it("shows 8/10 for Question 1 in the UI", () => {
+    renderInResultContext(<SummaryPanel {...props} />, {is_reviewer: false});
+    expect(screen.getByRole("gridcell", {name: "8 / 10"})).toBeInTheDocument();
+  });
+
+  it("shows -/10 for Question 1 in the UI", () => {
+    props.criterionSummaryData = [{criterion: "Question 1", mark: null, max_mark: 10}];
+    renderInResultContext(<SummaryPanel {...props} />, {is_reviewer: false});
+    expect(screen.getByText("- / 10")).toBeInTheDocument();
+  });
+
+  it("shows an old mark of 6 when remark_submitted is set to true", () => {
+    props.criterionSummaryData = [
+      {criterion: "Question 1", mark: 8, max_mark: 10, old_mark: {mark: 6}},
+    ];
+    props.remark_submitted = true;
+    renderInResultContext(<SummaryPanel {...props} />, {is_reviewer: false});
+    expect(screen.getByText("6")).toBeInTheDocument();
+  });
 });

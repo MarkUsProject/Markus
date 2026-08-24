@@ -4,18 +4,13 @@
 
 <%= content_for :modal_content do %>
 
-  <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script_yml',
-                             upload_id: 'upload_file',
-                             button_id: 'upload', nonce: true %>
   <% if @assignment.marking_started? %>
     <div class="warning">
       <p><%= t('assignments.due_date.marking_started_warning').html_safe %></p>
       <p><%= t('assignments.due_date.marking_overwrite_warning_html') %></p>
     </div>
   <% end %>
-  <%= t('upload_help_html', markus_version: Rails.configuration.markus_version, section_id: Criterion.name.pluralize.underscore.dasherize) %>
+  <%= t('upload_help_html', docs_url: Settings.docs_url, section_id: Criterion.name.pluralize.underscore.dasherize) %>
   <%= form_tag upload_course_assignment_criteria_path(@current_course, @assignment),
                multipart: true, size: 1 do %>
     <p><%= file_field_tag :upload_file, required: true, accept: '.yaml,.yml' %></p>
@@ -27,8 +22,7 @@
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),
                      data: { disable_with: t(:uploading_please_wait) },
-                     id: 'upload',
-                     disabled: true %>
+                     id: 'upload' %>
       <input type='reset' value='<%= t(:cancel) %>'>
     </section>
   <% end %>

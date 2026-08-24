@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {expect, describe, it, beforeEach} from "@jest/globals";
@@ -29,8 +28,8 @@ function mockData() {
   ];
 }
 
-function renderTableWithMockData() {
-  return renderTable(mockColumns(), mockData());
+function renderTableWithMockData(tableProps = {}) {
+  return renderTable(mockColumns(), mockData(), null, tableProps);
 }
 
 function renderTableWithoutData() {
@@ -43,11 +42,22 @@ function renderTableWithoutDataCustomText() {
   return {...result, noDataText: customNoDataText};
 }
 
-function renderTable(columns, data, noDataText) {
+function renderTable(columns, data, noDataText, tableProps = {}) {
   const {container, rerender} = render(
-    <Table columns={columns} data={data} {...(noDataText != null && {noDataText})} />
+    <Table
+      columns={columns}
+      data={data}
+      {...(noDataText != null && {noDataText})}
+      {...tableProps}
+    />
   );
-  return {table: container, columns: columns, data: data, rerender: rerender};
+  return {
+    table: container,
+    columns: columns,
+    data: data,
+    rerender: rerender,
+    tableProps: tableProps,
+  };
 }
 
 function expectTextInDocument(text) {
@@ -167,6 +177,30 @@ describe("tests for the table component", () => {
 
       expectRowsInTableInOrder(table, columns, data);
     });
+
+    it("does not show row numbers by default", () => {
+      const {table} = renderTableWithMockData();
+      const tableElement = table.querySelector(".Table");
+
+      expect(tableElement).not.toHaveClass("-show-row-numbers");
+    });
+
+    it("shows positional row numbers without adding a table column when enabled", () => {
+      const {table} = renderTableWithMockData({showRowNumbers: true});
+      const tableElement = table.querySelector(".Table");
+      const header = table.querySelector(".rt-thead.-header");
+      const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
+
+      expect(tableElement).toHaveClass("-show-row-numbers");
+      expect(table.querySelector(".rt-tbody").style.minWidth).toContain(
+        "var(--row-number-gutter-width)"
+      );
+      expect(header.querySelectorAll(".rt-th")).toHaveLength(mockColumns().length);
+      tableRows.forEach(tableRow => {
+        expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(mockColumns().length);
+        expect(tableRow.querySelector(".rt-row-number")).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe("rendering of the no-data component when data is empty", () => {
@@ -216,6 +250,19 @@ describe("tests for the table component", () => {
         expectRowsInTableInOrder(table, columns, data);
       }
     });
+
+    it("sorts row contents without adding a row-number column", async () => {
+      const {table, columns, data} = renderTableWithMockData({showRowNumbers: true});
+
+      await clickHeader(columns[0].header);
+      await clickHeader(columns[0].header);
+
+      const tableRows = table.querySelectorAll(".rt-tbody .rt-tr");
+      expect(within(tableRows[0]).getByText(data[data.length - 1].col1)).toBeInTheDocument();
+      tableRows.forEach(tableRow =>
+        expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(columns.length)
+      );
+    });
   });
 
   describe("filtering", () => {
@@ -236,7 +283,7 @@ describe("tests for the table component", () => {
     });
 
     it("filters data", async () => {
-      const {columns} = renderTableWithMockData();
+      const {table, columns} = renderTableWithMockData();
       columns.pop();
 
       const inputs = searchInputs();
@@ -256,6 +303,7 @@ describe("tests for the table component", () => {
         ],
         columns
       );
+      expect(table.querySelectorAll(".rt-tbody .rt-tr")).toHaveLength(2);
     });
 
     it("resets the filter when the search query is erased", async () => {
@@ -326,6 +374,35 @@ describe("tests for the table component", () => {
         {col1: "abcd", col2: "p", col3: "Ivan"},
         {col1: "abc", col2: "pq", col3: "David"},
       ]);
+    });
+  });
+
+  describe("checking and unchecking of the select column checkboxes", () => {
+    it("checks the select column checkboxes when the select column header checkbox is selected", async () => {
+      const {table} = renderTableWithMockData({enableRowSelection: true});
+      const header = table.querySelector(".rt-thead.-header");
+      const selectAllCheckbox = within(header).getByRole("checkbox");
+
+      expect(selectAllCheckbox).not.toBeChecked();
+      await user.click(selectAllCheckbox);
+      expect(selectAllCheckbox).toBeChecked();
+
+      const body = document.querySelector(".rt-tbody");
+      const rowCheckboxes = within(body).getAllByRole("checkbox");
+      rowCheckboxes.forEach(checkbox => expect(checkbox).toBeChecked());
+    });
+
+    it("unchecks the select column checkboxes when the select column header checkbox is unselected", async () => {
+      const {table} = renderTableWithMockData({enableRowSelection: true});
+      const header = table.querySelector(".rt-thead.-header");
+      const selectAllCheckbox = within(header).getByRole("checkbox");
+      await user.click(selectAllCheckbox);
+      await user.click(selectAllCheckbox);
+      expect(selectAllCheckbox).not.toBeChecked();
+
+      const body = document.querySelector(".rt-tbody");
+      const rowCheckboxes = within(body).getAllByRole("checkbox");
+      rowCheckboxes.forEach(checkbox => expect(checkbox).not.toBeChecked());
     });
   });
 });

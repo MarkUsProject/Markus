@@ -8,11 +8,13 @@
 #  entry_rename  :string           default(""), not null
 #  name          :string           not null
 #  use_rename    :boolean          default(FALSE), not null
+#  created_at    :datetime
+#  updated_at    :datetime
 #  assessment_id :bigint           not null
 #
 # Indexes
 #
-#  index_starter_file_groups_on_assessment_id  (assessment_id)
+#  index_starter_file_groups_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
 # Foreign Keys
 #

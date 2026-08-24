@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import {useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -11,6 +11,7 @@ export default function CheckboxCriterionInput({
   destroyMark,
   expanded,
   id,
+  last_updated_by,
   mark,
   max_mark,
   name,
@@ -120,6 +121,11 @@ export default function CheckboxCriterionInput({
             oldMark.mark
           })`}</div>
         )}
+        {last_updated_by && (
+          <div className="last-updated-by">
+            {I18n.t("results.last_updated_by", {name: last_updated_by})}
+          </div>
+        )}
         <div
           className="criterion-description"
           dangerouslySetInnerHTML={{__html: safe_marked(description)}}
@@ -134,6 +140,7 @@ CheckboxCriterionInput.propTypes = {
   destroyMark: PropTypes.func.isRequired,
   expanded: PropTypes.bool.isRequired,
   id: PropTypes.number.isRequired,
+  last_updated_by: PropTypes.string,
   mark: PropTypes.number,
   max_mark: PropTypes.number.isRequired,
   oldMark: PropTypes.object,

@@ -149,7 +149,7 @@ describe AutomatedTestsController do
         let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id, file_name: filename } }
 
         it 'returns an error message' do
-          expect(response.body).to eq I18n.t('student.submission.missing_file', file_name: filename)
+          expect(response.body).to eq I18n.t('submissions.student.missing_file', file_name: filename)
         end
       end
     end

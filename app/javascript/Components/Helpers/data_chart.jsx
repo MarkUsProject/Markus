@@ -1,4 +1,3 @@
-import React from "react";
 import {createRoot} from "react-dom/client";
 import {Bar} from "react-chartjs-2";
 import {chartScales} from "./chart_helpers";

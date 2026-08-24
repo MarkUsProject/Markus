@@ -9,7 +9,7 @@ source 'https://rubygems.org'
 # Bundler requires these gems in all environments
 gem 'propshaft'
 gem 'puma'
-gem 'rails', '~> 8.1.2'
+gem 'rails', '~> 8.1.3'
 
 # Models and database interactions
 gem 'pluck_to_hash'
@@ -43,7 +43,7 @@ gem 'redis', '~> 5.4.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.2.0'
+gem 'rmagick', '~> 7.0.5'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -51,7 +51,7 @@ gem 'csv'
 gem 'json'
 gem 'mini_mime'
 gem 'redcarpet'
-gem 'rubyzip', require: 'zip'
+gem 'rubyzip', '~> 3.4.1'
 gem 'rugged'
 
 # Rails miscellany
@@ -105,7 +105,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
-  gem 'active_record_doctor', require: false
+  gem 'active_record_doctor'
   gem 'bullet'
   gem 'capybara'
   gem 'debug', '>= 1.0.0'
@@ -128,4 +128,11 @@ end
 # group if you are using Phusion Passenger or Puma.
 group :unicorn do
   gem 'unicorn'
+end
+
+group :docs do
+  gem 'jekyll', '~> 4.4'
+  gem 'jekyll-relative-links'
+  gem 'jekyll-seo-tag'
+  gem 'just-the-docs'
 end

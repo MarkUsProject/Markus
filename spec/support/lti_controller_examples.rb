@@ -22,7 +22,7 @@ shared_examples 'lti deployment controller' do
   let(:mock_roles) { [LtiDeployment::LTI_ROLES[:instructor]] }
 
   def create_pub_jwk
-    @create_pub_jwk ||= JWT::JWK.new(OpenSSL::PKey::RSA.new(1024))
+    @create_pub_jwk ||= JWT::JWK.new(OpenSSL::PKey::RSA.new(2048))
   end
 
   def generate_payload(roles, nonce)

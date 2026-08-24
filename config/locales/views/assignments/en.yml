@@ -6,6 +6,7 @@ en:
     assignment_information: Assignment information
     average_annotations: "%{average_annotations} annotations per marked submission"
     average_annotations_detail_descriptor: For detailed information, see
+    bonus_deductions: Bonus/Deductions
     configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
     deletion_confirmation: Are you sure you want to delete this assignment?
@@ -106,6 +107,9 @@ en:
     upload_config_files:
       errors:
         invalid_starter_file_group_dirname: 'Invalid directory_name for starter file group: %{directory_name}'
-    upload_config_help_html: "<p>This zip file will configure and create this assignment.</p><p>This does not configure student or grader settings.<br>For more information please visit <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Importing-and-Exporting-Data.md#%{section_id}>this page</a>.</p>"
+    upload_config_help_html: <p>This zip file will configure and create this assignment.</p><p>This does not configure student or grader settings.<br>For more information please visit <a href="%{docs_url}/instructors/importing-and-exporting-data/#%{section_id}">this page</a>.</p>
     upload_file_requirement: Filename %{file_name} is not allowed for this assignment.
     upload_file_requirement_in_folder: Filename %{file_name} in %{file_path} is not allowed for this assignment.
+    upload_grades:
+      invalid_criteria: 'The following criteria were not found for this assignment: %{criteria}'
+      overwrite: Overwrite existing grades?

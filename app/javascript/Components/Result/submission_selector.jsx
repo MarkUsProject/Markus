@@ -171,6 +171,7 @@ export class SubmissionSelector extends React.Component {
             filterData={this.props.filterData}
             updateFilterData={this.props.updateFilterData}
             clearAllFilters={this.props.clearAllFilters}
+            can_manage_submissions={this.props.can_manage_submissions}
             sections={this.props.sections}
             tas={this.props.tas}
             available_tags={this.props.available_tags}
@@ -249,6 +250,7 @@ export class SubmissionSelector extends React.Component {
 SubmissionSelector.propTypes = {
   assignment_max_mark: PropTypes.number,
   can_release: PropTypes.bool,
+  can_manage_submissions: PropTypes.bool,
   fullscreen: PropTypes.bool,
   group_name: PropTypes.string,
   marking_state: PropTypes.string,

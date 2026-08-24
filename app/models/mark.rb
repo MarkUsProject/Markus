@@ -14,9 +14,9 @@
 #
 # Indexes
 #
-#  index_marks_on_criterion_id        (criterion_id)
-#  index_marks_on_last_updated_by_id  (last_updated_by_id)
-#  index_marks_on_result_id           (result_id)
+#  index_marks_on_criterion_id                (criterion_id)
+#  index_marks_on_last_updated_by_id          (last_updated_by_id)
+#  index_marks_on_result_id_and_criterion_id  (result_id,criterion_id) UNIQUE
 #
 # Foreign Keys
 #

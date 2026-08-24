@@ -11,13 +11,11 @@ AllCops:
     - 'db/migrate/.*'
     - 'db/schema.rb'
     - 'lib/repo/test/.*'
+    - 'release/.*'
     - 'Vagrantfile'
   NewCops: enable
   SuggestExtensions: false
   TargetRubyVersion: 3.1
-
-Capybara/ClickLinkOrButtonStyle:  # TODO: Enable and fix errors after reviewing system tests
-  Enabled: false
 
 FactoryBot/AssociationStyle:
   EnforcedStyle: explicit

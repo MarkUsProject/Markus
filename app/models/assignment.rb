@@ -21,12 +21,14 @@
 # Indexes
 #
 #  index_assessments_on_course_id                       (course_id)
+#  index_assessments_on_parent_assessment_id            (parent_assessment_id) UNIQUE
 #  index_assessments_on_short_identifier_and_course_id  (short_identifier,course_id) UNIQUE
 #  index_assessments_on_type_and_short_identifier       (type,short_identifier)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (parent_assessment_id => assessments.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 require 'csv'
@@ -590,6 +592,11 @@ class Assignment < Assessment
   def summary_json(user)
     return {} unless user.instructor? || user.ta?
     is_instructor = user.instructor?
+    assigned_grouping_ids = self.groupings
+                                .joins(:memberships)
+                                .where('memberships.role_id': user.id)
+                                .ids
+                                .to_set
 
     if is_instructor
       groupings = self.groupings
@@ -606,9 +613,11 @@ class Assignment < Assessment
                                                   'lti_deployments.lms_course_name')
       lti_deployments.each { |deployment| deployment.transform_keys! { |key| key.to_s.split('.')[-1] } }
     else
-      groupings = self.groupings
-                      .joins(:memberships)
-                      .where('memberships.role_id': user.id)
+      groupings = if user.grader_permission.manage_submissions
+                    self.groupings
+                  else
+                    self.groupings.where(id: assigned_grouping_ids)
+                  end
       graders = {}
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
@@ -655,15 +664,15 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
     selected_criteria = is_instructor ? self.criteria : self.ta_criteria
-    selected_criteria = selected_criteria.pluck(:id, :name, :max_mark, :bonus)
-    criteria_columns = selected_criteria.filter_map do |crit_id, crit_name, crit_max_mark, crit_bonus|
+    criteria_columns = selected_criteria.filter_map do |criterion|
+      crit_id = criterion.id
       unassigned = !assigned_criteria.nil? && assigned_criteria.exclude?(crit_id)
       next if hide_unassigned && unassigned
 
-      max_mark += crit_max_mark unless crit_bonus
+      max_mark += criterion.max_mark unless criterion.bonus?
       criteria_shown << crit_id
       {
-        Header: crit_bonus ? "#{crit_name} (#{Criterion.human_attribute_name(:bonus)})" : crit_name,
+        Header: criterion.export_name,
         accessor: "criteria.#{crit_id}",
         className: unassigned ? 'number unassigned' : 'number',
         headerClassName: unassigned ? 'unassigned' : ''
@@ -714,7 +723,8 @@ class Assignment < Assessment
         max_mark: max_mark,
         result_id: result_id,
         submission_id: submission_id,
-        total_extra_marks: extra_mark
+        total_extra_marks: extra_mark,
+        assigned: assigned_grouping_ids.include?(grouping_id)
       }
     end
 
@@ -833,10 +843,10 @@ class Assignment < Assessment
     headers = [first_row, second_row]
 
     self.ta_criteria.each do |crit|
-      headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
+      headers[0] << crit.export_name
       headers[1] << crit.max_mark
     end
-    headers[0] << 'Bonus/Deductions'
+    headers[0] << I18n.t('assignments.bonus_deductions')
     headers[1] << ''
 
     result_ids = groupings.pluck('results.id').uniq.compact
@@ -864,6 +874,107 @@ class Assignment < Assessment
         csv << row
       end
     end
+  end
+
+  def import_marks_from_csv(grades_data, overwrite, role)
+    results_by_group_name = current_results
+                            .joins(grouping: :group)
+                            .includes(grouping: :group)
+                            .index_by { |result| result.grouping.group.group_name }
+    criteria_by_name = ta_criteria.index_by(&:export_name)
+    ignored_headers = [Group.human_attribute_name(:group_name),
+                       I18n.t('results.total_mark'),
+                       I18n.t('assignments.bonus_deductions')] +
+      Student::CSV_ORDER.map { |field| User.human_attribute_name(field) }
+    result_ids = results_by_group_name.values.map(&:id)
+    criterion_ids = criteria_by_name.values.map(&:id)
+    marks_by_result_and_criterion = Mark.where(result_id: result_ids, criterion_id: criterion_ids)
+                                        .pluck_to_hash(:id, :result_id, :criterion_id, :mark)
+                                        .index_by { |mark| [mark[:result_id], mark[:criterion_id]] }
+    mark_updates = {}
+    new_mark_updates = {}
+    incomplete_result_ids = []
+    now = Time.current
+
+    headers = nil
+    criterion_columns = nil
+    group_name_index = nil
+
+    parse_result = MarkusCsv.parse(grades_data, header_count: 2) do |row|
+      next if row.empty?
+
+      if headers.nil?
+        headers = row
+        group_name_index = headers.index(Group.human_attribute_name(:group_name)) || 0
+        unknown_columns = []
+        uploaded_criterion_columns = headers.each_with_index.filter_map do |header, i|
+          criterion = criteria_by_name[header]
+          next [i, criterion] unless criterion.nil?
+
+          unknown_columns << header if header.present? && ignored_headers.exclude?(header)
+          nil
+        end
+
+        if uploaded_criterion_columns.empty? || unknown_columns.present?
+          raise I18n.t('assignments.upload_grades.invalid_criteria', criteria: unknown_columns.join(', '))
+        end
+        criterion_columns = uploaded_criterion_columns
+        next
+      end
+
+      group_name = row[group_name_index]
+      next if group_name.blank?
+      uploaded_result = results_by_group_name[group_name]
+      raise CsvInvalidLineError if uploaded_result.nil? || uploaded_result.released_to_students?
+
+      row_updates = []
+      criterion_columns.each do |column_index, criterion|
+        key = [uploaded_result.id, criterion.id]
+        mark = marks_by_result_and_criterion[key]
+        current_mark = if mark&.[](:id)
+                         mark_updates.key?(mark[:id]) ? mark_updates[mark[:id]][:mark] : mark[:mark]
+                       else
+                         new_mark_updates[key]&.[](:mark)
+                       end
+        next if !overwrite && !current_mark.nil?
+
+        mark_value = nil
+        if row[column_index].present?
+          mark_value = Float(row[column_index], exception: false)
+          raise CsvInvalidLineError if mark_value.nil? || mark_value.negative? || mark_value > criterion.max_mark
+        end
+
+        row_updates << [
+          key,
+          mark,
+          {
+            result_id: uploaded_result.id,
+            criterion_id: criterion.id,
+            mark: mark_value,
+            override: !mark_value.nil?,
+            last_updated_by_id: role.id,
+            updated_at: now
+          }
+        ]
+      end
+
+      row_updates.each do |key, mark, attrs|
+        if mark&.[](:id)
+          mark_updates[mark[:id]] = attrs.merge(id: mark[:id])
+        else
+          new_mark_updates[key] = attrs
+        end
+        incomplete_result_ids << attrs[:result_id] if attrs[:mark].nil?
+      end
+    end
+
+    Mark.upsert_all(mark_updates.values) unless mark_updates.empty?
+    Mark.insert_all(new_mark_updates.values) unless new_mark_updates.empty?
+    unless incomplete_result_ids.empty?
+      Result.where(id: incomplete_result_ids.uniq).update_all(marking_state: Result::MARKING_STATES[:incomplete])
+    end
+
+    parse_result
   end
 
   # Returns an array of [mark, max_mark].
@@ -1285,7 +1396,7 @@ class Assignment < Assessment
                       .joins(tas: :user)
                       .group('user_name')
                       .count
-    graders = self.course.tas.joins(:user)
+    graders = self.course.course_staff.joins(:user)
                   .pluck(:user_name, :first_name, :last_name, 'roles.id',
                          'roles.hidden').map do |user_name, first_name, last_name, id, hidden|
       {
@@ -1363,14 +1474,22 @@ class Assignment < Assessment
   # Retrieve data for submissions table.
   # Uses joins and pluck rather than includes to improve query speed.
   def current_submission_data(current_role)
+    return [] unless current_role.instructor? || current_role.ta?
+
+    assigned_grouping_ids = self.groupings
+                                .joins(:memberships)
+                                .where('memberships.role_id': current_role.id)
+                                .ids
+                                .to_set
+
     if current_role.instructor?
       groupings = self.groupings
-    elsif current_role.ta?
-      groupings = self.groupings.where(id: self.groupings.joins(:memberships)
-                                                         .where('memberships.role_id': current_role.id)
-                                                         .select(:'groupings.id'))
     else
-      return []
+      groupings = if current_role.grader_permission.manage_submissions
+                    self.groupings
+                  else
+                    self.groupings.where(id: assigned_grouping_ids)
+                  end
     end
 
     data = groupings
@@ -1461,7 +1580,8 @@ class Assignment < Assessment
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
                                      result_info['results.released_to_students'],
-                                     collection_date)
+                                     collection_date),
+        assigned: assigned_grouping_ids.include?(grouping_id)
       }
 
       base[:start_time] = I18n.l(start_time) if self.is_timed && !start_time.nil?

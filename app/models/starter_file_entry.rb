@@ -6,6 +6,8 @@
 #
 #  id                    :bigint           not null, primary key
 #  path                  :string           not null
+#  created_at            :datetime
+#  updated_at            :datetime
 #  starter_file_group_id :bigint           not null
 #
 # Indexes

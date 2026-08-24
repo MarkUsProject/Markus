@@ -1,5 +1,6 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
+import {Group, Panel, Separator} from "react-resizable-panels";
 
 // TODO: This import seems to be required to automatically include the X-CSRF-TOKEN header on
 //   jQuery AJAX requests in this component, unlike all other pages. Requires further investigation.
@@ -15,6 +16,7 @@ import {ResultContext} from "./result_context";
 import {annotation_context_menu} from "./context_menu";
 import {AnnotationText} from "../../common/annotations/annotation_text";
 import {get_html_annotation_range} from "../../common/annotations/html_annotations";
+import {getInitialFilterData, restoreFilterData} from "./filter_data";
 
 const INITIAL_ANNOTATION_MODAL_STATE = {
   show: false,
@@ -26,28 +28,10 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   changeOneOption: false,
 };
 
-const INITIAL_FILTER_MODAL_STATE = {
-  ascending: true,
-  orderBy: "group_name",
-  annotationText: "",
-  tas: [],
-  tags: [],
-  section: "",
-  markingState: "",
-  totalMarkRange: {
-    min: "",
-    max: "",
-  },
-  totalExtraMarkRange: {
-    min: "",
-    max: "",
-  },
-  criteria: {},
-};
-
 class Result extends React.Component {
   constructor(props) {
     super(props);
+    this.initialFilterModalState = getInitialFilterData(props.role);
 
     this.state = {
       annotation_categories: [],
@@ -61,7 +45,7 @@ class Result extends React.Component {
       result_id: props.result_id,
       grouping_id: props.grouping_id,
       can_release: false,
-      filterData: INITIAL_FILTER_MODAL_STATE,
+      filterData: this.initialFilterModalState,
       isCreateTagModalOpen: false,
       prefetchedIds: null, // Array of { result_id, grouping_id }
       prefetchedIndex: -1, // Current position in prefetched list
@@ -72,21 +56,33 @@ class Result extends React.Component {
     this.leftPane = React.createRef();
   }
 
+  refreshPdfViewer = () => {
+    if (window.pdfViewer) {
+      window.pdfViewer.refresh_annotations();
+    }
+  };
+
+  handleFullscreenChange = () => {
+    this.setState({fullscreen: !!document.fullscreenElement}, this.refreshPdfViewer);
+  };
+
   componentDidMount() {
     this.fetchData();
     window.modal = new ModalMarkus("#annotation_dialog");
     window.modalNotesGroup = new ModalMarkus("#notes_dialog");
 
-    document.addEventListener("fullscreenchange", () => {
-      this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
-    });
+    if (!this.layoutListenersAdded) {
+      document.addEventListener("fullscreenchange", this.handleFullscreenChange);
+      window.addEventListener("resize", this.refreshPdfViewer);
+      this.layoutListenersAdded = true;
+    }
 
     // Clear text selection to enable shift + arrow keyboard shortcuts
     document.getSelection().removeAllRanges();
 
-    this.refreshFilterData();
+    const filterChanged = this.refreshFilterData();
     // Prefetch grouping IDs for client-side navigation (skip if already valid)
-    if (!this.state.prefetchedIds || this.shouldRefetchIds()) {
+    if (!filterChanged && (!this.state.prefetchedIds || this.shouldRefetchIds())) {
       this.fetchGroupingIds();
     }
   }
@@ -94,6 +90,13 @@ class Result extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.result_id !== prevState.result_id) {
       this.componentDidMount();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.layoutListenersAdded) {
+      document.removeEventListener("fullscreenchange", this.handleFullscreenChange);
+      window.removeEventListener("resize", this.refreshPdfViewer);
     }
   }
 
@@ -112,8 +115,6 @@ class Result extends React.Component {
         }
         const markData = this.processMarks(res);
         this.setState({...res, ...markData, loading: false}, () => {
-          initializePanes();
-          fix_panes();
           this.updateContextMenu();
           if (this.props.role !== "Student") {
             this.syncFilterData();
@@ -142,7 +143,7 @@ class Result extends React.Component {
 
   syncSection = (sectionSelection, sectionData) => {
     if (!sectionData.includes(sectionSelection) && sectionSelection !== "") {
-      this.updateFilterData({section: INITIAL_FILTER_MODAL_STATE["section"]});
+      this.updateFilterData({section: this.initialFilterModalState["section"]});
     }
   };
 
@@ -295,6 +296,14 @@ class Result extends React.Component {
   };
 
   /* Callbacks for annotations */
+  // Headers for annotation routes, which are submitted as JSON via fetch rather than
+  // through jQuery, so the CSRF token needs to be attached by hand.
+  jsonHeaders = () => ({
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
+  });
+
   newAnnotation = () => {
     const submission_file_id =
       this.leftPane.current.submissionFilePanel.current.state.selectedFile[1];
@@ -314,14 +323,18 @@ class Result extends React.Component {
 
     let onSubmit = formData => {
       let data = {...formData, ...metadata};
-      return $.post({
-        url: Routes.course_annotations_path(this.props.course_id),
-        data,
-      }).then(() => {
-        this.setState({
-          annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
-        });
-      }); // Resetting back to original
+      return fetch(Routes.course_annotations_path(this.props.course_id), {
+        method: "POST",
+        headers: this.jsonHeaders(),
+        body: JSON.stringify(data),
+      })
+        .then(response => response.json())
+        .then(json => {
+          this.addAnnotation(json.annotation, json.mark_update);
+          this.setState({
+            annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
+          });
+        }); // Resetting back to original
     };
 
     this.setState({
@@ -354,27 +367,20 @@ class Result extends React.Component {
     }
   };
 
-  addAnnotation = (
-    annotation,
-    criterion_id = null,
-    mark_value = null,
-    new_subtotal = null,
-    new_total = null,
-    new_num_marked = null
-  ) => {
+  addAnnotation = (annotation, markUpdate = null) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
 
-    if (!!criterion_id) {
+    if (markUpdate) {
       let newMarks = [...this.state.marks];
-      let i = newMarks.findIndex(m => m.id === criterion_id);
+      let i = newMarks.findIndex(m => m.id === markUpdate.criterion_id);
       if (i >= 0) {
         newMarks[i] = {...newMarks[i]};
-        newMarks[i].mark = mark_value;
+        newMarks[i].mark = markUpdate.mark;
         this.setState({
           marks: newMarks,
-          subtotal: new_subtotal,
-          total: new_total,
-          num_marked: new_num_marked,
+          subtotal: markUpdate.subtotal,
+          total: markUpdate.total,
+          num_marked: markUpdate.num_marked,
         });
       }
     }
@@ -403,7 +409,15 @@ class Result extends React.Component {
 
     data = this.extend_with_selection_data(data);
     if (data) {
-      $.post(Routes.add_existing_annotation_course_annotations_path(this.props.course_id), data);
+      fetch(Routes.add_existing_annotation_course_annotations_path(this.props.course_id), {
+        method: "POST",
+        headers: this.jsonHeaders(),
+        body: JSON.stringify(data),
+      })
+        .then(response => response.json())
+        .then(json => {
+          this.addAnnotation(json.annotation, json.mark_update);
+        });
     }
   };
 
@@ -423,7 +437,15 @@ class Result extends React.Component {
 
     data = this.extend_with_selection_data(data);
     if (data) {
-      $.post(Routes.course_annotations_path(this.props.course_id), data, undefined, "script");
+      fetch(Routes.course_annotations_path(this.props.course_id), {
+        method: "POST",
+        headers: this.jsonHeaders(),
+        body: JSON.stringify(data),
+      })
+        .then(response => response.json())
+        .then(json => {
+          this.addAnnotation(json.annotation, json.mark_update);
+        });
     }
   };
 
@@ -467,18 +489,24 @@ class Result extends React.Component {
 
     let onSubmit = formData => {
       let data = {...formData, ...metadata};
-      $.ajax({
-        url: Routes.course_annotation_path(this.props.course_id, annot_id),
-        data,
+      return fetch(Routes.course_annotation_path(this.props.course_id, annot_id), {
         method: "PUT",
-        dataType: "json",
-      }).always(() => {
-        this.setState({
-          annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
+        headers: this.jsonHeaders(),
+        body: JSON.stringify(data),
+      })
+        .then(response => (response.ok ? response.json() : null))
+        .then(json => {
+          if (json) {
+            this.updateAnnotation(json.annotation);
+          }
+        })
+        .finally(() => {
+          this.setState({
+            annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
+          });
+          this.refreshAnnotations();
+          this.refreshAnnotationCategories();
         });
-        this.refreshAnnotations();
-        this.refreshAnnotationCategories();
-      });
     };
 
     let annotation = this.state.annotations.find(
@@ -542,7 +570,7 @@ class Result extends React.Component {
     }
   }
 
-  destroyAnnotation(annotation_id, range, annotation_text_id) {
+  destroyAnnotation(annotation_id, annotation_text_id) {
     if (
       !!window.annotation_manager &&
       window.annotation_manager.annotation_text_manager.annotationTextExists(annotation_text_id)
@@ -564,15 +592,21 @@ class Result extends React.Component {
   }
 
   removeAnnotation = annot_id => {
-    $.ajax({
-      url: Routes.course_annotation_path(this.props.course_id, annot_id),
+    fetch(Routes.course_annotation_path(this.props.course_id, annot_id), {
       method: "DELETE",
-      data: {
+      headers: this.jsonHeaders(),
+      body: JSON.stringify({
         result_id: this.state.result_id,
         assignment_id: this.state.assignment_id,
-      },
-      dataType: "script",
-    }).then(this.fetchData);
+      }),
+    })
+      .then(response => (response.ok ? response.json() : null))
+      .then(json => {
+        if (json) {
+          this.destroyAnnotation(json.id, json.annotation_text_id);
+        }
+      })
+      .then(this.fetchData);
   };
 
   /* Callbacks for RightPane */
@@ -599,6 +633,7 @@ class Result extends React.Component {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark.override = data.mark_override;
+          newMark.last_updated_by = data.last_updated_by;
           return newMark;
         } else {
           return markData;
@@ -900,21 +935,16 @@ class Result extends React.Component {
     });
   };
 
+  filterStorageKey = () => `${this.props.user_id}_${this.state.assignment_id}_filterData`;
+
   refreshFilterData = () => {
-    const storedFilter = localStorage.getItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`
-    );
-    let parsed_filter;
-    try {
-      parsed_filter = JSON.parse(storedFilter);
-    } catch (e) {
-      parsed_filter = null;
+    const filterData = restoreFilterData(this.props.role, this.filterStorageKey());
+
+    const filterChanged = JSON.stringify(this.state.filterData) !== JSON.stringify(filterData);
+    if (filterChanged) {
+      this.updateFilterData(filterData);
     }
-    if (parsed_filter) {
-      this.setState({filterData: parsed_filter});
-    } else {
-      this.updateFilterData(INITIAL_FILTER_MODAL_STATE);
-    }
+    return filterChanged;
   };
 
   updateFilterData = new_filters => {
@@ -922,23 +952,17 @@ class Result extends React.Component {
     this.setState({filterData: filters, prefetchedIds: null, prefetchedIndex: -1}, () => {
       this.fetchGroupingIds();
     });
-    localStorage.setItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(filters)
-    );
+    localStorage.setItem(this.filterStorageKey(), JSON.stringify(filters));
   };
 
   resetFilterData = () => {
     this.setState(
-      {filterData: INITIAL_FILTER_MODAL_STATE, prefetchedIds: null, prefetchedIndex: -1},
+      {filterData: this.initialFilterModalState, prefetchedIds: null, prefetchedIndex: -1},
       () => {
         this.fetchGroupingIds();
       }
     );
-    localStorage.setItem(
-      `${this.props.user_id}_${this.state.assignment_id}_filterData`,
-      JSON.stringify(INITIAL_FILTER_MODAL_STATE)
-    );
+    localStorage.setItem(this.filterStorageKey(), JSON.stringify(this.initialFilterModalState));
   };
 
   handleCreateTagButtonClick = () => {
@@ -960,6 +984,7 @@ class Result extends React.Component {
       course_id: this.props.course_id,
       role: this.props.role,
       is_reviewer: this.state.is_reviewer,
+      scanned_exam: !!this.props.scanned_exam,
     };
 
     return (
@@ -977,6 +1002,7 @@ class Result extends React.Component {
           <SubmissionSelector
             key="submission-selector"
             can_release={this.state.can_release}
+            can_manage_submissions={this.state.can_manage_submissions}
             assignment_max_mark={this.state.assignment_max_mark}
             fullscreen={this.state.fullscreen}
             group_name={this.state.group_name}
@@ -1007,8 +1033,8 @@ class Result extends React.Component {
               isOpen={this.state.isCreateTagModalOpen}
               onRequestClose={this.closeCreateTagModal}
             />
-            <div id="panes">
-              <div id="left-pane">
+            <Group id="panes" orientation="horizontal" onLayoutChange={this.refreshPdfViewer}>
+              <Panel id="left-pane" className="result-pane" defaultSize="70%" minSize="25%">
                 <LeftPane
                   ref={this.leftPane}
                   loading={this.state.loading}
@@ -1034,17 +1060,14 @@ class Result extends React.Component {
                   submission_files={this.state.submission_files}
                   student_view={this.props.role === "Student"}
                   newAnnotation={this.newAnnotation}
-                  addAnnotation={this.addAnnotation}
                   addExistingAnnotation={this.addExistingAnnotation}
                   editAnnotation={this.editAnnotation}
-                  updateAnnotation={this.updateAnnotation}
                   removeAnnotation={this.removeAnnotation}
-                  destroyAnnotation={this.destroyAnnotation}
                   rmd_convert_enabled={this.props.rmd_convert_enabled}
                 />
-              </div>
-              <div id="drag" />
-              <div id="right-pane">
+              </Panel>
+              <Separator id="drag" disableDoubleClick />
+              <Panel id="right-pane" className="result-pane" defaultSize="30%" minSize="25%">
                 <RightPane
                   members={this.state.members || []}
                   annotations={this.state.annotations}
@@ -1078,8 +1101,8 @@ class Result extends React.Component {
                   newNote={this.newNote}
                   findDeductiveAnnotation={this.findDeductiveAnnotation}
                 />
-              </div>
-            </div>
+              </Panel>
+            </Group>
           </div>
         </ResultContext.Provider>
       </React.Fragment>

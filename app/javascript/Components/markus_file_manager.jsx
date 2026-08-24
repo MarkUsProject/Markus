@@ -310,7 +310,6 @@ class FileManagerFile extends FileRenderers.RawTableFile {
         <form className="renaming" onSubmit={this.handleRenameSubmit}>
           {icon}
           <input
-            ref="newName"
             type="text"
             value={this.state.newName}
             onChange={this.handleNewNameChange}

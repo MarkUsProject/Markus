@@ -108,6 +108,43 @@ describe SubmissionsController do
     stub_const('SAMPLE_FILE_NAME', 'file.java'.freeze)
   end
 
+  describe '#browse assigned-submissions filter' do
+    render_views
+
+    subject(:send_request) do
+      get_as role, :browse, params: { course_id: course.id, assignment_id: assignment.id }, format: 'html'
+    end
+
+    let(:course) { create(:course) }
+    let(:role) { create(:instructor, course: course) }
+    let(:assignment) { create(:assignment, course: course) }
+
+    context 'when the instructor is assigned to this assignment' do
+      before do
+        grouping = create(:grouping, assignment: assignment)
+        create(:ta_membership, grouping: grouping, role: role)
+        send_request
+      end
+
+      it 'enables the assigned-submissions filter' do
+        expect(response.body).to match(/can_view_assigned_submissions_only:\s+true/)
+      end
+    end
+
+    context 'when the instructor is assigned only to another assignment' do
+      before do
+        other_assignment = create(:assignment, course: course)
+        grouping = create(:grouping, assignment: other_assignment)
+        create(:ta_membership, grouping: grouping, role: role)
+        send_request
+      end
+
+      it 'does not enable the assigned-submissions filter' do
+        expect(response.body).to match(/can_view_assigned_submissions_only:\s+false/)
+      end
+    end
+  end
+
   describe 'A student working alone' do
     before do
       @group = create(:group)
@@ -206,8 +243,8 @@ describe SubmissionsController do
               params: { course_id: course.id, assignment_id: @assignment.id, new_files: [invalid_file] }
 
       expect(response).to have_http_status :ok
-      sample_warning_message = I18n.t('student.submission.file_extension_mismatch', extension: file_extension)
-      flash[:warning] = I18n.t('student.submission.file_extension_mismatch', extension: file_extension)
+      sample_warning_message = I18n.t('submissions.student.file_extension_mismatch', extension: file_extension)
+      flash[:warning] = I18n.t('submissions.student.file_extension_mismatch', extension: file_extension)
       expect(flash[:warning]).to eq sample_warning_message
 
       # Check to see if the file was added

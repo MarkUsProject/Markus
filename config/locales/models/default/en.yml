@@ -3,3 +3,5 @@ en:
   attributes:
     date: Date
     filename: Filename
+  date_validator:
+    invalid_date: is not a valid date

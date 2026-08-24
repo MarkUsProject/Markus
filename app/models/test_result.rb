@@ -17,7 +17,7 @@
 #
 # Indexes
 #
-#  index_test_results_on_test_group_result_id  (test_group_result_id)
+#  index_test_results_on_test_group_result_id_and_name  (test_group_result_id,name) UNIQUE
 #
 # Foreign Keys
 #

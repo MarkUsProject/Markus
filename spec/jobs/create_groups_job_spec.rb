@@ -93,6 +93,61 @@ describe CreateGroupsJob do
     it_behaves_like 'create objects', 2, 2, 2
   end
 
+  context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
+    let(:student1) { create(:student, course: assignment.course) }
+    let(:student2) { create(:student, course: assignment.course) }
+    let(:instructor) { create(:instructor, course: assignment.course) }
+
+    before do
+      @data = [[student1.user_name, student1.user_name],
+               [student2.user_name, student2.user_name]]
+    end
+
+    it 'broadcasts status updates and one table update on completion' do
+      (1..2).each do |i|
+        expect(GroupsChannel).to receive(:broadcast_to) do |enqueuing_user, options|
+          expect(enqueuing_user).to eq(instructor.user)
+          expect(options[:status]).to be(:working)
+          expect(options[:progress]).to eq(i)
+          expect(options[:total]).to eq(2)
+        end
+      end
+      expect(GroupsChannel).to receive(:broadcast_to) do |enqueuing_user, options|
+        expect(enqueuing_user).to eq(instructor.user)
+        expect(options[:status]).to be(:completed)
+        expect(options[:update_table]).to be true
+      end
+
+      CreateGroupsJob.perform_now(assignment, @data, enqueuing_user: instructor.user, notify_socket: true)
+    end
+
+    it 'broadcasts warning messages if present' do
+      @data = [['group1', "#{student1.user_name}_bad_padding"],
+               [student2.user_name, student2.user_name]]
+
+      expect(GroupsChannel).to receive(:broadcast_to) do |_, options|
+        expect(options[:warning_message]).to include(
+          I18n.t('groups.upload.errors.unknown_students', student_names: "#{student1.user_name}_bad_padding")
+        )
+      end.exactly(3).times
+
+      CreateGroupsJob.perform_now(assignment, @data, enqueuing_user: instructor.user, notify_socket: true)
+    end
+  end
+
+  context 'when notify_socket flag is not set' do
+    let(:instructor) { create(:instructor, course: assignment.course) }
+
+    before do
+      @data = [[student1.user_name, student1.user_name]]
+    end
+
+    it "doesn't broadcast a message" do
+      expect { CreateGroupsJob.perform_now(assignment, @data, enqueuing_user: instructor.user) }
+        .to have_broadcasted_to(instructor.user).from_channel(GroupsChannel).exactly 0
+    end
+  end
+
   context 'when creating one good and one bad group' do
     context 'when the bad one is first' do
       before do

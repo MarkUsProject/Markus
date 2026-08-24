@@ -148,9 +148,7 @@ class LtiDeploymentsController < ApplicationController
                               lti_user_id: lti_data[:lti_user_id])
     if lti_deployment.course.nil?
       # Check if the user has any of the privileged roles
-      has_privileged_role = lti_data[:user_roles].any? do |role_uri|
-        LtiDeployment::LTI_PRIVILEGED_ROLES.include?(role_uri)
-      end
+      has_privileged_role = lti_data[:user_roles].intersect?(LtiDeployment::LTI_PRIVILEGED_ROLES)
       has_ta_role = lti_data[:user_roles].include?(LtiDeployment::LTI_ROLES[:ta])
       if has_privileged_role && !has_ta_role
         redirect_to choose_course_lti_deployment_path(lti_deployment)
@@ -225,7 +223,9 @@ class LtiDeploymentsController < ApplicationController
       redirect_to choose_course_lti_deployment_path
       return
     end
-    new_course.update!(display_name: params['display_name'], is_hidden: true)
+    start_at, end_at = LtiConfig.respond_to?(:get_course_dates) ? LtiConfig.get_course_dates(record) : nil
+    new_course.update!(display_name: params['display_name'], is_hidden: true,
+                       start_at: start_at, end_at: end_at)
     if current_user.admin_user?
       AdminRole.find_or_create_by(user: current_user, course: new_course)
     else

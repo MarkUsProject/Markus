@@ -15,6 +15,10 @@
 #
 #  index_notes_on_creator_id  (creator_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (creator_id => roles.id)
+#
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Note < ApplicationRecord
   belongs_to :noteable, polymorphic: true

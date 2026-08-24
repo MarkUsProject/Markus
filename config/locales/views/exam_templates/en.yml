@@ -11,8 +11,11 @@ en:
       fix_errors: Fix
       help: Manually enter paper copy number and page number for pages where QR code scanning failed.
       page_number: Page Number
-      upside_down: Page Upside Down?
+      rotate90_left: Rotate 90° left
+      rotate90_right: Rotate 90° right
+      rotation: Fix Page Orientation
     assign_scans:
+      assign: Assign
       display_inactive: Display inactive students
       done: All groups have been successfully assigned students
       help: Assign students to scanned exam groups based on printed student names.
@@ -21,7 +24,9 @@ en:
       no_similar_students: No similar students found. Please assign manually.
       not_all_submissions_collected: Not all submissions have been collected.
       ocr_detected: 'OCR Detected %{field_type}:'
-      skip_group: Skip group
+      progress: "%{valid} of %{total} assigned"
+      search_placeholder: Search by name, username, or ID number
+      skip_group: Skip
       student_not_found: Student with name %{name} does not exist.
       suggested_students: 'Suggested Students:'
       title: Assign Scans
@@ -47,7 +52,7 @@ en:
       title: Generate Exam Copies
     help_manual_html: |
       <p>
-        For more details on any of these steps and more, please visit the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md>MarkUs wiki</a>.
+        For more details on any of these steps and more, please visit the <a href="%{docs_url}/instructors/scanned-exams/">MarkUs documentation website</a>.
       </p> <h3>Editing Exam Templates</h3> <p>
         Select an Exam Template on the left to edit it. In addition to changing the name and template file you may also
         make changes to the following:
@@ -68,7 +73,7 @@ en:
             If enabled, MarkUs will attempt to scan a portion of the test cover page and parse handwriting corresponding
             to either a student's user name or ID number. MarkUs will then attempt to match the test paper to a student
             in the course. This feature is not designed to replace the manual matching process. For more details please
-            consult the <a href=https://github.com/MarkUsProject/Wiki/blob/%{markus_version}/Instructor-Guide--Scanned-Exams.md#automatic-parsing-of-student-information>wiki</a>.
+            consult the <a href="%{docs_url}/instructors/scanned-exams/#automatic-matching-of-student-papers">documentation</a>.
           </p>
         </li>
       </ul> <h3>Uploading Completed Test Papers</h3> <p>

@@ -8,3 +8,20 @@ en:
         no_message: This job failed due to an unexpected error.
       in_progress: This job is in progress.
       queued: This job is waiting to be run.
+  poll_job:
+    auto_match_job: "%{progress}/%{total} groups processed"
+    autotest_run_job_enqueuing: Enqueuing tests
+    autotest_specs_job: Setting up automated tests.
+    completed: Completed
+    create_groups_job: "%{progress}/%{total} groups created"
+    download_submissions_complete: Submissions are ready for download. Click here to complete the download.
+    download_submissions_finalizing: Finalizing submissions for download
+    download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
+    failed: Failed
+    generate_job: Generating copy %{progress} of %{total} for %{exam_name}
+    not_enqueued: No job was enqueued
+    queued: Queued
+    uncollect_submissions_job: 'Uncollecting assignments ... '
+    update_repo_max_file_size_job: "%{progress}/%{total} Student repositories updated with new maximum file size"
+    update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
+    working_message: "%{progress} out of %{total}"

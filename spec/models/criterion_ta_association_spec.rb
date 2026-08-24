@@ -9,6 +9,31 @@ describe CriterionTaAssociation do
     it { is_expected.to have_one(:course) }
 
     it_behaves_like 'course associations'
+
+    it 'allows instructors to be graders' do
+      criterion = create(:rubric_criterion)
+      instructor = create(:instructor, course: criterion.assignment.course)
+
+      expect(build(:criterion_ta_association, criterion: criterion, ta: instructor)).to be_valid
+    end
+
+    it 'does not allow students to be graders' do
+      criterion = create(:rubric_criterion)
+      student = create(:student, course: criterion.assignment.course)
+      association = build(:criterion_ta_association, criterion: criterion, ta: student)
+
+      expect(association).not_to be_valid
+      expect(association.errors.of_kind?(:ta, :invalid)).to be true
+    end
+
+    it 'does not allow admin roles to be graders' do
+      criterion = create(:rubric_criterion)
+      admin_role = create(:admin_role, course: criterion.assignment.course)
+      association = build(:criterion_ta_association, criterion: criterion, ta: admin_role)
+
+      expect(association).not_to be_valid
+      expect(association.errors.of_kind?(:ta, :invalid)).to be true
+    end
   end
 
   describe '#self.from_csv' do
@@ -32,6 +57,16 @@ describe CriterionTaAssociation do
       file = file_fixture('criteria_ta_association/simple.csv')
       CriterionTaAssociation.from_csv(cta.assignment, file.read, true)
       expect(CriterionTaAssociation.find_by(ta_id: grader.id, criterion_id: criterion.id)).not_to be_nil
+    end
+
+    it 'creates criterion associations for instructors' do
+      instructor = create(:instructor, course: criterion.assignment.course,
+                                       user: create(:end_user, user_name: 'professor'))
+      csv_data = "#{criterion.name},#{instructor.user_name}"
+
+      expect { CriterionTaAssociation.from_csv(criterion.assignment, csv_data, false) }
+        .to change { CriterionTaAssociation.count }.by(1)
+      expect(criterion.reload.tas).to include(instructor)
     end
 
     it 'should not create a ta that does not exist' do

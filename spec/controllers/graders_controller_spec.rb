@@ -58,6 +58,19 @@ describe GradersController do
       expect(assigns(:assignment)).not_to be_nil
     end
 
+    it 'includes instructors in the grader data used by the UI' do
+      other_instructor = create(:instructor, course: course)
+      admin_role = create(:admin_role, course: course)
+
+      get_as @instructor, :index,
+             params: { course_id: course.id, assignment_id: @assignment.id }, format: :json
+
+      grader_ids = response.parsed_body['graders'].pluck('_id')
+      expect(response).to have_http_status(:ok)
+      expect(grader_ids).to include(@instructor.id, other_instructor.id)
+      expect(grader_ids).not_to include(admin_role.id)
+    end
+
     it 'doing a GET on :grader_criteria_mapping' do
       ta1 = create(:ta)
       ta2 = create(:ta)
@@ -720,6 +733,18 @@ describe GradersController do
           expect(@grouping3.tas).to eq []
         end
 
+        it 'and an instructor is selected as the grader' do
+          grader = create(:instructor, course: course)
+
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
+                            groupings: [@grouping1.id], graders: [grader.id], current_table: 'groups_table' }
+
+          expect(response).to have_http_status(:ok)
+          expect(@grouping1.reload.tas).to include(grader)
+        end
+
         it 'and one grader and two groupings are selected' do
           post_as @instructor,
                   :global_actions,
@@ -1044,6 +1069,20 @@ describe GradersController do
           expect(@grouping3.tas).to eq [@ta3]
         end
 
+        it 'and an instructor is unassigned by user name' do
+          grader = create(:instructor, course: course)
+          create(:ta_membership, role: grader, grouping: @grouping1)
+
+          post_as @instructor,
+                  :global_actions,
+                  params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'unassign',
+                            groupings: [@grouping1.id], grader_user_names: [grader.user_name],
+                            current_table: 'groups_table' }
+
+          expect(response).to have_http_status(:ok)
+          expect(@grouping1.reload.tas).not_to include(grader)
+        end
+
         it 'and all groupings from one grader are selected' do
           create(:ta_membership, role: @ta1, grouping: @grouping1)
           create(:ta_membership, role: @ta2, grouping: @grouping1)
@@ -1302,6 +1341,19 @@ describe GradersController do
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
+          end
+
+          it 'and an instructor is selected as the grader' do
+            grader = create(:instructor, course: course)
+
+            post_as @instructor,
+                    :global_actions,
+                    params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'assign',
+                              criteria: [@criterion1.position], graders: [grader.id],
+                              current_table: 'criteria_table' }
+
+            expect(response).to have_http_status(:ok)
+            expect(@criterion1.reload.tas).to include(grader)
           end
 
           it 'and one grader and two criteria are selected' do

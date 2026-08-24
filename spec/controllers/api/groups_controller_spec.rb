@@ -784,8 +784,21 @@ describe Api::GroupsController do
       let(:assignment) { create(:assignment) }
       let(:grouping) { create(:grouping, assignment: assignment) }
       let(:submission) { create(:version_used_submission, grouping: grouping) }
-      let(:submission_file) { create(:submission_file, submission: submission) }
+      let!(:submission_file) { create(:submission_file, submission: submission) }
+      let!(:image_file) { create(:image_submission_file, submission: submission) }
+      let!(:pdf_file) { create(:pdf_submission_file, submission: submission) }
+      let!(:notebook_file) { create(:notebook_submission_file, submission: submission) }
       let(:response_type) { 'application/xml' }
+
+      def post_annotations(annotation_data)
+        request.env['HTTP_ACCEPT'] = response_type
+        post :add_annotations, params: {
+          assignment_id: assignment.id,
+          id: grouping.group_id,
+          course_id: course.id,
+          annotations: annotation_data
+        }
+      end
 
       it 'creates new annotations for a submission file that exists' do
         annotation_data = [
@@ -808,18 +821,138 @@ describe Api::GroupsController do
             column_end: 15
           }
         ]
-        request.env['HTTP_ACCEPT'] = response_type
-        post :add_annotations, params: {
-          assignment_id: assignment.id,
-          id: grouping.group_id,
-          course_id: course.id,
-          annotations: annotation_data
-        }
+        post_annotations(annotation_data)
 
         expect(response).to have_http_status :success
 
         annotation_contents = submission.current_result.annotations.map { |a| a.annotation_text.content }
         expect(annotation_contents).to contain_exactly('Content 1', 'Content 2')
+      end
+
+      it "creates a TextAnnotation for type 'TextAnnotation' on a text file" do
+        post_annotations([{ type: 'TextAnnotation', filename: submission_file.filename, content: 'c',
+                            line_start: 1, line_end: 2, column_start: 0, column_end: 5 }])
+
+        expect(response).to have_http_status :success
+        expect(submission.current_result.annotations.first).to be_a(TextAnnotation)
+      end
+
+      it "creates an ImageAnnotation for type 'ImageAnnotation' on an image file" do
+        post_annotations([{ type: 'ImageAnnotation', filename: image_file.filename, content: 'c',
+                            x1: 1, y1: 2, x2: 3, y2: 4 }])
+
+        expect(response).to have_http_status :success
+        annotation = submission.current_result.annotations.first
+        expect(annotation).to be_a(ImageAnnotation)
+        expect([annotation.x1, annotation.y1, annotation.x2, annotation.y2]).to eq([1, 2, 3, 4])
+      end
+
+      it "creates a PdfAnnotation for type 'PdfAnnotation' on a pdf file" do
+        post_annotations([{ type: 'PdfAnnotation', filename: pdf_file.filename, content: 'c',
+                            x1: 1, y1: 2, x2: 3, y2: 4, page: 7 }])
+
+        expect(response).to have_http_status :success
+        annotation = submission.current_result.annotations.first
+        expect(annotation).to be_a(PdfAnnotation)
+        expect(annotation.page).to eq(7)
+      end
+
+      it "creates an HtmlAnnotation for type 'HtmlAnnotation' on a notebook file" do
+        post_annotations([{ type: 'HtmlAnnotation', filename: notebook_file.filename, content: 'c',
+                            start_node: 'p:nth-child(1)', start_offset: 0,
+                            end_node: 'p:nth-child(2)', end_offset: 10 }])
+
+        expect(response).to have_http_status :success
+        annotation = submission.current_result.annotations.first
+        expect(annotation).to be_a(HtmlAnnotation)
+        expect(annotation.start_node).to eq('p:nth-child(1)')
+      end
+
+      it 'derives the type from the file when type is omitted' do
+        post_annotations([{ filename: pdf_file.filename, content: 'c',
+                            x1: 1, y1: 2, x2: 3, y2: 4, page: 1 }])
+
+        expect(response).to have_http_status :success
+        expect(submission.current_result.annotations.first).to be_a(PdfAnnotation)
+      end
+
+      it 'creates annotations of mixed types across files in a single request' do
+        annotation_data = [
+          { type: 'TextAnnotation', filename: submission_file.filename, content: 'text',
+            line_start: 1, line_end: 1, column_start: 0, column_end: 5 },
+          { type: 'PdfAnnotation', filename: pdf_file.filename, content: 'pdf',
+            x1: 1, y1: 2, x2: 3, y2: 4, page: 1 }
+        ]
+        post_annotations(annotation_data)
+
+        expect(response).to have_http_status :success
+        types = submission.current_result.annotations.map { |a| a.class.name }
+        expect(types).to contain_exactly('TextAnnotation', 'PdfAnnotation')
+      end
+
+      context 'with invalid input' do
+        it 'raises ParameterMissing when the annotations key is absent' do
+          request.env['HTTP_ACCEPT'] = response_type
+          expect do
+            post :add_annotations, params: { assignment_id: assignment.id, id: grouping.group_id,
+                                             course_id: course.id }
+          end.to raise_error(ActionController::ParameterMissing)
+        end
+
+        it 'returns 422 when the asserted type does not match the file' do
+          post_annotations([{ type: 'TextAnnotation', filename: pdf_file.filename, content: 'c',
+                              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 for an unknown annotation type' do
+          post_annotations([{ type: 'bogus', filename: submission_file.filename, content: 'c',
+                              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 when the submission file does not exist' do
+          post_annotations([{ type: 'TextAnnotation', filename: 'does_not_exist.txt', content: 'c',
+                              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }])
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 when a required field is missing for the derived type' do
+          post_annotations([{ filename: pdf_file.filename, content: 'c',
+                              x1: 1, y1: 2, x2: 3, y2: 4 }]) # missing page
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'returns 422 when fields belonging to a different type are included' do
+          post_annotations([{ filename: pdf_file.filename, content: 'c',
+                              x1: 1, y1: 2, x2: 3, y2: 4, page: 1,
+                              line_start: 5 }]) # line_start belongs to a TextAnnotation
+
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
+
+        it 'rolls back categories created earlier in the batch when a later annotation is invalid' do
+          annotation_data = [
+            { type: 'TextAnnotation', filename: submission_file.filename, content: 'ok',
+              annotation_category_name: 'New Category',
+              line_start: 1, line_end: 1, column_start: 0, column_end: 5 },
+            { type: 'TextAnnotation', filename: pdf_file.filename, content: 'bad', # mismatched type/file
+              line_start: 1, line_end: 1, column_start: 0, column_end: 5 }
+          ]
+
+          expect { post_annotations(annotation_data) }.not_to(change { assignment.annotation_categories.count })
+          expect(response).to have_http_status :unprocessable_content
+          expect(submission.current_result.annotations).to be_empty
+        end
       end
     end
 
@@ -1467,6 +1600,162 @@ describe Api::GroupsController do
           expect(test_results.length).to eq(1)
           expect(test_results.first['test_result_name']).to eq('New Test')
           expect(test_results.first['marks_earned']).to eq(4.0)
+        end
+      end
+    end
+
+    context 'GET test_runs' do
+      let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+      let(:test_group) { create(:test_group, assignment: assignment) }
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+
+      context 'when the group has one test run' do
+        let!(:test_run) do
+          create(:test_run, grouping: grouping, role: instructor, status: :complete, submission: submission)
+        end
+        let!(:test_group_result) do
+          create(:test_group_result, test_run: test_run, test_group: test_group,
+                                     marks_earned: 5.0, marks_total: 10.0, time: 1000)
+        end
+
+        before do
+          create(:test_result, test_group_result: test_group_result, name: 'Test 1',
+                               status: 'pass', marks_earned: 3.0, marks_total: 5.0, position: 1)
+        end
+
+        context 'expecting json response' do
+          before do
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return test runs for the group' do
+            test_results = response.parsed_body
+            expect(test_results).to be_an(Array)
+            expect(test_results.length).to eq(1)
+            expect(test_results.first).to include(
+              'id' => test_run.id,
+              'status' => 'complete',
+              'role_id' => instructor.id,
+              'grouping_id' => grouping.id
+            )
+            test_group_results = test_results.first['test_group_results']
+            expect(test_group_results.length).to eq(1)
+            expect(test_group_results.first['id']).to eq(test_group_result.id)
+          end
+        end
+
+        context 'expecting xml response' do
+          before do
+            request.env['HTTP_ACCEPT'] = 'application/xml'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return xml content' do
+            xml_data = Hash.from_xml(response.body)
+            expect(xml_data).to have_key('test_runs')
+          end
+        end
+
+        context 'with multiple test groups' do
+          let(:test_group_two) { create(:test_group, assignment: assignment, name: 'Group B') }
+          let!(:test_group_result_two) do
+            create(:test_group_result, test_run: test_run, test_group: test_group_two)
+          end
+
+          before do
+            create(:test_result, test_group_result: test_group_result_two, name: 'Test B1',
+                                 status: 'pass', marks_earned: 2.0, marks_total: 5.0, position: 1)
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'should return both test group results' do
+            test_group_results = response.parsed_body.first['test_group_results']
+            expect(test_group_results.length).to eq(2)
+            expect(test_group_results.first['id']).to eq(test_group_result.id)
+            expect(test_group_results.last['id']).to eq(test_group_result_two.id)
+          end
+        end
+      end
+
+      context 'when multiple test runs exist' do
+        let!(:older_test_run) do
+          create(:test_run, grouping: grouping, role: instructor, created_at: 2.days.ago, status: :complete,
+                            submission: submission)
+        end
+        let!(:newer_test_run) do
+          create(:test_run, grouping: grouping, role: instructor, created_at: 1.hour.ago, status: :complete,
+                            submission: submission)
+        end
+        let!(:older_test_group_result) do
+          create(:test_group_result, test_run: older_test_run, test_group: test_group)
+        end
+        let!(:newer_test_group_result) do
+          create(:test_group_result, test_run: newer_test_run, test_group: test_group)
+        end
+
+        before do
+          create(:test_result, test_group_result: older_test_group_result, name: 'Old Test',
+                               marks_earned: 1.0, marks_total: 5.0, status: 'pass', position: 1)
+          create(:test_result, test_group_result: newer_test_group_result, name: 'New Test',
+                               marks_earned: 4.0, marks_total: 5.0, status: 'pass', position: 1)
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return all test run results' do
+          test_results = response.parsed_body
+          expect(test_results.length).to eq(2)
+          test_results_first = test_results.first['test_group_results']
+          expect(test_results_first.length).to eq(1)
+          expect(test_results_first.first['id']).to eq(newer_test_group_result.id)
+          test_results_second = test_results.last['test_group_results']
+          expect(test_results_second.length).to eq(1)
+          expect(test_results_second.first['id']).to eq(older_test_group_result.id)
+        end
+      end
+
+      context 'authorization check' do
+        it_behaves_like 'for a different course' do
+          before do
+            request.env['HTTP_ACCEPT'] = 'application/json'
+            get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+          end
+        end
+      end
+
+      context 'when the group has no test results' do
+        before do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_runs, params: { id: grouping.group.id, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return an empty list' do
+          expect(response.parsed_body).to be_an(Array).and be_empty
+        end
+      end
+
+      context 'when the group does not exist' do
+        before do
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :test_runs, params: { id: 999_999, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it 'should return 404 status' do
+          expect(response).to have_http_status(:not_found)
         end
       end
     end

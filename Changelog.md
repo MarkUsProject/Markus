@@ -3,37 +3,117 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Replaced weak MD5 hashing used for API key generation with SHA-256 hashing (#8104)
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
-- Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
-- Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
+- Enforced restriction on grouping deletion when submissions exist (#8134)
+- Improved table selection column styling, fixed table overflow in containers, and hid unused scrollbars (#8133)
+- Displayed who last updated a mark to TAs and instructors in the grading view (#8131)
+- Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#8057)
+- Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
+- Added row numbers to the course summaries table (#8108)
+- Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
+- Added row numbers to tables using React Table v8, allowing users to identify row positions after sorting and filtering (#8089)
+- Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
+- Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
+- Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)
+- Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
+- Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
+- Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
+- Improved the Assign Scans page: OCR suggestions now appear above the manual entry form and clicking one assigns the student directly, "Skip group" is now a button instead of a checkbox, the Members list is hidden when empty, and the progress bar shows "x of y assigned" (#8059)
+- Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
+- Added a table showing incomplete papers and their missing page numbers when uploading exam scans (#8051)
+- Updated links to refer to new documentation website (#8049)
+- Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
+- Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
+- Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
-- Added GET and PATCH /overall_comment API routes (#7963)
-- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+- Added GET /test_runs API route (#8055)
 
 ### 🐛 Bug fixes
+- Fixed bulk grouping deletion assignment scoping (#8134)
+- Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
+- Prevented grader assignment and unassignment operations from modifying groupings belonging to other assignments (#8072)
+- Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
+- Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
+- Allow new instructors without existing courses to create a course via LTI launch (#8061)
+
+### 📚 Documentation changes
+- Made documentation site table-of-contents/section listings consistent (#8062)
+- Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
+
+### 🔧 Internal changes
+- Updated `pdfjs-dist` to v6.2.108 (#8135)
+- Refactored annotation routes to respond with JSON rather than Javascript (#8127)
+- Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb`
+- Replaced `jcrop` with `cropperjs` for the exam template cover page crop selector (#8114)
+- Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)
+- Suppressed CodeQL scanning false positives (#8101)
+- Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
+- Migrated `SummaryPanel` component to React Table V8 (#8019)
+- Resolved/ignored Brakeman warnings and added Brakeman to CI checks (#8066)
+- Refactored Action Cable channel authorization into `Channel` superclass (#8054)
+- Removed dead code in repository files (#8065)
+- Upgraded to React v19.2.7 (#8044)
+- Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
+- Upgraded Babel to v8 (#8041)
+- Added a Jekyll-based documentation site under `docs/`, with a Docker Compose service and a `markus:docs` rake task for production builds (#8022)
+- Upgraded to Rails v8.1.3 (#8015)
+- Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
+- Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
+- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
+- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
+- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
+- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
+- Migrated asset pipeline from Sprockets to Propshaft (#7970)
+- Added missing foreign keys in seed data (#8006)
+- Updated to Rails v8.1.3.1 (#8113)
+
+## [v2.10.1]
+
+### 🛡️ Security
+- Fixed escaping of HTML annotation `start_node` and `end_node` attributes (#8064)
+
+### ✨ New features and improvements
+- Added CSV upload support for criterion marks in the assignment Grades tab (#8008)
+- Added a confirm dialog when a student tries to submit work after the deadline has passed (#8003)
+- Added a confirm dialog to the Upload Scans form that appears when no template divisions are assigned to the selected exam template (#7993)
+- Preserved PDF scroll position when switching between submissions while grading scanned exams (#8004)
+- Added GET and PATCH /overall_comment API routes (#7963)
+- Add case-sensitive search toggle to group name filters in graders, groups, submissions, and annotation usage tables (#7938)
+- Add pagination to Admin Users table for performance (#7997)
+- Added support for all annotation types for POST /add_annotations (#8007)
+
+### 🐛 Bug fixes
+- Fixed Assignments Index page dropdown menu not redirecting users to the selected assignment (#8043)
+- Fixed broken checkbox in the header of the selection column for tables with row selection enabled. (#8037)
+- Fixed bug where clicking a file link in the annotations tab would show a blank or oversized error for PDF files (#8017)
 - Fixed bug where clicking MarkUs logo in navbar on mobile would open the sidebar instead of redirecting to courses page (#7990)
 - Fixed bug where merge commits were incorrectly flagged as making a new assignment submission when no assignment files were changed (#7988)
 - Fixed shift+up/shift+down keybinding being suppressed when a criterion input had focus; active criterion now scrolls into view when navigated to via keyboard (#7989)
 - Fixed autotester spec upload when spec contains non-existent criterion (#7998)
+- Fix SVG rendering by converting base64 SVG data URIs to inline <svg> (#8001)
 
 ### 🔧 Internal changes
+- Migrated `graders_manager.jsx` file's `GradersTable`, `GroupsTable`, `CriteriaTable` to use `react-table` v8 (#8014)
+- Migrated `MarkingSchemesTable` component to React Table V8 (#7985)
+- Added missing `created_at`/`updated_at` timestamp columns flagged by `active_record_doctor:table_without_timestamps` (#8040)
+- Added missing foreign key constraints flagged by `active_record_doctor:missing_foreign_keys` (#8040)
+- Refactored `GroupsController#create_groups_when_students_work_alone` and `GroupsController#upload` to use ActionCable websockets instead of polling to report `CreateGroupsJob` status. (#8020)
+- Added unique database indexes to enforce uniqueness constraints already validated at the model layer, and removed 17 single-column indexes made redundant by composite indexes (#8018)
+- Replaced `upload_button_control.js` with native HTML `required` validation on file upload inputs (#8016)
+- Reorganized locale strings from `config/locales/en.yml` into subdirectory files (#8012)
 - Added release automation scripts (#7914)
 - Refactored the `SummaryPanel` marks chart modal to use `react-modal` instead of `ModalMarkus`, with test coverage for opening and closing the modal (#7996)
 - Moved rubric criterion keyboard navigation (up/down/enter) from a global jQuery-based keybinding into `RubricCriterionInput`, replacing DOM class mutation with React state (`hoveredLevelIndex`); moved criterion navigation (shift+up/shift+down) into `MarksPanel`, eliminating the `window.marksPanel` global (#7989)
 - Refactored `Group` creation to reserve the next id from `groups_id_seq` in a `before_validation` callback that populates `id`, `group_name`, and `repo_name` before validation (#7975)
 - Added `NOT NULL` constraint on `groups.group_name` (#7975)
 - Added `NOT NULL` constraints and presence/inclusion validators flagged by `active_record_doctor` checks `missing_non_null_constraint` and `missing_presence_validation` (#7965)
-- Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
-- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
-- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
-- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
-- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Refactored `SubmissionFilePanel` subcomponents to React functional components (#7969)
-- Migrated asset pipeline from Sprockets to Propshaft (#7970)
 - Simplified Chart.js usage: removed the `DataChart` wrapper component, converted `chart_config.js` to an ES module, and replaced `registerables` with a minimal set of Chart.js components (#7987)
+- Bump jwt from 2.10.3 to 3.2.0 (#8039)
 
 ## [v2.10.0]
 

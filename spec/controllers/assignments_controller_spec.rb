@@ -152,6 +152,73 @@ describe AssignmentsController do
     end
   end
 
+  describe '#upload_grades' do
+    let(:course) { create(:course) }
+    let(:role) { create(:instructor, course: course) }
+    let(:assignment) { create(:assignment, course: course) }
+    let!(:criterion) do
+      create(:flexible_criterion, assignment: assignment, name: 'Correctness', max_mark: 10, position: 1)
+    end
+    let!(:grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let(:student) { grouping.inviter }
+    let(:csv_data) do
+      headers = [Group.human_attribute_name(:group_name)] +
+        Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
+        [I18n.t('results.total_mark'), criterion.export_name, I18n.t('assignments.bonus_deductions')]
+      totals = [' '] * Student::CSV_ORDER.length +
+        [Assessment.human_attribute_name(:max_mark), assignment.max_mark, criterion.max_mark, '']
+      row = [grouping.group.group_name] +
+        Student::CSV_ORDER.map { |field| student.public_send(field) } +
+        [999, 8, 100]
+      MarkusCsv.generate([headers, totals, row], &:itself)
+    end
+    let(:upload_file) do
+      file = Tempfile.new(['assignment_grades', '.csv'])
+      file.write(csv_data)
+      file.rewind
+      @upload_files << file
+      Rack::Test::UploadedFile.new(file.path, 'text/csv')
+    end
+
+    before { @upload_files = [] }
+
+    after { @upload_files.each(&:close!) }
+
+    it 'uploads criterion marks and redirects back to the assignment grades tab' do
+      post_as role, :upload_grades,
+              params: { course_id: course.id, id: assignment.id, upload_file: upload_file, overwrite: true }
+
+      expect(response).to have_http_status(:found)
+      expect(response).to redirect_to(summary_course_assignment_path(course, assignment))
+      expect(flash[:error]).to be_nil
+      expect(grouping.current_result.reload.mark_hash[criterion.id][:mark]).to eq 8
+    end
+
+    context 'when the CSV includes an unknown criterion column' do
+      let(:csv_data) do
+        headers = [Group.human_attribute_name(:group_name)] +
+          Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
+          [I18n.t('results.total_mark'), 'Unknown criterion', I18n.t('assignments.bonus_deductions')]
+        totals = [' '] * Student::CSV_ORDER.length +
+          [Assessment.human_attribute_name(:max_mark), assignment.max_mark, 1, '']
+        row = [grouping.group.group_name] +
+          Student::CSV_ORDER.map { |field| student.public_send(field) } +
+          [999, 8, 100]
+        MarkusCsv.generate([headers, totals, row], &:itself)
+      end
+
+      it 'redirects back to the assignment grades tab with the import error' do
+        post_as role, :upload_grades,
+                params: { course_id: course.id, id: assignment.id, upload_file: upload_file, overwrite: true }
+
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(summary_course_assignment_path(course, assignment))
+        expect(flash[:error].join).to include('Unknown criterion')
+        expect(grouping.current_result.reload.mark_hash[criterion.id][:mark]).to be_nil
+      end
+    end
+  end
+
   context 'download the most recent test results as CSV' do
     let(:user) { create(:instructor) }
     let(:assignment) { create(:assignment_with_criteria_and_test_results) }
@@ -668,9 +735,42 @@ describe AssignmentsController do
 
     describe 'When the role is instructor' do
       let(:role) { create(:instructor) }
-      let(:assignment) { create(:assignment) }
+      let(:assignment) { create(:assignment, course: course) }
 
       it_behaves_like 'An authorized role viewing assignment summary'
+
+      context 'when rendering the assigned-submissions filter' do
+        render_views
+
+        subject(:send_request) do
+          get_as role, :summary, params: { course_id: course.id, id: assignment.id }, format: 'html'
+        end
+
+        context 'when the instructor is assigned to this assignment' do
+          before do
+            grouping = create(:grouping, assignment: assignment)
+            create(:ta_membership, grouping: grouping, role: role)
+            send_request
+          end
+
+          it 'enables the assigned-submissions filter' do
+            expect(response.body).to match(/can_view_assigned_submissions_only:\s+true/)
+          end
+        end
+
+        context 'when the instructor is assigned only to another assignment' do
+          before do
+            other_assignment = create(:assignment, course: course)
+            grouping = create(:grouping, assignment: other_assignment)
+            create(:ta_membership, grouping: grouping, role: role)
+            send_request
+          end
+
+          it 'does not enable the assigned-submissions filter' do
+            expect(response.body).to match(/can_view_assigned_submissions_only:\s+false/)
+          end
+        end
+      end
     end
 
     describe 'When the role is grader' do
@@ -692,6 +792,7 @@ describe AssignmentsController do
       example_form_params[:assignment][:submission_rule_attributes][:periods_attributes] = submission_rule.id
       example_form_params
     end
+
     it 'should update an assignment without errors' do
       expect { patch_as role, :update, params: params }.not_to raise_error
     end
@@ -958,6 +1059,7 @@ describe AssignmentsController do
     let(:assignment) { create(:assignment_for_tests) }
     let(:grouping) { create(:grouping, assignment: assignment) }
     let(:test_run) { create(:test_run, grouping: grouping) }
+
     describe '#batch_runs' do
       before { get_as role, :batch_runs, params: { course_id: course.id, id: assignment.id } }
 
@@ -1403,6 +1505,7 @@ describe AssignmentsController do
       let!(:starter_file_group) { create(:starter_file_group_with_entries, assignment: assignment) }
       let!(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
       let(:params) { { course_id: assignment.course.id, id: starter_file_group.assignment.id } }
+
       it 'should return a 200 status code' do
         subject
         expect(response).to have_http_status(:ok)
@@ -1530,6 +1633,21 @@ describe AssignmentsController do
           data = data_response['data']
           ta = assignment.tas[index]
           expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
+        end
+      end
+
+      context 'with an instructor assigned as a grader' do
+        before do
+          @grader = create(:instructor, course: assignment.course)
+          Grouping.assign_all_tas([assignment.groupings.first], [@grader.id], assignment)
+          get_as role, :grade_distribution, params: params
+        end
+
+        it 'includes grading data for the instructor' do
+          labels = response.parsed_body['ta_data']['datasets'].pluck('label')
+
+          expect(response).to have_http_status(:ok)
+          expect(labels).to include(a_string_including(@grader.display_name))
         end
       end
 
@@ -1726,6 +1844,7 @@ describe AssignmentsController do
 
     shared_examples 'download sample starter files' do
       let(:structure) { { 'q1/': nil, 'q1/q1.txt': 'q1 content', 'q2.txt': 'q2 content' } }
+
       # NOTE: other starter_file_type are not tested because they involve randomness and so are not deterministic
       before { create(:starter_file_group_with_entries, assignment: assignment, structure: structure) }
 

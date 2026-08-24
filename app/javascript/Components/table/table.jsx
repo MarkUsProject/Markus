@@ -9,6 +9,7 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -19,6 +20,9 @@ import TableRow from "./table_row";
 export const defaultNoDataText = () => I18n.t("table.no_data");
 
 const columnHelper = createColumnHelper();
+export const SELECTION_COLUMN_ID = "select";
+const FILTER_VARIANT_SELECT = "select";
+
 export const expanderColumn = columnHelper.display({
   id: "expander",
   header: () => null,
@@ -40,7 +44,7 @@ export const expanderColumn = columnHelper.display({
 });
 
 export const selectionColumn = columnHelper.display({
-  id: "select",
+  id: SELECTION_COLUMN_ID,
   header: ({table}) => {
     const checkboxRef = React.useRef(null);
 
@@ -52,12 +56,14 @@ export const selectionColumn = columnHelper.display({
     }, [table.getIsSomeRowsSelected(), table.getIsAllRowsSelected()]);
 
     return (
-      <input
-        ref={checkboxRef}
-        type="checkbox"
-        checked={table.getIsAllRowsSelected()}
-        onChange={table.getToggleAllRowsSelectedHandler()}
-      />
+      <div style={{textAlign: "center"}}>
+        <input
+          ref={checkboxRef}
+          type="checkbox"
+          checked={table.getIsAllRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      </div>
     );
   },
   size: 30,
@@ -65,12 +71,14 @@ export const selectionColumn = columnHelper.display({
   enableResizing: false,
   enableSorting: false,
   cell: ({row}) => (
-    <input
-      type="checkbox"
-      checked={row.getIsSelected()}
-      disabled={!row.getCanSelect()}
-      onChange={row.getToggleSelectedHandler()}
-    />
+    <div style={{textAlign: "center"}}>
+      <input
+        type="checkbox"
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect()}
+        onChange={row.getToggleSelectedHandler()}
+      />
+    </div>
   ),
 });
 
@@ -81,6 +89,7 @@ export default function Table({
   initialState,
   loading,
   renderSubComponent,
+  renderSubRows,
   getRowCanExpand,
   getRowId,
   enableRowSelection,
@@ -88,6 +97,7 @@ export default function Table({
   columnFilters: externalColumnFilters,
   onColumnFiltersChange: externalOnColumnFiltersChange,
   onRowSelectionChange,
+  showRowNumbers = false,
 }) {
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
@@ -97,6 +107,7 @@ export default function Table({
   });
   const [expanded, setExpanded] = React.useState({});
   const [internalRowSelection, setInternalRowSelection] = React.useState({});
+  const [grouping, setGrouping] = React.useState(initialState?.grouping ?? []);
 
   const columnFilters = React.useMemo(
     () => (externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters),
@@ -126,11 +137,11 @@ export default function Table({
     if (enableRowSelection) {
       cols = [selectionColumn, ...cols];
     }
-    if (renderSubComponent) {
+    if (renderSubComponent || renderSubRows) {
       cols = [expanderColumn, ...cols];
     }
     return cols;
-  }, [columns, enableRowSelection, renderSubComponent]);
+  }, [columns, enableRowSelection, renderSubComponent, renderSubRows]);
 
   const table = useReactTable({
     data,
@@ -141,21 +152,25 @@ export default function Table({
       columnVisibility,
       expanded,
       rowSelection,
+      grouping,
     },
     initialState: initialState,
     onColumnFiltersChange: handleColumnFiltersChange,
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: setExpanded,
+    onGroupingChange: setGrouping,
     onRowSelectionChange: handleRowSelectionChange,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
     getRowCanExpand,
     getRowId,
+    groupedColumnMode: false,
     enableSortingRemoval: false,
     enableColumnResizing: true,
     enableRowSelection: enableRowSelection,
@@ -163,9 +178,13 @@ export default function Table({
   });
 
   const centerTotalSize = table.getCenterTotalSize();
+  const tableMinWidth = showRowNumbers
+    ? `calc(${centerTotalSize}px + var(--row-number-gutter-width))`
+    : centerTotalSize;
+  const rows = table.getRowModel().rows;
 
   const tableHeaders = (
-    <div className="rt-thead -header" style={{minWidth: centerTotalSize}}>
+    <div className="rt-thead -header" style={{minWidth: tableMinWidth}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -175,6 +194,9 @@ export default function Table({
               size={header.getSize()}
               isSorted={header.column.getIsSorted()}
               isResizing={header.column.getIsResizing()}
+              allRowsSelected={
+                header.column.id === SELECTION_COLUMN_ID ? table.getIsAllRowsSelected() : undefined
+              }
             />
           ))}
         </div>
@@ -187,7 +209,7 @@ export default function Table({
     [table, finalColumns]
   );
   const tableFilters = showFilters && (
-    <div className="rt-thead -filters" style={{minWidth: centerTotalSize}}>
+    <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -197,7 +219,7 @@ export default function Table({
               column={header.column}
               filterValue={header.column.getFilterValue()}
               facetedUniqueValues={
-                header.column.columnDef.meta?.filterVariant === "select"
+                header.column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
                   ? header.column.getFacetedUniqueValues()
                   : null
               }
@@ -209,24 +231,29 @@ export default function Table({
   );
 
   return (
-    <div className="Table -highlight" style={{maxHeight: "500px"}}>
+    <div
+      className={`Table -highlight${showRowNumbers ? " -show-row-numbers" : ""}`}
+      style={{maxHeight: "500px"}}
+    >
       <div className="rt-table" role="grid">
         {tableHeaders}
         {tableFilters}
-        <div className="rt-tbody" style={{minWidth: centerTotalSize}}>
-          {table.getRowModel().rows.map(row => (
+        <div className="rt-tbody" style={{minWidth: tableMinWidth}}>
+          {rows.map(row => (
             <TableRow
               row={row}
               isExpanded={row.getIsExpanded()}
+              isGrouped={row.getIsGrouped()}
               isSelected={row.getIsSelected()}
               key={row.id}
               renderSubComponent={renderSubComponent}
               // columnSizing is not used directly in TableRow, but is passed to trigger
               // re-render when column sizes change
               columnSizing={columnSizing}
+              columns={finalColumns}
             />
           ))}
-          {loading && table.getRowModel().rows.length > 0 && (
+          {loading && rows.length > 0 && (
             <div
               className="loading-spinner"
               style={{
@@ -252,7 +279,7 @@ export default function Table({
               />
             </div>
           )}
-          {!table.getRowModel().rows.length &&
+          {!rows.length &&
             (loading ? (
               <div className="loading-spinner">
                 <Grid

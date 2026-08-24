@@ -185,6 +185,7 @@ namespace :db do
       end
       results << {
         id: result_id,
+        submission_id: submission_id,
         marking_state: Result::MARKING_STATES[:complete],
         released_to_students: true,
         view_token: Result.generate_unique_secure_token
@@ -214,7 +215,12 @@ namespace :db do
           grade: random_grade
         }
       end
-      students << { id: student.id, role_id: student.role.id, released_to_student: true }
+      students << {
+        id: student.id,
+        role_id: student.role.id,
+        assessment_id: grade_entry_form.id,
+        released_to_student: true
+      }
     end
 
     Grade.insert_all grades

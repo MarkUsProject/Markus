@@ -21,6 +21,8 @@
 #  x2                 :integer
 #  y1                 :integer
 #  y2                 :integer
+#  created_at         :datetime
+#  updated_at         :datetime
 #  annotation_text_id :integer          not null
 #  creator_id         :integer
 #  result_id          :integer          not null
@@ -35,6 +37,7 @@
 #
 #  fk_annotations_annotation_texts  (annotation_text_id => annotation_texts.id)
 #  fk_annotations_submission_files  (submission_file_id => submission_files.id)
+#  fk_rails_...                     (result_id => results.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Annotation < ApplicationRecord
@@ -66,6 +69,12 @@ class Annotation < ApplicationRecord
   before_destroy :check_if_released
   after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
 
+  # The union of every annotation subclass's location fields, used to detect annotation
+  # params that belong to a different type than the one being created.
+  def self.location_fields
+    [TextAnnotation, ImageAnnotation, PdfAnnotation, HtmlAnnotation].flat_map(&:required_fields).uniq
+  end
+
   def modify_mark_with_deduction
     criterion = self.annotation_text.annotation_category.flexible_criterion
     self.result.marks.find_or_create_by(criterion: criterion).update_deduction unless self.is_remark
@@ -94,6 +103,28 @@ class Annotation < ApplicationRecord
     end
 
     data
+  end
+
+  # Serializes this annotation for the Result component. When the annotation carries a
+  # deduction that isn't overridden, also includes the updated mark/subtotal/total so
+  # the front end can reflect the deduction without a full refetch.
+  def to_json(current_role: nil)
+    data = { annotation: get_data(include_creator: true) }
+
+    criterion = annotation_text.annotation_category&.flexible_criterion
+    mark = result.marks.find_by(criterion: criterion)
+    unless annotation_text.deduction.nil? || annotation_text.deduction == 0 || mark.override
+      grader_id = current_role&.instructor? ? nil : current_role&.id
+      data[:mark_update] = {
+        criterion_id: criterion.id,
+        mark: mark.mark,
+        subtotal: result.get_subtotal,
+        total: result.get_total_mark,
+        num_marked: result.grouping.assignment.get_num_marked(grader_id)
+      }
+    end
+
+    data.to_json
   end
 
   private

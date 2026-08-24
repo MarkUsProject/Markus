@@ -39,7 +39,8 @@
     border-left: 1px solid $gridline;
     border-right: 1px solid $gridline;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 
     &.-headerGroups {
       background: rgba(0, 0, 0, 0.03);
@@ -72,6 +73,7 @@
     }
 
     .rt-tr {
+      background-color: $background-support;
       text-align: center;
     }
 
@@ -171,7 +173,8 @@
     border-left: 1px solid $gridline;
     border-right: 1px solid $gridline;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 
     .rt-tr-group {
       border-bottom: solid 1px rgba(0, 0, 0, 0.05);
@@ -210,6 +213,36 @@
   .rt-tr {
     flex: 1 0 auto;
     display: inline-flex;
+    position: relative;
+  }
+
+  &.-show-row-numbers {
+    .rt-tbody {
+      counter-reset: table-row-number;
+
+      .rt-tr {
+        counter-increment: table-row-number;
+
+        &::before {
+          align-items: center;
+          background-color: $background-support;
+          bottom: 0;
+          content: counter(table-row-number);
+          display: flex;
+          font-size: 0.85em;
+          font-variant-numeric: tabular-nums;
+          justify-content: center;
+          left: 0;
+          position: absolute;
+          top: 0;
+          width: var(--row-number-gutter-width);
+        }
+      }
+    }
+
+    .rt-tr {
+      padding-left: var(--row-number-gutter-width);
+    }
   }
 
   .rt-th,

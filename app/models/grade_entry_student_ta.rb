@@ -5,12 +5,19 @@
 # Table name: grade_entry_students_tas
 #
 #  id                     :integer          not null, primary key
+#  created_at             :datetime
+#  updated_at             :datetime
 #  grade_entry_student_id :integer          not null
 #  ta_id                  :integer          not null
 #
 # Indexes
 #
 #  index_grade_entry_students_tas  (grade_entry_student_id,ta_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (grade_entry_student_id => grade_entry_students.id)
+#  fk_rails_...  (ta_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GradeEntryStudentTa < ApplicationRecord

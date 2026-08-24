@@ -5,7 +5,7 @@ describe Grouping do
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }
-    it { is_expected.to have_many(:submissions) }
+    it { is_expected.to have_many(:submissions).dependent(:restrict_with_error) }
     it { is_expected.to have_many(:notes) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
     it { is_expected.to have_one(:course) }
@@ -52,7 +52,7 @@ describe Grouping do
       end
 
       it 'cannot be invited by students' do
-        errors = grouping.invite(hidden.user.user_name)
+        errors, _ = grouping.invite(hidden.user.user_name)
         expect(errors).not_to be_empty
         expect(errors.first).to include('inactive')
         expect(grouping.memberships.count).to eq(0)
@@ -117,6 +117,16 @@ describe Grouping do
           grouping.reload
           expect(grouping.tas.size).to eq 1
           expect(tas).to include grouping.tas.first
+        end
+      end
+
+      it 'uses only TAs retained by assign_tas when calculating weights' do
+        student = create(:student, course: assignment.course)
+
+        Grouping.randomly_assign_tas(grouping_ids, [ta_ids.first, student.id], [1, 3], assignment)
+
+        groupings.each do |grouping|
+          expect(grouping.reload.tas).to contain_exactly(tas.first)
         end
       end
 
@@ -218,20 +228,23 @@ describe Grouping do
       end
     end
 
-    describe '.delete_grouping' do
-      it 'makes an attempt to update repository permissions when deleting a group' do
-        g = groupings
-        expect(Repository.get_class).to receive(:update_permissions_after)
-        g[0].delete_grouping
-      end
-    end
-
     describe '.assign_tas' do
       it 'updates repository permissions exactly once after assigning all TAs' do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
         Grouping.assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
           grouping_ids.zip(ta_ids.cycle)
         end
+      end
+
+      it 'only assigns groupings from the given assignment' do
+        other_grouping = create(:grouping, assignment: create(:assignment))
+
+        Grouping.assign_tas([grouping_ids.first, other_grouping.id], ta_ids.first, assignment) do |ids, role_ids|
+          ids.product(role_ids)
+        end
+
+        expect(groupings.first.reload.tas).to contain_exactly(tas.first)
+        expect(other_grouping.reload.tas).to be_empty
       end
     end
 
@@ -250,6 +263,22 @@ describe Grouping do
           grouping.reload
           expect(grouping.tas).to be_empty
         end
+      end
+
+      it 'only unassigns memberships from the given assignment' do
+        membership = create(:ta_membership, grouping: groupings.first, role: tas.first)
+        other_assignment = create(:assignment)
+        other_grouping = create(:grouping, assignment: other_assignment)
+        other_membership = create(:ta_membership, grouping: other_grouping)
+
+        Grouping.unassign_tas(
+          [membership.id, other_membership.id],
+          [groupings.first.id, other_grouping.id],
+          assignment
+        )
+
+        expect { membership.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(other_membership.reload).to be_present
       end
 
       it 'updates criteria coverage counts after bulk unassign TAs' do
@@ -774,6 +803,30 @@ describe Grouping do
       end
     end
 
+    describe '#destroy' do
+      context 'when the grouping has a submission' do
+        before { create(:version_used_submission, grouping: @grouping) }
+
+        it 'does not destroy the grouping' do
+          expect { @grouping.destroy }.not_to(change { Grouping.exists?(@grouping.id) })
+        end
+
+        it 'adds an error to the grouping' do
+          @grouping.destroy
+          expect(@grouping.errors.full_messages).to include(
+            I18n.t('activerecord.errors.models.grouping.attributes.base.restrict_dependent_destroy.has_many',
+                   record: 'submissions')
+          )
+        end
+      end
+
+      context 'when the grouping has no submission' do
+        it 'destroys the grouping' do
+          expect { @grouping.destroy }.to change { Grouping.exists?(@grouping.id) }.from(true).to(false)
+        end
+      end
+    end
+
     context 'when the group has no students' do
       before do
         @student01 = create(:student)
@@ -781,10 +834,81 @@ describe Grouping do
       end
 
       describe '#invite' do
-        it 'adds students in any scenario possible when invoked by instructor' do
-          members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
-          expect(@grouping.accepted_student_memberships.count).to eq(2)
+        context 'invoked by instructor' do
+          it 'returns an error when no members are provided' do
+            errors, invited = @grouping.invite([], StudentMembership::STATUSES[:accepted],
+                                               invoked_by_instructor: true)
+            expect(errors).to contain_exactly(I18n.t('groups.invite_member.errors.empty_text_field'))
+            expect(invited).to be_empty
+            expect(@grouping.accepted_student_memberships.count).to eq(0)
+          end
+
+          it 'adds students by username in any scenario possible' do
+            members = [@student01.user_name, @student02.user_name]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+
+          it 'returns an error when no student matching the username entered could be found' do
+            members = ['test123']
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
+            )
+          end
+
+          it 'returns an error for the unknown username but still adds the known student' do
+            members = ['test123', @student01.user_name]
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
+            )
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'adds students by email in any scenario possible' do
+            members = [@student01.email, @student02.email]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+
+          it 'adds a student by email regardless of the case entered' do
+            members = [@student01.email.upcase]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'returns an error when no student matching the email entered could be found' do
+            members = ['test@example.com']
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
+            )
+          end
+
+          it 'returns an error for the unknown email but still adds the known student' do
+            members = ['test@example.com', @student01.email]
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
+            )
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'adds different students by both username and email in any scenario possible' do
+            members = [@student01.user_name, @student02.email]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+        end
+
+        context 'invoked by student' do
+          it 'adds one student when both the username and email are provided for that student' do
+            members = [@student01.email, @student01.user_name]
+            errors, _ = @grouping.invite(members)
+            expect(errors).to be_empty
+            expect(@grouping.student_memberships.count).to eq(1)
+          end
         end
       end
     end
@@ -935,6 +1059,7 @@ describe Grouping do
       let(:assignment) { create(:timed_assignment) }
       let(:due_date) { due_date_obj.due_date || assignment.due_date }
       let(:start_time) { due_date_obj.start_time || assignment.start_time }
+
       context 'before the grouping has started' do
         it 'should return the due date' do
           expect(grouping.due_date).to be_within(1.second).of(due_date)
@@ -1644,8 +1769,8 @@ describe Grouping do
   end
 
   describe '#get_next_group as instructor' do
-    let(:role) { create(:instructor) }
     let(:assignment) { create(:assignment) }
+    let(:role) { create(:instructor, course: assignment.course) }
     let(:groupings_collected) { [true, true] }
 
     before do
@@ -1691,6 +1816,33 @@ describe Grouping do
         groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.last.get_next_grouping(role, true)
         expect(new_grouping.group_id).to eq(groupings.first.group_id)
+      end
+    end
+
+    context 'when the instructor is assigned as a grader' do
+      let(:groupings_collected) { [true, true, true] }
+
+      before do
+        ordered_groupings = assignment.groupings.joins(:group).order(:group_name)
+        create(:ta_membership, grouping: ordered_groupings.first, role: role)
+        create(:ta_membership, grouping: ordered_groupings.last, role: role)
+      end
+
+      it 'navigates all groupings by default' do
+        ordered_groupings = assignment.groupings.joins(:group).order(:group_name)
+
+        expect(ordered_groupings.first.get_next_grouping(role, false)).to eq(ordered_groupings.second)
+      end
+
+      it 'navigates only assigned groupings when assigned-only navigation is enabled' do
+        ordered_groupings = assignment.groupings.joins(:group).order(:group_name)
+        next_grouping = ordered_groupings.first.get_next_grouping(
+          role,
+          false,
+          { 'assignedGradersOnly' => 'true' }
+        )
+
+        expect(next_grouping).to eq(ordered_groupings.last)
       end
     end
   end
@@ -1750,6 +1902,28 @@ describe Grouping do
         groupings = assignment.groupings.joins(:group).order(:group_name)
         new_grouping = groupings.last.get_next_grouping(role, true)
         expect(new_grouping.group_id).to eq(groupings.first.group_id)
+      end
+    end
+
+    context 'when the TA can manage submissions' do
+      let(:role) { create(:ta, manage_submissions: true) }
+      let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+      let(:groupings) { [grouping1, grouping3] }
+
+      before do
+        grouping1.group.update!(group_name: "navigation-scope-1-#{grouping1.id}")
+        grouping2.group.update!(group_name: "navigation-scope-2-#{grouping2.id}")
+        grouping3.group.update!(group_name: "navigation-scope-3-#{grouping3.id}")
+      end
+
+      it 'navigates only assigned groupings by default' do
+        new_grouping = grouping1.get_next_grouping(role, false)
+        expect(new_grouping).to eq(grouping3)
+      end
+
+      it 'navigates all groupings when assigned-only navigation is disabled' do
+        new_grouping = grouping1.get_next_grouping(role, false, { 'assignedGradersOnly' => 'false' })
+        expect(new_grouping).to eq(grouping2)
       end
     end
   end
@@ -1818,7 +1992,7 @@ describe Grouping do
     let(:assignment) { grouping1.assignment }
 
     context 'when role is an instructor' do
-      let(:role) { create(:instructor) }
+      let(:role) { create(:instructor, course: assignment.course) }
 
       it 'returns all groupings ordered by group name ascending with correct keys' do
         result = grouping1.get_filtered_ordered_ids(role)
@@ -1833,6 +2007,21 @@ describe Grouping do
         expected_ids = [grouping1, grouping2, grouping3].sort_by { |g| g.group.group_name }.reverse
                                                         .map { |g| g.current_result.id }
         expect(result.pluck(:result_id)).to eq(expected_ids)
+      end
+
+      context 'when the instructor is assigned as a grader' do
+        before do
+          create(:ta_membership, grouping: grouping1, role: role)
+          create(:ta_membership, grouping: grouping3, role: role)
+        end
+
+        it 'returns only assigned groupings when assigned-only navigation is enabled' do
+          result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'true' })
+          returned_grouping_ids = result.pluck(:grouping_id)
+
+          expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+          expect(returned_grouping_ids).not_to include(grouping2.id)
+        end
       end
 
       it 'orders by submission_date when specified' do
@@ -1883,6 +2072,16 @@ describe Grouping do
       end
     end
 
+    context 'when role is an admin' do
+      let(:role) { create(:admin_role, course: assignment.course) }
+
+      it 'does not apply the instructor assigned-only submission scope' do
+        result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'true' })
+
+        expect(result.pluck(:grouping_id)).to match_array([grouping1.id, grouping2.id, grouping3.id])
+      end
+    end
+
     context 'when role is a ta' do
       let(:role) { create(:ta) }
 
@@ -1896,6 +2095,23 @@ describe Grouping do
         returned_grouping_ids = result.pluck(:grouping_id)
         expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
         expect(returned_grouping_ids).not_to include(grouping2.id)
+      end
+
+      context 'when the TA can manage submissions' do
+        let(:role) { create(:ta, manage_submissions: true) }
+
+        it 'returns all groupings when assigned-only navigation is disabled' do
+          result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'false' })
+          returned_grouping_ids = result.pluck(:grouping_id)
+          expect(returned_grouping_ids).to include(grouping1.id, grouping2.id, grouping3.id)
+        end
+
+        it 'returns only assigned groupings when assigned-only navigation is enabled' do
+          result = grouping1.get_filtered_ordered_ids(role, { 'assignedGradersOnly' => 'true' })
+          returned_grouping_ids = result.pluck(:grouping_id)
+          expect(returned_grouping_ids).to include(grouping1.id, grouping3.id)
+          expect(returned_grouping_ids).not_to include(grouping2.id)
+        end
       end
     end
   end

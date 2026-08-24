@@ -17,6 +17,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (assessment_id => assessments.id)
+#  fk_rails_...  (marking_scheme_id => marking_schemes.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class MarkingWeight < ApplicationRecord

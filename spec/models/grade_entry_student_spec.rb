@@ -86,11 +86,10 @@ describe GradeEntryStudent do
         # First grade entry student gets all the TAs.
         grade_entry_student = form.grade_entry_students.find_by!(role_id: student_ids.first)
         grade_entry_student.reload
-        form.grade_entry_students.delete(grade_entry_student)
         expect(grade_entry_student.tas).to match_array(tas)
 
         # The rest of the grade entry students gets only the first TA.
-        form.grade_entry_students.each do |ges|
+        form.grade_entry_students.where.not(id: grade_entry_student.id).find_each do |ges|
           ges.reload
           expect(ges.tas).to eq [tas.first]
         end

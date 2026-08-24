@@ -21,6 +21,8 @@
 #  x2                 :integer
 #  y1                 :integer
 #  y2                 :integer
+#  created_at         :datetime
+#  updated_at         :datetime
 #  annotation_text_id :integer          not null
 #  creator_id         :integer
 #  result_id          :integer          not null
@@ -35,6 +37,7 @@
 #
 #  fk_annotations_annotation_texts  (annotation_text_id => annotation_texts.id)
 #  fk_annotations_submission_files  (submission_file_id => submission_files.id)
+#  fk_rails_...                     (result_id => results.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class PdfAnnotation < Annotation
@@ -42,6 +45,10 @@ class PdfAnnotation < Annotation
   # of the rectangle containing the annotation.
   validates :x1, :x2, :y1, :y2, :page, presence: true
   validates :x1, :x2, :y1, :y2, :page, numericality: true
+
+  def self.required_fields
+    %i[x1 y1 x2 y2 page]
+  end
 
   # Return a hash containing the coordinates of the rectangle containing the
   # annotation and the page.

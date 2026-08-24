@@ -81,7 +81,7 @@ search:
   # Override default scanner settings to handle non-HTML .erb files using the PatternWithScopeScanner
   # https://github.com/davidwessman/i18n-tasks/blob/main/lib/i18n/tasks/used_keys.rb
   scanners:
-    - ['::I18n::Tasks::Scanners::RubyAstScanner', { only: ['*.rb'] }]
+    - ['::I18n::Tasks::Scanners::RubyScanner', { only: ['*.rb'] }]
     - ['::I18n::Tasks::Scanners::ErbAstScanner', { only: ['*.html.erb'] }]
     - ['::I18n::Tasks::Scanners::PatternWithScopeScanner', { exclude: ['*.html.erb', '*.rb'] }]
 

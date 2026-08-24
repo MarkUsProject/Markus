@@ -19,6 +19,8 @@
 # Foreign Keys
 #
 #  fk_annotation_labels_annotation_categories  (annotation_category_id => annotation_categories.id) ON DELETE => cascade
+#  fk_rails_...                                (creator_id => roles.id)
+#  fk_rails_...                                (last_editor_id => roles.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class AnnotationText < ApplicationRecord

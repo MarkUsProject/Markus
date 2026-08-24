@@ -23,12 +23,14 @@
 # Indexes
 #
 #  index_assessments_on_course_id                       (course_id)
+#  index_assessments_on_parent_assessment_id            (parent_assessment_id) UNIQUE
 #  index_assessments_on_short_identifier_and_course_id  (short_identifier,course_id) UNIQUE
 #  index_assessments_on_type_and_short_identifier       (type,short_identifier)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (course_id => courses.id)
+#  fk_rails_...  (parent_assessment_id => assessments.id)
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Assessment < ApplicationRecord

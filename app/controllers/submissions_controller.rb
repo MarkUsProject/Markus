@@ -11,10 +11,7 @@ class SubmissionsController < ApplicationController
 
   PERMITTED_IFRAME_SRC = ([:self] + %w[https://www.youtube.com https://drive.google.com https://docs.google.com]).freeze
   content_security_policy only: [:repo_browser, :file_manager] do |p|
-    # required because heic2any uses libheif which calls
-    # eval (javascript) and creates an image as a blob.
-    # TODO: remove this when possible
-    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    # required because heic-convert creates an image as a blob
     p.img_src :self, :blob
     p.frame_src(*PERMITTED_IFRAME_SRC)
   end
@@ -134,6 +131,10 @@ class SubmissionsController < ApplicationController
     # helper. See update_files action where this is used as well.
     set_filebrowser_vars(@grouping)
     flash_file_manager_messages
+
+    past_due_date = @assignment.grouping_past_due_date?(@grouping)
+    past_collection_date = @grouping.past_collection_date?
+    @show_late_submit_confirmation = past_due_date && !past_collection_date
 
     render 'file_manager', layout: 'assignment_content', locals: {}
   end
@@ -367,7 +368,7 @@ class SubmissionsController < ApplicationController
     assignment_id = params[:assignment_id]
     unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
-    raise t('student.submission.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
+    raise t('submissions.student.external_submit_only') if current_role.student? && !@assignment.allow_web_submits
 
     @path = params[:path].presence || '/'
 
@@ -403,7 +404,7 @@ class SubmissionsController < ApplicationController
     end
 
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty? && new_url.empty?
-      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+      flash_message(:warning, I18n.t('submissions.student.no_action_detected'))
     else
       messages = []
       path = FileHelper.checked_join(@grouping.assignment.repository_folder, @path.gsub(%r{^/}, ''))
@@ -454,7 +455,7 @@ class SubmissionsController < ApplicationController
             expected_mime_type = Marcel::MimeType.for extension: file_extension
 
             if content_type != expected_mime_type && content_type != 'application/octet-stream'
-              flash_message(:warning, I18n.t('student.submission.file_extension_mismatch', extension: file_extension))
+              flash_message(:warning, I18n.t('submissions.student.file_extension_mismatch', extension: file_extension))
             end
             success, msgs = add_file(f, current_role, repo,
                                      path: path, txn: txn, check_size: true, required_files: required_files)
@@ -618,7 +619,7 @@ class SubmissionsController < ApplicationController
         end
       rescue StandardError => e
         flash_message(:error, e.message)
-        render plain: I18n.t('student.submission.missing_file',
+        render plain: I18n.t('submissions.student.missing_file',
                              file_name: params[:file_name], message: e.message)
         return
       end
@@ -694,7 +695,7 @@ class SubmissionsController < ApplicationController
       send_file zip_path, disposition: 'inline', filename: zip_file
     rescue ActionController::MissingFile
       flash_message(:error, I18n.t('submissions.download_zipped_file.file_missing', zip_file: zip_file))
-      redirect_back(fallback_location: root_path)
+      redirect_back_or_to(root_path)
     end
   end
 
@@ -718,7 +719,7 @@ class SubmissionsController < ApplicationController
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
           flash_message(:error, t('submissions.student.no_revision_available'))
-          redirect_back(fallback_location: root_path)
+          redirect_back_or_to(root_path)
           return
         end
       end
@@ -726,7 +727,7 @@ class SubmissionsController < ApplicationController
       files = revision.files_at_path(assignment.repository_folder)
       if files.empty?
         flash_message(:error, t('submissions.no_files_available'))
-        redirect_back(fallback_location: root_path)
+        redirect_back_or_to(root_path)
         return
       end
 

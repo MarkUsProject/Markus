@@ -19,6 +19,7 @@ CATEGORIES = [
   "### \u{1F6A8} Breaking changes",
   "### \u{2728} New features and improvements",
   "### \u{1F41B} Bug fixes",
+  "### \u{1F4DA} Documentation changes",
   "### \u{1F527} Internal changes"
 ].freeze
 
@@ -81,10 +82,8 @@ def emit_old_sections_verbatim(out, raw_text, skip:)
   emitting = false
   raw_text.each_line do |line|
     line = line.chomp
-    if line =~ /^## \[(unreleased|v[\d.]+)\]/i
-      ver = Regexp.last_match(1).downcase == 'unreleased' ? 'unreleased' : Regexp.last_match(1)
-      emitting = skip.exclude?(ver)
-    end
+    ver = parse_version_header(line)
+    emitting = !skip.include?(ver) if ver
     out << line if emitting
   end
 end
@@ -138,7 +137,11 @@ if ARGV.empty? || ARGV.intersect?(['-h', '--help'])
 end
 
 args = {}
-ARGV.each { |a| args[Regexp.last_match(1)] = Regexp.last_match(2) if a =~ /^--(\w[\w-]*)=(.+)$/ }
+ARGV.each do |arg|
+  next unless (match = arg.match(/^--(\w[\w-]*)=(.+)$/))
+
+  args[match[1]] = match[2]
+end
 
 mode = args['mode']
 version = args['version']

@@ -19,7 +19,7 @@
 #
 # Indexes
 #
-#  index_exam_templates_on_assessment_id  (assessment_id)
+#  index_exam_templates_on_assessment_id_and_name  (assessment_id,name) UNIQUE
 #
 # Foreign Keys
 #
@@ -126,7 +126,7 @@ class ExamTemplate < ApplicationRecord
                               current_user)
   end
 
-  def fix_error(filename, exam_num, page_num, upside_down)
+  def fix_error(filename, exam_num, page_num, rotation = 0)
     error_file = File.join(
       base_path, 'error', filename
     )
@@ -176,10 +176,11 @@ class ExamTemplate < ApplicationRecord
       error_file_old_name = File.join(incomplete_dir, filename)
       error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
       File.rename(error_file_old_name, error_file_new_name)
-      if upside_down
+      unless rotation.zero?
         new_pdf = CombinePDF.new
         pdf = CombinePDF.load(error_file_new_name)
         pdf.pages.each do |page|
+          page[:Rotate] = page[:Rotate].to_f + rotation
           new_pdf << page.fix_rotation
         end
         File.binwrite(error_file_new_name, new_pdf.to_pdf)
@@ -254,6 +255,7 @@ class ExamTemplate < ApplicationRecord
 
         repo.commit(txn)
       end
+      collect_if_complete(grouping)
     end
   end
 
@@ -302,6 +304,22 @@ class ExamTemplate < ApplicationRecord
   # any changes to template divisions should be rejected once exams have been uploaded
   def exam_been_uploaded?
     self.split_pdf_logs.exists?
+  end
+
+  def missing_pages(group)
+    (1..num_pages).to_a - group.split_pages.pluck(:exam_page_number)
+  end
+
+  def paper_complete?(group)
+    missing_pages(group).empty?
+  end
+
+  def collect_if_complete(grouping)
+    return if grouping.is_collected?
+    return unless paper_complete?(grouping.group)
+    group = grouping.group
+    group.build_repository unless Repository.get_class.repository_exists?(group.repo_path)
+    SubmissionsJob.perform_now([grouping], apply_late_penalty: false)
   end
 
   private

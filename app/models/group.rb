@@ -7,6 +7,8 @@
 #  id         :integer          not null, primary key
 #  group_name :string           not null
 #  repo_name  :string
+#  created_at :datetime
+#  updated_at :datetime
 #  course_id  :bigint           not null
 #
 # Indexes

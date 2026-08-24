@@ -22,6 +22,26 @@
     margin: 5px;
   }
 
+  .grader-scope-filters {
+    display: flex;
+    flex-direction: column;
+    width: $dropdown-horizontal;
+  }
+
+  .submission-scope-options {
+    display: flex;
+    gap: 20px;
+  }
+
+  .submission-scope-option {
+    align-items: center;
+    display: flex;
+
+    label {
+      margin-left: 4px;
+    }
+  }
+
   .order {
     padding-top: 10px;
   }

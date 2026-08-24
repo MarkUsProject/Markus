@@ -20,7 +20,6 @@
 #
 #  index_roles_on_course_id              (course_id)
 #  index_roles_on_section_id             (section_id)
-#  index_roles_on_user_id                (user_id)
 #  index_roles_on_user_id_and_course_id  (user_id,course_id) UNIQUE
 #
 # Foreign Keys
@@ -31,6 +30,8 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Instructor < Role
+  include CourseStaffRole
+
   after_create { Repository.get_class.update_permissions }
   after_destroy { Repository.get_class.update_permissions }
   validate :associated_user_is_an_end_user, unless: -> { self.admin_role? }
