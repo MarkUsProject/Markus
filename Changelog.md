@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
 - Enforced restriction on grouping deletion when submissions exist (#8134)
 - Improved table selection column styling, fixed table overflow in containers, and hid unused scrollbars (#8133)

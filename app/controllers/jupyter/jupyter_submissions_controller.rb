@@ -20,39 +20,57 @@ module Jupyter
     }.freeze
 
     RESPONSE_BODY_TRUNCATE_LENGTH = 500
+    JUPYTER_SESSION_TTL = 15.minutes
 
-    # The Jupyter endpoint resolves the submitting user separately, so it
-    # should not require an existing MarkUs browser session.
-    skip_before_action :verify_authenticity_token, only: [:submit], raise: false
-    skip_before_action :authenticate, only: [:submit]
-    skip_before_action :check_record, only: [:submit]
-    skip_before_action :check_course_switch, only: [:submit]
+    # codeql[rb/csrf-protection-disabled] -- authenticated via header token, not cookies, so CSRF does not apply
+    skip_before_action :verify_authenticity_token, only: [:create_session, :submit], raise: false
 
-    skip_verify_authorized only: :submit
+    # The Jupyter endpoints resolve the submitting user separately, so they
+    # do not require an existing MarkUs browser session.
+    skip_before_action :authenticate, only: [:create_session, :submit]
+    skip_before_action :check_record, only: [:create_session, :submit]
+    skip_before_action :check_course_switch, only: [:create_session, :submit]
+
+    skip_verify_authorized only: [:create_session, :submit]
 
     before_action :ensure_jupyter_enabled!
+    before_action :authenticate_jupyter_session!, only: [:submit]
+
+    # Verifies the caller's JupyterHub token and mints a short-lived signed session token.
+    def create_session
+      jupyter_info = create_session_params[:jupyter]
+      origin, = parse_jupyter_base_url!(jupyter_info[:base_url])
+      token = jupyter_info[:token]
+
+      user_name = find_username_from_jupyter_token!(origin, token)
+      session_token, expires_at = encode_jupyter_session(user_name: user_name, origin: origin, token: token)
+
+      render json: {
+        status: 'success',
+        session_token: session_token,
+        expires_at: expires_at.iso8601,
+        markus_user_name: user_name
+      }
+    rescue StandardError => e
+      render_error(e)
+    end
 
     def submit
       payload = submit_params
 
-      jupyter_info = payload[:jupyter]
       jupyter_path = payload[:notebook_path].to_s
       destination_path = File.basename(jupyter_path)
       if destination_path.blank?
         raise ArgumentError, I18n.t('jupyter.submit.missing_destination_filename')
       end
 
-      origin, base_path = parse_jupyter_base_url!(jupyter_info[:base_url])
-      token = jupyter_info[:token]
-
-      user = find_user_from_jupyter_token!(origin, token)
       course = find_course_from_payload!(payload)
 
-      student = course.students.find_by(user_id: user.id)
+      student = course.students.find_by(user_id: current_user.id)
 
       if student.nil?
         raise ForbiddenError,
-              I18n.t('jupyter.submit.not_a_student', user_name: user.user_name, course_name: course.name)
+              I18n.t('jupyter.submit.not_a_student', user_name: current_user.user_name, course_name: course.name)
       end
 
       assignment = find_assignment_from_payload!(payload, student)
@@ -61,7 +79,7 @@ module Jupyter
         raise ForbiddenError, I18n.t('submissions.api_submission_disabled')
       end
 
-      jupyter_file = fetch_jupyter_file!(origin, base_path, token, jupyter_path)
+      jupyter_file = fetch_jupyter_file!(@jupyter_origin, @jupyter_base_path, @jupyter_token, jupyter_path)
 
       submit_jupyter_file!(
         assignment: assignment,
@@ -79,10 +97,16 @@ module Jupyter
           course: course.name,
           assignment_id: assignment.id,
           assignment: assignment.short_identifier,
-          markus_user_name: user.user_name
+          markus_user_name: current_user.user_name
         }
       }
     rescue StandardError => e
+      render_error(e)
+    end
+
+    private
+
+    def render_error(e)
       status = ERROR_STATUSES.find { |error_class, _| e.is_a?(error_class) }&.last
       if status.nil?
         Rails.logger.error("Jupyter submission failed: #{e.class}: #{e.message}\n#{e.backtrace&.join("\n")}")
@@ -100,8 +124,6 @@ module Jupyter
       end
     end
 
-    private
-
     def ensure_jupyter_enabled!
       return if Settings.jupyter.enabled
 
@@ -111,11 +133,38 @@ module Jupyter
       }, status: :service_unavailable
     end
 
-    def submit_params
-      params.require([:notebook_path, :jupyter])
+    # Resolves +current_user+ (via +@real_user+, mirroring Api::MainApiController#authenticate)
+    # from a previously-issued session token, without touching the MarkUs session cookie.
+    # Stashes the parsed Jupyter origin/base_path/token as ivars so +submit+ doesn't need to
+    # re-parse +jupyter.base_url+.
+    def authenticate_jupyter_session!
+      params.require(:jupyter).require([:base_url, :token])
+      jupyter_info = params.require(:jupyter).permit(:base_url, :token)
+      session_token = params[:session_token]
+
+      if session_token.blank?
+        raise IdentityError, I18n.t('jupyter.submit.missing_session_token')
+      end
+
+      origin, base_path = parse_jupyter_base_url!(jupyter_info[:base_url])
+      @jupyter_origin = origin
+      @jupyter_base_path = base_path
+      @jupyter_token = jupyter_info[:token]
+      @real_user = decode_jupyter_session!(session_token, origin: origin, token: @jupyter_token)
+    rescue StandardError => e
+      render_error(e)
+    end
+
+    def create_session_params
       params.require(:jupyter).require([:base_url, :token])
 
-      params.permit(:notebook_path, :course_id, :course, :assignment_id, :assignment,
+      params.permit(jupyter: [:base_url, :token])
+    end
+
+    def submit_params
+      params.require(:notebook_path)
+
+      params.permit(:notebook_path, :session_token, :course_id, :course, :assignment_id, :assignment,
                     jupyter: [:base_url, :token])
     end
 
@@ -155,7 +204,7 @@ module Jupyter
       raise BadRequestError, I18n.t('jupyter.submit.unparseable_base_url', error: e.message)
     end
 
-    def find_user_from_jupyter_token!(origin, token)
+    def find_username_from_jupyter_token!(origin, token)
       uri = URI.parse("#{origin}/hub/api/user")
       model = jupyter_api_get!(uri, token, error_class: IdentityError)
       name = model['name']
@@ -164,13 +213,51 @@ module Jupyter
         raise IdentityError, I18n.t('jupyter.submit.missing_username')
       end
 
-      user = User.find_by(user_name: name)
-
-      if user.nil?
+      unless User.exists?(user_name: name)
         raise ActiveRecord::RecordNotFound, I18n.t('jupyter.submit.unknown_user', user_name: name.inspect)
       end
 
+      name
+    end
+
+    def encode_jupyter_session(user_name:, origin:, token:)
+      expires_at = JUPYTER_SESSION_TTL.from_now
+      payload = {
+        'user_name' => user_name,
+        'origin' => origin,
+        'token_hash' => Digest::SHA256.hexdigest(token),
+        'expires_at' => expires_at.to_i
+      }
+
+      [Rails.application.message_verifier(:jupyter_session).generate(payload), expires_at]
+    end
+
+    # Verifies a session token minted by +encode_jupyter_session+. Verifies request
+    # params origin and JupyterHub token against the session token.
+    def decode_jupyter_session!(session_token, origin:, token:)
+      payload = Rails.application.message_verifier(:jupyter_session).verify(session_token)
+
+      if payload['expires_at'].to_i < Time.current.to_i
+        raise IdentityError, I18n.t('jupyter.submit.session_expired')
+      end
+
+      unless payload['origin'] == origin
+        raise IdentityError, I18n.t('jupyter.submit.session_origin_mismatch')
+      end
+
+      unless ActiveSupport::SecurityUtils.secure_compare(payload['token_hash'], Digest::SHA256.hexdigest(token))
+        raise IdentityError, I18n.t('jupyter.submit.session_token_mismatch')
+      end
+
+      user = User.find_by(user_name: payload['user_name'])
+
+      if user.nil?
+        raise ActiveRecord::RecordNotFound, I18n.t('jupyter.submit.unknown_user', user_name: payload['user_name'])
+      end
+
       user
+    rescue ActiveSupport::MessageVerifier::InvalidSignature
+      raise IdentityError, I18n.t('jupyter.submit.invalid_session_token')
     end
 
     def find_course_from_payload!(payload)
