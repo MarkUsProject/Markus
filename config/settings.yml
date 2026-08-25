@@ -36,6 +36,9 @@ puma:
   max_threads: 5
   worker_timeout: 60
 
+jupyter:
+  enabled: false
+
 jupyter_server:
   hosts: []
 

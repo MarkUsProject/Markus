@@ -30,6 +30,8 @@ module Jupyter
 
     skip_verify_authorized only: :submit
 
+    before_action :ensure_jupyter_enabled!
+
     def submit
       payload = submit_params
 
@@ -99,6 +101,15 @@ module Jupyter
     end
 
     private
+
+    def ensure_jupyter_enabled!
+      return if Settings.jupyter.enabled
+
+      render json: {
+        status: 'error',
+        message: I18n.t('jupyter.feature_disabled')
+      }, status: :service_unavailable
+    end
 
     def submit_params
       params.require([:notebook_path, :jupyter])

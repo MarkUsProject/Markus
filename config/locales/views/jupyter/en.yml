@@ -1,6 +1,7 @@
 ---
 en:
   jupyter:
+    feature_disabled: The Jupyter submission integration is not enabled on this MarkUs instance.
     submit:
       assignment_not_found: Assignment could not be found.
       connection_failed: 'Could not connect to Jupyter at %{uri}: %{error}'

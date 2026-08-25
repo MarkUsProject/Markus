@@ -38,6 +38,9 @@ logging:
 autotest:
   max_batch_size: 10
 
+jupyter:
+  enabled: true
+
 jupyter_server:
   hosts:
     - "http://localhost:8888"

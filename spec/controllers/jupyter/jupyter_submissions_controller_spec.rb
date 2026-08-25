@@ -39,6 +39,7 @@ describe Jupyter::JupyterSubmissionsController do
   end
 
   before do
+    allow(Settings.jupyter).to receive(:enabled).and_return(true)
     allow(Settings.jupyter_server).to receive(:hosts).and_return([origin])
   end
 
@@ -102,6 +103,14 @@ describe Jupyter::JupyterSubmissionsController do
   describe 'error handling' do
     let(:assignment) { create(:assignment, course: course) }
     let!(:student) { create(:student, course: course) }
+
+    it 'returns 503 when the jupyter feature flag is disabled' do
+      allow(Settings.jupyter).to receive(:enabled).and_return(false)
+
+      post :submit, params: valid_params
+
+      expect(response).to have_http_status :service_unavailable
+    end
 
     it 'returns 400 when a top-level required param is missing' do
       post :submit, params: valid_params.except(:notebook_path)
