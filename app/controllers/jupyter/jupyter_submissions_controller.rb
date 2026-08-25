@@ -19,6 +19,8 @@ module Jupyter
       SubmissionError => :unprocessable_content
     }.freeze
 
+    RESPONSE_BODY_TRUNCATE_LENGTH = 500
+
     # The Jupyter endpoint resolves the submitting user separately, so it
     # should not require an existing MarkUs browser session.
     skip_before_action :verify_authenticity_token, only: [:submit], raise: false
@@ -79,12 +81,21 @@ module Jupyter
         }
       }
     rescue StandardError => e
-      status = ERROR_STATUSES.find { |error_class, _| e.is_a?(error_class) }&.last || :internal_server_error
-      render json: {
-        status: 'error',
-        message: e.message,
-        error_class: e.class.name
-      }, status: status
+      status = ERROR_STATUSES.find { |error_class, _| e.is_a?(error_class) }&.last
+      if status.nil?
+        Rails.logger.error("Jupyter submission failed: #{e.class}: #{e.message}\n#{e.backtrace&.join("\n")}")
+        render json: {
+          status: 'error',
+          message: I18n.t('jupyter.submit.internal_error'),
+          error_class: 'InternalServerError'
+        }, status: :internal_server_error
+      else
+        render json: {
+          status: 'error',
+          message: e.message,
+          error_class: e.class.name
+        }, status: status
+      end
     end
 
     private
@@ -107,13 +118,15 @@ module Jupyter
         raise BadRequestError, I18n.t('jupyter.submit.invalid_base_url', base_url: base_url)
       end
 
+      scheme = uri.scheme.downcase
+      host = uri.host.downcase
       origin = if uri.port == uri.default_port
-                 "#{uri.scheme}://#{uri.host}"
+                 "#{scheme}://#{host}"
                else
-                 "#{uri.scheme}://#{uri.host}:#{uri.port}"
+                 "#{scheme}://#{host}:#{uri.port}"
                end
 
-      allowed_hosts = Settings.jupyter_server.hosts.map { |host| host.strip.sub(%r{/*\z}, '') }
+      allowed_hosts = Settings.jupyter_server.hosts.map { |h| h.strip.sub(%r{/*\z}, '').downcase }
       unless allowed_hosts.include?(origin)
         raise BadRequestError, I18n.t('jupyter.submit.origin_not_allowed', origin: origin)
       end
@@ -121,6 +134,10 @@ module Jupyter
       path = uri.path.presence || '/'
       path = "/#{path}" unless path.start_with?('/')
       path = "#{path}/" unless path.end_with?('/')
+
+      if path.split('/').include?('..')
+        raise BadRequestError, I18n.t('jupyter.submit.invalid_base_url_path', base_url: base_url)
+      end
 
       [origin, path]
     rescue URI::InvalidURIError => e
@@ -215,14 +232,21 @@ module Jupyter
 
       unless response.is_a?(Net::HTTPSuccess)
         raise error_class,
-              I18n.t('jupyter.submit.request_failed', uri: uri, code: response.code, body: response.body)
+              I18n.t('jupyter.submit.request_failed', uri: uri, code: response.code,
+                                                      body: truncate_response_body(response.body))
       end
 
       JSON.parse(response.body)
     rescue JSON::ParserError => e
       raise error_class, I18n.t('jupyter.submit.invalid_json_response', uri: uri, error: e.message)
-    rescue Errno::ECONNREFUSED, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
+    rescue Errno::ECONNREFUSED, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
       raise error_class, I18n.t('jupyter.submit.connection_failed', uri: uri, error: e.message)
+    end
+
+    # Truncates a Jupyter/JupyterHub error response body before it is embedded in a message
+    # returned to the client, since these can be arbitrarily large (e.g. an HTML error page).
+    def truncate_response_body(body)
+      body.to_s.truncate(RESPONSE_BODY_TRUNCATE_LENGTH)
     end
 
     def contents_uri(origin, base_path, jupyter_path)
