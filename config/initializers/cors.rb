@@ -10,12 +10,12 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     # Jupyter/JupyterHub browser origins that are permitted to submit to MarkUs.
     origins(*Settings.jupyter_server.hosts)
 
-    # Existing MarkUs Jupyter submission API.
+    # Legacy MarkUs Jupyter submission API.
     resource %r{/api/courses/\d+/assignments/\d+/submit_file},
              headers: :any,
              methods: [:post]
 
-    # New JupyterLab submit-button endpoint.
+    # New JupyterLab extension submission endpoint.
     resource %r{/jupyter/submit},
              headers: :any,
              methods: [:post, :options]

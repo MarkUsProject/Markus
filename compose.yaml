@@ -51,7 +51,6 @@ services:
       - PLAYWRIGHT_BROWSERS_PATH=/app/tmp/pw-browsers
     extra_hosts:
       - localhost:host-gateway
-      - "host.docker.internal:host-gateway"
     ports:
       - '3000:3000'
     volumes:
