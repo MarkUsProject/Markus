@@ -15,7 +15,10 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
              headers: :any,
              methods: [:post]
 
-    # New JupyterLab extension submission endpoint.
+    # New JupyterLab submission extension endpoints.
+    resource %r{/jupyter/authenticate},
+             headers: :any,
+             methods: [:post, :options]
     resource %r{/jupyter/submit},
              headers: :any,
              methods: [:post, :options]
