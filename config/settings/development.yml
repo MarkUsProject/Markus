@@ -38,6 +38,8 @@ logging:
 autotest:
   max_batch_size: 10
 
+docs_url: http://localhost:4000
+
 lti:
   adapter_file: <%= "#{::Rails.root}/config/dummy_lti_config.rb" %>
   domains: <%= %w[host.docker.internal] %>

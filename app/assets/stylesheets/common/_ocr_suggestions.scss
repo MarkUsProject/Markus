@@ -3,6 +3,19 @@
 
 @use 'constants' as *;
 
+#assign_student #names {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.ui-autocomplete {
+  box-sizing: border-box;
+
+  li div {
+    overflow-wrap: break-word;
+  }
+}
+
 .ocr-suggestions-container {
   margin: 1em 0;
   padding: 1em;

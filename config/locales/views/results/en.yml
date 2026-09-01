@@ -53,6 +53,7 @@ en:
       previous_level: Select previous level
       toggle_compact: Toggle fullscreen
       when_rubric: "(When on rubric) "
+    last_updated_by: Last updated by %{name}
     late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
     marks_chart: Marks Chart
     marks_released: The marks have been released. You cannot change the grades.
@@ -61,6 +62,7 @@ en:
     no_incomplete_submission: There are no other incomplete submissions!
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
+    old_mark: Old Mark
     overridden_deductions: Overridden
     previous_submission: Previous Submission
     print: Print

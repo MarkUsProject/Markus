@@ -5,10 +5,7 @@ class ResultsController < ApplicationController
   authorize :criterion_id, through: :criterion_id_param
 
   content_security_policy only: [:edit, :view_marks] do |p|
-    # required because heic2any uses libheif which calls
-    # eval (javascript) and creates an image as a blob.
-    # TODO: remove this when possible
-    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    # required because heic-convert creates an image as a blob
     p.img_src :self, :blob
     p.frame_src(*SubmissionsController::PERMITTED_IFRAME_SRC)
   end
@@ -24,6 +21,7 @@ class ResultsController < ApplicationController
         original_result = remark_submitted ? submission.get_original_result : nil
         is_review = result.is_a_review?
         is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+        can_view_grader_info = current_role.instructor? || current_role.ta? || is_reviewer
         pr_assignment = is_review ? assignment.pr_assignment : nil
 
         grouping = submission.grouping
@@ -32,7 +30,7 @@ class ResultsController < ApplicationController
           grouping_id: is_reviewer ? nil : submission.grouping_id,
           marking_state: result.marking_state,
           released_to_students: result.released_to_students,
-          detailed_annotations: current_role.instructor? || current_role.ta? || is_reviewer,
+          detailed_annotations: can_view_grader_info,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
           allow_remarks: is_review ? pr_assignment.allow_remarks : assignment.allow_remarks,
@@ -95,11 +93,11 @@ class ResultsController < ApplicationController
         end
 
         data[:annotations] = all_annotations.map do |annotation|
-          annotation.get_data(include_creator: current_role.instructor? || current_role.ta? || is_reviewer)
+          annotation.get_data(include_creator: can_view_grader_info)
         end
 
         # Annotation categories
-        if current_role.instructor? || current_role.ta? || is_reviewer
+        if can_view_grader_info
           annotation_categories = AnnotationCategory.visible_categories(is_review ? pr_assignment : assignment,
                                                                         current_role)
                                                     .includes(:annotation_texts)
@@ -162,13 +160,16 @@ class ResultsController < ApplicationController
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           criteria = klass.where(**criteria_query)
           criteria_info = criteria.pluck_to_hash(*fields)
-          marks_info = criteria.joins(:marks)
-                               .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields,
-                                              'marks.mark AS mark',
-                                              'marks.override AS override',
-                                              'criteria.bonus AS bonus')
-                               .group_by { |h| h[:id] }
+          marks_relation = criteria.joins(:marks).where('marks.result_id': result.id)
+          marks_fields = [*fields,
+                          'marks.mark as mark',
+                          'marks.override AS override',
+                          'criteria.bonus AS bonus']
+          if can_view_grader_info
+            marks_relation = marks_relation.left_outer_joins(marks: { last_updated_by: :user })
+            marks_fields << 'users.display_name AS last_updated_by'
+          end
+          marks_info = marks_relation.pluck_to_hash(*marks_fields).group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
             info = marks_info[cr[:id]]&.first || cr.merge(mark: nil)
@@ -475,6 +476,7 @@ class ResultsController < ApplicationController
         num_marked: num_marked,
         mark: result_mark.reload.mark,
         mark_override: result_mark.override,
+        last_updated_by: current_role.display_name,
         subtotal: result.get_subtotal,
         total: result.get_total_mark
       }

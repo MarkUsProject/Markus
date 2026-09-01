@@ -262,6 +262,12 @@ describe ExamTemplatesController do
                           page_number: page_number }
       end
 
+      it 'does not collect the submission when the paper is still incomplete' do
+        group = Group.find_by!(group_name: "#{exam_template.name}_paper_#{copy_number}")
+        grouping = exam_template.assignment.groupings.find_by!(group_id: group.id)
+        expect(grouping.is_collected?).to be false
+      end
+
       context 'when the split page id does not exist' do
         let(:split_page_id) { -1 }
 
@@ -341,19 +347,170 @@ describe ExamTemplatesController do
       end
     end
 
-    describe '#view_logs' do
-      render_views
-      before do
- get_as user, :view_logs, format: 'js', params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+    describe '#fix_error completing a paper' do
+      subject(:fix_error) do
+        post_as user, :fix_error,
+                params: { course_id: course.id,
+                          id: exam_template.id,
+                          commit: 'Save',
+                          split_page_id: split_page_id,
+                          copy_number: copy_number,
+                          page_number: page_number,
+                          split_pdf_log_id: split_pdf_log.id,
+                          rotation: rotation }
       end
 
-      it('should respond with 200') { expect(response).to have_http_status :ok }
+      let(:copy_number) { 1 }
+      let(:page_number) { 1 }
+      let(:rotation) { '0' }
+      let(:group) do
+ create(:group, group_name: "#{exam_template.name}_paper_#{copy_number}",
+                repo_name: "#{exam_template.name}_paper_#{copy_number}", course: course)
+      end
+      let!(:grouping) { create(:grouping, group: group, assignment: exam_template.assignment) }
+      let(:split_pdf_log) { create(:split_pdf_log, exam_template: exam_template) }
+      let(:split_page) do
+ create(:split_page, split_pdf_log: split_pdf_log, group: group, exam_page_number: page_number)
+      end
+      let(:split_page_id) { split_page.id }
+      let(:incomplete_dir) { File.join(exam_template.base_path, 'incomplete', copy_number.to_s) }
+      let(:renamed_page_pdf) { File.join(incomplete_dir, "#{page_number}.pdf") }
 
-      it 'passes template division data to init_upload_scans_form' do
-        expect(response.body).to include('upload_scans_form')
-        expect(response.body).to include('template_division_count')
-        expect(response.body).to include('init_upload_scans_form(examTemplateData)')
-        expect(response.body).to include(exam_template.id.to_s)
+      before do
+        (2..6).each do |n|
+          create(:split_page, split_pdf_log: split_pdf_log, group: group,
+                              exam_page_number: n, status: 'Saved to incomplete directory')
+        end
+
+        filename = "#{split_page_id}.pdf"
+        error_file = File.join(exam_template.base_path, 'error', filename)
+        complete_page = File.join(exam_template.base_path, 'complete', copy_number.to_s, page_number.to_s)
+        incomplete_page = File.join(exam_template.base_path, 'incomplete', copy_number.to_s, page_number.to_s)
+
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with(error_file).and_return(true)
+
+        allow(File).to receive(:exist?).with(complete_page).and_return(false)
+        allow(File).to receive(:exist?).with(incomplete_page).and_return(false)
+        allow(File).to receive(:exist?).with(renamed_page_pdf).and_return(false)
+
+        allow(FileUtils).to receive(:mv).and_call_original
+        allow(FileUtils).to receive(:mv).with(error_file, incomplete_dir)
+        allow(File).to receive(:rename).and_call_original
+        allow(File).to receive(:rename).with(File.join(incomplete_dir, filename), renamed_page_pdf)
+      end
+
+      it 'automatically collects the submission' do
+        fix_error
+
+        expect(grouping.reload.is_collected?).to be true
+      end
+
+      context 'when rotating a sideways page to the right' do
+        let(:rotation) { '90' }
+
+        it 'rotates the page 90 degrees clockwise' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 90.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
+      end
+
+      context 'when rotating a sideways page to the left' do
+        let(:rotation) { '270' }
+
+        it 'rotates the page 90 degrees counterclockwise' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 270.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
+      end
+
+      context 'when rotating an upside-down page' do
+        let(:rotation) { '180' }
+
+        it 'rotates the page 180 degrees' do
+          page = CombinePDF.create_page
+          pdf = instance_double(CombinePDF::PDF, pages: [page])
+          allow(CombinePDF).to receive(:load).with(renamed_page_pdf).and_return(pdf)
+          allow(page).to receive(:[]=).and_call_original
+          expect(page).to receive(:[]=).with(:Rotate, 180.0).and_call_original
+          expect(File).to receive(:binwrite).with(renamed_page_pdf, kind_of(String))
+
+          fix_error
+        end
+      end
+    end
+
+    describe '#view_logs' do
+      context 'when format is js' do
+        render_views
+        before do
+          get_as user, :view_logs, format: 'js',
+                                   params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+        end
+
+        it('should respond with 200') { expect(response).to have_http_status :ok }
+
+        it 'passes template division data to init_upload_scans_form' do
+          expect(response.body).to include('upload_scans_form')
+          expect(response.body).to include('template_division_count')
+          expect(response.body).to include('init_upload_scans_form(examTemplateData)')
+          expect(response.body).to include(exam_template.id.to_s)
+        end
+      end
+
+      context 'when format is json' do
+        let(:split_pdf_log) { create(:split_pdf_log, exam_template: exam_template) }
+        let(:group) { create(:group, course: course) }
+
+        def group_data_for(response)
+          response.parsed_body.first['group_data']
+        end
+
+        context 'when a group has every expected page scanned' do
+          before do
+            (1..exam_template.num_pages).each do |page_num|
+              create(:split_page, split_pdf_log: split_pdf_log, group: group,
+                                  exam_page_number: page_num, status: 'Saved to complete directory')
+            end
+            get_as user, :view_logs, format: 'json',
+                                     params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+          end
+
+          it 'excludes the group from group_data since it has no missing pages' do
+            entry = group_data_for(response).find { |g| g['group'] == group.group_name }
+            expect(entry).to be_nil
+          end
+        end
+
+        context 'when a group is partially scanned' do
+          let(:pages_scanned) { 4 }
+
+          before do
+            (1..pages_scanned).each do |page_num|
+              create(:split_page, split_pdf_log: split_pdf_log, group: group,
+                                  exam_page_number: page_num, status: 'Saved to incomplete directory')
+            end
+            get_as user, :view_logs, format: 'json',
+                                     params: { assignment_id: exam_template.assignment.id, course_id: course.id }
+          end
+
+          it 'reports the group with the correct missing page numbers' do
+            entry = group_data_for(response).find { |g| g['group'] == group.group_name }
+            expect(entry['missing_pages']).to eq(((pages_scanned + 1)..exam_template.num_pages).to_a)
+          end
+        end
       end
     end
 

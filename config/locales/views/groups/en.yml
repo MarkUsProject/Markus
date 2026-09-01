@@ -13,7 +13,6 @@ en:
       no_active_students: 'Group ''%{group}'' not cloned: zero active students left.'
       no_member: 'Member ''%{member}'' not added to group ''%{group}'': %{error}.'
       other: 'Group ''%{group}'' not cloned: %{error}.'
-    could_not_delete: Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading.
     delete: Delete group(s)
     delete_confirm: This will remove all members in the group and delete all information associated with this group. Continue?
     delete_group_has_submission: 'The following groupings could not be deleted since they have submissions: '
@@ -39,14 +38,16 @@ en:
       errors:
         already_grouped: 'Could not invite %{user_name}: this student is already a member of a group.'
         already_pending: 'Could not invite %{user_name}: this student already has a pending invitation for this group.'
+        email_not_found: No student with email '%{email}' could be found.
+        empty_text_field: You need to enter at least one user name or email.
         extension_exists: You cannot modify a group with an extension to the due date. Please contact your instructor if you wish to make changes.
         group_max_reached: 'Could not invite %{user_name}: group maximum has been reached.'
         inactive_grader: Cannot assign inactive grader(s) %{user_names}.
         inactive_student: 'Could not invite %{user_name}: this student is inactive.'
         inviting_self: You cannot invite yourself to your own group.
         need_to_create_group: You must create a group before you can invite members.
-        not_found: No student '%{user_name}' could be found.
         not_same_section: 'Could not invite %{user_name}: this student is not in your section.'
+        user_name_not_found: No student with user name '%{user_name}' could be found.
       success: Invitation(s) successful.
     is_not_valid: Group is not valid
     is_valid: Group is valid
@@ -61,7 +62,8 @@ en:
         not_found: No available membership found for this student and group.
       invitations: Group invitations
       invite: Invite student(s)
-      invite_instructions: Enter one or more student user names, separated by commas.
+      invite_instructions: Enter one or more student user names and/or emails, separated by commas, spaces, or newlines.
+      invite_label: User names / Emails
       invited_by: You have been invited to a group by %{inviter_display_name}.
       join: Join Group
       member_disinvited: Member disinvited.

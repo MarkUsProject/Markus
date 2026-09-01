@@ -5,7 +5,7 @@ describe Grouping do
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }
-    it { is_expected.to have_many(:submissions) }
+    it { is_expected.to have_many(:submissions).dependent(:restrict_with_error) }
     it { is_expected.to have_many(:notes) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
     it { is_expected.to have_one(:course) }
@@ -52,7 +52,7 @@ describe Grouping do
       end
 
       it 'cannot be invited by students' do
-        errors = grouping.invite(hidden.user.user_name)
+        errors, _ = grouping.invite(hidden.user.user_name)
         expect(errors).not_to be_empty
         expect(errors.first).to include('inactive')
         expect(grouping.memberships.count).to eq(0)
@@ -117,6 +117,16 @@ describe Grouping do
           grouping.reload
           expect(grouping.tas.size).to eq 1
           expect(tas).to include grouping.tas.first
+        end
+      end
+
+      it 'uses only TAs retained by assign_tas when calculating weights' do
+        student = create(:student, course: assignment.course)
+
+        Grouping.randomly_assign_tas(grouping_ids, [ta_ids.first, student.id], [1, 3], assignment)
+
+        groupings.each do |grouping|
+          expect(grouping.reload.tas).to contain_exactly(tas.first)
         end
       end
 
@@ -218,20 +228,23 @@ describe Grouping do
       end
     end
 
-    describe '.delete_grouping' do
-      it 'makes an attempt to update repository permissions when deleting a group' do
-        g = groupings
-        expect(Repository.get_class).to receive(:update_permissions_after)
-        g[0].delete_grouping
-      end
-    end
-
     describe '.assign_tas' do
       it 'updates repository permissions exactly once after assigning all TAs' do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
         Grouping.assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
           grouping_ids.zip(ta_ids.cycle)
         end
+      end
+
+      it 'only assigns groupings from the given assignment' do
+        other_grouping = create(:grouping, assignment: create(:assignment))
+
+        Grouping.assign_tas([grouping_ids.first, other_grouping.id], ta_ids.first, assignment) do |ids, role_ids|
+          ids.product(role_ids)
+        end
+
+        expect(groupings.first.reload.tas).to contain_exactly(tas.first)
+        expect(other_grouping.reload.tas).to be_empty
       end
     end
 
@@ -250,6 +263,22 @@ describe Grouping do
           grouping.reload
           expect(grouping.tas).to be_empty
         end
+      end
+
+      it 'only unassigns memberships from the given assignment' do
+        membership = create(:ta_membership, grouping: groupings.first, role: tas.first)
+        other_assignment = create(:assignment)
+        other_grouping = create(:grouping, assignment: other_assignment)
+        other_membership = create(:ta_membership, grouping: other_grouping)
+
+        Grouping.unassign_tas(
+          [membership.id, other_membership.id],
+          [groupings.first.id, other_grouping.id],
+          assignment
+        )
+
+        expect { membership.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(other_membership.reload).to be_present
       end
 
       it 'updates criteria coverage counts after bulk unassign TAs' do
@@ -774,6 +803,30 @@ describe Grouping do
       end
     end
 
+    describe '#destroy' do
+      context 'when the grouping has a submission' do
+        before { create(:version_used_submission, grouping: @grouping) }
+
+        it 'does not destroy the grouping' do
+          expect { @grouping.destroy }.not_to(change { Grouping.exists?(@grouping.id) })
+        end
+
+        it 'adds an error to the grouping' do
+          @grouping.destroy
+          expect(@grouping.errors.full_messages).to include(
+            I18n.t('activerecord.errors.models.grouping.attributes.base.restrict_dependent_destroy.has_many',
+                   record: 'submissions')
+          )
+        end
+      end
+
+      context 'when the grouping has no submission' do
+        it 'destroys the grouping' do
+          expect { @grouping.destroy }.to change { Grouping.exists?(@grouping.id) }.from(true).to(false)
+        end
+      end
+    end
+
     context 'when the group has no students' do
       before do
         @student01 = create(:student)
@@ -781,10 +834,81 @@ describe Grouping do
       end
 
       describe '#invite' do
-        it 'adds students in any scenario possible when invoked by instructor' do
-          members = [@student01.user_name, @student02.user_name]
-          @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
-          expect(@grouping.accepted_student_memberships.count).to eq(2)
+        context 'invoked by instructor' do
+          it 'returns an error when no members are provided' do
+            errors, invited = @grouping.invite([], StudentMembership::STATUSES[:accepted],
+                                               invoked_by_instructor: true)
+            expect(errors).to contain_exactly(I18n.t('groups.invite_member.errors.empty_text_field'))
+            expect(invited).to be_empty
+            expect(@grouping.accepted_student_memberships.count).to eq(0)
+          end
+
+          it 'adds students by username in any scenario possible' do
+            members = [@student01.user_name, @student02.user_name]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+
+          it 'returns an error when no student matching the username entered could be found' do
+            members = ['test123']
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
+            )
+          end
+
+          it 'returns an error for the unknown username but still adds the known student' do
+            members = ['test123', @student01.user_name]
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.user_name_not_found', user_name: 'test123')
+            )
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'adds students by email in any scenario possible' do
+            members = [@student01.email, @student02.email]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+
+          it 'adds a student by email regardless of the case entered' do
+            members = [@student01.email.upcase]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'returns an error when no student matching the email entered could be found' do
+            members = ['test@example.com']
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
+            )
+          end
+
+          it 'returns an error for the unknown email but still adds the known student' do
+            members = ['test@example.com', @student01.email]
+            errors, _ = @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(errors).to contain_exactly(
+              I18n.t('groups.invite_member.errors.email_not_found', email: 'test@example.com')
+            )
+            expect(@grouping.accepted_student_memberships.count).to eq(1)
+          end
+
+          it 'adds different students by both username and email in any scenario possible' do
+            members = [@student01.user_name, @student02.email]
+            @grouping.invite(members, StudentMembership::STATUSES[:accepted], invoked_by_instructor: true)
+            expect(@grouping.accepted_student_memberships.count).to eq(2)
+          end
+        end
+
+        context 'invoked by student' do
+          it 'adds one student when both the username and email are provided for that student' do
+            members = [@student01.email, @student01.user_name]
+            errors, _ = @grouping.invite(members)
+            expect(errors).to be_empty
+            expect(@grouping.student_memberships.count).to eq(1)
+          end
         end
       end
     end

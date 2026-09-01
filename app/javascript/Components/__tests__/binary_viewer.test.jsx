@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, waitFor, fireEvent} from "@testing-library/react";
 import {BinaryViewer} from "../Result/binary_viewer";
 import fetchMock from "jest-fetch-mock";

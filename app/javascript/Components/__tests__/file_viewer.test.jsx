@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen} from "@testing-library/react";
 import {FileViewer} from "../Result/file_viewer";
 import fetchMock from "jest-fetch-mock";

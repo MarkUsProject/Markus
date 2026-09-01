@@ -7,19 +7,16 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
+gem 'propshaft'
 gem 'puma'
-gem 'rails', '~> 8.1.2'
-gem 'sprockets'
-gem 'sprockets-rails'
+gem 'rails', '~> 8.1.3'
 
 # Models and database interactions
 gem 'pluck_to_hash'
 
 # CSS and JavaScript
-gem 'autoprefixer-rails'
 gem 'jsbundling-rails'
 gem 'js-routes'
-gem 'terser'
 
 # Background tasks
 gem 'activejob-status'
@@ -46,7 +43,7 @@ gem 'redis', '~> 5.4.1'
 gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'rmagick', '~> 6.2.0'
+gem 'rmagick', '~> 7.0.5'
 gem 'rtesseract'
 
 # Ruby miscellany
@@ -54,7 +51,7 @@ gem 'csv'
 gem 'json'
 gem 'mini_mime'
 gem 'redcarpet'
-gem 'rubyzip', require: 'zip'
+gem 'rubyzip', '~> 3.4.1'
 gem 'rugged'
 
 # Rails miscellany
@@ -132,4 +129,9 @@ group :unicorn do
   gem 'unicorn'
 end
 
-gem 'cssbundling-rails', '~> 1.4'
+group :docs do
+  gem 'jekyll', '~> 4.4'
+  gem 'jekyll-relative-links'
+  gem 'jekyll-seo-tag'
+  gem 'just-the-docs'
+end

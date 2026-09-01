@@ -17,13 +17,13 @@ export const FileViewer = React.memo(function FileViewer(props) {
     setErrorMessage(null);
   }, [props.selectedFile, props.selectedFileURL, props.selectedFileType]);
 
+  const viewerKey = `${props.selectedFileType}-viewer`;
   const commonProps = {
     submission_file_id: props.selectedFile,
     annotations: props.annotations ?? [],
     released_to_students: props.released_to_students,
     resultView: !!props.result_id,
     course_id: props.course_id,
-    key: `${props.selectedFileType}-viewer`,
     url: props.selectedFileURL,
     setLoadingCallback: setLoading,
     setErrorMessageCallback: setErrorMessage,
@@ -31,12 +31,13 @@ export const FileViewer = React.memo(function FileViewer(props) {
 
   let viewer;
   if (props.selectedFileType === "image") {
-    viewer = <ImageViewer mime_type={props.mime_type} {...commonProps} />;
+    viewer = <ImageViewer mime_type={props.mime_type} key={viewerKey} {...commonProps} />;
   } else if (props.selectedFileType === "pdf") {
     viewer = (
       <PDFViewer
         annotationFocus={props.annotationFocus}
         userFileSelectionCount={props.userFileSelectionCount}
+        key={viewerKey}
         {...commonProps}
       />
     );
@@ -44,16 +45,19 @@ export const FileViewer = React.memo(function FileViewer(props) {
     props.selectedFileType === "jupyter-notebook" ||
     (props.selectedFileType === "rmarkdown" && props.rmd_convert_enabled)
   ) {
-    viewer = <HTMLViewer annotationFocus={props.annotationFocus} {...commonProps} />;
+    viewer = (
+      <HTMLViewer annotationFocus={props.annotationFocus} key={viewerKey} {...commonProps} />
+    );
   } else if (props.selectedFileType === "binary") {
-    viewer = <BinaryViewer {...commonProps} />;
+    viewer = <BinaryViewer key={viewerKey} {...commonProps} />;
   } else if (props.selectedFileType === "markusurl") {
-    viewer = <URLViewer {...commonProps} />;
+    viewer = <URLViewer key={viewerKey} {...commonProps} />;
   } else if (props.selectedFileType !== "") {
     viewer = (
       <TextViewer
         type={props.selectedFileType === "rmarkdown" ? "markdown" : props.selectedFileType}
         focusLine={props.focusLine}
+        key={viewerKey}
         {...commonProps}
       />
     );

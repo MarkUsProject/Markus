@@ -1444,6 +1444,23 @@ describe ResultsController do
      :update_view_token_expiry,
      :download_view_tokens].each { |route_name| test_unauthorized(route_name) }
     it_behaves_like 'showing json data', true
+
+    context 'when a criterion has been graded' do
+      let(:criterion) { create(:rubric_criterion, assignment: assignment) }
+      let(:mark) { create(:rubric_mark, result: complete_result, criterion: criterion, last_updated_by: instructor) }
+
+      before do
+        allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+        mark
+        get :show, params: { course_id: complete_result.course.id, id: complete_result.id, format: :json }
+      end
+
+      it 'does not include the name of the grader who last updated the mark' do
+        mark_data = response.parsed_body['marks'].find { |m| m['id'] == criterion.id }
+        expect(mark_data).not_to have_key('last_updated_by')
+      end
+    end
+
     describe '#view_token_check' do
       subject { get :view_token_check, params: params }
 
@@ -2175,6 +2192,19 @@ describe ResultsController do
     it_behaves_like 'show result with old_total'
 
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
+
+    context 'when a criterion has been graded' do
+      before do
+        create(:ta_membership, role: ta, grouping: grouping)
+        rubric_mark.update!(last_updated_by: ta)
+        get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
+      end
+
+      it 'includes the name of the grader who last updated the mark' do
+        mark_data = response.parsed_body['marks'].find { |m| m['id'] == rubric_criterion.id }
+        expect(mark_data['last_updated_by']).to eq ta.display_name
+      end
+    end
 
     context 'when groups information is anonymized' do
       let(:data) { response.parsed_body }

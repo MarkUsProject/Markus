@@ -69,7 +69,7 @@ class Grouping < ApplicationRecord
            class_name: 'Student',
            through: :accepted_student_memberships,
            source: :role
-  has_many :submissions
+  has_many :submissions, dependent: :restrict_with_error
   has_one :current_submission_used,
           -> { where submission_version_used: true },
           class_name: 'Submission',
@@ -141,17 +141,17 @@ class Grouping < ApplicationRecord
   # which is a parallel array to +ta_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, weightings_arr, assignment)
-    # Create a hash of TA's to the number of groups they are supposed to mark
-    total = weightings_arr.sum
-    weightings = {}
-    ta_ids.each_with_index do |group, index|
-      weightings[group] = (weightings_arr[index].to_f / total * grouping_ids.length).round
-    end
+    weightings = Array(ta_ids).map(&:to_i).zip(weightings_arr).to_h
 
-    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, _|
-      # Create 1 TA for each group they are supposed to be assigned to
-      ta_ids = ta_ids.sort_by { |ta| weightings[ta] }
-      ta_ids_ = ta_ids.flat_map { |ta_id| [ta_id] * weightings[ta_id] }
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids_, ta_ids_|
+      total = ta_ids_.sum { |ta_id| weightings[ta_id] || 0 }
+      next [] if total.zero?
+
+      assignment_counts = ta_ids_.index_with do |ta_id|
+        ((weightings[ta_id] || 0).to_f / total * grouping_ids_.length).round
+      end
+      ta_ids_ = ta_ids_.sort_by { |ta_id| assignment_counts[ta_id] }
+                       .flat_map { |ta_id| [ta_id] * assignment_counts[ta_id] }
       # Assign TAs in a round-robin fashion to a list of random groupings.
       grouping_ids_.shuffle.zip(ta_ids_.cycle).reject { |pair| pair.include?(nil) }
     end
@@ -191,7 +191,7 @@ class Grouping < ApplicationRecord
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).ids
-    grouping_ids = Grouping.where(id: grouping_ids).ids
+    grouping_ids = assignment.groupings.where(id: grouping_ids).ids
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
                       .where(grouping_id: grouping_ids, role_id: ta_ids)
@@ -222,8 +222,9 @@ class Grouping < ApplicationRecord
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
+    grouping_ids = assignment.groupings.where(id: grouping_ids).ids
     Repository.get_class.update_permissions_after do
-      TaMembership.where(id: ta_membership_ids).delete_all
+      TaMembership.where(id: ta_membership_ids, grouping_id: grouping_ids).delete_all
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
@@ -315,21 +316,36 @@ class Grouping < ApplicationRecord
     # overloading invite() to accept members arg as both a string and a array
     members = [members] unless members.instance_of?(Array) # put a string in an array
     all_errors = []
+    already_invited = Set.new
+    if members.empty?
+      return [[I18n.t('groups.invite_member.errors.empty_text_field')], already_invited]
+    end
     members.each do |m|
       m = m.strip
-      user = course.students.joins(:user).find_by('users.user_name': m)
+      user_name = false
+      if m.include?('@') # email
+        user = course.students.joins(:user).find_by('lower(users.email) = ?', m.downcase)
+      else
+        user = course.students.joins(:user).find_by('users.user_name': m)
+        user_name = true
+      end
       begin
         if user.nil?
-          raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
+          if user_name
+            raise I18n.t('groups.invite_member.errors.user_name_not_found', user_name: m)
+          else
+            raise I18n.t('groups.invite_member.errors.email_not_found', email: m)
+          end
         end
-        if invoked_by_instructor || self.can_invite?(user)
+        if already_invited.exclude?(user) && (invoked_by_instructor || self.can_invite?(user))
           self.add_member(user, set_membership_status)
+          already_invited.add(user)
         end
       rescue StandardError => e
         all_errors << e.message
       end
     end
-    all_errors
+    [all_errors, already_invited]
   end
 
   # Add a new member to base
@@ -468,13 +484,6 @@ class Grouping < ApplicationRecord
         membership.save
       end
     end
-  end
-
-  def delete_grouping
-    Repository.get_class.update_permissions_after(only_on_request: true) do
-      student_memberships.includes(:role).find_each(&:destroy)
-    end
-    self.destroy
   end
 
   # Removes the member rejected by its membership id

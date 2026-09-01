@@ -5,10 +5,6 @@ class GroupsController < ApplicationController
   before_action { authorize! }
   layout 'assignment_content'
 
-  content_security_policy only: [:assign_scans] do |p|
-    p.img_src :self, :blob
-  end
-
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
@@ -26,23 +22,14 @@ class GroupsController < ApplicationController
   end
 
   def remove_group
-    # When a success div exists we can return successfully removed groups
-    groupings = Grouping.where(id: params[:grouping_id])
+    assignment = current_course.assignments.find(params[:assignment_id])
+    groupings = assignment.groupings.where(id: params[:grouping_id])
     errors = []
-    @removed_groupings = []
     Repository.get_class.update_permissions_after(only_on_request: true) do
       groupings.each do |grouping|
-        grouping.student_memberships.each do |member|
-          grouping.remove_member(member.id)
+        unless grouping.destroy
+          errors.push(grouping.group.group_name)
         end
-      end
-    end
-    groupings.each do |grouping|
-      if grouping.has_submission?
-        errors.push(grouping.group.group_name)
-      else
-        grouping.delete_grouping
-        @removed_groupings.push(grouping)
       end
     end
     if errors.any?
@@ -136,7 +123,7 @@ class GroupsController < ApplicationController
       if @assignment.groupings.left_outer_joins(:current_submission_used).where('submissions.id': nil).any?
         flash_message(:warning, I18n.t('exam_templates.assign_scans.not_all_submissions_collected'))
       end
-      redirect_back(fallback_location: course_assignment_groups_path(current_course, @assignment))
+      redirect_back_or_to(course_assignment_groups_path(current_course, @assignment))
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|
@@ -204,7 +191,7 @@ class GroupsController < ApplicationController
     # TODO: make this a member route in a new GroupingsController
     @grouping = Grouping.joins(:assignment).where('assessments.course_id': current_course.id).find(params[:g_id])
     @assignment = @grouping.assignment
-    unless params[:skip]
+    if params[:skip].blank?
       # if the user has selected a name from the dropdown, s_id is set
       if params[:s_id].present?
         student = current_course.students.find(params[:s_id])
@@ -240,7 +227,14 @@ class GroupsController < ApplicationController
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
     if next_grouping.nil?
-      head :not_found
+      num_valid = @assignment.get_num_valid
+      num_total = @assignment.groupings.size
+      if num_valid == num_total
+        flash_message(:success, t('exam_templates.assign_scans.done'))
+      else
+        flash_message(:warning, t('exam_templates.assign_scans.not_all_submissions_collected'))
+      end
+      render json: { redirect: course_assignment_groups_path(current_course, @assignment) }
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|
@@ -380,7 +374,7 @@ class GroupsController < ApplicationController
       end
     end
 
-    redirect_back(fallback_location: root_path)
+    redirect_back_or_to(root_path)
   end
 
   def accept_invitation
@@ -441,8 +435,8 @@ class GroupsController < ApplicationController
   end
 
   def destroy
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_role.accepted_grouping_for(@assignment.id)
+    @assignment = current_course.assignments.find(params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:id])
     m_logger = MarkusLogger.instance
     if @grouping.nil?
       m_logger.log('Failed to delete group, since no accepted group for this user existed.' \
@@ -481,15 +475,14 @@ class GroupsController < ApplicationController
       return
     end
     if flash_allowance(:error, allowance_to(:invite_member?, @grouping)).value
-      to_invite = params[:invite_member].split(',')
-      errors = @grouping.invite(to_invite)
+      to_invite = params[:invite_member].to_s.split(/[,\s]+/).compact_blank
+      errors, invited = @grouping.invite(to_invite)
+      errors = errors.uniq
       if errors.blank?
-        to_invite.each do |i|
-          i = i.strip
-          invited_user = current_course.students.joins(:user).find_by('users.user_name': i)
-          if invited_user&.receives_invite_emails?
+        invited.each do |student|
+          if student.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
-                                    invited: invited_user,
+                                    invited: student,
                                     grouping: @grouping).grouping_invite_email.deliver_later
           end
         end
@@ -552,8 +545,6 @@ class GroupsController < ApplicationController
       students = Student.where(id: student_ids)
 
       case params[:global_actions]
-      when 'delete'
-        delete_groupings(groupings)
       when 'invalid'
         invalidate_groupings(groupings)
       when 'valid'
@@ -651,24 +642,6 @@ class GroupsController < ApplicationController
     groupings.each(&:validate_grouping)
   end
 
-  # Deletes the given list of groupings if possible. Removes each member first.
-  def delete_groupings(groupings)
-    # If any groupings have a submission raise an error.
-    if groupings.any?(&:has_submission?)
-      raise I18n.t('groups.could_not_delete') # should add names of grouping we could not delete
-    else
-      # Remove each student from every group.
-      Repository.get_class.update_permissions_after(only_on_request: true) do
-        groupings.each do |grouping|
-          grouping.student_memberships.each do |mem|
-            grouping.remove_member(mem.id)
-          end
-          grouping.delete_grouping
-        end
-      end
-    end
-  end
-
   # Adds students to grouping. `groupings` should be an array with
   # only one element, which is the grouping that is supposed to be
   # added to.
@@ -707,7 +680,7 @@ class GroupsController < ApplicationController
     if student.has_accepted_grouping_for?(assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
-    errors = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
+    errors, _ = grouping.invite(student.user_name, set_membership_status, invoked_by_instructor: true)
     grouping.reload
 
     if errors.present?

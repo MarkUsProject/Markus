@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import CreateGroupModal from "../Modals/create_group_modal";
 import Modal from "react-modal";

@@ -5,9 +5,6 @@
         { course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
     });
   <% end %>
-  <%= render partial: 'shared/navigation_warning',
-             formats: [:js],
-             handlers: [:erb] %>
 <% end %>
 
 <div id='autotest-manager'></div>

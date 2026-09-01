@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, fireEvent} from "@testing-library/react";
 import {PDFViewer} from "../Result/pdf_viewer";
 import {ResultContext} from "../Result/result_context";

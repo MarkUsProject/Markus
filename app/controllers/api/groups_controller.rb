@@ -228,6 +228,23 @@ module Api
              status: :not_found
     end
 
+    def test_runs
+      return render_no_grouping_error unless grouping
+
+      group_runs = grouping.test_runs
+      test_group_results = TestGroupResult.where(test_run_id: group_runs)
+                                          .group_by(&:test_run_id)
+
+      grouping_test_runs = group_runs.as_json.map do |test_run|
+        test_run.merge('test_group_results' => test_group_results[test_run['id']])
+      end
+
+      respond_to do |format|
+        format.xml { render xml: grouping_test_runs.to_xml(root: 'test_runs', skip_types: 'true') }
+        format.json { render json: grouping_test_runs }
+      end
+    end
+
     def add_annotations
       result = self.grouping&.current_result
       return page_not_found('No submission exists for that group') if result.nil?

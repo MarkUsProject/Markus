@@ -32,6 +32,8 @@ logging:
 autotest:
   max_batch_size: 500
 
+docs_url: https://markus-docs.teach.cs.toronto.edu
+
 # The settings below are for an experimental feature that is not available
 # in production yet. Please disregard for now.
 lti:

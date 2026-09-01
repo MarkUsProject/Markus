@@ -9,6 +9,7 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getGroupedRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -55,12 +56,14 @@ export const selectionColumn = columnHelper.display({
     }, [table.getIsSomeRowsSelected(), table.getIsAllRowsSelected()]);
 
     return (
-      <input
-        ref={checkboxRef}
-        type="checkbox"
-        checked={table.getIsAllRowsSelected()}
-        onChange={table.getToggleAllRowsSelectedHandler()}
-      />
+      <div style={{textAlign: "center"}}>
+        <input
+          ref={checkboxRef}
+          type="checkbox"
+          checked={table.getIsAllRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      </div>
     );
   },
   size: 30,
@@ -68,12 +71,14 @@ export const selectionColumn = columnHelper.display({
   enableResizing: false,
   enableSorting: false,
   cell: ({row}) => (
-    <input
-      type="checkbox"
-      checked={row.getIsSelected()}
-      disabled={!row.getCanSelect()}
-      onChange={row.getToggleSelectedHandler()}
-    />
+    <div style={{textAlign: "center"}}>
+      <input
+        type="checkbox"
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect()}
+        onChange={row.getToggleSelectedHandler()}
+      />
+    </div>
   ),
 });
 
@@ -84,6 +89,7 @@ export default function Table({
   initialState,
   loading,
   renderSubComponent,
+  renderSubRows,
   getRowCanExpand,
   getRowId,
   enableRowSelection,
@@ -91,6 +97,7 @@ export default function Table({
   columnFilters: externalColumnFilters,
   onColumnFiltersChange: externalOnColumnFiltersChange,
   onRowSelectionChange,
+  showRowNumbers = false,
 }) {
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
@@ -100,6 +107,7 @@ export default function Table({
   });
   const [expanded, setExpanded] = React.useState({});
   const [internalRowSelection, setInternalRowSelection] = React.useState({});
+  const [grouping, setGrouping] = React.useState(initialState?.grouping ?? []);
 
   const columnFilters = React.useMemo(
     () => (externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters),
@@ -129,11 +137,11 @@ export default function Table({
     if (enableRowSelection) {
       cols = [selectionColumn, ...cols];
     }
-    if (renderSubComponent) {
+    if (renderSubComponent || renderSubRows) {
       cols = [expanderColumn, ...cols];
     }
     return cols;
-  }, [columns, enableRowSelection, renderSubComponent]);
+  }, [columns, enableRowSelection, renderSubComponent, renderSubRows]);
 
   const table = useReactTable({
     data,
@@ -144,21 +152,25 @@ export default function Table({
       columnVisibility,
       expanded,
       rowSelection,
+      grouping,
     },
     initialState: initialState,
     onColumnFiltersChange: handleColumnFiltersChange,
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: setExpanded,
+    onGroupingChange: setGrouping,
     onRowSelectionChange: handleRowSelectionChange,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedRowModel: getFacetedRowModel(),
     getRowCanExpand,
     getRowId,
+    groupedColumnMode: false,
     enableSortingRemoval: false,
     enableColumnResizing: true,
     enableRowSelection: enableRowSelection,
@@ -166,9 +178,13 @@ export default function Table({
   });
 
   const centerTotalSize = table.getCenterTotalSize();
+  const tableMinWidth = showRowNumbers
+    ? `calc(${centerTotalSize}px + var(--row-number-gutter-width))`
+    : centerTotalSize;
+  const rows = table.getRowModel().rows;
 
   const tableHeaders = (
-    <div className="rt-thead -header" style={{minWidth: centerTotalSize}}>
+    <div className="rt-thead -header" style={{minWidth: tableMinWidth}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -193,7 +209,7 @@ export default function Table({
     [table, finalColumns]
   );
   const tableFilters = showFilters && (
-    <div className="rt-thead -filters" style={{minWidth: centerTotalSize}}>
+    <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
       {table.getHeaderGroups().map(headerGroup => (
         <div className="rt-tr" role="row" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -215,15 +231,19 @@ export default function Table({
   );
 
   return (
-    <div className="Table -highlight" style={{maxHeight: "500px"}}>
+    <div
+      className={`Table -highlight${showRowNumbers ? " -show-row-numbers" : ""}`}
+      style={{maxHeight: "500px"}}
+    >
       <div className="rt-table" role="grid">
         {tableHeaders}
         {tableFilters}
-        <div className="rt-tbody" style={{minWidth: centerTotalSize}}>
-          {table.getRowModel().rows.map(row => (
+        <div className="rt-tbody" style={{minWidth: tableMinWidth}}>
+          {rows.map(row => (
             <TableRow
               row={row}
               isExpanded={row.getIsExpanded()}
+              isGrouped={row.getIsGrouped()}
               isSelected={row.getIsSelected()}
               key={row.id}
               renderSubComponent={renderSubComponent}
@@ -233,7 +253,7 @@ export default function Table({
               columns={finalColumns}
             />
           ))}
-          {loading && table.getRowModel().rows.length > 0 && (
+          {loading && rows.length > 0 && (
             <div
               className="loading-spinner"
               style={{
@@ -259,7 +279,7 @@ export default function Table({
               />
             </div>
           )}
-          {!table.getRowModel().rows.length &&
+          {!rows.length &&
             (loading ? (
               <div className="loading-spinner">
                 <Grid
