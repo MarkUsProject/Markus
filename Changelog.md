@@ -3,13 +3,38 @@
 ## [unreleased]
 
 ### 🛡️ Security
-- Replaced weak MD5 hashing used for API key generation with SHA-256 hashing (#8104)
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
+- Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
+- Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
+- Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
+- Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
+- Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
+
+### 🐛 Bug fixes
+
+### 📚 Documentation changes
+
+### 🔧 Internal changes
+- Suppressed CodeQL scanning false positives (#8101)
+- Refactored Action Cable channel authorization into `Channel` superclass (#8054)
+- Removed dead code in repository files (#8065)
+- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
+- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
+- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
+- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
+- Added missing foreign keys in seed data (#8006)
+
+## [v2.10.2]
+
+### 🛡️ Security
+- Replaced weak MD5 hashing used for API key generation with SHA-256 hashing (#8104)
+
+### ✨ New features and improvements
 - Enforced restriction on grouping deletion when submissions exist (#8134)
 - Improved table selection column styling, fixed table overflow in containers, and hid unused scrollbars (#8133)
 - Displayed who last updated a mark to TAs and instructors in the grading view (#8131)
@@ -18,18 +43,13 @@
 - Added row numbers to the course summaries table (#8108)
 - Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
 - Added row numbers to tables using React Table v8, allowing users to identify row positions after sorting and filtering (#8089)
-- Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
 - Improved Session Timeout Logic: `check_timeout` polling paused when user is not focused on the MarkUs tab and polling stops after user session has timed out (#8074)
 - Migrated Groups Manager students and groups tables to use `react-table` v8 (#8068)
 - Decreased size of QR codes on scanned assessments and ignored whitespace in OCR of page labels (#8076)
 - Added automatic collection of scanned exam submissions once a paper's pages are all present and error-free (#8069)
-- Added support for assigning instructors as graders through the assignment Graders tab and CSV imports (#8060)
 - Improved the Assign Scans page: OCR suggestions now appear above the manual entry form and clicking one assigns the student directly, "Skip group" is now a button instead of a checkbox, the Members list is hidden when empty, and the progress bar shows "x of y assigned" (#8059)
-- Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
 - Added a table showing incomplete papers and their missing page numbers when uploading exam scans (#8051)
 - Updated links to refer to new documentation website (#8049)
-- Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
-- Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 - Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET /test_runs API route (#8055)
@@ -41,23 +61,22 @@
 - Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
 - Fixed Assign Scans returning a raw 404 instead of redirecting back to the Groups page once all groups have been assigned (#8059)
 - Allow new instructors without existing courses to create a course via LTI launch (#8061)
+- Fixed spurious unsaved-changes navigation warning on the autotest manager and starter files manager pages (#7968)
 
 ### 📚 Documentation changes
+- Fixed typos and icons in documentation (#8088)
 - Made documentation site table-of-contents/section listings consistent (#8062)
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
-- Updated `pdfjs-dist` to v6.2.108 (#8135)
 - Refactored annotation routes to respond with JSON rather than Javascript (#8127)
-- Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb`
+- Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb` (#8109)
 - Replaced `jcrop` with `cropperjs` for the exam template cover page crop selector (#8114)
 - Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)
-- Suppressed CodeQL scanning false positives (#8101)
+- Modified release scripts to use only plain Ruby (#8086)
 - Migrated `AnnotationUsagePanel` component to use `react-table` v8 (#8021)
 - Migrated `SummaryPanel` component to React Table V8 (#8019)
 - Resolved/ignored Brakeman warnings and added Brakeman to CI checks (#8066)
-- Refactored Action Cable channel authorization into `Channel` superclass (#8054)
-- Removed dead code in repository files (#8065)
 - Upgraded to React v19.2.7 (#8044)
 - Switched JSX compilation to the automatic runtime and removed now-unnecessary `import React from "react"` statements (#8042)
 - Upgraded Babel to v8 (#8041)
@@ -65,13 +84,53 @@
 - Upgraded to Rails v8.1.3 (#8015)
 - Replaced the grading view's custom jQuery pane resizing logic with `react-resizable-panels` (#8000)
 - Refactored `Result#generate_print_pdf` to use Dir.mktmpdir instead of `Fileutils.mkdir_p` (#7964)
-- Added tests for `MarksGradersController` to achieve full test coverage for `randomly_assign` (#7947)
-- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
-- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
-- Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Migrated asset pipeline from Sprockets to Propshaft (#7970)
-- Added missing foreign keys in seed data (#8006)
 - Updated to Rails v8.1.3.1 (#8113)
+- Bumped `pdfjs-dist` from 5.6.205 to 6.2.108 (#8111)
+- Bumped `brace-expansion` from 1.1.14 to 1.1.18 and from 2.1.0 to 2.1.4 (#8132)
+- Bumped `resque-scheduler` from 4.11.0 to 5.0.0 (#8124)
+- Bumped `brakeman` from 8.0.4 to 8.0.5 (#8125)
+- Bumped `mime` from 4.0.7 to 4.1.0 (#8123)
+- Bumped `autoprefixer` from 10.5.0 to 10.5.4 (#8121)
+- Bumped `@rails/actioncable` from 8.1.300 to 8.1.301 (#8120)
+- Bumped `bootsnap` from 1.24.0 to 1.24.6 (#8115)
+- Bumped `csv` from 3.3.5 to 3.3.6 (#8122)
+- Bumped `webmock` from 3.26.1 to 3.26.2 (#8119)
+- Bumped `dompurify` from 3.4.12 to 3.4.13 (#8112)
+- Bumped `@rjsf/core` and `@rjsf/validator-ajv8` from 6.6.2 to 6.7.1 (#8097)
+- Bumped `fast-uri` from 3.1.4 to 3.1.5 (#8107)
+- Bumped `react` and `react-dom` from 19.2.7 to 19.2.8 (#8096)
+- Bumped `@fortawesome` packages from 7.2.0 to 7.3.1 and `@fortawesome/react-fontawesome` from 3.3.1 to 3.5.0 (#8094)
+- Bumped `rubyzip` from 3.2.2 to 3.4.1 (#8092)
+- Bumped `i18n` from 1.14.8 to 1.15.2 (#8093)
+- Bumped `selenium-webdriver` from 4.35.0 to 4.46.0 (#8095)
+- Bumped `postcss` from 8.5.23 to 8.5.24 (#8099)
+- Bumped `msgpack` from 1.8.0 to 1.8.2 (#8091)
+- Bumped `postcss` from 8.5.15 to 8.5.23 (#8087)
+- Bumped `json` from 2.19.8 to 2.19.9 (#8084)
+- Bumped `rmagick` from 6.2.0 to 7.0.5 (#8028)
+- Bumped `rails-html-sanitizer` from 1.6.2 to 1.7.1 (#8079)
+- Bumped `immutable` from 5.1.5 to 5.1.9 (#8080)
+- Bumped `fast-uri` from 3.1.2 to 3.1.4 (#8082)
+- Bumped `dompurify` from 3.4.11 to 3.4.12 (#8081)
+- Bumped `websocket-driver` from 0.8.1 to 0.8.2 (#8078)
+- Bumped `loofah` from 2.25.1 to 2.25.2 (#8077)
+- Bumped `playwright` from 1.60.0 to 1.61.0 (#8029)
+- Bumped `@rjsf/core` and `@rjsf/validator-ajv8` from 6.6.1 to 6.6.2 (#8035)
+- Bumped `marcel` from 1.1.0 to 1.2.1 (#8033)
+- Bumped `timecop` from 0.9.10 to 0.9.11 (#8031)
+- Bumped `bullet` from 8.1.0 to 8.1.3 (#8027)
+- Bumped `i18n-tasks` from 1.0.15 to 1.1.2 (#8030)
+- Bumped `nanasess/setup-chromedriver` GitHub Action from 2 to 3 (#8025)
+- Bumped `actions/checkout` GitHub Action from 6 to 7 (#8024)
+- Bumped `actions/cache` GitHub Action from 4 to 6 (#8026)
+- Bumped `@rjsf/core` and `@rjsf/validator-ajv8` from 6.5.2 to 6.6.1 (#7981)
+- Bumped `playwright` from 1.59.0 to 1.60.0 (#7980)
+- Bumped `action_policy` from 0.7.5 to 0.7.6 (#7976)
+- Bumped `dayjs` from 1.11.13 to 1.11.21 (#7982)
+- Bumped `json` from 2.19.2 to 2.19.8 (#7978)
+- Bumped `@babel` packages (`core`, `runtime`, `plugin-transform-runtime`, `preset-env`, `preset-react`) to 7.29.7 (#7979)
+- Bumped `js-routes` from 2.3.6 to 2.3.7 (#7977)
 
 ## [v2.10.1]
 
