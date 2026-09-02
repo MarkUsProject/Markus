@@ -39,7 +39,8 @@
     border-left: 1px solid $gridline;
     border-right: 1px solid $gridline;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 
     &.-headerGroups {
       background: rgba(0, 0, 0, 0.03);
@@ -172,7 +173,8 @@
     border-left: 1px solid $gridline;
     border-right: 1px solid $gridline;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 
     .rt-tr-group {
       border-bottom: solid 1px rgba(0, 0, 0, 0.05);

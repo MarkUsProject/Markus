@@ -8,6 +8,12 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
+- Added experimental support for JupyterHub integration for assignment submission (#7986)
+- Enforced restriction on grouping deletion when submissions exist (#8134)
+- Improved table selection column styling, fixed table overflow in containers, and hid unused scrollbars (#8133)
+- Displayed who last updated a mark to TAs and instructors in the grading view (#8131)
+- Automatically populate course start and end dates from the term when a course is created via Canvas LTI (#8057)
 - Added support for inviting students to groups by email (case-insensitive), in addition to user name (#8106)
 - Added row numbers to the course summaries table (#8108)
 - Added an option to rotate sideways scanned exam pages by 90 degrees when fixing scan errors (#8103)
@@ -24,11 +30,13 @@
 - Updated links to refer to new documentation website (#8049)
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
+- Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET /test_runs API route (#8055)
 - Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
 
 ### 🐛 Bug fixes
+- Fixed bulk grouping deletion assignment scoping (#8134)
 - Ensured random grader assignment excludes ineligible roles and recalculates weights using eligible graders (#8073)
 - Prevented grader assignment and unassignment operations from modifying groupings belonging to other assignments (#8072)
 - Fixed the "Fix" link being clipped off the screen for long QR-scan error messages on the exam scan log table (#8070)
@@ -40,6 +48,8 @@
 - Updated images: moved externally-hosted images into repository, ensured images are vertically centred and displayed as new paragraphs, and cropped images to remove blank space (#8053)
 
 ### 🔧 Internal changes
+- Updated `pdfjs-dist` to v6.2.108 (#8135)
+- Refactored annotation routes to respond with JSON rather than Javascript (#8127)
 - Removed `:blob` CSP exception for `img_src` for `groups_controller.rb` and `exam_templates_controller.rb`
 - Replaced `jcrop` with `cropperjs` for the exam template cover page crop selector (#8114)
 - Migrated `image_viewer.jsx` file to use `heic-convert` instead of `heic2any`; Updated CSP exceptions for controllers depending on `image_viewer.jsx` (#8100)

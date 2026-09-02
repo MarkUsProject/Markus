@@ -1102,5 +1102,10 @@ Rails.application.routes.draw do
   post 'main/about', controller: 'main', action: 'about'
   post 'main/logout', controller: 'main', action: 'logout'
 
+  namespace :jupyter do
+    post 'authenticate', controller: 'jupyter_submissions', action: 'create_session'
+    post 'submit', controller: 'jupyter_submissions', action: 'submit'
+  end
+
   match '*path', controller: 'main', action: 'page_not_found', via: :all
 end

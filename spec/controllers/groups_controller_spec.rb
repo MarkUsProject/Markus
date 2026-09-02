@@ -58,80 +58,104 @@ describe GroupsController do
       end
 
       context 'when grouping has no submissions' do
-        before do
-          allow(grouping).to receive(:delete_grouping)
-          allow(grouping).to receive(:has_submission?).and_return(false)
-        end
-
-        it 'should not flash an error message' do
+        it 'does not flash an error message' do
           delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(flash[:error]).to be_nil
         end
 
-        it 'populates @removed_groupings with deleted groupings' do
-          delete_as instructor, :remove_group,
-                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
-          expect(assigns(:removed_groupings)).to match_array([grouping])
-        end
-
-        it 'calls grouping.has_submission?' do
-          expect(grouping).to receive(:has_submission?).and_return(false)
-          delete_as instructor, :remove_group,
-                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
-        end
-
-        it 'calls grouping.delete_groupings' do
-          expect(grouping).to receive(:delete_grouping)
-          delete_as instructor, :remove_group,
-                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
-        end
-
-        it 'should attempt to update permissions file' do
+        it 'attempts to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'should return the :ok status code' do
+        it 'returns the :ok status code' do
           delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
+        end
+
+        it 'removes the grouping' do
+          delete_as instructor, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
+          expect(assignment.groupings.find_by(id: grouping.id)).to be_nil
         end
       end
 
       context 'when grouping has submissions' do
         before do
-          allow(grouping).to receive(:has_submission?).and_return(true)
-
+          create(:version_used_submission, grouping: grouping)
           delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'should have an error message in the flash queue' do
+        it 'reports an error message' do
           expect(flash[:error]).to be_present
         end
 
-        it 'assigns empty array to @removed_groupings' do
-          expect(assigns(:removed_groupings)).to be_empty
-        end
-
-        it 'calls grouping.has_submission?' do
-          expect(grouping).to receive(:has_submission?).and_return(true)
-          delete_as instructor, :remove_group,
-                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
-        end
-
-        it 'should return the :ok status code' do
+        it 'returns the :ok status code' do
           delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
         end
 
-        it 'should attempt to update permissions file' do
+        it 'attempts to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete_as instructor, :remove_group,
                     params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
+        end
+
+        it 'does not remove the grouping' do
+          delete_as instructor, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
+          expect(assignment.groupings.find_by(id: grouping.id)).to be_present
+        end
+      end
+
+      context 'when the grouping belongs to a different assignment' do
+        let!(:other_grouping) { create(:grouping) }
+
+        it 'does not remove the grouping' do
+          delete_as instructor, :remove_group,
+                    params: { course_id: course.id, grouping_id: [other_grouping.id], assignment_id: assignment }
+          expect(other_grouping.assignment.groupings.find_by(id: other_grouping.id)).to be_present
+        end
+
+        it 'does not flash an error message' do
+          delete_as instructor, :remove_group,
+                    params: { course_id: course.id, grouping_id: [other_grouping.id], assignment_id: assignment }
+          expect(flash[:error]).to be_nil
+        end
+
+        it 'returns the :ok status code' do
+          delete_as instructor, :remove_group,
+                    params: { course_id: course.id, grouping_id: [other_grouping.id], assignment_id: assignment }
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'when multiple groupings are selected and only some have submissions' do
+        let!(:other_grouping) { create(:grouping, assignment: assignment) }
+
+        before do
+          create(:version_used_submission, grouping: grouping)
+          delete_as instructor, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id, other_grouping.id],
+                              assignment_id: assignment }
+        end
+
+        it 'removes the grouping without a submission' do
+          expect(assignment.groupings.find_by(id: other_grouping.id)).to be_nil
+        end
+
+        it 'does not remove the grouping with a submission' do
+          expect(assignment.groupings.find_by(id: grouping.id)).to be_present
+        end
+
+        it 'reports an error message naming only the grouping that could not be removed' do
+          expect(flash[:error].join).to include(grouping.group.group_name)
+          expect(flash[:error].join).not_to include(other_grouping.group.group_name)
         end
       end
     end
@@ -878,29 +902,6 @@ describe GroupsController do
       end
     end
 
-    describe '#delete_groupings' do
-      let!(:grouping) { create(:grouping_with_inviter) }
-      let!(:grouping_with_submission) { create(:grouping_with_inviter_and_submission) }
-
-      it 'should delete groupings without submissions' do
-        post_as instructor, :global_actions, params: { course_id: course.id,
-                                                       assignment_id: grouping.assignment.id,
-                                                       groupings: [grouping.id],
-                                                       global_actions: 'delete' }
-
-        expect(Grouping.all.size).to eq 1
-      end
-
-      it 'should not delete groupings with submissions' do
-        post_as instructor, :global_actions, params: { course_id: course.id,
-                                                       assignment_id: grouping_with_submission.assignment.id,
-                                                       groupings: [grouping_with_submission.id],
-                                                       global_actions: 'delete' }
-
-        expect(Grouping.all.size).to eq 2
-      end
-    end
-
     describe '#add_members' do
       let(:grouping) { create(:grouping_with_inviter) }
       let(:grouping2) { create(:grouping_with_inviter, assignment: grouping.assignment) }
@@ -1360,6 +1361,59 @@ describe GroupsController do
 
       it 'should respond with success' do
         expect(subject).to respond_with(:redirect)
+      end
+
+      context 'when the student is the inviter of a deletable grouping with no submission' do
+        let!(:own_grouping) { create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student) }
+
+        before do
+          delete_as @current_student, :destroy,
+                    params: { course_id: course.id, assignment_id: @assignment.id, id: own_grouping.id }
+        end
+
+        it 'removes the grouping' do
+          expect(Grouping.find_by(id: own_grouping.id)).to be_nil
+        end
+
+        it 'redirects to the assignment page' do
+          expect(response).to redirect_to(course_assignment_path(course, @assignment))
+        end
+
+        it 'flashes a success message' do
+          expect(flash[:success]).to be_present
+        end
+      end
+
+      context 'when the grouping has a submission' do
+        let!(:own_grouping) do
+          create(:grouping_with_inviter_and_submission, assignment: @assignment, inviter: @current_student)
+        end
+
+        before do
+          delete_as @current_student, :destroy,
+                    params: { course_id: course.id, assignment_id: @assignment.id, id: own_grouping.id }
+        end
+
+        it 'does not remove the grouping' do
+          expect(Grouping.find_by(id: own_grouping.id)).to be_present
+        end
+
+        it 'redirects to the assignment page' do
+          expect(response).to redirect_to(course_assignment_path(course, @assignment))
+        end
+      end
+
+      context 'when the grouping belongs to a different assignment than the one specified in the request' do
+        let(:other_assignment) { create(:assignment, course: course) }
+        let!(:own_grouping) { create(:grouping_with_inviter, assignment: other_assignment, inviter: @current_student) }
+
+        it 'does not remove the grouping and raises an error' do
+          expect do
+            delete_as @current_student, :destroy,
+                      params: { course_id: course.id, assignment_id: @assignment.id, id: own_grouping.id }
+          end.to raise_error(ActiveRecord::RecordNotFound)
+          expect(Grouping.find_by(id: own_grouping.id)).to be_present
+        end
       end
     end
 
