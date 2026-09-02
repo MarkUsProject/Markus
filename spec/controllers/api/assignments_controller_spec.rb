@@ -472,6 +472,13 @@ describe Api::AssignmentsController do
             expect(response).to have_http_status(:internal_server_error)
           end
 
+          it 'should respond with 500 when submission_rule_periods is an empty list' do
+            put :update, params: { id: assignment.id, course_id: course.id,
+                                   submission_rule_type: 'GracePeriod',
+                                   submission_rule_periods: [] }
+            expect(response).to have_http_status(:internal_server_error)
+          end
+
           it 'should respond with 500 when submission_rule_periods is missing hours' do
             put :update, params: { id: assignment.id, course_id: course.id,
                                    submission_rule_type: 'GracePeriod',
@@ -499,6 +506,13 @@ describe Api::AssignmentsController do
           it 'should respond with 500 when submission_rule_periods is missing' do
             put :update, params: { id: assignment.id, course_id: course.id,
                                    submission_rule_type: 'PenaltyPeriod' }
+            expect(response).to have_http_status(:internal_server_error)
+          end
+
+          it 'should respond with 500 when submission_rule_periods is an empty list' do
+            put :update, params: { id: assignment.id, course_id: course.id,
+                                   submission_rule_type: 'PenaltyPeriod',
+                                   submission_rule_periods: [] }
             expect(response).to have_http_status(:internal_server_error)
           end
 
@@ -531,6 +545,13 @@ describe Api::AssignmentsController do
           it 'should respond with 500 when submission_rule_periods is missing' do
             put :update, params: { id: assignment.id, course_id: course.id,
                                    submission_rule_type: 'PenaltyDecayPeriod' }
+            expect(response).to have_http_status(:internal_server_error)
+          end
+
+          it 'should respond with 500 when submission_rule_periods is an empty list' do
+            put :update, params: { id: assignment.id, course_id: course.id,
+                                   submission_rule_type: 'PenaltyDecayPeriod',
+                                   submission_rule_periods: [] }
             expect(response).to have_http_status(:internal_server_error)
           end
 

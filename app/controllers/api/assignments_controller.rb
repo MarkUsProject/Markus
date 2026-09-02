@@ -136,18 +136,19 @@ module Api
       # Update the submission rule if provided
       unless params[:submission_rule_type].nil?
         submission_rule = get_submission_rule(params)
-
         if submission_rule.nil?
           render 'shared/http_status', locals: { code: '500', message:
             HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
           return
         end
 
+        original_submission_rule = assignment.submission_rule
         unless assignment.update(submission_rule: submission_rule)
           render 'shared/http_status', locals: { code: '500', message:
             HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
           return
         end
+        original_submission_rule.destroy
 
       end
 
@@ -232,72 +233,35 @@ module Api
     # Defaults to NoLateSubmissionRule
     def get_submission_rule(params)
       if params[:submission_rule_type] == 'GracePeriod'
-        if params[:submission_rule_periods].nil? ||
-           !params[:submission_rule_periods].is_a?(Array) ||
-           params[:submission_rule_periods].empty?
-          return
-        end
-
-        rule_periods = params[:submission_rule_periods]
-
-        # If hours is missing from any of the periods, return
-        if rule_periods.any? { |period| !period.respond_to?(:to_h) || !period.key?('hours') }
-          return
-        end
-
-        submission_rule = GracePeriodSubmissionRule.new
-        submission_rule.periods = rule_periods.map do |period|
-                                    Period.new(hours: period[:hours])
-        end
-
+        rule_type = 'GracePeriodSubmissionRule'
+        required = [:hours]
       elsif params[:submission_rule_type] == 'PenaltyDecayPeriod'
-        if params[:submission_rule_periods].nil? ||
-           !params[:submission_rule_periods].is_a?(Array) ||
-           params[:submission_rule_periods].empty?
-          return
-        end
-        rule_periods = params[:submission_rule_periods]
-
-        # If any of the required keys are missing, return
-        if rule_periods.any? do |period|
-          !period.respond_to?(:to_h) || !period.key?('hours') ||
-            !period.key?('deduction') || !period.key?('interval')
-        end
-          return
-        end
-
-        submission_rule = PenaltyDecayPeriodSubmissionRule.new
-        submission_rule.periods = rule_periods.map do |period|
-                                    Period.new(hours: period[:hours],
-                                               deduction: period[:deduction],
-                                               interval: period[:interval])
-        end
+        rule_type = 'PenaltyDecayPeriodSubmissionRule'
+        required = [:hours, :deduction, :interval]
       elsif params[:submission_rule_type] == 'PenaltyPeriod'
-        if params[:submission_rule_periods].nil? ||
-           !params[:submission_rule_periods].is_a?(Array) ||
-           params[:submission_rule_periods].empty?
-          return
-        end
-
-        rule_periods = params[:submission_rule_periods]
-        # If any of the required keys are missing, return
-        if rule_periods.any? do |period|
- !period.respond_to?(:to_h) || !period.key?('hours') || !period.key?('deduction')
-        end
-          return
-        end
-
-        submission_rule = PenaltyPeriodSubmissionRule.new
-        submission_rule.periods = rule_periods.map do |period|
-                                    Period.new(hours: period[:hours],
-                                               deduction: period[:deduction])
-        end
-
+        rule_type = 'PenaltyPeriodSubmissionRule'
+        required = [:hours, :deduction]
       else
-        submission_rule = NoLateSubmissionRule.new
+        return NoLateSubmissionRule.new
       end
 
-      submission_rule
+      if params[:submission_rule_periods].nil?
+        return
+      end
+
+      permitted_params = params.permit(
+        submission_rule_periods: [:hours, :deduction, :interval, :_destroy]
+      )
+      if permitted_params[:submission_rule_periods].any? do |period|
+        required.any? { |key| !period.key?(key) }
+      end
+        return
+      end
+
+      SubmissionRule.create(
+        { type: rule_type,
+          periods_attributes: permitted_params[:submission_rule_periods] }
+      )
     end
 
     def grades_summary
