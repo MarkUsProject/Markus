@@ -16,6 +16,7 @@
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 
 ### 🐛 Bug fixes
+- Fixed production webpack builds compiling JSX in development mode (#8150)
 
 ### 📚 Documentation changes
 
