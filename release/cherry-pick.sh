@@ -53,7 +53,7 @@ stop() {
 # Caller must `continue` the loop afterwards.
 skip_pr() {
   git cherry-pick --skip 2>/dev/null
-  success "#$PR — already on release, skipped"
+  success "#$PR already on release, skipped"
   SKIPPED="${SKIPPED:+$SKIPPED,}$PR"
 }
 
@@ -109,7 +109,7 @@ while IFS= read -r entry; do
 
   # Resume: skip if a cherry-picked commit for this PR is already on the branch
   if $RESUME && [[ "$BRANCH_LOG" == *"(#$PR)"* ]]; then
-    success "[$NUM/$TOTAL] #$PR — already picked, skipping"
+    success "[$NUM/$TOTAL] #$PR already picked, skipping"
     PICKED="${PICKED:+$PICKED,}$PR"
     continue
   fi
@@ -117,7 +117,7 @@ while IFS= read -r entry; do
   info "[$NUM/$TOTAL] Cherry-picking #$PR (${SHA:0:10})..."
 
   CHERRY_OUT=$(git cherry-pick -m1 "$SHA" 2>&1) || {
-    # Empty commit — PR already on release via different path
+    # Empty commit: PR already on release via a different path
     if [[ "$CHERRY_OUT" =~ (empty|nothing.*to\ commit) ]]; then
       skip_pr
       continue
@@ -125,20 +125,20 @@ while IFS= read -r entry; do
 
     CONFLICTED_FILES=$(git diff --name-only --diff-filter=U 2>/dev/null)
 
-    # No merge conflicts — likely a pre-commit hook failure on a clean pick
+    # No merge conflicts: likely a pre-commit hook failure on a clean pick
     if [[ -z "$CONFLICTED_FILES" ]]; then
       HOOK_DIFF=$(git diff 2>/dev/null)
       [[ -n "$HOOK_DIFF" ]] && stop_for_hook_review "$HOOK_DIFF"
-      # No conflicts, no hook changes — truly empty commit
+      # No conflicts, no hook changes: an empty commit
       skip_pr
       continue
     fi
 
-    # Check if all conflicts are auto-resolvable (Changelog.md, Gemfile.lock)
+    # Check if all conflicts are auto-resolvable (Changelog.md + lockfiles)
     HAS_CODE_CONFLICT=false
     while IFS= read -r f; do
       case "$f" in
-        Changelog.md|Gemfile.lock) ;;
+        Changelog.md|Gemfile.lock|package.json|package-lock.json) ;;
         *) HAS_CODE_CONFLICT=true; break ;;
       esac
     done <<< "$CONFLICTED_FILES"
@@ -160,26 +160,34 @@ while IFS= read -r entry; do
       stop
     fi
 
-    # Auto-resolve: Changelog with ours (rebuilt later), Gemfile.lock by accepting incoming version
+    # Auto-resolve: Changelog with ours (rebuilt later); lockfiles keep the
+    # higher version per key via lockres.rb (release can be ahead of a PR's
+    # base). lockres.rb refuses non-trivial blocks, which stops the run.
     while IFS= read -r f; do
       case "$f" in
         Changelog.md)  git checkout --ours "$f" && git add "$f" ;;
-        Gemfile.lock)
-          # Resolve conflict markers: drop ours, keep theirs (incoming version)
-          awk '/^<<<<<<</{skip=1;next} /^=======/{skip=0;next} /^>>>>>>>/{next} !skip{print}' "$f" > "$f.tmp" \
-            && mv "$f.tmp" "$f" && git add "$f" ;;
+        Gemfile.lock|package.json|package-lock.json)
+          if ruby "$HELPERS/lockres.rb" "$f"; then
+            git add "$f"
+          else
+            fail "Lockfile conflict in #$PR needs manual resolution: $f"
+            echo "  Resolve against: gh pr diff $PR"
+            echo "  Then: git add $f && git cherry-pick --continue"
+            echo "  And:  release/cherry-pick.sh $VERSION --resume"
+            stop
+          fi ;;
       esac
     done <<< "$CONFLICTED_FILES"
     if ! GIT_EDITOR=true git cherry-pick --continue 2>/dev/null; then
-      # Commit failed — check if a pre-commit hook modified files
+      # Commit failed: check if a pre-commit hook modified files
       HOOK_DIFF=$(git diff 2>/dev/null)
       [[ -n "$HOOK_DIFF" ]] && stop_for_hook_review "$HOOK_DIFF"
-      # No hook changes — commit became empty after resolution (PR already applied)
+      # No hook changes: commit became empty after resolution (PR already applied)
       git checkout -- . 2>/dev/null
       skip_pr
       continue
     fi
-    success "#$PR — auto-resolved ($(echo "$CONFLICTED_FILES" | paste -sd, -))"
+    success "#$PR auto-resolved ($(echo "$CONFLICTED_FILES" | paste -sd, -))"
     BRANCH_LOG="$(git log --oneline HEAD --not origin/release)"
   }
 
@@ -194,7 +202,7 @@ while IFS= read -r entry; do
     stop
   fi
 
-  success "#$PR — verified clean"
+  success "#$PR verified clean"
   PICKED="${PICKED:+$PICKED,}$PR"
   BRANCH_LOG="$(git log --oneline HEAD --not origin/release)"
 done <<< "$ORDER"
