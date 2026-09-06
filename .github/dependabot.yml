@@ -28,6 +28,10 @@ updates:
     fortawesome:
       patterns:
         - "@fortawesome*"
+    jest:
+      patterns:
+        - "jest"
+        - "jest-environment-jsdom"
     rails:
       patterns:
         - "@rails*"
