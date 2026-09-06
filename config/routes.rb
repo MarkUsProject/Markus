@@ -51,8 +51,6 @@
 #                                                                   PATCH    /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files/:id(.:format)              api/feedback_files#update
 #                                                                   PUT      /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files/:id(.:format)              api/feedback_files#update
 #                                                                   DELETE   /api/courses/:course_id/assignments/:assignment_id/groups/:group_id/feedback_files/:id(.:format)              api/feedback_files#destroy
-#                       overall_comment_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/overall_comment(.:format)                       api/groups#overall_comment
-#                                                                   PATCH    /api/courses/:course_id/assignments/:assignment_id/groups/:id/overall_comment(.:format)                       api/groups#overall_comment
 #                           annotations_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/annotations(.:format)                           api/groups#annotations
 #                       add_annotations_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/add_annotations(.:format)                       api/groups#add_annotations
 #                           add_members_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/add_members(.:format)                           api/groups#add_members
@@ -63,6 +61,8 @@
 #                             extension_api_course_assignment_group POST     /api/courses/:course_id/assignments/:assignment_id/groups/:id/extension(.:format)                             api/groups#extension
 #                                                                   PATCH    /api/courses/:course_id/assignments/:assignment_id/groups/:id/extension(.:format)                             api/groups#extension
 #                                                                   DELETE   /api/courses/:course_id/assignments/:assignment_id/groups/:id/extension(.:format)                             api/groups#extension
+#                       overall_comment_api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id/overall_comment(.:format)                       api/groups#overall_comment
+#                                                                   PATCH    /api/courses/:course_id/assignments/:assignment_id/groups/:id/overall_comment(.:format)                       api/groups#overall_comment
 #                                      api_course_assignment_groups GET      /api/courses/:course_id/assignments/:assignment_id/groups(.:format)                                           api/groups#index
 #                                                                   POST     /api/courses/:course_id/assignments/:assignment_id/groups(.:format)                                           api/groups#create
 #                                       api_course_assignment_group GET      /api/courses/:course_id/assignments/:assignment_id/groups/:id(.:format)                                       api/groups#show
@@ -128,7 +128,7 @@
 #                                                      admin_course PATCH    /admin/courses/:id(.:format)                                                                                  admin/courses#update
 #                                                                   PUT      /admin/courses/:id(.:format)                                                                                  admin/courses#update
 #                                                             admin GET      /admin(.:format)                                                                                              admin/main_admin#index
-#                                                      admin_resque          /admin/resque                                                                                                 #<Resque::Server app_file="/bundle/gems/resque-2.7.0/lib/resque/server.rb">
+#                                                      admin_resque          /admin/resque                                                                                                 #<Resque::Server app_file="/bundle/gems/resque-3.0.0/lib/resque/server.rb">
 #                                                 admin_performance          /admin/rails/performance                                                                                      RailsPerformance::Engine
 #                                                      admin_pghero          /admin/rails/pghero                                                                                           PgHero::Engine
 #                                  clear_role_switch_session_course GET      /courses/:id/clear_role_switch_session(.:format)                                                              courses#clear_role_switch_session
@@ -223,6 +223,7 @@
 #                                     peer_review_course_assignment GET      /courses/:course_id/assignments/:id/peer_review(.:format)                                                     assignments#peer_review
 #                   populate_starter_file_manager_course_assignment GET      /courses/:course_id/assignments/:id/populate_starter_file_manager(.:format)                                   assignments#populate_starter_file_manager
 #                                         summary_course_assignment GET      /courses/:course_id/assignments/:id/summary(.:format)                                                         assignments#summary
+#                                   upload_grades_course_assignment POST     /courses/:course_id/assignments/:id/upload_grades(.:format)                                                   assignments#upload_grades
 #                                      batch_runs_course_assignment GET      /courses/:course_id/assignments/:id/batch_runs(.:format)                                                      assignments#batch_runs
 #                     set_boolean_graders_options_course_assignment POST     /courses/:course_id/assignments/:id/set_boolean_graders_options(.:format)                                     assignments#set_boolean_graders_options
 #                                       stop_test_course_assignment GET      /courses/:course_id/assignments/:id/stop_test(.:format)                                                       assignments#stop_test
@@ -484,6 +485,8 @@
 #                                                              main POST     /main(.:format)                                                                                               courses#index
 #                                                        main_about POST     /main/about(.:format)                                                                                         main#about
 #                                                       main_logout POST     /main/logout(.:format)                                                                                        main#logout
+#                                              jupyter_authenticate POST     /jupyter/authenticate(.:format)                                                                               jupyter/jupyter_submissions#create_session
+#                                                    jupyter_submit POST     /jupyter/submit(.:format)                                                                                     jupyter/jupyter_submissions#submit
 #                                                                            /*path(.:format)                                                                                              main#page_not_found
 #                                                 rails_performance          /admin/rails/performance                                                                                      RailsPerformance::Engine
 #                                     rails_postmark_inbound_emails POST     /rails/action_mailbox/postmark/inbound_emails(.:format)                                                       action_mailbox/ingresses/postmark/inbound_emails#create
@@ -511,20 +514,21 @@
 #                                              rails_direct_uploads POST     /rails/active_storage/direct_uploads(.:format)                                                                active_storage/direct_uploads#create
 #
 # Routes for RailsPerformance::Engine:
-#                        Prefix Verb URI Pattern            Controller#Action
-#             rails_performance GET  /                      rails_performance/rails_performance#index
-#    rails_performance_requests GET  /requests(.:format)    rails_performance/rails_performance#requests
-#     rails_performance_crashes GET  /crashes(.:format)     rails_performance/rails_performance#crashes
-#      rails_performance_recent GET  /recent(.:format)      rails_performance/rails_performance#recent
-#        rails_performance_slow GET  /slow(.:format)        rails_performance/rails_performance#slow
-#       rails_performance_trace GET  /trace/:id(.:format)   rails_performance/rails_performance#trace
-#     rails_performance_summary GET  /summary(.:format)     rails_performance/rails_performance#summary
-#     rails_performance_sidekiq GET  /sidekiq(.:format)     rails_performance/rails_performance#sidekiq
-# rails_performance_delayed_job GET  /delayed_job(.:format) rails_performance/rails_performance#delayed_job
-#       rails_performance_grape GET  /grape(.:format)       rails_performance/rails_performance#grape
-#        rails_performance_rake GET  /rake(.:format)        rails_performance/rails_performance#rake
-#      rails_performance_custom GET  /custom(.:format)      rails_performance/rails_performance#custom
-#   rails_performance_resources GET  /resources(.:format)   rails_performance/rails_performance#resources
+#                        Prefix Verb URI Pattern             Controller#Action
+#                  engine_asset GET  /assets/*file(.:format) Inline handler (Proc/Lambda)
+#             rails_performance GET  /                       rails_performance/rails_performance#index
+#    rails_performance_requests GET  /requests(.:format)     rails_performance/rails_performance#requests
+#     rails_performance_crashes GET  /crashes(.:format)      rails_performance/rails_performance#crashes
+#      rails_performance_recent GET  /recent(.:format)       rails_performance/rails_performance#recent
+#        rails_performance_slow GET  /slow(.:format)         rails_performance/rails_performance#slow
+#       rails_performance_trace GET  /trace/:id(.:format)    rails_performance/rails_performance#trace
+#     rails_performance_summary GET  /summary(.:format)      rails_performance/rails_performance#summary
+#     rails_performance_sidekiq GET  /sidekiq(.:format)      rails_performance/rails_performance#sidekiq
+# rails_performance_delayed_job GET  /delayed_job(.:format)  rails_performance/rails_performance#delayed_job
+#       rails_performance_grape GET  /grape(.:format)        rails_performance/rails_performance#grape
+#        rails_performance_rake GET  /rake(.:format)         rails_performance/rails_performance#rake
+#      rails_performance_custom GET  /custom(.:format)       rails_performance/rails_performance#custom
+#   rails_performance_resources GET  /resources(.:format)    rails_performance/rails_performance#resources
 #
 # Routes for PgHero::Engine:
 #                    Prefix Verb URI Pattern                                      Controller#Action
