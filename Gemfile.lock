@@ -505,7 +505,7 @@ GEM
     rubyzip (3.4.1)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
-    rugged (1.9.0)
+    rugged (1.9.6)
     safe_yaml (1.0.5)
     sass-embedded (1.104.0)
       google-protobuf (~> 4.31)
