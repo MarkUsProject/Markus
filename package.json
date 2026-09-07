@@ -15,7 +15,7 @@
     "core-js": "^3.43.0",
     "cropperjs": "^1.6.2",
     "dayjs": "^1.11.21",
-    "dompurify": "^3.4.13",
+    "dompurify": "^3.4.14",
     "flatpickr": "^4.6.13",
     "heic-convert": "^2.1.0",
     "i18n-js": "^4.5.3",
