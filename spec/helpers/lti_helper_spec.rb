@@ -2,10 +2,10 @@ describe LtiHelper do
   let(:scope) { LtiDeployment::LTI_SCOPES[:names_role] }
   let(:course) { create(:course) }
   let(:lti_deployment) { create(:lti_deployment, course: course) }
+  let(:signing_key) { OpenSSL::PKey::RSA.new(2048) }
 
   before do
-    allow(File).to receive(:read).and_call_original
-    allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048))
+    allow(LtiKeyStore).to receive(:current_jwk).and_return(JWT::JWK.new(signing_key))
     stub_request(:post, Settings.lti.token_endpoint)
       .with(
         body: hash_including(
