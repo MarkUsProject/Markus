@@ -252,13 +252,13 @@ module Api
       permitted_params = params.permit(
         submission_rule_periods: [:hours, :deduction, :interval, :_destroy]
       )
-      if permitted_params[:submission_rule_periods].any? do |period|
-        required.any? { |key| !period.key?(key) }
-      end
-        return
+      permitted_params[:submission_rule_periods].each do |period|
+        if required.any? { |key| !period.key?(key) }
+           return
+        end
       end
 
-      SubmissionRule.create(
+      SubmissionRule.new(
         { type: rule_type,
           periods_attributes: permitted_params[:submission_rule_periods] }
       )
