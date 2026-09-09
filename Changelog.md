@@ -10,6 +10,7 @@
 
 ### 🐛 Bug fixes
 - Fixed production webpack builds compiling JSX in development mode (#8150)
+- Enforce privileged LTI launch role for course linking and creation (#8130)
 
 ### 🔧 Internal changes
 
