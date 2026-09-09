@@ -1,11 +1,12 @@
 class LtiDeploymentsController < ApplicationController
   skip_verify_authorized except: [:choose_course]
-  skip_forgery_protection except: [:choose_course]
+  skip_forgery_protection except: [:choose_course, :create_course]
 
   before_action :authenticate, :check_course_switch, :check_record,
                 except: [:get_config, :launch, :public_jwk, :redirect_login]
   before_action(except: [:get_config, :launch, :public_jwk, :redirect_login]) { authorize! }
   before_action :check_host, only: [:launch, :redirect_login]
+  before_action :check_lti_launch_role, only: [:choose_course, :create_course]
 
   USE_SECURE_COOKIES = !Rails.env.local?
 
@@ -151,6 +152,7 @@ class LtiDeploymentsController < ApplicationController
       has_privileged_role = lti_data[:user_roles].intersect?(LtiDeployment::LTI_PRIVILEGED_ROLES)
       has_ta_role = lti_data[:user_roles].include?(LtiDeployment::LTI_ROLES[:ta])
       if has_privileged_role && !has_ta_role
+        session[:lti_privileged_deployments] = Array(session[:lti_privileged_deployments]) | [lti_deployment.id]
         redirect_to choose_course_lti_deployment_path(lti_deployment)
       else
         redirect_to course_not_set_up_lti_deployment_path(lti_deployment)
@@ -255,5 +257,16 @@ class LtiDeploymentsController < ApplicationController
     referer_host_with_port = "#{referer_host}:#{referer.port}"
     referer_host = referer_host_with_port if referer.to_s.start_with?(referer_host_with_port)
     URI("#{referer_host}#{endpoint}")
+  end
+
+  # Only allow linking or creating a course for LTI deployments that the current
+  # user launched from the LMS with a privileged (non-TA) role. The launch role
+  # is recorded in the session by #redirect_login.
+  def check_lti_launch_role
+    return if Array(session[:lti_privileged_deployments]).include?(record&.id)
+
+    @title = I18n.t('lti.launch_required_title')
+    @message = I18n.t('lti.launch_required')
+    render 'message', status: :forbidden
   end
 end

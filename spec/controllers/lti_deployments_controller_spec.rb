@@ -14,6 +14,10 @@ describe LtiDeploymentsController do
     let(:test_rlid) { 'a-unique-resource-link-id-12345' }
     let!(:lti) { create(:lti_deployment, resource_link_id: test_rlid) }
 
+    before do
+      session[:lti_privileged_deployments] = [lti.id]
+    end
+
     describe 'get' do
       it 'is inaccessible unless logged in' do
         get :choose_course, params: { id: lti.id }
@@ -21,17 +25,28 @@ describe LtiDeploymentsController do
       end
 
       it 'is accessible when logged in' do
-        session[:lti_deployment_id] = lti.id
         get_as instructor, :choose_course, params: { id: lti.id }
         expect(response).to have_http_status(:ok)
+      end
+
+      context 'when the user did not launch this deployment with a privileged LMS role' do
+        before do
+          session[:lti_privileged_deployments] = []
+        end
+
+        it 'responds with forbidden' do
+          get_as instructor, :choose_course, params: { id: lti.id }
+          expect(response).to have_http_status(:forbidden)
+        end
+
+        it 'renders the launch required message' do
+          get_as instructor, :choose_course, params: { id: lti.id }
+          expect(response).to render_template('message')
+        end
       end
     end
 
     describe 'post' do
-      before do
-        session[:lti_deployment_id] = lti.id
-      end
-
       context 'when picking a course' do
         it 'redirects to a course on success' do
           post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
@@ -53,6 +68,23 @@ describe LtiDeploymentsController do
           post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
           lti.reload
           expect(lti.resource_link_id).to eq(test_rlid)
+        end
+
+        context 'when the user did not launch this deployment with a privileged LMS role' do
+          before do
+            session[:lti_privileged_deployments] = []
+          end
+
+          it 'does not link the course' do
+            post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
+            lti.reload
+            expect(lti.course).to be_nil
+          end
+
+          it 'responds with forbidden' do
+            post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
+            expect(response).to have_http_status(:forbidden)
+          end
         end
 
         context 'when the user does not have permission to link' do
@@ -79,9 +111,12 @@ describe LtiDeploymentsController do
       { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
     end
 
+    before do
+      session[:lti_privileged_deployments] = [lti_deployment.id]
+    end
+
     context 'as an instructor with a standard term' do
       before do
-        session[:lti_deployment_id] = lti_deployment.id
         post_as instructor, :create_course, params: course_params
       end
 
@@ -148,10 +183,6 @@ describe LtiDeploymentsController do
         create(:lti_deployment, lms_term_name: 'Default Term', lms_course_name: 'csc108')
       end
 
-      before do
-        session[:lti_deployment_id] = lti_deployment.id
-      end
-
       it 'slugifies the term name as the suffix' do
         post_as instructor, :create_course, params: {
           id: lti_deployment.id,
@@ -188,7 +219,6 @@ describe LtiDeploymentsController do
 
     context 'as an admin user' do
       before do
-        session[:lti_deployment_id] = lti_deployment.id
         post_as admin_user, :create_course, params: course_params
       end
 
@@ -213,7 +243,6 @@ describe LtiDeploymentsController do
     context 'when a course already exists' do
       before do
         create(:course, name: expected_name)
-        session[:lti_deployment_id] = lti_deployment.id
       end
 
       it 'does not create a new course' do
@@ -238,10 +267,6 @@ describe LtiDeploymentsController do
         create(:lti_deployment, lms_course_name: 'csc108 fall 3000!', lms_term_name: 'Fall 2026')
       end
 
-      before do
-        session[:lti_deployment_id] = lti_deployment.id
-      end
-
       it 'creates a new course with a sanitized name and appends suffix' do
         post_as instructor, :create_course, params: course_params
         expect(Course.exists?(name: 'CSC108-FALL-3000-20269')).not_to be_nil
@@ -251,10 +276,6 @@ describe LtiDeploymentsController do
     context 'when the course is rejected by the filter' do
       # NOTE: the default filter in config/dummy_lti_config.rb only accepts course names starting with 'csc'
       let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'sta130', lms_term_name: 'Fall 2026') }
-
-      before do
-        session[:lti_deployment_id] = lti_deployment.id
-      end
 
       it 'does not create a new course' do
         post_as instructor, :create_course, params: course_params
@@ -281,6 +302,44 @@ describe LtiDeploymentsController do
       it 'creates an instructor role for the user' do
         course = Course.find_by(name: expected_name)
         expect(Role.find_by(user: new_instructor_user, course: course, type: 'Instructor')).not_to be_nil
+      end
+    end
+
+    context 'when the user did not launch this deployment with a privileged LMS role' do
+      before do
+        session[:lti_privileged_deployments] = []
+      end
+
+      it 'does not create a course' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.find_by(name: expected_name)).to be_nil
+      end
+
+      it 'responds with forbidden' do
+        post_as instructor, :create_course, params: course_params
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'renders the launch required message' do
+        post_as instructor, :create_course, params: course_params
+        expect(response).to render_template('message')
+      end
+    end
+
+    context 'when the deployment is already linked to a course' do
+      let(:linked_course) { create(:course) }
+
+      before do
+        lti_deployment.update!(course: linked_course)
+        post_as instructor, :create_course, params: course_params
+      end
+
+      it 'responds with not found' do
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'does not create a new course' do
+        expect(Course.find_by(name: expected_name)).to be_nil
       end
     end
   end
