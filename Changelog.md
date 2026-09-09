@@ -9,6 +9,7 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+- Fixed production webpack builds compiling JSX in development mode (#8150)
 
 ### 🔧 Internal changes
 
