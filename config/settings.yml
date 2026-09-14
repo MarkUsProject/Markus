@@ -136,9 +136,3 @@ max_zip_total_size: 500000000
 
 resque:
   permitted_hosts: [".localhost", ".internal"]
-
-lti:
-  rotation:
-    enabled: false        # off everywhere by default
-    max_age_days: 90      # rotate the current key once it's older than this
-    overlap_days: 7       # keep a retired key published this long

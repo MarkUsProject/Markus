@@ -40,3 +40,7 @@ lti:
   domains: <%= %w[canvas.instructure.com] %>
   token_endpoint: "https://canvas.instructure.com/login/oauth2/token"
   sync_schedule: "0 3 * * *"
+  rotation:
+    enabled: false
+    max_age_days: 90
+    overlap_days: 7
