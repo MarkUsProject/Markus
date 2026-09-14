@@ -1174,7 +1174,8 @@ describe SubmissionsController do
             collection_dates: hash_including,
             collect_current: false,
             apply_late_penalty: false,
-            retain_existing_grading: false
+            retain_existing_grading: false,
+            assign_zero_to_empty: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
@@ -1191,12 +1192,31 @@ describe SubmissionsController do
             collection_dates: hash_including,
             collect_current: false,
             apply_late_penalty: false,
-            retain_existing_grading: true
+            retain_existing_grading: true,
+            assign_zero_to_empty: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
                                                                groupings: [@grouping.id, uncollected_grouping.id],
                                                                override: true, retain_existing_grading: true }
+        end
+
+        it 'should assign a grade of zero to empty submissions when assign_zero_to_empty is true' do
+          enqueuing_user = @instructor.user
+          expect(SubmissionsJob).to receive(:perform_later).with(
+            array_including(@grouping, uncollected_grouping),
+            enqueuing_user: enqueuing_user,
+            notify_socket: true,
+            collection_dates: hash_including,
+            collect_current: false,
+            apply_late_penalty: false,
+            retain_existing_grading: false,
+            assign_zero_to_empty: true
+          )
+          post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                               assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id, uncollected_grouping.id],
+                                                               override: true, assign_zero_to_empty: true }
         end
 
         it 'should collect the uncollected grouping only when override is false' do
@@ -1208,7 +1228,8 @@ describe SubmissionsController do
             collection_dates: hash_including,
             collect_current: false,
             apply_late_penalty: false,
-            retain_existing_grading: false
+            retain_existing_grading: false,
+            assign_zero_to_empty: false
           )
           post_as @instructor, :collect_submissions, params: { course_id: course.id,
                                                                assignment_id: @assignment.id,
