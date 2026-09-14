@@ -9,9 +9,19 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
-- Fixed production webpack builds compiling JSX in development mode (#8150)
+
+### 📚 Documentation changes
 
 ### 🔧 Internal changes
+
+## [v2.10.3]
+
+### ✨ New features and improvements
+- Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
+
+### 🐛 Bug fixes
+- Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
+- Enforce privileged LTI launch role for course linking and creation (#8130)
 
 ## [v2.10.2]
 
