@@ -9,11 +9,19 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
-- Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
-- Fixed production webpack builds compiling JSX in development mode (#8150)
-- Enforce privileged LTI launch role for course linking and creation (#8130)
+
+### 📚 Documentation changes
 
 ### 🔧 Internal changes
+
+## [v2.10.3]
+
+### ✨ New features and improvements
+- Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
+
+### 🐛 Bug fixes
+- Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
+- Enforce privileged LTI launch role for course linking and creation (#8130)
 
 ## [v2.10.2]
 
@@ -39,7 +47,6 @@
 - Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET /test_runs API route (#8055)
-- Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
 
 ### 🐛 Bug fixes
 - Fixed bulk grouping deletion assignment scoping (#8134)
