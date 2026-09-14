@@ -289,7 +289,7 @@ If you wish to use Learning Tools Interoperability (LTI) with MarkUs, you'll nee
 - `lti.token_endpoint` must be the url used to generate an LTI credentials token for the external platform.
 - `lti.sync_schedule` must be a cron schedule dictating when MarkUs should attempt to automatically sync its roster via LTI.
 
-You must also create a private key for generating Javascript Web Tokens to sign LTI requests.
+You must also create a private key for generating JavaScript Web Tokens to sign LTI requests.
 A private key can be automatically created with the `markus:lti_key` rake task (see "LTI Key Rotation" below).
 
 If you wish to filter course creation requests from LTI deployments, add the following keys:
