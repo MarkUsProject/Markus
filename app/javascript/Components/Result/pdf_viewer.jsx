@@ -70,10 +70,19 @@ export class PDFViewer extends React.PureComponent {
   }
 
   loadPDFFile = () => {
-    pdfjs.getDocument({url: this.props.url}).promise.then(pdfDocument => {
-      this.pdfViewer.setDocument(pdfDocument);
-      this.props.setLoadingCallback(false);
-    });
+    pdfjs
+      .getDocument({
+        url: this.props.url,
+        // Without this, decoding a JBIG2 image (what scanners produce for scanned exams)
+        // or a JPEG 2000 one fails and the page renders blank. pdf.js appends the module
+        // file name to this URL, so the trailing slash matters; webpack copies the modules
+        // into public/wasm (see webpack.common.js).
+        wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`,
+      })
+      .promise.then(pdfDocument => {
+        this.pdfViewer.setDocument(pdfDocument);
+        this.props.setLoadingCallback(false);
+      });
   };
 
   ready_annotations = () => {
