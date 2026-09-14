@@ -37,7 +37,7 @@ module LtiKeyStore
   # The RSA key MarkUs signs NEW assertions with.
   def current_key
     path = explicit_current || key_paths.first
-    raise 'No LTI signing key found' if path.nil?
+    raise I18n.t('lti.no_signing_key') if path.nil?
 
     OpenSSL::PKey::RSA.new(File.read(path))
   end
@@ -62,7 +62,7 @@ module LtiKeyStore
     return if name.nil?
 
     path = File.join(key_dir, name)
-    raise "Pinned LTI signing key not found: #{path} (check Settings.lti.rotation.current_key)" unless File.exist?(path)
+    raise I18n.t('lti.pinned_key_not_found', path: path) unless File.exist?(path)
 
     path
   end
