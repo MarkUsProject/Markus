@@ -9,6 +9,7 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+- Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
 - Fixed production webpack builds compiling JSX in development mode (#8150)
 - Enforce privileged LTI launch role for course linking and creation (#8130)
 

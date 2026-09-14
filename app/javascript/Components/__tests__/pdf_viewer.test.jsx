@@ -54,6 +54,23 @@ describe("PDFViewer", () => {
     delete global.annotation_manager;
   });
 
+  describe("loading a document", () => {
+    it("points pdf.js at the wasm image decoders so scanned (JBIG2) pages render", () => {
+      render(
+        <PDFViewer
+          resultView={true}
+          annotations={[]}
+          url={"/some.pdf"}
+          setLoadingCallback={jest.fn()}
+        />
+      );
+
+      expect(global.pdfjs.getDocument).toHaveBeenCalledWith(
+        expect.objectContaining({wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`})
+      );
+    });
+  });
+
   describe("rotation", () => {
     let rotateButton;
 
