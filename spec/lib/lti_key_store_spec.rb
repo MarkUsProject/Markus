@@ -268,7 +268,7 @@ describe LtiKeyStore do
     it 'falls back to mtime for a file without a timestamp in its name' do
       path = File.join(tmp_dir, 'key.pem')
       File.write(path, OpenSSL::PKey::RSA.new(2048).to_pem)
-      expect(LtiKeyStore.created_at(path)).to be_within(1.minute).of(Time.now.utc)
+      expect(LtiKeyStore.created_at(path)).to be_within(1.minute).of(Time.current.utc)
     end
   end
 end

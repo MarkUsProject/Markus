@@ -77,7 +77,7 @@ module LtiKeyStore
   def rotate!
     FileUtils.mkdir_p(key_dir)
     key = OpenSSL::PKey::RSA.new(2048)
-    path = File.join(key_dir, "lti_key_#{Time.now.utc.strftime('%Y%m%dT%H%M%SZ')}.pem")
+    path = File.join(key_dir, "lti_key_#{Time.current.utc.strftime('%Y%m%dT%H%M%SZ')}.pem")
     File.open(path, File::WRONLY | File::CREAT | File::EXCL, 0o600) { |f| f.write(key.to_pem) }
     Rails.logger.info("LTI key rotated: #{File.basename(path)} (kid=#{JWT::JWK.new(key).kid})")
     path
@@ -87,7 +87,7 @@ module LtiKeyStore
   def rotate_if_due!
     max_age = Settings.lti.rotation.max_age_days.days
     current = key_paths.first
-    age = current && (Time.now.utc - created_at(current))
+    age = current && (Time.current.utc - created_at(current))
     return rotate! if age.nil? || age > max_age
 
     Rails.logger.info("LTI key #{(age / 1.day).round(1)}d old; no rotation (threshold #{max_age / 1.day}d)")
@@ -102,7 +102,7 @@ module LtiKeyStore
     overlap = Settings.lti.rotation.overlap_days.days
     paths = key_paths
     pinned = explicit_current
-    now = Time.now.utc
+    now = Time.current.utc
 
     paths.each_with_index.filter_map do |path, i|
       next if i.zero?
