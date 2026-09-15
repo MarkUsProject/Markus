@@ -13,6 +13,7 @@ class CollectSubmissionsModal extends React.Component {
       collect_time: this.props.isScannedExam ? "collect_current" : "collect_due_date",
       apply_late_penalty: !this.props.isScannedExam,
       retain_existing_grading: true,
+      assign_zero_to_empty: true,
     };
   }
 
@@ -27,7 +28,8 @@ class CollectSubmissionsModal extends React.Component {
       this.state.collect_time === "collect_current",
       // Always apply late penalty when collecting based on due date
       this.state.apply_late_penalty || this.state.collect_time === "collect_due_date",
-      this.state.override && this.state.retain_existing_grading
+      this.state.override && this.state.retain_existing_grading,
+      this.state.assign_zero_to_empty
     );
   };
 
@@ -45,6 +47,10 @@ class CollectSubmissionsModal extends React.Component {
 
   handleApplyLatePenaltyChange = event => {
     this.setState({apply_late_penalty: event.target.checked});
+  };
+
+  handleAssignZeroToEmptyChange = event => {
+    this.setState({assign_zero_to_empty: event.target.checked});
   };
 
   warningText = () => {
@@ -157,6 +163,21 @@ class CollectSubmissionsModal extends React.Component {
                   <span>{I18n.t("submissions.collect.apply_late_penalty")}</span>
                 </p>
               )}
+              <p>
+                <label>
+                  <input
+                    type="checkbox"
+                    defaultChecked={this.state.assign_zero_to_empty}
+                    name="assign_zero_to_empty"
+                    data-testid="chk_assign_zero_to_empty"
+                    onChange={this.handleAssignZeroToEmptyChange}
+                  />
+                  &nbsp;
+                  <span data-testid="lbl_assign_zero_to_empty">
+                    {I18n.t("submissions.collect.assign_zero_to_empty")}
+                  </span>
+                </label>
+              </p>
             </fieldset>
             <section className={"modal-container dialog-actions"}>
               <input

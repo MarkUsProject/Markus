@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
