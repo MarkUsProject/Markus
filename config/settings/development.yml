@@ -53,3 +53,7 @@ lti:
   token_endpoint: "http://host.docker.internal:3100/login/oauth2/token"
   unpermitted_new_course_message: 'You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator.'
   sync_schedule: "0 3 * * *"
+  rotation:
+    enabled: false
+    max_age_days: 90
+    overlap_days: 7
