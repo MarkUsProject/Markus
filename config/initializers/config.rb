@@ -198,6 +198,13 @@ Config.setup do |config|
         required(:token_endpoint).filled(:string)
         optional(:unpermitted_new_course_message).filled(:string)
         required(:sync_schedule).filled(:string)
+        optional(:rotation).hash do
+          required(:enabled).filled(:bool)
+          required(:max_age_days).value(:integer, gt?: 0)
+          required(:overlap_days).value(:integer, gt?: 0)
+          optional(:key_dir).filled(:string)
+          optional(:current_key).filled(:string)
+        end
       end
     end
   end

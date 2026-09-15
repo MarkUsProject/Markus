@@ -48,7 +48,9 @@ en:
     no_courses: No courses available for matching.
     no_grades: No grades to sync
     no_platform: No platforms selected
+    no_signing_key: No LTI signing key found
     no_users: No user data returned from LMS
+    pinned_key_not_found: 'Pinned LTI signing key not found: %{path} (check Settings.lti.rotation.current_key)'
     roster_sync: Sync Roster
     roster_sync_complete: Roster Sync Complete
     roster_sync_errors: Some students could not be synced.
