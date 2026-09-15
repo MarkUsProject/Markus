@@ -14,6 +14,7 @@
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
+- Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 
 ### 🐛 Bug fixes
 - Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)

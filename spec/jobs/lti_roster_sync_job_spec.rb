@@ -7,7 +7,7 @@ describe LtiRosterSyncJob do
   let(:assessment) { create(:assignment_with_criteria_and_results, course: course) }
 
   before do
-    allow(File).to receive(:read).with(LtiClient::KEY_PATH).and_return(OpenSSL::PKey::RSA.new(2048))
+    allow(LtiKeyStore).to receive(:current_jwk).and_return(JWT::JWK.new(OpenSSL::PKey::RSA.new(2048)))
     stub_request(:post, Settings.lti.token_endpoint)
       .with(
         body: hash_including(
