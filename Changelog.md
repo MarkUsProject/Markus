@@ -17,6 +17,7 @@
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 
 ### 🐛 Bug fixes
+- Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 
 ### 📚 Documentation changes
 
