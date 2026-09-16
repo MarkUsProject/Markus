@@ -45,6 +45,8 @@ jupyter_server:
   hosts:
     - "http://localhost:8888"
     - "http://127.0.0.1:8888"
+  internal_url: "http://host.docker.internal:8888"
+
 docs_url: http://localhost:4000
 
 lti:

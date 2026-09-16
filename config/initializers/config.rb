@@ -105,6 +105,7 @@ Config.setup do |config|
       end
       required(:jupyter_server).hash do
         required(:hosts).array(:string)
+        optional(:internal_url).filled(:string)
       end
       required(:queues).hash do
         required(:default).filled(:string)
