@@ -278,11 +278,11 @@ describe SubmissionsJob do
         SubmissionsJob.perform_now(groupings, retain_existing_grading: true, assign_zero_to_empty: true)
       end
 
-      it 'overwrites the retained marks with zero when the new submission is empty' do
+      it 'does not overwrite the retained marks when the new submission is empty' do
         groupings.each do |g|
           result = g.reload.current_submission_used.get_latest_result
-          expect(result.marks.pluck(:mark)).to all(eq(0))
-          expect(result.marking_state).to eq(Result::MARKING_STATES[:complete])
+          expect(result.marks.pluck(:mark)).to all(eq(1))
+          expect(result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
         end
       end
     end
