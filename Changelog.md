@@ -9,6 +9,7 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+- Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 
 ### 📚 Documentation changes
 
