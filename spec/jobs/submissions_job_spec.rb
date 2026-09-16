@@ -238,7 +238,9 @@ describe SubmissionsJob do
       it 'adds a warning containing the grouping name and error' do
         grouping = groupings.first
         error = ActiveRecord::ActiveRecordError.new('failed to assign marks')
-        allow_any_instance_of(Result).to receive(:create_marks).and_raise(error)
+        allow_any_instance_of(Result).to receive(:update!)
+          .with(marking_state: Result::MARKING_STATES[:complete])
+          .and_raise(error)
         expect(Rails.logger).to receive(:error).with("#{grouping.group.group_name}: #{error}")
 
         SubmissionsJob.perform_now([grouping], assign_zero_to_empty: true)
