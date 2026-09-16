@@ -234,6 +234,17 @@ describe SubmissionsJob do
       end
     end
 
+    context 'when assigning marks fails' do
+      it 'adds a warning containing the grouping name and error' do
+        grouping = groupings.first
+        error = ActiveRecord::ActiveRecordError.new('failed to assign marks')
+        allow_any_instance_of(Result).to receive(:create_marks).and_raise(error)
+        expect(Rails.logger).to receive(:error).with("#{grouping.group.group_name}: #{error}")
+
+        SubmissionsJob.perform_now([grouping], assign_zero_to_empty: true)
+      end
+    end
+
     context 'when the collected submissions are not empty' do
       before do
         groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', 1.hour.ago.to_s, 'test.txt', 'aaa') }
