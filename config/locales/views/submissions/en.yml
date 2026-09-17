@@ -9,6 +9,7 @@ en:
       Would you like to continue?
     collect:
       apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)
+      assign_zero_to_empty: Assign grade of 0 to collected submissions that are empty. Has no effect if previous grading is retained.
       collect_current: Collect most recent files submitted, regardless of assignment due date or late period.
       collect_due_date: Collect most recent files submitted before the due date, including any late period.
       collection_options: Collection options
