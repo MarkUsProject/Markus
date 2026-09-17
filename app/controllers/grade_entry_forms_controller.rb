@@ -175,7 +175,7 @@ class GradeEntryFormsController < ApplicationController
     else
       grade_entry_form = record
       release = params[:release_results] == 'true'
-      updated = GradeEntryStudent.transaction do
+      updated_ids = GradeEntryStudent.transaction do
         data = record.course
                      .students
                      .joins(:grade_entry_students)
@@ -193,13 +193,13 @@ class GradeEntryFormsController < ApplicationController
         action = release ? 'released' : 'unreleased'
         log_message = "#{action} #{num_changed} for marks spreadsheet '#{grade_entry_form.short_identifier}'."
         MarkusLogger.instance.log(log_message)
-        true
+        data.map { |row| row[:id] }
       rescue StandardError => e
         flash_message(:error, e.message)
         raise ActiveRecord::Rollback
       end
-      if updated && release
-        GradeEntryStudent.where(id: params[:students]).includes(:role).find_each do |current_student|
+      if updated_ids && release
+        GradeEntryStudent.where(id: updated_ids).includes(:role).find_each do |current_student|
           if current_student.role.receives_results_emails?
             NotificationMailer.with(student: current_student, form: grade_entry_form, course: current_course)
                               .release_spreadsheet_email.deliver_later
