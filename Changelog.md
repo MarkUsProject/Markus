@@ -14,6 +14,12 @@
 
 ### 🔧 Internal changes
 
+## [v2.10.4]
+
+### 🐛 Bug fixes
+- Fixed marks spreadsheet release emails being sent to students of other grade entry forms (#8174)
+- Fixed releasing and unreleasing marks spreadsheet grades failing with a `NOT NULL` violation on `grade_entry_students.assessment_id`, and limited marks release emails to successful releases (#8173)
+
 ## [v2.10.3]
 
 ### ✨ New features and improvements
