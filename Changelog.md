@@ -18,6 +18,7 @@
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 
 ### 🐛 Bug fixes
+- Fixed releasing and unreleasing marks spreadsheet grades failing with a `NOT NULL` violation on `grade_entry_students.assessment_id`, and limited marks release emails to successful releases (#8173)
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 
 ### 📚 Documentation changes
