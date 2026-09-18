@@ -31,6 +31,7 @@
 - Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Added missing foreign keys in seed data (#8006)
+- Added tests for `AnnotationCategory` to cover an error when uploading a CSV for `add_by_row` (#8177)
 
 ## [v2.10.4]
 

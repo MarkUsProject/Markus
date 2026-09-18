@@ -214,6 +214,26 @@ describe AnnotationCategory do
         expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
       end
     end
+
+    context 'when the creator role belongs to a different course than the assignment' do
+      let(:other_course_instructor) { create(:instructor, course: create(:course)) }
+      let(:expected_message) do
+        I18n.t('annotation_categories.upload.error', annotation_category: 'category_name')
+      end
+
+      it 'returns an error message for a category without a criterion' do
+        row = ['category_name', nil, 'text_content']
+        expect { AnnotationCategory.add_by_row(row, assignment, other_course_instructor) }
+          .to raise_error(CsvInvalidLineError, expected_message)
+      end
+
+      it 'returns an error message for a category with a criterion' do
+        create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 2.0)
+        row = ['category_name', 'criterion_name', 'text_content', '1.0']
+        expect { AnnotationCategory.add_by_row(row, assignment, other_course_instructor) }
+          .to raise_error(CsvInvalidLineError, expected_message)
+      end
+    end
   end
 
   describe '#update_annotation_text_deductions' do
