@@ -65,6 +65,12 @@ module.exports = {
       patterns: [
         {from: "node_modules/katex/dist/fonts", to: "fonts"},
         {from: "node_modules/pdfjs-dist/web/images", to: "images"},
+        // pdf.js >= 6 ships its image decoders (JBIG2, JPEG 2000) and colour management
+        // as separate wasm modules that it fetches at runtime, appending the file name
+        // itself to the `wasmUrl` passed to getDocument(). Propshaft only serves
+        // digest-stamped paths, so these go to public/ (served as-is under the relative
+        // URL root) instead of app/assets/builds. See Components/Result/pdf_viewer.jsx.
+        {from: "node_modules/pdfjs-dist/wasm", to: path.resolve(__dirname, "public/wasm")},
       ],
     }),
     new webpack.ProvidePlugin({

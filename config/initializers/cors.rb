@@ -7,11 +7,20 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    # This enables jupyterhub servers running the markus-jupyter-extension to submit files to MarkUs
-    # Add hosts running jupyterhub to the Settings.jupyter_server.hosts settings option.
+    # Jupyter/JupyterHub browser origins that are permitted to submit to MarkUs.
     origins(*Settings.jupyter_server.hosts)
+
+    # Legacy MarkUs Jupyter submission API.
     resource %r{/api/courses/\d+/assignments/\d+/submit_file},
              headers: :any,
-             methods: :post
+             methods: [:post]
+
+    # New JupyterLab submission extension endpoints.
+    resource %r{/jupyter/authenticate},
+             headers: :any,
+             methods: [:post, :options]
+    resource %r{/jupyter/submit},
+             headers: :any,
+             methods: [:post, :options]
   end
 end

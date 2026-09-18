@@ -257,6 +257,35 @@ module RepositoryHelper
     [false, [:txn_conflicts, txn.conflicts]]
   end
 
+  # Translates a single (msg, other_info) tuple, as returned in the messages array from
+  # +add_file+/+add_folder+/+commit_transaction+, into user-facing text.
+  def repository_message_text(msg, other_info, course)
+    case msg
+    when :too_large
+      max_size = (course.max_file_size / 1_000_000.00).round(2)
+      I18n.t('submissions.student.file_too_large', file_name: other_info, max_size: max_size)
+    when :too_small
+      I18n.t('submissions.student.empty_file_warning', file_name: other_info)
+    when :invalid_filename
+      I18n.t('submissions.student.invalid_file_name', file_name: other_info)
+    when :extra_files
+      full_file_path = other_info[0].rpartition('/')
+      file_name = full_file_path.last
+      file_path = full_file_path.first.partition('/').last
+      if file_path == ''
+        I18n.t('assignments.upload_file_requirement', file_name: file_name)
+      else
+        I18n.t('assignments.upload_file_requirement_in_folder', file_name: file_name, file_path: file_path)
+      end
+    when :no_files
+      I18n.t('submissions.student.no_action_detected')
+    when :txn_conflicts
+      "#{I18n.t('submissions.student.file_conflicts')} #{Array(other_info).join(', ')}"
+    when :invalid_folder_name
+      I18n.t('submissions.student.invalid_folder_name', folder_name: other_info)
+    end
+  end
+
   def flash_repository_messages(messages, course, suppress: nil)
     suppress ||= {}
     messages.each do |msg, other_info|

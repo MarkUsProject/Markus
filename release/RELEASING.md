@@ -1,12 +1,12 @@
 # Releasing MarkUs
 
-Step-by-step guide for cutting a MarkUs minor release. Helper scripts in this directory automate the tedious parts — each step shows the manual command and the script alternative.
+Step-by-step guide for cutting a MarkUs minor release. Scripts in this folder automate the slow parts. Each step shows the manual command plus the script that does it for you.
 
 ## Prerequisites
 
-- `gh` CLI authenticated (`gh auth status`)
+- The `gh` CLI is logged in (`gh auth status`)
 - Docker running (`docker compose up`)
-- A GitHub milestone exists for the target version with all relevant PRs merged and tagged
+- A GitHub milestone exists for the target version. All its PRs are merged.
 - Clean working tree
 
 ## Phase 1: Setup
@@ -19,7 +19,7 @@ git checkout -b v2.X.Y   # branch from release, not master
 
 **Verify:** `git log --oneline -1` matches the latest release branch commit.
 
-## Phase 2: Recon — discover what to cherry-pick
+## Phase 2: Recon, discover what to cherry-pick
 
 ```bash
 RECON=$(ruby release/recon.rb v2.X.Y)
@@ -27,9 +27,9 @@ echo "$RECON" | ruby release/recon-format.rb --summary
 echo "$RECON" | ruby release/recon-format.rb --plan
 ```
 
-This queries the milestone, checks which PRs are already on the release branch, resolves file-overlap dependencies, and outputs a JSON plan. The `$RECON` variable is reused in later phases (release notes, PR body).
+This queries the milestone. It flags PRs that already shipped. It resolves file-overlap order. It prints a JSON plan. Later phases reuse `$RECON` for release notes plus the PR body.
 
-Review the plan. Note any non-PR commits (direct pushes, fork merges) — decide whether to include or skip.
+Review the plan. Check any non-PR commits (direct pushes, fork merges). Decide: include or skip.
 
 ## Phase 3: Cherry-pick
 
@@ -39,7 +39,7 @@ Review the plan. Note any non-PR commits (direct pushes, fork merges) — decide
 release/cherry-pick.sh v2.X.Y
 ```
 
-This cherry-picks all milestone PRs in dependency order, auto-resolves Changelog conflicts, skips empty commits, and verifies each pick for contamination. It stops on code conflicts or contamination and tells you exactly what to do.
+This picks every milestone PR in dependency order. It auto-resolves `Changelog.md` plus lockfile conflicts. It skips empty commits. It verifies each pick against the PR's file list. On a code conflict it stops, and it tells you what to do.
 
 After fixing a problem, resume from where it stopped:
 ```bash
@@ -48,8 +48,7 @@ release/cherry-pick.sh v2.X.Y --resume
 
 At the end it prints the PR list and the `changelog.rb` command to run next.
 
-<details>
-<summary>Manual alternative</summary>
+### Manual alternative
 
 For each PR in the order from recon:
 
@@ -59,20 +58,19 @@ ruby release/verify.rb <PR_NUMBER>
 ```
 
 Conflict handling:
-- **Changelog.md only:** `git checkout --ours Changelog.md && git add Changelog.md && GIT_EDITOR=true git cherry-pick --continue`
+- **`Changelog.md` alone:** `git checkout --ours Changelog.md && git add Changelog.md && GIT_EDITOR=true git cherry-pick --continue`
 - **Code files:** Stop. Resolve by comparing against `gh pr diff <N>`.
 - **Empty commit:** Already on release. `git cherry-pick --skip`.
-</details>
 
 ## Phase 4: Rebuild the Changelog
 
-The Changelog is always corrupted after cherry-picks. Rebuild it:
+Cherry-picks always corrupt `Changelog.md`. Rebuild it:
 
 ```bash
 ruby release/changelog.rb --mode=release --version=v2.X.Y --prs=7783,7851,7858
 ```
 
-Pass the comma-separated list of cherry-picked PR numbers. The script reads `origin/release` and `origin/master`, filters master's unreleased entries to only the included PRs, and outputs a clean Changelog.
+Pass the picked PR numbers, comma-separated. The script reads `origin/release` plus `origin/master`. It keeps the unreleased entries whose PRs you picked, plus the old sections. It prints a clean `Changelog.md`.
 
 ```bash
 ruby release/changelog.rb --mode=release --version=v2.X.Y --prs=<PR_LIST> > Changelog.md
@@ -83,7 +81,7 @@ ruby release/changelog.rb --mode=release --version=v2.X.Y --prs=<PR_LIST> > Chan
 bash release/validate_changelog.sh v2.X.Y
 ```
 
-All 6 checks should pass: no conflict markers, empty unreleased, version section exists with entries, correct ordering, no duplicate PRs, older sections unchanged.
+All 6 checks must pass: zero conflict markers, empty unreleased, a filled version section, correct order, zero duplicate PRs, older sections intact.
 
 ## Phase 5: Version bump and commit
 
@@ -93,7 +91,7 @@ git add Changelog.md app/MARKUS_VERSION
 git commit -m "v2.X.Y"
 ```
 
-`PATCH_LEVEL=DEV` is a legacy field — always keep it as-is.
+`PATCH_LEVEL=DEV` is a legacy field. Keep it as is, always.
 
 ## Phase 6: Test
 
@@ -102,17 +100,27 @@ docker compose exec rails bundle exec rspec
 docker compose exec rails npx jest --no-coverage
 ```
 
-Pre-existing failures on the release branch are expected. Verify no NEW failures were introduced by the cherry-picks.
+The release branch has known failures. Your job: confirm the cherry-picks added zero NEW ones.
+
+Before blaming the release, rule out the environment. Rerun the failing spec
+file alone. Rerun it with suspect env vars cleared (the dev container sets
+`MARKUS_URL`, which the autotest job specs read). A pass in isolation points at
+the environment or test order. A fail either way is a real regression.
 
 ## Phase 7: Dependency and settings check
 
 ```bash
 git diff origin/release -- Gemfile Gemfile.lock package.json package-lock.json
-git diff origin/release -- markus.control config/settings.yml
+git diff origin/release -- markus.control config/settings.yml config/settings/production.yml
+git diff origin/release -- requirements-jupyter.txt Dockerfile
 git diff origin/release --name-only -- db/migrate/
 ```
 
-If any of these show changes, notify sysadmins before deployment. They may need to `bundle install`, `npm install`, apply new settings to `settings.local.yml`, or run migrations.
+A `requirements-jupyter.txt` change can alter deploy steps too. In v2.10.2 the
+playwright bump required `playwright install chromium` plus
+`playwright install-deps` on the server.
+
+When any of these show changes, tell the sysadmins before deploy. Their steps: `bundle install`, `npm install`, new settings in `settings.local.yml`, or migrations.
 
 ## Phase 8: Push and PR
 
@@ -121,7 +129,7 @@ git push -u origin v2.X.Y
 gh pr create --base release --title "v2.X.Y" --body "Release v2.X.Y"
 ```
 
-Wait for CI. Get reviewer approval. **Merge with "Create a merge commit"** (never squash into release).
+Wait for CI. Get reviewer approval. Ask for **"Create a merge commit"**. Recent releases were squash-merged in practice. That is why recon finds shipped PRs via the changelog, never via ancestry.
 
 ## Phase 9: GitHub Release
 
@@ -133,7 +141,7 @@ RECON=$(ruby release/recon.rb v2.X.Y)
 gh release create v2.X.Y --repo MarkUsProject/Markus --target release --title "v2.X.Y" --notes "$(echo "$RECON" | ruby release/recon-format.rb --release-notes)"
 ```
 
-Or create manually via GitHub UI: Releases > Create > tag `v2.X.Y`, target `release`.
+Or create it in the GitHub UI: Releases > Create > tag `v2.X.Y`, target `release`.
 
 ## Phase 10: Milestone management
 
@@ -148,7 +156,7 @@ gh api repos/MarkUsProject/Markus/milestones -f title="v2.X.Z"
 
 ## Phase 11: Sync Changelog to master
 
-Move released entries from `[unreleased]` into a new version section on master:
+Move the released entries out of `[unreleased]` into a new version section on master:
 
 ```bash
 git checkout master && git pull origin master
@@ -163,11 +171,17 @@ git push -u origin v2.X.Y-changelog
 gh pr create --base master --title "Update changelog for v2.X.Y" --body "Sync released entries."
 ```
 
-Squash-merge is fine here (same branch lineage, `[ci skip]` skips CI).
+Squash-merge works here (same branch lineage; `[ci skip]` skips CI).
 
-## Phase 12: Satellite repos (Wiki, Autotester)
+## Phase 12: Satellite repos
 
-Check each repo's milestone for PRs. If any exist, follow the same cherry-pick + PR + release flow. If none, still create a GitHub release with the version tag.
+Check the markus-autotesting milestone for PRs. When PRs exist, follow the same
+cherry-pick, PR, release flow. When zero exist, skip the release. The autotester
+releases on its own pace (it skipped v2.10.1 plus v2.10.2). Master sitting ahead
+of release there is normal future-milestone work.
+
+The Wiki is retired. Docs moved into this repo in v2.10.2 (#8022). MarkUs links
+point at the docs site (#8049). Skip it until a milestone PR appears there again.
 
 ## Phase 13: Cleanup
 
@@ -191,7 +205,7 @@ git branch -d v2.X.Y v2.X.Y-changelog
 | `validate_changelog.sh <version>` | 6-check validation for release branch changelog |
 | `validate_changelog_master.sh <version>` | 5-check validation for master changelog sync |
 
-All scripts accept `--help` for usage details.
+Every script prints usage with `--help`.
 
 ---
 
