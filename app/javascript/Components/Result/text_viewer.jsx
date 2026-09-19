@@ -1,5 +1,6 @@
 import React from "react";
 import Prism from "prismjs";
+import MarkdownPreview from "../markdown_preview";
 import {TextAnnotationManager} from "../../common/annotations/text_annotation_manager";
 
 export class TextViewer extends React.PureComponent {
@@ -9,10 +10,12 @@ export class TextViewer extends React.PureComponent {
       copy_success: false,
       font_size: 1,
       content: null,
+      preview_markdown: false,
     };
     this.highlight_root = null;
     this.annotation_manager = null;
     this.raw_content = React.createRef();
+    this.markdown_preview = React.createRef();
     this.abortController = null;
   }
 
@@ -33,7 +36,17 @@ export class TextViewer extends React.PureComponent {
     if (this.abortController) {
       this.abortController.abort();
     }
+    window.removeEventListener("resize", this.resize_markdown_preview);
   }
+
+  resize_markdown_preview = () => {
+    const preview = this.markdown_preview.current?.querySelector(".preview");
+    if (!preview) return;
+
+    const availableHeight = Math.max(0, window.innerHeight - preview.getBoundingClientRect().top);
+    preview.style.maxHeight = `${availableHeight}px`;
+    preview.style.minHeight = `${availableHeight}px`;
+  };
 
   componentDidMount() {
     this.highlight_root = this.raw_content.current.parentNode;
@@ -109,6 +122,16 @@ export class TextViewer extends React.PureComponent {
     } else {
       this.postInitContent(prevProps, prevState);
     }
+
+    if (prevState.preview_markdown && !this.state.preview_markdown) {
+      this.highlight_root = this.raw_content.current.parentNode;
+      this.ready_annotations();
+    }
+
+    if (!prevState.preview_markdown && this.state.preview_markdown) {
+      this.resize_markdown_preview();
+      window.addEventListener("resize", this.resize_markdown_preview);
+    }
   }
 
   postInitContent(prevProps, prevState) {
@@ -139,8 +162,7 @@ export class TextViewer extends React.PureComponent {
     if (this.annotation_manager !== null) {
       this.annotation_manager.annotation_text_displayer.hide();
     }
-
-    this.highlight_root.style.font_size = this.state.fontSize + "em";
+    this.highlight_root.style.fontSize = this.state.font_size + "em";
 
     if (this.props.resultView) {
       window.annotation_type = window.ANNOTATION_TYPES.CODE;
@@ -255,23 +277,38 @@ export class TextViewer extends React.PureComponent {
       <React.Fragment>
         <div className="toolbar">
           <div className="toolbar-actions">
-            <a href="#" onClick={this.copyToClipboard}>
-              {this.state.copy_success ? "✔ " : ""}
-              {I18n.t("results.copy_text")}
-            </a>
-            <a href="#" onClick={() => this.change_font_size(0.25)}>
-              +A
-            </a>
-            <a href="#" onClick={() => this.change_font_size(-0.25)}>
-              -A
-            </a>
+            {this.props.type === "markdown" && (
+              <a onClick={() => this.setState({preview_markdown: !this.state.preview_markdown})}>
+                {this.state.preview_markdown ? "view source" : "preview markdown"}
+              </a>
+            )}
+            {(this.props.type !== "markdown" || !this.state.preview_markdown) && (
+              <React.Fragment>
+                <a href="#" onClick={this.copyToClipboard}>
+                  {this.state.copy_success ? "✔ " : ""}
+                  {I18n.t("results.copy_text")}
+                </a>
+                <a href="#" onClick={() => this.change_font_size(0.25)}>
+                  +A
+                </a>
+                <a href="#" onClick={() => this.change_font_size(-0.25)}>
+                  -A
+                </a>
+              </React.Fragment>
+            )}
           </div>
         </div>
-        <pre name={preElementName} className={`line-numbers`}>
-          <code ref={this.raw_content} className={`language-${this.props.type}`}>
-            {this.getContent()}
-          </code>
-        </pre>
+        {this.state.preview_markdown ? (
+          <div ref={this.markdown_preview}>
+            <MarkdownPreview id="markdown-preview" content={this.getContent()} />
+          </div>
+        ) : (
+          <pre name={preElementName} className="line-numbers">
+            <code ref={this.raw_content} className={`language-${this.props.type}`}>
+              {this.getContent()}
+            </code>
+          </pre>
+        )}
       </React.Fragment>
     );
   }
