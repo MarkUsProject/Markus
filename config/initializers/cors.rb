@@ -19,6 +19,9 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     resource %r{/jupyter/authenticate},
              headers: :any,
              methods: [:post, :options]
+    resource %r{/jupyter/assignments},
+             headers: :any,
+             methods: [:post, :options]
     resource %r{/jupyter/submit},
              headers: :any,
              methods: [:post, :options]
