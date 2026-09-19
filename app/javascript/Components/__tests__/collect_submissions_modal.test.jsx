@@ -31,6 +31,25 @@ describe("CollectSubmissionsModal", () => {
     expect(chkRecollectExistingSubmissions.checked).toBe(false);
   });
 
+  it("should display the option to assign a grade of 0 to empty submissions checked by default", () => {
+    const lblAssignZeroToEmpty = screen.getByTestId("lbl_assign_zero_to_empty");
+    const chkAssignZeroToEmpty = screen.getByTestId("chk_assign_zero_to_empty");
+
+    expect(lblAssignZeroToEmpty).toBeInTheDocument();
+    expect(chkAssignZeroToEmpty).toBeInTheDocument();
+    expect(chkAssignZeroToEmpty.checked).toBe(true);
+  });
+
+  it("should call onSubmit with assign_zero_to_empty false when its checkbox is unchecked", async () => {
+    fireEvent.click(screen.getByTestId("chk_assign_zero_to_empty"));
+    fireEvent.click(screen.getByTestId("btn_collect_submissions"));
+
+    await waitFor(() => {
+      expect(props.onSubmit).toHaveBeenCalledTimes(1);
+      expect(props.onSubmit).toHaveBeenCalledWith(false, false, true, false, false);
+    });
+  });
+
   describe("when the option to recollect checkbox is checked", () => {
     beforeEach(() => {
       fireEvent.click(screen.getByTestId("chk_recollect_existing_submissions"));
@@ -65,7 +84,7 @@ describe("CollectSubmissionsModal", () => {
 
       await waitFor(() => {
         expect(props.onSubmit).toHaveBeenCalledTimes(1);
-        expect(props.onSubmit).toHaveBeenCalledWith(true, false, true, true);
+        expect(props.onSubmit).toHaveBeenCalledWith(true, false, true, true, true);
       });
     });
   });
