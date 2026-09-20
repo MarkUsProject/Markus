@@ -229,7 +229,7 @@ describe AnnotationCategory do
 
       it 'returns an error message for a category with a criterion' do
         create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 2.0)
-        row = ['category_name', 'criterion_name', 'text_content', '1.0']
+        row = %w[category_name criterion_name text_content 1.0]
         expect { AnnotationCategory.add_by_row(row, assignment, other_course_instructor) }
           .to raise_error(CsvInvalidLineError, expected_message)
       end
