@@ -105,6 +105,15 @@ export class TextViewer extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const fileChanged =
+      this.props.submission_file_id !== prevProps.submission_file_id ||
+      this.props.url !== prevProps.url;
+
+    if (fileChanged && this.state.preview_file) {
+      this.setState({preview_file: false});
+      return;
+    }
+
     if (this.props.url && this.props.url !== prevProps.url) {
       // The URL has updated, so the content needs to be fetched using the new URL.
       this.fetchContent(this.props.url)
@@ -157,6 +166,13 @@ export class TextViewer extends React.PureComponent {
    * 3. Scroll to line numbered this.props.focusLine
    */
   ready_annotations = () => {
+    if (!this.raw_content.current) {
+      if (this.state.preview_file) {
+        this.setState({preview_file: false});
+      }
+      return;
+    }
+
     this.run_syntax_highlighting();
 
     if (this.annotation_manager !== null) {
