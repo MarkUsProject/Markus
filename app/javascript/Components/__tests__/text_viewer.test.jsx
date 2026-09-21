@@ -25,7 +25,7 @@ describe("TextViewer", () => {
   it("should show the markdown preview button", () => {
     render(<TextViewer {...props} type="markdown" content="# Markdown" />);
 
-    expect(screen.getByText("preview markdown")).toBeInTheDocument();
+    expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
   });
 
   it("should replace the source with the markdown preview when rendered", async () => {
