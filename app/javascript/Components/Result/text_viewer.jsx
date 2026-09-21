@@ -280,7 +280,9 @@ export class TextViewer extends React.PureComponent {
           <div className="toolbar-actions">
             {this.props.type === "markdown" && (
               <a onClick={() => this.setState({preview_markdown: !this.state.preview_markdown})}>
-                {this.state.preview_markdown ? "view source" : "preview markdown"}
+                {this.state.preview_markdown
+                  ? I18n.t("results.view_source")
+                  : I18n.t("results.preview")}
               </a>
             )}
             {(this.props.type !== "markdown" || !this.state.preview_markdown) && (
