@@ -10,12 +10,12 @@ export class TextViewer extends React.PureComponent {
       copy_success: false,
       font_size: 1,
       content: null,
-      preview_markdown: false,
+      preview_file: false,
     };
     this.highlight_root = null;
     this.annotation_manager = null;
     this.raw_content = React.createRef();
-    this.markdown_preview = React.createRef();
+    this.file_preview = React.createRef();
     this.abortController = null;
   }
 
@@ -36,11 +36,11 @@ export class TextViewer extends React.PureComponent {
     if (this.abortController) {
       this.abortController.abort();
     }
-    window.removeEventListener("resize", this.resize_markdown_preview);
+    window.removeEventListener("resize", this.resize_file_preview);
   }
 
-  resize_markdown_preview = () => {
-    const preview = this.markdown_preview.current?.querySelector(".preview");
+  resize_file_preview = () => {
+    const preview = this.file_preview.current?.querySelector(".preview");
     if (!preview) return;
 
     const availableHeight = Math.max(0, window.innerHeight - preview.getBoundingClientRect().top);
@@ -123,14 +123,14 @@ export class TextViewer extends React.PureComponent {
       this.postInitContent(prevProps, prevState);
     }
 
-    if (prevState.preview_markdown && !this.state.preview_markdown) {
+    if (prevState.preview_file && !this.state.preview_file) {
       this.highlight_root = this.raw_content.current.parentNode;
       this.ready_annotations();
     }
 
-    if (!prevState.preview_markdown && this.state.preview_markdown) {
-      this.resize_markdown_preview();
-      window.addEventListener("resize", this.resize_markdown_preview);
+    if (!prevState.preview_file && this.state.preview_file) {
+      this.resize_file_preview();
+      window.addEventListener("resize", this.resize_file_preview);
     }
   }
 
@@ -279,13 +279,13 @@ export class TextViewer extends React.PureComponent {
         <div className="toolbar">
           <div className="toolbar-actions">
             {this.props.type === "markdown" && (
-              <a onClick={() => this.setState({preview_markdown: !this.state.preview_markdown})}>
-                {this.state.preview_markdown
+              <a onClick={() => this.setState({preview_file: !this.state.preview_file})}>
+                {this.state.preview_file
                   ? I18n.t("results.view_source")
                   : I18n.t("results.preview")}
               </a>
             )}
-            {(this.props.type !== "markdown" || !this.state.preview_markdown) && (
+            {(this.props.type !== "markdown" || !this.state.preview_file) && (
               <React.Fragment>
                 <a href="#" onClick={this.copyToClipboard}>
                   {this.state.copy_success ? "✔ " : ""}
@@ -301,8 +301,8 @@ export class TextViewer extends React.PureComponent {
             )}
           </div>
         </div>
-        {this.state.preview_markdown ? (
-          <div ref={this.markdown_preview}>
+        {this.state.preview_file ? (
+          <div ref={this.file_preview}>
             <MarkdownPreview id="markdown-preview" content={this.getContent()} />
           </div>
         ) : (
