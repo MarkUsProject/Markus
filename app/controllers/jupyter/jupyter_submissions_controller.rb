@@ -22,19 +22,21 @@ module Jupyter
     RESPONSE_BODY_TRUNCATE_LENGTH = 500
     JUPYTER_SESSION_TTL = 15.minutes
 
-    # codeql[rb/csrf-protection-disabled] -- these API endpoints authenticate with Jupyter/session tokens rather than the MarkUs browser session cookie
-    skip_before_action :verify_authenticity_token, only: [:create_session, :assignments, :submit], raise: false
+    # these API endpoints authenticate with Jupyter/session tokens
+    # codeql[rb/csrf-protection-disabled]
+    skip_before_action :verify_authenticity_token, only: [:create_session, :get_courses, :get_assignments, :submit],
+                                                   raise: false
 
     # The Jupyter endpoints resolve the submitting user separately, so they
     # do not require an existing MarkUs browser session.
-    skip_before_action :authenticate, only: [:create_session, :assignments, :submit]
-    skip_before_action :check_record, only: [:create_session, :assignments, :submit]
-    skip_before_action :check_course_switch, only: [:create_session, :assignments, :submit]
+    skip_before_action :authenticate, only: [:create_session, :get_courses, :get_assignments, :submit]
+    skip_before_action :check_record, only: [:create_session, :get_courses, :get_assignments, :submit]
+    skip_before_action :check_course_switch, only: [:create_session, :get_courses, :get_assignments, :submit]
 
-    skip_verify_authorized only: [:create_session, :assignments, :submit]
+    skip_verify_authorized only: [:create_session, :get_courses, :get_assignments, :submit]
 
     before_action :ensure_jupyter_enabled!
-    before_action :authenticate_jupyter_session!, only: [:assignments, :submit]
+    before_action :authenticate_jupyter_session!, only: [:get_courses, :get_assignments, :submit]
 
     # Verifies the caller's JupyterHub token and mints a short-lived signed session token.
     def create_session
@@ -55,7 +57,7 @@ module Jupyter
       render_error(e)
     end
 
-    def assignments
+    def get_courses
       courses = Course
                 .joins(:students)
                 .where(students: { user_id: current_user.id, hidden: false })
@@ -65,36 +67,77 @@ module Jupyter
 
       render json: {
         status: 'success',
-        courses: courses.filter_map do |course|
-          student = course.students.find_by!(user_id: current_user.id, hidden: false)
-
-          visible_assignment_ids =
-            student
-              .visible_assessments(assessment_type: Assignment.name)
-              .select(:id)
-
-          assignments =
-            course.assignments
-                  .where(id: visible_assignment_ids)
-                  .joins(:assignment_properties)
-                  .where(assignment_properties: { api_submit: true })
-                  .order(:short_identifier)
-
-          next if assignments.empty?
-
+        courses: courses.map do |course|
           {
             id: course.id,
             name: course.name,
-            display_name: course.display_name,
-            assignments: assignments.map do |assignment|
-              {
-                id: assignment.id,
-                short_identifier: assignment.short_identifier,
-                description: assignment.description
-              }
-            end
+            display_name: course.display_name
           }
+        end,
+        reason: courses.empty? ? 'no_enrollment' : nil
+      }
+    rescue StandardError => e
+      render_error(e)
+    end
+
+    def get_assignments
+      course_id = params.require(:course_id)
+
+      course = Course.find_by(id: course_id, is_hidden: false)
+
+      if course.nil?
+        raise ActiveRecord::RecordNotFound,
+              I18n.t('jupyter.submit.course_not_found')
+      end
+
+      student = course.students.find_by(
+        user_id: current_user.id,
+        hidden: false
+      )
+
+      if student.nil?
+        raise ForbiddenError,
+              I18n.t(
+                'jupyter.submit.not_a_student',
+                user_name: current_user.user_name,
+                course_name: course.name
+              )
+      end
+
+      visible_assignment_ids =
+        student
+          .visible_assessments(assessment_type: Assignment.name)
+          .select(:id)
+
+      visible_assignments =
+        course.assignments.where(id: visible_assignment_ids)
+
+      assignments =
+        visible_assignments
+          .joins(:assignment_properties)
+          .where(assignment_properties: { api_submit: true })
+          .order(:short_identifier)
+
+      reason =
+        if assignments.empty?
+          if visible_assignments.exists?
+            'api_submission_disabled'
+          else
+            'no_available_assignments'
+          end
         end
+
+      render json: {
+        status: 'success',
+        assignments: assignments.map do |assignment|
+          {
+            id: assignment.id,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.section_due_date(student.section)&.iso8601
+          }
+        end,
+        reason: reason
       }
     rescue StandardError => e
       render_error(e)
@@ -115,26 +158,16 @@ module Jupyter
 
       if student.nil?
         raise ForbiddenError,
-              I18n.t(
-                'jupyter.submit.not_a_student',
-                user_name: current_user.user_name,
-                course_name: course.name
-              )
+              I18n.t('jupyter.submit.not_a_student', user_name: current_user.user_name, course_name: course.name)
       end
 
-      assignment = find_assignment_from_payload!(payload, student, course)
+      assignment = find_assignment_from_payload!(payload, student)
 
       unless assignment.api_submit
         raise ForbiddenError, I18n.t('submissions.api_submission_disabled')
       end
 
-      jupyter_file =
-        fetch_jupyter_file!(
-          @jupyter_origin,
-          @jupyter_base_path,
-          @jupyter_token,
-          jupyter_path
-        )
+      jupyter_file = fetch_jupyter_file!(@jupyter_origin, @jupyter_base_path, @jupyter_token, jupyter_path)
 
       submit_jupyter_file!(
         assignment: assignment,
@@ -165,9 +198,7 @@ module Jupyter
       status = ERROR_STATUSES.find { |error_class, _| e.is_a?(error_class) }&.last
 
       if status.nil?
-        Rails.logger.error(
-          "Jupyter submission failed: #{e.class}: #{e.message}\n#{e.backtrace&.join("\n")}"
-        )
+        Rails.logger.error("Jupyter submission failed: #{e.class}: #{e.message}\n#{e.backtrace&.join("\n")}")
 
         render json: {
           status: 'error',
@@ -209,11 +240,7 @@ module Jupyter
       @jupyter_origin = origin
       @jupyter_base_path = base_path
       @jupyter_token = jupyter_info[:token]
-      @real_user = decode_jupyter_session!(
-        session_token,
-        origin: origin,
-        token: @jupyter_token
-      )
+      @real_user = decode_jupyter_session!(session_token, origin: origin, token: @jupyter_token)
     rescue StandardError => e
       render_error(e)
     end
@@ -227,15 +254,8 @@ module Jupyter
     def submit_params
       params.require(:notebook_path)
 
-      params.permit(
-        :notebook_path,
-        :session_token,
-        :course_id,
-        :course,
-        :assignment_id,
-        :assignment,
-        jupyter: [:base_url, :token]
-      )
+      params.permit(:notebook_path, :session_token, :course_id, :course, :assignment_id, :assignment,
+                    jupyter: [:base_url, :token])
     end
 
     # +base_url+ is an absolute URL (e.g. "http://localhost:8888/user/foo/"). Splits it into
@@ -250,17 +270,15 @@ module Jupyter
 
       scheme = uri.scheme.downcase
       host = uri.host.downcase
-      origin =
-        if uri.port == uri.default_port
-          "#{scheme}://#{host}"
-        else
-          "#{scheme}://#{host}:#{uri.port}"
-        end
+      origin = if uri.port == uri.default_port
+                  "#{scheme}://#{host}"
+               else
+                  "#{scheme}://#{host}:#{uri.port}"
+               end
 
-      allowed_hosts =
-        Settings.jupyter_server.hosts.map do |allowed_host|
-          allowed_host.strip.sub(%r{/*\z}, '').downcase
-        end
+      allowed_hosts = Settings.jupyter_server.hosts.map do |allowed_host|
+allowed_host.strip.sub(%r{/*\z}, '').downcase
+      end
 
       unless allowed_hosts.include?(origin)
         raise BadRequestError, I18n.t('jupyter.submit.origin_not_allowed', origin: origin)
@@ -279,18 +297,8 @@ module Jupyter
       raise BadRequestError, I18n.t('jupyter.submit.unparseable_base_url', error: e.message)
     end
 
-    # Uses an optional server-to-server JupyterHub URL for backend requests.
-    # The browser-facing origin is still validated separately and stored in the
-    # signed Jupyter session token.
-    def jupyter_request_origin(origin)
-      internal_url = Settings.jupyter_server.internal_url
-      return origin if internal_url.blank?
-
-      internal_url.to_s.strip.sub(%r{/*\z}, '')
-    end
-
     def find_username_from_jupyter_token!(origin, token)
-      uri = URI.parse("#{jupyter_request_origin(origin)}/hub/api/user")
+      uri = URI.parse("#{origin}/hub/api/user")
       model = jupyter_api_get!(uri, token, error_class: IdentityError)
       name = model['name']
 
@@ -299,8 +307,7 @@ module Jupyter
       end
 
       unless User.exists?(user_name: name)
-        raise ActiveRecord::RecordNotFound,
-              I18n.t('jupyter.submit.unknown_user', user_name: name.inspect)
+        raise ActiveRecord::RecordNotFound, I18n.t('jupyter.submit.unknown_user', user_name: name.inspect)
       end
 
       name
@@ -315,10 +322,7 @@ module Jupyter
         'expires_at' => expires_at.to_i
       }
 
-      [
-        Rails.application.message_verifier(:jupyter_session).generate(payload),
-        expires_at
-      ]
+      [Rails.application.message_verifier(:jupyter_session).generate(payload), expires_at]
     end
 
     # Verifies a session token minted by +encode_jupyter_session+. Verifies request
@@ -335,7 +339,6 @@ module Jupyter
       end
 
       token_hash = Digest::SHA256.hexdigest(token)
-
       unless ActiveSupport::SecurityUtils.secure_compare(payload['token_hash'], token_hash)
         raise IdentityError, I18n.t('jupyter.submit.session_token_mismatch')
       end
@@ -343,11 +346,7 @@ module Jupyter
       user = User.find_by(user_name: payload['user_name'])
 
       if user.nil?
-        raise ActiveRecord::RecordNotFound,
-              I18n.t(
-                'jupyter.submit.unknown_user',
-                user_name: payload['user_name']
-              )
+        raise ActiveRecord::RecordNotFound, I18n.t('jupyter.submit.unknown_user', user_name: payload['user_name'])
       end
 
       user
@@ -373,11 +372,9 @@ module Jupyter
       course
     end
 
-    def find_assignment_from_payload!(payload, student, course)
+    def find_assignment_from_payload!(payload, student)
       visible_assignments =
-        student
-          .visible_assessments
-          .where(course_id: course.id, type: Assignment.name)
+        student.visible_assessments(assessment_type: Assignment.name)
 
       if payload[:assignment_id].present?
         assignment_id = payload[:assignment_id].to_i
@@ -390,15 +387,14 @@ module Jupyter
       end
 
       if assignment.nil?
-        raise ActiveRecord::RecordNotFound,
-              I18n.t('jupyter.submit.assignment_not_found')
+        raise ActiveRecord::RecordNotFound, I18n.t('jupyter.submit.assignment_not_found')
       end
 
       assignment
     end
 
     def fetch_jupyter_file!(origin, base_path, token, jupyter_path)
-      uri = contents_uri(jupyter_request_origin(origin), base_path, jupyter_path)
+      uri = contents_uri(origin, base_path, jupyter_path)
       model = jupyter_api_get!(uri, token, error_class: FetchError)
 
       {
@@ -419,35 +415,20 @@ module Jupyter
       request['Accept'] = 'application/json'
       request['Authorization'] = "token #{token}"
 
-      response =
-        Net::HTTP.start(
-          uri.hostname,
-          uri.port,
-          use_ssl: uri.scheme == 'https',
-          open_timeout: 10,
-          read_timeout: 30
-        ) do |http|
-          http.request(request)
-        end
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10,
+                                                         read_timeout: 30) do |http|
+                   http.request(request)
+      end
 
       unless response.is_a?(Net::HTTPSuccess)
         raise error_class,
-              I18n.t(
-                'jupyter.submit.request_failed',
-                uri: uri,
-                code: response.code,
-                body: truncate_response_body(response.body)
-              )
+              I18n.t('jupyter.submit.request_failed', uri: uri, code: response.code,
+                                                      body: truncate_response_body(response.body))
       end
 
       JSON.parse(response.body)
     rescue JSON::ParserError => e
-      raise error_class,
-            I18n.t(
-              'jupyter.submit.invalid_json_response',
-              uri: uri,
-              error: e.message
-            )
+      raise error_class, I18n.t('jupyter.submit.invalid_json_response', uri: uri, error: e.message)
     rescue Errno::ECONNREFUSED,
            SocketError,
            Net::OpenTimeout,
@@ -468,12 +449,11 @@ module Jupyter
     end
 
     def contents_uri(origin, base_path, jupyter_path)
-      encoded_path =
-        jupyter_path
-          .split('/')
-          .compact_blank
-          .map { |part| ERB::Util.url_encode(part) }
-          .join('/')
+      encoded_path = jupyter_path
+                    .split('/')
+                    .compact_blank
+                    .map { |part| ERB::Util.url_encode(part) }
+                    .join('/')
 
       uri = URI.parse("#{origin}#{base_path}api/contents/#{encoded_path}")
       uri.query = URI.encode_www_form(content: '1')
@@ -522,7 +502,7 @@ module Jupyter
       formatted_messages =
         Array(messages)
           .map do |msg, other_info|
-            repository_message_text(msg, other_info, assignment.course)
+          repository_message_text(msg, other_info, assignment.course)
           end
           .compact_blank
           .join(', ')
