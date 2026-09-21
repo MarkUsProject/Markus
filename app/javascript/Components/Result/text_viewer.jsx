@@ -162,6 +162,7 @@ export class TextViewer extends React.PureComponent {
     if (this.annotation_manager !== null) {
       this.annotation_manager.annotation_text_displayer.hide();
     }
+
     this.highlight_root.style.fontSize = this.state.font_size + "em";
 
     if (this.props.resultView) {
