@@ -31,16 +31,16 @@ describe("TextViewer", () => {
   it("should replace the source with the markdown preview when rendered", async () => {
     const {container} = render(<TextViewer {...props} type="markdown" content="# Markdown" />);
 
-    expect(screen.getByText("preview markdown")).toBeInTheDocument();
+    expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
     expect(screen.getByText(I18n.t("results.copy_text"))).toBeInTheDocument();
     expect(screen.getByText("+A")).toBeInTheDocument();
     expect(screen.getByText("-A")).toBeInTheDocument();
     expect(container.querySelector("pre")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("preview markdown"));
+    await userEvent.click(screen.getByText(I18n.t("results.preview")));
 
-    expect(screen.getByText("view source")).toBeInTheDocument();
-    expect(screen.queryByText("preview markdown")).not.toBeInTheDocument();
+    expect(screen.getByText(I18n.t("results.view_source"))).toBeInTheDocument();
+    expect(screen.queryByText(I18n.t("results.preview"))).not.toBeInTheDocument();
     expect(screen.queryByText(I18n.t("results.copy_text"))).not.toBeInTheDocument();
     expect(screen.queryByText("+A")).not.toBeInTheDocument();
     expect(screen.queryByText("-A")).not.toBeInTheDocument();
