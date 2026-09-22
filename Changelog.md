@@ -7,6 +7,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added annotations as sticky notes to PDF submission files downloaded with annotations included (#7907)
 - Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)

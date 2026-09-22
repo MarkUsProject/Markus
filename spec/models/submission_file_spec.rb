@@ -367,4 +367,101 @@ describe SubmissionFile do
       end
     end
   end
+
+  describe '#retrieve_file' do
+    let(:result) { create(:complete_result) }
+    let(:file_contents) { "first line\nsecond line\n" }
+
+    before do
+      revision = instance_double(Repository::AbstractRevision)
+      repo = instance_double(Repository::AbstractRepository)
+      allow(revision).to receive(:files_at_path).and_return({ submission_file.filename => :revision_file })
+      allow(repo).to receive_messages(get_revision: revision, download_as_string: file_contents)
+      allow_any_instance_of(Grouping).to receive(:access_repo).and_yield(repo)
+    end
+
+    context 'with a plaintext submission file' do
+      let(:submission_file) { create(:submission_file, filename: 'example.py', submission: result.submission) }
+      let!(:annotation) do
+        create(:text_annotation, result: result, submission_file: submission_file, annotation_number: 1,
+                                 line_start: 1, line_end: 1)
+      end
+
+      it 'does not modify the file when include_annotations is false' do
+        expect(submission_file.retrieve_file).to eq(file_contents)
+      end
+
+      it 'surrounds the annotated lines with comments when include_annotations is true' do
+        expect(submission_file.retrieve_file(include_annotations: true)).to include(
+          "ANNOTATION 1: #{annotation.annotation_text.content}"
+        )
+      end
+    end
+
+    context 'with a PDF submission file' do
+      let(:submission_file) { create(:pdf_submission_file, submission: result.submission) }
+      let(:file_contents) do
+        Prawn::Document.new do |doc|
+          doc.text 'page 1'
+          doc.start_new_page
+          doc.text 'page 2'
+        end.render
+      end
+
+      # The annotations of the PDF page at the given (one-based) index, as PDF dictionaries.
+      def page_annotations(contents, page_index)
+        annots = CombinePDF.parse(contents).pages[page_index - 1][:Annots] || []
+        annots.map { |annot| annot[:referenced_object] || annot }
+      end
+
+      def annotation_contents(annot)
+        annot[:Contents].dup.force_encoding(Encoding::UTF_16BE).encode(Encoding::UTF_8).delete_prefix("\uFEFF")
+      end
+
+      context 'when the file has no annotations' do
+        it 'returns the file unchanged' do
+          expect(submission_file.retrieve_file(include_annotations: true)).to eq(file_contents)
+        end
+      end
+
+      context 'when the file has annotations' do
+        let!(:annotation) do
+          create(:pdf_annotation, result: result, submission_file: submission_file, annotation_number: 3,
+                                  page: 2, x1: 10_000, y1: 20_000, x2: 30_000, y2: 40_000)
+        end
+
+        it 'does not modify the file when include_annotations is false' do
+          expect(submission_file.retrieve_file).to eq(file_contents)
+        end
+
+        it 'adds a sticky note to the page the annotation is on' do
+          contents = submission_file.retrieve_file(include_annotations: true)
+          expect(page_annotations(contents, 1)).to be_empty
+          expect(page_annotations(contents, 2).pluck(:Subtype)).to eq([:Text])
+        end
+
+        it 'includes the annotation number and text in the sticky note' do
+          contents = submission_file.retrieve_file(include_annotations: true)
+          expect(annotation_contents(page_annotations(contents, 2).first))
+            .to eq("3. #{annotation.annotation_text.content}")
+        end
+
+        it 'places the sticky note at the annotation location' do
+          contents = submission_file.retrieve_file(include_annotations: true)
+          left, bottom, right, top = page_annotations(contents, 2).first[:Rect].map(&:to_f)
+          # The note is a 20pt square centred on the annotation's top left corner, which is
+          # 10% across and 20% down a 612x792 page (measured from its top left corner).
+          expect((left + right) / 2).to be_within(0.01).of(0.1 * 612)
+          expect((bottom + top) / 2).to be_within(0.01).of(792 - (0.2 * 792))
+          expect(right - left).to be_within(0.01).of(20)
+          expect(top - bottom).to be_within(0.01).of(20)
+        end
+
+        it 'leaves the pages of the file intact' do
+          expect(CombinePDF.parse(submission_file.retrieve_file(include_annotations: true)).pages.size)
+            .to eq(CombinePDF.parse(file_contents).pages.size)
+        end
+      end
+    end
+  end
 end
