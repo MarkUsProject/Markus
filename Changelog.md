@@ -32,6 +32,7 @@
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Added missing foreign keys in seed data (#8006)
 - Added tests for `AnnotationCategory` to cover an error when uploading a CSV for `add_by_row` (#8177)
+- Added tests for timed and untimed extensions returned by `GroupsController#index`
 
 ## [v2.10.4]
 
