@@ -63,6 +63,14 @@ You can also view a preview of the files you have already submitted by selecting
 
 ![File Manager](/images/student-file-manager.png)
 
+Markdown files can be previewed as rendered Markdown by clicking "preview file" in the text viewer toolbar.
+
+![Previewing Rendered Markdown](/images/student-preview-file.png)
+
+Click "view source" to return to the original file source.
+
+![Previewing Rendered Markdown](/images/student-view-source.png)
+
 If you are missing some required files, a list of missing required files will be included as a warning at the top of the page.
 
 ![Missing Required Warning](/images/student-missing-required-warning.png)
