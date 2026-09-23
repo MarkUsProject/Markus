@@ -414,6 +414,11 @@ describe SubmissionFile do
         annots.map { |annot| annot[:referenced_object] || annot }
       end
 
+      # Parse a sticky note's :M entry, which is a PDF date string (e.g. "D:20260923134500-04'00'").
+      def note_updated_at(annot)
+        DateTime.strptime(annot[:M].delete("'"), 'D:%Y%m%d%H%M%S%z').to_time
+      end
+
       def annotation_contents(annot)
         annot[:Contents].dup.force_encoding(Encoding::UTF_16BE).encode(Encoding::UTF_8).delete_prefix("\uFEFF")
       end
@@ -443,7 +448,22 @@ describe SubmissionFile do
         it 'includes the annotation number and text in the sticky note' do
           contents = submission_file.retrieve_file(include_annotations: true)
           expect(annotation_contents(page_annotations(contents, 2).first))
-            .to eq("3. #{annotation.annotation_text.content}")
+            .to eq("(#3) #{annotation.annotation_text.content}")
+        end
+
+        it 'records when the annotation was last updated' do
+          annotation.update!(updated_at: 2.days.ago)
+          annotation.annotation_text.update!(updated_at: 3.days.ago)
+          contents = submission_file.retrieve_file(include_annotations: true)
+          expect(note_updated_at(page_annotations(contents, 2).first)).to be_within(1).of(annotation.updated_at)
+        end
+
+        it 'records the annotation text timestamp when the text was edited more recently' do
+          annotation.update!(updated_at: 3.days.ago)
+          annotation.annotation_text.update!(updated_at: 2.days.ago)
+          contents = submission_file.retrieve_file(include_annotations: true)
+          expect(note_updated_at(page_annotations(contents, 2).first))
+            .to be_within(1).of(annotation.annotation_text.updated_at)
         end
 
         it 'places the sticky note at the annotation location' do

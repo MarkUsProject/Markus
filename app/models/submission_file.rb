@@ -165,6 +165,13 @@ class SubmissionFile < ApplicationRecord
       "-#{annotation_text.deduction}]"
   end
 
+  # Return when +annotation+ was last changed, for the :M (modification date) entry of its
+  # sticky note, which PDF viewers display alongside the note's text. An annotation's text
+  # can be edited after the annotation itself was placed, so use the later of the two.
+  def annotation_updated_at(annotation)
+    [annotation.updated_at, annotation.annotation_text.updated_at].max
+  end
+
   # Return +file_contents+ (the contents of a PDF submission file) with this file's
   # annotations added as PDF "sticky note" annotations, so that they are visible at the
   # right location when the downloaded file is opened in a PDF viewer.
@@ -183,8 +190,8 @@ class SubmissionFile < ApplicationRecord
         doc.start_new_page
         annotations_by_page.fetch(index + 1, []).each do |annotation|
           doc.text_annotation(pdf_annotation_rect(page, annotation),
-                              "#{annotation.annotation_number}. #{annotation_content(annotation)}",
-                              Name: :Comment, Open: false)
+                              "(##{annotation.annotation_number}) #{annotation_content(annotation)}",
+                              Name: :Comment, Open: false, M: annotation_updated_at(annotation))
         end
       end
     end
