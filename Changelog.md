@@ -22,6 +22,7 @@ Added a Markdown Preview button to the `TextViewer` component, shown only for Ma
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 
 ### 📚 Documentation changes
+- Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
 - Suppressed CodeQL scanning false positives (#8101)
