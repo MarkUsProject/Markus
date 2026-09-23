@@ -17,6 +17,7 @@ export class TextViewer extends React.PureComponent {
     this.raw_content = React.createRef();
     this.file_preview = React.createRef();
     this.abortController = null;
+    this.unpreview_from_annotation = false;
   }
 
   getContentFromProps(props, state) {
@@ -125,7 +126,12 @@ export class TextViewer extends React.PureComponent {
 
     if (prevState.preview_file && !this.state.preview_file) {
       this.highlight_root = this.raw_content.current.parentNode;
-      this.ready_annotations();
+      const from_annotation = this.unpreview_from_annotation;
+      this.unpreview_from_annotation = false;
+      this.ready_annotations(from_annotation);
+      if (!from_annotation) {
+        this.scrollToTop();
+      }
     }
 
     if (!prevState.preview_file && this.state.preview_file) {
@@ -156,8 +162,9 @@ export class TextViewer extends React.PureComponent {
    * 2. Display annotations
    * 3. Scroll to line numbered this.props.focusLine
    */
-  ready_annotations = () => {
+  ready_annotations = (scroll_to_line = true) => {
     if (this.state.preview_file) {
+      this.unpreview_from_annotation = true;
       this.setState({preview_file: false});
       return;
     }
@@ -178,7 +185,9 @@ export class TextViewer extends React.PureComponent {
     }
 
     this.props.annotations.forEach(this.display_annotation);
-    this.scrollToLine(this.props.focusLine);
+    if (scroll_to_line) {
+      this.scrollToLine(this.props.focusLine);
+    }
   };
 
   run_syntax_highlighting = () => {
@@ -259,6 +268,16 @@ export class TextViewer extends React.PureComponent {
     const line = this.highlight_root.querySelector(`span.source-line:nth-of-type(${lineNumber})`);
     if (line) {
       line.scrollIntoView();
+    }
+  };
+
+  scrollToTop = () => {
+    let node = this.highlight_root;
+    while (node) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        node.scrollTop = 0;
+      }
+      node = node.parentNode;
     }
   };
 
