@@ -32,6 +32,14 @@ You may display any file you wish simply by clicking on the name of the one you 
 
 This will pull the selected file into the viewing panel where you may read and [annotate](#annotations) the file.
 
+Markdown files can be previewed as rendered Markdown by clicking "preview file" in the text viewer toolbar.
+
+![Previewing Rendered Markdown](/images/graders-preview-file.png)
+
+Click "view source" to return to the original file source.
+
+![Previewing Rendered Markdown](/images/graders-view-source.png)
+
 ## Grading Bar
 
 The grading bar, located at the top of the grading view page, provides some useful features for the grader.

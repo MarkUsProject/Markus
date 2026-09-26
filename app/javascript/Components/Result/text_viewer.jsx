@@ -1,5 +1,6 @@
 import React from "react";
 import Prism from "prismjs";
+import MarkdownPreview from "../markdown_preview";
 import {TextAnnotationManager} from "../../common/annotations/text_annotation_manager";
 
 export class TextViewer extends React.PureComponent {
@@ -9,11 +10,14 @@ export class TextViewer extends React.PureComponent {
       copy_success: false,
       font_size: 1,
       content: null,
+      preview_file: false,
     };
     this.highlight_root = null;
     this.annotation_manager = null;
     this.raw_content = React.createRef();
+    this.file_preview = React.createRef();
     this.abortController = null;
+    this.unpreview_from_annotation = false;
   }
 
   getContentFromProps(props, state) {
@@ -33,7 +37,17 @@ export class TextViewer extends React.PureComponent {
     if (this.abortController) {
       this.abortController.abort();
     }
+    window.removeEventListener("resize", this.resize_file_preview);
   }
+
+  resize_file_preview = () => {
+    const preview = this.file_preview.current?.querySelector(".preview");
+    if (!preview) return;
+
+    const availableHeight = Math.max(0, window.innerHeight - preview.getBoundingClientRect().top);
+    preview.style.maxHeight = `${availableHeight}px`;
+    preview.style.minHeight = `${availableHeight}px`;
+  };
 
   componentDidMount() {
     this.highlight_root = this.raw_content.current.parentNode;
@@ -109,6 +123,21 @@ export class TextViewer extends React.PureComponent {
     } else {
       this.postInitContent(prevProps, prevState);
     }
+
+    if (prevState.preview_file && !this.state.preview_file) {
+      this.highlight_root = this.raw_content.current.parentNode;
+      const from_annotation = this.unpreview_from_annotation;
+      this.unpreview_from_annotation = false;
+      this.ready_annotations(from_annotation);
+      if (!from_annotation) {
+        this.scrollToTop();
+      }
+    }
+
+    if (!prevState.preview_file && this.state.preview_file) {
+      this.resize_file_preview();
+      window.addEventListener("resize", this.resize_file_preview);
+    }
   }
 
   postInitContent(prevProps, prevState) {
@@ -133,14 +162,20 @@ export class TextViewer extends React.PureComponent {
    * 2. Display annotations
    * 3. Scroll to line numbered this.props.focusLine
    */
-  ready_annotations = () => {
+  ready_annotations = (scroll_to_line = true) => {
+    if (this.state.preview_file) {
+      this.unpreview_from_annotation = true;
+      this.setState({preview_file: false});
+      return;
+    }
+
     this.run_syntax_highlighting();
 
     if (this.annotation_manager !== null) {
       this.annotation_manager.annotation_text_displayer.hide();
     }
 
-    this.highlight_root.style.font_size = this.state.fontSize + "em";
+    this.highlight_root.style.fontSize = this.state.font_size + "em";
 
     if (this.props.resultView) {
       window.annotation_type = window.ANNOTATION_TYPES.CODE;
@@ -150,7 +185,9 @@ export class TextViewer extends React.PureComponent {
     }
 
     this.props.annotations.forEach(this.display_annotation);
-    this.scrollToLine(this.props.focusLine);
+    if (scroll_to_line) {
+      this.scrollToLine(this.props.focusLine);
+    }
   };
 
   run_syntax_highlighting = () => {
@@ -234,6 +271,16 @@ export class TextViewer extends React.PureComponent {
     }
   };
 
+  scrollToTop = () => {
+    let node = this.highlight_root;
+    while (node) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        node.scrollTop = 0;
+      }
+      node = node.parentNode;
+    }
+  };
+
   copyToClipboard = () => {
     const content = this.getContent();
 
@@ -255,23 +302,40 @@ export class TextViewer extends React.PureComponent {
       <React.Fragment>
         <div className="toolbar">
           <div className="toolbar-actions">
-            <a href="#" onClick={this.copyToClipboard}>
-              {this.state.copy_success ? "✔ " : ""}
-              {I18n.t("results.copy_text")}
-            </a>
-            <a href="#" onClick={() => this.change_font_size(0.25)}>
-              +A
-            </a>
-            <a href="#" onClick={() => this.change_font_size(-0.25)}>
-              -A
-            </a>
+            {this.props.type === "markdown" && (
+              <a onClick={() => this.setState({preview_file: !this.state.preview_file})}>
+                {this.state.preview_file
+                  ? I18n.t("results.view_source")
+                  : I18n.t("results.preview")}
+              </a>
+            )}
+            {(this.props.type !== "markdown" || !this.state.preview_file) && (
+              <React.Fragment>
+                <a href="#" onClick={this.copyToClipboard}>
+                  {this.state.copy_success ? "✔ " : ""}
+                  {I18n.t("results.copy_text")}
+                </a>
+                <a href="#" onClick={() => this.change_font_size(0.25)}>
+                  +A
+                </a>
+                <a href="#" onClick={() => this.change_font_size(-0.25)}>
+                  -A
+                </a>
+              </React.Fragment>
+            )}
           </div>
         </div>
-        <pre name={preElementName} className={`line-numbers`}>
-          <code ref={this.raw_content} className={`language-${this.props.type}`}>
-            {this.getContent()}
-          </code>
-        </pre>
+        {this.state.preview_file ? (
+          <div ref={this.file_preview}>
+            <MarkdownPreview id="markdown-preview" content={this.getContent()} />
+          </div>
+        ) : (
+          <pre name={preElementName} className="line-numbers">
+            <code ref={this.raw_content} className={`language-${this.props.type}`}>
+              {this.getContent()}
+            </code>
+          </pre>
+        )}
       </React.Fragment>
     );
   }
