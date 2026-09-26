@@ -18,6 +18,7 @@
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
+- Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
 
 ### 🐛 Bug fixes
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
