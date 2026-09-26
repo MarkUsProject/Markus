@@ -6,7 +6,7 @@ en:
       common: Common Annotations
       feedback_generated_header: 'Feedback generated from automated test run on %{time}:'
       include_in_download: Include Annotations
-      include_in_download_warning: 'Warning: Annotations on PDFs are not currently downloaded.'
+      include_in_download_warning: 'Warning: Annotations on images are not currently downloaded.'
       no_overlap: Annotations cannot overlap.
       placeholder: Markdown and basic LaTeX syntax are supported.
       remark_flag: remark
