@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted the peer review table to instructors and graders (#8182)
 
 ### 🚨 Breaking changes
 
