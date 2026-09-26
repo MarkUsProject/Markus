@@ -1108,6 +1108,8 @@ Rails.application.routes.draw do
 
   namespace :jupyter do
     post 'authenticate', controller: 'jupyter_submissions', action: 'create_session'
+    post 'courses', controller: 'jupyter_submissions', action: 'get_courses'
+    post 'assignments', controller: 'jupyter_submissions', action: 'get_assignments'
     post 'submit', controller: 'jupyter_submissions', action: 'submit'
   end
 
