@@ -67,6 +67,7 @@ en:
     no_results_in_direction: There are no more results in this direction!
     old_mark: Old Mark
     overridden_deductions: Overridden
+    preview: preview file
     previous_submission: Previous Submission
     print: Print
     random_incomplete_submission: Random Incomplete Submission
@@ -95,6 +96,7 @@ en:
     total_extra_marks: Total Extra Marks
     total_mark: Total Mark
     view_group_repo: View group repository
+    view_source: view source
     view_token_submit: Please enter the unique token provided by your instructor to view the results for this assignment.
     your_mark: Your Mark
     zoom: 'Zoom:'

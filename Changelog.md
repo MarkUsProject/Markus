@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
 - Added annotations as sticky notes to PDF submission files downloaded with annotations included (#8179)
 - Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
