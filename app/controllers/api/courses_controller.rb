@@ -105,6 +105,28 @@ module Api
       end
     end
 
+    def refresh_autotest_schema
+      settings = current_course.autotest_setting
+      if settings&.url
+        begin
+          settings.update!(schema: get_schema(settings))
+          render 'shared/http_status', locals: { code: '200', message:
+            I18n.t('automated_tests.manage_connection.refresh_schema_success') }, status: :ok
+        rescue ActiveRecord::RecordInvalid => e
+          render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
+        rescue StandardError => e
+          render 'shared/http_status',
+                 locals: { code: '500',
+                           message: I18n.t('automated_tests.manage_connection.refresh_schema_failure',
+                                           error: e.to_s) },
+                 status: :internal_server_error
+        end
+      else
+        render 'shared/http_status', locals: { code: '422', message:
+          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_content
+      end
+    end
+
     private
 
     def check_course
