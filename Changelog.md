@@ -3,10 +3,12 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted the peer review table to instructors and graders (#8182)
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added annotations as sticky notes to PDF submission files downloaded with annotations included (#8179)
 - Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
@@ -22,6 +24,7 @@
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 
 ### 📚 Documentation changes
+- Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
 - Suppressed CodeQL scanning false positives (#8101)
@@ -32,6 +35,14 @@
 - Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Added missing foreign keys in seed data (#8006)
+- Added tests for `AnnotationCategory` to cover an error when uploading a CSV for `add_by_row` (#8177)
+- Added tests for timed and untimed extensions returned by `GroupsController#index` (#8180)
+
+## [v2.10.4]
+
+### 🐛 Bug fixes
+- Fixed marks spreadsheet release emails being sent to students of other grade entry forms (#8174)
+- Fixed releasing and unreleasing marks spreadsheet grades failing with a `NOT NULL` violation on `grade_entry_students.assessment_id`, and limited marks release emails to successful releases (#8173)
 
 ## [v2.10.3]
 
