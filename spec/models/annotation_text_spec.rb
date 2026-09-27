@@ -126,25 +126,6 @@ describe AnnotationText do
     end
   end
 
-  describe 'position' do
-    let(:text) { create(:annotation_text, position: 2) }
-
-    it 'is reset when the annotation text is moved to a different annotation category' do
-      text.update!(annotation_category: create(:annotation_category, assignment: text.annotation_category.assignment))
-      expect(text.reload.position).to be_nil
-    end
-
-    it 'is reset when the annotation text is made one-time only' do
-      text.update!(annotation_category: nil)
-      expect(text.reload.position).to be_nil
-    end
-
-    it 'is not changed when the annotation text is otherwise updated' do
-      text.update!(content: 'Do not plagiarize!')
-      expect(text.reload.position).to eq 2
-    end
-  end
-
   describe '#update_mark_deductions' do
     it 'updates the mark associated with its annotation category\'s flexible criterion ' \
        'for every grouping if its deduction changed' do

@@ -53,11 +53,7 @@ Once an associated criterion has been selected, individual annotations can be co
 
 ## Reordering annotations
 
-Instructors, and graders with permission to manage assessments, can change the order of the annotations in an annotation category from the assignment's annotation settings page. Click on the annotation category, then click and drag the grey squares on the left-hand side of an annotation to move it:
-
-![Reorder annotations in an annotation category](/images/annotations-reorder.png)
-
-When marking, the annotations in each annotation category's drop-down menu are listed in this order. New annotations are added to the end of their annotation category.
+Instructors, and graders with permission to manage assessments, can reorder the annotations in an annotation category from the assignment's annotation settings page by clicking and dragging the grey squares on the left-hand side of each annotation. When marking, the annotations in the annotation category's drop-down menu are listed in this order.
 
 ## Deductive annotations in the interface
 

@@ -1426,20 +1426,6 @@ nav {
   min-width: 200px;
 }
 
-#annotation_list > li {
-  align-items: baseline;
-  display: flex;
-
-  &.ui-sortable-helper {
-    background-color: $background-main;
-  }
-
-  > div {
-    flex-grow: 1;
-    min-width: 0;
-  }
-}
-
 // Styling for grade entry form inputs
 .grade-input {
   > input[type='number'] {

@@ -383,9 +383,7 @@ describe AnnotationCategoriesController do
                           annotation_text: [text3.id, text1.id, text2.id] }
 
         expect(response).to have_http_status(:ok)
-        expect(text3.reload.position).to eq 0
-        expect(text1.reload.position).to eq 1
-        expect(text2.reload.position).to eq 2
+        expect(annotation_category.annotation_texts.reload).to eq [text3, text1, text2]
       end
 
       it 'ignores annotation texts that are not associated with the annotation category' do

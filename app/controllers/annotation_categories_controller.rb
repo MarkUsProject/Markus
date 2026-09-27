@@ -156,16 +156,11 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   # This method handles the drag/drop sorting of the annotation texts within an annotation category.
-  # It ignores annotation texts that are not associated with the annotation category.
-  # Positions are updated without AnnotationText callbacks so that texts used in released results can be reordered.
+  # update_all skips AnnotationText callbacks, so annotation texts used in released results can still be reordered.
   def update_annotation_text_positions
-    annotation_category = record
-    text_ids = Array(params[:annotation_text]).map(&:to_i) & annotation_category.annotation_texts.ids
-
-    AnnotationText.transaction do
-      text_ids.each_with_index do |id, position|
-        AnnotationText.where(id: id).update_all(position: position)
-      end
+    annotation_texts = record.annotation_texts
+    params[:annotation_text].each_with_index do |id, position|
+      annotation_texts.where(id: id).update_all(position: position)
     end
 
     head :ok
@@ -240,10 +235,11 @@ class AnnotationCategoriesController < ApplicationController
                                .left_outer_joins(last_editor: :user)
                                .where('annotation_texts.annotation_category_id': category)
                                .where('roles.course_id': course)
+                               .order('users.user_name')
     if category.nil?
       text_data = base_query.joins(annotations: { result: { grouping: :group } })
                             .where('groupings.assessment_id': params[:assignment_id])
-                            .order('users.user_name', 'results.id')
+                            .order('results.id')
                             .pluck_to_hash('groups.group_name AS group_name',
                                            'groupings.assessment_id AS assignment_id',
                                            'results.id AS result_id',
@@ -251,7 +247,7 @@ class AnnotationCategoriesController < ApplicationController
                                            *shared_values)
     else
       text_data = base_query.left_outer_joins(annotation_category: :flexible_criterion)
-                            .order(:position, :id)
+                            .reorder(:position, :id)
                             .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
                                            'annotation_texts.deduction AS deduction',
                                            'annotation_texts.annotation_category_id AS annotation_category',

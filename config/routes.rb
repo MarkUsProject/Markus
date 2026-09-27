@@ -209,7 +209,6 @@
 #                                                edit_course_result GET      /courses/:course_id/results/:id/edit(.:format)                                                                results#edit
 #                                                     course_result GET      /courses/:course_id/results/:id(.:format)                                                                     results#show
 #                                    show_result_course_peer_review GET      /courses/:course_id/peer_reviews/:id/show_result(.:format)                                                    peer_reviews#show_result
-#       update_annotation_text_positions_course_annotation_category POST     /courses/:course_id/annotation_categories/:id/update_annotation_text_positions(.:format)                      annotation_categories#update_annotation_text_positions
 #                                        course_annotation_category GET      /courses/:course_id/annotation_categories/:id(.:format)                                                       annotation_categories#show
 #                                                                   PATCH    /courses/:course_id/annotation_categories/:id(.:format)                                                       annotation_categories#update
 #                                                                   PUT      /courses/:course_id/annotation_categories/:id(.:format)                                                       annotation_categories#update

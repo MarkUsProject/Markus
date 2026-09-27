@@ -33,14 +33,15 @@
       axis: 'y',
       cursor: 'move',
       handle: '.fa-grip-vertical',
-      items: '> li[id^="annotation_text_"]',
+      items: '> li',
       start: function(event, ui) {
+        // jQuery UI does not size the placeholder for these items, so the list would collapse while dragging
         ui.placeholder.outerHeight(ui.item.outerHeight());
       },
       update: function() {
         $.post(
           '<%= update_annotation_text_positions_course_annotation_category_path(@current_course, annotation_category) %>',
-          $('#annotation_list').sortable('serialize')
+          $(this).sortable('serialize')
         );
       }
     });

@@ -31,9 +31,6 @@ class AnnotationText < ApplicationRecord
   has_one :course, through: :creator
 
   before_update :check_if_released
-  # Positions are relative to the other texts in an annotation category, so a text that is moved to a different
-  # category (or made one-time only) is placed at the end of its new category.
-  before_update -> { self.position = nil }, if: :will_save_change_to_annotation_category_id?
   after_update :update_mark_deductions,
                unless: ->(t) {
                          t.annotation_category.nil? ||
