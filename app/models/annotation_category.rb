@@ -34,7 +34,8 @@ class AnnotationCategory < ApplicationRecord
   # as it is currently the only way to ensure the annotation_texts do not get destroyed before the callback.
   before_destroy :delete_allowed?
 
-  has_many :annotation_texts, dependent: :destroy
+  # Annotation texts without a position (i.e. those added since the category's texts were last reordered) come last.
+  has_many :annotation_texts, -> { order(:position, :id) }, dependent: :destroy, inverse_of: :annotation_category
 
   validates :annotation_category_name, presence: true
   validates :annotation_category_name, uniqueness: { scope: :assessment_id }

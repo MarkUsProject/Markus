@@ -1196,6 +1196,19 @@ describe ResultsController do
                        .first['flexible_criterion_id']).to eq category.flexible_criterion.id
       end
 
+      it 'returns the texts of each annotation category in position order' do
+        category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
+        unpositioned_text = category.annotation_texts.first
+        second_text = create(:annotation_text_with_deduction, annotation_category: category, position: 1)
+        first_text = create(:annotation_text_with_deduction, annotation_category: category, position: 0)
+        post :show, params: { course_id: course.id,
+                              id: assignment.groupings.first.current_result,
+                              format: :json }, xhr: true
+
+        texts = response.parsed_body['annotation_categories'].find { |c| c['id'] == category.id }['texts']
+        expect(texts.pluck('id')).to eq [first_text.id, second_text.id, unpositioned_text.id]
+      end
+
       it 'reverts a mark to a value calculated from automatic deductions correctly' do
         mark.update!(override: true, mark: 3.0)
         patch :revert_to_automatic_deductions, params: {

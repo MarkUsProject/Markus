@@ -21,6 +21,9 @@
 <% end %>
 
 <li id='annotation_text_<%= annotation_text[:id] %>'>
+  <% unless annotation_text[:annotation_category].nil? %>
+    <i class="fa-solid fa-grip-vertical"></i>
+  <% end %>
   <div id='annotation_text_<%= annotation_text[:id] %>_control' class="word-break-all">
     <%= markdown(annotation_text[:content]) %>
 

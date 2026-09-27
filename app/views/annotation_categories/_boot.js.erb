@@ -35,7 +35,7 @@
     bindSortable();
 
     function bindSortable() {
-      $('.sortable ul').sortable({
+      $('#annotation_category_pane_list').sortable({
         axis:   'y',
         cursor: 'move',
         update: function() {
@@ -47,7 +47,7 @@
           ajaxRequest = $.ajax({
             url:  '<%= update_positions_course_assignment_annotation_categories_path(@current_course, @assignment) %>',
             type: 'POST',
-            data: $('.sortable ul').sortable('serialize'),
+            data: $('#annotation_category_pane_list').sortable('serialize'),
             success: function(response) {
               ajaxRequest = undefined;
               bindSortable();

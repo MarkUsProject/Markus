@@ -24,8 +24,25 @@
     <%= t('activerecord.models.annotation.other') %>
   </h3>
 
-  <ul id='annotation_list' class='block-list'>
+  <ul id='annotation_list' class='block-list sortable'>
     <%= render partial: 'annotation_text',
                collection: annotation_texts %>
   </ul>
+  <%= javascript_tag nonce: true do %>
+    $('#annotation_list').sortable({
+      axis: 'y',
+      cursor: 'move',
+      handle: '.fa-grip-vertical',
+      items: '> li[id^="annotation_text_"]',
+      start: function(event, ui) {
+        ui.placeholder.outerHeight(ui.item.outerHeight());
+      },
+      update: function() {
+        $.post(
+          '<%= update_annotation_text_positions_course_annotation_category_path(@current_course, annotation_category) %>',
+          $('#annotation_list').sortable('serialize')
+        );
+      }
+    });
+  <% end %>
 </div>

@@ -44,6 +44,18 @@ describe AnnotationCategory do
     end
   end
 
+  describe '#annotation_texts' do
+    it 'orders annotation texts by position, followed by annotation texts without a position in creation order' do
+      category = create(:annotation_category, assignment: assignment)
+      unpositioned_text1 = create(:annotation_text, annotation_category: category)
+      second_text = create(:annotation_text, annotation_category: category, position: 1)
+      unpositioned_text2 = create(:annotation_text, annotation_category: category)
+      first_text = create(:annotation_text, annotation_category: category, position: 0)
+
+      expect(category.annotation_texts).to eq [first_text, second_text, unpositioned_text1, unpositioned_text2]
+    end
+  end
+
   describe '.add_by_row' do
     it 'returns an error message if the category name is blank' do
       row = [nil, 'criterion_name', 'text_content', '1.0']

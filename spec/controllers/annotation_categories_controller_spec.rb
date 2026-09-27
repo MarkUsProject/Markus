@@ -88,6 +88,16 @@ describe AnnotationCategoriesController do
         expect(response).to have_http_status(:ok)
       end
 
+      it 'lists annotation texts by position, followed by annotation texts without a position' do
+        unpositioned_text = create(:annotation_text, annotation_category: annotation_category)
+        second_text = create(:annotation_text, annotation_category: annotation_category, position: 1)
+        first_text = create(:annotation_text, annotation_category: annotation_category, position: 0)
+
+        get_as role, :show, params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
+
+        expect(assigns(:annotation_texts).pluck('id')).to eq [first_text.id, second_text.id, unpositioned_text.id]
+      end
+
       it_behaves_like 'role is from a different course' do
         subject do
           get_as new_role, :show,
@@ -357,6 +367,56 @@ describe AnnotationCategoriesController do
                   params: { assignment_id: assignment.id,
                             course_id: course.id,
                             annotation_category: [] }
+        end
+      end
+    end
+
+    describe '#update_annotation_text_positions' do
+      let!(:text1) { create(:annotation_text, annotation_category: annotation_category) }
+      let!(:text2) { create(:annotation_text, annotation_category: annotation_category) }
+      let!(:text3) { create(:annotation_text, annotation_category: annotation_category) }
+
+      it 'successfully updates annotation text positions' do
+        post_as role, :update_annotation_text_positions,
+                params: { course_id: course.id,
+                          id: annotation_category.id,
+                          annotation_text: [text3.id, text1.id, text2.id] }
+
+        expect(response).to have_http_status(:ok)
+        expect(text3.reload.position).to eq 0
+        expect(text1.reload.position).to eq 1
+        expect(text2.reload.position).to eq 2
+      end
+
+      it 'ignores annotation texts that are not associated with the annotation category' do
+        other_text = create(:annotation_text, annotation_category: create(:annotation_category, assignment: assignment))
+
+        post_as role, :update_annotation_text_positions,
+                params: { course_id: course.id,
+                          id: annotation_category.id,
+                          annotation_text: [other_text.id, text3.id, text1.id, text2.id] }
+
+        expect(other_text.reload.position).to be_nil
+        expect(annotation_category.annotation_texts.reload).to eq [text3, text1, text2]
+      end
+
+      it 'updates the positions of annotation texts that have been used in released results' do
+        assignment = create(:assignment_with_deductive_annotations)
+        category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+        used_text = category.annotation_texts.first
+        new_text = create(:annotation_text_with_deduction, annotation_category: category)
+        assignment.groupings.first.current_result.update!(released_to_students: true)
+
+        post_as role, :update_annotation_text_positions,
+                params: { course_id: course.id, id: category.id, annotation_text: [new_text.id, used_text.id] }
+
+        expect(category.annotation_texts.reload).to eq [new_text, used_text]
+      end
+
+      it_behaves_like 'role is from a different course' do
+        subject do
+          post_as new_role, :update_annotation_text_positions,
+                  params: { course_id: course.id, id: annotation_category.id, annotation_text: [] }
         end
       end
     end
@@ -1051,6 +1111,17 @@ describe AnnotationCategoriesController do
         post_as role, :update_positions,
                 params: { course_id: course.id, assignment_id: assignment.id, annotation_category: [cat2.id, cat1.id] }
         expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    describe '#update_annotation_text_positions' do
+      it 'should respond with 403' do
+        text1 = create(:annotation_text, annotation_category: annotation_category)
+        text2 = create(:annotation_text, annotation_category: annotation_category)
+        post_as role, :update_annotation_text_positions,
+                params: { course_id: course.id, id: annotation_category.id, annotation_text: [text2.id, text1.id] }
+        expect(response).to have_http_status(:forbidden)
+        expect(annotation_category.annotation_texts.pluck(:position)).to all(be_nil)
       end
     end
 
