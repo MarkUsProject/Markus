@@ -298,6 +298,10 @@ If you wish to filter course creation requests from LTI deployments, add the fol
 - `lti.unpermitted_new_course_message` must be a message to display if an LTI deployment is rejected by the filter. The message must be a string with interpolation key `%{course_name}`, which will be bound to the `title` field in the launch claim `https://purl.imsglobal.org/spec/lti/claim/context`.
     - Example: `"You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator."`
 
+If you wish courses created from LTI deployments to be connected to an autotester automatically, add the following key:
+
+- `lti.default_autotest_url` must be the url of a markus-autotesting server. Every course created through LTI will be connected to this autotester, as if an admin had set the course's autotester url. If this key is not set, the autotester url must be set manually for each new course.
+
 ### LTI Key Rotation
 
 MarkUs signs LTI requests with an RSA private key, and publishes the corresponding public key at the `public_jwk` endpoint. The external platform (for example, Canvas) fetches this endpoint to verify those signatures.
