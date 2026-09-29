@@ -44,3 +44,4 @@ lti:
     enabled: false
     max_age_days: 90
     overlap_days: 7
+  default_autotest_url:

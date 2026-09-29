@@ -197,7 +197,7 @@ Config.setup do |config|
         required(:domains).array(:str?)
         required(:token_endpoint).filled(:string)
         optional(:unpermitted_new_course_message).filled(:string)
-        optional(:default_autotest_url).filled(:string)
+        optional(:default_autotest_url).maybe(:string)
         required(:sync_schedule).filled(:string)
         optional(:rotation).hash do
           required(:enabled).filled(:bool)
