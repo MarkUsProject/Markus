@@ -252,6 +252,11 @@ describe LtiDeploymentsController do
         )
       end
 
+      it 'stores the job id in the session so its status is shown' do
+        post_as instructor, :create_course, params: course_params
+        expect(session[:job_id]).to be_present
+      end
+
       it 'does not enqueue a job when the course already exists' do
         create(:course, name: expected_name)
         expect { post_as instructor, :create_course, params: course_params }.not_to have_enqueued_job
