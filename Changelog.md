@@ -39,6 +39,7 @@
 - Added tests for `AnnotationCategory` to cover an error when uploading a CSV for `add_by_row` (#8177)
 - Added tests for timed and untimed extensions returned by `GroupsController#index` (#8180)
 - Added tests for `StudentsController#download` to test downloading a CSV or YAML of students (#8183)
+- Added tests for `ExamTemplatesController#show_cover` for existing and missing cover pages (#8185)
 
 ## [v2.10.4]
 
