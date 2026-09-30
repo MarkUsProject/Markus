@@ -61,6 +61,20 @@ describe Group do
         end
       end
     end
+
+    context 'when a git repository already exists at repo_name' do
+      include_context 'git'
+
+      let(:course) { create(:course) }
+
+      before { GitRepository.create(File.join(Repository::ROOT_DIR, course.name, 'taken_repo'), course) }
+
+      it 'is invalid with a taken repo_name error' do
+        group = build(:group, course: course, group_name: 'new_group', repo_name: 'taken_repo')
+        expect(group).not_to be_valid
+        expect(group.errors.details[:repo_name]).to include(error: :taken)
+      end
+    end
   end
 
   describe '#set_repo_name' do

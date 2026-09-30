@@ -418,6 +418,11 @@ describe Assignment do
         end
 
         it_behaves_like 'group persistence and members', expected_member_count: 1
+
+        it 'raises when a renamed group holds the student user name' do
+          create(:group, course: course, group_name: student.user.user_name, repo_name: 'other_repo')
+          expect { group }.to raise_error(RuntimeError, /Group name has already been taken/)
+        end
       end
 
       context 'for timed assignment' do

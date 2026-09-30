@@ -16,4 +16,29 @@ describe GitRepository do
       expect(file_contents.first.split(',')[2]).to eq('student2')
     end
   end
+
+  context 'with a repository on disk' do
+    include_context 'git'
+
+    let(:course) { create(:course) }
+    let(:repo_path) { File.join(Repository::ROOT_DIR, course.name, 'collision_test_repo') }
+
+    describe '.repository_exists?' do
+      it 'returns false before the repository is created' do
+        expect(GitRepository.repository_exists?(repo_path)).to be false
+      end
+
+      it 'returns true once the repository is created' do
+        GitRepository.create(repo_path, course)
+        expect(GitRepository.repository_exists?(repo_path)).to be true
+      end
+    end
+
+    describe '.create' do
+      it 'raises a RepositoryCollision when the repository already exists' do
+        GitRepository.create(repo_path, course)
+        expect { GitRepository.create(repo_path, course) }.to raise_error(Repository::RepositoryCollision)
+      end
+    end
+  end
 end
