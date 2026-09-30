@@ -119,6 +119,16 @@ class AnnotationCategory < ApplicationRecord
     !self.assignment.released_marks.empty?
   end
 
+  # Sets the positions of this category's annotation texts, whose ids are given by +text_ids+, to match the order of
+  # +text_ids+ (starting from 1). This skips AnnotationText callbacks, so that annotation texts which have been applied
+  # to released results can still be reordered.
+  def update_annotation_text_positions(text_ids)
+    return if text_ids.empty?
+
+    AnnotationText.upsert_all(text_ids.map.with_index(1) { |id, position| { id: id, position: position } },
+                              update_only: :position)
+  end
+
   def assignment_criteria
     return [nil] if self.assignment.nil?
     self.assignment.criteria.where(type: 'FlexibleCriterion').ids + [nil]

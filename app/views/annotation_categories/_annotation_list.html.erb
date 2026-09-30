@@ -39,10 +39,11 @@
         ui.placeholder.outerHeight(ui.item.outerHeight());
       },
       update: function() {
-        $.post(
-          '<%= update_annotation_text_positions_course_annotation_category_path(@current_course, annotation_category) %>',
-          $(this).sortable('serialize')
-        );
+        $.ajax({
+          url: '<%= update_annotation_text_positions_course_annotation_category_path(@current_course, annotation_category) %>',
+          type: 'PATCH',
+          data: $(this).sortable('serialize')
+        });
       }
     });
   <% end %>

@@ -781,7 +781,7 @@ Rails.application.routes.draw do
 
     resources :annotation_categories, only: [:show, :destroy, :update] do
       member do
-        post 'update_annotation_text_positions'
+        patch 'update_annotation_text_positions'
       end
     end
 

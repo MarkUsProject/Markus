@@ -156,14 +156,16 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   # This method handles the drag/drop sorting of the annotation texts within an annotation category.
-  # update_all skips AnnotationText callbacks, so annotation texts used in released results can still be reordered.
+  # The ids of all of the category's annotation texts must be given exactly once, in their new order.
   def update_annotation_text_positions
-    annotation_texts = record.annotation_texts
-    params[:annotation_text].each_with_index do |id, position|
-      annotation_texts.where(id: id).update_all(position: position)
+    text_ids = Array(params[:annotation_text]).map(&:to_i)
+    if text_ids.sort == record.annotation_texts.ids.sort
+      record.update_annotation_text_positions(text_ids)
+      head :ok
+    else
+      flash_message(:error, t('.error'))
+      head :bad_request
     end
-
-    head :ok
   end
 
   def download

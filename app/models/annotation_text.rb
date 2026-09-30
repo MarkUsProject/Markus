@@ -30,6 +30,8 @@ class AnnotationText < ApplicationRecord
 
   has_one :course, through: :creator
 
+  before_validation :set_position, if: :will_save_change_to_annotation_category_id?,
+                                   unless: :will_save_change_to_position?
   before_update :check_if_released
   after_update :update_mark_deductions,
                unless: ->(t) {
@@ -53,10 +55,28 @@ class AnnotationText < ApplicationRecord
 
   validates :deduction, absence: { unless: :should_have_deduction? }
 
+  validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 1 },
+                       uniqueness: { scope: :annotation_category_id },
+                       allow_nil: true
+
   validate :courses_should_match
 
   def should_have_deduction?
     !self.annotation_category&.flexible_criterion_id.nil?
+  end
+
+  # Places this annotation text after the other annotation texts in its annotation category. For backwards
+  # compatibility, the other annotation texts are first given positions if any of them do not have one.
+  def set_position
+    # Lock the annotation category so that annotation texts added to it at the same time get different positions
+    category = AnnotationCategory.lock.find_by(id: annotation_category_id)
+    if category.nil?
+      self.position = nil
+    else
+      other_texts = category.annotation_texts.where.not(id: id)
+      category.update_annotation_text_positions(other_texts.ids) if other_texts.exists?(position: nil)
+      self.position = other_texts.maximum(:position).to_i + 1
+    end
   end
 
   def escape_content

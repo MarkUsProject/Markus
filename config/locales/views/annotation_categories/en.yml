@@ -27,6 +27,8 @@ en:
       success: This annotation category was successfully updated.
     update_annotation_text:
       deductive_annotation_released_error: Cannot update this annotation because it has a deduction and has been applied to released results.
+    update_annotation_text_positions:
+      error: Could not reorder the annotations. Please refresh the page and try again.
     upload:
       criterion_not_found: Flexible criterion '%{missing_criterion}' not found.
       deduction_absent: Invalid deduction value %{value} encountered for category %{annotation_category}.
