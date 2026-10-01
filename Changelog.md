@@ -23,7 +23,7 @@
 - Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
 
 ### 🐛 Bug fixes
-- Fixed changing a course's autotester url cancelling in-progress test runs in every course (#XXXX)
+- Fixed changing a course's autotester url cancelling in-progress test runs in every course (#8202)
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 - Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
 
