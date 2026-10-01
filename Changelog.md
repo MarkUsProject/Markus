@@ -28,6 +28,7 @@
 - Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
+- Updated Rails and `@rails/actioncable` to v8.1.4
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
 - Removed dead code in repository files (#8065)
