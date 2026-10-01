@@ -22,6 +22,32 @@ describe AutotestResetUrlJob do
       allow_any_instance_of(AutotestSetting).to receive(:update_settings)
     end
 
+    shared_examples 'resets test runs only for the course' do
+      def create_test_run(test_run_course, autotest_test_id)
+        create(:test_run, status: :in_progress, autotest_test_id: autotest_test_id,
+                          grouping: create(:grouping, assignment: create(:assignment, course: test_run_course)),
+                          role: create(:instructor, course: test_run_course))
+      end
+
+      let!(:test_run) { create_test_run(course, 1) }
+      let!(:other_test_run) { create_test_run(create(:course), 2) }
+
+      it 'should cancel in progress test runs for the course' do
+        subject
+        expect(test_run.reload.status).to eq 'cancelled'
+      end
+
+      it 'should reset the autotest_test_id of test runs for the course' do
+        subject
+        expect(test_run.reload.autotest_test_id).to be_nil
+      end
+
+      it 'should not change test runs for other courses' do
+        subject
+        expect(other_test_run.reload).to have_attributes(status: 'in_progress', autotest_test_id: 2)
+      end
+    end
+
     context 'when no autotest setting already exists for that url' do
       it 'should create a new autotest setting' do
         expect { subject }.to(change { AutotestSetting.where(url: url).count }.from(0).to(1))
@@ -81,6 +107,12 @@ describe AutotestResetUrlJob do
           subject
         end
 
+        context 'when test runs exist' do
+          before { allow_any_instance_of(AutotestResetUrlJob).to receive(:update_credentials) }
+
+          it_behaves_like 'resets test runs only for the course'
+        end
+
         context 'when assignments exist for the course and all have autotest settings' do
           before do
             allow_any_instance_of(AutotestResetUrlJob).to receive(:update_credentials)
@@ -128,6 +160,8 @@ describe AutotestResetUrlJob do
           expect(course.reload.autotest_setting.url).to eq url
         end
 
+        it_behaves_like 'resets test runs only for the course'
+
         context 'when assignments exist for the course and all have autotest settings' do
           before do
             3.times do |i|
@@ -165,6 +199,8 @@ describe AutotestResetUrlJob do
             subject
             expect(course.reload.autotest_setting).to be_nil
           end
+
+          it_behaves_like 'resets test runs only for the course'
 
           it 'should reset the remote_autotest_settings_id for all assignments' do
             subject
