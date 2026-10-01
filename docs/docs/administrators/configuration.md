@@ -129,6 +129,7 @@ resque_scheduler: # configuration for scheduling background jobs (this section c
 autotest:
   student_test_buffer_minutes: # maximum number of minutes between student tests (see "Student Tests" below)
   max_batch_size: # maximum number of tests to send to the markus-autotesting server in a single batch
+  default_url: # (optional) url of a markus-autotesting server that new courses are connected to automatically (currently only applies to courses created through LTI)
 i18n:
   available_locales: # list of locale strings (Note that 'en' is the only option that is supported)
   default_locale: # locale string to use as default (must be one of the options in available_locales)
@@ -297,6 +298,8 @@ If you wish to filter course creation requests from LTI deployments, add the fol
 - `lti.course_filter_file` must be the absolute path to a Ruby file that defines a method `LtiConfig::allowed_to_create_course?(lti_deployment)`, which takes an `LtiDeployment` model instance and returns `true` or `false`.
 - `lti.unpermitted_new_course_message` must be a message to display if an LTI deployment is rejected by the filter. The message must be a string with interpolation key `%{course_name}`, which will be bound to the `title` field in the launch claim `https://purl.imsglobal.org/spec/lti/claim/context`.
     - Example: `"You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator."`
+
+If you wish courses created from LTI deployments to be connected to an autotester automatically, set `autotest.default_url` to the url of a markus-autotesting server. Every course created through LTI will be connected to this autotester, as if an admin had set the course's autotester url. If this key is not set, the autotester url must be set manually for each new course.
 
 ### LTI Key Rotation
 

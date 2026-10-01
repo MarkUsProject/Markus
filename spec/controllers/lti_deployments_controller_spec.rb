@@ -240,6 +240,37 @@ describe LtiDeploymentsController do
       end
     end
 
+    context 'when a default autotest url is configured' do
+      before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+      it 'enqueues a job to set the autotest url of the new course' do
+        expect { post_as instructor, :create_course, params: course_params }.to(
+          have_enqueued_job(AutotestResetUrlJob).with do |course, url, _host|
+            expect(course.name).to eq(expected_name)
+            expect(url).to eq('http://autotest.example.com')
+          end
+        )
+      end
+
+      it 'stores the job id in the session so its status is shown' do
+        post_as instructor, :create_course, params: course_params
+        expect(session[:job_id]).to be_present
+      end
+
+      it 'does not enqueue a job when the course already exists' do
+        create(:course, name: expected_name)
+        expect { post_as instructor, :create_course, params: course_params }.not_to have_enqueued_job
+      end
+    end
+
+    context 'when no default autotest url is configured' do
+      before { allow(Settings.autotest).to receive(:default_url).and_return(nil) }
+
+      it 'does not enqueue a job to set the autotest url' do
+        expect { post_as instructor, :create_course, params: course_params }.not_to have_enqueued_job
+      end
+    end
+
     context 'when a course already exists' do
       before do
         create(:course, name: expected_name)
