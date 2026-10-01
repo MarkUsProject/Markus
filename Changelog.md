@@ -11,6 +11,7 @@
 
 ### 🐛 Bug fixes
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
+- Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
 
 ### 📚 Documentation changes
 
