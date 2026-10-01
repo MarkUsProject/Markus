@@ -37,6 +37,7 @@ logging:
 
 autotest:
   max_batch_size: 10
+  default_url: <%= ENV['AUTOTEST_URL'] %>
 
 jupyter:
   enabled: true
@@ -57,4 +58,3 @@ lti:
     enabled: false
     max_age_days: 90
     overlap_days: 7
-  default_autotest_url: <%= ENV['AUTOTEST_URL'] %>

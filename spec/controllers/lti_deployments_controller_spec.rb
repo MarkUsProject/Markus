@@ -241,7 +241,7 @@ describe LtiDeploymentsController do
     end
 
     context 'when a default autotest url is configured' do
-      before { allow(Settings.lti).to receive(:default_autotest_url).and_return('http://autotest.example.com') }
+      before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
 
       it 'enqueues a job to set the autotest url of the new course' do
         expect { post_as instructor, :create_course, params: course_params }.to(
@@ -264,7 +264,7 @@ describe LtiDeploymentsController do
     end
 
     context 'when no default autotest url is configured' do
-      before { allow(Settings.lti).to receive(:default_autotest_url).and_return(nil) }
+      before { allow(Settings.autotest).to receive(:default_url).and_return(nil) }
 
       it 'does not enqueue a job to set the autotest url' do
         expect { post_as instructor, :create_course, params: course_params }.not_to have_enqueued_job

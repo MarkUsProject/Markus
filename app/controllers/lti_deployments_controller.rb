@@ -234,8 +234,8 @@ class LtiDeploymentsController < ApplicationController
     end
     lti_deployment = record
     lti_deployment.update!(course: new_course)
-    if Settings.lti.default_autotest_url.present?
-      current_job = AutotestResetUrlJob.perform_later(new_course, Settings.lti.default_autotest_url,
+    if Settings.autotest.default_url.present?
+      current_job = AutotestResetUrlJob.perform_later(new_course, Settings.autotest.default_url,
                                                       request.protocol + request.host_with_port)
       session[:job_id] = current_job.job_id if current_job
     end

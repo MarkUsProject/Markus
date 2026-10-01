@@ -31,6 +31,7 @@ logging:
 
 autotest:
   max_batch_size: 500
+  default_url:
 
 docs_url: https://markus-docs.teach.cs.toronto.edu
 
@@ -44,4 +45,3 @@ lti:
     enabled: false
     max_age_days: 90
     overlap_days: 7
-  default_autotest_url:
