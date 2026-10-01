@@ -51,6 +51,9 @@ module Markus
     # Ensure form_with calls generate remote forms by
     config.action_view.form_with_generates_remote_forms = true
 
+    # Flash keys used by the responders gem's FlashResponder
+    config.responders.flash_keys = [:success, :error]
+
     # Set conservative Regexp.timeout (Rails default is 1s)
     Regexp.timeout = 10
 

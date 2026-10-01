@@ -9,6 +9,7 @@
 
 ### ✨ New features and improvements
 - Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
+- Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
 - Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
 - Added annotations as sticky notes to PDF submission files downloaded with annotations included (#8179)
 - Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
@@ -24,11 +25,13 @@
 
 ### 🐛 Bug fixes
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
+- Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
+- Updated Rails and `@rails/actioncable` to v8.1.4 (#8200)
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
 - Removed dead code in repository files (#8065)

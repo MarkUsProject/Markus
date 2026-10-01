@@ -37,6 +37,7 @@ logging:
 
 autotest:
   max_batch_size: 10
+  default_url: <%= ENV['AUTOTEST_URL'] %>
 
 jupyter:
   enabled: true

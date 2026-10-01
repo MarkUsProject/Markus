@@ -9,7 +9,7 @@ source 'https://rubygems.org'
 # Bundler requires these gems in all environments
 gem 'propshaft'
 gem 'puma'
-gem 'rails', '~> 8.1.3'
+gem 'rails', '~> 8.1.4'
 
 # Models and database interactions
 gem 'pluck_to_hash'
@@ -37,7 +37,7 @@ gem 'i18n-js'
 gem 'rails-i18n', '~> 8.1.0'
 
 # Redis
-gem 'redis', '~> 5.4.1'
+gem 'redis', '~> 6.0.0'
 
 # Exam template requirements
 gem 'combine_pdf'
