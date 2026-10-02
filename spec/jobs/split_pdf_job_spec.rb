@@ -95,6 +95,28 @@ describe SplitPdfJob do
     )
   end
 
+  it 'logs the pages whose QR codes are for a different exam template' do
+    exam_template.update!(name: 'other-exam')
+    filename = 'midterm_scan_100.pdf'
+    split_pdf_log = exam_template.split_pdf_logs.create(
+      filename: filename,
+      original_num_pages: 6,
+      num_groups_in_complete: 0,
+      num_groups_in_incomplete: 0,
+      num_pages_qr_scan_error: 0,
+      role: instructor
+    )
+    FileUtils.cp "db/data/scanned_exams/#{filename}",
+                 File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+
+    events = capture_semantic_logger_events do
+      SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor, user)
+    end
+    status = 'ERROR: QR code does not contain corresponding exam template (got midterm1-v2-test).'
+    expect(split_pdf_log.num_pages_qr_scan_error).to eq 6
+    expect(events.count { |event| event.message == 'Scanned exam page' && event.payload[:status] == status }).to eq 6
+  end
+
   it 'correctly splits a PDF with one test paper with two pages upside-down' do
     filename = 'midterm_scan_101.pdf'
     split_pdf_log = exam_template.split_pdf_logs.create(

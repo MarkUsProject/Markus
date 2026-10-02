@@ -1431,6 +1431,16 @@ describe GroupsController do
         )
       end
 
+      it 'logs when a student\'s group cannot be deleted' do
+        grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
+        allow_any_instance_of(Grouping).to receive(:destroy).and_raise(RuntimeError, 'error')
+        expect { delete_as @current_student, :destroy, params: { **params, id: grouping.id } }.to(
+          log_semantic_logger_event(level: :error, name: 'GroupsController', message: 'Group deletion failed',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               group_name: grouping.group.group_name, errors: ['error'] })
+        )
+      end
+
       it 'logs when a student accepts an invitation' do
         grouping = create(:grouping_with_inviter, assignment: @assignment)
         create(:student_membership, role: @current_student, grouping: grouping)
