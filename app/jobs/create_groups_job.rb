@@ -21,7 +21,7 @@ class CreateGroupsJob < ApplicationJob
             bad_names = (Set.new(members) - all_users).to_a.join(', ')
             msg = I18n.t('groups.upload.errors.unknown_students', student_names: bad_names)
             status.update(warning_message: [status[:warning_message], msg].compact.join("\n"))
-            Rails.logger.error msg
+            logger.warn('Group creation failed', assignment_id: assignment.id, group_name: group_name, errors: [msg])
             raise ActiveRecord::Rollback
           end
           inviter, *others = students.to_a
@@ -45,7 +45,7 @@ class CreateGroupsJob < ApplicationJob
           unless errors.empty?
             msg = errors.join("\n")
             status.update(warning_message: [status[:warning_message], msg].compact.join("\n"))
-            Rails.logger.error msg
+            logger.warn('Group creation failed', assignment_id: assignment.id, group_name: group_name, errors: errors)
             raise ActiveRecord::Rollback
           end
         end
@@ -53,9 +53,8 @@ class CreateGroupsJob < ApplicationJob
         broadcast_status(enqueuing_user, notify_socket)
       end
     end
-    m_logger = MarkusLogger.instance
-    m_logger.log('Creating all individual groups completed',
-                 MarkusLogger::INFO)
+    logger.info('Finished creating groups', assignment_id: assignment.id,
+                                            short_identifier: assignment.short_identifier, num_groups: data.length)
   rescue StandardError => e
     job_failed = true
     status.catch_exception(e)

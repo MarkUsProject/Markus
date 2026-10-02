@@ -190,10 +190,12 @@ class GradeEntryFormsController < ApplicationController
         num_changed = data.length
         flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
                                        numGradeEntryStudentsChanged: num_changed))
-        action = release ? 'released' : 'unreleased'
-        log_message = "#{action} #{num_changed} for marks spreadsheet '#{grade_entry_form.short_identifier}'."
-        MarkusLogger.instance.log(log_message)
-        data.map { |row| row[:id] }
+        updated_ids = data.map { |row| row[:id] }
+        logger.info(release ? 'Marks released' : 'Marks unreleased',
+                    user_name: current_role.user_name, grade_entry_form_id: grade_entry_form.id,
+                    short_identifier: grade_entry_form.short_identifier, num_students: num_changed,
+                    grade_entry_student_ids: updated_ids)
+        updated_ids
       rescue StandardError => e
         flash_message(:error, e.message)
         raise ActiveRecord::Rollback

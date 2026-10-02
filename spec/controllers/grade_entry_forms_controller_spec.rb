@@ -412,6 +412,18 @@ describe GradeEntryFormsController do
       expect(@student.reload).to have_attributes(released_to_student: true, assessment_id: @this_form.id)
     end
 
+    it 'logs the release of the marks' do
+      expect do
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id, course_id: course.id, students: [@student.id], release_results: 'true' }
+      end.to(
+        log_semantic_logger_event(level: :info, name: 'GradeEntryFormsController', message: 'Marks released',
+                                  payload: { user_name: user.user_name, grade_entry_form_id: @this_form.id,
+                                             short_identifier: @this_form.short_identifier, num_students: 1,
+                                             grade_entry_student_ids: [@student.id] })
+      )
+    end
+
     it 'unreleases the marks of the selected students' do
       @student.update!(released_to_student: true)
       post_as user, :update_grade_entry_students,

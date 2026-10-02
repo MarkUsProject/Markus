@@ -16,6 +16,8 @@ require 'time'
 #   * rake markus:rotate_if_due adds a new key when the current one is past
 #     its max age; rake markus:prune_keys removes keys past the overlap window.
 module LtiKeyStore
+  include SemanticLogger::Loggable
+
   module_function
 
   KEY_GLOB = 'lti_key_*.pem'
@@ -79,7 +81,7 @@ module LtiKeyStore
     key = OpenSSL::PKey::RSA.new(2048)
     path = File.join(key_dir, "lti_key_#{Time.current.utc.strftime('%Y%m%dT%H%M%SZ')}.pem")
     File.open(path, File::WRONLY | File::CREAT | File::EXCL, 0o600) { |f| f.write(key.to_pem) }
-    Rails.logger.info("LTI key rotated: #{File.basename(path)} (kid=#{JWT::JWK.new(key).kid})")
+    logger.info('LTI key rotated', file_name: File.basename(path), kid: JWT::JWK.new(key).kid)
     path
   end
 
@@ -90,7 +92,7 @@ module LtiKeyStore
     age = current && (Time.current.utc - created_at(current))
     return rotate! if age.nil? || age > max_age
 
-    Rails.logger.info("LTI key #{(age / 1.day).round(1)}d old; no rotation (threshold #{max_age / 1.day}d)")
+    logger.info('LTI key rotation not due', key_age_days: (age / 1.day).round(1), max_age_days: max_age / 1.day)
     nil
   end
 
@@ -112,7 +114,7 @@ module LtiKeyStore
       next unless age > overlap
 
       File.delete(path)
-      Rails.logger.info("Pruned LTI key #{File.basename(path)} (retired #{(age / 1.day).round(1)}d ago)")
+      logger.info('LTI key pruned', file_name: File.basename(path), retired_days_ago: (age / 1.day).round(1))
       path
     end
   end

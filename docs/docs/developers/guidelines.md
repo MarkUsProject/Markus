@@ -49,6 +49,22 @@ When developing MarkUs, make sure to follow the following steps (where appropria
 - Use 2 (two) **spaces** (instead of tabs) for indenting
 - Make sure you provide a brief and understandable high-level-description of your Rails model/controller code (use RDoc syntax, where appropriate)).
 
+## Logging
+
+MarkUs writes structured logs using [Semantic Logger](https://logger.reidmorrison.com/rails) (see the [Logging](../administrators/logging.md) page in the administrator documentation). When you write a log entry:
+
+- Use the `logger` of the current class (for example, `logger.info` in a controller, model, or background job) so that the entry is named after that class.
+- Use a short message that does not contain any variable data, and put the variable data in the payload. For example, write `logger.info('Mark updated', user_name: current_role.user_name, submission_id: submission.id)` instead of ``logger.info("User #{current_role.user_name} updated the mark for submission #{submission.id}")``.
+- Pass exceptions as their own argument (for example, `logger.error('Test results processing failed', { grouping_id: grouping.id }, e)`) so that the exception's class, message, and backtrace are logged as structured data.
+- If you add or change an audit event, update the list of audit events on the Logging page.
+
+In development, logs are written to `log/development.log` and to the standard output of the rails server and the resque workers. In tests, you can check that a log entry was written with the `log_semantic_logger_event` matcher:
+
+```ruby
+expect { get :logout }.to log_semantic_logger_event(level: :info, message: 'User logged out',
+                                                    payload: { user_name: instructor.user_name })
+```
+
 ## Managing Dependencies and Databases
 
 If you create a new database migration or change one of the dependencies files, make sure that your changes are reflected in lockfiles and database schemas before you submit your changes as a pull request.

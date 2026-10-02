@@ -1250,6 +1250,34 @@ describe SubmissionsController do
           expect(subject).to respond_with(:success)
         end
 
+        it 'should log the release' do
+          expect do
+            post_as @instructor, :update_submissions, params: { course_id: course.id, assignment_id: @assignment.id,
+                                                                groupings: [@grouping.id], release_results: 'true' }
+          end.to(
+            log_semantic_logger_event(level: :info, name: 'SubmissionsController', message: 'Marks released',
+                                      payload: { user_name: @instructor.user_name, assignment_id: @assignment.id,
+                                                 short_identifier: @assignment.short_identifier, num_groupings: 1,
+                                                 grouping_ids: [@grouping.id] })
+          )
+        end
+
+        it 'should log the release of peer review results' do
+          peer_review = create(:peer_review)
+          peer_review.result.update!(marking_state: Result::MARKING_STATES[:complete])
+          pr_assignment = peer_review.reviewer.assignment
+          expect do
+            post_as @instructor, :update_submissions,
+                    params: { course_id: course.id, assignment_id: pr_assignment.id, peer_reviews: [peer_review.id],
+                              release_results: 'true' }
+          end.to(
+            log_semantic_logger_event(level: :info, name: 'SubmissionsController', message: 'Marks released',
+                                      payload: { user_name: @instructor.user_name, assignment_id: pr_assignment.id,
+                                                 short_identifier: pr_assignment.short_identifier, num_groupings: 1,
+                                                 peer_review_ids: [peer_review.id] })
+          )
+        end
+
         context 'with one grouping selected' do
           it 'sends an email to the student if only one student exists in the grouping' do
             expect do

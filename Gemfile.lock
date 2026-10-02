@@ -416,6 +416,10 @@ GEM
       browser
       railties
       redis
+    rails_semantic_logger (5.2.0)
+      rack
+      railties (>= 7.2)
+      semantic_logger (>= 5.1)
     railties (8.1.4)
       actionpack (= 8.1.4)
       activesupport (= 8.1.4)
@@ -517,6 +521,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
+    semantic_logger (5.1.0)
+      concurrent-ruby (~> 1.0)
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
     shoulda-context (3.0.0.rc1)
@@ -626,6 +632,7 @@ DEPENDENCIES
   rails-html-sanitizer
   rails-i18n (~> 8.1.0)
   rails_performance
+  rails_semantic_logger
   redcarpet
   redis (~> 6.0.0)
   responders

@@ -26,6 +26,13 @@ describe GenerateJob do
       GenerateJob.perform_now(exam_template, 5, 0, user)
     end
 
+    it 'should log the generated copies' do
+      expect { GenerateJob.perform_now(exam_template, 2, 3, user) }.to(
+        log_semantic_logger_event(level: :info, name: 'GenerateJob', message: 'Generated exam copies',
+                                  payload: { exam_template_id: exam_template.id, num_copies: 2, start: 3 })
+      )
+    end
+
     it 'should create a QR code' do
       expect(RQRCode::QRCode).to receive(:new).exactly(exam_template.num_pages).times.and_call_original
       GenerateJob.perform_now(exam_template, 1, 0, user)

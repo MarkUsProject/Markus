@@ -25,10 +25,6 @@ i18n:
 validate_user_not_allowed_message: ~
 incorrect_login_message: ~
 
-logging:
-  log_file: log/info_production.log
-  error_file: log/error_production.log
-
 autotest:
   max_batch_size: 500
   default_url:
