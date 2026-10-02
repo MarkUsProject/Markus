@@ -47,12 +47,11 @@ class GitRepository < Repository::AbstractRepository
     if GitRepository.repository_exists?(connect_string)
       raise Repository::RepositoryCollision, "There is already a repository at #{connect_string}"
     end
-    if File.exist?(connect_string)
-      raise IOError, "Could not create a repository at #{connect_string}: some directory with same name exists
-                         already"
-    end
     # Repo is created bare, then clone it in the repository storage location
     barepath = bare_path(connect_string)
+    if File.exist?(barepath)
+      raise IOError, "Could not create a repository at #{barepath}: a directory with the same name already exists"
+    end
     self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
       FileUtils.mkdir_p(File.dirname(barepath))
       Rugged::Repository.init_at(barepath, :bare)

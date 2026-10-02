@@ -39,6 +39,11 @@ describe GitRepository do
         GitRepository.create(repo_path, course)
         expect { GitRepository.create(repo_path, course) }.to raise_error(Repository::RepositoryCollision)
       end
+
+      it 'raises an IOError when a non-repository directory holds the bare repository path' do
+        FileUtils.mkdir_p(GitRepository.bare_path(repo_path))
+        expect { GitRepository.create(repo_path, course) }.to raise_error(IOError)
+      end
     end
   end
 end
