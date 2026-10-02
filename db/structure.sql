@@ -186,7 +186,8 @@ CREATE TABLE public.annotation_texts (
     updated_at timestamp without time zone NOT NULL,
     creator_id integer,
     last_editor_id integer,
-    deduction double precision
+    deduction double precision,
+    "position" integer
 );
 
 
@@ -4668,6 +4669,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260926233000'),
 ('20260703000001'),
 ('20260703000000'),
 ('20260621000001'),
