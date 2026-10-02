@@ -74,6 +74,27 @@ describe SplitPdfJob do
     expect(completed_page_numbers).to contain_exactly(1, 2, 3, 4, 5, 6)
   end
 
+  it 'logs a summary of the split PDF' do
+    filename = 'midterm_scan_100.pdf'
+    split_pdf_log = exam_template.split_pdf_logs.create(
+      filename: filename,
+      original_num_pages: 6,
+      num_groups_in_complete: 0,
+      num_groups_in_incomplete: 0,
+      num_pages_qr_scan_error: 0,
+      role: instructor
+    )
+    FileUtils.cp "db/data/scanned_exams/#{filename}",
+                 File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
+
+    expect { SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, instructor, user) }.to(
+      log_semantic_logger_event(level: :info, name: 'SplitPdfJob', message: 'Split scanned exam PDF',
+                                payload: { exam_template_id: exam_template.id, split_pdf_log_id: split_pdf_log.id,
+                                           num_pages: 6, num_groups_in_complete: 1, num_groups_in_incomplete: 0,
+                                           num_pages_qr_scan_error: 0 })
+    )
+  end
+
   it 'correctly splits a PDF with one test paper with two pages upside-down' do
     filename = 'midterm_scan_101.pdf'
     split_pdf_log = exam_template.split_pdf_logs.create(

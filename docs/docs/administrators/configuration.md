@@ -45,14 +45,14 @@ rails:
   consider_all_requests_local: # boolean indicating whether to display detailed debugging information on an error
   hosts: # (optional) list of hosts to allow when checking for Host header attacks (if empty, no checks are made)
   force_ssl: # boolean indicating that all traffic must be sent over ssl
-  log_level: # log level (one of: debug info warn error fatal unknown)
+  log_level: # log level (one of: debug info warn error fatal unknown) (See the "Logging" page for more details)
   cache_store: # cache store name (redis_cache_store is recommended because MarkUs already uses redis elsewhere)
   active_job:
     queue_adapter: # queue adapter name (supported by ActiveJob::QueueAdapters) (Resque is recommended because MarkUs already uses redis elsewhere)
   assets:
     prefix: # relative path from the rails root to write compiled assets to
   active_record:
-    verbose_query_logs: # boolean indicating whether to write verbose query logs
+    verbose_query_logs: # boolean indicating whether to log the source code location of each database query (and of every other log entry)
   session_store:
     type: # session store name (supported by ActionDispatch::Session)
     args: # hash of arguments used to initialize the session store class (this may vary by type. See ActionDispatch::Session documentation for details)
@@ -114,15 +114,10 @@ repository:
   markus_git_shell: # (required if type == git and enable_key_storage == true) absolute path to the markus-git-shell.sh script (can be found in lib/repo/) on the ssh server (see the Installation page for more details).
 session_timeout: # duration of a user's session (in seconds). This setting is ignored if users log in with remote user authentication (See "User Authentication Options" below for more details)
 enable_key_storage: # boolean indicating whether to allow ssh public key uploads (see the Installation page for more details).
-logging:
-  enabled: # boolean indicating whether to enable logging
-  rotate_by_interval: # boolean whether to rotate logs
-  rotate_interval: # (required if rotate_by_interval == true) interval used to rotate logs (choose from: daily, weekly, monthly)
-  size_threshold: # (required if rotate_by_interval == false) maximum file size (in bytes) of a single log file
-  old_files: # maximum number of log files to keep (older files will be deleted)
-  log_file: # relative path (from the MarkUs root) to the log file
-  error_file: # relative path (from the MarkUs root) to the error log file
-  tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
+logging: # (See the "Logging" page for more details)
+  log_file: # path to the log file, either absolute or relative to the MarkUs root directory
+  format: # format of each log entry (choose from: json, text, color)
+  tag_with_usernames: # boolean indicating whether to tag each entry written while handling a request with the user names of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
   enable: # boolean indicating whether to enable scanned exams
 resque_scheduler: # configuration for scheduling background jobs (this section can be omitted entirely)

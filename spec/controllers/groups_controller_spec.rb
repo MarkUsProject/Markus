@@ -1402,6 +1402,67 @@ describe GroupsController do
       end
     end
 
+    describe 'logging' do
+      let(:params) { { course_id: course.id, assignment_id: @assignment.id } }
+
+      it 'logs when a student creates a group' do
+        expect { post_as @current_student, :create, params: { **params, workalone: true } }.to(
+          log_semantic_logger_event(level: :info, name: 'GroupsController', message: 'Group created',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               group_name: @current_student.user_name })
+        )
+      end
+
+      it 'logs when a student cannot create a group' do
+        allow_any_instance_of(Student).to receive(:create_group_for_working_alone_student).and_raise('error')
+        expect { post_as @current_student, :create, params: { **params, workalone: true } }.to(
+          log_semantic_logger_event(level: :warn, name: 'GroupsController', message: 'Group creation failed',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               errors: ['error'] })
+        )
+      end
+
+      it 'logs when a student deletes their group' do
+        grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
+        expect { delete_as @current_student, :destroy, params: { **params, id: grouping.id } }.to(
+          log_semantic_logger_event(level: :info, name: 'GroupsController', message: 'Group deleted',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               group_name: grouping.group.group_name })
+        )
+      end
+
+      it 'logs when a student accepts an invitation' do
+        grouping = create(:grouping_with_inviter, assignment: @assignment)
+        create(:student_membership, role: @current_student, grouping: grouping)
+        expect { post_as @current_student, :accept_invitation, params: { **params, grouping_id: grouping.id } }.to(
+          log_semantic_logger_event(level: :info, name: 'GroupsController', message: 'Accepted group invitation',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               group_name: grouping.group.group_name })
+        )
+      end
+
+      it 'logs when a student declines an invitation' do
+        grouping = create(:grouping_with_inviter, assignment: @assignment)
+        create(:student_membership, role: @current_student, grouping: grouping)
+        expect { post_as @current_student, :decline_invitation, params: { **params, grouping_id: grouping.id } }.to(
+          log_semantic_logger_event(level: :info, name: 'GroupsController', message: 'Declined group invitation',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               group_name: grouping.group.group_name })
+        )
+      end
+
+      it 'logs when a student cancels an invitation' do
+        grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
+        invitation = create(:student_membership, grouping: grouping)
+        expect { post_as @current_student, :disinvite_member, params: { **params, membership: invitation.id } }.to(
+          log_semantic_logger_event(level: :info, name: 'GroupsController', message: 'Cancelled group invitation',
+                                    payload: { user_name: @current_student.user_name, assignment_id: @assignment.id,
+                                               group_name: grouping.group.group_name,
+                                               invited_user_name: invitation.role.user_name })
+        )
+      end
+    end
+
     describe 'DELETE #destroy' do
       let(:grouping) { create(:grouping) }
 

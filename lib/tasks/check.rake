@@ -8,9 +8,6 @@ namespace :markus do
     check_in_readable_dir(Settings.logging.log_file, 'MarkUs log file')
     check_in_writable_dir(Settings.logging.log_file, 'MarkUs log file')
     check_in_executable_dir(Settings.logging.log_file, 'MarkUs log file')
-    check_in_readable_dir(Settings.logging.error_file, 'MarkUs error log file')
-    check_in_writable_dir(Settings.logging.error_file, 'MarkUs error log file')
-    check_in_executable_dir(Settings.logging.error_file, 'MarkUs error log file')
     Settings.file_storage.each do |key, path|
       if Dir.exist?(path)
         check_writable(path, "file_storage.#{key}")

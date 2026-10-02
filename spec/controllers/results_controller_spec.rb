@@ -1588,6 +1588,15 @@ describe ResultsController do
           allow_any_instance_of(Result).to receive(:released_to_students).and_return true
         end
 
+        it 'logs that the student viewed their results' do
+          expect { subject }.to(
+            log_semantic_logger_event(level: :info, name: 'ResultsController', message: 'Viewed results',
+                                      payload: { user_name: student.user_name, assignment_id: assignment.id,
+                                                 short_identifier: assignment.short_identifier,
+                                                 result_id: complete_result.id })
+          )
+        end
+
         context 'assignment.release_with_urls is false' do
           before { subject }
 
@@ -1690,6 +1699,63 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
 
       test_assigns_not_nil :result
+    end
+
+    describe 'logging' do
+      let(:log_payload) do
+        { user_name: instructor.user_name, submission_id: submission.id, assignment_id: assignment.id,
+          short_identifier: assignment.short_identifier, group_name: grouping.group.group_name }
+      end
+
+      it 'logs when the instructor views a submission' do
+        expect { get :edit, params: { course_id: course.id, id: incomplete_result.id }, xhr: true }.to(
+          log_semantic_logger_event(level: :info, name: 'ResultsController', message: 'Viewed submission',
+                                    payload: log_payload)
+        )
+      end
+
+      it 'logs the previous and new mark when the instructor updates a mark' do
+        flexible_mark.update!(mark: 0.5)
+        expect do
+          patch :update_mark, params: { course_id: course.id, id: incomplete_result.id,
+                                        criterion_id: flexible_mark.criterion_id, mark: 1 }, xhr: true
+        end.to(
+          log_semantic_logger_event(level: :info, name: 'ResultsController', message: 'Mark updated',
+                                    payload: { **log_payload, criterion_id: flexible_mark.criterion_id,
+                                                              previous_mark: 0.5, mark: 1.0 })
+        )
+      end
+
+      it 'logs when a mark cannot be updated' do
+        allow_any_instance_of(Mark).to receive(:save).and_return false
+        allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
+        expect do
+          patch :update_mark, params: { course_id: course.id, id: incomplete_result.id,
+                                        criterion_id: flexible_mark.criterion_id, mark: 1 }, xhr: true
+        end.to(
+          log_semantic_logger_event(level: :warn, name: 'ResultsController', message: 'Mark update failed',
+                                    payload: { **log_payload, criterion_id: flexible_mark.criterion_id, mark: 1.0,
+                                                              errors: [SAMPLE_ERROR_MESSAGE] })
+        )
+      end
+
+      it 'logs when the instructor releases a result' do
+        expect do
+          post :set_released_to_students, params: { course_id: course.id, id: complete_result.id }, xhr: true
+        end.to(
+          log_semantic_logger_event(level: :info, name: 'ResultsController', message: 'Marks released',
+                                    payload: { user_name: instructor.user_name, assignment_id: assignment.id,
+                                               short_identifier: assignment.short_identifier, num_groupings: 1,
+                                               grouping_ids: [grouping.id] })
+        )
+      end
+
+      it 'logs when the instructor unreleases a result' do
+        complete_result.update!(released_to_students: true)
+        expect do
+          post :set_released_to_students, params: { course_id: course.id, id: complete_result.id }, xhr: true
+        end.to log_semantic_logger_event(message: 'Marks unreleased', payload_includes: { grouping_ids: [grouping.id] })
+      end
     end
 
     it_behaves_like 'showing json data', false

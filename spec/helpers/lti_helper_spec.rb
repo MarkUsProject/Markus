@@ -129,6 +129,14 @@ describe LtiHelper do
           subject
           expect(LtiUser.count).to eq(2)
         end
+
+        it 'logs the users that could not be synced' do
+          allow_any_instance_of(LtiUser).to receive(:update!).and_raise(ActiveRecord::RecordInvalid)
+          expect { subject }.to(
+            log_semantic_logger_event(level: :error, message: 'LTI roster sync failed for user',
+                                      payload_includes: { user_name: student.user_name })
+          )
+        end
       end
 
       context 'when run by an instructor' do

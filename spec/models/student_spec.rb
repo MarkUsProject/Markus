@@ -275,6 +275,21 @@ describe Student do
               end.to raise_error(RuntimeError,
                                  I18n.t('students.errors.group_creation_failure'))
             end
+
+            it 'logs the group save failure' do
+              allow_any_instance_of(Group).to receive(:save).and_return(false)
+
+              events = capture_semantic_logger_events do
+                @student.create_group_for_working_alone_student(@assignment.id)
+              rescue RuntimeError
+                nil
+              end
+              expect(events).to include(
+                a_semantic_logger_event(level: :error, name: 'Student', message: 'Group creation failed',
+                                        payload_includes: { user_name: @student.user_name,
+                                                            assignment_id: @assignment.id })
+              )
+            end
           end
 
           context 'when error occurs on grouping save' do

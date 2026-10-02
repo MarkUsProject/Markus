@@ -1,14 +1,14 @@
 class SubmissionsJob < ApplicationJob
-  def add_warning_messages(messages)
+  def add_warning_messages(messages, grouping:)
     msg = [status[:warning_message], *messages].compact.join("\n")
     status.update(warning_message: msg)
-    Rails.logger.error msg
+    logger.error('Submission collection error', assignment_id: grouping.assessment_id, grouping_id: grouping.id,
+                                                errors: Array(messages))
   end
 
   def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
 
-    m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
 
     progress.total = groupings.size
@@ -18,8 +18,8 @@ class SubmissionsJob < ApplicationJob
 
       ActiveRecord::Base.transaction do
         original_submission = grouping.current_submission_used
-        m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
-                     grouping.id.to_s)
+        logger.info('Collecting submission', assignment_id: assignment.id,
+                                             short_identifier: assignment.short_identifier, grouping_id: grouping.id)
         if options[:revision_identifier].nil?
           time = if assignment.scanned_exam? || options[:collect_current]
                    Time.current
@@ -37,7 +37,7 @@ class SubmissionsJob < ApplicationJob
           rescue ActiveRecord::RecordInvalid => e
             # in this case, rather than triggering rollback automatically, we
             # need to populate the warning messages and then do it
-            add_warning_messages("#{grouping.group.group_name}: #{e}")
+            add_warning_messages("#{grouping.group.group_name}: #{e}", grouping: grouping)
             transaction_failed = true
             raise ActiveRecord::Rollback
           end
@@ -61,13 +61,13 @@ class SubmissionsJob < ApplicationJob
             result.marks.update_all(mark: 0)
             result.update!(marking_state: Result::MARKING_STATES[:complete])
           rescue ActiveRecord::ActiveRecordError => e
-            add_warning_messages("#{grouping.group.group_name}: #{e}")
+            add_warning_messages("#{grouping.group.group_name}: #{e}", grouping: grouping)
           end
         end
 
         grouping.is_collected = true
         grouping.save
-        add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?
+        add_warning_messages(grouping.errors.full_messages, grouping: grouping) if grouping.errors.present?
       end
 
       progress.increment
@@ -75,6 +75,8 @@ class SubmissionsJob < ApplicationJob
         CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], status.to_h)
       end
     end
+    logger.info('Collected submissions', assignment_id: assignment.id, short_identifier: assignment.short_identifier,
+                                         num_groupings: groupings.size)
   rescue StandardError => e
     status.catch_exception(e)
     raise e
@@ -92,6 +94,5 @@ class SubmissionsJob < ApplicationJob
       end
       CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message.merge({ update_table: true }))
     end
-    m_logger.log('Submission collection process done')
   end
 end

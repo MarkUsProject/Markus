@@ -112,6 +112,18 @@ describe CoursesController do
         end
       end
 
+      context 'when logging a successful role switch' do
+        let(:end_user) { create(:student, course: course) }
+
+        it 'logs the user names of the instructor and the student' do
+          expect { subject }.to(
+            log_semantic_logger_event(level: :info, name: 'CoursesController', message: 'Role switch started',
+                                      payload: { real_user_name: instructor.user_name,
+                                                 user_name: end_user.user_name, course_id: course.id })
+          )
+        end
+      end
+
       context 'when switching to a TA in the course' do
         let(:end_user) { create(:ta, course: course) }
 
@@ -134,6 +146,23 @@ describe CoursesController do
         it "sets session's user_name to the TA's user_name" do
           expect(session[:user_name]).to eq(end_user.user_name)
         end
+      end
+    end
+
+    describe 'logging the end of a role switch' do
+      let(:end_user) { create(:student, course: course) }
+
+      before do
+        subject
+        @controller = CoursesController.new
+      end
+
+      it 'logs the user names of the instructor and the student' do
+        expect { get_as instructor, :clear_role_switch_session, params: { id: course.id } }.to(
+          log_semantic_logger_event(level: :info, name: 'CoursesController', message: 'Role switch ended',
+                                    payload: { real_user_name: instructor.user_name,
+                                               user_name: end_user.user_name, course_id: course.id })
+        )
       end
     end
 

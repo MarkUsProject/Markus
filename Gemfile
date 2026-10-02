@@ -64,6 +64,7 @@ gem 'marcel'
 gem 'pghero'
 gem 'rails-html-sanitizer'
 gem 'rails_performance'
+gem 'rails_semantic_logger'
 gem 'responders'
 
 # LTI and OAuth
