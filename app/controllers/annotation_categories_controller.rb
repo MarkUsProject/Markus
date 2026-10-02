@@ -155,6 +155,19 @@ class AnnotationCategoriesController < ApplicationController
     head :ok
   end
 
+  # This method handles the drag/drop sorting of the annotation texts within an annotation category.
+  # The ids of all of the category's annotation texts must be given exactly once, in their new order.
+  def update_annotation_text_positions
+    text_ids = Array(params[:annotation_text]).map(&:to_i)
+    if text_ids.sort == record.annotation_texts.ids.sort
+      record.update_annotation_text_positions(text_ids)
+      head :ok
+    else
+      flash_message(:error, t('.error'))
+      head :bad_request
+    end
+  end
+
   def download
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
@@ -236,6 +249,7 @@ class AnnotationCategoriesController < ApplicationController
                                            *shared_values)
     else
       text_data = base_query.left_outer_joins(annotation_category: :flexible_criterion)
+                            .reorder(:position, :id)
                             .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
                                            'annotation_texts.deduction AS deduction',
                                            'annotation_texts.annotation_category_id AS annotation_category',

@@ -24,8 +24,27 @@
     <%= t('activerecord.models.annotation.other') %>
   </h3>
 
-  <ul id='annotation_list' class='block-list'>
+  <ul id='annotation_list' class='block-list sortable'>
     <%= render partial: 'annotation_text',
                collection: annotation_texts %>
   </ul>
+  <%= javascript_tag nonce: true do %>
+    $('#annotation_list').sortable({
+      axis: 'y',
+      cursor: 'move',
+      handle: '.fa-grip-vertical',
+      items: '> li',
+      start: function(event, ui) {
+        // jQuery UI does not size the placeholder for these items, so the list would collapse while dragging
+        ui.placeholder.outerHeight(ui.item.outerHeight());
+      },
+      update: function() {
+        $.ajax({
+          url: '<%= update_annotation_text_positions_course_annotation_category_path(@current_course, annotation_category) %>',
+          type: 'PATCH',
+          data: $(this).sortable('serialize')
+        });
+      }
+    });
+  <% end %>
 </div>

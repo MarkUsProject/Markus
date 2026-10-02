@@ -34,7 +34,7 @@ class AnnotationCategory < ApplicationRecord
   # as it is currently the only way to ensure the annotation_texts do not get destroyed before the callback.
   before_destroy :delete_allowed?
 
-  has_many :annotation_texts, dependent: :destroy
+  has_many :annotation_texts, -> { order(:position, :id) }, dependent: :destroy, inverse_of: :annotation_category
 
   validates :annotation_category_name, presence: true
   validates :annotation_category_name, uniqueness: { scope: :assessment_id }
@@ -117,6 +117,16 @@ class AnnotationCategory < ApplicationRecord
 
   def marks_released?
     !self.assignment.released_marks.empty?
+  end
+
+  # Sets the positions of this category's annotation texts, whose ids are given by +text_ids+, to match the order of
+  # +text_ids+ (starting from 1). This skips AnnotationText callbacks, so that annotation texts which have been applied
+  # to released results can still be reordered.
+  def update_annotation_text_positions(text_ids)
+    return if text_ids.empty?
+
+    AnnotationText.upsert_all(text_ids.map.with_index(1) { |id, position| { id: id, position: position } },
+                              update_only: :position)
   end
 
   def assignment_criteria

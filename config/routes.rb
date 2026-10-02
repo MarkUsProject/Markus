@@ -779,7 +779,11 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :annotation_categories, only: [:show, :destroy, :update]
+    resources :annotation_categories, only: [:show, :destroy, :update] do
+      member do
+        patch 'update_annotation_text_positions'
+      end
+    end
 
     resources :assignments do
       collection do

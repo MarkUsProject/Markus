@@ -18,6 +18,8 @@ describe AnnotationText do
     it { is_expected.to belong_to(:creator).optional }
     it { is_expected.to belong_to(:last_editor).optional }
     it { is_expected.to have_one(:course) }
+    it { is_expected.to validate_numericality_of(:position).only_integer.is_greater_than_or_equal_to(1).allow_nil }
+    it { is_expected.to validate_uniqueness_of(:position).scoped_to(:annotation_category_id).allow_nil }
 
     it_behaves_like 'course associations'
 
@@ -123,6 +125,38 @@ describe AnnotationText do
       it 'prevents deletion' do
         expect(deductive_text.destroy).to be false
       end
+    end
+  end
+
+  describe '#set_position' do
+    let(:category) { create(:annotation_category) }
+    let!(:other_texts) { create_list(:annotation_text, 2, annotation_category: category) }
+
+    it 'places a new annotation text after the other annotation texts in its category' do
+      expect(create(:annotation_text, annotation_category: category).position).to eq 3
+    end
+
+    it 'assigns positions to the other annotation texts in the category if they do not have one' do
+      other_texts.each { |text| text.update_columns(position: nil) }
+      text = create(:annotation_text, annotation_category: category)
+      expect(category.annotation_texts.pluck(:id, :position)).to eq [[other_texts[0].id, 1],
+                                                                     [other_texts[1].id, 2],
+                                                                     [text.id, 3]]
+    end
+
+    it 'does not assign a position to a one-time annotation text' do
+      expect(create(:annotation_text, annotation_category: nil).position).to be_nil
+    end
+
+    it 'places an annotation text moved from another category after the other annotation texts in its category' do
+      text = create(:annotation_text)
+      text.update!(annotation_category: category)
+      expect(text.reload.position).to eq 3
+    end
+
+    it 'removes the position of an annotation text that is made one-time only' do
+      other_texts[0].update!(annotation_category: nil)
+      expect(other_texts[0].reload.position).to be_nil
     end
   end
 

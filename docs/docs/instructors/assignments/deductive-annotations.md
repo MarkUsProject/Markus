@@ -51,6 +51,10 @@ Once an associated criterion has been selected, individual annotations can be co
 - You can create new deductive annotations for an assignment with released marks, but you will not be able to apply those annotations to released results (as is usual with regular annotations).
 - The deduction input will be disabled for annotations which have been applied to released results, and trying to edit the content of those annotations will not work (a disclaimer will appear).
 
+## Reordering annotations
+
+Instructors, and graders with permission to manage assessments, can reorder the annotations in an annotation category from the assignment's annotation settings page by clicking and dragging the grey squares on the left-hand side of each annotation. When marking, the annotations in the annotation category's drop-down menu are listed in this order.
+
 ## Deductive annotations in the interface
 
 Deductive annotations appear in the marking interface similarly to regular annotations, with some differences. Annotation categories that are linked to a flexible criterion display their criterion's name in square brackets after their own name in the annotation categories panel. When the drop-down is selected for those categories which have an associated criterion, each annotation option has a red deduction value to the right of it, with the exception of annotations that have a value of zero for their deduction.

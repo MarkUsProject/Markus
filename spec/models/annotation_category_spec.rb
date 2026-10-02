@@ -44,6 +44,29 @@ describe AnnotationCategory do
     end
   end
 
+  describe '#annotation_texts' do
+    it 'orders annotation texts by position, followed by annotation texts without a position in creation order' do
+      category = create(:annotation_category, assignment: assignment)
+      texts = create_list(:annotation_text, 4, annotation_category: category)
+      texts[0].update_columns(position: nil)
+      texts[2].update_columns(position: nil)
+      texts[3].update_columns(position: 1)
+
+      expect(category.annotation_texts).to eq [texts[3], texts[1], texts[0], texts[2]]
+    end
+  end
+
+  describe '#update_annotation_text_positions' do
+    it 'sets the positions of the annotation texts to match the given order' do
+      category = create(:annotation_category, assignment: assignment)
+      texts = create_list(:annotation_text, 3, annotation_category: category)
+
+      category.update_annotation_text_positions([texts[2].id, texts[0].id, texts[1].id])
+
+      expect(texts.map { |text| text.reload.position }).to eq [2, 3, 1]
+    end
+  end
+
   describe '.add_by_row' do
     it 'returns an error message if the category name is blank' do
       row = [nil, 'criterion_name', 'text_content', '1.0']
@@ -135,10 +158,26 @@ describe AnnotationCategory do
         expect(AnnotationCategory
                  .where(annotation_category_name: @row[0])).not_to be_nil
       end
+
+      it 'assigns positions to the annotation texts in the order they appear in the row' do
+        AnnotationCategory.add_by_row(@row, assignment, instructor)
+        category = assignment.annotation_categories.find_by(annotation_category_name: 'annotation category name')
+        expect(category.annotation_texts.pluck(:content, :position)).to eq [['annotation text 1', 1],
+                                                                            ['annotation text 2', 2]]
+      end
     end
 
     context 'when the annotation category already exists' do
       let(:category) { create(:annotation_category) }
+
+      it 'adds annotation texts after the existing annotation texts in the order they appear in the row' do
+        existing_text = create(:annotation_text, annotation_category: category)
+        row = [category.annotation_category_name, nil, 'new text 1', 'new text 2']
+        AnnotationCategory.add_by_row(row, category.assignment, instructor)
+        expect(category.annotation_texts.pluck(:content, :position)).to eq [[existing_text.content, 1],
+                                                                            ['new text 1', 2],
+                                                                            ['new text 2', 3]]
+      end
 
       it 'adds annotation texts to that category when the criterion column is nil' do
         row = [category.annotation_category_name, nil, 'new text 1', 'new text 2']
