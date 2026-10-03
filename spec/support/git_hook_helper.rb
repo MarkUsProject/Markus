@@ -19,6 +19,9 @@ shared_context 'git_hooks' do
   let(:server_hook_output) { [] }
 
   before do
+    # Detached git maintenance can write into the repos after the after hook deletes them
+    Rugged::Config.new(File.join(repo_path, '.git', 'config'))['maintenance.auto'] = false
+    Rugged::Config.new(File.join(repo_bare_path, 'config'))['receive.autoGc'] = false
     FileUtils.rm_rf(File.join(repo_path, '.git', 'hooks'))
     FileUtils.cp_r(File.join(repo_path, 'markus-hooks'), File.join(repo_path, '.git', 'hooks'))
     if client_hooks

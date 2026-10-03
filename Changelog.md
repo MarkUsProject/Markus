@@ -10,6 +10,7 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+- Fixed groups sharing one git repository when a new or working-alone group reused a taken repository name (#8187)
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 - Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
 
