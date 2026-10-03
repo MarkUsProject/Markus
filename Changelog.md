@@ -24,6 +24,7 @@
 - Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
 
 ### 🐛 Bug fixes
+- Fixed `rails_performance.enabled: false` not disabling rails_performance request tracking and resource monitoring
 - Fixed groups sharing one git repository when a new or working-alone group reused a taken repository name (#8187)
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 - Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)

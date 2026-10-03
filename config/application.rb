@@ -96,6 +96,13 @@ module Markus
 
     config.force_ssl = Settings.rails.force_ssl
 
+    # The rails_performance engine reads these in its own initializers (to decide whether to
+    # add its middleware, metrics subscriber, etc.), so they must be set before those run.
+    config.before_initialize do
+      RailsPerformance.enabled = Settings.rails_performance.enabled
+      RailsPerformance.duration = Settings.rails_performance.duration.minutes if Settings.rails_performance.duration
+    end
+
     # The settings above are required
     # The settings below may optionally be set depending on the current environment
 
