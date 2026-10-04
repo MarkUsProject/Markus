@@ -3,6 +3,8 @@ import Prism from "prismjs";
 import MarkdownPreview from "../markdown_preview";
 import {TextAnnotationManager} from "../../common/annotations/text_annotation_manager";
 
+const PREVIEWABLE_FILE_TYPES = ["markdown", "html"];
+
 export class TextViewer extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -190,6 +192,15 @@ export class TextViewer extends React.PureComponent {
     }
   };
 
+  render_preview_component = fileType => {
+    switch (fileType) {
+      case "markdown":
+        return <MarkdownPreview id="markdown-preview" content={this.getContent()} />;
+      case "html":
+        return <iframe id={"html-preview"} src={this.props.url + "&preview=true"} />;
+    }
+  };
+
   run_syntax_highlighting = () => {
     Prism.highlightElement(this.raw_content.current, false);
     let nodeLines = [];
@@ -302,14 +313,14 @@ export class TextViewer extends React.PureComponent {
       <React.Fragment>
         <div className="toolbar">
           <div className="toolbar-actions">
-            {this.props.type === "markdown" && (
+            {PREVIEWABLE_FILE_TYPES.includes(this.props.type) && (
               <a onClick={() => this.setState({preview_file: !this.state.preview_file})}>
                 {this.state.preview_file
                   ? I18n.t("results.view_source")
                   : I18n.t("results.preview")}
               </a>
             )}
-            {(this.props.type !== "markdown" || !this.state.preview_file) && (
+            {(!PREVIEWABLE_FILE_TYPES.includes(this.props.type) || !this.state.preview_file) && (
               <React.Fragment>
                 <a href="#" onClick={this.copyToClipboard}>
                   {this.state.copy_success ? "✔ " : ""}
@@ -326,9 +337,7 @@ export class TextViewer extends React.PureComponent {
           </div>
         </div>
         {this.state.preview_file ? (
-          <div ref={this.file_preview}>
-            <MarkdownPreview id="markdown-preview" content={this.getContent()} />
-          </div>
+          <div ref={this.file_preview}>{this.render_preview_component(this.props.type)}</div>
         ) : (
           <pre name={preElementName} className="line-numbers">
             <code ref={this.raw_content} className={`language-${this.props.type}`}>
