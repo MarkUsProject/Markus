@@ -197,7 +197,16 @@ export class TextViewer extends React.PureComponent {
       case "markdown":
         return <MarkdownPreview id="markdown-preview" content={this.getContent()} />;
       case "html":
-        return <iframe id={"html-preview"} src={this.props.url + "&preview=true"} />;
+        return (
+          <iframe
+            className="preview"
+            id="html-preview"
+            key={this.props.url}
+            src={this.props.url + "&preview=true"}
+            sandbox="allow-same-origin"
+            style={{width: "100%", display: "block"}}
+          />
+        );
     }
   };
 
