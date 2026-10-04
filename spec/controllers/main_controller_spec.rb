@@ -197,17 +197,6 @@ describe MainController do
         expect(response).to redirect_to action: 'login', controller: 'main'
       end
     end
-
-    context 'when logging out' do
-      before { post :login, params: { user_login: instructor.user_name, user_password: 'a' } }
-
-      it 'should log that the user logged out' do
-        expect { get :logout }.to(
-          log_semantic_logger_event(level: :info, name: 'MainController', message: 'User logged out',
-                                    payload: { user_name: instructor.user_name })
-        )
-      end
-    end
   end
 
   context 'A student' do

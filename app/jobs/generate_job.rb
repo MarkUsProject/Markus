@@ -4,7 +4,7 @@ class GenerateJob < ApplicationJob
     template_pdf = CombinePDF.load exam_template.file_path
     generated_pdf = CombinePDF.new
     (start..(start + num_copies - 1)).each do |exam_num|
-      logger.debug('Generating exam copy', exam_template_id: exam_template.id, exam_number: exam_num)
+      logger.info('Generating exam copy', exam_number: exam_num)
       pdf = Prawn::Document.new(margin: 15, skip_page_creation: true) do
         template_pdf.pages.each_with_index do |page, page_num|
           # Start a new page with the same size and layout as the current page
@@ -43,7 +43,7 @@ class GenerateJob < ApplicationJob
 
     FileUtils.mkdir_p(exam_template.tmp_path)
     generated_pdf.save File.join(exam_template.tmp_path, exam_template.generated_copies_file_name(num_copies, start))
-    logger.info('Generated exam copies', exam_template_id: exam_template.id, num_copies: num_copies, start: start)
+    logger.info('Generate pdf copies process done')
     if enqueuing_user
       ExamTemplatesChannel.broadcast_to(enqueuing_user,
                                         { status: 'completed',

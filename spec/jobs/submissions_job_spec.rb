@@ -8,28 +8,6 @@ describe SubmissionsJob do
     it_behaves_like 'background job'
   end
 
-  context 'when logging' do
-    let(:events) { capture_semantic_logger_events { SubmissionsJob.perform_now(groupings) } }
-
-    it 'logs the collection of each grouping\'s submission' do
-      expect(events).to include(
-        *groupings.map do |g|
-          a_semantic_logger_event(level: :info, name: 'SubmissionsJob', message: 'Collecting submission',
-                                  payload: { assignment_id: assignment.id,
-                                             short_identifier: assignment.short_identifier, grouping_id: g.id })
-        end
-      )
-    end
-
-    it 'logs when all submissions have been collected' do
-      expect(events).to include(
-        a_semantic_logger_event(level: :info, name: 'SubmissionsJob', message: 'Collected submissions',
-                                payload: { assignment_id: assignment.id, short_identifier: assignment.short_identifier,
-                                           num_groupings: 3 })
-      )
-    end
-  end
-
   context 'when creating a submission by timestamp' do
     let(:job_kwargs) { {} }
 
@@ -263,11 +241,9 @@ describe SubmissionsJob do
         allow_any_instance_of(Result).to receive(:update!)
           .with(marking_state: Result::MARKING_STATES[:complete])
           .and_raise(error)
-        expect { SubmissionsJob.perform_now([grouping], assign_zero_to_empty: true) }.to(
-          log_semantic_logger_event(level: :error, name: 'SubmissionsJob', message: 'Submission collection error',
-                                    payload: { assignment_id: assignment.id, grouping_id: grouping.id,
-                                               errors: ["#{grouping.group.group_name}: #{error}"] })
-        )
+        expect(Rails.logger).to receive(:error).with("#{grouping.group.group_name}: #{error}")
+
+        SubmissionsJob.perform_now([grouping], assign_zero_to_empty: true)
       end
     end
 

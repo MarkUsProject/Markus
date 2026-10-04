@@ -77,8 +77,8 @@ class User < ApplicationRecord
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = /[\n\0]+/
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
-      logger.warn('User authentication failed', user_name: login, auth_type: auth_type,
-                                                reason: 'User name or password contained illegal characters')
+      logger.error('User authentication failed', user_name: login,
+                                                 reason: 'Username/password contained illegal characters')
       AUTHENTICATE_BAD_CHAR
     else
       # Open a pipe and write to stdin of the program specified by Settings.validate_file.
@@ -97,17 +97,15 @@ class User < ApplicationRecord
       to_stdin = [login, password, ip].compact.join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
-      exit_status = $CHILD_STATUS.exitstatus
-      custom_message = Settings.validate_custom_status_message[exit_status.to_s]
-      if exit_status == 0
-        logger.info('User authenticated', user_name: login, auth_type: auth_type)
+      custom_message = Settings.validate_custom_status_message[$CHILD_STATUS.exitstatus.to_s]
+      if $CHILD_STATUS.exitstatus == 0
+        logger.info('User authenticated', user_name: login)
         AUTHENTICATE_SUCCESS
       elsif custom_message
-        logger.warn('User authentication failed', user_name: login, auth_type: auth_type, exit_status: exit_status,
-                                                  reason: custom_message)
-        exit_status.to_s
+        logger.error('User authentication failed', user_name: login, reason: custom_message)
+        $CHILD_STATUS.exitstatus.to_s
       else
-        logger.warn('User authentication failed', user_name: login, auth_type: auth_type, exit_status: exit_status)
+        logger.error('User authentication failed', user_name: login)
         AUTHENTICATE_ERROR
       end
     end

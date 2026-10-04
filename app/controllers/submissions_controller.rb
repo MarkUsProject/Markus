@@ -771,14 +771,8 @@ class SubmissionsController < ApplicationController
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('submissions.successfully_changed',
                                    changed: changed))
-        released_ids = if is_review
-                         { peer_review_ids: Array(params[:peer_reviews]).map(&:to_i) }
-                       else
-                         { grouping_ids: Array(params[:groupings]).map(&:to_i) }
-                       end
         logger.info(release ? 'Marks released' : 'Marks unreleased',
-                    user_name: current_role.user_name, assignment_id: assignment.id,
-                    short_identifier: assignment.short_identifier, num_groupings: changed, **released_ids)
+                    assignment_id: assignment.id, short_identifier: assignment.short_identifier, num_groupings: changed)
       end
 
       head :ok

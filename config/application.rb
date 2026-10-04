@@ -110,9 +110,7 @@ module Markus
 
     config.hosts.push(*Settings.rails.hosts)
 
-    # Instead of Rails' verbose query logs, Semantic Logger records the source code location of each
-    # database query (and of every other log entry at or above the backtrace level)
-    config.semantic_logger.backtrace_level = :debug if Settings.rails.active_record.verbose_query_logs
+    config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
     config.active_record.schema_format = :sql
 
@@ -138,25 +136,21 @@ module Markus
       appenders.add_console(formatter: :color)
     end
 
-    # Tag each log entry written while handling a request with the request id and the client's IP address
-    config.log_tags = { request_id: :request_id, ip: :remote_ip }
+    # Tag each entry written while handling a request with the client's IP address, which Semantic Logger
+    # otherwise only logs in the "Started" entry of each request (at the debug level)
+    config.log_tags = { ip: :remote_ip }
 
     if Settings.logging.tag_with_usernames && Settings.rails.session_store.type == 'cookie_store'
-      # Also tag it with the user names stored in the session, which only differ when an instructor has
-      # switched roles (see SessionHandler#real_user and SessionHandler#current_user)
-      session_user_names = ->(request) do
-        request.env['markus.log_tags.user_names'] ||= begin
-          session_info = request.cookie_jar.encrypted[config.session_options[:key]] || {}
-          real_user_name = if session_info['auth_type'] == 'remote'
-                             request.get_header('HTTP_X_FORWARDED_USER')
-                           else
-                             session_info['real_user_name']
-                           end
-          { real_user_name: real_user_name, user_name: session_info['user_name'] || real_user_name }
+      config.log_tags[:user_name] = proc do |request|
+        session_info = request.cookie_jar.encrypted[Rails.application.config.session_options[:key]] || {}
+        real_user_name = session_info['real_user_name']
+        user_name = session_info['user_name']
+        if user_name && user_name != real_user_name
+          "#{real_user_name} as #{user_name}"
+        else
+          real_user_name
         end
       end
-      config.log_tags[:real_user_name] = ->(request) { session_user_names.call(request)[:real_user_name] }
-      config.log_tags[:user_name] = ->(request) { session_user_names.call(request)[:user_name] }
     end
 
     config.action_cable.url = "#{config.relative_url_root}/cable"

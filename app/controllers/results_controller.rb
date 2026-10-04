@@ -268,7 +268,7 @@ class ResultsController < ApplicationController
     @authorized = allowed.value
 
     logger.info('Viewed submission', user_name: current_role.user_name, submission_id: @submission.id,
-                                     assignment_id: @assignment.id, short_identifier: @assignment.short_identifier,
+                                     short_identifier: @assignment.short_identifier,
                                      group_name: @grouping.group.group_name)
 
     # Check whether this group made a submission after the final deadline.
@@ -386,9 +386,7 @@ class ResultsController < ApplicationController
     if @result.save
       assignment = @result.submission.assignment
       logger.info(released_to_students ? 'Marks released' : 'Marks unreleased',
-                  user_name: current_role.user_name, assignment_id: assignment.id,
-                  short_identifier: assignment.short_identifier, num_groupings: 1,
-                  grouping_ids: [@result.submission.grouping_id])
+                  assignment_id: assignment.id, short_identifier: assignment.short_identifier, num_groupings: 1)
     end
     head :ok
   end
@@ -449,15 +447,11 @@ class ResultsController < ApplicationController
       result_mark.save
     end
 
-    log_payload = { user_name: current_role.user_name, submission_id: submission.id, assignment_id: assignment.id,
-                    short_identifier: assignment.short_identifier, group_name: group.group_name,
-                    criterion_id: result_mark.criterion_id }
-    previous_mark = result_mark.mark
-
     if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?),
                           last_updated_by: current_role)
 
-      logger.info('Mark updated', **log_payload, previous_mark: previous_mark, mark: mark_value)
+      logger.info('Mark updated', user_name: current_role.user_name, submission_id: submission.id,
+                                  short_identifier: assignment.short_identifier, group_name: group.group_name)
 
       if is_reviewer
         reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
@@ -476,7 +470,8 @@ class ResultsController < ApplicationController
         total: result.get_total_mark
       }
     else
-      logger.warn('Mark update failed', **log_payload, mark: mark_value, errors: result_mark.errors.full_messages)
+      logger.error('Mark update failed', user_name: current_role.user_name, submission_id: submission.id,
+                                         short_identifier: assignment.short_identifier, group_name: group.group_name)
       render json: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
@@ -589,8 +584,7 @@ class ResultsController < ApplicationController
 
     @host = Rails.application.config.relative_url_root
 
-    logger.info('Viewed results', user_name: current_role.user_name, assignment_id: @assignment.id,
-                                  short_identifier: @assignment.short_identifier, result_id: @result.id)
+    logger.info('Viewed results', user_name: current_role.user_name, short_identifier: @assignment.short_identifier)
   end
 
   def add_extra_mark

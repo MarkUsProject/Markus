@@ -12,8 +12,6 @@ end
 # rails_semantic_logger replaces Resque.logger. Only write warnings and errors logged by resque itself,
 # since Active Job already logs when each job is performed.
 Resque.logger.level = :warn
-# Write resque-scheduler logs with Semantic Logger as well, at resque-scheduler's default (info) level
-Resque::Scheduler.logger = SemanticLogger[Resque::Scheduler].tap { |logger| logger.level = :info }
 
 # Modify Resque::Server class to add (manual) authentication
 unless ENV['NO_INIT_SCHEDULER']

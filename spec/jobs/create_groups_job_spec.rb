@@ -166,27 +166,6 @@ describe CreateGroupsJob do
 
       it_behaves_like 'create objects', 1, 1, 1
     end
-
-    context 'when logging' do
-      let(:data) { [['group1', student1.user_name], ['group2', student2.user_name + 'bad_padding']] }
-      let(:events) { capture_semantic_logger_events { CreateGroupsJob.perform_now(assignment, data) } }
-
-      it 'logs the group that could not be created' do
-        error = I18n.t('groups.upload.errors.unknown_students', student_names: student2.user_name + 'bad_padding')
-        expect(events).to include(
-          a_semantic_logger_event(level: :warn, name: 'CreateGroupsJob', message: 'Group creation failed',
-                                  payload: { assignment_id: assignment.id, group_name: 'group2', errors: [error] })
-        )
-      end
-
-      it 'logs when all of the groups have been processed' do
-        expect(events).to include(
-          a_semantic_logger_event(level: :info, name: 'CreateGroupsJob', message: 'Finished creating groups',
-                                  payload: { assignment_id: assignment.id,
-                                             short_identifier: assignment.short_identifier, num_groups: 2 })
-        )
-      end
-    end
   end
 
   context 'where the group already exists' do

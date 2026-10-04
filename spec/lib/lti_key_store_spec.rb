@@ -160,16 +160,6 @@ describe LtiKeyStore do
       LtiKeyStore.rotate!
       expect(Dir.exist?(nested)).to be true
     end
-
-    it 'logs the file name and key id of the new key' do
-      path = nil
-      events = capture_semantic_logger_events { path = LtiKeyStore.rotate! }
-      kid = JWT::JWK.new(OpenSSL::PKey::RSA.new(File.read(path))).kid
-      expect(events).to include(
-        a_semantic_logger_event(level: :info, name: 'LtiKeyStore', message: 'LTI key rotated',
-                                payload: { file_name: File.basename(path), kid: kid })
-      )
-    end
   end
 
   describe '.rotate_if_due!' do
@@ -191,14 +181,6 @@ describe LtiKeyStore do
     it 'returns nil when no rotation occurs' do
       write_key(1.day.ago)
       expect(LtiKeyStore.rotate_if_due!).to be_nil
-    end
-
-    it 'logs the age of the current key when no rotation occurs' do
-      write_key(89.days.ago)
-      expect { LtiKeyStore.rotate_if_due! }.to(
-        log_semantic_logger_event(level: :info, name: 'LtiKeyStore', message: 'LTI key rotation not due',
-                                  payload: { key_age_days: 89.0, max_age_days: 90 })
-      )
     end
   end
 
@@ -243,17 +225,6 @@ describe LtiKeyStore do
       write_key(1.day.ago)
 
       expect(LtiKeyStore.prune!).to eq([stale])
-    end
-
-    it 'logs the keys it pruned' do
-      stale = write_key(60.days.ago)
-      write_key(30.days.ago)
-      write_key(1.day.ago)
-
-      expect { LtiKeyStore.prune! }.to(
-        log_semantic_logger_event(level: :info, name: 'LtiKeyStore', message: 'LTI key pruned',
-                                  payload: { file_name: File.basename(stale), retired_days_ago: 30.0 })
-      )
     end
 
     it 'is idempotent' do

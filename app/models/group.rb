@@ -97,8 +97,8 @@ class Group < ApplicationRecord
     rescue StandardError => e
       # log the collision
       errors.add(:base, self.repo_name)
-      logger.error('Repository creation failed', { group_name: self.group_name, repo_name: self.repo_name,
-                                                   collision: e.is_a?(Repository::RepositoryCollision) }, e)
+      logger.error('Repository creation failed', group_name: self.group_name, repo_name: self.repo_name,
+                                                 collision: e.is_a?(Repository::RepositoryCollision), error: e.message)
       raise
     end
     true

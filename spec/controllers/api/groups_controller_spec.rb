@@ -1452,19 +1452,6 @@ describe Api::GroupsController do
                            test_results: valid_test_results[:test_results] }
             expect(response.parsed_body['errors']).to eq('Failed to process test results')
           end
-
-          it 'should log the error' do
-            expect do
-              post :add_test_run,
-                   params: { course_id: course.id, assignment_id: assignment.id, id: grouping.group.id,
-                             test_results: valid_test_results[:test_results] }
-            end.to(
-              log_semantic_logger_event(level: :error, name: 'Api::GroupsController',
-                                        message: 'Test results processing failed',
-                                        payload: { grouping_id: grouping.id, submission_id: submission.id },
-                                        exception_includes: { message: 'Processing error' })
-            )
-          end
         end
 
         it_behaves_like 'for a different course' do

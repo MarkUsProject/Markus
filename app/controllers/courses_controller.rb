@@ -47,8 +47,7 @@ class CoursesController < ApplicationController
 
   # Sets current_user to nil, which clears a role switch session (see role_switch)
   def clear_role_switch_session
-    logger.info('Role switch ended', real_user_name: real_user.user_name, user_name: current_user.user_name,
-                                     course_id: current_course.id)
+    logger.info('Role switch ended', real_user_name: session[:real_user_name], user_name: session[:user_name])
     session[:user_name] = nil
     session[:role_switch_course_id] = nil
     redirect_to action: 'show'
@@ -202,16 +201,15 @@ class CoursesController < ApplicationController
   private
 
   def log_role_switch(found_user)
+    # Log the date that the role switch occurred
     if current_user != real_user
       # Log that the instructor dropped role of another user
-      logger.info('Role switch ended', real_user_name: real_user.user_name, user_name: current_user.user_name,
-                                       course_id: current_course.id)
+      logger.info('Role switch ended', real_user_name: real_user.user_name, user_name: current_user.user_name)
     end
 
     if found_user != real_user
       # Log that the instructor assumed role of another user
-      logger.info('Role switch started', real_user_name: real_user.user_name, user_name: found_user.user_name,
-                                         course_id: current_course.id)
+      logger.info('Role switch started', real_user_name: real_user.user_name, user_name: found_user.user_name)
     end
   end
 

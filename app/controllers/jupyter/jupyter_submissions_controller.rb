@@ -109,7 +109,7 @@ module Jupyter
     def render_error(e)
       status = ERROR_STATUSES.find { |error_class, _| e.is_a?(error_class) }&.last
       if status.nil?
-        logger.error('Jupyter submission failed', e)
+        Rails.logger.error("Jupyter submission failed: #{e.class}: #{e.message}\n#{e.backtrace&.join("\n")}")
         render json: {
           status: 'error',
           message: I18n.t('jupyter.submit.internal_error'),

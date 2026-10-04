@@ -83,16 +83,6 @@ describe User do
       it 'should not allow a newline in the password' do
         expect(User.authenticate('ab', password: "12\na3")).to eq User::AUTHENTICATE_BAD_CHAR
       end
-
-      it 'should log the failed authentication' do
-        expect { User.authenticate("a\nb", password: '123') }.to(
-          log_semantic_logger_event(
-            level: :warn, name: 'User', message: 'User authentication failed',
-            payload: { user_name: "a\nb", auth_type: User::AUTHENTICATE_LOCAL,
-                       reason: 'User name or password contained illegal characters' }
-          )
-        )
-      end
     end
 
     context 'bad platform' do
@@ -116,7 +106,7 @@ describe User do
         it 'should log the successful authentication' do
           expect { User.authenticate('ab', password: '123') }.to(
             log_semantic_logger_event(level: :info, name: 'User', message: 'User authenticated',
-                                      payload: { user_name: 'ab', auth_type: User::AUTHENTICATE_LOCAL })
+                                      payload: { user_name: 'ab' })
           )
         end
       end
@@ -128,9 +118,8 @@ describe User do
 
         it 'should log the failed authentication' do
           expect { User.authenticate('exit1', password: '123') }.to(
-            log_semantic_logger_event(level: :warn, name: 'User', message: 'User authentication failed',
-                                      payload: { user_name: 'exit1', auth_type: User::AUTHENTICATE_LOCAL,
-                                                 exit_status: 1 })
+            log_semantic_logger_event(level: :error, name: 'User', message: 'User authentication failed',
+                                      payload: { user_name: 'exit1' })
           )
         end
       end
@@ -155,15 +144,6 @@ describe User do
         it 'should return a success with an allowed ip' do
           expect(User.authenticate('exit3', password: '123', ip: '0.0.0.0',
                                             auth_type: User::AUTHENTICATE_REMOTE)).to eq User::AUTHENTICATE_SUCCESS
-        end
-
-        it 'should log the remote authentication type' do
-          expect do
-            User.authenticate('exit3', password: '123', ip: '0.0.0.0', auth_type: User::AUTHENTICATE_REMOTE)
-          end.to(
-            log_semantic_logger_event(message: 'User authenticated',
-                                      payload: { user_name: 'exit3', auth_type: User::AUTHENTICATE_REMOTE })
-          )
         end
       end
     end
@@ -193,14 +173,6 @@ describe User do
 
         it 'should return a custom message with a 2' do
           expect(User.authenticate('exit2', password: '123')).to eq '2'
-        end
-
-        it 'should log the custom message as the reason for the failure' do
-          expect { User.authenticate('exit2', password: '123') }.to(
-            log_semantic_logger_event(level: :warn, message: 'User authentication failed',
-                                      payload: { user_name: 'exit2', auth_type: User::AUTHENTICATE_LOCAL,
-                                                 exit_status: 2, reason: 'a two!' })
-          )
         end
 
         it 'should return a custom message with a 3' do

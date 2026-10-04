@@ -89,18 +89,6 @@ describe Jupyter::JupyterSubmissionsController do
 
       expect(response).to have_http_status :service_unavailable
     end
-
-    it 'returns 500 and logs the error when an unexpected error occurs' do
-      stub_hub_identity(user_name: student.user_name)
-      allow(controller).to receive(:encode_jupyter_session).and_raise(StandardError, 'unexpected error')
-
-      expect { post :create_session, params: { jupyter: jupyter_params } }.to(
-        log_semantic_logger_event(level: :error, name: 'Jupyter::JupyterSubmissionsController',
-                                  message: 'Jupyter submission failed',
-                                  exception_includes: { message: 'unexpected error' })
-      )
-      expect(response).to have_http_status :internal_server_error
-    end
   end
 
   describe 'successful submissions' do

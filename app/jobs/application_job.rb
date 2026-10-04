@@ -1,8 +1,6 @@
 class ApplicationJob < ActiveJob::Base
   include ActiveJob::Status
   include Bullet::ActiveJob if Rails.env.development?
-  # Name log entries written by each job after the job's class (instead of Rails)
-  include SemanticLogger::Loggable
 
   queue_as queue_name
 

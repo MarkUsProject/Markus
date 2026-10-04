@@ -169,27 +169,6 @@ describe Group do
     it 'returns true' do
       expect(group.build_repository).to be_truthy
     end
-
-    context 'when the repository cannot be created' do
-      before do
-        group
-        allow(Repository.get_class).to receive(:create).and_raise(Repository::RepositoryCollision, 'collision')
-      end
-
-      it 'logs the error' do
-        events = capture_semantic_logger_events do
-          group.build_repository
-        rescue Repository::RepositoryCollision
-          nil
-        end
-        expect(events).to include(
-          a_semantic_logger_event(level: :error, name: 'Group', message: 'Repository creation failed',
-                                  payload: { group_name: group.group_name, repo_name: group.repo_name,
-                                             collision: true },
-                                  exception_includes: { message: 'collision' })
-        )
-      end
-    end
   end
 
   describe '#access_repo' do

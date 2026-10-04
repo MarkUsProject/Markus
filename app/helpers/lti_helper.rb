@@ -94,7 +94,7 @@ module LtiHelper
       lti_user.update!(lti_user_id: lms_user[:lti_user_id])
       processed_lti_ids << lms_user[:lti_user_id]
     rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error('LTI roster sync failed for user', user_name: lms_user[:user_name], errors: [e.message])
+      Rails.logger.error I18n.t('lti.sync_failed_log', user: lms_user[:user_name], message: e.message)
       error = true
       next
     end
