@@ -13,7 +13,7 @@
 <h2><%= exam_template.name %></h2>
 <%= render partial: 'form',
            locals: { exam_template: exam_template } %>
-<% if Rails.application.config.scanner_enabled %>
+<% if Settings.scanned_exams.enable %>
   <hr>
   <div class="student-info">
     <h3><%= t('exam_templates.parsing.title') %></h3>

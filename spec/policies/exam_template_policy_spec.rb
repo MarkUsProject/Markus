@@ -5,11 +5,11 @@ describe ExamTemplatePolicy do
     context 'role is an instructor' do
       let(:role) { create(:instructor) }
 
-      succeed 'scanner dependencies are installed' do
-        before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(true) }
+      succeed 'scanned exams are enabled' do
+        before { allow(Settings.scanned_exams).to receive(:enable).and_return(true) }
       end
-      failed 'scanner dependencies are not installed' do
-        before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(false) }
+      failed 'scanned exams are disabled' do
+        before { allow(Settings.scanned_exams).to receive(:enable).and_return(false) }
       end
     end
 
@@ -17,11 +17,11 @@ describe ExamTemplatePolicy do
       context 'that can manage assessments' do
         let(:role) { create(:ta, manage_assessments: true) }
 
-        succeed 'scanner dependencies are installed' do
-          before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(true) }
+        succeed 'scanned exams are enabled' do
+          before { allow(Settings.scanned_exams).to receive(:enable).and_return(true) }
         end
-        failed 'scanner dependencies are not installed' do
-          before { allow(Rails.application.config).to receive(:scanner_enabled).and_return(false) }
+        failed 'scanned exams are disabled' do
+          before { allow(Settings.scanned_exams).to receive(:enable).and_return(false) }
         end
       end
 

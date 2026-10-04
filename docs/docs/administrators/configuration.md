@@ -124,7 +124,7 @@ logging:
   error_file: # relative path (from the MarkUs root) to the error log file
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
-  enable: # boolean indicating whether to enable scanned exams
+  enable: # boolean indicating whether to enable scanned exams (requires the python dependencies in requirements-scanner.txt, see the Installation page)
 resque_scheduler: # configuration for scheduling background jobs (this section can be omitted entirely)
 autotest:
   student_test_buffer_minutes: # maximum number of minutes between student tests (see "Student Tests" below)
@@ -133,7 +133,8 @@ autotest:
 i18n:
   available_locales: # list of locale strings (Note that 'en' is the only option that is supported)
   default_locale: # locale string to use as default (must be one of the options in available_locales)
-python: # location of a python executable where python dependencies are installed (optional)
+python: # location of the python executable where MarkUs's python dependencies are installed (default: python3)
+nbconvert_enabled: # boolean indicating whether to render Jupyter notebooks as HTML and include them in PDF downloads of results (requires the python dependencies in requirements-jupyter.txt, see the Installation page)
 rails_performance:
   enabled: # boolean whether to enable the rails performance dashboard (See the "Admin Guide" page for more information about this dashboard)
   duration: # duration in minutes for rails performance to store data for monitoring
@@ -348,9 +349,11 @@ Confirm that the `public_jwk` endpoint still serves the same key, then delete th
 
 ## Optional Features
 
+Some optional features require additional software to be installed. After enabling one of these features, run `rails markus:check` to verify that its dependencies are installed (see [Check your installation](installation.md#check-your-installation)).
+
 ### Preview RMarkdown Files as HTML
 
-To preview RMarkdown (.Rmd) submission files as rendered HTML instead of displaying the raw RMarkdown source, enable the following setting:
+To preview RMarkdown (.Rmd) submission files as rendered HTML instead of displaying the raw RMarkdown source, install [pandoc](https://pandoc.org/) and enable the following setting:
 
 ```yaml
 rmd_convert_enabled: true

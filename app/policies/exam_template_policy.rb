@@ -3,7 +3,7 @@ class ExamTemplatePolicy < ApplicationPolicy
   default_rule :manage?
 
   def add_fields?
-    Rails.application.config.scanner_enabled && check?(:manage?)
+    Settings.scanned_exams.enable && check?(:manage?)
   end
 
   def manage?

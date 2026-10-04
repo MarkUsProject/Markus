@@ -141,6 +141,7 @@ Config.setup do |config|
         included_in?: %w[user_name last_name first_name id_number email]
       )
       required(:rmd_convert_enabled).filled(:bool)
+      required(:nbconvert_enabled).filled(:bool)
       required(:max_zip_file_entries).value(:integer, gt?: -1)
       required(:max_zip_total_size).value(:integer, gt?: -1)
       required(:repository).hash do
@@ -172,7 +173,7 @@ Config.setup do |config|
         required(:max_batch_size).value(:integer, gt?: 0)
         optional(:default_url).maybe(:string)
       end
-      optional(:python).filled(:string)
+      required(:python).filled(:string)
       required(:rails_performance).hash do
         required(:enabled).filled(:bool)
         optional(:duration).value(:integer, gt?: 0)

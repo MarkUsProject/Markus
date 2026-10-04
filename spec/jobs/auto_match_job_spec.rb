@@ -32,8 +32,8 @@ describe AutoMatchJob do
     let(:group) { Group.find_by(group_name: group_name) }
     let(:grouping) { group.groupings.find_by(assessment_id: exam_template.assessment_id) }
 
-    context 'when scanner dependencies are installed',
-            skip: Rails.application.config.scanner_enabled ? false : 'scanner dependencies not installed' do
+    context 'when scanned exams are enabled',
+            skip: Settings.scanned_exams.enable ? false : 'scanned exams disabled' do
       before { subject }
 
       context 'when there is a student number' do
@@ -108,9 +108,9 @@ describe AutoMatchJob do
       end
     end
 
-    context 'when the scanner dependencies are not installed' do
+    context 'when scanned exams are disabled' do
       before do
-        allow(Rails.application.config).to receive(:scanner_enabled).and_return(false)
+        allow(Settings.scanned_exams).to receive(:enable).and_return(false)
         subject
       end
 
