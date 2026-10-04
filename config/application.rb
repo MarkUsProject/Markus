@@ -151,7 +151,7 @@ module Markus
 
     config.rmd_convert_enabled = Settings.rmd_convert_enabled
     config.nbconvert_enabled = Settings.nbconvert_enabled
-    config.python = Settings.python
+    config.python = Settings.python || 'python3'
 
     # TODO: review initializers 01 and 02
     # TODO review markus custom config format

@@ -110,7 +110,7 @@ autotest:
   student_test_buffer_minutes: 60
 
 scanned_exams:
-  enabled: false
+  enabled: true
 
 exception_notification:
   enabled: false
@@ -128,10 +128,7 @@ file_storage:
   default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/
 
 rmd_convert_enabled: false
-nbconvert_enabled: false
-
-# python executable used for scanned exams and jupyter notebook conversion
-python: python3
+nbconvert_enabled: true
 
 # maximum number of entries allowed when extracting uploaded zip files
 max_zip_file_entries: 10000

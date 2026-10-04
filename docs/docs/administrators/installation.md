@@ -85,7 +85,7 @@ npm ci
 
 ### Install python dependencies (optional)
 
-Skip this step if you do not want to enable [scanned exams](../instructors/scanned-exams.md) or Jupyter notebook rendering.
+Skip this step if you do not want to use [scanned exams](../instructors/scanned-exams.md) or Jupyter notebook rendering. Note that both features are enabled by default, so if you skip this step you should disable them (see below).
 
 We recommend installing python packages for MarkUs in a [virtual environment](https://docs.python.org/3/library/venv.html) since that will keep the python dependencies distinct from other python packages that you might have installed on your system.
 
@@ -103,11 +103,11 @@ If this is not set, then the `python3` executable that can be found in the `PATH
 pip install -r requirements-scanner.txt
 ```
 
-These dependencies are used to read the QR codes on scanned exam pages, and for [automatic matching of student papers](../instructors/scanned-exams.md#automatic-matching-of-student-papers) using optical character recognition. Then, enable scanned exams in `settings.local.yml`:
+These dependencies are used to read the QR codes on scanned exam pages, and for [automatic matching of student papers](../instructors/scanned-exams.md#automatic-matching-of-student-papers) using optical character recognition. Scanned exams are enabled by default. If you do not install these dependencies, disable scanned exams in `settings.local.yml`:
 
 ```yaml
 scanned_exams:
-  enabled: true
+  enabled: false
 ```
 
 #### Install python dependencies for jupyter notebook rendering
@@ -117,10 +117,10 @@ pip install -r requirements-jupyter.txt
 playwright install chromium
 ```
 
-The second command installs the Chromium browser used to convert notebooks to PDF. Chromium also requires some system packages, which can be installed (as root) with `playwright install-deps chromium`. Then, enable notebook rendering in `settings.local.yml`:
+The second command installs the Chromium browser used to convert notebooks to PDF. Chromium also requires some system packages, which can be installed (as root) with `playwright install-deps chromium`. Jupyter notebook rendering is enabled by default. If you do not install these dependencies, disable it in `settings.local.yml`:
 
 ```yaml
-nbconvert_enabled: true
+nbconvert_enabled: false
 ```
 
 When this setting is enabled, MarkUs will render jupyter notebook files as HTML (converted using nbconvert) and include them when downloading results as PDFs. Otherwise, it will render them as plain text.

@@ -6,7 +6,7 @@
 - Restricted the peer review table to instructors and graders (#8182)
 
 ### 🚨 Breaking changes
-- Scanned exams and Jupyter notebook rendering are now enabled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both disabled by default), instead of being enabled automatically when their Python dependencies are detected at startup (#8208)
+- Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default), instead of being enabled based on Python dependency availability (#8208)
 
 ### ✨ New features and improvements
 - Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)

@@ -124,7 +124,7 @@ logging:
   error_file: # relative path (from the MarkUs root) to the error log file
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
-  enabled: # boolean indicating whether to enable scanned exams (requires the python dependencies in requirements-scanner.txt, see the Installation page)
+  enabled: # boolean indicating whether to enable scanned exams (default: true; requires the python dependencies in requirements-scanner.txt, see the Installation page)
 resque_scheduler: # configuration for scheduling background jobs (this section can be omitted entirely)
 autotest:
   student_test_buffer_minutes: # maximum number of minutes between student tests (see "Student Tests" below)
@@ -133,8 +133,8 @@ autotest:
 i18n:
   available_locales: # list of locale strings (Note that 'en' is the only option that is supported)
   default_locale: # locale string to use as default (must be one of the options in available_locales)
-python: # location of the python executable where MarkUs's python dependencies are installed (default: python3)
-nbconvert_enabled: # boolean indicating whether to render Jupyter notebooks as HTML and include them in PDF downloads of results (requires the python dependencies in requirements-jupyter.txt, see the Installation page)
+python: # (optional) location of the python executable where MarkUs's python dependencies are installed (if not set, python3 will be used)
+nbconvert_enabled: # boolean indicating whether to render Jupyter notebooks as HTML and include them in PDF downloads of results (default: true; requires the python dependencies in requirements-jupyter.txt, see the Installation page)
 rails_performance:
   enabled: # boolean whether to enable the rails performance dashboard (See the "Admin Guide" page for more information about this dashboard)
   duration: # duration in minutes for rails performance to store data for monitoring

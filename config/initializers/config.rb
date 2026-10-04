@@ -173,7 +173,7 @@ Config.setup do |config|
         required(:max_batch_size).value(:integer, gt?: 0)
         optional(:default_url).maybe(:string)
       end
-      required(:python).filled(:string)
+      optional(:python).filled(:string)
       required(:rails_performance).hash do
         required(:enabled).filled(:bool)
         optional(:duration).value(:integer, gt?: 0)

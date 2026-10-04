@@ -58,8 +58,3 @@ lti:
     enabled: false
     max_age_days: 90
     overlap_days: 7
-
-scanned_exams:
-  enabled: true
-
-nbconvert_enabled: true
