@@ -33,7 +33,7 @@ describe AutoMatchJob do
     let(:grouping) { group.groupings.find_by(assessment_id: exam_template.assessment_id) }
 
     context 'when scanned exams are enabled',
-            skip: Settings.scanned_exams.enable ? false : 'scanned exams disabled' do
+            skip: Settings.scanned_exams.enabled ? false : 'scanned exams disabled' do
       before { subject }
 
       context 'when there is a student number' do
@@ -110,7 +110,7 @@ describe AutoMatchJob do
 
     context 'when scanned exams are disabled' do
       before do
-        allow(Settings.scanned_exams).to receive(:enable).and_return(false)
+        allow(Settings.scanned_exams).to receive(:enabled).and_return(false)
         subject
       end
 

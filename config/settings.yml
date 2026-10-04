@@ -110,7 +110,7 @@ autotest:
   student_test_buffer_minutes: 60
 
 scanned_exams:
-  enable: false
+  enabled: false
 
 exception_notification:
   enabled: false

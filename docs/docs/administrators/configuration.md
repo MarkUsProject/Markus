@@ -124,7 +124,7 @@ logging:
   error_file: # relative path (from the MarkUs root) to the error log file
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
-  enable: # boolean indicating whether to enable scanned exams (requires the python dependencies in requirements-scanner.txt, see the Installation page)
+  enabled: # boolean indicating whether to enable scanned exams (requires the python dependencies in requirements-scanner.txt, see the Installation page)
 resque_scheduler: # configuration for scheduling background jobs (this section can be omitted entirely)
 autotest:
   student_test_buffer_minutes: # maximum number of minutes between student tests (see "Student Tests" below)

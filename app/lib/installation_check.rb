@@ -22,7 +22,7 @@ class InstallationCheck
   def run
     check_paths
     check_logout_redirect
-    check_feature('scanned_exams.enable', Settings.scanned_exams.enable) { check_scanned_exams }
+    check_feature('scanned_exams.enabled', Settings.scanned_exams.enabled) { check_scanned_exams }
     check_feature('nbconvert_enabled', Rails.application.config.nbconvert_enabled) { check_nbconvert }
     check_feature('rmd_convert_enabled', Rails.application.config.rmd_convert_enabled) do
       check_command('rmd_convert_enabled', 'pandoc is installed', 'pandoc', '--version')
@@ -99,7 +99,7 @@ class InstallationCheck
   end
 
   def check_scanned_exams
-    setting = 'scanned_exams.enable'
+    setting = 'scanned_exams.enabled'
     return unless check_python(setting)
 
     check_python_requirements(setting, 'requirements-scanner.txt')

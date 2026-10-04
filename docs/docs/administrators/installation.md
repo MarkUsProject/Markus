@@ -107,7 +107,7 @@ These dependencies are used to read the QR codes on scanned exam pages, and for 
 
 ```yaml
 scanned_exams:
-  enable: true
+  enabled: true
 ```
 
 #### Install python dependencies for jupyter notebook rendering

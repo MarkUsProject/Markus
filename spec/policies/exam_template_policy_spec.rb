@@ -6,10 +6,10 @@ describe ExamTemplatePolicy do
       let(:role) { create(:instructor) }
 
       succeed 'scanned exams are enabled' do
-        before { allow(Settings.scanned_exams).to receive(:enable).and_return(true) }
+        before { allow(Settings.scanned_exams).to receive(:enabled).and_return(true) }
       end
       failed 'scanned exams are disabled' do
-        before { allow(Settings.scanned_exams).to receive(:enable).and_return(false) }
+        before { allow(Settings.scanned_exams).to receive(:enabled).and_return(false) }
       end
     end
 
@@ -18,10 +18,10 @@ describe ExamTemplatePolicy do
         let(:role) { create(:ta, manage_assessments: true) }
 
         succeed 'scanned exams are enabled' do
-          before { allow(Settings.scanned_exams).to receive(:enable).and_return(true) }
+          before { allow(Settings.scanned_exams).to receive(:enabled).and_return(true) }
         end
         failed 'scanned exams are disabled' do
-          before { allow(Settings.scanned_exams).to receive(:enable).and_return(false) }
+          before { allow(Settings.scanned_exams).to receive(:enabled).and_return(false) }
         end
       end
 

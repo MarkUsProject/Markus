@@ -17,7 +17,7 @@ describe InstallationCheck do
   end
 
   before do
-    allow(Settings.scanned_exams).to receive(:enable).and_return(scanned_exams_enabled)
+    allow(Settings.scanned_exams).to receive(:enabled).and_return(scanned_exams_enabled)
     allow(Rails.application.config).to receive_messages(nbconvert_enabled: nbconvert_enabled,
                                                         rmd_convert_enabled: rmd_convert_enabled)
     allow(Open3).to receive(:capture3) do |*args, **_kwargs|
@@ -38,7 +38,7 @@ describe InstallationCheck do
   it 'skips the checks for disabled features without running any commands' do
     expect(Open3).not_to receive(:capture3)
     result
-    expect(output.string).to include('[SKIP] scanned_exams.enable: disabled',
+    expect(output.string).to include('[SKIP] scanned_exams.enabled: disabled',
                                      '[SKIP] nbconvert_enabled: disabled',
                                      '[SKIP] rmd_convert_enabled: disabled')
   end
@@ -133,8 +133,8 @@ describe InstallationCheck do
     it 'passes when the dependencies are installed' do
       expect(result).to be(true)
       expect(output.string).to include(
-        '[PASS] scanned_exams.enable: Python packages in requirements-scanner.txt are installed',
-        '[PASS] scanned_exams.enable: markus_exam_matcher can be imported'
+        '[PASS] scanned_exams.enabled: Python packages in requirements-scanner.txt are installed',
+        '[PASS] scanned_exams.enabled: markus_exam_matcher can be imported'
       )
     end
 
@@ -142,7 +142,7 @@ describe InstallationCheck do
       it 'fails and skips the remaining scanned exam checks' do
         expect(Open3).to receive(:capture3).once.and_raise(Errno::ENOENT)
         expect(result).to be(false)
-        expect(output.string).to include('[FAIL] scanned_exams.enable: Python executable can be run')
+        expect(output.string).to include('[FAIL] scanned_exams.enabled: Python executable can be run')
       end
     end
 

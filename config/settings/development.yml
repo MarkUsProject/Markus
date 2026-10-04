@@ -60,6 +60,6 @@ lti:
     overlap_days: 7
 
 scanned_exams:
-  enable: true
+  enabled: true
 
 nbconvert_enabled: true

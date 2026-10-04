@@ -162,7 +162,7 @@ Config.setup do |config|
         required(:tag_with_usernames).filled(:bool)
       end
       required(:scanned_exams).hash do
-        required(:enable).filled(:bool)
+        required(:enabled).filled(:bool)
       end
       required(:i18n).hash do
         required(:available_locales).array(:string)

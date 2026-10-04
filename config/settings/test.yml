@@ -48,6 +48,6 @@ file_storage:
   default_root_path: <%= "#{::Rails.root}/data/#{::Rails.env}#{ENV['TEST_ENV_NUMBER']}/" %>
 
 scanned_exams:
-  enable: true
+  enabled: true
 
 nbconvert_enabled: true
