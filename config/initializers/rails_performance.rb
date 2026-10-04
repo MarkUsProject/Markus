@@ -30,9 +30,8 @@ Rails.application.config.after_initialize do
   end
 
   if defined?(RailsPerformance)
+    # enabled and duration are set in config/application.rb
     RailsPerformance.setup do |config|
-      config.enabled = Settings.rails_performance.enabled
-      config.duration = Settings.rails_performance.duration.minutes
       config.home_link = ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '/' }
       config.mount_at = '/admin/rails/performance'
       config.redis = Redis::Namespace.new("#{Rails.env}-rails-performance", redis: Resque.redis)
