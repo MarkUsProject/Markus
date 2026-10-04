@@ -28,16 +28,29 @@ describe InstallationCheck do
     end
   end
 
-  context 'when a file_storage directory does not exist yet' do
+  context 'when a file_storage directory does not exist but its parent does' do
     before do
       allow(Settings).to receive(:file_storage).and_return(
-        { 'default_root_path' => Rails.root.join('tmp/does/not/exist').to_s }
+        { 'default_root_path' => Rails.root.join('tmp/does-not-exist').to_s }
       )
     end
 
-    it 'checks the closest existing ancestor directory' do
+    it 'checks the parent directory' do
       expect(result).to be(true)
       expect(output.string).to include("[PASS] file_storage.default_root_path: #{Rails.root.join('tmp')}")
+    end
+  end
+
+  context 'when neither a file_storage directory nor its parent exists' do
+    let(:path) { Rails.root.join('tmp/does/not/exist') }
+
+    before { allow(Settings).to receive(:file_storage).and_return({ 'default_root_path' => path.to_s }) }
+
+    it 'fails' do
+      expect(result).to be(false)
+      expect(output.string).to include(
+        "[FAIL] file_storage.default_root_path: neither #{path} nor its parent directory exists"
+      )
     end
   end
 
@@ -54,20 +67,24 @@ describe InstallationCheck do
     end
   end
 
-  context 'when logout_redirect is a URL' do
-    before { allow(Settings).to receive(:logout_redirect).and_return('https://example.com') }
+  ['http://example.com', 'https://example.com/logout?a=b'].each do |url|
+    context "when logout_redirect is #{url}" do
+      before { allow(Settings).to receive(:logout_redirect).and_return(url) }
 
-    it 'passes' do
-      expect(result).to be(true)
+      it 'passes' do
+        expect(result).to be(true)
+      end
     end
   end
 
-  context 'when logout_redirect is invalid' do
-    before { allow(Settings).to receive(:logout_redirect).and_return('example.com') }
+  ['example.com', 'ftp://example.com', 'http://', 'http:example.com', 'https://exa mple.com'].each do |url|
+    context "when logout_redirect is #{url}" do
+      before { allow(Settings).to receive(:logout_redirect).and_return(url) }
 
-    it 'fails' do
-      expect(result).to be(false)
-      expect(output.string).to include('[FAIL] logout_redirect: example.com is invalid')
+      it 'fails' do
+        expect(result).to be(false)
+        expect(output.string).to include("[FAIL] logout_redirect: #{url} is invalid")
+      end
     end
   end
 end

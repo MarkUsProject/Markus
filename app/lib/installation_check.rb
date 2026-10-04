@@ -34,11 +34,15 @@ class InstallationCheck
   end
 
   # Checks that MarkUs can create and access files in the directory +path+ (relative paths are relative to
-  # the MarkUs root). If the directory does not exist yet, checks the closest existing ancestor (where the
-  # directory would be created).
+  # the MarkUs root). If the directory does not exist yet, checks its parent directory (where the directory
+  # would be created) instead, and fails if the parent directory does not exist either.
   def check_directory(path, setting)
     dir = Rails.root.join(path)
-    dir = dir.parent until dir.exist?
+    dir = dir.parent unless dir.exist?
+    unless dir.directory?
+      failure "#{setting}: neither #{Rails.root.join(path)} nor its parent directory exists"
+      return
+    end
     missing = %w[readable writable executable].reject { |permission| File.public_send(:"#{permission}?", dir) }
     if missing.empty?
       pass "#{setting}: #{dir}"
@@ -49,11 +53,19 @@ class InstallationCheck
 
   def check_logout_redirect
     logout_redirect = Settings.logout_redirect
-    if %w[DEFAULT NONE].include?(logout_redirect) || logout_redirect.match?(%r{\Ahttps?://})
+    if %w[DEFAULT NONE].include?(logout_redirect) || http_url?(logout_redirect)
       pass "logout_redirect: #{logout_redirect}"
     else
-      failure "logout_redirect: #{logout_redirect} is invalid. Only 'DEFAULT', 'NONE' or addresses " \
-              'beginning with http:// or https:// are valid values.'
+      failure "logout_redirect: #{logout_redirect} is invalid. Only 'DEFAULT', 'NONE' or a valid http:// " \
+              'or https:// URL are valid values.'
     end
+  end
+
+  # Returns whether +url+ is a valid absolute http or https URL
+  def http_url?(url)
+    uri = URI.parse(url)
+    uri.is_a?(URI::HTTP) && uri.host.present?
+  rescue URI::InvalidURIError
+    false
   end
 end
