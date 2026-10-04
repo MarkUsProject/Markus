@@ -24,7 +24,7 @@
           <ul>
             <% unless allowed_to?(:role_is_switched?) %>
               <li>
-                <i class="fa-solid fa-gear"></i>
+                <i class="fa-solid fa-user"></i>
                 <%= link_to t('menu.settings'),
                             settings_users_path,
                             class: 'settings' %>
