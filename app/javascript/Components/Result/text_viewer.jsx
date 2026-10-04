@@ -202,7 +202,7 @@ export class TextViewer extends React.PureComponent {
             className="preview"
             id="html-preview"
             key={this.props.url}
-            src={this.props.url + "&preview=true"}
+            srcDoc={this.getContent()}
             sandbox="allow-same-origin"
             style={{width: "100%", display: "block"}}
           />
