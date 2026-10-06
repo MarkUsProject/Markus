@@ -82,7 +82,7 @@ class AutotestResetUrlJob < ApplicationJob
 
   # Cancel in-progress test runs and clear their autotester ids, for this course only.
   def reset_test_runs(course)
-    test_runs = TestRun.where(role_id: course.roles.select(:id))
+    test_runs = course.test_runs
     test_runs.where(status: :in_progress).update_all(status: :cancelled)
     test_runs.update_all(autotest_test_id: nil)
   end
