@@ -203,7 +203,7 @@ export class TextViewer extends React.PureComponent {
             id="html-preview"
             key={this.props.url}
             srcDoc={this.getContent()}
-            sandbox="allow-same-origin"
+            sandbox="allow-scripts allow-forms allow-modals"
             style={{width: "100%", display: "block"}}
           />
         );
