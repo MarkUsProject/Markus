@@ -25,8 +25,10 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed the `markus:check` rake task crashing instead of reporting configuration errors; it now reports the result of every check and resolves relative paths from the MarkUs root (#8206)
 - Fixed `rails_performance.enabled: false` not disabling rails_performance request tracking and resource monitoring (#8205)
 - Fixed groups sharing one git repository when a new or working-alone group reused a taken repository name (#8187)
+- Fixed changing a course's autotester url cancelling in-progress test runs in every course (#8202)
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 - Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
 
