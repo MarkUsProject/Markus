@@ -10,6 +10,12 @@ class GroupingPolicy < ApplicationPolicy
     role.ta? && record.memberships.exists?(role_id: role.id)
   end
 
+  # Instructors, graders who manage submissions, graders assigned to this grouping,
+  # and the grouping's own students can see and change its repository files.
+  def manage_repo_files?
+    check?(:manage_submissions?, role) || check?(:assigned_grader?) || check?(:member?)
+  end
+
   def not_in_progress?
     !record.student_test_run_in_progress?
   end
