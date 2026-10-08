@@ -4,6 +4,7 @@
 
 ### 🛡️ Security
 - Restricted the peer review table to instructors and graders (#8182)
+- Restricted submission repo files to instructors, assigned graders, and graders who manage submissions (#8211)
 
 ### 🚨 Breaking changes
 
