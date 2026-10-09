@@ -23,6 +23,7 @@
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 - Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
+- Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
 - Fixed the `markus:check` rake task crashing instead of reporting configuration errors; it now reports the result of every check and resolves relative paths from the MarkUs root (#8206)
@@ -36,6 +37,7 @@
 - Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
+- Refreshed apt package lists before installing system dependencies in CI (#8212)
 - Updated Rails and `@rails/actioncable` to v8.1.4 (#8200)
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
