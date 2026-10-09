@@ -8,6 +8,7 @@
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+- Added HTML file previewing functionality to the `TextViewer` component (#8210)
 - Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
 - Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
 - Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
