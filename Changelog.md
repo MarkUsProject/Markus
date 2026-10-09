@@ -29,6 +29,7 @@
 - Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 - Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
+- Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
 - Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
