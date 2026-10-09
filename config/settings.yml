@@ -79,11 +79,8 @@ end_user_csv_order:
   - email
 
 logging:
-  enabled: true
-  rotate_by_interval: false
-  rotate_interval: daily
-  size_threshold: 1024000000
-  old_files: 10
+  log_file: log/<%= ::Rails.env %>.log
+  format: json
   tag_with_usernames: true
 
 # resque-scheduler configuration: https://github.com/resque/resque-scheduler#static-schedules

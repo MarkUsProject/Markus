@@ -53,9 +53,7 @@ class CreateGroupsJob < ApplicationJob
         broadcast_status(enqueuing_user, notify_socket)
       end
     end
-    m_logger = MarkusLogger.instance
-    m_logger.log('Creating all individual groups completed',
-                 MarkusLogger::INFO)
+    logger.info(Logging::Messages::FINISHED_CREATING_GROUPS, assignment_id: assignment.id)
   rescue StandardError => e
     job_failed = true
     status.catch_exception(e)

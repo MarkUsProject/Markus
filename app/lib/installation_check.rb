@@ -27,7 +27,6 @@ class InstallationCheck
 
   def check_paths
     check_directory(File.dirname(Settings.logging.log_file), 'logging.log_file')
-    check_directory(File.dirname(Settings.logging.error_file), 'logging.error_file')
     Settings.file_storage.each do |key, path|
       check_directory(path, "file_storage.#{key}") unless path.nil?
     end

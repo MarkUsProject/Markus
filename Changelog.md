@@ -6,6 +6,7 @@
 - Restricted the peer review table to instructors and graders (#8182)
 
 ### 🚨 Breaking changes
+- Replaced `MarkusLogger` and the default Rails logger with Semantic Logger (`rails_semantic_logger`). All log entries, including audit events, are now written as structured entries to a single log file, in JSON format by default in production. The `logging.enabled`, `logging.rotate_by_interval`, `logging.rotate_interval`, `logging.size_threshold`, `logging.old_files`, and `logging.error_file` settings have been removed, and a `logging.format` setting has been added (#8204)
 
 ### ✨ New features and improvements
 - Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
@@ -33,6 +34,7 @@
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
+- Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
 - Refreshed apt package lists before installing system dependencies in CI (#8212)

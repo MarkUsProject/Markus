@@ -24,7 +24,7 @@ describe InstallationCheck do
     it 'fails and reports every failing check' do
       expect(result).to be(false)
       expect(output.string).to match(/\[FAIL\] logging\.log_file: .* is not writable/)
-      expect(output.string).to match(/\[FAIL\] logging\.error_file: .* is not writable/)
+      expect(output.string).to match(/\[FAIL\] file_storage\.default_root_path: .* is not writable/)
     end
   end
 

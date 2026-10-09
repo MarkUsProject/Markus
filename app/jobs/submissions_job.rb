@@ -8,7 +8,6 @@ class SubmissionsJob < ApplicationJob
   def perform(groupings, apply_late_penalty: true, **options)
     return if groupings.empty?
 
-    m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
 
     progress.total = groupings.size
@@ -18,8 +17,7 @@ class SubmissionsJob < ApplicationJob
 
       ActiveRecord::Base.transaction do
         original_submission = grouping.current_submission_used
-        m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
-                     grouping.id.to_s)
+        logger.info(Logging::Messages::COLLECTING_SUBMISSION, assignment_id: assignment.id, grouping_id: grouping.id)
         if options[:revision_identifier].nil?
           time = if assignment.scanned_exam? || options[:collect_current]
                    Time.current
@@ -92,6 +90,6 @@ class SubmissionsJob < ApplicationJob
       end
       CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message.merge({ update_table: true }))
     end
-    m_logger.log('Submission collection process done')
+    logger.info(Logging::Messages::FINISHED_COLLECTING_SUBMISSIONS, assignment_id: assignment&.id)
   end
 end

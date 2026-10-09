@@ -771,19 +771,8 @@ class SubmissionsController < ApplicationController
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('submissions.successfully_changed',
                                    changed: changed))
-        if release
-          MarkusLogger.instance.log(
-            'Marks released for assignment ' \
-            "'#{assignment.short_identifier}', ID: '" \
-            "#{assignment.id}' for #{changed} group(s)."
-          )
-        else
-          MarkusLogger.instance.log(
-            'Marks unreleased for assignment ' \
-            "'#{assignment.short_identifier}', ID: '" \
-            "#{assignment.id}' for #{changed} group(s)."
-          )
-        end
+        logger.info(release ? Logging::Messages::MARKS_RELEASED : Logging::Messages::MARKS_UNRELEASED,
+                    assignment_id: assignment.id, num_groupings: changed)
       end
 
       head :ok

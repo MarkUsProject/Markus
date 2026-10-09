@@ -102,7 +102,7 @@ class MainController < ApplicationController
       page_not_found
       return
     end
-    MarkusLogger.instance.log("User '#{real_user.user_name}' logged out.")
+    logger.info(Logging::Messages::USER_LOGGED_OUT, user_id: real_user.id)
     clear_session
     if logout_redirect == 'DEFAULT'
       redirect_to action: 'login'

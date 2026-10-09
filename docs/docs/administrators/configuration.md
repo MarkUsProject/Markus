@@ -52,7 +52,7 @@ rails:
   assets:
     prefix: # relative path from the rails root to write compiled assets to
   active_record:
-    verbose_query_logs: # boolean indicating whether to write verbose query logs
+    verbose_query_logs: # boolean indicating whether to log the source code location of each database query (and of every other log entry)
   session_store:
     type: # session store name (supported by ActionDispatch::Session)
     args: # hash of arguments used to initialize the session store class (this may vary by type. See ActionDispatch::Session documentation for details)
@@ -114,14 +114,9 @@ repository:
   markus_git_shell: # (required if type == git and enable_key_storage == true) absolute path to the markus-git-shell.sh script (can be found in lib/repo/) on the ssh server (see the Installation page for more details).
 session_timeout: # duration of a user's session (in seconds). This setting is ignored if users log in with remote user authentication (See "User Authentication Options" below for more details)
 enable_key_storage: # boolean indicating whether to allow ssh public key uploads (see the Installation page for more details).
-logging:
-  enabled: # boolean indicating whether to enable logging
-  rotate_by_interval: # boolean whether to rotate logs
-  rotate_interval: # (required if rotate_by_interval == true) interval used to rotate logs (choose from: daily, weekly, monthly)
-  size_threshold: # (required if rotate_by_interval == false) maximum file size (in bytes) of a single log file
-  old_files: # maximum number of log files to keep (older files will be deleted)
+logging: # (See the "Logging" page for more details)
   log_file: # relative path (from the MarkUs root) to the log file
-  error_file: # relative path (from the MarkUs root) to the error log file
+  format: # format of each log entry (choose from: json, default, color)
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
   enable: # boolean indicating whether to enable scanned exams

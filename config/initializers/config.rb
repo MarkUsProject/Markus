@@ -151,13 +151,8 @@ Config.setup do |config|
       required(:session_timeout).value(:integer, gt?: 0)
       required(:enable_key_storage).filled(:bool)
       required(:logging).hash do
-        required(:enabled).filled(:bool)
-        required(:rotate_by_interval).filled(:bool)
-        optional(:rotate_interval).filled(included_in?: %w[daily weekly monthly])
-        required(:size_threshold).filled(:integer, gt?: 0)
-        required(:old_files).filled(:integer, gt?: 0)
         required(:log_file).filled(:string)
-        required(:error_file).filled(:string)
+        required(:format).filled(included_in?: %w[json default color])
         required(:tag_with_usernames).filled(:bool)
       end
       required(:scanned_exams).hash do

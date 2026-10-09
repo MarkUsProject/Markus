@@ -117,8 +117,6 @@ module Markus
 
     config.hosts.push(*Settings.rails.hosts)
 
-    config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
-
     config.active_record.schema_format = :sql
 
     if Settings.exception_notification.enabled
@@ -130,19 +128,6 @@ module Markus
                               exception_recipients: Settings.exception_notification.recipients
                             },
                             error_grouping: true
-    end
-
-    if Settings.logging.tag_with_usernames && Settings.rails.session_store.type == 'cookie_store'
-      config.log_tags = [proc do |request|
-        session_info = request.cookie_jar.encrypted[Rails.application.config.session_options[:key]] || {}
-        real_user_name = session_info['real_user_name']
-        user_name = session_info['user_name']
-        if user_name && user_name != real_user_name
-          "#{real_user_name} as #{user_name}"
-        else
-          real_user_name
-        end
-      end]
     end
 
     config.action_cable.url = "#{config.relative_url_root}/cable"
@@ -159,3 +144,5 @@ module Markus
     # TODO database pool connections and unicorn workers
   end
 end
+
+require_relative 'logging'

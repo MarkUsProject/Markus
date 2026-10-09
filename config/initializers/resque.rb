@@ -9,6 +9,12 @@ else
   Resque.redis = Settings.redis.url
 end
 
+# Resque.logger is only used by Resque itself, to log what each worker is doing (for example, a worker logs
+# "Checking <queue>" at the debug level every few seconds while it waits for jobs). Before rails_semantic_logger
+# replaced it, it wrote nothing. Only write Resque's own warnings and errors. This does not affect the entries
+# logged by the jobs, which use their own loggers.
+Resque.logger.level = :warn
+
 # Modify Resque::Server class to add (manual) authentication
 unless ENV['NO_INIT_SCHEDULER']
   Rails.application.config.after_initialize do

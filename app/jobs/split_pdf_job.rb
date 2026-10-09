@@ -1,218 +1,219 @@
 class SplitPdfJob < ApplicationJob
   def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _role = nil,
               on_duplicate = nil, enqueuing_user = nil)
-    m_logger = MarkusLogger.instance
-    begin
-      # Create directory for files whose QR code couldn't be parsed
-      error_dir = File.join(exam_template.base_path, 'error')
-      raw_dir = File.join(exam_template.base_path, 'raw')
-      FileUtils.mkdir_p error_dir
-      FileUtils.mkdir_p raw_dir
+    # Create directory for files whose QR code couldn't be parsed
+    error_dir = File.join(exam_template.base_path, 'error')
+    raw_dir = File.join(exam_template.base_path, 'raw')
+    FileUtils.mkdir_p error_dir
+    FileUtils.mkdir_p raw_dir
 
-      filename = split_pdf_log.filename
+    filename = split_pdf_log.filename
 
-      pdf = CombinePDF.load File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
+    pdf = CombinePDF.load File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-      if enqueuing_user
-        ExamTemplatesChannel.broadcast_to(enqueuing_user, {
-          status: 'in_progress',
-          job_class: 'SplitPdfJob',
-          exam_name: exam_template.name,
-          message: I18n.t('exam_templates.split_pdf_log.qr_scan_in_progress')
-        })
-      end
+    if enqueuing_user
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, {
+        status: 'in_progress',
+        job_class: 'SplitPdfJob',
+        exam_name: exam_template.name,
+        message: I18n.t('exam_templates.split_pdf_log.qr_scan_in_progress')
+      })
+    end
 
-      # First, save each PDF file
-      split_pages_to_insert = Array.new(pdf.pages.length) do |i|
-        { filename: filename, split_pdf_log_id: split_pdf_log.id, raw_page_number: i + 1 }
-      end
-      split_page_ids = SplitPage.insert_all(split_pages_to_insert).pluck('id')
+    # First, save each PDF file
+    split_pages_to_insert = Array.new(pdf.pages.length) do |i|
+      { filename: filename, split_pdf_log_id: split_pdf_log.id, raw_page_number: i + 1 }
+    end
+    split_page_ids = SplitPage.insert_all(split_pages_to_insert).pluck('id')
 
-      split_pages = []
-      pdf.pages.each_index do |i|
-        page = pdf.pages[i]
-        new_page = CombinePDF.new
-        new_page << page
-        new_page.save File.join(raw_dir, "#{split_page_ids[i]}.pdf")
-        split_pages << new_page
-      end
+    split_pages = []
+    pdf.pages.each_index do |i|
+      page = pdf.pages[i]
+      new_page = CombinePDF.new
+      new_page << page
+      new_page.save File.join(raw_dir, "#{split_page_ids[i]}.pdf")
+      split_pages << new_page
+    end
 
-      # Then, run the QR code scanner
-      python_exe = Rails.application.config.python
-      stdin_data = split_page_ids.map { |id| "#{id}.pdf" }.join("\n")
-      stdout, stderr, status = Open3.capture3(
-        python_exe,
-        '-m',
-        'markus_exam_matcher',
-        '--bulk',
-        'qr',
-        raw_dir,
-        stdin_data: stdin_data
-      )
-      qr_scan_results = {}
-      if status.success?
-        csv = CSV.parse(stdout, headers: false)
-        csv.each_with_index do |row, i|
-          next if row.empty?
-          qr_scan_results[row[0]] = row.length >= 2 ? row[1] : ''
-          if row.length >= 3
-            orientation = row[2].to_i
-            if (-181..-179).cover?(orientation) || (179..181).cover?(orientation)
-              current_rotation = pdf.pages[i][:Rotate] || 0
-              pdf.pages[i][:Rotate] = (current_rotation + orientation) % 360
-            end
+    # Then, run the QR code scanner
+    python_exe = Rails.application.config.python
+    stdin_data = split_page_ids.map { |id| "#{id}.pdf" }.join("\n")
+    stdout, stderr, status = Open3.capture3(
+      python_exe,
+      '-m',
+      'markus_exam_matcher',
+      '--bulk',
+      'qr',
+      raw_dir,
+      stdin_data: stdin_data
+    )
+    qr_scan_results = {}
+    if status.success?
+      csv = CSV.parse(stdout, headers: false)
+      csv.each_with_index do |row, i|
+        next if row.empty?
+        qr_scan_results[row[0]] = row.length >= 2 ? row[1] : ''
+        if row.length >= 3
+          orientation = row[2].to_i
+          if (-181..-179).cover?(orientation) || (179..181).cover?(orientation)
+            current_rotation = pdf.pages[i][:Rotate] || 0
+            pdf.pages[i][:Rotate] = (current_rotation + orientation) % 360
           end
         end
+      end
+    else
+      raise "Error running markus-exam-matcher. Details:\n#{stdout}\n#{stderr}"
+    end
+
+    # Parse QR scan results and attempt OCR if QR parsing failed
+    matches = {}
+    pdf.pages.each_index do |i|
+      split_page_id = split_page_ids[i]
+
+      code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
+      match_text = qr_scan_results["#{split_page_id}.pdf"] || ''
+      if match_text.present?
+        matches[i] = code_regex.match(match_text)
       else
-        raise "Error running markus-exam-matcher. Details:\n#{stdout}\n#{stderr}"
+        # convert PDF to an image
+        new_page = split_pages[i]
+        img = Magick::Image.from_blob(new_page.to_pdf) do |options|
+          options.quality = 100
+          options.density = '200'
+        end.first
+
+        qr_file_location = File.join(raw_dir, "#{split_page_id}.jpg")
+        img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
+        img.destroy!
+        # OCR occasionally inserts spurious whitespace (e.g. "midterm1" -> "midterm 1"); exam template
+        # names and generated codes never contain whitespace, so it's always safe to strip it here.
+        ocr_text = RTesseract.new(qr_file_location).to_s.gsub(/\s+/, '')
+        matches[i] = code_regex.match(ocr_text)
       end
+    end
 
-      # Parse QR scan results and attempt OCR if QR parsing failed
-      matches = {}
-      pdf.pages.each_index do |i|
-        split_page_id = split_page_ids[i]
+    if enqueuing_user
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, {
+        status: 'in_progress',
+        job_class: 'SplitPdfJob',
+        exam_name: exam_template.name,
+        message: I18n.t('exam_templates.split_pdf_log.submission_in_progress')
+      })
+    end
 
-        code_regex = /(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)/
-        match_text = qr_scan_results["#{split_page_id}.pdf"] || ''
-        if match_text.present?
-          matches[i] = code_regex.match(match_text)
-        else
-          # convert PDF to an image
-          new_page = split_pages[i]
-          img = Magick::Image.from_blob(new_page.to_pdf) do |options|
-            options.quality = 100
-            options.density = '200'
-          end.first
+    # Create group and grouping objects (done in bulk)
+    assignment = exam_template.assignment
+    groups_to_upsert = {}
+    matches.each_value do |match|
+      next if match.nil? || match[:short_id] != exam_template.name
 
-          qr_file_location = File.join(raw_dir, "#{split_page_id}.jpg")
-          img.crop(Magick::NorthWestGravity, img.columns, img.rows / 5.0).write(qr_file_location)
-          img.destroy!
-          # OCR occasionally inserts spurious whitespace (e.g. "midterm1" -> "midterm 1"); exam template
-          # names and generated codes never contain whitespace, so it's always safe to strip it here.
-          ocr_text = RTesseract.new(qr_file_location).to_s.gsub(/\s+/, '')
-          matches[i] = code_regex.match(ocr_text)
-        end
-      end
+      group_name = group_name_for(exam_template, match[:exam_num].to_i)
+      groups_to_upsert[match[:exam_num]] = {
+        group_name: group_name,
+        repo_name: group_name,
+        course_id: assignment.course_id
+      }
+    end
+    group_data = Group.upsert_all(groups_to_upsert.values,
+                                  returning: [:group_name, :id],
+                                  unique_by: %i[group_name course_id])
+    group_data = group_data.map { |x| [x['group_name'], x['id']] }.to_h
+    groupings_to_upsert = group_data.map { |_, group_id| { group_id: group_id, assessment_id: assignment.id } }
+    Grouping.upsert_all(groupings_to_upsert, returning: false, unique_by: %i[group_id assessment_id])
 
-      if enqueuing_user
-        ExamTemplatesChannel.broadcast_to(enqueuing_user, {
-          status: 'in_progress',
-          job_class: 'SplitPdfJob',
-          exam_name: exam_template.name,
-          message: I18n.t('exam_templates.split_pdf_log.submission_in_progress')
-        })
-      end
+    # Get all groupings associated with this assignment.
+    # The Grouping.upsert_all query above does not return any grouping ids if the groupings already exist.
+    groupings_by_id = assignment.groupings.includes(:group).index_by(&:group_id)
+    @group_name_to_groupings = group_data.transform_values { |group_id| groupings_by_id[group_id] }
 
-      # Create group and grouping objects (done in bulk)
-      assignment = exam_template.assignment
-      groups_to_upsert = {}
-      matches.each_value do |match|
-        next if match.nil? || match[:short_id] != exam_template.name
+    partial_exams = Hash.new do |hash, key|
+      hash[key] = []
+    end
+    num_pages_qr_scan_error = 0
+    split_page_updates = []
+    pdf.pages.each_index do |i|
+      split_page_id = split_page_ids[i]
+      new_page = split_pages[i]
+      page = pdf.pages[i]
 
-        group_name = group_name_for(exam_template, match[:exam_num].to_i)
-        groups_to_upsert[match[:exam_num]] = {
-          group_name: group_name,
-          repo_name: group_name,
-          course_id: assignment.course_id
+      m = matches[i]
+      status = ''
+
+      if m.nil?
+        new_page.save File.join(error_dir, "#{split_page_id}.pdf")
+        num_pages_qr_scan_error += 1
+        status = 'ERROR: QR code not found'
+        logger.warn(Logging::Messages::SCANNED_EXAM_PAGE,
+                    exam_template_id: exam_template.id, split_page_id: split_page_id, details: status)
+        split_page_updates << {
+          id: split_page_id,
+          split_pdf_log_id: split_pdf_log.id,
+          status: status,
+          group_id: nil,
+          exam_page_number: nil
+        }
+      elsif m[:short_id] != exam_template.name  # if QR code doesn't contain corresponding exam template
+        new_page.save File.join(error_dir, "#{split_page_id}.pdf")
+        num_pages_qr_scan_error += 1
+        status = "ERROR: QR code does not contain corresponding exam template (got #{m[:short_id]})."
+        logger.warn(Logging::Messages::SCANNED_EXAM_PAGE,
+                    exam_template_id: exam_template.id, split_page_id: split_page_id, details: status)
+        split_page_updates << {
+          id: split_page_id,
+          split_pdf_log_id: split_pdf_log.id,
+          status: status,
+          group_id: nil,
+          exam_page_number: nil
+        }
+      else
+        group_id = group_data[group_name_for(exam_template, m[:exam_num].to_i)]
+        partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, split_page_id]
+        logger.debug(Logging::Messages::SCANNED_EXAM_PAGE,
+                     exam_template_id: exam_template.id, split_page_id: split_page_id,
+                     exam_number: m[:exam_num].to_i, page_number: m[:page_num].to_i)
+        split_page_updates << {
+          id: split_page_id,
+          split_pdf_log_id: split_pdf_log.id,
+          status: status,
+          group_id: group_id,
+          exam_page_number: m[:page_num].to_i
         }
       end
-      group_data = Group.upsert_all(groups_to_upsert.values,
-                                    returning: [:group_name, :id],
-                                    unique_by: %i[group_name course_id])
-      group_data = group_data.map { |x| [x['group_name'], x['id']] }.to_h
-      groupings_to_upsert = group_data.map { |_, group_id| { group_id: group_id, assessment_id: assignment.id } }
-      Grouping.upsert_all(groupings_to_upsert, returning: false, unique_by: %i[group_id assessment_id])
-
-      # Get all groupings associated with this assignment.
-      # The Grouping.upsert_all query above does not return any grouping ids if the groupings already exist.
-      groupings_by_id = assignment.groupings.includes(:group).index_by(&:group_id)
-      @group_name_to_groupings = group_data.transform_values { |group_id| groupings_by_id[group_id] }
-
-      partial_exams = Hash.new do |hash, key|
-        hash[key] = []
-      end
-      num_pages_qr_scan_error = 0
-      split_page_updates = []
-      pdf.pages.each_index do |i|
-        split_page_id = split_page_ids[i]
-        new_page = split_pages[i]
-        page = pdf.pages[i]
-
-        m = matches[i]
-        status = ''
-
-        if m.nil?
-          new_page.save File.join(error_dir, "#{split_page_id}.pdf")
-          num_pages_qr_scan_error += 1
-          status = 'ERROR: QR code not found'
-          m_logger.log(status)
-          split_page_updates << {
-            id: split_page_id,
-            split_pdf_log_id: split_pdf_log.id,
-            status: status,
-            group_id: nil,
-            exam_page_number: nil
-          }
-        elsif m[:short_id] != exam_template.name  # if QR code doesn't contain corresponding exam template
-          new_page.save File.join(error_dir, "#{split_page_id}.pdf")
-          num_pages_qr_scan_error += 1
-          status = "ERROR: QR code does not contain corresponding exam template (got #{m[:short_id]})."
-          m_logger.log(status)
-          split_page_updates << {
-            id: split_page_id,
-            split_pdf_log_id: split_pdf_log.id,
-            status: status,
-            group_id: nil,
-            exam_page_number: nil
-          }
-        else
-          group_id = group_data[group_name_for(exam_template, m[:exam_num].to_i)]
-          partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, split_page_id]
-          m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
-          split_page_updates << {
-            id: split_page_id,
-            split_pdf_log_id: split_pdf_log.id,
-            status: status,
-            group_id: group_id,
-            exam_page_number: m[:page_num].to_i
-          }
-        end
-      end
-      SplitPage.upsert_all(split_page_updates, returning: false)
-      num_complete = save_pages(exam_template, partial_exams, split_pdf_log, on_duplicate)
-      num_incomplete = partial_exams.length - num_complete
-
-      split_pdf_log.update(
-        num_groups_in_complete: num_complete,
-        num_groups_in_incomplete: num_incomplete,
-        num_pages_qr_scan_error: num_pages_qr_scan_error
-      )
-
-      # Run Grouping callback that was skipped in the Grouping.upsert_all call
-      assignment.groupings.first&.update_repo_permissions_after_save
-
-      m_logger.log('Split pdf process done')
-      # Broadcast job completion
-      if enqueuing_user
-        ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed',
-                                                            job_class: 'SplitPdfJob',
-                                                            exam_name: exam_template.name })
-      end
-      split_pdf_log
-    rescue StandardError => e
-      # Clean tmp folder
-      Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
-      # Broadcast job error
-      if enqueuing_user
-        ExamTemplatesChannel.broadcast_to(enqueuing_user, {
-          status: 'failed',
-          job_class: 'SplitPdfJob',
-          exam_name: exam_template.name,
-          exception: e.message
-        })
-      end
-      raise e
     end
+    SplitPage.upsert_all(split_page_updates, returning: false)
+    num_complete = save_pages(exam_template, partial_exams, split_pdf_log, on_duplicate)
+    num_incomplete = partial_exams.length - num_complete
+
+    split_pdf_log.update(
+      num_groups_in_complete: num_complete,
+      num_groups_in_incomplete: num_incomplete,
+      num_pages_qr_scan_error: num_pages_qr_scan_error
+    )
+
+    # Run Grouping callback that was skipped in the Grouping.upsert_all call
+    assignment.groupings.first&.update_repo_permissions_after_save
+
+    logger.info(Logging::Messages::FINISHED_SPLITTING_SCANNED_EXAMS, exam_template_id: exam_template.id)
+    # Broadcast job completion
+    if enqueuing_user
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed',
+                                                          job_class: 'SplitPdfJob',
+                                                          exam_name: exam_template.name })
+    end
+    split_pdf_log
+  rescue StandardError => e
+    # Clean tmp folder
+    Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
+    # Broadcast job error
+    if enqueuing_user
+      ExamTemplatesChannel.broadcast_to(enqueuing_user, {
+        status: 'failed',
+        job_class: 'SplitPdfJob',
+        exam_name: exam_template.name,
+        exception: e.message
+      })
+    end
+    raise e
   end
 
   # Save the pages into groups for this assignment

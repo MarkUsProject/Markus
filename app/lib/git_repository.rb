@@ -441,13 +441,12 @@ class GitRepository < Repository::AbstractRepository
         end
         @non_bare_repo.reset('origin/master', :hard) # align to whatever is in origin/master
       rescue Rugged::Error, Rugged::OSError => e
-        m_logger = MarkusLogger.instance
-        m_logger.log "Error accessing repository #{tmp_repo}: #{e.message}"
+        Rails.logger.warn(Logging::Messages::REPOSITORY_ACCESS_FAILED, repo_path: tmp_repo.to_s, details: e.message)
         @non_bare_repo = reclone_repo(tmp_repo)
       end
     else
-      m_logger = MarkusLogger.instance
-      m_logger.log "Error accessing repository #{tmp_repo}: repository missing"
+      Rails.logger.warn(Logging::Messages::REPOSITORY_ACCESS_FAILED, repo_path: tmp_repo.to_s,
+                                                                     details: 'Repository is missing')
       @non_bare_repo = reclone_repo(tmp_repo)
     end
     @non_bare_repo
@@ -461,13 +460,10 @@ class GitRepository < Repository::AbstractRepository
       FileUtils.mv(tmp_repo, bad_repo_path)
     end
     repo = Rugged::Repository.clone_at(bare_path, tmp_repo)
-    m_logger = MarkusLogger.instance
-    m_logger.log "Recloned corrupted or missing git repo: #{tmp_repo}"
+    Rails.logger.info(Logging::Messages::RECLONED_REPOSITORY, repo_path: tmp_repo.to_s)
     repo
-  rescue StandardError
-    msg = "Failed to clone corrupted or missing git repo: #{tmp_repo}"
-    m_logger = MarkusLogger.instance
-    m_logger.log msg
+  rescue StandardError => e
+    Rails.logger.error(Logging::Messages::REPOSITORY_RECLONE_FAILED, { repo_path: tmp_repo.to_s }, e)
     raise
   end
 

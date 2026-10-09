@@ -97,11 +97,7 @@ class Group < ApplicationRecord
     rescue StandardError => e
       # log the collision
       errors.add(:base, self.repo_name)
-      m_logger = MarkusLogger.instance
-      error_type = e.is_a?(Repository::RepositoryCollision) ? 'a repository collision' : 'an error'
-      m_logger.log("Creating group '#{self.group_name}' caused #{error_type} " \
-                   "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
-                   MarkusLogger::ERROR)
+      logger.error(Logging::Messages::REPOSITORY_CREATION_FAILED, { group_id: self.id, repo_name: self.repo_name }, e)
       raise
     end
     true
