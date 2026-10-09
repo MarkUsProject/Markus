@@ -53,7 +53,8 @@
 
       <% @submission = @grouping.nil? ? nil : @grouping.current_submission_used %>
       <% @result = @submission.nil? ? nil : @submission.get_visible_result %>
-      <% if !@grouping.nil? && !@submission.nil? && !@result.nil? %>
+      <% if !@grouping.nil? && !@submission.nil? && !@result.nil? &&
+        (@result.released_to_students || @submission.remark_submitted?) %>
         <% active = controller.controller_name == 'results' && !@result.is_a_review? %>
         <% if allowed_to?(:view?, @result, context: {view_token: session["view_token"]&.[](@result&.id&.to_s)}) %>
           <!-- check if a token not required or if the current user has entered the token already this session -->
