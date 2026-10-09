@@ -22,6 +22,40 @@ describe GroupingPolicy do
     end
   end
 
+  describe_rule :manage_repo_files? do
+    let(:grouping) { create(:grouping_with_inviter) }
+
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    context 'role is a ta' do
+      succeed 'that can manage submissions' do
+        let(:role) { create(:ta, manage_submissions: true) }
+      end
+      succeed 'that is assigned to the grouping' do
+        let(:role) { create(:ta_membership, grouping: grouping).role }
+      end
+      failed 'that is assigned to another grouping' do
+        let(:role) { create(:ta_membership, grouping: create(:grouping, assignment: grouping.assignment)).role }
+      end
+      failed 'that cannot manage submissions and is not assigned' do
+        let(:role) { create(:ta) }
+      end
+    end
+
+    context 'role is a student' do
+      succeed 'that is a member' do
+        let(:role) { grouping.inviter }
+      end
+      failed 'that is not a member' do
+        let(:role) { create(:student) }
+      end
+      failed 'that has a pending invitation' do
+        let(:role) { create(:student_membership, grouping: grouping).role }
+      end
+    end
+  end
+
   describe_rule :not_in_progress? do
     succeed 'test not in progress' do
       before { allow(grouping).to receive(:student_test_run_in_progress?).and_return false }
