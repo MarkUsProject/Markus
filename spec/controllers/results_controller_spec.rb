@@ -1697,10 +1697,9 @@ describe ResultsController do
         patch :update_mark, params: { course_id: course.id, id: incomplete_result.id,
                                       criterion_id: flexible_mark.criterion_id, mark: 1 }, xhr: true
       end.to(
-        log_semantic_logger_event(level: :info, name: 'ResultsController', message: 'Mark updated',
-                                  payload: { user_name: instructor.user_name, submission_id: submission.id,
-                                             short_identifier: assignment.short_identifier,
-                                             group_name: grouping.group.group_name })
+        log_semantic_logger_event(level: :info, name: 'ResultsController', message: Logging::Messages::MARK_UPDATED,
+                                  payload: { role_id: instructor.id, submission_id: submission.id,
+                                             assignment_id: assignment.id, group_id: grouping.group_id })
       )
     end
 

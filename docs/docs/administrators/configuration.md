@@ -52,7 +52,7 @@ rails:
   assets:
     prefix: # relative path from the rails root to write compiled assets to
   active_record:
-    verbose_query_logs: # boolean indicating whether to write verbose query logs
+    verbose_query_logs: # boolean indicating whether to log the source code location of each database query (and of every other log entry)
   session_store:
     type: # session store name (supported by ActionDispatch::Session)
     args: # hash of arguments used to initialize the session store class (this may vary by type. See ActionDispatch::Session documentation for details)
@@ -116,7 +116,7 @@ session_timeout: # duration of a user's session (in seconds). This setting is ig
 enable_key_storage: # boolean indicating whether to allow ssh public key uploads (see the Installation page for more details).
 logging: # (See the "Logging" page for more details)
   log_file: # relative path (from the MarkUs root) to the log file
-  format: # format of each log entry (choose from: json, text, color)
+  format: # format of each log entry (choose from: json, default, color)
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
   enable: # boolean indicating whether to enable scanned exams

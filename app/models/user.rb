@@ -77,8 +77,8 @@ class User < ApplicationRecord
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = /[\n\0]+/
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
-      logger.error('User authentication failed', user_name: login,
-                                                 reason: 'Username/password contained illegal characters')
+      logger.warn(Logging::Messages::USER_AUTHENTICATION_FAILED,
+                  user_name: login, details: 'Username/password contained illegal characters')
       AUTHENTICATE_BAD_CHAR
     else
       # Open a pipe and write to stdin of the program specified by Settings.validate_file.
@@ -99,13 +99,13 @@ class User < ApplicationRecord
       pipe.close
       custom_message = Settings.validate_custom_status_message[$CHILD_STATUS.exitstatus.to_s]
       if $CHILD_STATUS.exitstatus == 0
-        logger.info('User authenticated', user_name: login)
+        logger.info(Logging::Messages::USER_AUTHENTICATED, user_name: login)
         AUTHENTICATE_SUCCESS
       elsif custom_message
-        logger.error('User authentication failed', user_name: login, reason: custom_message)
+        logger.warn(Logging::Messages::USER_AUTHENTICATION_FAILED, user_name: login, details: custom_message)
         $CHILD_STATUS.exitstatus.to_s
       else
-        logger.error('User authentication failed', user_name: login)
+        logger.warn(Logging::Messages::USER_AUTHENTICATION_FAILED, user_name: login)
         AUTHENTICATE_ERROR
       end
     end

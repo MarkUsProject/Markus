@@ -152,7 +152,7 @@ Config.setup do |config|
       required(:enable_key_storage).filled(:bool)
       required(:logging).hash do
         required(:log_file).filled(:string)
-        required(:format).filled(included_in?: %w[json text color])
+        required(:format).filled(included_in?: %w[json default color])
         required(:tag_with_usernames).filled(:bool)
       end
       required(:scanned_exams).hash do

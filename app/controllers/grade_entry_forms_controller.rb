@@ -190,8 +190,8 @@ class GradeEntryFormsController < ApplicationController
         num_changed = data.length
         flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
                                        numGradeEntryStudentsChanged: num_changed))
-        logger.info(release ? 'Marks released' : 'Marks unreleased',
-                    short_identifier: grade_entry_form.short_identifier, num_students: num_changed)
+        logger.info(release ? Logging::Messages::MARKS_RELEASED : Logging::Messages::MARKS_UNRELEASED,
+                    grade_entry_form_id: grade_entry_form.id, num_students: num_changed)
         data.map { |row| row[:id] }
       rescue StandardError => e
         flash_message(:error, e.message)

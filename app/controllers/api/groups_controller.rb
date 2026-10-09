@@ -517,7 +517,7 @@ module Api
       rescue ActiveRecord::RecordInvalid => e
         render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
       rescue StandardError => e
-        logger.info('Test results processing failed', e)
+        logger.error(Logging::Messages::TEST_RESULTS_PROCESSING_FAILED, e)
         render json: { errors: 'Failed to process test results' }, status: :internal_server_error
       end
     end

@@ -771,8 +771,8 @@ class SubmissionsController < ApplicationController
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('submissions.successfully_changed',
                                    changed: changed))
-        logger.info(release ? 'Marks released' : 'Marks unreleased',
-                    assignment_id: assignment.id, short_identifier: assignment.short_identifier, num_groupings: changed)
+        logger.info(release ? Logging::Messages::MARKS_RELEASED : Logging::Messages::MARKS_UNRELEASED,
+                    assignment_id: assignment.id, num_groupings: changed)
       end
 
       head :ok

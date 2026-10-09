@@ -117,8 +117,6 @@ module Markus
 
     config.hosts.push(*Settings.rails.hosts)
 
-    config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
-
     config.active_record.schema_format = :sql
 
     if Settings.exception_notification.enabled
@@ -130,34 +128,6 @@ module Markus
                               exception_recipients: Settings.exception_notification.recipients
                             },
                             error_grouping: true
-    end
-
-    # Logs are written by Semantic Logger (see https://logger.reidmorrison.com/rails). Appenders must be
-    # declared here or in config/environments/*.rb, since Rails creates the logger before running initializers.
-    log_file = File.expand_path(Settings.logging.log_file, config.root)
-    FileUtils.mkdir_p(File.dirname(log_file))
-    log_formatter = { 'json' => :json, 'text' => :default, 'color' => :color }.fetch(Settings.logging.format)
-    config.semantic_logger.application = 'MarkUs'
-    config.rails_semantic_logger.appenders do |appenders|
-      appenders.add(file_name: log_file, formatter: log_formatter)
-      appenders.add_console(formatter: :color)
-    end
-
-    # Tag each entry written while handling a request with the client's IP address, which Semantic Logger
-    # otherwise only logs in the "Started" entry of each request (at the debug level)
-    config.log_tags = { ip: :remote_ip }
-
-    if Settings.logging.tag_with_usernames && Settings.rails.session_store.type == 'cookie_store'
-      config.log_tags[:user_name] = proc do |request|
-        session_info = request.cookie_jar.encrypted[Rails.application.config.session_options[:key]] || {}
-        real_user_name = session_info['real_user_name']
-        user_name = session_info['user_name']
-        if user_name && user_name != real_user_name
-          "#{real_user_name} as #{user_name}"
-        else
-          real_user_name
-        end
-      end
     end
 
     config.action_cable.url = "#{config.relative_url_root}/cable"
@@ -174,3 +144,5 @@ module Markus
     # TODO database pool connections and unicorn workers
   end
 end
+
+require_relative 'logging'

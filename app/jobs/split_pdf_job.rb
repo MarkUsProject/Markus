@@ -143,7 +143,8 @@ class SplitPdfJob < ApplicationJob
         new_page.save File.join(error_dir, "#{split_page_id}.pdf")
         num_pages_qr_scan_error += 1
         status = 'ERROR: QR code not found'
-        logger.info('Scanned exam page', status: status)
+        logger.warn(Logging::Messages::SCANNED_EXAM_PAGE,
+                    exam_template_id: exam_template.id, split_page_id: split_page_id, details: status)
         split_page_updates << {
           id: split_page_id,
           split_pdf_log_id: split_pdf_log.id,
@@ -155,7 +156,8 @@ class SplitPdfJob < ApplicationJob
         new_page.save File.join(error_dir, "#{split_page_id}.pdf")
         num_pages_qr_scan_error += 1
         status = "ERROR: QR code does not contain corresponding exam template (got #{m[:short_id]})."
-        logger.info('Scanned exam page', status: status)
+        logger.warn(Logging::Messages::SCANNED_EXAM_PAGE,
+                    exam_template_id: exam_template.id, split_page_id: split_page_id, details: status)
         split_page_updates << {
           id: split_page_id,
           split_pdf_log_id: split_pdf_log.id,
@@ -166,8 +168,9 @@ class SplitPdfJob < ApplicationJob
       else
         group_id = group_data[group_name_for(exam_template, m[:exam_num].to_i)]
         partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, split_page_id]
-        logger.info('Scanned exam page', short_identifier: m[:short_id], exam_number: m[:exam_num].to_i,
-                                         page_number: m[:page_num].to_i)
+        logger.debug(Logging::Messages::SCANNED_EXAM_PAGE,
+                     exam_template_id: exam_template.id, split_page_id: split_page_id,
+                     exam_number: m[:exam_num].to_i, page_number: m[:page_num].to_i)
         split_page_updates << {
           id: split_page_id,
           split_pdf_log_id: split_pdf_log.id,
@@ -190,7 +193,7 @@ class SplitPdfJob < ApplicationJob
     # Run Grouping callback that was skipped in the Grouping.upsert_all call
     assignment.groupings.first&.update_repo_permissions_after_save
 
-    logger.info('Split pdf process done')
+    logger.info(Logging::Messages::FINISHED_SPLITTING_SCANNED_EXAMS, exam_template_id: exam_template.id)
     # Broadcast job completion
     if enqueuing_user
       ExamTemplatesChannel.broadcast_to(enqueuing_user, { status: 'completed',

@@ -9,8 +9,10 @@ else
   Resque.redis = Settings.redis.url
 end
 
-# rails_semantic_logger replaces Resque.logger. Only write warnings and errors logged by resque itself,
-# since Active Job already logs when each job is performed.
+# Resque.logger is only used by Resque itself, to log what each worker is doing (for example, a worker logs
+# "Checking <queue>" at the debug level every few seconds while it waits for jobs). Before rails_semantic_logger
+# replaced it, it wrote nothing. Only write Resque's own warnings and errors. This does not affect the entries
+# logged by the jobs, which use their own loggers.
 Resque.logger.level = :warn
 
 # Modify Resque::Server class to add (manual) authentication

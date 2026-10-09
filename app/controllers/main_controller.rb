@@ -102,7 +102,7 @@ class MainController < ApplicationController
       page_not_found
       return
     end
-    logger.info('User logged out', user_name: real_user.user_name)
+    logger.info(Logging::Messages::USER_LOGGED_OUT, user_id: real_user.id)
     clear_session
     if logout_redirect == 'DEFAULT'
       redirect_to action: 'login'
