@@ -34,8 +34,6 @@ Logging is configured with the following [settings](configuration.md#settings):
 
 In development, log entries are also written to the output of `rails server`. When running `rails console`, log entries are also written to the console.
 
-When `rails.active_record.verbose_query_logs` is true (the default in development), each entry also records the source file and line that wrote it. For a database query, this is the line in MarkUs that made the query.
-
 ## Log entry format
 
 Here is an example of an entry written in the `json` format (formatted over multiple lines here for readability; in the log file, each entry is written on a single line):
@@ -65,7 +63,7 @@ Here is an example of an entry written in the `json` format (formatted over mult
 }
 ```
 
-The `message` of an entry does not contain any variable data, so it can be used to search for a particular kind of entry. The messages that MarkUs writes are listed in `app/lib/logging/messages.rb`. The details of an entry are in its `payload`, which identifies records (such as users, assignments, and groups) by their ids. Entries that describe an error contain a `details` field with a description of the error, or an `exception` field with the name, message, and stack trace of an unexpected exception.
+The `message` of an entry does not contain any variable data, so it can be used to search for a particular kind of entry. The details are in its `payload`. Entries that describe an error also contain an `exception` field with the name, message, and stack trace of the exception.
 
 Entries written while handling a request have the following `named_tags`:
 

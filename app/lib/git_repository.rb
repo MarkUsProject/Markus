@@ -462,8 +462,8 @@ class GitRepository < Repository::AbstractRepository
     repo = Rugged::Repository.clone_at(bare_path, tmp_repo)
     Rails.logger.info(Logging::Messages::RECLONED_REPOSITORY, repo_path: tmp_repo.to_s)
     repo
-  rescue StandardError => e
-    Rails.logger.error(Logging::Messages::REPOSITORY_RECLONE_FAILED, { repo_path: tmp_repo.to_s }, e)
+  rescue StandardError
+    Rails.logger.error(Logging::Messages::REPOSITORY_RECLONE_FAILED, repo_path: tmp_repo.to_s)
     raise
   end
 

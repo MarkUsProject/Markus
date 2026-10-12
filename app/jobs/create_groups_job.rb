@@ -53,7 +53,7 @@ class CreateGroupsJob < ApplicationJob
         broadcast_status(enqueuing_user, notify_socket)
       end
     end
-    logger.info(Logging::Messages::FINISHED_CREATING_GROUPS, assignment_id: assignment.id)
+    logger.info(Logging::Messages::CREATING_ALL_INDIVIDUAL_GROUPS_COMPLETED, assignment_id: assignment.id)
   rescue StandardError => e
     job_failed = true
     status.catch_exception(e)

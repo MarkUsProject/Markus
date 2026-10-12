@@ -27,7 +27,7 @@ module Logging
     ACCEPTED_GROUP_INVITATION = 'Accepted group invitation'.freeze
     DECLINED_GROUP_INVITATION = 'Declined group invitation'.freeze
     CANCELLED_GROUP_INVITATION = 'Cancelled group invitation'.freeze
-    FINISHED_CREATING_GROUPS = 'Finished creating groups'.freeze
+    CREATING_ALL_INDIVIDUAL_GROUPS_COMPLETED = 'Creating all individual groups completed'.freeze
 
     # Repositories
     REPOSITORY_CREATION_FAILED = 'Repository creation failed'.freeze
@@ -37,12 +37,12 @@ module Logging
 
     # Submissions
     COLLECTING_SUBMISSION = 'Collecting submission'.freeze
-    FINISHED_COLLECTING_SUBMISSIONS = 'Finished collecting submissions'.freeze
+    SUBMISSION_COLLECTION_PROCESS_DONE = 'Submission collection process done'.freeze
 
     # Exam templates
     GENERATING_EXAM_COPY = 'Generating exam copy'.freeze
-    FINISHED_GENERATING_EXAM_COPIES = 'Finished generating exam copies'.freeze
+    GENERATE_PDF_COPIES_PROCESS_DONE = 'Generate pdf copies process done'.freeze
     SCANNED_EXAM_PAGE = 'Scanned exam page'.freeze
-    FINISHED_SPLITTING_SCANNED_EXAMS = 'Finished splitting scanned exams'.freeze
+    SPLIT_PDF_PROCESS_DONE = 'Split pdf process done'.freeze
   end
 end

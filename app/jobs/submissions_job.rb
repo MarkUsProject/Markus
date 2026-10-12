@@ -90,6 +90,6 @@ class SubmissionsJob < ApplicationJob
       end
       CollectSubmissionsChannel.broadcast_to(options[:enqueuing_user], message.merge({ update_table: true }))
     end
-    logger.info(Logging::Messages::FINISHED_COLLECTING_SUBMISSIONS, assignment_id: assignment&.id)
+    logger.info(Logging::Messages::SUBMISSION_COLLECTION_PROCESS_DONE, assignment_id: assignment&.id)
   end
 end

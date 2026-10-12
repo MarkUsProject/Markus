@@ -52,7 +52,7 @@ rails:
   assets:
     prefix: # relative path from the rails root to write compiled assets to
   active_record:
-    verbose_query_logs: # boolean indicating whether to log the source code location of each database query (and of every other log entry)
+    verbose_query_logs: # boolean indicating whether to write verbose query logs
   session_store:
     type: # session store name (supported by ActionDispatch::Session)
     args: # hash of arguments used to initialize the session store class (this may vary by type. See ActionDispatch::Session documentation for details)

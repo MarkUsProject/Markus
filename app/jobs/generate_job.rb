@@ -43,7 +43,7 @@ class GenerateJob < ApplicationJob
 
     FileUtils.mkdir_p(exam_template.tmp_path)
     generated_pdf.save File.join(exam_template.tmp_path, exam_template.generated_copies_file_name(num_copies, start))
-    logger.info(Logging::Messages::FINISHED_GENERATING_EXAM_COPIES, exam_template_id: exam_template.id)
+    logger.info(Logging::Messages::GENERATE_PDF_COPIES_PROCESS_DONE, exam_template_id: exam_template.id)
     if enqueuing_user
       ExamTemplatesChannel.broadcast_to(enqueuing_user,
                                         { status: 'completed',

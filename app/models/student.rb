@@ -155,8 +155,7 @@ class Student < Role
         @group = Group.find_or_initialize_individual(self.user_name, @assignment.course)
       end
       unless @group.save
-        logger.error(Logging::Messages::GROUP_CREATION_FAILED, role_id: id, assignment_id: aid,
-                                                               details: @group.errors.full_messages.join(', '))
+        logger.error(Logging::Messages::GROUP_CREATION_FAILED, role_id: id, details: @group.errors.full_messages)
         raise I18n.t('students.errors.group_creation_failure')
       end
 
@@ -164,8 +163,8 @@ class Student < Role
       # this can happen if an instructor removes the student membership from its grouping (see issue 627)
       @grouping = Grouping.find_or_initialize_by(assessment_id: aid, group_id: @group.id)
       unless @grouping.save
-        logger.error(Logging::Messages::GROUPING_CREATION_FAILED, role_id: id, assignment_id: aid, group_id: @group.id,
-                                                                  details: @grouping.errors.full_messages.join(', '))
+        logger.error(Logging::Messages::GROUPING_CREATION_FAILED, role_id: id, group_id: @group.id,
+                                                                  details: @grouping.errors.full_messages)
         raise I18n.t('students.errors.grouping_creation_failure')
       end
 
