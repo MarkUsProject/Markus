@@ -38,6 +38,7 @@ class Course < ApplicationRecord
   has_many :students
   has_many :marking_schemes
   has_many :tags, through: :roles
+  has_many :test_runs, through: :roles
   has_many :exam_templates, through: :assignments
   has_many :lti_deployments
   belongs_to :autotest_setting, optional: true
