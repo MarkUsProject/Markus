@@ -38,6 +38,7 @@
 - Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
+- Refactored calculating the remaining grace credits when displaying the Students table (#8216)
 - Refreshed apt package lists before installing system dependencies in CI (#8212)
 - Updated Rails and `@rails/actioncable` to v8.1.4 (#8200)
 - Suppressed CodeQL scanning false positives (#8101)
