@@ -74,14 +74,14 @@ describe SubmissionsController do
     end
 
     context 'a jupyter-notebook file',
-            skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+            skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert disabled' do
       let(:filename) { 'example.ipynb' }
 
       it_behaves_like 'html content'
     end
 
     context 'a jupyter-notebook file with widgets',
-            skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert dependencies not installed' do
+            skip: Rails.application.config.nbconvert_enabled ? false : 'nbconvert disabled' do
       render_views
       let(:filename) { 'example_widgets.ipynb' }
 
