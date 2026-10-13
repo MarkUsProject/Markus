@@ -6,8 +6,10 @@
 - Restricted the peer review table to instructors and graders (#8182)
 
 ### 🚨 Breaking changes
+- Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
 - Added HTML file previewing functionality to the `TextViewer` component (#8210)
 - Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
 - Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
