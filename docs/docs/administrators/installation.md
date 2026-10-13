@@ -85,7 +85,7 @@ npm ci
 
 ### Install python dependencies (optional)
 
-Skip this step if you do not want to enable optical character recognition for scanned exams or jupyter notebook rendering.
+Skip this step if you do not want to use [scanned exams](../instructors/scanned-exams.md) or Jupyter notebook rendering. Note that both features are enabled by default, so if you skip this step you should disable them (see below).
 
 We recommend installing python packages for MarkUs in a [virtual environment](https://docs.python.org/3/library/venv.html) since that will keep the python dependencies distinct from other python packages that you might have installed on your system.
 
@@ -95,23 +95,35 @@ If you are using a virtual environment, make sure to point MarkUs to the locatio
 python: /path/to/the/venv/bin/python3
 ```
 
-If this is not set, then the `python3` executable that can be found in the `PATH` will be used (if it exists).
+If this is not set, then the `python3` executable that can be found in the `PATH` will be used.
 
-#### Install python dependencies for optical character recognition for scanned exams
+#### Install python dependencies for scanned exams
 
 ```sh
 pip install -r requirements-scanner.txt
 ```
 
-If these dependencies are installed, it will enable [automatic matching of student papers](../instructors/scanned-exams.md#automatic-matching-of-student-papers) using optical character recognition.
+These dependencies are used to read the QR codes on scanned exam pages, and for [automatic matching of student papers](../instructors/scanned-exams.md#automatic-matching-of-student-papers) using optical character recognition. Scanned exams are enabled by default. If you do not install these dependencies, disable scanned exams in `settings.local.yml`:
+
+```yaml
+scanned_exams:
+  enabled: false
+```
 
 #### Install python dependencies for jupyter notebook rendering
 
 ```sh
 pip install -r requirements-jupyter.txt
+playwright install chromium
 ```
 
-If these dependencies are installed, MarkUs will render jupyter notebook files as HTML (converted using nbconvert), otherwise it will render them as plain text.
+The second command installs the Chromium browser used to convert notebooks to PDF. Chromium also requires some system packages, which can be installed (as root) with `playwright install-deps chromium`. Jupyter notebook rendering is enabled by default. If you do not install these dependencies, disable it in `settings.local.yml`:
+
+```yaml
+nbconvert_enabled: false
+```
+
+When this setting is enabled, MarkUs will render jupyter notebook files as HTML (converted using nbconvert) and include them when downloading results as PDFs. Otherwise, it will render them as plain text.
 
 ### Configure MarkUs settings
 
@@ -165,13 +177,13 @@ RAILS_ENV=production ./bin/bundle exec rails assets:precompile
 
 ### Check your installation
 
-Once MarkUs is configured, run the following command as the `markus` user to check your settings (for example, that the log and file storage directories in your settings are accessible to MarkUs):
+Once MarkUs is configured, run the following command as the `markus` user to check that the paths in your settings are accessible and that the dependencies needed by each enabled feature (for example, scanned exams and Jupyter notebook rendering) are installed:
 
 ```sh
 RAILS_ENV=production ./bin/bundle exec rails markus:check
 ```
 
-Each check is reported as `PASS` or `FAIL`, and the command exits with a non-zero status if any check fails. We recommend running this command again after upgrading MarkUs or changing your settings.
+Each check is reported as `PASS`, `FAIL`, or `SKIP` (for features that are disabled in your settings), and failures include a suggestion for how to fix them. The command exits with a non-zero status if any check fails. We recommend running this command again after upgrading MarkUs or changing your settings.
 
 ## Configuring the web server
 

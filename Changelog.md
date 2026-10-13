@@ -7,8 +7,11 @@
 
 ### 🚨 Breaking changes
 - Replaced `MarkusLogger` and the default Rails logger with Semantic Logger (`rails_semantic_logger`). All log entries, including audit events, are now written as structured entries to a single log file, in JSON format by default in production. The `logging.enabled`, `logging.rotate_by_interval`, `logging.rotate_interval`, `logging.size_threshold`, `logging.old_files`, and `logging.error_file` settings have been removed, and a `logging.format` setting has been added (#8204)
+- Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
+- Added HTML file previewing functionality to the `TextViewer` component (#8210)
 - Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
 - Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
 - Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
@@ -23,8 +26,10 @@
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 - Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
+- Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
 - Fixed the `markus:check` rake task crashing instead of reporting configuration errors; it now reports the result of every check and resolves relative paths from the MarkUs root (#8206)
 - Fixed `rails_performance.enabled: false` not disabling rails_performance request tracking and resource monitoring (#8205)
 - Fixed groups sharing one git repository when a new or working-alone group reused a taken repository name (#8187)

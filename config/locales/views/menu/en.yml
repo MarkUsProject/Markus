@@ -1,6 +1,7 @@
 ---
 en:
   menu:
+    account: Account
     choose: Choose...
     dashboard: Dashboard
     email_settings: Email Settings

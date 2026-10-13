@@ -22,31 +22,67 @@ describe("TextViewer", () => {
     fetchMock.resetMocks();
   });
 
-  it("should show the markdown preview button", () => {
-    render(<TextViewer {...props} type="markdown" content="# Markdown" />);
+  describe("file preview", () => {
+    describe("viewing a markdown file", () => {
+      it("should show the file preview button", () => {
+        render(<TextViewer {...props} type="markdown" content="# MARKDOWN" />);
+        expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
+      });
 
-    expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
-  });
+      it("should replace the source with the markdown preview when rendered", async () => {
+        const {container} = render(<TextViewer {...props} type="markdown" content="# MARKDOWN" />);
 
-  it("should replace the source with the markdown preview when rendered", async () => {
-    const {container} = render(<TextViewer {...props} type="markdown" content="# Markdown" />);
+        expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
+        expect(screen.getByText(I18n.t("results.copy_text"))).toBeInTheDocument();
+        expect(screen.getByText("+A")).toBeInTheDocument();
+        expect(screen.getByText("-A")).toBeInTheDocument();
+        expect(container.querySelector("pre")).toBeInTheDocument();
 
-    expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
-    expect(screen.getByText(I18n.t("results.copy_text"))).toBeInTheDocument();
-    expect(screen.getByText("+A")).toBeInTheDocument();
-    expect(screen.getByText("-A")).toBeInTheDocument();
-    expect(container.querySelector("pre")).toBeInTheDocument();
+        await userEvent.click(screen.getByText(I18n.t("results.preview")));
 
-    await userEvent.click(screen.getByText(I18n.t("results.preview")));
+        expect(screen.getByText(I18n.t("results.view_source"))).toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("results.preview"))).not.toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("results.copy_text"))).not.toBeInTheDocument();
+        expect(screen.queryByText("+A")).not.toBeInTheDocument();
+        expect(screen.queryByText("-A")).not.toBeInTheDocument();
+        expect(container.querySelector("pre")).not.toBeInTheDocument();
+        expect(container.querySelector(".preview")).toBeInTheDocument();
 
-    expect(screen.getByText(I18n.t("results.view_source"))).toBeInTheDocument();
-    expect(screen.queryByText(I18n.t("results.preview"))).not.toBeInTheDocument();
-    expect(screen.queryByText(I18n.t("results.copy_text"))).not.toBeInTheDocument();
-    expect(screen.queryByText("+A")).not.toBeInTheDocument();
-    expect(screen.queryByText("-A")).not.toBeInTheDocument();
-    expect(container.querySelector("pre")).not.toBeInTheDocument();
-    expect(container.querySelector(".preview")).toBeInTheDocument();
-    expect(container.querySelector(".preview")).toHaveTextContent("Markdown");
+        expect(screen.getByText("MARKDOWN")).toBeInTheDocument();
+      });
+    });
+
+    describe("viewing a html file", () => {
+      it("should show the file preview button", () => {
+        render(<TextViewer {...props} type="html" content="<html><p>HTML</p></html>" />);
+        expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
+      });
+
+      it("should replace the source with the html preview when rendered", async () => {
+        const {container} = render(
+          <TextViewer {...props} type="html" content="<html><p>HTML</p></html>" />
+        );
+
+        expect(screen.getByText(I18n.t("results.preview"))).toBeInTheDocument();
+        expect(screen.getByText(I18n.t("results.copy_text"))).toBeInTheDocument();
+        expect(screen.getByText("+A")).toBeInTheDocument();
+        expect(screen.getByText("-A")).toBeInTheDocument();
+        expect(container.querySelector("pre")).toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(I18n.t("results.preview")));
+
+        expect(screen.getByText(I18n.t("results.view_source"))).toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("results.preview"))).not.toBeInTheDocument();
+        expect(screen.queryByText(I18n.t("results.copy_text"))).not.toBeInTheDocument();
+        expect(screen.queryByText("+A")).not.toBeInTheDocument();
+        expect(screen.queryByText("-A")).not.toBeInTheDocument();
+        expect(container.querySelector("pre")).not.toBeInTheDocument();
+
+        const iframe = container.querySelector(".preview");
+        expect(iframe).toBeInTheDocument();
+        expect(iframe).toHaveAttribute("srcdoc", "<html><p>HTML</p></html>");
+      });
+    });
   });
 
   it("should save font size to localStorage when font size change", async () => {

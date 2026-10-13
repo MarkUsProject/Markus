@@ -391,7 +391,12 @@ class Result < ApplicationRecord
         combined_page << annotation_page
       end
 
-      input_files = submission.submission_files.where("filename LIKE '%.ipynb'").order(:path, :filename)
+      # Jupyter notebooks can only be converted to PDF when nbconvert is enabled
+      input_files = if Rails.application.config.nbconvert_enabled
+                      submission.submission_files.where("filename LIKE '%.ipynb'").order(:path, :filename)
+                    else
+                      SubmissionFile.none
+                    end
       grouping.access_repo do |repo|
         input_files.each do |sf|
           contents = sf.retrieve_file(repo: repo)
