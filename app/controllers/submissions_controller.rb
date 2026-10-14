@@ -47,6 +47,7 @@ class SubmissionsController < ApplicationController
     # TODO: move this to a new groupings controller
     @assignment = Assignment.find_by(id: params[:assignment_id])
     @grouping = @assignment.groupings.find(params[:grouping_id])
+    authorize! @grouping, to: :manage_repo_files?
     @collected_revision = nil
     @revision = nil
     @grouping.access_repo do |repo|
@@ -82,6 +83,7 @@ class SubmissionsController < ApplicationController
   def revisions
     assignment = Assignment.find_by(id: params[:assignment_id])
     grouping = assignment.groupings.find(params[:grouping_id])
+    authorize! grouping, to: :manage_repo_files?
     grouping.access_repo do |repo|
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
       assignment_path = grouping.assignment.repository_folder
@@ -146,6 +148,7 @@ class SubmissionsController < ApplicationController
     else
       grouping = assignment.groupings.find(params[:grouping_id])
     end
+    authorize! grouping, to: :manage_repo_files?
     entries = []
     grouping.access_repo do |repo|
       if current_role.student? || params[:revision_identifier].blank?
@@ -385,6 +388,7 @@ class SubmissionsController < ApplicationController
     else
       @grouping = @assignment.groupings.find(params[:grouping_id])
     end
+    authorize! @grouping, to: :manage_repo_files?
 
     # The files that will be deleted
     delete_files = params[:delete_files] || []
@@ -488,6 +492,8 @@ class SubmissionsController < ApplicationController
       set_filebrowser_vars(@grouping)
       flash_file_manager_messages
     end
+  rescue ActionPolicy::Unauthorized
+    raise # ApplicationController answers with 403
   rescue StandardError => e
     flash_message(:error, e.message)
     head :bad_request
@@ -587,6 +593,7 @@ class SubmissionsController < ApplicationController
         I18n.t('submissions.download.group_not_found') }, status: :not_found
       return
     end
+    authorize! @grouping, to: :manage_repo_files?
 
     revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
@@ -712,6 +719,7 @@ class SubmissionsController < ApplicationController
     else
       grouping = assignment.groupings.find(params[:grouping_id])
     end
+    authorize! grouping, to: :manage_repo_files?
     zip_name = "#{assignment.short_identifier}-#{grouping.group.group_name}"
     grouping.access_repo do |repo|
       if current_role.student? || params[:revision_identifier].nil?

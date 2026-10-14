@@ -4,6 +4,7 @@
 
 ### 🛡️ Security
 - Restricted the peer review table to instructors and graders (#8182)
+- Restricted submission repo files to instructors, assigned graders, and graders who manage submissions (#8211)
 
 ### 🚨 Breaking changes
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)

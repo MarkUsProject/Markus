@@ -877,6 +877,7 @@ describe SubmissionsController do
         result.save
         submission.save
       end
+      create(:ta_membership, role: grader, grouping: @grouping1)
     end
 
     describe '#set_resulting_marking_state' do
@@ -887,20 +888,20 @@ describe SubmissionsController do
     end
 
     it 'should be able to access the repository browser.' do
-      revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+      revision_identifier = @grouping1.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as grader,
              :repo_browser,
-             params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: Grouping.last.id,
+             params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
                        revision_identifier: revision_identifier,
                        path: '/' }
       expect(subject).to respond_with(:success)
     end
 
     it 'should render with the assignment_content layout' do
-      revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+      revision_identifier = @grouping1.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as grader,
              :repo_browser,
-             params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: Grouping.last.id,
+             params: { course_id: course.id, assignment_id: @assignment.id, grouping_id: @grouping1.id,
                        revision_identifier: revision_identifier,
                        path: '/' }
       expect(response).to render_template('layouts/assignment_content')
@@ -2576,6 +2577,93 @@ describe SubmissionsController do
       it 'redirects to the original result view' do
         expect(response).to redirect_to view_marks_course_result_path(course_id: assignment.course_id,
                                                                       id: submission.get_original_result.id)
+      end
+    end
+  end
+
+  describe 'accessing the files of a grouping' do
+    file_actions = { repo_browser: [:get_as, {}],
+                     revisions: [:get_as, {}],
+                     populate_file_manager: [:get_as, {}],
+                     download: [:get_as, { file_name: 'file.txt' }],
+                     downloads: [:get_as, {}],
+                     update_files: [:post_as, { delete_files: ['file.txt'] }] }
+
+    let(:assignment) { create(:assignment) }
+    let(:course) { assignment.course }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:base_params) { { course_id: course.id, assignment_id: assignment.id, grouping_id: grouping.id } }
+
+    before { submit_file(assignment, grouping, 'file.txt', 'content') }
+
+    def latest_revision
+      grouping.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+    end
+
+    shared_examples 'file access' do |status|
+      file_actions.each do |action, (method, params)|
+        it "responds with #{status} to ##{action}" do
+          public_send(method, role, action, params: base_params.merge(params))
+          expect(response).to have_http_status status
+        end
+      end
+    end
+
+    context 'as a ta that cannot manage submissions and is not assigned to the grouping' do
+      let(:role) { create(:ta) }
+
+      it_behaves_like 'file access', :forbidden
+
+      it 'does not delete files' do
+        expect { post_as role, :update_files, params: base_params.merge(delete_files: ['file.txt']) }
+          .not_to(change { latest_revision })
+      end
+
+      it 'does not add files' do
+        new_files = [fixture_file_upload('Shapes.java', 'text/java')]
+        expect { post_as role, :update_files, params: base_params.merge(new_files: new_files) }
+          .not_to(change { latest_revision })
+      end
+
+      it 'does not add folders' do
+        expect { post_as role, :update_files, params: base_params.merge(new_folders: ['new_folder']) }
+          .not_to(change { latest_revision })
+      end
+
+      it 'does not render a notebook preview' do
+        allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(true)
+        expect(controller).not_to receive(:html_content)
+        get_as role, :download, params: base_params.merge(file_name: 'example.ipynb', preview: true)
+        expect(response).to have_http_status :forbidden
+      end
+    end
+
+    context 'as a ta assigned to another grouping' do
+      let(:role) { create(:ta_membership, grouping: create(:grouping, assignment: assignment)).role }
+
+      it_behaves_like 'file access', :forbidden
+    end
+
+    context 'as a ta assigned to the grouping' do
+      let(:role) { create(:ta_membership, grouping: grouping).role }
+
+      it_behaves_like 'file access', :ok
+    end
+
+    context 'as a ta that can manage submissions' do
+      let(:role) { create(:ta, manage_submissions: true) }
+
+      it_behaves_like 'file access', :ok
+    end
+
+    context 'as a student passing the id of another grouping' do
+      let(:other_grouping) { create(:grouping_with_inviter, assignment: assignment) }
+
+      before { submit_file(assignment, other_grouping, 'other.txt', 'other content') }
+
+      it 'downloads a file from their own grouping' do
+        get_as other_grouping.inviter, :download, params: base_params.merge(file_name: 'other.txt')
+        expect(response.body).to eq 'other content'
       end
     end
   end
