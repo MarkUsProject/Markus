@@ -22,8 +22,7 @@ module Jupyter
     RESPONSE_BODY_TRUNCATE_LENGTH = 500
     JUPYTER_SESSION_TTL = 15.minutes
 
-    # these API endpoints authenticate with Jupyter/session tokens
-    # codeql[rb/csrf-protection-disabled]
+    # codeql[rb/csrf-protection-disabled] -- authenticated via header token, not cookies, so CSRF does not apply
     skip_before_action :verify_authenticity_token, only: [:create_session, :get_courses, :get_assignments, :submit],
                                                    raise: false
 
@@ -95,7 +94,7 @@ module Jupyter
       visible_assignment_ids =
         student
           .visible_assessments(assessment_type: Assignment.name)
-          .pludk(:id)
+          .select(:id)
 
       visible_assignments =
         course.assignments.where(id: visible_assignment_ids)

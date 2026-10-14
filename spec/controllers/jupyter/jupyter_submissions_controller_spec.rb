@@ -162,13 +162,7 @@ describe Jupyter::JupyterSubmissionsController do
 
   describe 'get_assignments' do
     let!(:student) { create(:student, course: course) }
-    let!(:assignment) do
-      create(
-        :assignment,
-        course: course,
-        assignment_properties_attributes: { api_submit: true }
-      )
-    end
+    let!(:assignment) { create(:assignment, course: course, assignment_properties_attributes: { api_submit: true }) }
 
     it 'returns visible API-enabled assignments for the selected course' do
       session_token = create_session_token!(user_name: student.user_name)
@@ -213,17 +207,79 @@ describe Jupyter::JupyterSubmissionsController do
       expect(response.parsed_body['assignments']).to be_empty
       expect(response.parsed_body['reason']).to eq('api_submission_disabled')
     end
+
+    it 'does not return assignments from the student\'s other courses' do
+      other_course = create(:course)
+      create(:student, user: student.user, course: other_course)
+      create(:assignment, course: other_course, assignment_properties_attributes: { api_submit: true })
+      session_token = create_session_token!(user_name: student.user_name)
+
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
+
+      expect(response).to have_http_status :ok
+      expect(response.parsed_body['assignments'].pluck('id')).to contain_exactly(assignment.id)
+    end
+
+    it 'returns 403 when the user is not a student in the given course' do
+      outsider = create(:student, course: create(:course))
+      session_token = create_session_token!(user_name: outsider.user_name)
+
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
+
+      expect(response).to have_http_status :forbidden
+    end
+
+    it 'returns 403 for a hidden student enrollment' do
+      student.update!(hidden: true)
+      session_token = create_session_token!(user_name: student.user_name)
+
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
+
+      expect(response).to have_http_status :forbidden
+    end
+
+    it 'returns 404 when the course cannot be found' do
+      session_token = create_session_token!(user_name: student.user_name)
+
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: -1 }
+
+      expect(response).to have_http_status :not_found
+    end
+
+    it 'returns 404 when course_id is missing' do
+      session_token = create_session_token!(user_name: student.user_name)
+
+      set_session_headers(session_token)
+      get :get_assignments
+
+      expect(response).to have_http_status :not_found
+    end
+
+    it 'returns 404 for a hidden course' do
+      course.update!(is_hidden: true)
+      session_token = create_session_token!(user_name: student.user_name)
+
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
+
+      expect(response).to have_http_status :not_found
+    end
+
+    it 'returns 401 when the session token is invalid' do
+      set_session_headers('not-a-real-session-token')
+      get :get_assignments, params: { course_id: course.id }
+
+      expect(response).to have_http_status :unauthorized
+    end
   end
 
   describe 'successful submissions' do
     context 'when the assignment only allows students to work alone' do
-      let(:assignment) do
-        create(
-          :assignment,
-          course: course,
-          assignment_properties_attributes: { api_submit: true }
-        )
-      end
+      let(:assignment) { create(:assignment, course: course, assignment_properties_attributes: { api_submit: true }) }
       let!(:student) { create(:student, course: course) }
 
       before { stub_notebook_contents }
@@ -248,7 +304,6 @@ describe Jupyter::JupyterSubmissionsController do
 
         grouping = student.accepted_grouping_for(assignment.id)
         expect(grouping).not_to be_nil
-
         grouping.access_repo do |repo|
           revision = repo.get_latest_revision
           files = revision.files_at_path(assignment.repository_folder)
@@ -278,11 +333,7 @@ describe Jupyter::JupyterSubmissionsController do
 
     context 'when the assignment allows groups of students' do
       let(:assignment) do
-        create(
-          :assignment,
-          course: course,
-          assignment_properties_attributes: { group_max: 3, api_submit: true }
-        )
+        create(:assignment, course: course, assignment_properties_attributes: { group_max: 3, api_submit: true })
       end
       let!(:student) { create(:student, course: course) }
 
@@ -344,9 +395,7 @@ describe Jupyter::JupyterSubmissionsController do
 
     it 'returns 400 when the base_url origin is not in the configured allowlist' do
       session_token = create_session_token!(user_name: student.user_name)
-      allow(Settings.jupyter_server).to receive(:hosts).and_return(
-        ['http://a-different-host.test']
-      )
+      allow(Settings.jupyter_server).to receive(:hosts).and_return(['http://a-different-host.test'])
 
       set_session_headers(session_token)
       post :submit, params: base_submit_params
@@ -368,9 +417,7 @@ describe Jupyter::JupyterSubmissionsController do
         'token_hash' => Digest::SHA256.hexdigest(token),
         'expires_at' => 1.minute.ago.to_i
       }
-
-      expired_token =
-        Rails.application.message_verifier(:jupyter_session).generate(payload)
+      expired_token = Rails.application.message_verifier(:jupyter_session).generate(payload)
 
       set_session_headers(expired_token)
       post :submit, params: base_submit_params
@@ -389,10 +436,7 @@ describe Jupyter::JupyterSubmissionsController do
 
     it 'returns 401 when session_token was issued for a different Jupyter origin' do
       second_origin = 'http://other-jupyter.example.test'
-      allow(Settings.jupyter_server).to receive(:hosts).and_return(
-        [origin, second_origin]
-      )
-
+      allow(Settings.jupyter_server).to receive(:hosts).and_return([origin, second_origin])
       session_token = create_session_token!(user_name: student.user_name)
 
       set_session_headers(session_token, base_url: "#{second_origin}/user/testuser/")
@@ -445,18 +489,11 @@ describe Jupyter::JupyterSubmissionsController do
       post :submit, params: base_submit_params
 
       expect(response).to have_http_status :forbidden
-      expect(response.parsed_body['message']).to eq(
-        I18n.t('submissions.api_submission_disabled')
-      )
+      expect(response.parsed_body['message']).to eq I18n.t('submissions.api_submission_disabled')
     end
 
     it 'returns 502 when fetching the notebook contents fails' do
-      enabled_assignment = create(
-        :assignment,
-        course: course,
-        assignment_properties_attributes: { api_submit: true }
-      )
-
+      enabled_assignment = create(:assignment, course: course, assignment_properties_attributes: { api_submit: true })
       session_token = create_session_token!(user_name: student.user_name)
       stub_notebook_contents(status: 404, body: 'Not Found')
 
@@ -467,21 +504,10 @@ describe Jupyter::JupyterSubmissionsController do
     end
 
     it 'returns 422 when the repository rejects the submission' do
-      required_assignment = create(
-        :assignment,
-        course: course,
-        assignment_properties_attributes: {
-          only_required_files: true,
-          api_submit: true
-        }
-      )
-
-      create(
-        :assignment_file,
-        assignment: required_assignment,
-        filename: 'required.ipynb'
-      )
-
+      required_assignment = create(:assignment, course: course,
+                                                assignment_properties_attributes: { only_required_files: true,
+                                                                                    api_submit: true })
+      create(:assignment_file, assignment: required_assignment, filename: 'required.ipynb')
       session_token = create_session_token!(user_name: student.user_name)
       stub_notebook_contents
 
@@ -493,12 +519,8 @@ describe Jupyter::JupyterSubmissionsController do
 
     it 'returns 404 when the assignment belongs to a different course' do
       other_course = create(:course)
-      other_assignment = create(
-        :assignment,
-        course: other_course,
-        assignment_properties_attributes: { api_submit: true }
-      )
-
+      other_assignment = create(:assignment, course: other_course,
+                                             assignment_properties_attributes: { api_submit: true })
       session_token = create_session_token!(user_name: student.user_name)
 
       set_session_headers(session_token)
