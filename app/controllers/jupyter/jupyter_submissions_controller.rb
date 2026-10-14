@@ -60,41 +60,29 @@ module Jupyter
     def get_courses
       courses = Course
                 .joins(:students)
-                .where(students: { user_id: current_user.id, hidden: false })
-                .where(is_hidden: false)
+                .where(students: { user_id: current_user.id, hidden: false },
+                       is_hidden: false)
                 .distinct
                 .order(:name)
+                .pluck_to_hash(:id, :name, :display_name)
 
       render json: {
-        status: 'success',
-        courses: courses.map do |course|
-          {
-            id: course.id,
-            name: course.name,
-            display_name: course.display_name
-          }
-        end,
-        reason: courses.empty? ? 'no_enrollment' : nil
+        status: :success,
+        courses: courses,
+        reason: courses.empty? ? :no_enrollment : nil
       }
     rescue StandardError => e
       render_error(e)
     end
 
     def get_assignments
-      course_id = params.require(:course_id)
-
-      course = Course.find_by(id: course_id, is_hidden: false)
-
+      course = Course.find_by(id: params[:course_id], is_hidden: false)
       if course.nil?
         raise ActiveRecord::RecordNotFound,
               I18n.t('jupyter.submit.course_not_found')
       end
 
-      student = course.students.find_by(
-        user_id: current_user.id,
-        hidden: false
-      )
-
+      student = course.students.find_by(user_id: current_user.id, hidden: false)
       if student.nil?
         raise ForbiddenError,
               I18n.t(
@@ -107,7 +95,7 @@ module Jupyter
       visible_assignment_ids =
         student
           .visible_assessments(assessment_type: Assignment.name)
-          .select(:id)
+          .pludk(:id)
 
       visible_assignments =
         course.assignments.where(id: visible_assignment_ids)
@@ -121,14 +109,14 @@ module Jupyter
       reason =
         if assignments.empty?
           if visible_assignments.exists?
-            'api_submission_disabled'
+            :api_submission_disabled
           else
-            'no_available_assignments'
+            :no_available_assignments
           end
         end
 
       render json: {
-        status: 'success',
+        status: :success,
         assignments: assignments.map do |assignment|
           {
             id: assignment.id,
@@ -196,10 +184,8 @@ module Jupyter
 
     def render_error(e)
       status = ERROR_STATUSES.find { |error_class, _| e.is_a?(error_class) }&.last
-
       if status.nil?
         Rails.logger.error("Jupyter submission failed: #{e.class}: #{e.message}\n#{e.backtrace&.join("\n")}")
-
         render json: {
           status: 'error',
           message: I18n.t('jupyter.submit.internal_error'),
@@ -226,20 +212,28 @@ module Jupyter
     # Resolves +current_user+ (via +@real_user+, mirroring Api::MainApiController#authenticate)
     # from a previously-issued session token, without touching the MarkUs session cookie.
     # Stashes the parsed Jupyter origin/base_path/token as ivars so +submit+ doesn't need to
-    # re-parse +jupyter.base_url+.
+    # re-parse the Jupyter base URL.
+    #
+    # Credentials are read from request headers rather than params so they don't end up in
+    # server or proxy access logs: the session token as "Authorization: Bearer <token>", and
+    # the Jupyter base URL and API token as "X-Jupyter-Base-Url" and "X-Jupyter-Token".
     def authenticate_jupyter_session!
-      params.require(:jupyter).require([:base_url, :token])
-      jupyter_info = params.require(:jupyter).permit(:base_url, :token)
-      session_token = params[:session_token]
+      session_token = request.authorization.to_s[/\ABearer (.+)\z/, 1]
+      base_url = request.headers['X-Jupyter-Base-Url']
+      jupyter_token = request.headers['X-Jupyter-Token']
+
+      if base_url.blank? || jupyter_token.blank?
+        raise BadRequestError, I18n.t('jupyter.submit.missing_jupyter_credentials')
+      end
 
       if session_token.blank?
         raise IdentityError, I18n.t('jupyter.submit.missing_session_token')
       end
 
-      origin, base_path = parse_jupyter_base_url!(jupyter_info[:base_url])
+      origin, base_path = parse_jupyter_base_url!(base_url)
       @jupyter_origin = origin
       @jupyter_base_path = base_path
-      @jupyter_token = jupyter_info[:token]
+      @jupyter_token = jupyter_token
       @real_user = decode_jupyter_session!(session_token, origin: origin, token: @jupyter_token)
     rescue StandardError => e
       render_error(e)
@@ -254,8 +248,7 @@ module Jupyter
     def submit_params
       params.require(:notebook_path)
 
-      params.permit(:notebook_path, :session_token, :course_id, :course, :assignment_id, :assignment,
-                    jupyter: [:base_url, :token])
+      params.permit(:notebook_path, :course_id, :course, :assignment_id, :assignment)
     end
 
     # +base_url+ is an absolute URL (e.g. "http://localhost:8888/user/foo/"). Splits it into
@@ -271,15 +264,12 @@ module Jupyter
       scheme = uri.scheme.downcase
       host = uri.host.downcase
       origin = if uri.port == uri.default_port
-                  "#{scheme}://#{host}"
+                 "#{scheme}://#{host}"
                else
-                  "#{scheme}://#{host}:#{uri.port}"
+                 "#{scheme}://#{host}:#{uri.port}"
                end
 
-      allowed_hosts = Settings.jupyter_server.hosts.map do |allowed_host|
-allowed_host.strip.sub(%r{/*\z}, '').downcase
-      end
-
+      allowed_hosts = Settings.jupyter_server.hosts.map { |h| h.strip.sub(%r{/*\z}, '').downcase }
       unless allowed_hosts.include?(origin)
         raise BadRequestError, I18n.t('jupyter.submit.origin_not_allowed', origin: origin)
       end
@@ -338,8 +328,7 @@ allowed_host.strip.sub(%r{/*\z}, '').downcase
         raise IdentityError, I18n.t('jupyter.submit.session_origin_mismatch')
       end
 
-      token_hash = Digest::SHA256.hexdigest(token)
-      unless ActiveSupport::SecurityUtils.secure_compare(payload['token_hash'], token_hash)
+      unless ActiveSupport::SecurityUtils.secure_compare(payload['token_hash'], Digest::SHA256.hexdigest(token))
         raise IdentityError, I18n.t('jupyter.submit.session_token_mismatch')
       end
 
@@ -415,9 +404,14 @@ allowed_host.strip.sub(%r{/*\z}, '').downcase
       request['Accept'] = 'application/json'
       request['Authorization'] = "token #{token}"
 
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10,
-                                                         read_timeout: 30) do |http|
-                   http.request(request)
+      response = Net::HTTP.start(
+        uri.hostname,
+        uri.port,
+        use_ssl: uri.scheme == 'https',
+        open_timeout: 10,
+        read_timeout: 30
+      ) do |http|
+        http.request(request)
       end
 
       unless response.is_a?(Net::HTTPSuccess)
@@ -429,17 +423,8 @@ allowed_host.strip.sub(%r{/*\z}, '').downcase
       JSON.parse(response.body)
     rescue JSON::ParserError => e
       raise error_class, I18n.t('jupyter.submit.invalid_json_response', uri: uri, error: e.message)
-    rescue Errno::ECONNREFUSED,
-           SocketError,
-           Net::OpenTimeout,
-           Net::ReadTimeout,
-           OpenSSL::SSL::SSLError => e
-      raise error_class,
-            I18n.t(
-              'jupyter.submit.connection_failed',
-              uri: uri,
-              error: e.message
-            )
+    rescue Errno::ECONNREFUSED, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
+      raise error_class, I18n.t('jupyter.submit.connection_failed', uri: uri, error: e.message)
     end
 
     # Truncates a Jupyter/JupyterHub error response body before it is embedded in a message
@@ -501,9 +486,7 @@ allowed_host.strip.sub(%r{/*\z}, '').downcase
 
       formatted_messages =
         Array(messages)
-          .map do |msg, other_info|
-          repository_message_text(msg, other_info, assignment.course)
-          end
+          .map { |msg, other_info| repository_message_text(msg, other_info, assignment.course) }
           .compact_blank
           .join(', ')
 

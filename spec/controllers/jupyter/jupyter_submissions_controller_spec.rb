@@ -11,8 +11,7 @@ describe Jupyter::JupyterSubmissionsController do
     {
       notebook_path: notebook_path,
       course_id: course.id,
-      assignment_id: assignment.id,
-      jupyter: jupyter_params
+      assignment_id: assignment.id
     }
   end
 
@@ -44,6 +43,14 @@ describe Jupyter::JupyterSubmissionsController do
     stub_hub_identity(user_name: user_name)
     post :create_session, params: { jupyter: jupyter_params }
     response.parsed_body.fetch('session_token')
+  end
+
+  # Sends the session token and Jupyter credentials the way the extension does: in request headers.
+  # Pass nil to omit a header.
+  def set_session_headers(session_token, base_url: self.base_url, token: self.token)
+    request.headers['Authorization'] = "Bearer #{session_token}" unless session_token.nil?
+    request.headers['X-Jupyter-Base-Url'] = base_url unless base_url.nil?
+    request.headers['X-Jupyter-Token'] = token unless token.nil?
   end
 
   before do
@@ -97,10 +104,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns the authenticated student courses' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :get_courses, params: {
-        session_token: session_token,
-        jupyter: jupyter_params
-      }
+      set_session_headers(session_token)
+      get :get_courses
 
       expect(response).to have_http_status :ok
 
@@ -119,10 +124,8 @@ describe Jupyter::JupyterSubmissionsController do
       student.update!(hidden: true)
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :get_courses, params: {
-        session_token: session_token,
-        jupyter: jupyter_params
-      }
+      set_session_headers(session_token)
+      get :get_courses
 
       expect(response).to have_http_status :ok
       expect(response.parsed_body['courses']).to be_empty
@@ -133,21 +136,25 @@ describe Jupyter::JupyterSubmissionsController do
       course.update!(is_hidden: true)
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :get_courses, params: {
-        session_token: session_token,
-        jupyter: jupyter_params
-      }
+      set_session_headers(session_token)
+      get :get_courses
 
       expect(response).to have_http_status :ok
       expect(response.parsed_body['courses']).to be_empty
       expect(response.parsed_body['reason']).to eq('no_enrollment')
     end
 
+    it 'ignores credentials sent as params instead of headers' do
+      session_token = create_session_token!(user_name: student.user_name)
+
+      get :get_courses, params: { session_token: session_token, jupyter: jupyter_params }
+
+      expect(response).to have_http_status :bad_request
+    end
+
     it 'returns 401 when the session token is invalid' do
-      post :get_courses, params: {
-        session_token: 'not-a-real-session-token',
-        jupyter: jupyter_params
-      }
+      set_session_headers('not-a-real-session-token')
+      get :get_courses
 
       expect(response).to have_http_status :unauthorized
     end
@@ -166,11 +173,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns visible API-enabled assignments for the selected course' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :get_assignments, params: {
-        course_id: course.id,
-        session_token: session_token,
-        jupyter: jupyter_params
-      }
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
 
       expect(response).to have_http_status :ok
 
@@ -190,11 +194,8 @@ describe Jupyter::JupyterSubmissionsController do
       assignment.update!(visible_on: 1.day.from_now)
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :get_assignments, params: {
-        course_id: course.id,
-        session_token: session_token,
-        jupyter: jupyter_params
-      }
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
 
       expect(response).to have_http_status :ok
       expect(response.parsed_body['assignments']).to be_empty
@@ -205,11 +206,8 @@ describe Jupyter::JupyterSubmissionsController do
       assignment.assignment_properties.update!(api_submit: false)
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :get_assignments, params: {
-        course_id: course.id,
-        session_token: session_token,
-        jupyter: jupyter_params
-      }
+      set_session_headers(session_token)
+      get :get_assignments, params: { course_id: course.id }
 
       expect(response).to have_http_status :ok
       expect(response.parsed_body['assignments']).to be_empty
@@ -233,7 +231,8 @@ describe Jupyter::JupyterSubmissionsController do
       it 'creates a solo group for the student and submits the notebook to the repo' do
         session_token = create_session_token!(user_name: student.user_name)
 
-        post :submit, params: base_submit_params.merge(session_token: session_token)
+        set_session_headers(session_token)
+        post :submit, params: base_submit_params
 
         expect(response).to have_http_status :ok
         body = response.parsed_body
@@ -260,7 +259,8 @@ describe Jupyter::JupyterSubmissionsController do
       it 'does not write to the MarkUs session cookie' do
         session_token = create_session_token!(user_name: student.user_name)
 
-        post :submit, params: base_submit_params.merge(session_token: session_token)
+        set_session_headers(session_token)
+        post :submit, params: base_submit_params
 
         expect(session[:user_name]).to be_nil
       end
@@ -268,7 +268,8 @@ describe Jupyter::JupyterSubmissionsController do
       it 'does not re-verify identity against JupyterHub when submitting' do
         session_token = create_session_token!(user_name: student.user_name)
 
-        post :submit, params: base_submit_params.merge(session_token: session_token)
+        set_session_headers(session_token)
+        post :submit, params: base_submit_params
 
         expect(response).to have_http_status :ok
         expect(WebMock).to have_requested(:get, "#{origin}/hub/api/user").once
@@ -291,7 +292,8 @@ describe Jupyter::JupyterSubmissionsController do
         expect(student.has_accepted_grouping_for?(assignment.id)).to be false
 
         session_token = create_session_token!(user_name: student.user_name)
-        post :submit, params: base_submit_params.merge(session_token: session_token)
+        set_session_headers(session_token)
+        post :submit, params: base_submit_params
 
         expect(response).to have_http_status :ok
         expect(student.has_accepted_grouping_for?(assignment.id)).to be true
@@ -311,26 +313,31 @@ describe Jupyter::JupyterSubmissionsController do
       expect(response).to have_http_status :service_unavailable
     end
 
-    it 'returns 401 when session_token is missing' do
+    it 'returns 401 when the Authorization header is missing' do
+      set_session_headers(nil)
       post :submit, params: base_submit_params
 
       expect(response).to have_http_status :unauthorized
     end
 
-    it 'returns 400 when a required jupyter field is missing' do
-      post :submit, params: base_submit_params.merge(
-        jupyter: jupyter_params.except(:token),
-        session_token: 'x'
-      )
+    it 'returns 401 when the Authorization header is not a Bearer token' do
+      set_session_headers(nil)
+      request.headers['Authorization'] = 'token x'
+      post :submit, params: base_submit_params
+
+      expect(response).to have_http_status :unauthorized
+    end
+
+    it 'returns 400 when a Jupyter credential header is missing' do
+      set_session_headers('x', token: nil)
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :bad_request
     end
 
     it 'returns 400 when base_url is not an absolute http(s) URL' do
-      post :submit, params: base_submit_params.merge(
-        jupyter: jupyter_params.merge(base_url: 'not-a-url'),
-        session_token: 'x'
-      )
+      set_session_headers('x', base_url: 'not-a-url')
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :bad_request
     end
@@ -341,17 +348,15 @@ describe Jupyter::JupyterSubmissionsController do
         ['http://a-different-host.test']
       )
 
-      post :submit, params: base_submit_params.merge(
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :bad_request
     end
 
     it 'returns 401 when session_token is garbage/tampered' do
-      post :submit, params: base_submit_params.merge(
-        session_token: 'not-a-real-session-token'
-      )
+      set_session_headers('not-a-real-session-token')
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :unauthorized
     end
@@ -367,9 +372,8 @@ describe Jupyter::JupyterSubmissionsController do
       expired_token =
         Rails.application.message_verifier(:jupyter_session).generate(payload)
 
-      post :submit, params: base_submit_params.merge(
-        session_token: expired_token
-      )
+      set_session_headers(expired_token)
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :unauthorized
     end
@@ -377,10 +381,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns 401 when session_token was issued for a different Jupyter token (spoofing attempt)' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        jupyter: jupyter_params.merge(token: 'a-different-token'),
-        session_token: session_token
-      )
+      set_session_headers(session_token, token: 'a-different-token')
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :unauthorized
     end
@@ -393,12 +395,8 @@ describe Jupyter::JupyterSubmissionsController do
 
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        jupyter: jupyter_params.merge(
-          base_url: "#{second_origin}/user/testuser/"
-        ),
-        session_token: session_token
-      )
+      set_session_headers(session_token, base_url: "#{second_origin}/user/testuser/")
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :unauthorized
     end
@@ -406,9 +404,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns 400 when a top-level required param is missing' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params
-        .except(:notebook_path)
-        .merge(session_token: session_token)
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params.except(:notebook_path)
 
       expect(response).to have_http_status :bad_request
     end
@@ -416,10 +413,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns 404 when the course cannot be found' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        course_id: -1,
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params.merge(course_id: -1)
 
       expect(response).to have_http_status :not_found
     end
@@ -428,9 +423,8 @@ describe Jupyter::JupyterSubmissionsController do
       outsider = create(:student, course: create(:course))
       session_token = create_session_token!(user_name: outsider.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :forbidden
     end
@@ -438,10 +432,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns 404 when the assignment cannot be found' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        assignment_id: -1,
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params.merge(assignment_id: -1)
 
       expect(response).to have_http_status :not_found
     end
@@ -449,9 +441,8 @@ describe Jupyter::JupyterSubmissionsController do
     it 'returns 403 when API submission is disabled for the assignment' do
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params
 
       expect(response).to have_http_status :forbidden
       expect(response.parsed_body['message']).to eq(
@@ -469,10 +460,8 @@ describe Jupyter::JupyterSubmissionsController do
       session_token = create_session_token!(user_name: student.user_name)
       stub_notebook_contents(status: 404, body: 'Not Found')
 
-      post :submit, params: base_submit_params.merge(
-        assignment_id: enabled_assignment.id,
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params.merge(assignment_id: enabled_assignment.id)
 
       expect(response).to have_http_status :bad_gateway
     end
@@ -496,10 +485,8 @@ describe Jupyter::JupyterSubmissionsController do
       session_token = create_session_token!(user_name: student.user_name)
       stub_notebook_contents
 
-      post :submit, params: base_submit_params.merge(
-        assignment_id: required_assignment.id,
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params.merge(assignment_id: required_assignment.id)
 
       expect(response).to have_http_status :unprocessable_content
     end
@@ -514,10 +501,8 @@ describe Jupyter::JupyterSubmissionsController do
 
       session_token = create_session_token!(user_name: student.user_name)
 
-      post :submit, params: base_submit_params.merge(
-        assignment_id: other_assignment.id,
-        session_token: session_token
-      )
+      set_session_headers(session_token)
+      post :submit, params: base_submit_params.merge(assignment_id: other_assignment.id)
 
       expect(response).to have_http_status :not_found
     end
