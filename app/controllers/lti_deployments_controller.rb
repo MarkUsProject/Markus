@@ -166,9 +166,8 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def public_jwk
-    key = OpenSSL::PKey::RSA.new File.read(LtiClient::KEY_PATH)
-    jwk = JWT::JWK.new(key)
-    render json: { keys: [jwk.export] }
+    response.set_header('Cache-Control', 'public, max-age=300')
+    render json: LtiKeyStore.public_jwks
   end
 
   def course_not_set_up
@@ -235,6 +234,11 @@ class LtiDeploymentsController < ApplicationController
     end
     lti_deployment = record
     lti_deployment.update!(course: new_course)
+    if Settings.autotest.default_url.present?
+      current_job = AutotestResetUrlJob.perform_later(new_course, Settings.autotest.default_url,
+                                                      request.protocol + request.host_with_port)
+      session[:job_id] = current_job.job_id if current_job
+    end
     redirect_to edit_course_path(new_course)
   end
 

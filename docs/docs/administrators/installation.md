@@ -163,6 +163,16 @@ MarkUs will run a lot faster in production if [assets are precompiled](https://g
 RAILS_ENV=production ./bin/bundle exec rails assets:precompile
 ```
 
+### Check your installation
+
+Once MarkUs is configured, run the following command as the `markus` user to check your settings (for example, that the log and file storage directories in your settings are accessible to MarkUs):
+
+```sh
+RAILS_ENV=production ./bin/bundle exec rails markus:check
+```
+
+Each check is reported as `PASS` or `FAIL`, and the command exits with a non-zero status if any check fails. We recommend running this command again after upgrading MarkUs or changing your settings.
+
 ## Configuring the web server
 
 MarkUs will run a [puma web server](https://puma.io/) on localhost but to make it accessible on the internet you will need to run your own web server (such as [Apache](https://httpd.apache.org/) or [nginx](https://www.nginx.com/)).

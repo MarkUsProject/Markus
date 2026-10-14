@@ -70,6 +70,12 @@ describe Api::UsersController do
             info = Hash.from_xml(response.body).dig('users', 'user')[0]
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
           end
+
+          it 'should return only requested fields' do
+            get :index, params: { fields: %w[id user_name] }
+            info = Hash.from_xml(response.body).dig('users', 'user')[0]
+            expect(info.keys).to match_array(%w[id user_name])
+          end
         end
 
         context 'expecting an json response' do
@@ -97,6 +103,12 @@ describe Api::UsersController do
             get :index
             info = response.parsed_body[0]
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+          end
+
+          it 'should return only requested fields' do
+            get :index, params: { fields: %w[id user_name] }
+            info = response.parsed_body[0]
+            expect(info.keys).to match_array(%w[id user_name])
           end
         end
       end
@@ -134,6 +146,12 @@ describe Api::UsersController do
             info = Hash.from_xml(response.body)['user']
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
           end
+
+          it 'should return only requested fields' do
+            get :show, params: { id: end_users[0].id, fields: %w[id user_name] }
+            info = Hash.from_xml(response.body)['user']
+            expect(info.keys).to match_array(%w[id user_name])
+          end
         end
 
         context 'expecting an json response' do
@@ -155,6 +173,11 @@ describe Api::UsersController do
             get :show, params: { id: end_users[0].id }
             info = response.parsed_body
             expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+          end
+
+          it 'should return only requested fields' do
+            get :show, params: { id: end_users[0].id, fields: %w[id user_name] }
+            expect(response.parsed_body.keys).to match_array(%w[id user_name])
           end
         end
       end

@@ -532,6 +532,22 @@ describe PeerReviewsController do
 
       it('should respond with 403') { expect(response).to have_http_status :forbidden }
     end
+
+    describe '#populate_table' do
+      before { get_as grader, :populate_table, params: { course_id: course.id, assignment_id: @pr_id } }
+
+      it('should respond with 200') { expect(response).to have_http_status :ok }
+    end
+  end
+
+  describe 'When the role is a student' do
+    let(:student) { create(:student) }
+
+    describe '#populate_table' do
+      before { get_as student, :populate_table, params: { course_id: course.id, assignment_id: @pr_id } }
+
+      it('should respond with 403') { expect(response).to have_http_status :forbidden }
+    end
   end
 
   describe 'When listing peer reviews in Peer Reviews tab' do

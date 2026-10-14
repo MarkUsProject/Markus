@@ -121,10 +121,13 @@ class SubmissionFile < ApplicationRecord
       retrieved_file = get_retrieved_file.call(repo)
     end
     if include_annotations
-      retrieved_file = add_annotations(retrieved_file)
+      retrieved_file = is_pdf? ? add_pdf_annotations(retrieved_file) : add_annotations(retrieved_file)
     end
     retrieved_file
   end
+
+  # The size, in PDF points, of the square that a PDF sticky note is anchored in.
+  PDF_ANNOTATION_ICON_SIZE = 20
 
   private
 
@@ -134,14 +137,9 @@ class SubmissionFile < ApplicationRecord
     file_contents.split("\n").each_with_index do |contents, index|
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
-          annotation_text = AnnotationText.find(annot.annotation_text_id)
-          text = annotation_text.content
-          unless annotation_text.deduction.nil? || annotation_text.deduction == 0
-            text += " [#{annotation_text.annotation_category.flexible_criterion.name}: -#{annotation_text.deduction}]"
-          end
           result.concat(I18n.t('annotations.download_submission_file.begin_annotation',
                                id: annot.annotation_number.to_s,
-                               text: text,
+                               text: annotation_content(annot),
                                comment_start: comment_syntax[0],
                                comment_end: comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
@@ -154,5 +152,79 @@ class SubmissionFile < ApplicationRecord
       result.concat(contents + "\n")
     end
     result
+  end
+
+  # Return the text of +annotation+ as it should appear in a downloaded file, including
+  # the criterion deduction if the annotation carries one.
+  def annotation_content(annotation)
+    annotation_text = annotation.annotation_text
+    content = annotation_text.content.to_s
+    return content if [nil, 0].include?(annotation_text.deduction)
+
+    "#{content} [#{annotation_text.annotation_category.flexible_criterion.name}: " \
+      "-#{annotation_text.deduction}]"
+  end
+
+  # Return when +annotation+ was last changed, for the :M (modification date) entry of its
+  # sticky note, which PDF viewers display alongside the note's text. An annotation's text
+  # can be edited after the annotation itself was placed, so use the later of the two.
+  def annotation_updated_at(annotation)
+    [annotation.updated_at, annotation.annotation_text.updated_at].max
+  end
+
+  # Return +file_contents+ (the contents of a PDF submission file) with this file's
+  # annotations added as PDF "sticky note" annotations, so that they are visible at the
+  # right location when the downloaded file is opened in a PDF viewer.
+  def add_pdf_annotations(file_contents)
+    annotations_by_page = annotations.where.not(page: nil)
+                                     .order(:annotation_number)
+                                     .includes(annotation_text: { annotation_category: :flexible_criterion })
+                                     .group_by(&:page)
+    return file_contents if annotations_by_page.empty?
+
+    pdf = CombinePDF.parse(file_contents)
+    # Prawn cannot modify an existing PDF, so the sticky notes are created in a separate,
+    # otherwise empty, document with one page per page of the submission file.
+    notes = Prawn::Document.new(skip_page_creation: true) do |doc|
+      pdf.pages.each_with_index do |page, index|
+        doc.start_new_page
+        annotations_by_page.fetch(index + 1, []).each do |annotation|
+          doc.text_annotation(pdf_annotation_rect(page, annotation),
+                              "(##{annotation.annotation_number}) #{annotation_content(annotation)}",
+                              Name: :Comment, Open: false, M: annotation_updated_at(annotation))
+        end
+      end
+    end
+
+    # CombinePDF drops annotations when injecting one page into another, so the :Annots
+    # entries are copied over directly instead.
+    pdf.pages.zip(CombinePDF.parse(notes.render).pages) do |page, notes_page|
+      next if notes_page[:Annots].blank?
+      existing = page[:Annots]
+      existing = existing[:referenced_object] if existing.is_a?(Hash)
+      page[:Annots] = (existing.is_a?(Array) ? existing : []) + notes_page[:Annots]
+    end
+    pdf.to_pdf
+  end
+
+  # Return the rectangle, in the PDF user space of +page+, that +annotation+'s sticky note
+  # should be anchored to. Annotation coordinates are stored as a fraction (scaled by 1e5)
+  # of the page as it is displayed, measured from its top left corner, so they need to be
+  # scaled and flipped, and rotated back into user space if the page carries a :Rotate entry.
+  def pdf_annotation_rect(page, annotation)
+    left, bottom, right, top = page.page_size.map(&:to_f)
+    rotation = page[:Rotate].to_i % 360
+    sideways = [90, 270].include?(rotation)
+    # (x, y) is the annotation's top left corner, in points from the displayed page's top left corner
+    x = [annotation.x1, annotation.x2].min / 1.0e5 * (sideways ? top - bottom : right - left)
+    y = [annotation.y1, annotation.y2].min / 1.0e5 * (sideways ? right - left : top - bottom)
+    centre_x, centre_y = case rotation
+                         when 90 then [left + y, bottom + x]
+                         when 180 then [right - x, bottom + y]
+                         when 270 then [right - y, top - x]
+                         else [left + x, top - y]
+                         end
+    offset = PDF_ANNOTATION_ICON_SIZE / 2.0
+    [centre_x - offset, centre_y - offset, centre_x + offset, centre_y + offset]
   end
 end

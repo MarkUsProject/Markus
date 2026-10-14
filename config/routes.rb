@@ -579,6 +579,7 @@ Rails.application.routes.draw do
         put 'update_autotest_url'
         get 'test_autotest_connection'
         put 'reset_autotest_connection'
+        put 'refresh_autotest_schema'
       end
       resources :tags, only: [:index, :create, :update, :destroy]
       resources :roles, except: [:new, :edit, :destroy] do
@@ -778,7 +779,11 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :annotation_categories, only: [:show, :destroy, :update]
+    resources :annotation_categories, only: [:show, :destroy, :update] do
+      member do
+        patch 'update_annotation_text_positions'
+      end
+    end
 
     resources :assignments do
       collection do

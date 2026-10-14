@@ -209,6 +209,121 @@ describe SubmissionsJob do
     end
   end
 
+  context 'when collecting submissions with assign_zero_to_empty set to true' do
+    let(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment) }
+    let(:criterion_count) { 3 }
+
+    before { create_list(:flexible_criterion, criterion_count, assignment: assignment) }
+
+    context 'when the collected submissions are empty' do
+      before { SubmissionsJob.perform_now(groupings, assign_zero_to_empty: true) }
+
+      it 'assigns a mark of zero for every criterion' do
+        groupings.each do |g|
+          result = g.reload.current_submission_used.get_latest_result
+          expect(result.marks.pluck(:mark)).to all(eq(0))
+          expect(result.marks.count).to eq(assignment.ta_criteria.count)
+        end
+      end
+
+      it 'sets the marking state of the result to complete' do
+        groupings.each do |g|
+          result = g.reload.current_submission_used.get_latest_result
+          expect(result.marking_state).to eq(Result::MARKING_STATES[:complete])
+        end
+      end
+    end
+
+    context 'when assigning marks fails' do
+      it 'adds a warning containing the grouping name and error' do
+        grouping = groupings.first
+        error = ActiveRecord::ActiveRecordError.new('failed to assign marks')
+        allow_any_instance_of(Result).to receive(:update!)
+          .with(marking_state: Result::MARKING_STATES[:complete])
+          .and_raise(error)
+        expect(Rails.logger).to receive(:error).with("#{grouping.group.group_name}: #{error}")
+
+        SubmissionsJob.perform_now([grouping], assign_zero_to_empty: true)
+      end
+    end
+
+    context 'when the collected submissions are not empty' do
+      before do
+        groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', 1.hour.ago.to_s, 'test.txt', 'aaa') }
+        SubmissionsJob.perform_now(groupings, assign_zero_to_empty: true)
+      end
+
+      it 'does not assign any marks' do
+        groupings.each do |g|
+          result = g.reload.current_submission_used.get_latest_result
+          expect(result.marks.pluck(:mark)).to all(be_nil)
+        end
+      end
+
+      it 'leaves the marking state of the result as incomplete' do
+        groupings.each do |g|
+          result = g.reload.current_submission_used.get_latest_result
+          expect(result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
+        end
+      end
+    end
+
+    context 'when the assignment has no criteria' do
+      let(:criterion_count) { 0 }
+
+      before { SubmissionsJob.perform_now(groupings, assign_zero_to_empty: true) }
+
+      it 'sets the marking state of the result to complete' do
+        groupings.each do |g|
+          result = g.reload.current_submission_used.get_latest_result
+          expect(result.marking_state).to eq(Result::MARKING_STATES[:complete])
+        end
+      end
+    end
+
+    context 'when retain_existing_grading is also set to true' do
+      let(:groupings) { create_list(:grouping_with_inviter_and_submission, 3, assignment: assignment) }
+
+      before do
+        groupings.each do |g|
+          g.current_submission_used.get_latest_result.marks.each { |mark| mark.update!(mark: 1) }
+        end
+        SubmissionsJob.perform_now(groupings, retain_existing_grading: true, assign_zero_to_empty: true)
+      end
+
+      it 'does not overwrite the retained marks when the new submission is empty' do
+        groupings.each do |g|
+          result = g.reload.current_submission_used.get_latest_result
+          expect(result.marks.pluck(:mark)).to all(eq(1))
+          expect(result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
+        end
+      end
+    end
+  end
+
+  context 'when collecting empty submissions with assign_zero_to_empty set to false' do
+    let(:groupings) { create_list(:grouping_with_inviter, 3, assignment: assignment) }
+
+    before do
+      create_list(:flexible_criterion, 3, assignment: assignment)
+      SubmissionsJob.perform_now(groupings)
+    end
+
+    it 'does not assign any marks' do
+      groupings.each do |g|
+        result = g.reload.current_submission_used.get_latest_result
+        expect(result.marks.pluck(:mark)).to all(be_nil)
+      end
+    end
+
+    it 'leaves the marking state of the result as incomplete' do
+      groupings.each do |g|
+        result = g.reload.current_submission_used.get_latest_result
+        expect(result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
+      end
+    end
+  end
+
   context 'when notify_socket flag is set to true and enqueuing_user contains a valid user' do
     let(:instructor) { create(:instructor) }
     let(:instructor2) { create(:instructor) }

@@ -14,6 +14,35 @@
 
 ### 🔧 Internal changes
 
+## [v2.10.5]
+
+### 🛡️ Security
+- Restricted the peer review table to instructors and graders (#8182)
+- Restricted submission repo files to instructors, assigned graders, and graders who manage submissions (#8211)
+
+### ✨ New features and improvements
+- Added HTML file previewing functionality to the `TextViewer` component (#8210)
+- Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
+- Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
+- Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
+- Added annotations as sticky notes to PDF submission files downloaded with annotations included (#8179)
+- Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
+- Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
+- Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
+
+### 🐛 Bug fixes
+- Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
+- Fixed the `markus:check` rake task crashing instead of reporting configuration errors; it now reports the result of every check and resolves relative paths from the MarkUs root (#8206)
+- Fixed `rails_performance.enabled: false` not disabling rails_performance request tracking and resource monitoring (#8205)
+- Fixed groups sharing one git repository when a new or working-alone group reused a taken repository name (#8187)
+- Fixed changing a course's autotester url cancelling in-progress test runs in every course (#8202)
+- Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
+- Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
+- Fixed API user and course endpoints ignoring the optional `field`s parameter (#8102)
+
+### 🔧 Internal changes
+- Updated Rails and `@rails/actioncable` to v8.1.4 (#8200)
+
 ## [v2.10.4]
 
 ### 🐛 Bug fixes

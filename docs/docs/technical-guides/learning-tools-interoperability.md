@@ -60,7 +60,7 @@ on a schedule determined by your system administrator.
 
 ### Canvas
 
-Once installed in your course, a 'Launch Markus' page will appear in your
+Once installed in your course, a 'MarkUs' page will appear in your
 course's navigation (disabled by default), and needs to be added to the navigation:
 
 ![Canvas MarkUs Navigation](/images/canvas-markus-nav.png)
@@ -74,7 +74,7 @@ contact your Canvas administrators.
 
 Once MarkUs is configured with Canvas, an association between your
 Canvas course and your MarkUs course must be made.
-Click 'Launch MarkUs' in your Canvas course. If you are not logged in to MarkUs,
+Click 'MarkUs' in your Canvas course. If you are not logged in to MarkUs,
 you will be prompted to do so. Once you are logged in, you will be presented with
 a list of MarkUs courses for which you are an instructor. Select the course that matches your Canvas
 course and submit the form.
