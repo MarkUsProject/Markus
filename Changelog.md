@@ -29,7 +29,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
-- Fixed PDF files failing to display in older browsers (e.g. Firefox 140 ESR) by using the pdf.js legacy build (#XXXX)
+- Fixed PDF files failing to display in older browsers (e.g. Firefox 140 ESR) by using the pdf.js legacy build (#8218)
 - Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
 - Fixed the `markus:check` rake task crashing instead of reporting configuration errors; it now reports the result of every check and resolves relative paths from the MarkUs root (#8206)
 - Fixed `rails_performance.enabled: false` not disabling rails_performance request tracking and resource monitoring (#8205)
