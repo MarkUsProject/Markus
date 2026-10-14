@@ -11,17 +11,19 @@ module Api
       else
         courses = get_collection(current_user.visible_courses)
       end
+      fields = get_fields || return
       respond_to do |format|
-        format.xml { render xml: courses.to_xml(only: DEFAULT_FIELDS, root: 'courses', skip_types: 'true') }
-        format.json { render json: courses.to_json(only: DEFAULT_FIELDS) }
+        format.xml { render xml: courses.to_xml(only: fields, root: 'courses', skip_types: 'true') }
+        format.json { render json: courses.to_json(only: fields) }
       end
     end
 
     def show
       course = current_course
+      fields = get_fields || return
       respond_to do |format|
-        format.xml { render xml: course.to_xml(only: DEFAULT_FIELDS, root: 'course', skip_types: 'true') }
-        format.json { render json: course.to_json(only: DEFAULT_FIELDS) }
+        format.xml { render xml: course.to_xml(only: fields, root: 'course', skip_types: 'true') }
+        format.json { render json: course.to_json(only: fields) }
       end
     end
 
@@ -98,6 +100,28 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
         rescue StandardError => e
           render 'shared/http_status', locals: { code: '500', message: e.to_s }, status: :internal_server_error
+        end
+      else
+        render 'shared/http_status', locals: { code: '422', message:
+          I18n.t('automated_tests.no_autotest_settings') }, status: :unprocessable_content
+      end
+    end
+
+    def refresh_autotest_schema
+      settings = current_course.autotest_setting
+      if settings&.url
+        begin
+          settings.update!(schema: get_schema(settings))
+          render 'shared/http_status', locals: { code: '200', message:
+            I18n.t('automated_tests.manage_connection.refresh_schema_success') }, status: :ok
+        rescue ActiveRecord::RecordInvalid => e
+          render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
+        rescue StandardError => e
+          render 'shared/http_status',
+                 locals: { code: '500',
+                           message: I18n.t('automated_tests.manage_connection.refresh_schema_failure',
+                                           error: e.to_s) },
+                 status: :internal_server_error
         end
       else
         render 'shared/http_status', locals: { code: '422', message:

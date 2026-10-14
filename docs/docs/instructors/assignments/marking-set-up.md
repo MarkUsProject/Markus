@@ -69,10 +69,11 @@ However, the modal offers a few additional options for collection:
    1. When this box is checked, MarkUs provides the option to **retain grading data** (marks, annotations, feedback files, and test results) on any collected submissions that have it. **WARNING:** This option is true by default and disabling it will result in the permanent loss of all grading data on recollected submissions.
       - For any extra marks or deductions on a graded submission, point-based extra marks will be retained, but percentage-based penalties will not. The decision to apply percentage-based penalties is solely at the instructor's discretion during collection. This means that two identical submissions may receive different percentage penalties at collection time, depending on the assignment's submission rule.
 3. **Apply Late Penalty** - this option will only appear when collecting the most recent submissions. When collecting by due date, the late penalties are always applied. If it is unchecked, MarkUs will not apply penalties or deduct grace credits for submissions created after the due date.
+4. **Assign grade of 0 to collected submissions that are empty.** - this option is checked by default. When it is checked, any submission collected with no files is given a mark of 0 for every criterion and its marking state is set to "Completed".
 
 Once the files for an assignment have been collected, the marking state of the submission will change from "Not Collected" to "In Progress".
 
-> 🗒️ **NOTE:** Scanned exams are always collected based on the most recently submitted files, so only the recollect option is available.
+> 🗒️ **NOTE:** Scanned exams are always collected based on the most recently submitted files, so only the recollect and empty submission options are available.
 
 ### Collecting Specific Revisions
 

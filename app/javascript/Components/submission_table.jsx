@@ -327,7 +327,13 @@ class RawSubmissionTable extends React.Component {
   };
 
   // Submission table actions
-  collectSubmissions = (override, collect_current, apply_late_penalty, retain_existing_grading) => {
+  collectSubmissions = (
+    override,
+    collect_current,
+    apply_late_penalty,
+    retain_existing_grading,
+    assign_zero_to_empty
+  ) => {
     this.setState({showCollectSubmissionsModal: false});
     $.post({
       url: Routes.collect_submissions_course_assignment_submissions_path(
@@ -340,6 +346,7 @@ class RawSubmissionTable extends React.Component {
         collect_current: collect_current,
         apply_late_penalty: apply_late_penalty,
         retain_existing_grading: retain_existing_grading,
+        assign_zero_to_empty: assign_zero_to_empty,
       },
     });
   };

@@ -3,10 +3,20 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted the peer review table to instructors and graders (#8182)
+- Restricted submission repo files to instructors, assigned graders, and graders who manage submissions (#8211)
 
 ### 🚨 Breaking changes
+- Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
+- Added HTML file previewing functionality to the `TextViewer` component (#8210)
+- Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
+- Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
+- Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
+- Added annotations as sticky notes to PDF submission files downloaded with annotations included (#8179)
+- Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
@@ -14,15 +24,25 @@
 - Added an assignment summary table filter that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8052)
 - Added a submissions table filter option that lets graders with manage submissions permission view either all submissions or only their assigned submissions (#8047)
 - Added a submission scope filter to the grading view so TAs with manage submissions permission can navigate either all submissions or only their assigned submissions (#8046)
+- Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
+- Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
+- Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
-- Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
-- Fixed production webpack builds compiling JSX in development mode (#8150)
-- Enforce privileged LTI launch role for course linking and creation (#8130)
+- Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
+- Fixed the `markus:check` rake task crashing instead of reporting configuration errors; it now reports the result of every check and resolves relative paths from the MarkUs root (#8206)
+- Fixed `rails_performance.enabled: false` not disabling rails_performance request tracking and resource monitoring (#8205)
+- Fixed groups sharing one git repository when a new or working-alone group reused a taken repository name (#8187)
+- Fixed changing a course's autotester url cancelling in-progress test runs in every course (#8202)
+- Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
+- Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
 
 ### 📚 Documentation changes
+- Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
+- Refreshed apt package lists before installing system dependencies in CI (#8212)
+- Updated Rails and `@rails/actioncable` to v8.1.4 (#8200)
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
 - Removed dead code in repository files (#8065)
@@ -31,6 +51,27 @@
 - Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
 - Added variable to enable simplecov in `spec_helper.rb` if and only if COVERAGE=true (#7960)
 - Added missing foreign keys in seed data (#8006)
+- Added tests for `AnnotationCategory` to cover an error when uploading a CSV for `add_by_row` (#8177)
+- Added tests for timed and untimed extensions returned by `GroupsController#index` (#8180)
+- Added tests for `StudentsController#download` to test downloading a CSV or YAML of students (#8183)
+- Added tests for `ExamTemplatesController#show_cover` for existing and missing cover pages (#8185)
+
+## [v2.10.4]
+
+### 🐛 Bug fixes
+- Fixed marks spreadsheet release emails being sent to students of other grade entry forms (#8174)
+- Fixed releasing and unreleasing marks spreadsheet grades failing with a `NOT NULL` violation on `grade_entry_students.assessment_id`, and limited marks release emails to successful releases (#8173)
+
+## [v2.10.3]
+
+### ✨ New features and improvements
+- Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
+
+### 🐛 Bug fixes
+- Fixed API user and course endpoints ignoring the optional `field`s parameter (#8102)
+- Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
+- Fixed production webpack builds compiling JSX in development mode (#8150)
+- Enforce privileged LTI launch role for course linking and creation (#8130)
 
 ## [v2.10.2]
 
@@ -56,7 +97,6 @@
 - Forward the test batch id to the autotester so AI grading telemetry can attribute mass-grading runs (#7991)
 - Removed Graders Subcomponent and added a Graders column in the Assignment Grades tab (#7967)
 - Added GET /test_runs API route (#8055)
-- Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
 
 ### 🐛 Bug fixes
 - Fixed bulk grouping deletion assignment scoping (#8134)

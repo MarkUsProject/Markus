@@ -54,6 +54,17 @@ class SubmissionsJob < ApplicationJob
           assignment.submission_rule.apply_submission_rule(new_submission)
         end
 
+        if options[:assign_zero_to_empty] && !options[:retain_existing_grading] && new_submission.is_empty
+          begin
+            result = new_submission.get_latest_result
+            result.create_marks # creates marks for any criteria that don't have one yet
+            result.marks.update_all(mark: 0)
+            result.update!(marking_state: Result::MARKING_STATES[:complete])
+          rescue ActiveRecord::ActiveRecordError => e
+            add_warning_messages("#{grouping.group.group_name}: #{e}")
+          end
+        end
+
         grouping.is_collected = true
         grouping.save
         add_warning_messages(grouping.errors.full_messages) if grouping.errors.present?

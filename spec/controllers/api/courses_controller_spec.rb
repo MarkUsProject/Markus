@@ -33,6 +33,12 @@ describe Api::CoursesController do
           keys = Hash.from_xml(response.body).dig('courses', 'course').keys.map(&:to_sym)
           expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
         end
+
+        it 'should return only requested fields' do
+          get :index, params: { fields: %w[id name] }
+          keys = Hash.from_xml(response.body).dig('courses', 'course').keys
+          expect(keys).to match_array(%w[id name])
+        end
       end
 
       context 'with multiple courses' do
@@ -92,6 +98,12 @@ describe Api::CoursesController do
           get :index
           keys = response.parsed_body&.first&.keys&.map(&:to_sym)
           expect(keys).to match_array Api::CoursesController::DEFAULT_FIELDS
+        end
+
+        it 'should return only requested fields' do
+          get :index, params: { fields: %w[id name] }
+          keys = response.parsed_body&.first&.keys
+          expect(keys).to match_array(%w[id name])
         end
       end
 
@@ -157,6 +169,11 @@ describe Api::CoursesController do
       put :reset_autotest_connection, params: { id: course.id }
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'should fail to authenticate a PUT refresh_autotest_schema request' do
+      put :refresh_autotest_schema, params: { id: course.id }
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   context 'An instructor user in the course' do
@@ -186,6 +203,12 @@ describe Api::CoursesController do
         expect(Time.zone.parse(response.parsed_body['start_at'])).to be_within(1.second).of(start_time)
         expect(Time.zone.parse(response.parsed_body['end_at'])).to be_within(1.second).of(end_time)
       end
+
+      it 'returns only requested fields' do
+        get :show, params: { id: course.id, fields: %w[id name] }
+
+        expect(response.parsed_body.keys).to match_array(%w[id name])
+      end
     end
 
     it 'should fail to authenticate a POST create request' do
@@ -195,6 +218,11 @@ describe Api::CoursesController do
 
     it 'should fail to authenticate a PUT update request' do
       get :update, params: { id: course.id }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'should fail to authenticate a PUT refresh_autotest_schema request' do
+      put :refresh_autotest_schema, params: { id: course.id }
       expect(response).to have_http_status(:forbidden)
     end
 
@@ -526,6 +554,43 @@ describe Api::CoursesController do
 
         it 'should fail when an error is raised' do
           allow(AutotestResetUrlJob).to receive(:perform_now).and_raise(StandardError)
+          subject
+          expect(response).to have_http_status(:internal_server_error)
+        end
+      end
+    end
+
+    describe '#refresh_autotest_schema' do
+      subject { put :refresh_autotest_schema, params: { id: course.id } }
+
+      context 'there is no autotest_setting set' do
+        it 'should return unprocessable_entity' do
+          subject
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+      end
+
+      context 'there is an autotest_setting' do
+        include_context 'course with an autotest setting'
+        let(:new_schema) { { 'title' => 'new' }.to_json }
+
+        it 'should store the schema fetched from the autotester' do
+          allow(controller).to receive(:get_schema).and_return(new_schema)
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(course.autotest_setting.reload.schema).to eq new_schema
+        end
+
+        it 'should return unprocessable_entity when the record is invalid' do
+          allow(controller).to receive(:get_schema).and_return(new_schema)
+          allow_any_instance_of(AutotestSetting).to receive(:update!)
+            .and_raise(ActiveRecord::RecordInvalid.new(AutotestSetting.new))
+          subject
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'should fail when the autotester cannot be reached' do
+          allow(controller).to receive(:get_schema).and_raise(StandardError, 'down')
           subject
           expect(response).to have_http_status(:internal_server_error)
         end

@@ -396,7 +396,53 @@ describe GradeEntryFormsController do
       @this_form = grade_entry_form_with_data
     end
 
+    let(:other_form) { create(:grade_entry_form_with_data, course: course) }
+    let(:other_form_student) do
+      other_form.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
+    end
+
     around { |example| perform_enqueued_jobs(&example) }
+
+    it 'releases the marks of the selected students' do
+      post_as user, :update_grade_entry_students,
+              params: { id: @this_form.id,
+                        course_id: course.id,
+                        students: [@student.id],
+                        release_results: 'true' }
+      expect(@student.reload).to have_attributes(released_to_student: true, assessment_id: @this_form.id)
+    end
+
+    it 'unreleases the marks of the selected students' do
+      @student.update!(released_to_student: true)
+      post_as user, :update_grade_entry_students,
+              params: { id: @this_form.id,
+                        course_id: course.id,
+                        students: [@student.id],
+                        release_results: 'false' }
+      expect(@student.reload).to have_attributes(released_to_student: false, assessment_id: @this_form.id)
+    end
+
+    it 'does not send emails when the marks are unreleased' do
+      @student.update!(released_to_student: true)
+      expect do
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          course_id: course.id,
+                          students: [@student.id],
+                          release_results: 'false' }
+      end.not_to(change { ActionMailer::Base.deliveries.count })
+    end
+
+    it 'does not send emails when the marks fail to be released' do
+      allow(GradeEntryStudent).to receive(:upsert_all).and_raise(ActiveRecord::NotNullViolation)
+      expect do
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          course_id: course.id,
+                          students: [@student.id],
+                          release_results: 'true' }
+      end.not_to(change { ActionMailer::Base.deliveries.count })
+    end
 
     it 'sends an email to a student who has grades for this form if only one exists' do
       expect do
@@ -439,6 +485,25 @@ describe GradeEntryFormsController do
                           students: [@student.id, @another.id],
                           release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    it 'does not send emails to students of another grade entry form' do
+      expect do
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          course_id: course.id,
+                          students: [other_form_student.id],
+                          release_results: 'true' }
+      end.not_to(change { ActionMailer::Base.deliveries.count })
+    end
+
+    it 'does not release the marks of students of another grade entry form' do
+      post_as user, :update_grade_entry_students,
+              params: { id: @this_form.id,
+                        course_id: course.id,
+                        students: [other_form_student.id],
+                        release_results: 'true' }
+      expect(other_form_student.reload.released_to_student).to be false
     end
   end
 

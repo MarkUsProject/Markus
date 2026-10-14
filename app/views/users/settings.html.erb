@@ -1,11 +1,21 @@
 <% content_for :title, t('users.account_settings') %>
 <%= form_with url: 'update_settings', method: 'patch', model: @current_user, scope: :user, local: true do |f| %>
   <div class="inline-labels">
-    <%= f.label :time_zone, User.human_attribute_name(:time_zone) %>
-    <%= f.time_zone_select :time_zone, nil, default: @current_user.time_zone %>
+    <%= f.label :user_name ,User.human_attribute_name(:user_name) %>
+    <%= f.text_field :user_name, value: @current_user.user_name, readonly: true %>
+    <%= f.label :first_name, User.human_attribute_name(:first_name) %>
+    <%= f.text_field :first_name, value: @current_user.first_name, readonly: true %>
+    <%= f.label :last_name, User.human_attribute_name(:last_name) %>
+    <%= f.text_field :last_name, value: @current_user.last_name, readonly: true %>
     <%= f.label :display_name, User.human_attribute_name(:display_name) %>
     <%= f.text_field :display_name,
                      value: @current_user.display_name %>
+    <%= f.label :id_number, User.human_attribute_name(:id_number) %>
+    <%= f.text_field :id_number, value: @current_user.id_number, readonly: true %>
+    <%= f.label :email, User.human_attribute_name(:email) %>
+    <%= f.text_field :email, value: @current_user.email, readonly: true %>
+    <%= f.label :time_zone, User.human_attribute_name(:time_zone) %>
+    <%= f.time_zone_select :time_zone, nil, default: @current_user.time_zone %>
 
     <%= f.label :locale, User.human_attribute_name(:locale) %>
     <%= f.select :locale, options_for_select(I18n.available_locales, selected: "#{@current_user.locale}") %>

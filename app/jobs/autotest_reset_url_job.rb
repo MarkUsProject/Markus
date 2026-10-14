@@ -54,8 +54,7 @@ class AutotestResetUrlJob < ApplicationJob
   def perform(course, url, host_with_port, refresh: false)
     if url.blank?
       course.update!(autotest_setting_id: nil)
-      TestRun.where(status: :in_progress).update_all(status: :cancelled)
-      TestRun.update_all(autotest_test_id: nil)
+      reset_test_runs(course)
       AssignmentProperties.where(assessment_id: course.assignments.ids).update_all(remote_autotest_settings_id: nil)
     else
       autotest_setting = AutotestSetting.find_or_create_by(url: url.strip)
@@ -63,8 +62,7 @@ class AutotestResetUrlJob < ApplicationJob
       errors = []
       if refresh || autotest_setting.id != course.autotest_setting&.id
         course.update!(autotest_setting_id: autotest_setting.id)
-        TestRun.where(status: :in_progress).update_all(status: :cancelled)
-        TestRun.update_all(autotest_test_id: nil)
+        reset_test_runs(course)
         AssignmentProperties.where(assessment_id: course.assignments.ids).update_all(remote_autotest_settings_id: nil)
         course.assignments
               .joins(:assignment_properties)
@@ -78,5 +76,14 @@ class AutotestResetUrlJob < ApplicationJob
         raise errors.join("\n") unless errors.empty?
       end
     end
+  end
+
+  private
+
+  # Cancel in-progress test runs and clear their autotester ids, for this course only.
+  def reset_test_runs(course)
+    test_runs = course.test_runs
+    test_runs.where(status: :in_progress).update_all(status: :cancelled)
+    test_runs.update_all(autotest_test_id: nil)
   end
 end

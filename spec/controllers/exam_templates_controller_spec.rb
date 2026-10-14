@@ -160,6 +160,39 @@ describe ExamTemplatesController do
       end
     end
 
+    describe '#show_cover' do
+      subject(:show_cover) do
+        get_as user, :show_cover, params: { course_id: course.id, id: exam_template.id }
+      end
+
+      let(:cover_file) { File.join(exam_template.base_path, 'cover.jpg') }
+
+      before { FileUtils.rm_f(cover_file) }
+      after { FileUtils.rm_f(cover_file) }
+
+      context 'when the cover page exists' do
+        before do
+          FileUtils.cp(Rails.root.join('spec/fixtures/files/page_white_text.png'), cover_file)
+        end
+
+        it 'sends the cover page inline' do
+          show_cover
+
+          expect(response).to have_http_status :ok
+          expect(response.headers['Content-Disposition']).to include('inline', 'cover.jpg')
+          expect(response.body).to eq File.binread(cover_file)
+        end
+      end
+
+      context 'when the cover page does not exist' do
+        it 'responds with 404' do
+          show_cover
+
+          expect(response).to have_http_status :not_found
+        end
+      end
+    end
+
     describe '#destroy' do
       before { delete_as user, :destroy, params: { id: exam_template.id, course_id: course.id } }
 

@@ -16,7 +16,8 @@ function getFile(filename, pdfViewer) {
     <%= @exam_template.id %>,
     { file_name: filename, show_in_browser: true }
   );
-  pdfjs.getDocument({url: path}).promise.then(function (pdfDocument) {
+  pdfjs.getDocument({url: path, wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`})
+       .promise.then(function (pdfDocument) {
     pdfViewer.setDocument(pdfDocument);
   });
   $('#copy_number').focus();

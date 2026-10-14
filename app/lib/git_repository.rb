@@ -45,14 +45,13 @@ class GitRepository < Repository::AbstractRepository
   # location 'connect_string'
   def self.create(connect_string, course)
     if GitRepository.repository_exists?(connect_string)
-      raise RepositoryCollision, "There is already a repository at #{connect_string}"
-    end
-    if File.exist?(connect_string)
-      raise IOError, "Could not create a repository at #{connect_string}: some directory with same name exists
-                         already"
+      raise Repository::RepositoryCollision, "There is already a repository at #{connect_string}"
     end
     # Repo is created bare, then clone it in the repository storage location
     barepath = bare_path(connect_string)
+    if File.exist?(barepath)
+      raise IOError, "Could not create a repository at #{barepath}: a directory with the same name already exists"
+    end
     self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
       FileUtils.mkdir_p(File.dirname(barepath))
       Rugged::Repository.init_at(barepath, :bare)
@@ -300,17 +299,14 @@ class GitRepository < Repository::AbstractRepository
   end
   alias download_as_string stringify # create alias
 
-  # Static method: Reports if a Git repository exists.
-  # Done in a similarly hacky method as the git side.
-  # TODO - find a better way to do this.
-  def self.repository_exists?(repos_path)
-    repos_meta_files_exist = false
-    if File.exist?(File.join(repos_path, '.git/config')) &&
-        File.exist?(File.join(repos_path, '.git/description')) &&
-        File.exist?(File.join(repos_path, '.git/HEAD'))
-      repos_meta_files_exist = true
-    end
-    repos_meta_files_exist
+  # Static method: Reports if the bare Git repository for connect_string exists.
+  def self.repository_exists?(connect_string)
+    git_dir_exists?(bare_path(connect_string))
+  end
+
+  # Static method: Reports if git_dir holds Git metadata (a bare repo or a .git directory).
+  def self.git_dir_exists?(git_dir)
+    %w[config description HEAD].all? { |file| File.exist?(File.join(git_dir, file)) }
   end
 
   # Returns a Repository::TransAction object, to work with. Do operations,
@@ -432,7 +428,7 @@ class GitRepository < Repository::AbstractRepository
   def non_bare_repo
     return @non_bare_repo unless @non_bare_repo.nil?
 
-    if GitRepository.repository_exists?(tmp_repo)
+    if GitRepository.git_dir_exists?(File.join(tmp_repo, '.git'))
       begin
         @non_bare_repo = Rugged::Repository.new(tmp_repo)
         # make sure working directory is up-to-date

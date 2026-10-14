@@ -426,6 +426,20 @@ describe Result do
           expect { result.generate_print_pdf }.to raise_error(RuntimeError)
         end
       end
+
+      context 'when nbconvert is disabled' do
+        before { allow(Rails.application.config).to receive(:nbconvert_enabled).and_return(false) }
+
+        it 'does not run nbconvert' do
+          expect(Open3).not_to receive(:capture3)
+          result.generate_print_pdf
+        end
+
+        it 'successfully creates a PDF' do
+          pdf_file = result.generate_print_pdf
+          expect(pdf_file).to be_a CombinePDF::PDF
+        end
+      end
     end
 
     context 'when the result has extra marks' do

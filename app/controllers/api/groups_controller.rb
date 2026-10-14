@@ -328,6 +328,10 @@ module Api
         imported.rows.zip(annotations) do |t, a|
           a[:annotation_text_id] = t[0]
         end
+        # insert_all! skips the callback that positions new annotation texts, so add them after the existing ones
+        AnnotationCategory.lock.where(id: annotation_texts.pluck(:annotation_category_id)).find_each do |category|
+          category.update_annotation_text_positions(category.annotation_texts.ids)
+        end
         # Each annotation type has a different set of location columns, and insert_all! requires
         # uniform keys, so insert one type at a time.
         annotations.group_by { |annotation| annotation[:type] }.each_value do |rows|

@@ -124,15 +124,17 @@ logging:
   error_file: # relative path (from the MarkUs root) to the error log file
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
-  enable: # boolean indicating whether to enable scanned exams
+  enabled: # boolean indicating whether to enable scanned exams (default: true; requires the python dependencies in requirements-scanner.txt, see the Installation page)
 resque_scheduler: # configuration for scheduling background jobs (this section can be omitted entirely)
 autotest:
   student_test_buffer_minutes: # maximum number of minutes between student tests (see "Student Tests" below)
   max_batch_size: # maximum number of tests to send to the markus-autotesting server in a single batch
+  default_url: # (optional) url of a markus-autotesting server that new courses are connected to automatically (currently only applies to courses created through LTI)
 i18n:
   available_locales: # list of locale strings (Note that 'en' is the only option that is supported)
   default_locale: # locale string to use as default (must be one of the options in available_locales)
-python: # location of a python executable where python dependencies are installed (optional)
+python: # (optional) location of the python executable where MarkUs's python dependencies are installed (if not set, python3 will be used)
+nbconvert_enabled: # boolean indicating whether to render Jupyter notebooks as HTML and include them in PDF downloads of results (default: true; requires the python dependencies in requirements-jupyter.txt, see the Installation page)
 rails_performance:
   enabled: # boolean whether to enable the rails performance dashboard (See the "Admin Guide" page for more information about this dashboard)
   duration: # duration in minutes for rails performance to store data for monitoring
@@ -290,7 +292,7 @@ If you wish to use Learning Tools Interoperability (LTI) with MarkUs, you'll nee
 - `lti.sync_schedule` must be a cron schedule dictating when MarkUs should attempt to automatically sync its roster via LTI.
 
 You must also create a private key for generating JavaScript Web Tokens to sign LTI requests.
-A private key can be automatically created with the `markus:lti_key` rake task.
+A private key can be automatically created with the `markus:lti_key` rake task (see "LTI Key Rotation" below).
 
 If you wish to filter course creation requests from LTI deployments, add the following keys:
 
@@ -298,11 +300,60 @@ If you wish to filter course creation requests from LTI deployments, add the fol
 - `lti.unpermitted_new_course_message` must be a message to display if an LTI deployment is rejected by the filter. The message must be a string with interpolation key `%{course_name}`, which will be bound to the `title` field in the launch claim `https://purl.imsglobal.org/spec/lti/claim/context`.
     - Example: `"You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator."`
 
+If you wish courses created from LTI deployments to be connected to an autotester automatically, set `autotest.default_url` to the url of a markus-autotesting server. Every course created through LTI will be connected to this autotester, as if an admin had set the course's autotester url. If this key is not set, the autotester url must be set manually for each new course.
+
+### LTI Key Rotation
+
+MarkUs signs LTI requests with an RSA private key, and publishes the corresponding public key at the `public_jwk` endpoint. The external platform (for example, Canvas) fetches this endpoint to verify those signatures.
+
+Keys are stored as timestamped PEM files in a rotation directory (by default, an `lti/keys` subdirectory under `file_storage.default_root_path`). The newest key is the current signer, and **every** key in the directory is published. This means a key that has been rotated out can still verify assertions that were signed before the rotation, so keys can be rotated without disrupting grade passback or roster syncing.
+
+Rotation is disabled by default. To schedule it automatically, set the following keys:
+
+```yaml
+lti:
+  rotation:
+    enabled: # boolean indicating whether to automatically rotate the LTI signing key (default: false)
+    max_age_days: # rotate the current key once it is older than this many days
+    overlap_days: # keep a rotated-out key published for this many days before deleting it
+    key_dir: # (optional) absolute path to the directory holding the key files (if null, a subdirectory under the default_root_path will be used)
+    current_key: # (optional) file name of a specific key to sign with, overriding the default of signing with the newest key (the file must exist in the key directory)
+```
+
+When `enabled` is true, the `LtiKeyMaintenanceJob` runs daily. It generates a new key once the current one is older than `max_age_days`, and deletes any key that has been rotated out for longer than `overlap_days`. The current signing key is never deleted.
+
+`overlap_days` should comfortably exceed the lifetime of a signed assertion (one hour) plus however long the platform caches the published keys. Seven days is a safe default.
+
+>**Note**: scheduled rotation requires the `resque-scheduler` process to be running. If your MarkUs instance runs on more than one application server, all of them must share the same key directory.
+
+#### Rake tasks
+
+- `markus:lti_key` generates a new key immediately and makes it the current signer. Use this to create the initial key, or to rotate right away if a key may have been compromised.
+- `markus:rotate_if_due` generates a new key only if the current one is older than `max_age_days`.
+- `markus:prune_keys` deletes keys that have been rotated out for longer than `overlap_days`.
+
+#### Migrating an existing instance
+
+If your instance predates key rotation, it has a single key at `lti/key.pem`. MarkUs continues to sign with this file if the rotation directory is empty, so upgrading requires no action and nothing is rotated unless you enable it.
+
+To start rotating without changing the key the platform already trusts, copy the existing key into the rotation directory **before** rotating for the first time. Copying preserves the key, and therefore the key id that the platform has already seen:
+
+```sh
+mkdir -p <default_root_path>/lti/keys
+cp <default_root_path>/lti/key.pem \
+   <default_root_path>/lti/keys/lti_key_$(date -u +%Y%m%dT%H%M%SZ).pem
+chmod 600 <default_root_path>/lti/keys/lti_key_*.pem
+```
+
+Confirm that the `public_jwk` endpoint still serves the same key, then delete the original `lti/key.pem`. Rotating before copying also works, but replaces the published key immediately instead of keeping the previous one available during the overlap window.
+
 ## Optional Features
+
+Some optional features require additional software to be installed. After enabling one of these features, run `rails markus:check` to verify that its dependencies are installed (see [Check your installation](installation.md#check-your-installation)).
 
 ### Preview RMarkdown Files as HTML
 
-To preview RMarkdown (.Rmd) submission files as rendered HTML instead of displaying the raw RMarkdown source, enable the following setting:
+To preview RMarkdown (.Rmd) submission files as rendered HTML instead of displaying the raw RMarkdown source, install [pandoc](https://pandoc.org/) and enable the following setting:
 
 ```yaml
 rmd_convert_enabled: true

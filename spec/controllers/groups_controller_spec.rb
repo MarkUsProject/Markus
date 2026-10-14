@@ -281,6 +281,56 @@ describe GroupsController do
       end
     end
 
+    describe 'GET #index as JSON' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+
+      context 'when the assignment is timed' do
+        let(:assignment) { create(:timed_assignment) }
+
+        it 'returns extension duration in hours and minutes' do
+          extension = create(:extension, grouping: grouping, time_delta: 1.hour + 2.minutes)
+          get_as instructor, :index,
+                 params: { course_id: course.id, assignment_id: assignment },
+                 format: :json
+          group_data = response.parsed_body['groups'].find { |group| group['_id'] == grouping.id }
+
+          expect(group_data['extension']).to eq(
+            'hours' => 1,
+            'minutes' => 2,
+            'note' => '',
+            'apply_penalty' => false,
+            'id' => extension.id,
+            'grouping_id' => grouping.id
+          )
+        end
+      end
+
+      context 'when the assignment is not timed' do
+        let(:assignment) { create(:assignment) }
+
+        it 'returns the extension duration in weeks, days, hours, and minutes' do
+          extension = create(:extension,
+                             grouping: grouping,
+                             time_delta: 1.week + 2.days + 3.hours + 4.minutes)
+          get_as instructor, :index,
+                 params: { course_id: course.id, assignment_id: assignment },
+                 format: :json
+          group_data = response.parsed_body['groups'].find { |group| group['_id'] == grouping.id }
+
+          expect(group_data['extension']).to eq(
+            'weeks' => 1,
+            'days' => 2,
+            'hours' => 3,
+            'minutes' => 4,
+            'note' => '',
+            'apply_penalty' => false,
+            'id' => extension.id,
+            'grouping_id' => grouping.id
+          )
+        end
+      end
+    end
+
     describe '#assign_scans' do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
 
