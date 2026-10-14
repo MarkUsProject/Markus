@@ -3,12 +3,32 @@
 ## [unreleased]
 
 ### 🛡️ Security
-- Restricted the peer review table to instructors and graders (#8182)
-- Restricted submission repo files to instructors, assigned graders, and graders who manage submissions (#8211)
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
+
+### 🐛 Bug fixes
+
+### 📚 Documentation changes
+
+### 🔧 Internal changes
+
+## [v2.10.5]
+
+### 🛡️ Security
+- Restricted the peer review table to instructors and graders (#8182)
+- Restricted submission repo files to instructors, assigned graders, and graders who manage submissions (#8211)
+
+### ✨ New features and improvements
+- Added HTML file previewing functionality to the `TextViewer` component (#8210)
+- Added the ability to reorder reusable annotations within an annotation category from the assignment Annotations tab (#8184)
+- Added `autotest.default_url` setting to automatically connect courses created through LTI to an autotester (#8186)
+- Added a Markdown Preview button to the `TextViewer` component, shown only for Markdown files, allowing users to toggle between source and rendered Markdown views (#8178)
+- Added annotations as sticky notes to PDF submission files downloaded with annotations included (#8179)
+- Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
+- Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
+- Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
 
 ### 🐛 Bug fixes
 - Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
@@ -18,10 +38,10 @@
 - Fixed changing a course's autotester url cancelling in-progress test runs in every course (#8202)
 - Updated LTI documentation to use correct name for the MarkUs launch link (#8171)
 - Fixed pdfjs wasm URL for scanned exam PDF displays (#8201)
-
-### 📚 Documentation changes
+- Fixed API user and course endpoints ignoring the optional `field`s parameter (#8102)
 
 ### 🔧 Internal changes
+- Updated Rails and `@rails/actioncable` to v8.1.4 (#8200)
 
 ## [v2.10.4]
 
@@ -35,7 +55,6 @@
 - Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
 
 ### 🐛 Bug fixes
-- Fixed API user and course endpoints ignoring the optional `field`s parameter (#8102)
 - Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
 - Fixed production webpack builds compiling JSX in development mode (#8150)
 - Enforce privileged LTI launch role for course linking and creation (#8130)
