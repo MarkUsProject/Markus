@@ -36,6 +36,9 @@ puma:
   max_threads: 5
   worker_timeout: 60
 
+jupyter:
+  enabled: false
+
 jupyter_server:
   hosts: []
 
@@ -96,11 +99,18 @@ resque_scheduler:
       job_class:  CleanTmpJob
       arguments:
         - 5184000  # 60 days, in seconds
+  LtiKeyMaintenanceJob:
+    class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+    queue: DEFAULT_QUEUE
+    every: 1d
+    args:
+      job_class: LtiKeyMaintenanceJob
+      arguments: []
 autotest:
   student_test_buffer_minutes: 60
 
 scanned_exams:
-  enable: true
+  enabled: true
 
 exception_notification:
   enabled: false
@@ -118,6 +128,7 @@ file_storage:
   default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/
 
 rmd_convert_enabled: false
+nbconvert_enabled: true
 
 # maximum number of entries allowed when extracting uploaded zip files
 max_zip_file_entries: 10000

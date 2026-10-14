@@ -231,11 +231,11 @@
                  { id: 'invite-student-form' }) do %>
       <h2><%= t('groups.members.invite') %></h2>
       <p><%= t('groups.members.invite_instructions') %></p>
-      <label for='invite_member'><%= User.human_attribute_name(:user_name).pluralize %></label>
-      <%= text_field_tag 'invite_member', nil, required: true, autocomplete: 'off' %>
+      <label for='invite_member'><%= t('groups.members.invite_label') %></label>
+      <%= text_area_tag 'invite_member', nil, required: true, autocomplete: 'off' %>
 
       <section class='dialog-actions'>
-        <%= submit_tag t('groups.members.invite') %>
+        <%= submit_tag t('groups.members.invite'), data: { disable_with: false } %>
         <input type='reset'
                value='<%= t(:cancel) %>'
                id="invite-student-modal-close">

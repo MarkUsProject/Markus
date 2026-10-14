@@ -829,6 +829,21 @@ describe Api::GroupsController do
         expect(annotation_contents).to contain_exactly('Content 1', 'Content 2')
       end
 
+      it 'adds new annotation texts after the existing annotation texts in their annotation category' do
+        category = create(:annotation_category, assignment: assignment)
+        existing_text = create(:annotation_text, annotation_category: category)
+        annotation_data = ['Content 1', 'Content 2'].map.with_index(1) do |content, line|
+          { annotation_category_name: category.annotation_category_name, filename: submission_file.filename,
+            content: content, line_start: line, line_end: line, column_start: 1, column_end: 5 }
+        end
+        post_annotations(annotation_data)
+
+        expect(response).to have_http_status :success
+        expect(category.annotation_texts.pluck(:content, :position)).to eq [[existing_text.content, 1],
+                                                                            ['Content 1', 2],
+                                                                            ['Content 2', 3]]
+      end
+
       it "creates a TextAnnotation for type 'TextAnnotation' on a text file" do
         post_annotations([{ type: 'TextAnnotation', filename: submission_file.filename, content: 'c',
                             line_start: 1, line_end: 2, column_start: 0, column_end: 5 }])

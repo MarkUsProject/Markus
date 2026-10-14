@@ -82,7 +82,8 @@
           $("#grouping_id").val(data.grouping_id);
           $("#group_name").html(data.group_name);
           if (data.filelink) {
-            pdfjs.getDocument({url: data.filelink}).promise.then(function (pdfDocument) {
+            pdfjs.getDocument({url: data.filelink, wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`})
+                 .promise.then(function (pdfDocument) {
               pdfViewer.setDocument(pdfDocument);
             });
           }

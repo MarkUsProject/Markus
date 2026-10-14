@@ -39,11 +39,17 @@ export class ImageViewer extends React.PureComponent {
     if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
       // Returns a promise containing an object URL for a JPEG image converted from the HEIC/HEIF format.
       return fetch(this.props.url)
-        .then(res => res.blob())
-        .then(blob =>
-          import("heic2any").then(({default: heic2any}) => heic2any({blob, toType: "image/jpeg"}))
+        .then(res => res.arrayBuffer())
+        .then(arrayBuffer => new Uint8Array(arrayBuffer))
+        .then(inputBuffer =>
+          import("heic-convert/browser").then(({default: convert}) =>
+            convert({buffer: inputBuffer, format: "JPEG", quality: 1})
+          )
         )
-        .then(conversionResult => URL.createObjectURL(conversionResult))
+        .then(conversionResult => {
+          const blob = new Blob([conversionResult], {type: "image/jpeg"});
+          return URL.createObjectURL(blob);
+        })
         .then(JPEGObjectURL => this.setState({url: JPEGObjectURL}));
     } else {
       return new Promise(() => this.setState({url: this.props.url}));

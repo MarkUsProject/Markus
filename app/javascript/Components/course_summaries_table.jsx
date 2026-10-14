@@ -161,6 +161,7 @@ export class CourseSummaryTable extends React.Component {
           }}
           initialState={{sorting: [{id: "user_name", desc: false}]}}
           loading={this.props.loading}
+          showRowNumbers
           className={"auto-overflow"}
           getNoDataProps={() => ({
             loading: this.props.loading,

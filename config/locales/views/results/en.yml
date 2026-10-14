@@ -6,7 +6,7 @@ en:
       common: Common Annotations
       feedback_generated_header: 'Feedback generated from automated test run on %{time}:'
       include_in_download: Include Annotations
-      include_in_download_warning: 'Warning: Annotations on PDFs are not currently downloaded.'
+      include_in_download_warning: 'Warning: Annotations on images are not currently downloaded.'
       no_overlap: Annotations cannot overlap.
       placeholder: Markdown and basic LaTeX syntax are supported.
       remark_flag: remark
@@ -56,6 +56,7 @@ en:
       previous_level: Select previous level
       toggle_compact: Toggle fullscreen
       when_rubric: "(When on rubric) "
+    last_updated_by: Last updated by %{name}
     late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
     marks_chart: Marks Chart
     marks_released: The marks have been released. You cannot change the grades.
@@ -66,6 +67,7 @@ en:
     no_results_in_direction: There are no more results in this direction!
     old_mark: Old Mark
     overridden_deductions: Overridden
+    preview: preview file
     previous_submission: Previous Submission
     print: Print
     random_incomplete_submission: Random Incomplete Submission
@@ -94,6 +96,7 @@ en:
     total_extra_marks: Total Extra Marks
     total_mark: Total Mark
     view_group_repo: View group repository
+    view_source: view source
     view_token_submit: Please enter the unique token provided by your instructor to view the results for this assignment.
     your_mark: Your Mark
     zoom: 'Zoom:'

@@ -70,7 +70,7 @@ class Grouping < ApplicationRecord
            class_name: 'Student',
            through: :accepted_student_memberships,
            source: :role
-  has_many :submissions
+  has_many :submissions, dependent: :restrict_with_error
   has_one :current_submission_used,
           -> { where submission_version_used: true },
           class_name: 'Submission',
@@ -317,21 +317,36 @@ class Grouping < ApplicationRecord
     # overloading invite() to accept members arg as both a string and a array
     members = [members] unless members.instance_of?(Array) # put a string in an array
     all_errors = []
+    already_invited = Set.new
+    if members.empty?
+      return [[I18n.t('groups.invite_member.errors.empty_text_field')], already_invited]
+    end
     members.each do |m|
       m = m.strip
-      user = course.students.joins(:user).find_by('users.user_name': m)
+      user_name = false
+      if m.include?('@') # email
+        user = course.students.joins(:user).find_by('lower(users.email) = ?', m.downcase)
+      else
+        user = course.students.joins(:user).find_by('users.user_name': m)
+        user_name = true
+      end
       begin
         if user.nil?
-          raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
+          if user_name
+            raise I18n.t('groups.invite_member.errors.user_name_not_found', user_name: m)
+          else
+            raise I18n.t('groups.invite_member.errors.email_not_found', email: m)
+          end
         end
-        if invoked_by_instructor || self.can_invite?(user)
+        if already_invited.exclude?(user) && (invoked_by_instructor || self.can_invite?(user))
           self.add_member(user, set_membership_status)
+          already_invited.add(user)
         end
       rescue StandardError => e
         all_errors << e.message
       end
     end
-    all_errors
+    [all_errors, already_invited]
   end
 
   # Add a new member to base
@@ -470,13 +485,6 @@ class Grouping < ApplicationRecord
         membership.save
       end
     end
-  end
-
-  def delete_grouping
-    Repository.get_class.update_permissions_after(only_on_request: true) do
-      student_memberships.includes(:role).find_each(&:destroy)
-    end
-    self.destroy
   end
 
   # Removes the member rejected by its membership id
@@ -1032,9 +1040,8 @@ class Grouping < ApplicationRecord
     if ascending
       next_result = results.where('groups.group_name > ?', self.group.group_name).first
     else
-      # rubocop:disable Rails/WhereRange
+      # rubocop:disable-next Rails/WhereRange
       next_result = results.where('groups.group_name < ?', self.group.group_name).last
-      # rubocop:enable Rails/WhereRange
     end
     next_result&.grouping
   end
@@ -1054,13 +1061,12 @@ class Grouping < ApplicationRecord
                                       self.current_submission_used.revision_timestamp)).first
 
     else
-      # rubocop:disable Rails/WhereRange
+      # rubocop:disable-next Rails/WhereRange
       next_result = results
                     .where('submissions.revision_timestamp < ?', self.current_submission_used.revision_timestamp)
                     .or(results.where('groups.group_name < ? AND submissions.revision_timestamp = ?',
                                       self.group.group_name,
                                       self.current_submission_used.revision_timestamp)).last
-      # rubocop:enable Rails/WhereRange
     end
     next_result&.grouping
   end

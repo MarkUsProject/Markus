@@ -15,4 +15,8 @@ en:
     errors:
       models:
         grouping:
+          attributes:
+            base:
+              restrict_dependent_destroy:
+                has_many: This grouping could not be deleted because it has associated %{record}.
           different_assignment_grouping: tags must belong to the same assignment as this grouping

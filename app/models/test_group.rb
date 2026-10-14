@@ -5,7 +5,7 @@
 #
 #  id                :integer          not null, primary key
 #  autotest_settings :json             not null
-#  display_output    :integer          default("instructors"), not null
+#  display_output    :integer          default(0), not null
 #  name              :text             not null
 #  position          :integer          not null
 #  created_at        :datetime         not null

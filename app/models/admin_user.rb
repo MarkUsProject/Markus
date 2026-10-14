@@ -11,7 +11,7 @@
 #  id_number    :string
 #  last_name    :string           not null
 #  locale       :string           default("en"), not null
-#  theme        :integer          default("light"), not null
+#  theme        :integer          default(1), not null
 #  time_zone    :string           not null
 #  type         :string
 #  user_name    :string           not null

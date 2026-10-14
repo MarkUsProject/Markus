@@ -14,6 +14,10 @@ describe LtiDeploymentsController do
     let(:test_rlid) { 'a-unique-resource-link-id-12345' }
     let!(:lti) { create(:lti_deployment, resource_link_id: test_rlid) }
 
+    before do
+      session[:lti_privileged_deployments] = [lti.id]
+    end
+
     describe 'get' do
       it 'is inaccessible unless logged in' do
         get :choose_course, params: { id: lti.id }
@@ -21,17 +25,28 @@ describe LtiDeploymentsController do
       end
 
       it 'is accessible when logged in' do
-        session[:lti_deployment_id] = lti.id
         get_as instructor, :choose_course, params: { id: lti.id }
         expect(response).to have_http_status(:ok)
+      end
+
+      context 'when the user did not launch this deployment with a privileged LMS role' do
+        before do
+          session[:lti_privileged_deployments] = []
+        end
+
+        it 'responds with forbidden' do
+          get_as instructor, :choose_course, params: { id: lti.id }
+          expect(response).to have_http_status(:forbidden)
+        end
+
+        it 'renders the launch required message' do
+          get_as instructor, :choose_course, params: { id: lti.id }
+          expect(response).to render_template('message')
+        end
       end
     end
 
     describe 'post' do
-      before do
-        session[:lti_deployment_id] = lti.id
-      end
-
       context 'when picking a course' do
         it 'redirects to a course on success' do
           post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
@@ -53,6 +68,23 @@ describe LtiDeploymentsController do
           post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
           lti.reload
           expect(lti.resource_link_id).to eq(test_rlid)
+        end
+
+        context 'when the user did not launch this deployment with a privileged LMS role' do
+          before do
+            session[:lti_privileged_deployments] = []
+          end
+
+          it 'does not link the course' do
+            post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
+            lti.reload
+            expect(lti.course).to be_nil
+          end
+
+          it 'responds with forbidden' do
+            post_as instructor, :choose_course, params: { id: lti.id, course: course.id }
+            expect(response).to have_http_status(:forbidden)
+          end
         end
 
         context 'when the user does not have permission to link' do
@@ -79,9 +111,12 @@ describe LtiDeploymentsController do
       { id: lti_deployment.id, display_name: 'Introduction to Computer Science', name: lti_deployment.lms_course_name }
     end
 
+    before do
+      session[:lti_privileged_deployments] = [lti_deployment.id]
+    end
+
     context 'as an instructor with a standard term' do
       before do
-        session[:lti_deployment_id] = lti_deployment.id
         post_as instructor, :create_course, params: course_params
       end
 
@@ -102,6 +137,36 @@ describe LtiDeploymentsController do
         lti_deployment.reload
         expect(lti_deployment.resource_link_id).to eq(test_rlid)
       end
+
+      it 'populates the course start date from the term' do
+        expect(Course.find_by(name: expected_name).start_at).to eq(Time.zone.local(2026, 9, 1))
+      end
+
+      it 'populates the course end date from the term' do
+        # Column is timestamp(6): end_of_day nanoseconds are truncated to microseconds on write
+        expect(Course.find_by(name: expected_name).end_at)
+          .to be_within(1.second).of(Time.zone.local(2026, 12, 31).end_of_day)
+      end
+    end
+
+    context 'with a year-long term' do
+      let!(:lti_deployment) do
+        create(:lti_deployment, lms_course_name: 'csc108', lms_term_name: '2026 Fall-Winter')
+      end
+
+      before do
+        session[:lti_deployment_id] = lti_deployment.id
+        post_as instructor, :create_course, params: course_params
+      end
+
+      it 'starts the course in September' do
+        expect(Course.find_by(name: expected_name).start_at).to eq(Time.zone.local(2026, 9, 1))
+      end
+
+      it 'ends the course in April of the following year' do
+        expect(Course.find_by(name: expected_name).end_at)
+          .to be_within(1.second).of(Time.zone.local(2027, 4, 30).end_of_day)
+      end
     end
 
     context 'with an SCS term' do
@@ -118,10 +183,6 @@ describe LtiDeploymentsController do
         create(:lti_deployment, lms_term_name: 'Default Term', lms_course_name: 'csc108')
       end
 
-      before do
-        session[:lti_deployment_id] = lti_deployment.id
-      end
-
       it 'slugifies the term name as the suffix' do
         post_as instructor, :create_course, params: {
           id: lti_deployment.id,
@@ -130,11 +191,34 @@ describe LtiDeploymentsController do
         }
         expect(Course.find_by(name: 'CSC108-DEFAULT-TERM')).not_to be_nil
       end
+
+      it 'creates the course with unset dates' do
+        post_as instructor, :create_course, params: {
+          id: lti_deployment.id,
+          name: 'csc108',
+          display_name: 'CSC108'
+        }
+        course = Course.find_by(name: 'CSC108-DEFAULT-TERM')
+        expect([course.start_at, course.end_at]).to eq([nil, nil])
+      end
+    end
+
+    context 'when the adapter file does not implement get_course_dates' do
+      before do
+        allow(LtiConfig).to receive(:respond_to?).and_call_original
+        allow(LtiConfig).to receive(:respond_to?).with(:get_course_dates).and_return(false)
+        session[:lti_deployment_id] = lti_deployment.id
+        post_as instructor, :create_course, params: course_params
+      end
+
+      it 'creates the course with unset dates' do
+        course = Course.find_by(name: expected_name)
+        expect([course.start_at, course.end_at]).to eq([nil, nil])
+      end
     end
 
     context 'as an admin user' do
       before do
-        session[:lti_deployment_id] = lti_deployment.id
         post_as admin_user, :create_course, params: course_params
       end
 
@@ -150,12 +234,46 @@ describe LtiDeploymentsController do
         course = Course.find_by(name: expected_name)
         expect(Role.find_by(user: admin_user, course: course, type: 'AdminRole')).not_to be_nil
       end
+
+      it 'populates the course dates from the term' do
+        expect(Course.find_by(name: expected_name).start_at).to eq(Time.zone.local(2026, 9, 1))
+      end
+    end
+
+    context 'when a default autotest url is configured' do
+      before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+      it 'enqueues a job to set the autotest url of the new course' do
+        expect { post_as instructor, :create_course, params: course_params }.to(
+          have_enqueued_job(AutotestResetUrlJob).with do |course, url, _host|
+            expect(course.name).to eq(expected_name)
+            expect(url).to eq('http://autotest.example.com')
+          end
+        )
+      end
+
+      it 'stores the job id in the session so its status is shown' do
+        post_as instructor, :create_course, params: course_params
+        expect(session[:job_id]).to be_present
+      end
+
+      it 'does not enqueue a job when the course already exists' do
+        create(:course, name: expected_name)
+        expect { post_as instructor, :create_course, params: course_params }.not_to have_enqueued_job
+      end
+    end
+
+    context 'when no default autotest url is configured' do
+      before { allow(Settings.autotest).to receive(:default_url).and_return(nil) }
+
+      it 'does not enqueue a job to set the autotest url' do
+        expect { post_as instructor, :create_course, params: course_params }.not_to have_enqueued_job
+      end
     end
 
     context 'when a course already exists' do
       before do
         create(:course, name: expected_name)
-        session[:lti_deployment_id] = lti_deployment.id
       end
 
       it 'does not create a new course' do
@@ -167,15 +285,17 @@ describe LtiDeploymentsController do
         post_as instructor, :create_course, params: course_params
         expect(response).to have_http_status(:found)
       end
+
+      it 'leaves the existing course dates untouched' do
+        post_as instructor, :create_course, params: course_params
+        course = Course.find_by(name: expected_name)
+        expect([course.start_at, course.end_at]).to eq([nil, nil])
+      end
     end
 
     context 'when the LTI deployment course name has invalid characters' do
       let!(:lti_deployment) do
         create(:lti_deployment, lms_course_name: 'csc108 fall 3000!', lms_term_name: 'Fall 2026')
-      end
-
-      before do
-        session[:lti_deployment_id] = lti_deployment.id
       end
 
       it 'creates a new course with a sanitized name and appends suffix' do
@@ -187,10 +307,6 @@ describe LtiDeploymentsController do
     context 'when the course is rejected by the filter' do
       # NOTE: the default filter in config/dummy_lti_config.rb only accepts course names starting with 'csc'
       let!(:lti_deployment) { create(:lti_deployment, lms_course_name: 'sta130', lms_term_name: 'Fall 2026') }
-
-      before do
-        session[:lti_deployment_id] = lti_deployment.id
-      end
 
       it 'does not create a new course' do
         post_as instructor, :create_course, params: course_params
@@ -219,9 +335,53 @@ describe LtiDeploymentsController do
         expect(Role.find_by(user: new_instructor_user, course: course, type: 'Instructor')).not_to be_nil
       end
     end
+
+    context 'when the user did not launch this deployment with a privileged LMS role' do
+      before do
+        session[:lti_privileged_deployments] = []
+      end
+
+      it 'does not create a course' do
+        post_as instructor, :create_course, params: course_params
+        expect(Course.find_by(name: expected_name)).to be_nil
+      end
+
+      it 'responds with forbidden' do
+        post_as instructor, :create_course, params: course_params
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'renders the launch required message' do
+        post_as instructor, :create_course, params: course_params
+        expect(response).to render_template('message')
+      end
+    end
+
+    context 'when the deployment is already linked to a course' do
+      let(:linked_course) { create(:course) }
+
+      before do
+        lti_deployment.update!(course: linked_course)
+        post_as instructor, :create_course, params: course_params
+      end
+
+      it 'responds with not found' do
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'does not create a new course' do
+        expect(Course.find_by(name: expected_name)).to be_nil
+      end
+    end
   end
 
   describe '#public_jwk' do
+    let(:key) { OpenSSL::PKey::RSA.new(2048) }
+
+    before do
+      allow(LtiKeyStore).to receive(:public_jwks).and_return({ keys: [JWT::JWK.new(key).export] })
+    end
+
     it 'responds with success when logged out' do
       get :public_jwk
       expect(subject).to respond_with(:success)
@@ -250,8 +410,6 @@ describe LtiDeploymentsController do
       end
 
       context 'an individual key' do
-        let(:pub_jwk) { get :public_jwk }
-        let(:hash_jwk) { JSON.parse(pub_jwk.body) }
         let(:jwk_key) { hash_jwk['keys'][0] }
 
         it 'stores the correct signing algorithm' do
@@ -264,11 +422,38 @@ describe LtiDeploymentsController do
 
         it 'verifies a signed message' do
           payload = { test: 'data' }
-          token = JWT.encode payload, File.read(LtiClient::KEY_PATH), 'RS256', { kid: jwk_key['kid'] }
+          token = JWT.encode payload, key, 'RS256', { kid: jwk_key['kid'] }
           decoded = JWT.decode(token, nil, true, algorithms: ['RS256'], verify_iss: false, verify_aud: false,
                                                  jwks: hash_jwk)
           expect(decoded[0]['test']).to match('data')
         end
+      end
+    end
+
+    context 'with multiple keys published' do
+      let(:retired_key) { OpenSSL::PKey::RSA.new(2048) }
+      let(:hash_jwk) { JSON.parse(get(:public_jwk).body) }
+
+      before do
+        allow(LtiKeyStore).to receive(:public_jwks).and_return(
+          { keys: [JWT::JWK.new(key).export, JWT::JWK.new(retired_key).export] }
+        )
+      end
+
+      it 'publishes every key in the set' do
+        expect(hash_jwk['keys'].length).to eq(2)
+      end
+
+      it 'publishes a kid for each key' do
+        kids = hash_jwk['keys'].pluck('kid')
+        expect(kids).to contain_exactly(JWT::JWK.new(key).kid, JWT::JWK.new(retired_key).kid)
+      end
+
+      it 'verifies a message signed by a retired key' do
+        token = JWT.encode({ test: 'data' }, retired_key, 'RS256', { kid: JWT::JWK.new(retired_key).kid })
+        decoded = JWT.decode(token, nil, true, algorithms: ['RS256'], verify_iss: false, verify_aud: false,
+                                               jwks: hash_jwk)
+        expect(decoded[0]['test']).to match('data')
       end
     end
   end

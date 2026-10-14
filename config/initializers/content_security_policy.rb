@@ -15,17 +15,16 @@ Rails.application.configure do
 
     policy.object_src :none
     policy.style_src_elem :self   # <style> elements and <link> stylesheets; nonce added below
-    policy.style_src_attr :unsafe_inline  # style="..." attributes (required by Jcrop, jQuery UI, etc.)
+    policy.style_src_attr :unsafe_inline  # style="..." attributes (required by jQuery UI, etc.)
 
-    # child-src is the worker-src fallback for Safari < 16; blob: is required for heic2any's blob Worker
-    # and for blob: image URLs created by URL.createObjectURL on those same pages.
+    # child-src is the worker-src fallback for Safari < 16; blob: is required for blob image URLs
+    # created by URL.createObjectURL on pages that render converted images.
     policy.child_src :self, :blob
     policy.worker_src :self, :blob
 
     # Notes:
-    # 1. The following dependencies still require script-src 'unsafe-eval' on specific pages;
-    #    these are overridden per action in the relevant controllers:
-    #     - heic2any (results, submissions) - libheif compiled via Emscripten uses new Function()
+    # 1. The following dependency still requires script-src 'unsafe-eval' on a specific page;
+    #    this is overridden per action in the relevant controller:
     #     - @rjsf/validator-ajv8 (automated_tests#manage) - ajv compiles JSON schemas via new Function()
     # 2. @rails/ujs dynamically inserts <script> tags when a controller responses with render js: ...
     #    These require 'strict-dynamic' to execute.

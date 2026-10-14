@@ -51,9 +51,10 @@ import translations from "translations.json";
 window.I18n = new I18n(translations);
 window.I18n.locale = I18N_LOCALE;
 
-// JCrop
-import Jcrop from "jcrop";
-window.Jcrop = Jcrop;
+// Cropper.js
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
+window.Cropper = Cropper;
 
 // chart.js
 import "./common/chart_config";
@@ -77,6 +78,11 @@ window.pdfjsViewer = pdfjsViewer;
 import "pdfjs-dist/web/pdf_viewer.css";
 
 window.Routes = require("./routes");
+window.Routes.configure({
+  url_links: true,
+  default_url_options: {script_name: RELATIVE_URL_ROOT},
+});
+window.Routes.config();
 
 // create a global icon for the help system
 import {icon} from "@fortawesome/fontawesome-svg-core";

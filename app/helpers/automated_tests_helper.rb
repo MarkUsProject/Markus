@@ -110,12 +110,11 @@ module AutomatedTestsHelper
            .each { |h| h[:test_categories] = [h['user_type'].downcase] }
   end
 
+  # Get the current URL for this MarkUs instance, with the relative url root appended if it exists.
+  # +MARKUS_URL+ overrides +host_with_port+ to give the autotester an address it can reach.
   def get_markus_address(host_with_port)
-    if Rails.application.config.relative_url_root.nil?
-      host_with_port
-    else
-      host_with_port + Rails.application.config.relative_url_root
-    end
+    base = ENV['MARKUS_URL'].presence || host_with_port
+    "#{base}#{Rails.application.config.relative_url_root}"
   end
 
   # Sends RESTful api requests to the autotester
@@ -209,6 +208,8 @@ module AutomatedTestsHelper
       req.body = {
         test_data: test_data,
         categories: role.student? ? ['student'] : ['instructor'],
+        # Maps to TestBatch.id for telemetry attribution; null for solo runs.
+        batch_id: batch&.id,
         request_high_priority: batch.nil? && role.student?
       }.to_json
       res = send_request!(req, uri)
@@ -303,15 +304,6 @@ module AutomatedTestsHelper
     def set_headers(req, api_key)
       req['Api-Key'] = api_key
       req['Content-Type'] = 'application/json'
-    end
-
-    # Get the current URL for this MarkUs instance (adds the relative url root to +host_with_port+) if it exists.
-    def get_markus_address(host_with_port)
-      if Rails.application.config.relative_url_root.nil?
-        host_with_port
-      else
-        host_with_port + Rails.application.config.relative_url_root
-      end
     end
 
     # Gets the feedback file data from the autotester for the TestRun with autotest_test_id = +test_id+

@@ -21,7 +21,7 @@ class AnnotationsController < ApplicationController
       **params.to_unsafe_h.slice(*annotation_class.required_fields).symbolize_keys,
       **base_attributes
     )
-    render :create
+    render json: @annotation.to_json(current_role: current_role)
   end
 
   def create
@@ -62,6 +62,7 @@ class AnnotationsController < ApplicationController
       **params.to_unsafe_h.slice(*annotation_class.required_fields).symbolize_keys,
       **base_attributes
     )
+    render json: @annotation.to_json(current_role: current_role)
   end
 
   def destroy
@@ -79,6 +80,7 @@ class AnnotationsController < ApplicationController
       end
     end
     text = @annotation.annotation_text
+    annotation_text_id = @annotation.annotation_text_id
     text.destroy if text.annotation_category_id.nil?
     @annotation.destroy
     result.annotations.reload.each do |annot|
@@ -86,6 +88,7 @@ class AnnotationsController < ApplicationController
         annot.update(annotation_number: annot.annotation_number - 1)
       end
     end
+    render json: { id: @annotation.id, annotation_text_id: annotation_text_id }
   end
 
   def update
@@ -99,7 +102,7 @@ class AnnotationsController < ApplicationController
     end
 
     change_all = !params[:annotation_text] || !params[:annotation_text][:change_all] ||
-        params[:annotation_text][:change_all] == '1'
+        params[:annotation_text][:change_all].to_s == '1'
     if change_all
       @annotation_text.update(content: params[:content])
     else
@@ -114,6 +117,7 @@ class AnnotationsController < ApplicationController
         @annotation.update(annotation_text: new_text)
       end
     end
+    render json: { annotation: @annotation.reload.get_data(include_creator: true) }
   end
 
   protected

@@ -141,6 +141,7 @@ Config.setup do |config|
         included_in?: %w[user_name last_name first_name id_number email]
       )
       required(:rmd_convert_enabled).filled(:bool)
+      required(:nbconvert_enabled).filled(:bool)
       required(:max_zip_file_entries).value(:integer, gt?: -1)
       required(:max_zip_total_size).value(:integer, gt?: -1)
       required(:repository).hash do
@@ -161,7 +162,7 @@ Config.setup do |config|
         required(:tag_with_usernames).filled(:bool)
       end
       required(:scanned_exams).hash do
-        required(:enable).filled(:bool)
+        required(:enabled).filled(:bool)
       end
       required(:i18n).hash do
         required(:available_locales).array(:string)
@@ -170,6 +171,7 @@ Config.setup do |config|
       required(:autotest).hash do
         required(:student_test_buffer_minutes).value(:integer, gt?: 0)
         required(:max_batch_size).value(:integer, gt?: 0)
+        optional(:default_url).maybe(:string)
       end
       optional(:python).filled(:string)
       required(:rails_performance).hash do
@@ -198,6 +200,13 @@ Config.setup do |config|
         required(:token_endpoint).filled(:string)
         optional(:unpermitted_new_course_message).filled(:string)
         required(:sync_schedule).filled(:string)
+        optional(:rotation).hash do
+          required(:enabled).filled(:bool)
+          required(:max_age_days).value(:integer, gt?: 0)
+          required(:overlap_days).value(:integer, gt?: 0)
+          optional(:key_dir).filled(:string)
+          optional(:current_key).filled(:string)
+        end
       end
     end
   end

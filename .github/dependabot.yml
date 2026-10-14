@@ -18,6 +18,9 @@ updates:
   - dependency-name: react-table
     versions:
     - "> 6.9.2"
+  - dependency-name: cropperjs
+    update-types:
+    - "version-update:semver-major"
   groups:
     babel:
       patterns:
@@ -25,6 +28,10 @@ updates:
     fortawesome:
       patterns:
         - "@fortawesome*"
+    jest:
+      patterns:
+        - "jest"
+        - "jest-environment-jsdom"
     rails:
       patterns:
         - "@rails*"

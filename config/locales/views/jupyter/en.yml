@@ -1,0 +1,27 @@
+---
+en:
+  jupyter:
+    feature_disabled: The Jupyter submission integration is not enabled on this MarkUs instance.
+    submit:
+      assignment_not_found: Assignment could not be found.
+      connection_failed: 'Could not connect to Jupyter at %{uri}: %{error}'
+      course_not_found: Could not find course.
+      internal_error: An unexpected error occurred while processing the submission.
+      invalid_base_url: Jupyter base_url "%{base_url}" must be an absolute http(s) URL.
+      invalid_base_url_path: Jupyter base_url "%{base_url}" must not contain ".." path segments.
+      invalid_json_response: 'JupyterHub response from %{uri} was not valid JSON: %{error}'
+      invalid_jupyter_url: 'Invalid Jupyter URL: %{error}'
+      invalid_session_token: Jupyter session_token is invalid.
+      missing_assignment: Submission data must contain "assignment_id" or "assignment".
+      missing_course: Submission data must contain "course_id" or "course" field.
+      missing_destination_filename: Could not determine a destination filename for the submission.
+      missing_session_token: Submission data must contain a "session_token" obtained from jupyter/authenticate.
+      missing_username: JupyterHub identity response did not include a username.
+      not_a_student: MarkUs user "%{user_name}" is not a student in course "%{course_name}".
+      origin_not_allowed: Jupyter origin "%{origin}" is not in the configured list of allowed hosts.
+      request_failed: 'JupyterHub request to %{uri} returned HTTP %{code}: %{body}'
+      session_expired: Jupyter session_token has expired. Please authenticate again.
+      session_origin_mismatch: Jupyter session_token was issued for a different Jupyter origin.
+      session_token_mismatch: Jupyter session_token does not match the supplied Jupyter token.
+      unknown_user: No MarkUs user exists with user_name=%{user_name}.
+      unparseable_base_url: 'Invalid Jupyter base_url: %{error}'

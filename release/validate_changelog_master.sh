@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Changelog Validator — Master Branch Sync
+# Changelog Validator: Master Branch Sync
 # =============================================================================
 #
 # Validates that the Changelog.md edit on master correctly moves released
@@ -22,7 +22,7 @@
 #   1. [unreleased] section still has entries (not wiped out)
 #   2. New [v2.X.Y] section exists between [unreleased] and previous version
 #   3. Every entry in [v2.X.Y] was present in origin/master's [unreleased]
-#   4. No entries disappeared — every entry removed from [unreleased] is in [v2.X.Y]
+#   4. No entries disappeared: every entry removed from [unreleased] is in [v2.X.Y]
 #   5. Everything from the previous version downward is identical to origin/master
 #
 # =============================================================================
@@ -124,7 +124,7 @@ else
     if [ "$NEW_UNRELEASED_COUNT" -gt 0 ]; then
         pass "[unreleased] section has $NEW_UNRELEASED_COUNT entries"
     else
-        fail "[unreleased] section is empty — entries were wiped instead of moved"
+        fail "[unreleased] section is empty. Entries were wiped instead of moved"
         info "The [unreleased] section should retain entries not part of $VERSION"
     fi
 fi
@@ -142,7 +142,7 @@ else
     pass "[$VERSION] section found"
 
     if grep -q "^## \[$VERSION\]" "$REF_CHANGELOG"; then
-        warn "[$VERSION] section already existed in $REFERENCE — is this a re-run?"
+        warn "[$VERSION] section already existed in $REFERENCE. Is this a re-run?"
     fi
 
     FIRST_VERSIONED=$(grep '^## \[v' "$CHANGELOG" | head -1 | sed 's/## \[\(.*\)\]/\1/')
@@ -199,11 +199,11 @@ if [ "$FROM_UNRELEASED" -gt 0 ]; then
 fi
 
 # =============================================================================
-# CHECK 4: No entries vanished — removed entries accounted for in [VERSION]
+# CHECK 4: No entries vanished; removed entries accounted for in [VERSION]
 # =============================================================================
 
 echo ""
-echo "[4/5] No entries lost — every removal from [unreleased] is in [$VERSION]"
+echo "[4/5] No entries lost: every removal from [unreleased] is in [$VERSION]"
 
 NEW_UNRELEASED_FILE="$TMPDIR_VALIDATE/new_unreleased.txt"
 extract_entries "$CHANGELOG" "unreleased" > "$NEW_UNRELEASED_FILE"
@@ -213,14 +213,24 @@ MOVED_COUNT=0
 while IFS= read -r entry; do
     [ -z "$entry" ] && continue
     if ! grep -qFx -- "$entry" "$NEW_UNRELEASED_FILE"; then
-        # This entry was removed from unreleased — it must be in [VERSION]
+        # This entry left unreleased, so it must be in [VERSION]
         MOVED_COUNT=$((MOVED_COUNT + 1))
         if ! grep -qFx -- "$entry" "$VERSION_ENTRIES_FILE"; then
-            if [ "$MISSING_ENTRIES" -eq 0 ]; then
-                fail "Entries removed from [unreleased] but NOT in [$VERSION]:"
+            # Reworded entry: same PR number in [VERSION] => warn, not fail
+            PR_NUM=$(echo "$entry" | grep -o '(#[0-9]*)' | tail -1)
+            # Renumbered entry: same text in [VERSION] with a PR suffix added
+            STRIPPED_MATCH=$(sed 's/ (#[0-9]*)$//' "$VERSION_ENTRIES_FILE" | grep -cFx -- "$entry")
+            if [ -n "$PR_NUM" ] && grep -qF -- "$PR_NUM" "$VERSION_ENTRIES_FILE"; then
+                warn "Reworded (same PR $PR_NUM appears in [$VERSION]): $entry"
+            elif [ "$STRIPPED_MATCH" -gt 0 ]; then
+                warn "Renumbered (same text in [$VERSION] with a PR suffix): $entry"
+            else
+                if [ "$MISSING_ENTRIES" -eq 0 ]; then
+                    fail "Entries removed from [unreleased] but NOT in [$VERSION]:"
+                fi
+                MISSING_ENTRIES=$((MISSING_ENTRIES + 1))
+                echo "        $entry"
             fi
-            MISSING_ENTRIES=$((MISSING_ENTRIES + 1))
-            echo "        $entry"
         fi
     fi
 done < "$OLD_UNRELEASED"

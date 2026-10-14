@@ -67,6 +67,85 @@ describe StudentsController do
       end
     end
 
+    describe '#download' do
+      subject { get_as(instructor, :download, format: format_str, params: { course_id: course.id }) }
+
+      let(:section) { create(:section, course: course) }
+
+      before { create_list(:student, 2, course: course, section: section) + create_list(:student, 2, course: course) }
+
+      context 'csv' do
+        let(:format_str) { 'csv' }
+        let(:csv_options) { { type: 'text/csv', filename: 'student_list.csv', disposition: 'attachment' } }
+
+        it 'responds with appropriate status' do
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+
+        # parse header object to check for the right disposition
+        it 'sets disposition as attachment' do
+          subject
+          d = response.header['Content-Disposition'].split.first
+          expect(d).to eq 'attachment;'
+        end
+
+        it 'expects a call to send_data' do
+          csv_data = course.students.joins(:user).order('users.user_name').includes(:section).map do |student|
+            Student::CSV_ORDER.map do |field|
+              field == :section_name ? student.section&.name : student.public_send(field)
+            end.join(',')
+          end.join("\n") + "\n"
+          expect(@controller).to receive(:send_data)
+            .with(csv_data, csv_options) {
+              # to prevent a 'missing template' error
+              @controller.head :ok
+            }
+          subject
+        end
+
+        # parse header object to check for the right content type
+        it 'returns text/csv type' do
+          subject
+          expect(response.media_type).to eq 'text/csv'
+        end
+      end
+
+      context 'yml' do
+        let(:yml_options) { { type: 'text/yaml', filename: 'student_list.yml', disposition: 'attachment' } }
+        let(:format_str) { 'yml' }
+
+        it 'responds with appropriate status' do
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'sets disposition as attachment' do
+          subject
+          d = response.header['Content-Disposition'].split.first
+          expect(d).to eq 'attachment;'
+        end
+
+        it 'expects a call to send_data' do
+          output = course.students.joins(:user).order('users.user_name').includes(:section).map do |student|
+            { user_name: student.user_name,
+              last_name: student.last_name,
+              first_name: student.first_name,
+              email: student.email,
+              id_number: student.id_number,
+              section_name: student.section&.name }
+          end.to_yaml
+          expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
+          subject
+        end
+
+        it 'returns text/yaml type' do
+          subject
+          expect(response.media_type).to eq 'text/yaml'
+        end
+      end
+    end
+
     describe '#bulk_modify' do
       let(:section) { create(:section, { course_id: course.id }) }
       let(:shared_params) { { student_ids: students.map(&:id), course_id: course.id } }

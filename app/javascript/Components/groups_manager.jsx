@@ -573,8 +573,6 @@ class GroupsTable extends React.Component {
             meta: {
               filterVariant: "select",
             },
-            minSize: 30,
-            size: 145,
             enableSorting: false,
           }
         ),
@@ -633,7 +631,6 @@ class GroupsTable extends React.Component {
                     durationSort(rowA.original.extension, rowB.original.extension),
                   filterFn: "equals",
                   meta: {filterVariant: "select"},
-                  size: 220,
                 }
               ),
             ]

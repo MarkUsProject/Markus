@@ -20,4 +20,5 @@
 <%= javascript_tag nonce: true do %>
   const DOCS_URL = '<%= Settings.docs_url %>';
   const I18N_LOCALE = '<%= I18n.locale %>';
+  const RELATIVE_URL_ROOT = '<%= Rails.application.config.relative_url_root %>';
 <% end %>

@@ -11,6 +11,7 @@ export default function RubricCriterionInput({
   destroyMark,
   expanded,
   id,
+  last_updated_by,
   levels,
   mark,
   max_mark,
@@ -160,6 +161,11 @@ export default function RubricCriterionInput({
         <table className="rubric-levels">
           <tbody>{rubricLevels}</tbody>
         </table>
+        {last_updated_by && (
+          <div className="last-updated-by">
+            {I18n.t("results.last_updated_by", {name: last_updated_by})}
+          </div>
+        )}
       </div>
     </li>
   );
@@ -170,6 +176,7 @@ RubricCriterionInput.propTypes = {
   destroyMark: PropTypes.func.isRequired,
   expanded: PropTypes.bool.isRequired,
   id: PropTypes.number.isRequired,
+  last_updated_by: PropTypes.string,
   levels: PropTypes.array,
   mark: PropTypes.number,
   max_mark: PropTypes.number,
