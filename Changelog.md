@@ -68,6 +68,7 @@
 - Updated POST and PUT assignment API routes to allow for multiple submission rule periods (#8128)
 
 ### 🐛 Bug fixes
+- Fixed API user and course endpoints ignoring the optional `field`s parameter (#8102)
 - Fixed scanned exam PDFs rendering as blank pages by pointing pdf.js at its wasm image decoders (#8164)
 - Fixed production webpack builds compiling JSX in development mode (#8150)
 - Enforce privileged LTI launch role for course linking and creation (#8130)
