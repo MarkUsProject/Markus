@@ -8,7 +8,7 @@ module.exports = {
     application_webpack: "./app/javascript/application_webpack.js",
     dark_theme: "./app/javascript/dark_theme.js",
     light_theme: "./app/javascript/light_theme.js",
-    "pdf.worker": "pdfjs-dist/build/pdf.worker.mjs",
+    "pdf.worker": "pdfjs-dist/legacy/build/pdf.worker.mjs",
     application: "./app/assets/stylesheets/entrypoints/application.scss",
     notebook_common: "./app/assets/stylesheets/entrypoints/notebook_common.scss",
     notebook_dark: "./app/assets/stylesheets/entrypoints/notebook_dark.scss",

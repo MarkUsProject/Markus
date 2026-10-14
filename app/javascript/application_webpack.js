@@ -69,13 +69,13 @@ window.Prism.manual = true;
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 
 // pdf.js
-import * as pdfjs from "pdfjs-dist";
-import * as pdfjsViewer from "pdfjs-dist/web/pdf_viewer.mjs";
+import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
+import * as pdfjsViewer from "pdfjs-dist/legacy/web/pdf_viewer.mjs";
 
 window.pdfjs = pdfjs;
 window.pdfjsViewer = pdfjsViewer;
 
-import "pdfjs-dist/web/pdf_viewer.css";
+import "pdfjs-dist/legacy/web/pdf_viewer.css";
 
 window.Routes = require("./routes");
 window.Routes.configure({
