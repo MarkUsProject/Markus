@@ -25,6 +25,7 @@
 - Updated `README.md` links to point to the new documentation website (#8181)
 
 ### 🔧 Internal changes
+- Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
 - Refreshed apt package lists before installing system dependencies in CI (#8212)
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
