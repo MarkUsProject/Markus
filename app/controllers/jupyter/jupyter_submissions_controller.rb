@@ -23,18 +23,19 @@ module Jupyter
     JUPYTER_SESSION_TTL = 15.minutes
 
     # codeql[rb/csrf-protection-disabled] -- authenticated via header token, not cookies, so CSRF does not apply
-    skip_before_action :verify_authenticity_token, only: [:create_session, :submit], raise: false
+    skip_before_action :verify_authenticity_token, only: [:create_session, :get_courses, :get_assignments, :submit],
+                                                   raise: false
 
     # The Jupyter endpoints resolve the submitting user separately, so they
     # do not require an existing MarkUs browser session.
-    skip_before_action :authenticate, only: [:create_session, :submit]
-    skip_before_action :check_record, only: [:create_session, :submit]
-    skip_before_action :check_course_switch, only: [:create_session, :submit]
+    skip_before_action :authenticate, only: [:create_session, :get_courses, :get_assignments, :submit]
+    skip_before_action :check_record, only: [:create_session, :get_courses, :get_assignments, :submit]
+    skip_before_action :check_course_switch, only: [:create_session, :get_courses, :get_assignments, :submit]
 
-    skip_verify_authorized only: [:create_session, :submit]
+    skip_verify_authorized only: [:create_session, :get_courses, :get_assignments, :submit]
 
     before_action :ensure_jupyter_enabled!
-    before_action :authenticate_jupyter_session!, only: [:submit]
+    before_action :authenticate_jupyter_session!, only: [:get_courses, :get_assignments, :submit]
 
     # Verifies the caller's JupyterHub token and mints a short-lived signed session token.
     def create_session
@@ -55,6 +56,80 @@ module Jupyter
       render_error(e)
     end
 
+    def get_courses
+      courses = Course
+                .joins(:students)
+                .where(students: { user_id: current_user.id, hidden: false },
+                       is_hidden: false)
+                .distinct
+                .order(:name)
+                .pluck_to_hash(:id, :name, :display_name)
+
+      render json: {
+        status: :success,
+        courses: courses,
+        reason: courses.empty? ? :no_enrollment : nil
+      }
+    rescue StandardError => e
+      render_error(e)
+    end
+
+    def get_assignments
+      course = Course.find_by(id: params[:course_id], is_hidden: false)
+      if course.nil?
+        raise ActiveRecord::RecordNotFound,
+              I18n.t('jupyter.submit.course_not_found')
+      end
+
+      student = course.students.find_by(user_id: current_user.id, hidden: false)
+      if student.nil?
+        raise ForbiddenError,
+              I18n.t(
+                'jupyter.submit.not_a_student',
+                user_name: current_user.user_name,
+                course_name: course.name
+              )
+      end
+
+      visible_assignment_ids =
+        student
+          .visible_assessments(assessment_type: Assignment.name)
+          .select(:id)
+
+      visible_assignments =
+        course.assignments.where(id: visible_assignment_ids)
+
+      assignments =
+        visible_assignments
+          .joins(:assignment_properties)
+          .where(assignment_properties: { api_submit: true })
+          .order(:short_identifier)
+
+      reason =
+        if assignments.empty?
+          if visible_assignments.exists?
+            :api_submission_disabled
+          else
+            :no_available_assignments
+          end
+        end
+
+      render json: {
+        status: :success,
+        assignments: assignments.map do |assignment|
+          {
+            id: assignment.id,
+            short_identifier: assignment.short_identifier,
+            description: assignment.description,
+            due_date: assignment.section_due_date(student.section)&.iso8601
+          }
+        end,
+        reason: reason
+      }
+    rescue StandardError => e
+      render_error(e)
+    end
+
     def submit
       payload = submit_params
 
@@ -66,7 +141,7 @@ module Jupyter
 
       course = find_course_from_payload!(payload)
 
-      student = course.students.find_by(user_id: current_user.id)
+      student = course.students.find_by(user_id: current_user.id, hidden: false)
 
       if student.nil?
         raise ForbiddenError,
@@ -136,20 +211,28 @@ module Jupyter
     # Resolves +current_user+ (via +@real_user+, mirroring Api::MainApiController#authenticate)
     # from a previously-issued session token, without touching the MarkUs session cookie.
     # Stashes the parsed Jupyter origin/base_path/token as ivars so +submit+ doesn't need to
-    # re-parse +jupyter.base_url+.
+    # re-parse the Jupyter base URL.
+    #
+    # Credentials are read from request headers rather than params so they don't end up in
+    # server or proxy access logs: the session token as "Authorization: Bearer <token>", and
+    # the Jupyter base URL and API token as "X-Jupyter-Base-Url" and "X-Jupyter-Token".
     def authenticate_jupyter_session!
-      params.require(:jupyter).require([:base_url, :token])
-      jupyter_info = params.require(:jupyter).permit(:base_url, :token)
-      session_token = params[:session_token]
+      session_token = request.authorization.to_s[/\ABearer (.+)\z/, 1]
+      base_url = request.headers['X-Jupyter-Base-Url']
+      jupyter_token = request.headers['X-Jupyter-Token']
+
+      if base_url.blank? || jupyter_token.blank?
+        raise BadRequestError, I18n.t('jupyter.submit.missing_jupyter_credentials')
+      end
 
       if session_token.blank?
         raise IdentityError, I18n.t('jupyter.submit.missing_session_token')
       end
 
-      origin, base_path = parse_jupyter_base_url!(jupyter_info[:base_url])
+      origin, base_path = parse_jupyter_base_url!(base_url)
       @jupyter_origin = origin
       @jupyter_base_path = base_path
-      @jupyter_token = jupyter_info[:token]
+      @jupyter_token = jupyter_token
       @real_user = decode_jupyter_session!(session_token, origin: origin, token: @jupyter_token)
     rescue StandardError => e
       render_error(e)
@@ -164,8 +247,7 @@ module Jupyter
     def submit_params
       params.require(:notebook_path)
 
-      params.permit(:notebook_path, :session_token, :course_id, :course, :assignment_id, :assignment,
-                    jupyter: [:base_url, :token])
+      params.permit(:notebook_path, :course_id, :course, :assignment_id, :assignment)
     end
 
     # +base_url+ is an absolute URL (e.g. "http://localhost:8888/user/foo/"). Splits it into
@@ -279,12 +361,15 @@ module Jupyter
     end
 
     def find_assignment_from_payload!(payload, student)
+      visible_assignments =
+        student.visible_assessments(assessment_type: Assignment.name)
+
       if payload[:assignment_id].present?
         assignment_id = payload[:assignment_id].to_i
-        assignment = student.visible_assessments.find_by(id: assignment_id, type: Assignment.name)
+        assignment = visible_assignments.find_by(id: assignment_id)
       elsif payload[:assignment].present?
         short_identifier = payload[:assignment].to_s.strip
-        assignment = student.visible_assessments.find_by(short_identifier: short_identifier, type: Assignment.name)
+        assignment = visible_assignments.find_by(short_identifier: short_identifier)
       else
         raise BadRequestError, I18n.t('jupyter.submit.missing_assignment')
       end
