@@ -21,10 +21,6 @@ namespace :markus do
     log_dir = Rails.root.join(Settings.logging.log_file).dirname
     log_files_dir = archive_dir + 'log_files'
     archive_copy(log_dir, log_files_dir, rev: rev)
-    # copy error files
-    error_dir = Rails.root.join(Settings.logging.error_file).dirname
-    error_files_dir = archive_dir + 'error_dir'
-    archive_copy(error_dir, error_files_dir, rev: rev)
     # copy starter files
     starter_files_dir = archive_dir + 'starter_files'
     archive_copy(Assignment::STARTER_FILES_DIR, starter_files_dir, rev: rev)

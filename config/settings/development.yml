@@ -32,8 +32,7 @@ validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 remote_auth_login_url: https://www.example.com
 
 logging:
-  log_file: log/info_development.log
-  error_file: log/error_development.log
+  format: color
 
 autotest:
   max_batch_size: 10

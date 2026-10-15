@@ -484,7 +484,6 @@ module Api
     end
 
     def add_test_run
-      m_logger = MarkusLogger.instance
       # Validate test results against contract schema
       validation = TestResultsContract.new.call(params[:test_results].as_json)
 
@@ -518,7 +517,7 @@ module Api
       rescue ActiveRecord::RecordInvalid => e
         render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
       rescue StandardError => e
-        m_logger.log("Test results processing failed: #{e.message}\n#{e.backtrace.join("\n")}")
+        logger.error(Logging::Messages::TEST_RESULTS_PROCESSING_FAILED, e)
         render json: { errors: 'Failed to process test results' }, status: :internal_server_error
       end
     end

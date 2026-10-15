@@ -102,11 +102,26 @@ describe User do
         it 'should return a success message' do
           expect(User.authenticate('ab', password: '123')).to eq User::AUTHENTICATE_SUCCESS
         end
+
+        it 'should log the successful authentication' do
+          expect { User.authenticate('ab', password: '123') }.to(
+            log_semantic_logger_event(level: :info, name: 'User', message: Logging::Messages::USER_AUTHENTICATED,
+                                      payload: { user_name: 'ab' })
+          )
+        end
       end
 
       context 'an unsuccessful login' do
         it 'should return a failure message' do
           expect(User.authenticate('exit3', password: '123')).to eq User::AUTHENTICATE_ERROR
+        end
+
+        it 'should log the failed authentication' do
+          expect { User.authenticate('exit1', password: '123') }.to(
+            log_semantic_logger_event(level: :warn, name: 'User',
+                                      message: Logging::Messages::USER_AUTHENTICATION_FAILED,
+                                      payload: { user_name: 'exit1' })
+          )
         end
       end
 

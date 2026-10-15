@@ -1692,6 +1692,17 @@ describe ResultsController do
       test_assigns_not_nil :result
     end
 
+    it 'logs when the instructor updates a mark' do
+      expect do
+        patch :update_mark, params: { course_id: course.id, id: incomplete_result.id,
+                                      criterion_id: flexible_mark.criterion_id, mark: 1 }, xhr: true
+      end.to(
+        log_semantic_logger_event(level: :info, name: 'ResultsController', message: Logging::Messages::MARK_UPDATED,
+                                  payload: { role_id: instructor.id, submission_id: submission.id,
+                                             assignment_id: assignment.id, group_id: grouping.group_id })
+      )
+    end
+
     it_behaves_like 'showing json data', false
 
     context 'accessing update_overall_comment' do

@@ -267,10 +267,8 @@ class ResultsController < ApplicationController
     flash_allowance(:notice, allowed) if @assignment.enable_test
     @authorized = allowed.value
 
-    m_logger = MarkusLogger.instance
-    m_logger.log("User '#{current_role.user_name}' viewed submission (id: #{@submission.id})" \
-                 "of assignment '#{@assignment.short_identifier}' for group '" \
-                 "#{@grouping.group.group_name}'")
+    logger.info(Logging::Messages::VIEWED_SUBMISSION, role_id: current_role.id, submission_id: @submission.id,
+                                                      assignment_id: @assignment.id, group_id: @grouping.group_id)
 
     # Check whether this group made a submission after the final deadline.
     if @grouping.submitted_after_collection_date? && !@assignment.scanned_exam
@@ -385,15 +383,9 @@ class ResultsController < ApplicationController
     released_to_students = !@result.released_to_students
     @result.released_to_students = released_to_students
     if @result.save
-      m_logger = MarkusLogger.instance
       assignment = @result.submission.assignment
-      if released_to_students
-        m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" \
-                     "#{assignment.id}' (for 1 group).")
-      else
-        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" \
-                     "#{assignment.id}' (for 1 group).")
-      end
+      logger.info(released_to_students ? Logging::Messages::MARKS_RELEASED : Logging::Messages::MARKS_UNRELEASED,
+                  assignment_id: assignment.id, num_groupings: 1)
     end
     head :ok
   end
@@ -454,16 +446,11 @@ class ResultsController < ApplicationController
       result_mark.save
     end
 
-    m_logger = MarkusLogger.instance
-
     if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?),
                           last_updated_by: current_role)
 
-      m_logger.log("User '#{current_role.user_name}' updated mark for " \
-                   "submission (id: #{submission.id}) of " \
-                   "assignment #{assignment.short_identifier} for " \
-                   "group #{group.group_name}.",
-                   MarkusLogger::INFO)
+      logger.info(Logging::Messages::MARK_UPDATED, role_id: current_role.id, submission_id: submission.id,
+                                                   assignment_id: assignment.id, group_id: group.id)
 
       if is_reviewer
         reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
@@ -482,12 +469,8 @@ class ResultsController < ApplicationController
         total: result.get_total_mark
       }
     else
-      m_logger.log('Error while trying to update mark of submission. ' \
-                   "User: #{current_role.user_name}, " \
-                   "Submission id: #{submission.id}, " \
-                   "Assignment: #{assignment.short_identifier}, " \
-                   "Group: #{group.group_name}.",
-                   MarkusLogger::ERROR)
+      logger.warn(Logging::Messages::MARK_UPDATE_FAILED, role_id: current_role.id, submission_id: submission.id,
+                                                         assignment_id: assignment.id, group_id: group.id)
       render json: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
@@ -600,8 +583,7 @@ class ResultsController < ApplicationController
 
     @host = Rails.application.config.relative_url_root
 
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_role.user_name}' viewed results for assignment '#{@assignment.short_identifier}'.")
+    logger.info(Logging::Messages::VIEWED_RESULTS, role_id: current_role.id, assignment_id: @assignment.id)
   end
 
   def add_extra_mark
