@@ -423,14 +423,93 @@ describe Api::CoursesController do
     describe '#create' do
       let(:params) { { name: 'test', display_name: 'test', is_hidden: true } }
 
-      before { get :create, params: params }
-
-      it 'creates a course' do
-        expect(Course.first).not_to be_nil
+      before do
+        allow_any_instance_of(AutotestSetting).to receive(:register).and_return('someapikey')
+        allow_any_instance_of(AutotestSetting).to receive(:get_schema).and_return('{}')
       end
 
-      it 'creates a course with the right attributes' do
-        expect(Course.find_by(params)).not_to be_nil
+      context 'when creating a course' do
+        before { get :create, params: params }
+
+        it 'creates a course' do
+          expect(Course.first).not_to be_nil
+        end
+
+        it 'creates a course with the right attributes' do
+          expect(Course.find_by(params)).not_to be_nil
+        end
+      end
+
+      context 'when a default autotest url is configured' do
+        before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+        it 'connects the new course to the default autotester' do
+          get :create, params: params
+          expect(response).to have_http_status(:ok)
+          expect(Course.find_by(name: 'test').autotest_setting.url).to eq 'http://autotest.example.com'
+        end
+
+        it 'uses the autotest_url parameter instead of the default when one is given' do
+          get :create, params: params.merge(autotest_url: 'http://custom.example.com')
+          expect(response).to have_http_status(:ok)
+          expect(Course.find_by(name: 'test').autotest_setting.url).to eq 'http://custom.example.com'
+        end
+
+        it 'does not connect the new course to an autotester when autotest_url is blank' do
+          expect(AutotestResetUrlJob).not_to receive(:perform_now)
+          get :create, params: params.merge(autotest_url: '')
+          expect(response).to have_http_status(:ok)
+          expect(Course.find_by(name: 'test').autotest_setting).to be_nil
+        end
+
+        it 'does not connect to an autotester when the course is invalid' do
+          expect(AutotestResetUrlJob).not_to receive(:perform_now)
+          get :create, params: params.merge(display_name: nil)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        context 'when the autotester cannot be reached' do
+          render_views
+
+          before do
+            allow_any_instance_of(AutotestSetting).to receive(:register).and_raise(Errno::ECONNREFUSED)
+            request.env['HTTP_ACCEPT'] = 'application/json'
+          end
+
+          it 'responds with 500 and a message naming the autotester and the error' do
+            get :create, params: params
+            expect(response).to have_http_status(:internal_server_error)
+            expect(response.parsed_body['description']).to include('http://autotest.example.com')
+            expect(response.parsed_body['description']).to include('Connection refused')
+          end
+
+          it 'does not create the course' do
+            get :create, params: params
+            expect(Course.find_by(name: 'test')).to be_nil
+          end
+
+          it 'does not create an autotest setting' do
+            get :create, params: params
+            expect(AutotestSetting.find_by(url: 'http://autotest.example.com')).to be_nil
+          end
+        end
+      end
+
+      context 'when no default autotest url is configured' do
+        before { allow(Settings.autotest).to receive(:default_url).and_return(nil) }
+
+        it 'does not connect the new course to an autotester' do
+          expect(AutotestResetUrlJob).not_to receive(:perform_now)
+          get :create, params: params
+          expect(response).to have_http_status(:ok)
+          expect(Course.find_by(name: 'test').autotest_setting).to be_nil
+        end
+
+        it 'connects the new course to the autotester given by the autotest_url parameter' do
+          get :create, params: params.merge(autotest_url: 'http://custom.example.com')
+          expect(response).to have_http_status(:ok)
+          expect(Course.find_by(name: 'test').autotest_setting.url).to eq 'http://custom.example.com'
+        end
       end
     end
 

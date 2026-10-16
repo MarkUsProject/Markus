@@ -28,15 +28,33 @@ module Api
     end
 
     def create
-      Course.create!(course_params)
+      url = params.key?(:autotest_url) ? params[:autotest_url] : Settings.autotest.default_url
+      autotest_error = nil
+      # Creating the course and connecting it to the autotester is atomic: if the autotester
+      # cannot be reached the course is not created, so the client never has to guess.
+      Course.transaction do
+        course = Course.create!(course_params)
+        next if url.blank?
+        begin
+          AutotestResetUrlJob.perform_now(course, url, request.protocol + request.host_with_port)
+        rescue StandardError => e
+          autotest_error = e.to_s
+          raise ActiveRecord::Rollback
+        end
+      end
+      if autotest_error.nil?
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
+      else
+        render 'shared/http_status', locals: { code: '500', message:
+          I18n.t('courses.autotest_connection_failed', url: url, error: autotest_error) },
+                                     status: :internal_server_error
+      end
     rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: :unprocessable_content
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
         HttpStatusHelper::ERROR_CODE['message']['500'] }, status: :internal_server_error
-    else
-      render 'shared/http_status', locals: { code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: :ok
     end
 
     def update
