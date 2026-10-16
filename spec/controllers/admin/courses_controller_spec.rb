@@ -141,9 +141,31 @@ describe Admin::CoursesController do
     end
 
     describe '#new' do
+      render_views
+
       it 'responds with 200' do
         get_as admin, :new
         expect(response).to have_http_status(:ok)
+      end
+
+      context 'when a default autotest url is configured' do
+        before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+        it 'pre-fills the autotest url field with the default' do
+          get_as admin, :new
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to eq 'http://autotest.example.com'
+        end
+      end
+
+      context 'when no default autotest url is configured' do
+        before { allow(Settings.autotest).to receive(:default_url).and_return(nil) }
+
+        it 'leaves the autotest url field empty' do
+          get_as admin, :new
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to be_blank
+        end
       end
     end
 
