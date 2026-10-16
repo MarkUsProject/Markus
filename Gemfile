@@ -73,6 +73,11 @@ gem 'jwt'
 # Postgres
 gem 'pg'
 
+# Tracing (only loaded when OTEL_EXPORTER_OTLP_ENDPOINT is set, see config/initializers/opentelemetry.rb)
+gem 'opentelemetry-exporter-otlp', require: false
+gem 'opentelemetry-instrumentation-all', require: false
+gem 'opentelemetry-sdk', require: false
+
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
 group :development do
