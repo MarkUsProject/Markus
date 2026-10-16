@@ -208,6 +208,28 @@ describe Admin::CoursesController do
         expect(created_course).to be_nil
       end
 
+      context 'when parameters are invalid' do
+        render_views
+
+        before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+        it 're-renders the form with the submitted autotest url rather than the default' do
+          post_as admin, :create, params: {
+            course: { name: 'CSC207', display_name: nil, is_hidden: true, autotest_url: 'http://custom.example.com' }
+          }
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to eq 'http://custom.example.com'
+        end
+
+        it 're-renders the form with an empty autotest url when it was cleared' do
+          post_as admin, :create, params: {
+            course: { name: 'CSC207', display_name: nil, is_hidden: true, autotest_url: '' }
+          }
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to be_blank
+        end
+      end
+
       it 'updates the autotest_url' do
         expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
           expect(course_).to eq Course.find_by(name: 'CSC207')
