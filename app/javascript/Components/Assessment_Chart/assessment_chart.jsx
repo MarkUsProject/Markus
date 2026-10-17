@@ -1,40 +1,37 @@
-import React from "react";
 import {Bar} from "react-chartjs-2";
 import PropTypes from "prop-types";
 import {chartScales} from "../Helpers/chart_helpers";
 import {CoreStatistics} from "./core_statistics";
 
-export class AssessmentChart extends React.Component {
-  render() {
-    return (
-      <div className="flex-row">
-        <div className="distribution-graph">
-          <h3>{I18n.t("grade_distribution")}</h3>
-          <Bar
-            data={this.props.assessment_data}
-            options={{scales: chartScales()}}
-            width="500"
-            height="450"
+export function AssessmentChart({
+  additional_assessment_stats,
+  assessment_data,
+  outstanding_remark_request_link,
+  summary,
+}) {
+  return (
+    <div className="flex-row">
+      <div className="distribution-graph">
+        <h3>{I18n.t("grade_distribution")}</h3>
+        <Bar data={assessment_data} options={{scales: chartScales()}} width="500" height="450" />
+      </div>
+      <div className="flex-row-expand">
+        <div className="grid-2-col">
+          {additional_assessment_stats}
+          <CoreStatistics
+            average={summary.average}
+            median={summary.median}
+            standard_deviation={summary.standard_deviation}
+            max_mark={summary.max_mark}
+            num_fails={summary.num_fails}
+            num_zeros={summary.num_zeros}
+            num_groupings={summary.groupings_size}
           />
-        </div>
-        <div className="flex-row-expand">
-          <div className="grid-2-col">
-            {this.props.additional_assessment_stats}
-            <CoreStatistics
-              average={this.props.summary.average}
-              median={this.props.summary.median}
-              standard_deviation={this.props.summary.standard_deviation}
-              max_mark={this.props.summary.max_mark}
-              num_fails={this.props.summary.num_fails}
-              num_zeros={this.props.summary.num_zeros}
-              num_groupings={this.props.summary.groupings_size}
-            />
-            {this.props.outstanding_remark_request_link}
-          </div>
+          {outstanding_remark_request_link}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 AssessmentChart.propTypes = {

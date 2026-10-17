@@ -1,44 +1,49 @@
-import React from "react";
 import {FractionStat} from "./fraction_stat";
 import PropTypes from "prop-types";
 
-export class CoreStatistics extends React.Component {
-  render() {
-    const max_mark_value = Number(this.props.max_mark) || 0;
-    let percent_standard_deviation = "0.00";
-    if (max_mark_value !== 0) {
-      percent_standard_deviation = (
-        (100 / max_mark_value) *
-        (Number(this.props.standard_deviation) || 0)
-      ).toFixed(2);
-    }
-    let num_fails = "";
-    if (this.props.num_fails !== undefined) {
-      num_fails = (
-        <React.Fragment>
-          <span className="summary-stats-label">{I18n.t("num_failed")}</span>
-          <FractionStat numerator={this.props.num_fails} denominator={this.props.num_groupings} />
-        </React.Fragment>
-      );
-    }
-
-    return (
-      <React.Fragment>
-        <span className="summary-stats-label">{I18n.t("average")}</span>
-        <FractionStat numerator={this.props.average} denominator={this.props.max_mark} />
-        <span className="summary-stats-label">{I18n.t("median")}</span>
-        <FractionStat numerator={this.props.median} denominator={this.props.max_mark} />
-        <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
-        <span>
-          {(this.props.standard_deviation || 0).toFixed(2)}
-          &nbsp;({percent_standard_deviation}%)
-        </span>
-        {num_fails}
-        <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
-        <FractionStat numerator={this.props.num_zeros} denominator={this.props.num_groupings} />
-      </React.Fragment>
+export function CoreStatistics({
+  average,
+  max_mark,
+  median,
+  num_fails,
+  num_groupings,
+  num_zeros,
+  standard_deviation,
+}) {
+  const max_mark_value = Number(max_mark) || 0;
+  let percent_standard_deviation = "0.00";
+  if (max_mark_value !== 0) {
+    percent_standard_deviation = (
+      (100 / max_mark_value) *
+      (Number(standard_deviation) || 0)
+    ).toFixed(2);
+  }
+  let num_fails_stat = "";
+  if (num_fails !== undefined) {
+    num_fails_stat = (
+      <>
+        <span className="summary-stats-label">{I18n.t("num_failed")}</span>
+        <FractionStat numerator={num_fails} denominator={num_groupings} />
+      </>
     );
   }
+
+  return (
+    <>
+      <span className="summary-stats-label">{I18n.t("average")}</span>
+      <FractionStat numerator={average} denominator={max_mark} />
+      <span className="summary-stats-label">{I18n.t("median")}</span>
+      <FractionStat numerator={median} denominator={max_mark} />
+      <span className="summary-stats-label">{I18n.t("standard_deviation")}</span>
+      <span>
+        {(standard_deviation || 0).toFixed(2)}
+        &nbsp;({percent_standard_deviation}%)
+      </span>
+      {num_fails_stat}
+      <span className="summary-stats-label">{I18n.t("num_zeros")}</span>
+      <FractionStat numerator={num_zeros} denominator={num_groupings} />
+    </>
+  );
 }
 
 CoreStatistics.propTypes = {
