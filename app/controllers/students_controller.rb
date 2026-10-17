@@ -9,8 +9,8 @@ class StudentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        total_deductions = calculate_total_deductions
-        student_data = current_course.students.includes(:grace_period_deductions, :section, :user).map do |s|
+        total_deductions = current_course.get_all_grace_credit_deductions
+        student_data = current_course.students.includes(:user).map do |s|
           {
             _id: s.id,
             user_name: s.user_name,
@@ -36,14 +36,6 @@ class StudentsController < ApplicationController
         }
       end
     end
-  end
-
-  def calculate_total_deductions
-    current_course.roles
-                  .joins(memberships: :grace_period_deductions)
-                  .group('roles.id')
-                  .pluck('roles.id', 'sum(grace_period_deductions.deduction)')
-                  .to_h
   end
 
   def edit

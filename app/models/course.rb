@@ -145,6 +145,12 @@ class Course < ApplicationRecord
     end.join("\n")
   end
 
+  def get_all_grace_credit_deductions
+    students.joins(student_memberships: :grace_period_deductions)
+            .group('roles.id')
+            .sum('grace_period_deductions.deduction')
+  end
+
   def export_student_data_csv
     students = self.students.joins(:user).order('users.user_name').includes(:section)
     MarkusCsv.generate(students) do |student|
