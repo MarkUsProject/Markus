@@ -319,6 +319,34 @@ jobs:
           brakeman_version: gemfile
           reporter: github-pr-check
 
+  # Runs the Ruby pre-commit hooks that pre-commit.ci skips (see .pre-commit-config.yaml)
+  lint_ruby:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      BUNDLE_ONLY: development
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+      - name: Set up ruby and cache gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.4
+          bundler-cache: true
+      - name: Install python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run Ruby pre-commit hooks
+        run: |
+          for hook in rubocop erb_lint i18n-tasks-health; do
+            pre-commit run --all-files --show-diff-on-failure "$hook"
+          done
+
   finish:
     needs: [test_rspec, test_jest]
     if: github.event.pull_request.draft == false

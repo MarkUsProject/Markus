@@ -38,11 +38,14 @@ repos:
               app/assets/stylesheets/application.css|
               app/assets/stylesheets/common/_reset.scss
             )$
-  - repo: https://github.com/rubocop/rubocop
-    rev: v1.91.0
+  # Ruby hooks run in the rails Docker Compose service, using the gems in the Gemfile
+  - repo: local
     hooks:
       - id: rubocop
-        args: ["--autocorrect"]
+        name: rubocop
+        entry: .dockerfiles/run-in-docker.sh bundle exec rubocop --autocorrect --force-exclusion --cache-root tmp/rubocop
+        language: system
+        require_serial: true
         types: ["ruby"]
         exclude: |
           (?x)^(
@@ -52,36 +55,23 @@ repos:
             release/.*|
             Vagrantfile
           )$
-        additional_dependencies:
-          - rubocop-rails:2.36.0
-          - rubocop-performance:1.26.1
-          - rubocop-factory_bot:2.28.0
-          - rubocop-rspec:3.10.2
-          - rubocop-rspec_rails:2.32.0
-          - rubocop-capybara:3.0.0
-  - repo: local
-    hooks:
       - id: erb_lint
         name: erb_lint
-        entry: erb_lint
-        language: ruby
+        entry: .dockerfiles/run-in-docker.sh bundle exec erb_lint --autocorrect
+        language: system
+        require_serial: true
         types: ["erb"]
-        args: ["--autocorrect"]
         exclude: |
           (?x)^(
           .*.xml.erb|
           .*/assign_scans.html.erb
           )$
-        additional_dependencies:
-          - erb_lint:0.9.0
       - id: i18n-tasks-health
         name: i18n-tasks health
-        entry: i18n-tasks health
-        language: ruby
+        entry: .dockerfiles/run-in-docker.sh bundle exec i18n-tasks health
+        language: system
         files: config/locales/
         pass_filenames: false
-        additional_dependencies:
-          - i18n-tasks
 
 exclude: vendor
 
@@ -90,3 +80,5 @@ default_language_version:
 
 ci:
   autoupdate_schedule: monthly
+  # These hooks need the app's gems, so they run in the lint job in .github/workflows/test_ci.yml
+  skip: [rubocop, erb_lint, i18n-tasks-health]
