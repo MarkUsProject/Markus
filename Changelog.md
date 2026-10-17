@@ -27,6 +27,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Added optional OpenTelemetry tracing, enabled by setting `OTEL_EXPORTER_OTLP_ENDPOINT`, and a `compose.otel.yaml` file that sends traces from the development environment to a local Grafana (#8223)
 - Refreshed apt package lists before installing system dependencies in CI (#8212)
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
