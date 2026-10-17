@@ -148,12 +148,12 @@ We use [pre-commit](https://pre-commit.com/) to run automated checks on code bef
 2. Then, install the pre-commit library: `$ python3 -m pip install pre-commit` (or just `python` instead of `python3`), depending on your Python executable. Homebrew Python might [block](https://peps.python.org/pep-0668/) the above command. If this fails, run `brew install pipx` -> `pipx install pre-commit`.
 3. Finally, in the `Markus` folder run `$ pre-commit install`. This will install all Markus pre-commit hooks.
 
-The Ruby-based hooks (RuboCop, erb_lint and i18n-tasks) run inside the `rails` Docker Compose service using the gems in the `Gemfile`, so you don't need Ruby installed locally. They use the running `rails` container if there is one, and otherwise start a temporary one, so Docker must be running when you commit.
-
 After this, these checks will run every time you make a commit. If all checks pass, the commit will proceed as normal. If a check fails, the commit *does not* occur, and there are two possibilities:
 
 - Some checks will automatically fix issues (e.g., most style checks). *These changes still need to be manually git added and committed!*
 - Some checks will just report problems that you'll need to fix manually. After fixing them, you'll need to add and commit those changes.
+
+The Ruby-based hooks run inside the `rails` Docker Compose service, and so Docker must be running when you commit. These hooks use the running `rails` container if there is one, and otherwise start a temporary one.
 
 ## Running Commands in Docker
 

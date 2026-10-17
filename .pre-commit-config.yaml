@@ -47,14 +47,6 @@ repos:
         language: system
         require_serial: true
         types: ["ruby"]
-        exclude: |
-          (?x)^(
-            db/migrate/.*|
-            db/schema.rb|
-            lib/repo/test/.*|
-            release/.*|
-            Vagrantfile
-          )$
       - id: erb_lint
         name: erb_lint
         entry: .dockerfiles/run-in-docker.sh bundle exec erb_lint --autocorrect
@@ -80,5 +72,5 @@ default_language_version:
 
 ci:
   autoupdate_schedule: monthly
-  # These hooks need the app's gems, so they run in the lint job in .github/workflows/test_ci.yml
+  # Ruby-based hooks are run in a separate CI task
   skip: [rubocop, erb_lint, i18n-tasks-health]
