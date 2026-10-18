@@ -7,11 +7,12 @@
 # introduced by cherry-pick conflict resolution.
 #
 # Usage:
-#   ./validate_changelog.sh <version> [changelog_path]
+#   ./validate_changelog.sh <version> [changelog_path] [--prs N,N,...] [--bots N,N,...]
 #
 # Examples:
 #   ./validate_changelog.sh v2.9.3
 #   ./validate_changelog.sh v2.9.3 /path/to/Changelog.md
+#   ./validate_changelog.sh v2.9.3 --prs 8056,8171,8194 --bots 8194
 #
 # What it checks:
 #   1. No git conflict markers left in file
@@ -20,51 +21,28 @@
 #   4. Version sections appear in correct descending order
 #   5. No PR numbers duplicated across different version sections
 #   6. Sections below the release version match the original release branch
+#   7. No repeated version headers (except changelog_duplicate_headers.txt)
+#      and no empty version sections anywhere in the file
+#   8. Entries match the picks (--prs): no entry for an unpicked PR, and an
+#      entry for every picked PR except bots (--bots) and PRs whose only
+#      changed file is Changelog.md. Skipped with a WARN when --prs is absent;
+#      an empty --prs value is an error (exit 2).
 #
 # =============================================================================
 
 set -uo pipefail
 
-VERSION="${1:-}"
-CHANGELOG="${2:-Changelog.md}"
-ERRORS=0
-WARNINGS=0
-
-pass()    { echo "  PASS  $1"; }
-fail()    { echo "  FAIL  $1"; ERRORS=$((ERRORS + 1)); }
-warn()    { echo "  WARN  $1"; WARNINGS=$((WARNINGS + 1)); }
-info()    { echo "  INFO  $1"; }
-divider() { echo "------------------------------------------------------------------------"; }
-
-# Extract bullet entries from a section. $1 = section name (e.g., "unreleased", "$VERSION")
-section_entries() {
-    awk -v section="$1" '
-        BEGIN { IGNORECASE = 1 }
-        /^## \[/ {
-            if (found) exit
-            header = $0; gsub(/^## \[/, "", header); gsub(/\].*$/, "", header)
-            if (tolower(header) == tolower(section)) found = 1
-            next
-        }
-        found && /^- / { print }
-    ' "$CHANGELOG"
+usage() {
+    echo "Usage: $0 <version> [changelog_path] [--prs N,N,...] [--bots N,N,...]"
+    echo "  e.g. $0 v2.9.3 --prs 8056,8171,8194 --bots 8194"
 }
 
-# Extract version strings from ## [vX.Y.Z] headers
-version_headers() {
-    grep '^## \[v' "$CHANGELOG" | sed 's/## \[\(.*\)\]/\1/'
-}
-
-if [ -z "$VERSION" ]; then
-    echo "Usage: $0 <version> [changelog_path]"
-    echo "  e.g. $0 v2.9.3"
-    exit 2
-fi
-
-if [ ! -f "$CHANGELOG" ]; then
-    echo "Error: $CHANGELOG not found. Run from the repo root or pass the path."
-    exit 2
-fi
+# Shared checks; common.rb and changelog_duplicate_headers.txt sit beside them.
+CHECKS="$(dirname "$0")/changelog_checks.sh"
+# shellcheck source=release/changelog_checks.sh
+source "$CHECKS" 2>/dev/null || { echo "Error: $CHECKS not found. Copy it with the validator."; exit 2; }
+parse_args "$@"
+check_args
 
 echo ""
 echo "Changelog Validation: $VERSION"
@@ -76,7 +54,7 @@ divider
 # =============================================================================
 
 echo ""
-echo "[1/6] Conflict markers"
+echo "[1/8] Conflict markers"
 
 MARKERS=$(grep -n '^\(<<<<<<<\|=======\|>>>>>>>\)' "$CHANGELOG" 2>/dev/null || true)
 if [ -z "$MARKERS" ]; then
@@ -91,7 +69,7 @@ fi
 # =============================================================================
 
 echo ""
-echo "[2/6] Unreleased section"
+echo "[2/8] Unreleased section"
 
 if ! head -5 "$CHANGELOG" | grep -qi '## \[unreleased\]'; then
     fail "[unreleased] section missing or not at top of file"
@@ -99,13 +77,13 @@ else
     pass "[unreleased] section present at top of file"
 fi
 
-UNRELEASED_ENTRIES=$(section_entries "unreleased" | wc -l | tr -d ' ')
+UNRELEASED_ENTRIES=$(section_entries "$CHANGELOG" "unreleased" | wc -l | tr -d ' ')
 
 if [ "$UNRELEASED_ENTRIES" -eq 0 ]; then
     pass "[unreleased] section is empty"
 else
     warn "[unreleased] section has $UNRELEASED_ENTRIES entries (should be empty on release branch)"
-    section_entries "unreleased" | head -5 | sed 's/^/        /'
+    section_entries "$CHANGELOG" "unreleased" | head -5 | sed 's/^/        /'
 fi
 
 # =============================================================================
@@ -113,7 +91,7 @@ fi
 # =============================================================================
 
 echo ""
-echo "[3/6] Version section [$VERSION]"
+echo "[3/8] Version section [$VERSION]"
 
 if ! grep -q "^## \[$VERSION\]" "$CHANGELOG"; then
     fail "[$VERSION] section missing"
@@ -121,10 +99,10 @@ else
     pass "[$VERSION] section found"
 fi
 
-VERSION_ENTRIES=$(section_entries "$VERSION" | wc -l | tr -d ' ')
+VERSION_ENTRIES=$(section_entries "$CHANGELOG" "$VERSION" | wc -l | tr -d ' ')
 
 if [ "$VERSION_ENTRIES" -eq 0 ]; then
-    warn "[$VERSION] section has no entries"
+    fail "[$VERSION] section has no entries"
 else
     pass "[$VERSION] section has $VERSION_ENTRIES entries"
 fi
@@ -134,7 +112,7 @@ fi
 # =============================================================================
 
 echo ""
-echo "[4/6] Section ordering"
+echo "[4/8] Section ordering"
 
 VERSIONS_IN_FILE=$(version_headers | head -10)
 SORTED_VERSIONS=$(echo "$VERSIONS_IN_FILE" | sort -t. -k1,1r -k2,2rn -k3,3rn)
@@ -159,9 +137,9 @@ fi
 # =============================================================================
 
 echo ""
-echo "[5/6] Duplicate PR references"
+echo "[5/8] Duplicate PR references"
 
-TARGET_PRS=$(section_entries "$VERSION" | grep -o '#[0-9]\+' | sort -u)
+TARGET_PRS=$(section_entries "$CHANGELOG" "$VERSION" | grep -o '#[0-9]\+' | sort -u)
 OTHER_PRS=$(awk "found && /^## \[v/{p=1} p{print} /^## \[$VERSION\]/{found=1}" "$CHANGELOG" \
     | grep -o '#[0-9]\+' | sort -u)
 
@@ -187,14 +165,13 @@ fi
 # =============================================================================
 
 echo ""
-echo "[6/6] Integrity of older sections"
+echo "[6/8] Integrity of older sections"
 
 PREV_VERSION=$(version_headers | awk "found{print; exit} /^$VERSION\$/{found=1}")
 
 if [ -n "$PREV_VERSION" ] && git show origin/release:Changelog.md &>/dev/null; then
-    # Extract everything from the previous version onwards in both files
-    CURRENT_TAIL=$(awk "/^## \[$PREV_VERSION\]/{found=1} found{print}" "$CHANGELOG")
-    ORIGINAL_TAIL=$(git show origin/release:Changelog.md | awk "/^## \[$PREV_VERSION\]/{found=1} found{print}")
+    CURRENT_TAIL=$(from_section "$CHANGELOG" "$PREV_VERSION")
+    ORIGINAL_TAIL=$(git show origin/release:Changelog.md | from_section - "$PREV_VERSION")
 
     if [ "$CURRENT_TAIL" != "$ORIGINAL_TAIL" ]; then
         fail "Sections from [$PREV_VERSION] onwards differ from origin/release"
@@ -206,6 +183,24 @@ if [ -n "$PREV_VERSION" ] && git show origin/release:Changelog.md &>/dev/null; t
 else
     info "Skipped (could not determine previous version or origin/release not available)"
 fi
+
+# =============================================================================
+# CHECK 7: No repeated version headers or empty version sections
+# =============================================================================
+
+echo ""
+echo "[7/8] Version headers"
+
+check_structure
+
+# =============================================================================
+# CHECK 8: Entries match the picked PRs
+# =============================================================================
+
+echo ""
+echo "[8/8] Entries match picks"
+
+check_picks <<<"$(section_entries "$CHANGELOG" "$VERSION")"
 
 # =============================================================================
 # Summary
@@ -226,4 +221,4 @@ else
     echo "  Search for markers:     grep -n '<<<<<<' Changelog.md"
 fi
 echo ""
-exit $ERRORS
+[ "$ERRORS" -eq 0 ]
