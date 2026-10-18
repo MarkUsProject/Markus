@@ -319,8 +319,8 @@ jobs:
           brakeman_version: gemfile
           reporter: github-pr-check
 
-  # Runs the Ruby pre-commit hooks that pre-commit.ci skips (see .pre-commit-config.yaml)
-  lint_ruby:
+  # Runs the Ruby and JavaScript pre-commit hooks that pre-commit.ci skips (see .pre-commit-config.yaml)
+  lint:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     permissions:
@@ -335,15 +335,22 @@ jobs:
         with:
           ruby-version: ruby-3.4
           bundler-cache: true
+      - name: Set up node and cache packages
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install npm packages
+        run: npm ci
       - name: Install python
         uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Install pre-commit
         run: pip install pre-commit
-      - name: Run Ruby pre-commit hooks
+      - name: Run Ruby and JavaScript pre-commit hooks
         run: |
-          for hook in rubocop erb_lint i18n-tasks-health; do
+          for hook in prettier stylelint rubocop erb_lint i18n-tasks-health; do
             pre-commit run --all-files --show-diff-on-failure "$hook"
           done
 
