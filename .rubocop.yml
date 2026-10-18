@@ -8,10 +8,8 @@ plugins:
 
 AllCops:
   Exclude:
-    - 'db/migrate/.*'
-    - 'db/schema.rb'
-    - 'lib/repo/test/.*'
-    - 'release/.*'
+    - 'db/migrate/**/*'
+    - 'release/**/*'
     - 'Vagrantfile'
   NewCops: enable
   SuggestExtensions: false
