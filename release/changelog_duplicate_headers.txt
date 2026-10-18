@@ -1,0 +1,7 @@
+# Version headers that already appear twice in Changelog.md on origin/release.
+# The changelog validators skip these in the repeated-header check.
+# Source: git show origin/release:Changelog.md | grep '^## \[v' | sort | uniq -d
+# Add a version here only for a published duplicate that will stay as is.
+v2.6.1
+v2.6.0
+v2.2.4

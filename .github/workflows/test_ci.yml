@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - master
+      - release
+    tags:
+      - "v*"
 
 jobs:
   test_rspec:
@@ -117,7 +120,7 @@ jobs:
       - name: Get pip cache dir
         id: pip-cache
         run: |
-          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+          echo "dir=$(pip cache dir)" >> "$GITHUB_OUTPUT"
       - name: Cache pip
         uses: actions/cache@v6
         with:
@@ -353,6 +356,159 @@ jobs:
           for hook in prettier stylelint rubocop erb_lint i18n-tasks-health; do
             pre-commit run --all-files --show-diff-on-failure "$hook"
           done
+
+  production_boot:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    env:
+      # Same gem groups and boot flags as the production image (.dockerfiles/Dockerfile). NODE_ENV stays unset,
+      # as on servers installed from the docs, so the jsxDEV check catches a development-mode bundle.
+      BUNDLE_WITHOUT: development:test:offline:production_test
+      RAILS_ENV: production
+      SECRET_KEY_BASE: dummy
+      NO_INIT_SCHEDULER: 1
+      PGDATABASE: dummy
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+      - name: Update apt package lists
+        run: sudo apt-get update
+      - name: Install and cache system dependencies
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: |
+            libpq-dev
+            cmake
+            pkg-config
+            libmagickwand-dev
+          version: 1.0.2
+      - name: Set up ruby and cache gems
+        uses: ruby/setup-ruby@v1
+        with:
+          # Some production servers run Ruby 3.3; the other jobs and the production image use 3.4
+          ruby-version: ruby-3.3
+          bundler-cache: true
+      - name: Set up node and cache packages
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install npm packages
+        run: npm ci
+      - name: Configure server
+        run: cp .dockerfiles/database.yml.postgresql config/database.yml
+      - name: Precompile assets
+        # Also runs javascript:build (npm run build), as on the production server
+        run: bundle exec rails assets:precompile
+      - name: Check bundle for development JSX
+        run: |
+          if grep -l jsxDEV app/assets/builds/*.js; then
+            echo "::error::Production bundle contains jsxDEV: JSX was compiled in development mode"
+            exit 1
+          fi
+      - name: Check eager loading
+        run: bundle exec rails zeitwerk:check
+
+  migration_replay:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      BUNDLE_WITHOUT: development:production:console:unicorn
+      RAILS_ENV: test
+      NO_INIT_SCHEDULER: 1
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASETEST: markus_replay
+      FRESH_DB: markus_fresh
+      # One client for every load and dump, matching the server version
+      PG_BIN: /usr/lib/postgresql/17/bin
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Find previous release tag
+        run: |
+          current=$(git describe --tags --exact-match --match 'v*' HEAD 2>/dev/null || true)
+          prev=$(git tag --list 'v*' --sort=-v:refname | awk -v c="$current" 'c == "" || f { print; exit } $0 == c { f = 1 }')
+          if [ -z "$prev" ]; then
+            echo "No release tag before ${current:-HEAD}; skipping replay"
+            echo "REPLAY=skip" >> "$GITHUB_ENV"
+          elif git diff --quiet "$prev" HEAD -- db/structure.sql db/migrate; then
+            echo "No migration or structure.sql change since $prev; skipping replay"
+            echo "REPLAY=skip" >> "$GITHUB_ENV"
+          else
+            echo "Replaying migrations since $prev"
+            echo "PREV_TAG=$prev" >> "$GITHUB_ENV"
+          fi
+      - name: Add PostgreSQL apt repository
+        if: env.REPLAY != 'skip'
+        run: |
+          sudo apt-get install -y curl ca-certificates
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          sudo apt-get update
+      - name: Install and cache system dependencies
+        if: env.REPLAY != 'skip'
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: |
+            libpq-dev
+            cmake
+            pkg-config
+            libmagickwand-dev
+            postgresql-client-17
+          version: 1.0.2
+      - name: Set up ruby and cache gems
+        if: env.REPLAY != 'skip'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.4
+          bundler-cache: true
+      - name: Configure server
+        if: env.REPLAY != 'skip'
+        run: cp .dockerfiles/database.yml.postgresql config/database.yml
+      - name: Load previous release schema
+        if: env.REPLAY != 'skip'
+        run: |
+          git show "$PREV_TAG:db/structure.sql" > "$RUNNER_TEMP/previous_structure.sql"
+          "$PG_BIN/createdb" "$PGDATABASETEST"
+          "$PG_BIN/psql" -X -q -o /dev/null -v ON_ERROR_STOP=1 -d "$PGDATABASETEST" -f "$RUNNER_TEMP/previous_structure.sql"
+      - name: Run migrations
+        if: env.REPLAY != 'skip'
+        run: |
+          bundle exec rails runner 'ActiveRecord.dump_schema_after_migration = false; Rails.application.load_tasks; Rake::Task["db:migrate"].invoke'
+          git diff --exit-code db/structure.sql
+      - name: Compare migrated schema with db/structure.sql
+        if: env.REPLAY != 'skip'
+        run: |
+          set -o pipefail
+          "$PG_BIN/createdb" "$FRESH_DB"
+          "$PG_BIN/psql" -X -q -o /dev/null -v ON_ERROR_STOP=1 -d "$FRESH_DB" -f db/structure.sql
+          # \restrict and \unrestrict carry a random key in every dump
+          for db in "$PGDATABASETEST" "$FRESH_DB"; do
+            "$PG_BIN/pg_dump" --schema-only --no-owner --no-privileges -d "$db" | grep -Ev '^\\(un)?restrict ' > "$RUNNER_TEMP/$db.sql"
+          done
+          diff -u "$RUNNER_TEMP/$FRESH_DB.sql" "$RUNNER_TEMP/$PGDATABASETEST.sql"
 
   finish:
     needs: [test_rspec, test_jest]
