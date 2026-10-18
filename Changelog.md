@@ -28,6 +28,8 @@
 
 ### 🔧 Internal changes
 - Added optional OpenTelemetry tracing, enabled by setting `OTEL_EXPORTER_OTLP_ENDPOINT`, and a `compose.otel.yaml` file that sends traces from the development environment to a local Grafana (#8223)
+- Moved the RuboCop, erb_lint and i18n-tasks dependencies into the Gemfile and run them in pre-commit hooks using the `rails` Docker Compose service (#8224)
+- Moved the Prettier and stylelint dependencies into `package.json` and run them in pre-commit hooks using the `rails` Docker Compose service (#8225)
 - Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
 - Refreshed apt package lists before installing system dependencies in CI (#8212)
 - Suppressed CodeQL scanning false positives (#8101)

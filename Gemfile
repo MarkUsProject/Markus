@@ -87,7 +87,15 @@ group :development do
   gem 'binding_of_caller' # supplement for better_errors
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
+  gem 'erb_lint', require: false
   gem 'listen' # to listen for changes in i18n-js files
+  gem 'rubocop', require: false
+  gem 'rubocop-capybara', require: false
+  gem 'rubocop-factory_bot', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec_rails', require: false
 end
 
 group :development_extra, optional: true do
