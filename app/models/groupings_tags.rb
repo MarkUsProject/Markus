@@ -1,0 +1,2 @@
+class GroupingsTags < ApplicationRecord
+end
