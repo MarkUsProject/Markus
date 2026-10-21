@@ -12,11 +12,14 @@
 # branch (v2.X.Y-changelog), BEFORE pushing.
 #
 # Usage:
-#   ./validate_changelog_master.sh <version> [changelog_path]
+#   ./validate_changelog_master.sh <version> [changelog_path] [--prs N,N,...] [--bots N,N,...]
 #
 # Examples:
 #   ./validate_changelog_master.sh v2.9.4
 #   ./validate_changelog_master.sh v2.9.4 /path/to/Changelog.md
+#   ./validate_changelog_master.sh v2.9.4 --prs 7783,7851,7858 --bots 7858
+#
+# CHANGELOG_REFERENCE=<ref> replaces origin/master as the pre-edit reference.
 #
 # What it checks:
 #   1. [unreleased] section still has entries (not wiped out)
@@ -24,72 +27,33 @@
 #   3. Every entry in [v2.X.Y] was present in origin/master's [unreleased]
 #   4. No entries disappeared: every entry removed from [unreleased] is in [v2.X.Y]
 #   5. Everything from the previous version downward is identical to origin/master
+#   6. No repeated version headers (except changelog_duplicate_headers.txt)
+#      and no empty version sections anywhere in the file
+#   7. Entries match the picks (--prs): no entry for an unpicked PR, and an
+#      entry for every picked PR except bots (--bots) and PRs whose only
+#      changed file is Changelog.md. Skipped with a WARN when --prs is absent;
+#      an empty --prs value is an error (exit 2).
 #
 # =============================================================================
 
 set -uo pipefail
 
-VERSION="${1:-}"
-CHANGELOG="${2:-Changelog.md}"
-REFERENCE="origin/master"
-ERRORS=0
-WARNINGS=0
+REFERENCE="${CHANGELOG_REFERENCE:-origin/master}"
 
-pass()    { echo "  PASS  $1"; }
-fail()    { echo "  FAIL  $1"; ERRORS=$((ERRORS + 1)); }
-warn()    { echo "  WARN  $1"; WARNINGS=$((WARNINGS + 1)); }
-info()    { echo "  INFO  $1"; }
-divider() { echo "------------------------------------------------------------------------"; }
-
-# Extract bullet entries (lines starting with "- ") from a given section.
-# Reads from a file. Outputs sorted entries for stable comparison.
-# $1 = file path
-# $2 = section name (e.g., "unreleased" or "v2.9.4")
-extract_entries() {
-    local file="$1"
-    local section="$2"
-
-    awk -v section="$section" '
-        BEGIN { found = 0; IGNORECASE = 1 }
-        /^## \[/ {
-            if (found) exit
-            header = $0
-            gsub(/^## \[/, "", header)
-            gsub(/\].*$/, "", header)
-            if (tolower(header) == tolower(section)) found = 1
-            next
-        }
-        found && /^- / { print }
-    ' "$file" | sort
-}
-
-# Extract everything from a given version section header to EOF.
-# $1 = file path
-# $2 = version string (e.g., "v2.9.3")
-extract_from_version() {
-    local file="$1"
-    local version="$2"
-
-    awk -v version="$version" '
-        BEGIN { found = 0 }
-        $0 ~ "^## \\[" version "\\]" { found = 1 }
-        found { print }
-    ' "$file"
-}
-
-if [ -z "$VERSION" ]; then
-    echo "Usage: $0 <version> [changelog_path]"
-    echo "  e.g. $0 v2.9.4"
+usage() {
+    echo "Usage: $0 <version> [changelog_path] [--prs N,N,...] [--bots N,N,...]"
+    echo "  e.g. $0 v2.9.4 --prs 7783,7851,7858 --bots 7858"
     echo ""
     echo "Validates changelog edits when syncing released entries to master."
     echo "Run from the repo root on the v2.X.Y-changelog branch."
-    exit 2
-fi
+}
 
-if [ ! -f "$CHANGELOG" ]; then
-    echo "Error: $CHANGELOG not found. Run from the repo root or pass the path."
-    exit 2
-fi
+# Shared checks; common.rb and changelog_duplicate_headers.txt sit beside them.
+CHECKS="$(dirname "$0")/changelog_checks.sh"
+# shellcheck source=release/changelog_checks.sh
+source "$CHECKS" 2>/dev/null || { echo "Error: $CHECKS not found. Copy it with the validator."; exit 2; }
+parse_args "$@"
+check_args
 
 if ! git show "${REFERENCE}:Changelog.md" &>/dev/null; then
     echo "Error: Cannot read ${REFERENCE}:Changelog.md"
@@ -114,12 +78,12 @@ divider
 # =============================================================================
 
 echo ""
-echo "[1/5] Unreleased section has entries"
+echo "[1/7] Unreleased section has entries"
 
 if ! head -5 "$CHANGELOG" | grep -qi '## \[unreleased\]'; then
     fail "[unreleased] section missing or not at top of file"
 else
-    NEW_UNRELEASED_COUNT=$(extract_entries "$CHANGELOG" "unreleased" | wc -l | tr -d ' ' || true)
+    NEW_UNRELEASED_COUNT=$(section_entries "$CHANGELOG" "unreleased" | wc -l | tr -d ' ' || true)
 
     if [ "$NEW_UNRELEASED_COUNT" -gt 0 ]; then
         pass "[unreleased] section has $NEW_UNRELEASED_COUNT entries"
@@ -134,7 +98,7 @@ fi
 # =============================================================================
 
 echo ""
-echo "[2/5] New [$VERSION] section exists in correct position"
+echo "[2/7] New [$VERSION] section exists in correct position"
 
 if ! grep -q "^## \[$VERSION\]" "$CHANGELOG"; then
     fail "[$VERSION] section not found"
@@ -145,14 +109,14 @@ else
         warn "[$VERSION] section already existed in $REFERENCE. Is this a re-run?"
     fi
 
-    FIRST_VERSIONED=$(grep '^## \[v' "$CHANGELOG" | head -1 | sed 's/## \[\(.*\)\]/\1/')
+    FIRST_VERSIONED=$(version_headers | head -1)
     if [ "$FIRST_VERSIONED" != "$VERSION" ]; then
         fail "[$VERSION] is not the first version section (found [$FIRST_VERSIONED] first)"
     else
         pass "[$VERSION] is the first version section after [unreleased]"
     fi
 
-    VERSION_COUNT=$(extract_entries "$CHANGELOG" "$VERSION" | wc -l | tr -d ' ' || true)
+    VERSION_COUNT=$(section_entries "$CHANGELOG" "$VERSION" | wc -l | tr -d ' ' || true)
     if [ "$VERSION_COUNT" -eq 0 ]; then
         fail "[$VERSION] section has no entries"
     else
@@ -165,13 +129,13 @@ fi
 # =============================================================================
 
 echo ""
-echo "[3/5] All [$VERSION] entries came from [unreleased]"
+echo "[3/7] All [$VERSION] entries came from [unreleased]"
 
 OLD_UNRELEASED="$TMPDIR_VALIDATE/old_unreleased.txt"
-extract_entries "$REF_CHANGELOG" "unreleased" > "$OLD_UNRELEASED"
+section_entries "$REF_CHANGELOG" "unreleased" > "$OLD_UNRELEASED"
 
 VERSION_ENTRIES_FILE="$TMPDIR_VALIDATE/version_entries.txt"
-extract_entries "$CHANGELOG" "$VERSION" > "$VERSION_ENTRIES_FILE"
+section_entries "$CHANGELOG" "$VERSION" > "$VERSION_ENTRIES_FILE"
 
 VERSION_COUNT=$(wc -l < "$VERSION_ENTRIES_FILE" | tr -d ' ')
 
@@ -203,10 +167,10 @@ fi
 # =============================================================================
 
 echo ""
-echo "[4/5] No entries lost: every removal from [unreleased] is in [$VERSION]"
+echo "[4/7] No entries lost: every removal from [unreleased] is in [$VERSION]"
 
 NEW_UNRELEASED_FILE="$TMPDIR_VALIDATE/new_unreleased.txt"
-extract_entries "$CHANGELOG" "unreleased" > "$NEW_UNRELEASED_FILE"
+section_entries "$CHANGELOG" "unreleased" > "$NEW_UNRELEASED_FILE"
 
 MISSING_ENTRIES=0
 MOVED_COUNT=0
@@ -246,15 +210,15 @@ fi
 # =============================================================================
 
 echo ""
-echo "[5/5] Older sections unchanged"
+echo "[5/7] Older sections unchanged"
 
-PREV_VERSION=$(grep '^## \[v' "$REF_CHANGELOG" | head -1 | sed 's/## \[\(.*\)\]/\1/')
+PREV_VERSION=$(version_headers "$REF_CHANGELOG" | head -1)
 
 if [ -z "$PREV_VERSION" ]; then
     warn "Could not determine previous version section in $REFERENCE"
 else
-    CURRENT_TAIL=$(extract_from_version "$CHANGELOG" "$PREV_VERSION")
-    ORIGINAL_TAIL=$(extract_from_version "$REF_CHANGELOG" "$PREV_VERSION")
+    CURRENT_TAIL=$(from_section "$CHANGELOG" "$PREV_VERSION")
+    ORIGINAL_TAIL=$(from_section "$REF_CHANGELOG" "$PREV_VERSION")
 
     if [ "$CURRENT_TAIL" != "$ORIGINAL_TAIL" ]; then
         fail "Content from [$PREV_VERSION] onwards differs from $REFERENCE"
@@ -268,6 +232,24 @@ else
         pass "Everything from [$PREV_VERSION] onwards is identical to $REFERENCE"
     fi
 fi
+
+# =============================================================================
+# CHECK 6: No repeated version headers or empty version sections
+# =============================================================================
+
+echo ""
+echo "[6/7] Version headers"
+
+check_structure
+
+# =============================================================================
+# CHECK 7: Entries match the picked PRs
+# =============================================================================
+
+echo ""
+echo "[7/7] Entries match picks"
+
+check_picks <<<"$(section_entries "$CHANGELOG" "$VERSION")"
 
 # =============================================================================
 # Summary
@@ -288,4 +270,4 @@ else
     echo "  Full diff:      git diff $REFERENCE -- Changelog.md"
 fi
 echo ""
-exit $ERRORS
+[ "$ERRORS" -eq 0 ]

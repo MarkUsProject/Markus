@@ -11,6 +11,7 @@
 ### ✨ New features and improvements
 - Added JupyterLab integration course and assignment data endpoings (#8170)
 - Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
+- Expanded the `markus:check` rake task to check that the database has run exactly the migrations in the code (#8226)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
@@ -21,6 +22,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed rake tasks such as `assets:precompile` and `db:migrate` failing with a `LoadError` for `factory_bot_rails` on installations without the `test` gem group (#8226)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)

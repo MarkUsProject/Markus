@@ -124,6 +124,50 @@ describe InstallationCheck do
     end
   end
 
+  describe 'migrations' do
+    let(:schema_migration) { ActiveRecord::Base.connection_pool.schema_migration }
+    let(:migration_count) { ActiveRecord::Base.connection_pool.migration_context.migrations.size }
+
+    it 'passes when every migration has been run' do
+      expect(result).to be(true)
+      expect(output.string).to include("[PASS] migrations: all #{migration_count} migrations have been run")
+    end
+
+    context 'when the database lacks migrations from the code' do
+      let(:versions) { ActiveRecord::Base.connection_pool.migration_context.migrations.last(2).map(&:version) }
+
+      before { versions.each { |version| schema_migration.delete_version(version.to_s) } }
+
+      it 'fails and lists the pending migrations' do
+        expect(result).to be(false)
+        expect(output.string).to include("[FAIL] migrations: 2 pending migrations: #{versions.join(', ')}")
+      end
+    end
+
+    context 'when the database has migrations the code lacks' do
+      before { schema_migration.create_version('99990101000000') }
+
+      it 'fails and lists the migrations the code lacks' do
+        expect(result).to be(false)
+        expect(output.string).to include('[FAIL] migrations: 1 migration not in the code: 99990101000000. ' \
+                                         'The database is ahead of the code')
+        expect(output.string).not_to include('pending migration')
+      end
+    end
+
+    context 'when the migration status cannot be read' do
+      before do
+        allow(ActiveRecord::Base.connection_pool).to receive(:migration_context)
+          .and_raise(ActiveRecord::ConnectionNotEstablished, 'connection refused')
+      end
+
+      it 'fails' do
+        expect(result).to be(false)
+        expect(output.string).to include('[FAIL] migrations: could not read the migration status: connection refused')
+      end
+    end
+  end
+
   context 'when scanned exams are enabled' do
     let(:scanned_exams_enabled) { true }
     let(:installed_packages) do

@@ -8,18 +8,19 @@
 #
 # Policy: both sides of a conflict block must be version lines for the same
 # keys; the higher version wins per key (a release branch can be ahead of a
-# PR's base. In v2.10.2, release had jwt 3.2.0 while PRs expected 2.10.x.
+# PR's base: in v2.10.2, release had jwt 3.2.0 while PRs expected 2.10.x).
 # Anything else exits 1 with the block printed, so a human resolves it.
 # Every decision prints. The caller's contamination check (verify.rb) runs
 # after. For version-level intent, read the printed decisions.
 #
 # Plain Ruby, zero gems: Gem::Version is stdlib.
 
-KEY_RE = /^(\s*)"?([^"(:]+?)"?\s*[:(]\s*"?[\^~><=\s]*([0-9][^",)\s]*)/
+require_relative 'common'
+
 BLOCK_RE = /^<{7} [^\n]*\n(.*?)^={7}\n(.*?)^>{7} [^\n]*\n/m
 
 def parse_line(line)
-  match = KEY_RE.match(line)
+  match = ReleaseHelpers::VERSION_LINE.match(line)
   return unless match
 
   { key: match[1] + match[2], version: match[3], line: line }
