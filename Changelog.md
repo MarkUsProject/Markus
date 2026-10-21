@@ -27,6 +27,8 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Moved the RuboCop, erb_lint and i18n-tasks dependencies into the Gemfile and run them in pre-commit hooks using the `rails` Docker Compose service (#8224)
+- Moved the Prettier and stylelint dependencies into `package.json` and run them in pre-commit hooks using the `rails` Docker Compose service (#8225)
 - Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
 - Refreshed apt package lists before installing system dependencies in CI (#8212)
 - Refactored calculating the remaining grace credits when displaying the Students table (#8216)

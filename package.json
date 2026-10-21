@@ -66,8 +66,12 @@
     "mini-css-extract-plugin": "^2.9.2",
     "postcss": "^8.5.24",
     "postcss-loader": "^8.2.1",
+    "postcss-scss": "^4.0.9",
+    "prettier": "^3.9.9",
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
+    "stylelint": "^17.14.0",
+    "stylelint-config-sass-guidelines": "^13.0.0",
     "webpack": "^5.105.0",
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1"

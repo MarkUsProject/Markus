@@ -16,77 +16,54 @@ repos:
               )$
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
-  -   repo: https://github.com/rbubley/mirrors-prettier
-      rev: v3.9.9
-      hooks:
-        - id: prettier
-          types_or: [javascript, jsx, css, scss, html]
-  -   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-      rev: v17.16.0
-      hooks:
-        - id: stylelint
-          additional_dependencies: [
-              "stylelint@17.14.0",
-              "postcss-scss@4.0.9",
-              "stylelint-config-sass-guidelines@13.0.0",
-              "postcss@8.4.49",
-            ]
-          args: ["--fix"]
-          types_or: ["css", "scss"]
-          exclude: |
-            (?x)^(
-              app/assets/stylesheets/application.css|
-              app/assets/stylesheets/common/_reset.scss
-            )$
-  - repo: https://github.com/rubocop/rubocop
-    rev: v1.91.0
-    hooks:
-      - id: rubocop
-        args: ["--autocorrect"]
-        types: ["ruby"]
-        exclude: |
-          (?x)^(
-            db/migrate/.*|
-            db/schema.rb|
-            lib/repo/test/.*|
-            release/.*|
-            Vagrantfile
-          )$
-        additional_dependencies:
-          - rubocop-rails:2.36.0
-          - rubocop-performance:1.26.1
-          - rubocop-factory_bot:2.28.0
-          - rubocop-rspec:3.10.2
-          - rubocop-rspec_rails:2.32.0
-          - rubocop-capybara:3.0.0
+  # These hooks run in the rails Docker Compose service, using the gems in the Gemfile
+  # and the packages in package.json
   - repo: local
     hooks:
+      - id: prettier
+        name: prettier
+        entry: .dockerfiles/run-in-docker.sh node_modules/.bin/prettier --write --ignore-unknown
+        language: system
+        require_serial: true
+        types_or: [javascript, jsx, css, scss, html]
+      - id: stylelint
+        name: stylelint
+        entry: .dockerfiles/run-in-docker.sh node_modules/.bin/stylelint --fix
+        language: system
+        require_serial: true
+        types_or: ["css", "scss"]
+        exclude: |
+          (?x)^(
+            app/assets/stylesheets/application.css|
+            app/assets/stylesheets/common/_reset.scss
+          )$
+      - id: rubocop
+        name: rubocop
+        entry: .dockerfiles/run-in-docker.sh bundle exec rubocop --autocorrect --force-exclusion --cache-root tmp/rubocop
+        language: system
+        require_serial: true
+        types: ["ruby"]
       - id: erb_lint
         name: erb_lint
-        entry: erb_lint
-        language: ruby
+        entry: .dockerfiles/run-in-docker.sh bundle exec erb_lint --autocorrect
+        language: system
+        require_serial: true
         types: ["erb"]
-        args: ["--autocorrect"]
         exclude: |
           (?x)^(
           .*.xml.erb|
           .*/assign_scans.html.erb
           )$
-        additional_dependencies:
-          - erb_lint:0.9.0
       - id: i18n-tasks-health
         name: i18n-tasks health
-        entry: i18n-tasks health
-        language: ruby
+        entry: .dockerfiles/run-in-docker.sh bundle exec i18n-tasks health
+        language: system
         files: config/locales/
         pass_filenames: false
-        additional_dependencies:
-          - i18n-tasks
 
 exclude: vendor
 
-default_language_version:
-  node: "24.18.0"
-
 ci:
   autoupdate_schedule: monthly
+  # Ruby- and JavaScript-based hooks are run in a separate CI task
+  skip: [prettier, stylelint, rubocop, erb_lint, i18n-tasks-health]
