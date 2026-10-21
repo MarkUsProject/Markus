@@ -146,7 +146,7 @@ class Course < ApplicationRecord
   end
 
   def get_all_grace_credit_deductions
-    students.joins(student_memberships: :grace_period_deductions)
+    students.joins(memberships: :grace_period_deductions)
             .group('roles.id')
             .sum('grace_period_deductions.deduction')
   end
