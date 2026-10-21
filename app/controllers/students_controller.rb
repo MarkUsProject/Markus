@@ -9,7 +9,8 @@ class StudentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        student_data = current_course.students.includes(:grace_period_deductions, :section, :user).map do |s|
+        total_deductions = current_course.get_all_grace_credit_deductions
+        student_data = current_course.students.includes(:user).map do |s|
           {
             _id: s.id,
             user_name: s.user_name,
@@ -20,7 +21,7 @@ class StudentsController < ApplicationController
             hidden: s.hidden,
             section: s.section_id,
             grace_credits: s.grace_credits,
-            remaining_grace_credits: s.remaining_grace_credits
+            remaining_grace_credits: s.grace_credits - (total_deductions[s.id] || 0)
           }
         end
         sections = current_course.sections.pluck(:id, :name).to_h
