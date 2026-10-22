@@ -21,6 +21,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed a blank PDF and a file download error when switching between submissions in the grading view (#8228)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
