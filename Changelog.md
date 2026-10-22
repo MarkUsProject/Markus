@@ -21,6 +21,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
