@@ -46,43 +46,81 @@ export class PDFViewer extends React.PureComponent {
     if (this.props.url) {
       this.loadPDFFile();
     }
+
+    // pdf.js draws only the pages in view, and a hidden pane has none. When the pane is
+    // shown (e.g. once loading ends) or changes width, refit and redraw the pages.
+    this.resizeObserver = new ResizeObserver(this.handleResize);
+    this.resizeObserver.observe(this.scrollContainer.current);
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.url && this.props.url !== prevProps.url) {
-      if (this.props.userFileSelectionCount !== prevProps.userFileSelectionCount) {
-        // The user explicitly opened a different file: show it from the top.
-        this.savedScrollPosition = null;
-      } else if (this.context.submission_id !== this.loadedSubmissionId) {
-        // Automatic switch to another submission: carry the scroll position over.
-        // A submission switch updates the URL twice (the submission id, then the
-        // auto-selected file); keying the reset on an explicit file pick instead
-        // of the submission id keeps the second update from clobbering the save.
+    const filePicked = this.props.userFileSelectionCount !== prevProps.userFileSelectionCount;
+    if (this.context.submission_id !== this.loadedSubmissionId) {
+      // Automatic switch to another submission: carry the scroll position over. Save on
+      // the first render for the new submission, while the old PDF is still shown; the
+      // auto-selected file's URL arrives in a later render.
+      if (!filePicked) {
         this.save_scroll_position();
       }
       this.loadedSubmissionId = this.context.submission_id;
-      this.loadPDFFile();
-    } else if (this.props.resultView) {
-      this.refresh_annotations();
-    } else {
-      this.update_pdf_view();
     }
+
+    if (this.props.url !== prevProps.url) {
+      if (filePicked) {
+        // The user explicitly opened a different file: show it from the top.
+        this.savedScrollPosition = null;
+      }
+      this.loadPDFFile();
+      return;
+    }
+    if (this.props.resultView) {
+      this.refresh_annotations();
+      return;
+    }
+    this.update_pdf_view();
   }
 
   loadPDFFile = () => {
-    pdfjs
-      .getDocument({
-        url: this.props.url,
-        // Without this, decoding a JBIG2 image (what scanners produce for scanned exams)
-        // or a JPEG 2000 one fails and the page renders blank. pdf.js appends the module
-        // file name to this URL, so the trailing slash matters; webpack copies the modules
-        // into public/wasm (see webpack.common.js).
-        wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`,
-      })
-      .promise.then(pdfDocument => {
+    // Only the latest request may update the viewer; one that settles after the URL
+    // changed again (or the viewer unmounted) is ignored.
+    if (!this.props.url) {
+      this.loadingTask = null;
+      return;
+    }
+    const loadingTask = pdfjs.getDocument({
+      url: this.props.url,
+      // Without this, decoding a JBIG2 image (what scanners produce for scanned exams)
+      // or a JPEG 2000 one fails and the page renders blank. pdf.js appends the module
+      // file name to this URL, so the trailing slash matters; webpack copies the modules
+      // into public/wasm (see webpack.common.js).
+      wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`,
+    });
+    this.loadingTask = loadingTask;
+    loadingTask.promise.then(
+      pdfDocument => {
+        if (this.loadingTask !== loadingTask) return;
         this.pdfViewer.setDocument(pdfDocument);
         this.props.setLoadingCallback(false);
-      });
+      },
+      error => {
+        if (this.loadingTask !== loadingTask) return;
+        const message =
+          error.status === 413
+            ? "submissions.oversize_submission_file"
+            : "submissions.cannot_display";
+        this.props.setErrorMessageCallback(I18n.t(message));
+        this.props.setLoadingCallback(false);
+      }
+    );
+  };
+
+  handleResize = ([entry]) => {
+    // Track the border box: a scrollbar appearing after a refit would change the content
+    // box and trigger another refit.
+    const width = entry.borderBoxSize[0].inlineSize;
+    if (width === this.paneWidth) return;
+    this.paneWidth = width;
+    this.update_pdf_view();
   };
 
   ready_annotations = () => {
@@ -101,6 +139,8 @@ export class PDFViewer extends React.PureComponent {
       box.style.height = "0";
     }
     this.eventBus = null;
+    this.loadingTask = null;
+    this.resizeObserver.disconnect();
     window.pdfViewer = undefined;
     this.cancel_scroll_restore();
   }
@@ -114,9 +154,11 @@ export class PDFViewer extends React.PureComponent {
   // For scanned exams, preserve the scroll position across submission switches
   // so TAs grading one question on a shared page don't re-scroll every time.
   save_scroll_position = () => {
-    if (!this.context.scanned_exam || !this.scrollContainer.current) return;
+    const scrollParent = this.scrollContainer.current;
+    // A hidden pane (still loading a previous switch) reads as scrolled to the top.
+    if (!this.context.scanned_exam || !scrollParent || scrollParent.offsetParent === null) return;
 
-    const {scrollTop, scrollLeft} = this.scrollContainer.current;
+    const {scrollTop, scrollLeft} = scrollParent;
     this.savedScrollPosition = {top: scrollTop, left: scrollLeft};
   };
 
@@ -174,6 +216,8 @@ export class PDFViewer extends React.PureComponent {
     if (container && container.offsetParent) {
       this.pdfViewer.currentScaleValue = this.state.zoom;
       this.pdfViewer.pagesRotation = this.state.rotation;
+      // Draw the pages now in view; an unchanged scale makes pdf.js skip its own redraw.
+      this.pdfViewer.update();
     }
   };
 
