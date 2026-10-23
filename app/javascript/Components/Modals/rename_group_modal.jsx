@@ -1,70 +1,59 @@
-import React from "react";
+import {useEffect, useRef, useState} from "react";
 import Modal from "react-modal";
 
-export default class RenameGroupModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      groupName: props.initialGroupName || "",
-    };
-  }
+export default function RenameGroupModal({initialGroupName, isOpen, onRequestClose, onSubmit}) {
+  const [groupName, setGroupName] = useState(initialGroupName || "");
+  const previousIsOpen = useRef(isOpen);
 
-  componentDidMount() {
+  useEffect(() => {
     Modal.setAppElement("body");
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isOpen && !prevProps.isOpen && this.props.initialGroupName) {
-      this.setState({groupName: this.props.initialGroupName});
+  useEffect(() => {
+    if (isOpen && !previousIsOpen.current && initialGroupName) {
+      setGroupName(initialGroupName);
     }
-  }
+    previousIsOpen.current = isOpen;
+  }, [initialGroupName, isOpen]);
 
-  handleChange = event => {
-    this.setState({groupName: event.target.value});
+  const handleChange = event => {
+    setGroupName(event.target.value);
   };
 
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    if (!this.state.groupName) {
+    if (!groupName) {
       return;
     }
-    this.props.onSubmit(this.state.groupName);
-    this.setState({groupName: ""});
+    onSubmit(groupName);
+    setGroupName("");
   };
 
-  render() {
-    return (
-      <Modal
-        className="react-modal markus-dialog"
-        isOpen={this.props.isOpen}
-        onRequestClose={this.props.onRequestClose}
-        id="rename_group_dialog"
-      >
-        <h2>{I18n.t("groups.rename_group")}</h2>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor="groupName">{I18n.t("activerecord.attributes.group.group_name")}</label>
-          <input
-            id="groupName"
-            type="text"
-            value={this.state.groupName}
-            onChange={event => this.handleChange(event)}
-            autoFocus
-          />
-          <div className={"dialog-actions"}>
-            <button
-              className="button"
-              type="submit"
-              disabled={!this.state.groupName}
-              data-testid="rename-submit-button"
-            >
-              {I18n.t("groups.rename_group")}
-            </button>
-            <button className="button" type="reset" onClick={this.props.onRequestClose}>
-              {I18n.t("cancel")}
-            </button>
-          </div>
-        </form>
-      </Modal>
-    );
-  }
+  return (
+    <Modal
+      className="react-modal markus-dialog"
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      id="rename_group_dialog"
+    >
+      <h2>{I18n.t("groups.rename_group")}</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="groupName">{I18n.t("activerecord.attributes.group.group_name")}</label>
+        <input id="groupName" type="text" value={groupName} onChange={handleChange} autoFocus />
+        <div className={"dialog-actions"}>
+          <button
+            className="button"
+            type="submit"
+            disabled={!groupName}
+            data-testid="rename-submit-button"
+          >
+            {I18n.t("groups.rename_group")}
+          </button>
+          <button className="button" type="reset" onClick={onRequestClose}>
+            {I18n.t("cancel")}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
 }
