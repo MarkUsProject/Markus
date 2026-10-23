@@ -1,4 +1,4 @@
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, act} from "@testing-library/react";
 import {PDFViewer} from "../Result/pdf_viewer";
 import {ResultContext} from "../Result/result_context";
 
@@ -68,6 +68,79 @@ describe("PDFViewer", () => {
       expect(global.pdfjs.getDocument).toHaveBeenCalledWith(
         expect.objectContaining({wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`})
       );
+    });
+
+    // Each getDocument call returns a load the test settles by hand.
+    let loads;
+    let viewerProps;
+    let rerenderViewer;
+
+    beforeEach(() => {
+      loads = [];
+      global.pdfjs.getDocument = jest.fn(() => {
+        const load = {};
+        load.promise = new Promise((resolve, reject) => {
+          load.resolve = resolve;
+          load.reject = reject;
+        });
+        loads.push(load);
+        return load;
+      });
+      viewerProps = {
+        resultView: true,
+        annotations: [],
+        url: "/files/1.pdf",
+        setLoadingCallback: jest.fn(),
+        setErrorMessageCallback: jest.fn(),
+      };
+      const {rerender} = render(<PDFViewer {...viewerProps} />);
+      rerenderViewer = url => rerender(<PDFViewer {...viewerProps} url={url} />);
+    });
+
+    it("shows the newer document when an older load settles last", async () => {
+      rerenderViewer("/files/2.pdf");
+      const [older, newer] = loads;
+
+      await act(async () => newer.resolve("doc 2"));
+      await act(async () => older.resolve("doc 1"));
+
+      expect(mockPdfViewer.setDocument).toHaveBeenCalledTimes(1);
+      expect(mockPdfViewer.setDocument).toHaveBeenCalledWith("doc 2");
+    });
+
+    it("ignores a load that settles after the URL is cleared", async () => {
+      rerenderViewer(null);
+
+      await act(async () => loads[0].resolve("doc 1"));
+
+      expect(mockPdfViewer.setDocument).not.toHaveBeenCalled();
+      expect(viewerProps.setLoadingCallback).not.toHaveBeenCalled();
+    });
+
+    it("shows an error when the document fails to load", async () => {
+      await act(async () => loads[0].reject({status: 404}));
+
+      expect(viewerProps.setErrorMessageCallback).toHaveBeenCalledWith(
+        I18n.t("submissions.cannot_display")
+      );
+      expect(viewerProps.setLoadingCallback).toHaveBeenCalledWith(false);
+    });
+
+    it("shows the oversize message when the document is too large", async () => {
+      await act(async () => loads[0].reject({status: 413}));
+
+      expect(viewerProps.setErrorMessageCallback).toHaveBeenCalledWith(
+        I18n.t("submissions.oversize_submission_file")
+      );
+    });
+
+    it("ignores the failure of a load replaced by a newer one", async () => {
+      rerenderViewer("/files/2.pdf");
+
+      await act(async () => loads[0].reject({status: 404}));
+
+      expect(viewerProps.setErrorMessageCallback).not.toHaveBeenCalled();
+      expect(viewerProps.setLoadingCallback).not.toHaveBeenCalled();
     });
   });
 
@@ -216,9 +289,13 @@ describe("PDFViewer", () => {
         userFileSelectionCount += 1;
         renderViewer(utils, {...overrides});
       };
+      const hidePane = hidden => {
+        utils.container.style.display = hidden ? "none" : "";
+      };
       return {
         eventBus,
         scrollParent,
+        hidePane,
         switchSubmission,
         switchSubmissionInTwoSteps,
         switchFile,
@@ -319,6 +396,33 @@ describe("PDFViewer", () => {
       switchSubmissionInTwoSteps("/files/2-interim.pdf", "/files/2.pdf");
 
       scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      expect(scrollParent.scrollTop).toBe(480);
+    });
+
+    it("keeps the scroll position when the URL is cleared while the new files load", () => {
+      const {eventBus, scrollParent, switchSubmissionInTwoSteps} = renderWithContext(true);
+
+      scrollParent.scrollTop = 480;
+      switchSubmissionInTwoSteps(null, "/files/2.pdf");
+
+      scrollParent.scrollTop = 0;
+      eventBus.dispatch("pagesloaded");
+
+      expect(scrollParent.scrollTop).toBe(480);
+    });
+
+    it("keeps the saved position when another switch starts while the pane is hidden", () => {
+      const {eventBus, scrollParent, switchSubmission, hidePane} = renderWithContext(true);
+
+      scrollParent.scrollTop = 480;
+      switchSubmission("/files/2.pdf");
+      // The next switch starts before the PDF shows: the hidden pane reads as scrolled to 0.
+      hidePane(true);
+      scrollParent.scrollTop = 0;
+      switchSubmission("/files/3.pdf");
+      hidePane(false);
       eventBus.dispatch("pagesloaded");
 
       expect(scrollParent.scrollTop).toBe(480);
