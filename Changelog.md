@@ -25,6 +25,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed a file download error (404) when switching between submissions in the grading view (#8230)
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 - Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
 
