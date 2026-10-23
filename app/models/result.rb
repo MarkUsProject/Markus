@@ -355,6 +355,10 @@ class Result < ApplicationRecord
           input_pdf = CombinePDF.load(File.join(workdir, input_file.path, input_file.filename))
           combined_pdf << input_pdf
 
+          # go_to_page (below) leaves the cursor on the last annotated page, and Prawn's start_new_page
+          # inserts after the current page rather than at the end. Move to the last page first so this
+          # file's pages are appended, not inserted into the middle of the previous file's pages.
+          go_to_page(page_count) if page_count.positive?
           num_pages = input_pdf.pages.size
           num_pages.times do
             start_new_page

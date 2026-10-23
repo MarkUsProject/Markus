@@ -9,6 +9,7 @@
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+- Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 
 ### 📚 Documentation changes
 

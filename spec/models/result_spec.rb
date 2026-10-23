@@ -404,6 +404,45 @@ describe Result do
       end
     end
 
+    context 'when the result has multiple PDF submission files with annotations' do
+      # Both files use the same 5-page fixture. The cover page is inserted at the front of the
+      # output, so an annotation on page p of the nth file should appear on output page
+      # 1 + (pages in files before n) + p.
+      let(:submission_file) { create(:pdf_submission_file, submission: result.submission, filename: 'a.pdf') }
+      let(:submission_file2) do
+        create(:pdf_submission_file, submission: result.submission, path: submission_file.path, filename: 'b.pdf')
+      end
+
+      before do
+        allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return(
+          file_fixture('submission_files/pdf.pdf').read
+        )
+        # The first file's highest-numbered annotation is on an earlier page than a lower-numbered one.
+        create(:pdf_annotation, result: result, submission_file: submission_file, annotation_number: 1, page: 4)
+        create(:pdf_annotation, result: result, submission_file: submission_file, annotation_number: 2, page: 2)
+        create(:pdf_annotation, result: result, submission_file: submission_file2, annotation_number: 3, page: 1)
+      end
+
+      # Returns { page number => [marker numbers on that page] } for pages that contain a marker.
+      # Prawn writes the marker text as a hex string in a TJ operator; the fixture PDF uses no hex strings.
+      def marker_numbers_by_page(pdf_file)
+        # Page 1 is the Prawn-generated cover sheet and never carries markers; skip it so its text can't match.
+        pdf_file.pages.drop(1).each_with_index.with_object({}) do |(page, index), markers_by_page|
+          contents = page[:Contents]
+          contents = [contents] unless contents.is_a?(Array)
+          stream = contents.map { |ref| ref[:referenced_object][:raw_stream_content].to_s }.join
+          markers = stream.scan(/\[<([0-9A-Fa-f]+)>\]\s*TJ/).map { |(hex)| [hex].pack('H*').to_i }
+          markers_by_page[index + 2] = markers unless markers.empty?
+        end
+      end
+
+      it 'places each annotation marker on the page of the file it belongs to' do
+        pdf_file = result.generate_print_pdf
+        expect(pdf_file.pages.size).to eq 11
+        expect(marker_numbers_by_page(pdf_file)).to eq(3 => [2], 5 => [1], 7 => [3])
+      end
+    end
+
     context 'when the result has a Jupyter notebook submission file' do
       before do
         create(:notebook_submission_file, submission: result.submission)
