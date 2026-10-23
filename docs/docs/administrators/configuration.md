@@ -198,6 +198,7 @@ Students are only allowed to run one test at a time. This means that a student m
 If you wish new courses to be connected to an autotester by default, set `autotest.default_url` to the url of a markus-autotesting server. When this key is set:
 
 - The autotester url field on the admin course creation form is pre-filled with this url, so a course created by an admin is connected to this autotester unless the admin changes or clears the field.
+- A course created through the API (`POST /api/courses`) is connected to this autotester unless the request includes its own `autotest_url` parameter (see the [API documentation](../technical-guides/restful-api.md#post-apicourses)).
 - Every course created through LTI is connected to this autotester automatically, as if an admin had set the course's autotester url.
 
 If this key is not set, the autotester url must be set manually for each new course.
