@@ -31,6 +31,10 @@ export class SubmissionFilePanel extends React.Component {
       // different file (reset scroll) from an automatic refresh on a submission
       // switch (keep scroll).
       userFileSelectionCount: 0,
+      // The submission whose files the selection came from. Until the selection is refreshed
+      // for a newly opened submission, no file is requested: the old file id does not
+      // belong to the new submission and its download URL would answer 404.
+      selectedFileSubmissionId: null,
     };
   }
 
@@ -43,15 +47,16 @@ export class SubmissionFilePanel extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    // Wait until the new submission's files have loaded; refreshing earlier would pick
+    // a file from the previous submission's fileData.
     if (
-      prevProps.result_id !== this.props.result_id ||
-      (prevProps.loading && !this.props.loading)
+      !this.props.loading &&
+      (prevProps.result_id !== this.props.result_id || prevProps.loading)
     ) {
       this.refreshSelectedFile();
-    } else if (
-      prevProps.annotations !== this.props.annotations &&
-      this.state.selectedFile !== null
-    ) {
+      return;
+    }
+    if (prevProps.annotations !== this.props.annotations && this.state.selectedFile !== null) {
       const submission_file_id = this.state.selectedFile[1];
       const visibleAnnotations = this.props.annotations.filter(
         a => a.submission_file_id === submission_file_id
@@ -102,7 +107,13 @@ export class SubmissionFilePanel extends React.Component {
     }
     // Clear focus carried over from a previously selected annotation; leaving it
     // set would keep targeting the old result after a submission switch.
-    this.setState({selectedFile, visibleAnnotations, focusLine: null, annotationFocus: undefined});
+    this.setState({
+      selectedFile,
+      visibleAnnotations,
+      focusLine: null,
+      annotationFocus: undefined,
+      selectedFileSubmissionId: this.props.submission_id,
+    });
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
@@ -198,14 +209,10 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   render() {
-    let submission_file_id, submission_file_mime_type;
-    if (this.state.selectedFile === null) {
-      submission_file_id = null;
-      submission_file_mime_type = null;
-    } else {
-      submission_file_id = this.state.selectedFile[1];
-      submission_file_mime_type = mime.getType(this.state.selectedFile[0]);
-    }
+    const selectedFile = this.state.selectedFile;
+    const selectionIsCurrent = this.state.selectedFileSubmissionId === this.props.submission_id;
+    const submission_file_id = selectedFile && selectionIsCurrent ? selectedFile[1] : null;
+    const submission_file_mime_type = selectedFile && mime.getType(selectedFile[0]);
     return (
       <React.Fragment>
         <div key="annotation_menu" className="react-tabs-panel-action-bar">
