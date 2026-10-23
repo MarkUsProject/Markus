@@ -639,6 +639,48 @@ describe Course do
     end
   end
 
+  describe '#get_all_grace_credit_deductions' do
+    subject(:deductions) { course.get_all_grace_credit_deductions }
+
+    def add_deduction(student, amount, assignment: create(:assignment, course: course))
+      grouping = create(:grouping, assignment: assignment)
+      membership = create(:student_membership, role: student, grouping: grouping)
+      create(:grace_period_deduction, membership: membership, deduction: amount)
+    end
+
+    it 'returns an empty hash for a course with no students' do
+      expect(deductions).to eq({})
+    end
+
+    it 'omits students who are not members of any grouping' do
+      create(:student, course: course)
+      expect(deductions).to eq({})
+    end
+
+    it 'omits students whose memberships have no deductions' do
+      student = create(:student, course: course)
+      assignment = create(:assignment, course: course)
+      grouping = create(:grouping, assignment: assignment)
+      create(:student_membership, role: student, grouping: grouping)
+      expect(deductions).to eq({})
+    end
+
+    it "maps a student's role id to the sum of their deductions" do
+      student = create(:student, course: course)
+      add_deduction(student, 2)
+      add_deduction(student, 3)
+      expect(deductions).to eq({ student.id => 5 })
+    end
+
+    it 'keeps a separate total for each student and leaves out students with none' do
+      student1, student2 = create_list(:student, 3, course: course)
+      add_deduction(student1, 1)
+      add_deduction(student1, 2)
+      add_deduction(student2, 4)
+      expect(deductions).to eq({ student1.id => 3, student2.id => 4 })
+    end
+  end
+
   describe '#export_student_data_csv' do
     context 'when there are no students in the course' do
       it 'returns empty string' do

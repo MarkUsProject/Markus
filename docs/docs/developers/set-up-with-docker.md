@@ -153,6 +153,8 @@ After this, these checks will run every time you make a commit. If all checks pa
 - Some checks will automatically fix issues (e.g., most style checks). *These changes still need to be manually git added and committed!*
 - Some checks will just report problems that you'll need to fix manually. After fixing them, you'll need to add and commit those changes.
 
+The Ruby- and JavaScript-based hooks run inside the `rails` Docker Compose service, and so Docker must be running when you commit. These hooks use the running `rails` container if there is one, and otherwise start a temporary one.
+
 ## Running Commands in Docker
 
 Here's a summary of the few most common tasks you'll use in your development.

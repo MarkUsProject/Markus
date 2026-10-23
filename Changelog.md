@@ -10,6 +10,7 @@
 
 ### ✨ New features and improvements
 - Courses created through the API (`POST /api/courses`) are now connected to the autotester given by the `autotest.default_url` setting, unless the request includes its own `autotest_url` parameter (#8222)
+- Pre-filled the autotester url field on the admin course creation form with the `autotest.default_url` setting, so courses created by an admin are connected to the default autotester unless the field is changed (#8221)
 - Added JupyterLab integration course and assignment data endpoings (#8170)
 - Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
@@ -28,8 +29,11 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Moved the RuboCop, erb_lint and i18n-tasks dependencies into the Gemfile and run them in pre-commit hooks using the `rails` Docker Compose service (#8224)
+- Moved the Prettier and stylelint dependencies into `package.json` and run them in pre-commit hooks using the `rails` Docker Compose service (#8225)
 - Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
 - Refreshed apt package lists before installing system dependencies in CI (#8212)
+- Refactored calculating the remaining grace credits when displaying the Students table (#8216)
 - Suppressed CodeQL scanning false positives (#8101)
 - Refactored Action Cable channel authorization into `Channel` superclass (#8054)
 - Removed dead code in repository files (#8065)
