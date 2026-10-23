@@ -234,6 +234,10 @@ The fields parameter is commonly used when multiple fields per record are expect
     - name (string)
     - is_hidden (boolean)
     - display_name (string)
+- optional parameters:
+    - autotest_url (string: well-formed URL): url of the server running the [automated test software](https://github.com/MarkUsProject/markus-autotesting) to connect this course to. If this parameter is omitted, the course is connected to the autotester given by the `autotest.default_url` setting (if any). Pass an empty string to create the course without connecting it to any autotester.
+
+> 🗒️ **NOTE:** If the autotester cannot be reached, the course is **not** created and a 500 response is returned describing the error. To create the course anyway, repeat the request with an empty `autotest_url` parameter.
 
 > 🗒️ **NOTE:** This method is only available to AdminUser users
 
