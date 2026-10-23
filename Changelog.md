@@ -24,6 +24,7 @@
 
 ### 🐛 Bug fixes
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
+- Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
