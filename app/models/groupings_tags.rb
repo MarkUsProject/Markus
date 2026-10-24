@@ -1,3 +1,4 @@
+# Class joining a grouping with a tag.
 # rubocop:disable Layout/LineLength, Lint/RedundantCopDisableDirective
 # == Schema Information
 #
