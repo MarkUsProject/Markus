@@ -14,4 +14,6 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GroupingsTags < ApplicationRecord
+  belongs_to :grouping
+  belongs_to :tag
 end
