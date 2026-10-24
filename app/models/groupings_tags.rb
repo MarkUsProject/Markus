@@ -14,6 +14,22 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class GroupingsTags < ApplicationRecord
+  self.primary_key = nil
+
   belongs_to :grouping
   belongs_to :tag
+
+  has_one :course, through: :grouping
+
+  validate :courses_should_match
+  validate :assignments_should_match
+
+  private
+
+  def assignments_should_match
+    return if tag.nil? || grouping.nil? || tag.assessment_id.nil?
+    return if grouping.assessment_id == tag.assessment_id
+
+    errors.add(:base, :different_assignment_grouping)
+  end
 end
