@@ -9,6 +9,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Added optional OpenTelemetry tracing of requests and background jobs, controlled by the new `telemetry` settings, and a `telemetry` Docker Compose profile that runs a local Grafana for viewing traces in development (#8223)
 - Courses created through the API (`POST /api/courses`) are now connected to the autotester given by the `autotest.default_url` setting, unless the request includes its own `autotest_url` parameter (#8222)
 - Pre-filled the autotester url field on the admin course creation form with the `autotest.default_url` setting, so courses created by an admin are connected to the default autotester unless the field is changed (#8221)
 - Added JupyterLab integration course and assignment data endpoings (#8170)
