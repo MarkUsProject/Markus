@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        groupings_tags:
+          different_assignment_grouping: tag must belong to the same assignment as this grouping
