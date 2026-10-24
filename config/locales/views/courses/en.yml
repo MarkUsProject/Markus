@@ -1,6 +1,7 @@
 ---
 en:
   courses:
+    autotest_connection_failed: 'Course not created: could not connect to the autotester at %{url} (%{error})'
     current_courses: Current Courses
     no_courses: No courses to display.
     past_courses: Past Courses
