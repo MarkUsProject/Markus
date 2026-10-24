@@ -133,7 +133,7 @@ COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/da
 COPY --chown=${USER}:${USER} .dockerfiles/git-ssh.rc /home/${USER}/.ssh/rc
 
 # Install bundler
-RUN gem install bundler -v $BUNDLER_VERSION && bundle config set --local without 'development test offline production_test'
+RUN gem install bundler -v $BUNDLER_VERSION && bundle config set --local without 'development test offline production_test telemetry'
 
 USER $USER
 

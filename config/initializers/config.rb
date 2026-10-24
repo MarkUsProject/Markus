@@ -173,6 +173,10 @@ Config.setup do |config|
         required(:enabled).filled(:bool)
         optional(:duration).value(:integer, gt?: 0)
       end
+      required(:telemetry).hash do
+        required(:enabled).filled(:bool)
+        required(:endpoint).filled(:string)
+      end
       required(:exception_notification).hash do
         required(:enabled).filled(:bool)
         optional(:sender).filled(:string)

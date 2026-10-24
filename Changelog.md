@@ -9,6 +9,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Added optional OpenTelemetry tracing of requests and background jobs, controlled by the new `telemetry` settings, and a `telemetry` Docker Compose profile that runs a local Grafana for viewing traces in development (#8223)
 - Added JupyterLab integration course and assignment data endpoings (#8170)
 - Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
@@ -27,7 +28,6 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
-- Added optional OpenTelemetry tracing, enabled by setting `OTEL_EXPORTER_OTLP_ENDPOINT`, and a `compose.otel.yaml` file that sends traces from the development environment to a local Grafana (#8223)
 - Moved the RuboCop, erb_lint and i18n-tasks dependencies into the Gemfile and run them in pre-commit hooks using the `rails` Docker Compose service (#8224)
 - Moved the Prettier and stylelint dependencies into `package.json` and run them in pre-commit hooks using the `rails` Docker Compose service (#8225)
 - Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
