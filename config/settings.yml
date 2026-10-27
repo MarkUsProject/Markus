@@ -121,6 +121,10 @@ rails_performance:
   enabled: true
   duration: 180
 
+telemetry:
+  enabled: false
+  endpoint: http://localhost:4318
+
 file_storage:
   default_root_path: <%= ::Rails.root %>/data/<%= ::Rails.env %>/
 

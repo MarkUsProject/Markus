@@ -133,6 +133,9 @@ nbconvert_enabled: # boolean indicating whether to render Jupyter notebooks as H
 rails_performance:
   enabled: # boolean whether to enable the rails performance dashboard (See the "Admin Guide" page for more information about this dashboard)
   duration: # duration in minutes for rails performance to store data for monitoring
+telemetry:
+  enabled: # boolean whether to send OpenTelemetry traces of requests and background jobs (for development, see "Viewing Traces in Development" in the developer docs)
+  endpoint: # base URL of the OTLP/HTTP endpoint traces are sent to
 exception_notification:
   enabled: # boolean indicating whether to enable email notifications when errors occur (See "Error Notification Emails" below for more details)
   sender: # email address string with which to email error notifications
