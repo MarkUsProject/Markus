@@ -27,6 +27,7 @@ describe("PDFViewer", () => {
 
     mockPdfViewer = {
       setDocument: jest.fn(),
+      update: jest.fn(),
       pagesRotation: 0,
       currentScaleValue: "page-width",
     };
@@ -68,6 +69,33 @@ describe("PDFViewer", () => {
       expect(global.pdfjs.getDocument).toHaveBeenCalledWith(
         expect.objectContaining({wasmUrl: `${RELATIVE_URL_ROOT}/wasm/`})
       );
+    });
+  });
+
+  describe("redrawing when the pane is shown or resized", () => {
+    let resize;
+
+    beforeEach(() => {
+      jest.spyOn(global, "ResizeObserver").mockImplementation(callback => {
+        resize = width => callback([{borderBoxSize: [{inlineSize: width}]}]);
+        return {observe: jest.fn(), disconnect: jest.fn()};
+      });
+      render(<PDFViewer resultView={true} annotations={[]} />);
+      mockPdfViewer.update.mockClear();
+    });
+
+    it("draws the pages in view when the pane gets a width", () => {
+      resize(800);
+
+      expect(mockPdfViewer.update).toHaveBeenCalledTimes(1);
+      expect(mockPdfViewer.currentScaleValue).toBe("page-width");
+    });
+
+    it("skips a resize that leaves the width unchanged", () => {
+      resize(800);
+      resize(800);
+
+      expect(mockPdfViewer.update).toHaveBeenCalledTimes(1);
     });
   });
 
