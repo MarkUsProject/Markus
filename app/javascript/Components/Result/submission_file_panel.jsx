@@ -31,6 +31,10 @@ export class SubmissionFilePanel extends React.Component {
       // different file (reset scroll) from an automatic refresh on a submission
       // switch (keep scroll).
       userFileSelectionCount: 0,
+      // The submission whose files the selection came from. The download URL uses it, so a
+      // submission switch keeps showing the old file until the new files load, instead of
+      // asking the new submission for a file it does not have (a 404).
+      selectedFileSubmissionId: null,
     };
   }
 
@@ -43,9 +47,11 @@ export class SubmissionFilePanel extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    // Wait until the new submission's files have loaded; refreshing earlier would pick
+    // a file from the previous submission's fileData.
     if (
-      prevProps.result_id !== this.props.result_id ||
-      (prevProps.loading && !this.props.loading)
+      !this.props.loading &&
+      (prevProps.result_id !== this.props.result_id || prevProps.loading)
     ) {
       this.refreshSelectedFile();
     } else if (
@@ -102,7 +108,13 @@ export class SubmissionFilePanel extends React.Component {
     }
     // Clear focus carried over from a previously selected annotation; leaving it
     // set would keep targeting the old result after a submission switch.
-    this.setState({selectedFile, visibleAnnotations, focusLine: null, annotationFocus: undefined});
+    this.setState({
+      selectedFile,
+      visibleAnnotations,
+      focusLine: null,
+      annotationFocus: undefined,
+      selectedFileSubmissionId: this.props.submission_id,
+    });
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
@@ -186,7 +198,7 @@ export class SubmissionFilePanel extends React.Component {
     return Routes.download_file_course_assignment_submission_path(
       this.props.course_id,
       this.props.assignment_id,
-      this.props.submission_id,
+      this.state.selectedFileSubmissionId,
       {
         select_file_id: file_id,
         show_in_browser: true,
