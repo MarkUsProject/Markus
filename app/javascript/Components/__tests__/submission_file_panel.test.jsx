@@ -80,17 +80,17 @@ describe("SubmissionFilePanel", () => {
     viewerUrls.forEach(url => expect(url).not.toEqual(urlFor(200, 1000)));
   });
 
-  it("requests no file while the new submission's files load", () => {
+  it("keeps the previous submission's file while the new submission's files load", () => {
     rerenderPanel({loading: true, result_id: 11, submission_id: 200});
 
-    expect(viewerUrls[viewerUrls.length - 1]).toBeNull();
+    expect(viewerUrls[viewerUrls.length - 1]).toEqual(urlFor(100, 1000));
   });
 
-  it("keeps the previous submission's file out of requests when a file is picked mid-switch", () => {
+  it("requests a file picked mid-switch from the submission it belongs to", () => {
     rerenderPanel({loading: true, result_id: 11, submission_id: 200});
     act(() => ref.current.selectFile("Q1.pdf", 1001, "pdf"));
 
-    expect(viewerUrls[viewerUrls.length - 1]).toBeNull();
+    expect(viewerUrls[viewerUrls.length - 1]).toEqual(urlFor(100, 1001));
   });
 
   it("requests a file picked by the user", () => {
