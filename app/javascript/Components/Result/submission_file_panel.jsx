@@ -31,9 +31,9 @@ export class SubmissionFilePanel extends React.Component {
       // different file (reset scroll) from an automatic refresh on a submission
       // switch (keep scroll).
       userFileSelectionCount: 0,
-      // The submission whose files the selection came from. Until the selection is refreshed
-      // for a newly opened submission, no file is requested: the old file id does not
-      // belong to the new submission and its download URL would answer 404.
+      // The submission whose files the selection came from. The download URL uses it, so a
+      // submission switch keeps showing the old file until the new files load, instead of
+      // asking the new submission for a file it does not have (a 404).
       selectedFileSubmissionId: null,
     };
   }
@@ -54,9 +54,10 @@ export class SubmissionFilePanel extends React.Component {
       (prevProps.result_id !== this.props.result_id || prevProps.loading)
     ) {
       this.refreshSelectedFile();
-      return;
-    }
-    if (prevProps.annotations !== this.props.annotations && this.state.selectedFile !== null) {
+    } else if (
+      prevProps.annotations !== this.props.annotations &&
+      this.state.selectedFile !== null
+    ) {
       const submission_file_id = this.state.selectedFile[1];
       const visibleAnnotations = this.props.annotations.filter(
         a => a.submission_file_id === submission_file_id
@@ -197,7 +198,7 @@ export class SubmissionFilePanel extends React.Component {
     return Routes.download_file_course_assignment_submission_path(
       this.props.course_id,
       this.props.assignment_id,
-      this.props.submission_id,
+      this.state.selectedFileSubmissionId,
       {
         select_file_id: file_id,
         show_in_browser: true,
@@ -209,10 +210,14 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   render() {
-    const selectedFile = this.state.selectedFile;
-    const selectionIsCurrent = this.state.selectedFileSubmissionId === this.props.submission_id;
-    const submission_file_id = selectedFile && selectionIsCurrent ? selectedFile[1] : null;
-    const submission_file_mime_type = selectedFile && mime.getType(selectedFile[0]);
+    let submission_file_id, submission_file_mime_type;
+    if (this.state.selectedFile === null) {
+      submission_file_id = null;
+      submission_file_mime_type = null;
+    } else {
+      submission_file_id = this.state.selectedFile[1];
+      submission_file_mime_type = mime.getType(this.state.selectedFile[0]);
+    }
     return (
       <React.Fragment>
         <div key="annotation_menu" className="react-tabs-panel-action-bar">
