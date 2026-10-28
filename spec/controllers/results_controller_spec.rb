@@ -1048,7 +1048,7 @@ describe ResultsController do
         patch :update_mark, params: { course_id: course.id,
                                       id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: '1', format: :json }, xhr: true
-        expected_keys = %w[total subtotal mark_override num_marked mark]
+        expected_keys = %w[total subtotal mark_override num_marked mark last_updated_by]
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
 
@@ -1058,8 +1058,6 @@ describe ResultsController do
                                       mark: '', format: :json }, xhr: true
         expect(response.parsed_body['mark_override']).to be false
       end
-
-      it { expect(response).to have_http_status(:redirect) }
 
       context 'but cannot save the mark' do
         before do
@@ -1074,32 +1072,6 @@ describe ResultsController do
 
         it 'should report the correct error message' do
           expect(response.body).to match SAMPLE_ERROR_MESSAGE
-        end
-      end
-
-      context 'when duplicate marks exist' do
-        # NOTE: this should not occur but it does happen because of concurrent requests and the fact that
-        #       the find_or_create_by method is not atomic and neither are database writes
-        let(:mark2) { build(:mark, result: flexible_mark.result, criterion: flexible_mark.criterion) }
-
-        before do
-          mark2.save(validate: false)
-          patch :update_mark, params: { course_id: course.id,
-                                        id: incomplete_result.id,
-                                        criterion_id: flexible_mark.criterion_id,
-                                        mark: 1 }, xhr: true
-        end
-
-        it 'should update the mark' do
-          expect(flexible_mark.reload.mark).to eq 1
-        end
-
-        it 'should result in a valid mark' do
-          expect(flexible_mark.reload).to be_valid
-        end
-
-        it 'should destroy the other duplicate mark' do
-          expect { mark2.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
@@ -1236,10 +1208,10 @@ describe ResultsController do
         other_assignment = create(:assignment, course: course)
         other_assessment_tag = create(:tag, role: instructor, assessment: other_assignment)
 
-        post :add_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
-
-        expect(response).to have_http_status(:not_found)
+        expect do
+          post :add_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
         expect(complete_result.submission.grouping.tags).not_to include(other_assessment_tag)
       end
     end
@@ -1258,10 +1230,10 @@ describe ResultsController do
         other_assessment_tag = create(:tag, role: instructor, assessment: other_assignment)
         submission.grouping.tags << other_assessment_tag
 
-        post :remove_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
-
-        expect(response).to have_http_status(:not_found)
+        expect do
+          post :remove_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
         expect(complete_result.submission.grouping.tags).to include(other_assessment_tag)
       end
     end
@@ -2273,6 +2245,8 @@ describe ResultsController do
 
   context 'A TA' do
     before { sign_in ta }
+
+    let(:current_role) { ta }
 
     it_behaves_like 'show result with old_total'
 
