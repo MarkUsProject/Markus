@@ -175,7 +175,6 @@ class AssignmentsController < ApplicationController
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
 
-    @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :edit, layout: 'assignment_content'
   end
 
@@ -218,7 +217,6 @@ class AssignmentsController < ApplicationController
     @sections.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
-    @lti_deployments = @assignment.course.lti_deployments.includes(:lti_client)
     render :new, layout: 'assignment_content'
   end
 
@@ -980,13 +978,6 @@ class AssignmentsController < ApplicationController
       assignment.student_form_groups = false
       assignment.group_min = 1
       assignment.group_max = 1
-    end
-    if params.key?(:lti_deployment)
-      items_to_create = params[:lti_deployment].select { |_key, val| val == '1' }.keys.map(&:to_i)
-      unless items_to_create.empty?
-        @current_job = LtiLineItemJob.perform_later(items_to_create, assignment)
-        session[:job_id] = @current_job.job_id
-      end
     end
     assignment
   end
