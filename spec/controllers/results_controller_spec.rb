@@ -1702,6 +1702,9 @@ describe ResultsController do
   context 'An instructor' do
     before { sign_in instructor }
 
+    let(:current_role) { instructor }
+
+    it_behaves_like 'shared ta and instructor tests'
     it_behaves_like 'show result with old_total'
 
     context 'accessing set_released_to_students' do
@@ -2297,10 +2300,18 @@ describe ResultsController do
     context 'with manage submissions permission' do
       let(:ta) { create(:ta, course: course, manage_submissions: true) }
 
+      it_behaves_like 'shared ta and instructor tests'
+
       it 'reports that the TA can manage submissions' do
         get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
         expect(response.parsed_body['can_manage_submissions']).to be true
       end
+    end
+
+    context 'that has been assigned to grade the group\'s result' do
+      before { create(:ta_membership, role: ta, grouping: grouping) }
+
+      it_behaves_like 'shared ta and instructor tests'
     end
 
     context 'when groups information is anonymized' do
