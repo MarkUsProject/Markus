@@ -1232,14 +1232,15 @@ describe ResultsController do
         expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
       end
 
-      it 'does not add a tag from another course to a grouping' do
-        other_course_tag = create(:tag, role: create(:instructor, course: create(:course)))
+      it 'does not add a tag from another assessment to a grouping' do
+        other_assignment = create(:assignment, course: course)
+        other_assessment_tag = create(:tag, role: instructor, assessment: other_assignment)
 
         post :add_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: other_course_tag.id }
+             params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
 
         expect(response).to have_http_status(:not_found)
-        expect(complete_result.submission.grouping.tags).not_to include(other_course_tag)
+        expect(complete_result.submission.grouping.tags).not_to include(other_assessment_tag)
       end
     end
 
@@ -1252,15 +1253,16 @@ describe ResultsController do
         expect(complete_result.submission.grouping.tags.size).to eq 0
       end
 
-      it 'does not remove a tag from another course from a grouping' do
-        other_course_tag = create(:tag, role: create(:instructor, course: create(:course)))
-        submission.grouping.tags << other_course_tag
+      it 'does not remove a tag from another assessment from a grouping' do
+        other_assignment = create(:assignment, course: course)
+        other_assessment_tag = create(:tag, role: instructor, assessment: other_assignment)
+        submission.grouping.tags << other_assessment_tag
 
         post :remove_tag,
-             params: { course_id: course.id, id: complete_result.id, tag_id: other_course_tag.id }
+             params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
 
         expect(response).to have_http_status(:not_found)
-        expect(complete_result.submission.grouping.tags).to include(other_course_tag)
+        expect(complete_result.submission.grouping.tags).to include(other_assessment_tag)
       end
     end
 
