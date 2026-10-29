@@ -1076,28 +1076,46 @@ describe ResultsController do
       end
 
       context 'when duplicate marks exist' do
-        # NOTE: this should not occur but it does happen because of concurrent requests and the fact that
-        #       the find_or_create_by method is not atomic and neither are database writes
-        let(:mark2) { build(:mark, result: flexible_mark.result, criterion: flexible_mark.criterion) }
-
-        before do
-          mark2.save(validate: false)
+        # Simulate the duplicate returned by a concurrent find_or_create_by call without
+        # violating the database unique constraint.
+        subject do
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id,
                                         criterion_id: flexible_mark.criterion_id,
                                         mark: 1 }, xhr: true
         end
 
+        let(:marks) { instance_double(ActiveRecord::Relation) }
+        let(:where_chain) { instance_double(ActiveRecord::QueryMethods::WhereChain) }
+        let(:ordered_marks) { instance_double(ActiveRecord::Relation) }
+        let(:duplicate_marks) { instance_double(ActiveRecord::Relation) }
+
+        before do
+          allow(controller).to receive(:record).and_return(incomplete_result)
+          allow(incomplete_result.marks).to receive(:order).with(:id).and_return(ordered_marks)
+          allow(ordered_marks).to receive(:find_or_create_by)
+            .with(criterion_id: flexible_mark.criterion_id.to_s).and_return(flexible_mark)
+          allow(flexible_mark).to receive(:valid?).and_return(false, true)
+          allow(incomplete_result.marks).to receive(:where)
+            .with(criterion_id: flexible_mark.criterion_id.to_s).and_return(marks)
+          allow(marks).to receive_messages(many?: true, where: where_chain)
+          allow(where_chain).to receive(:not).with(id: flexible_mark.id).and_return(duplicate_marks)
+          allow(duplicate_marks).to receive(:destroy_all)
+        end
+
         it 'should update the mark' do
+          subject
           expect(flexible_mark.reload.mark).to eq 1
         end
 
         it 'should result in a valid mark' do
+          subject
           expect(flexible_mark.reload).to be_valid
         end
 
         it 'should destroy the other duplicate mark' do
-          expect { mark2.reload }.to raise_error(ActiveRecord::RecordNotFound)
+          expect(duplicate_marks).to receive(:destroy_all)
+          subject
         end
       end
     end
