@@ -1076,8 +1076,8 @@ describe ResultsController do
       end
 
       context 'when duplicate marks exist' do
-        # Simulate the duplicate returned by a concurrent find_or_create_by call without
-        # violating the database unique constraint.
+        # NOTE: this should not occur but it does happen because of concurrent requests and the fact that
+        #       the find_or_create_by method is not atomic and neither are database writes
         subject do
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id,
