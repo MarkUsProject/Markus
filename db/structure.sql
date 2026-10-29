@@ -436,7 +436,8 @@ CREATE TABLE public.assignment_properties (
     autotest_settings json,
     api_submit boolean DEFAULT false NOT NULL,
     release_with_urls boolean DEFAULT false NOT NULL,
-    token_end_date timestamp(6) without time zone
+    token_end_date timestamp(6) without time zone,
+    display_average_to_students boolean DEFAULT false NOT NULL
 );
 
 
@@ -4669,6 +4670,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261029013207'),
 ('20260926233000'),
 ('20260703000001'),
 ('20260703000000'),
