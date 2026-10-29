@@ -335,7 +335,7 @@ describe CourseSummariesController do
             returned_averages = response_data[:graph_data][:average]
             returned_medians = response_data[:graph_data][:median]
             Assessment.order(id: :asc).each do |a|
-              averages << a.results_average&.round(2)
+              averages << (a.display_average_to_students ? a.results_average&.round(2) : nil)
               medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
             end
             expect(returned_medians.compact).to be_empty
@@ -359,7 +359,13 @@ describe CourseSummariesController do
           end
         end
 
-        context 'when display_median_to_students not set for any assignment' do
+        context 'when display_average_to_students set for some assignments' do
+          before { Assignment.order(id: :asc).first.assignment_properties.update(display_average_to_students: true) }
+
+          it_behaves_like 'check_graph_data'
+        end
+
+        context 'when display_median_to_students and display_average_to_students not set for any assignment' do
           it_behaves_like 'check_graph_data'
         end
 
