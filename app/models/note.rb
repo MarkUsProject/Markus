@@ -13,7 +13,8 @@
 #
 # Indexes
 #
-#  index_notes_on_creator_id  (creator_id)
+#  index_notes_on_creator_id                     (creator_id)
+#  index_notes_on_noteable_type_and_noteable_id  (noteable_type,noteable_id)
 #
 # Foreign Keys
 #

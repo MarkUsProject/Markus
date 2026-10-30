@@ -30,7 +30,9 @@
 #
 # Indexes
 #
+#  index_annotations_on_annotation_text_id           (annotation_text_id)
 #  index_annotations_on_creator_type_and_creator_id  (creator_type,creator_id)
+#  index_annotations_on_result_id                    (result_id)
 #  index_annotations_on_submission_file_id           (submission_file_id)
 #
 # Foreign Keys
