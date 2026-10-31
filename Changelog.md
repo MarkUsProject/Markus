@@ -51,6 +51,7 @@
 - Added tests for timed and untimed extensions returned by `GroupsController#index` (#8180)
 - Added tests for `StudentsController#download` to test downloading a CSV or YAML of students (#8183)
 - Added tests for `ExamTemplatesController#show_cover` for existing and missing cover pages (#8185)
+- Removed unused LTI line item code from the assignment create and update actions (#8242)
 
 ## [v2.10.5]
 
