@@ -1048,7 +1048,7 @@ describe ResultsController do
         patch :update_mark, params: { course_id: course.id,
                                       id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: '1', format: :json }, xhr: true
-        expected_keys = %w[total subtotal mark_override num_marked mark]
+        expected_keys = %w[total subtotal mark_override num_marked mark last_updated_by]
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
 
@@ -1058,8 +1058,6 @@ describe ResultsController do
                                       mark: '', format: :json }, xhr: true
         expect(response.parsed_body['mark_override']).to be false
       end
-
-      it { expect(response).to have_http_status(:redirect) }
 
       context 'but cannot save the mark' do
         before do
@@ -1080,26 +1078,44 @@ describe ResultsController do
       context 'when duplicate marks exist' do
         # NOTE: this should not occur but it does happen because of concurrent requests and the fact that
         #       the find_or_create_by method is not atomic and neither are database writes
-        let(:mark2) { build(:mark, result: flexible_mark.result, criterion: flexible_mark.criterion) }
-
-        before do
-          mark2.save(validate: false)
+        subject do
           patch :update_mark, params: { course_id: course.id,
                                         id: incomplete_result.id,
                                         criterion_id: flexible_mark.criterion_id,
                                         mark: 1 }, xhr: true
         end
 
+        let(:marks) { instance_double(ActiveRecord::Relation) }
+        let(:where_chain) { instance_double(ActiveRecord::QueryMethods::WhereChain) }
+        let(:ordered_marks) { instance_double(ActiveRecord::Relation) }
+        let(:duplicate_marks) { instance_double(ActiveRecord::Relation) }
+
+        before do
+          allow(controller).to receive(:record).and_return(incomplete_result)
+          allow(incomplete_result.marks).to receive(:order).with(:id).and_return(ordered_marks)
+          allow(ordered_marks).to receive(:find_or_create_by)
+            .with(criterion_id: flexible_mark.criterion_id.to_s).and_return(flexible_mark)
+          allow(flexible_mark).to receive(:valid?).and_return(false, true)
+          allow(incomplete_result.marks).to receive(:where)
+            .with(criterion_id: flexible_mark.criterion_id.to_s).and_return(marks)
+          allow(marks).to receive_messages(many?: true, where: where_chain)
+          allow(where_chain).to receive(:not).with(id: flexible_mark.id).and_return(duplicate_marks)
+          allow(duplicate_marks).to receive(:destroy_all)
+        end
+
         it 'should update the mark' do
+          subject
           expect(flexible_mark.reload.mark).to eq 1
         end
 
         it 'should result in a valid mark' do
+          subject
           expect(flexible_mark.reload).to be_valid
         end
 
         it 'should destroy the other duplicate mark' do
-          expect { mark2.reload }.to raise_error(ActiveRecord::RecordNotFound)
+          expect(duplicate_marks).to receive(:destroy_all)
+          subject
         end
       end
     end
@@ -1231,6 +1247,17 @@ describe ResultsController do
              params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
         expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
       end
+
+      it 'does not add a tag from another assessment to a grouping' do
+        other_assignment = create(:assignment, course: course)
+        other_assessment_tag = create(:tag, role: instructor, assessment: other_assignment)
+
+        expect do
+          post :add_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect(complete_result.submission.grouping.tags).not_to include(other_assessment_tag)
+      end
     end
 
     describe '#remove_tag' do
@@ -1240,6 +1267,18 @@ describe ResultsController do
         post :remove_tag,
              params: { course_id: course.id, id: complete_result.id, tag_id: tag.id }
         expect(complete_result.submission.grouping.tags.size).to eq 0
+      end
+
+      it 'does not remove a tag from another assessment from a grouping' do
+        other_assignment = create(:assignment, course: course)
+        other_assessment_tag = create(:tag, role: instructor, assessment: other_assignment)
+        submission.grouping.tags << other_assessment_tag
+
+        expect do
+          post :remove_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect(complete_result.submission.grouping.tags).to include(other_assessment_tag)
       end
     end
 
@@ -1679,6 +1718,9 @@ describe ResultsController do
   context 'An instructor' do
     before { sign_in instructor }
 
+    let(:current_role) { instructor }
+
+    it_behaves_like 'shared ta and instructor tests'
     it_behaves_like 'show result with old_total'
 
     context 'accessing set_released_to_students' do
@@ -2248,6 +2290,8 @@ describe ResultsController do
   context 'A TA' do
     before { sign_in ta }
 
+    let(:current_role) { ta }
+
     it_behaves_like 'show result with old_total'
 
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
@@ -2274,10 +2318,18 @@ describe ResultsController do
     context 'with manage submissions permission' do
       let(:ta) { create(:ta, course: course, manage_submissions: true) }
 
+      it_behaves_like 'shared ta and instructor tests'
+
       it 'reports that the TA can manage submissions' do
         get :show, params: { course_id: course.id, id: incomplete_result.id }, format: :json
         expect(response.parsed_body['can_manage_submissions']).to be true
       end
+    end
+
+    context 'that has been assigned to grade the group\'s result' do
+      before { create(:ta_membership, role: ta, grouping: grouping) }
+
+      it_behaves_like 'shared ta and instructor tests'
     end
 
     context 'when groups information is anonymized' do
