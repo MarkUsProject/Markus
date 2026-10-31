@@ -14,6 +14,7 @@
 #
 # Indexes
 #
+#  index_grade_entry_students_on_assessment_id              (assessment_id)
 #  index_grade_entry_students_on_role_id_and_assessment_id  (role_id,assessment_id) UNIQUE
 #
 # Foreign Keys

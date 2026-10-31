@@ -53,6 +53,7 @@
 #
 #  index_assignment_properties_on_assessment_id                  (assessment_id) UNIQUE
 #  index_assignment_properties_on_default_starter_file_group_id  (default_starter_file_group_id)
+#  index_assignment_properties_on_remote_autotest_settings_id    (remote_autotest_settings_id)
 #
 # Foreign Keys
 #

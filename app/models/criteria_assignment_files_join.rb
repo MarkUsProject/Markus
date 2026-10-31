@@ -9,6 +9,11 @@
 #  assignment_file_id :integer          not null
 #  criterion_id       :integer          not null
 #
+# Indexes
+#
+#  index_criteria_assignment_files_joins_on_assignment_file_id  (assignment_file_id)
+#  index_criteria_assignment_files_joins_on_criterion_id        (criterion_id)
+#
 # Foreign Keys
 #
 #  fk_rails_...  (assignment_file_id => assignment_files.id)

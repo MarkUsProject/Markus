@@ -14,7 +14,8 @@
 #
 # Indexes
 #
-#  index_memberships_on_role_id  (role_id)
+#  index_memberships_on_grouping_id  (grouping_id)
+#  index_memberships_on_role_id      (role_id)
 #
 # Foreign Keys
 #

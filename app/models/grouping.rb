@@ -17,7 +17,8 @@
 #
 # Indexes
 #
-#  groupings_u1  (assessment_id,group_id) UNIQUE
+#  groupings_u1                 (assessment_id,group_id) UNIQUE
+#  index_groupings_on_group_id  (group_id)
 #
 # Foreign Keys
 #

@@ -15,6 +15,11 @@
 #  assessment_id :bigint           not null
 #  section_id    :integer          not null
 #
+# Indexes
+#
+#  index_assessment_section_properties_on_assessment_id  (assessment_id)
+#  index_assessment_section_properties_on_section_id     (section_id)
+#
 # Foreign Keys
 #
 #  fk_rails_...  (assessment_id => assessments.id)
