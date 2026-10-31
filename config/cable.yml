@@ -1,10 +1,17 @@
+# reconnect_attempts is a list of delays (in seconds) that ActionCable's Redis
+# listener thread waits between successive attempts to re-establish its pub/sub
+# connection after Redis drops it (e.g. when Redis restarts). The default is a
+# single, immediate attempt, which fails while Redis is still coming back up and
+# leaves the process permanently unsubscribed until it is restarted.
 development:
   adapter: redis
   url: <%= Settings.redis.url %>
   channel_prefix: markus_development
+  reconnect_attempts: [1, 2, 5, 10, 30, 60, 120, 300, 300, 300]
 test:
   adapter: test
 production:
   adapter: redis
   url: <%= Settings.redis.url %>
   channel_prefix: markus_production
+  reconnect_attempts: [1, 2, 5, 10, 30, 60, 120, 300, 300, 300]
