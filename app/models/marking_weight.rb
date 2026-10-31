@@ -12,7 +12,8 @@
 #
 # Indexes
 #
-#  index_marking_weights_on_assessment_id  (assessment_id)
+#  index_marking_weights_on_assessment_id      (assessment_id)
+#  index_marking_weights_on_marking_scheme_id  (marking_scheme_id)
 #
 # Foreign Keys
 #
