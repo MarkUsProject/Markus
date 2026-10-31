@@ -11,6 +11,7 @@
 #
 # Indexes
 #
+#  index_groupings_tags_on_grouping_id             (grouping_id)
 #  index_groupings_tags_on_tag_id_and_grouping_id  (tag_id,grouping_id) UNIQUE
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
