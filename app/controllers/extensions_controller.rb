@@ -4,7 +4,11 @@ class ExtensionsController < ApplicationController
 
   def create
     params = extension_params
-    extension = Extension.new(grouping_id: params[:grouping_id],
+    grouping = Grouping.joins(:assignment)
+                       .where(assessments: { course_id: current_course.id })
+                       .find_by(id: params[:grouping_id])
+
+    extension = Extension.new(grouping: grouping,
                               time_delta: duration_from_params,
                               apply_penalty: params[:penalty],
                               note: params[:note])
