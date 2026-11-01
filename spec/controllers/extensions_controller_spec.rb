@@ -2,8 +2,8 @@ describe ExtensionsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
   describe 'as an instructor' do
     let(:instructor) { create(:instructor) }
-    let(:grouping) { create(:grouping) }
     let(:course) { instructor.course }
+    let(:grouping) { create(:grouping, assignment: create(:assignment, course: course)) }
 
     describe '#update' do
       let(:extension) { create(:extension, grouping: grouping) }
@@ -75,6 +75,17 @@ describe ExtensionsController do
 
       it 'should create a new extension' do
         expect { post_as instructor, :create, params: params }.to change { Extension.count }.by(1)
+      end
+
+      it 'should not create an extension for a grouping from another course' do
+        course # make sure the instructor's course is created before another course
+        other_course = create(:course)
+        other_grouping = create(:grouping, assignment: create(:assignment, course: other_course))
+        params[:grouping_id] = other_grouping.id
+
+        expect do
+          post_as instructor, :create, params: params
+        end.not_to(change { Extension.count })
       end
 
       it 'should flash a message on success' do
