@@ -147,6 +147,8 @@ jobs:
         run: bundle exec rake javascript:build
       - name: Set up databases
         run: bundle exec rails parallel:setup
+      - name: Run active_record_doctor
+        run: bundle exec rails active_record_doctor
       - name: Restore runtime log
         uses: actions/cache/restore@v6
         with:
