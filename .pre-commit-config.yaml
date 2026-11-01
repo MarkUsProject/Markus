@@ -60,10 +60,17 @@ repos:
         language: system
         files: config/locales/
         pass_filenames: false
+      - id: active-record-doctor
+        name: active_record_doctor
+        entry: .dockerfiles/run-in-docker.sh bundle exec rails active_record_doctor
+        language: system
+        require_serial: true
+        files: ^(app/models/|db/migrate/|db/structure\.sql$|\.active_record_doctor\.rb$)
+        pass_filenames: false
 
 exclude: vendor
 
 ci:
   autoupdate_schedule: monthly
   # Ruby- and JavaScript-based hooks are run in a separate CI task
-  skip: [prettier, stylelint, rubocop, erb_lint, i18n-tasks-health]
+  skip: [prettier, stylelint, rubocop, erb_lint, i18n-tasks-health, active-record-doctor]
