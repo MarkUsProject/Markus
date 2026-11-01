@@ -436,7 +436,7 @@ GEM
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     pdf-core (0.10.0)
-    pg (1.6.3)
+    pg (1.7.0)
     pghero (4.1.0)
       activerecord (>= 7.2)
     pkg-config (1.6.5)
