@@ -27,6 +27,7 @@
 
 ### 🐛 Bug fixes
 - Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
+- Fixed a file download error (404) when switching between submissions in the grading view (#8230)
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 - Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
 - Fixed ActionCable processes permanently losing their Redis pub/sub subscriptions after a Redis restart, by configuring reconnection retries in `config/cable.yml` (#8244)
