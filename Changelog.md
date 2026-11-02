@@ -26,6 +26,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)
 - Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
 - Fixed a file download error (404) when switching between submissions in the grading view (#8230)
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
