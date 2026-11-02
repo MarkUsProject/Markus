@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
 

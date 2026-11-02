@@ -76,6 +76,16 @@ describe Admin::CoursesController do
           expect(response).to have_http_status(:forbidden)
         end
       end
+
+      describe '#destroy_lti_deployment' do
+        let!(:lti_deployment) { create(:lti_deployment, course: course) }
+
+        it 'responds with 403 and keeps the deployment' do
+          delete_as user, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+          expect(response).to have_http_status(:forbidden)
+          expect(LtiDeployment.exists?(lti_deployment.id)).to be true
+        end
+      end
     end
 
     context 'Instructor' do
@@ -476,6 +486,27 @@ describe Admin::CoursesController do
             OpenStruct.new job_id: 1 # mock return value so that the job id can be set on the session
           end
           subject
+        end
+      end
+    end
+
+    describe '#destroy_lti_deployment' do
+      let!(:lti_deployment) { create(:lti_deployment, course: course) }
+
+      it 'deletes the deployment' do
+        delete_as admin, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(response).to redirect_to(edit_admin_course_path(course))
+        expect(LtiDeployment.exists?(lti_deployment.id)).to be false
+      end
+
+      context 'with a deployment from another course' do
+        let!(:other_deployment) { create(:lti_deployment, course: create(:course)) }
+
+        it 'raises a not found error and keeps the deployment' do
+          expect do
+            delete_as admin, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: other_deployment.id }
+          end.to raise_error(ActiveRecord::RecordNotFound)
+          expect(LtiDeployment.exists?(other_deployment.id)).to be true
         end
       end
     end
