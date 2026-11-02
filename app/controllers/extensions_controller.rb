@@ -8,6 +8,12 @@ class ExtensionsController < ApplicationController
                        .where(assessments: { course_id: current_course.id })
                        .find_by(id: params[:grouping_id])
 
+    if grouping.nil?
+      flash_now(:error, I18n.t('extensions.invalid_grouping'))
+      head :ok
+      return
+    end
+
     extension = Extension.new(grouping: grouping,
                               time_delta: duration_from_params,
                               apply_penalty: params[:penalty],

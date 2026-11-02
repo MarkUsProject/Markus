@@ -83,6 +83,8 @@ describe ExtensionsController do
         other_grouping = create(:grouping, assignment: create(:assignment, course: other_course))
         params[:grouping_id] = other_grouping.id
 
+        expect_any_instance_of(ExtensionsController)
+          .to receive(:flash_now).with(:error, I18n.t('extensions.invalid_grouping'))
         expect do
           post_as instructor, :create, params: params
         end.not_to(change { Extension.count })
