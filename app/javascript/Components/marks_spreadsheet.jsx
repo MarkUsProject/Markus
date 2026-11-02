@@ -337,6 +337,7 @@ class GradeEntryCell extends React.Component {
   constructor(props) {
     super(props);
     this.typing_timer = undefined;
+    this.latest_request_id = 0;
     this.state = {
       value:
         props.default_value === null || props.default_value === undefined
@@ -345,14 +346,22 @@ class GradeEntryCell extends React.Component {
     };
   }
 
-  componentWillReceiveProps = nextProps => {
-    this.setState({
-      value:
-        nextProps.default_value === null || nextProps.default_value === undefined
-          ? ""
-          : nextProps.default_value,
-    });
-  };
+  componentDidUpdate(prevProps) {
+    // Only reset the input when the underlying value or the row (react-table reuses cells across rows
+    // when sorting) changes. The table can re-render with stale row data (e.g. when resizing a column),
+    // which must not overwrite a grade that has been entered and saved.
+    if (
+      prevProps.default_value !== this.props.default_value ||
+      prevProps.student_id !== this.props.student_id
+    ) {
+      this.setState({
+        value:
+          this.props.default_value === null || this.props.default_value === undefined
+            ? ""
+            : this.props.default_value,
+      });
+    }
+  }
 
   handleChange = event => {
     if (this.typing_timer) {
@@ -376,6 +385,7 @@ class GradeEntryCell extends React.Component {
     };
 
     this.typing_timer = setTimeout(() => {
+      const request_id = ++this.latest_request_id;
       $.ajax({
         url: Routes.update_grade_course_grade_entry_form_path(
           this.props.course_id,
@@ -385,6 +395,11 @@ class GradeEntryCell extends React.Component {
         type: "POST",
         dataType: "text",
       }).then(total => {
+        // Ignore responses for requests that have been superseded by a later edit of this cell
+        if (request_id !== this.latest_request_id) {
+          return;
+        }
+
         // Flash green
         $(`#${this.props.grade_id}`)
           .css("background-color", "")
@@ -488,4 +503,4 @@ class SpreadsheetActionBox extends React.Component {
 
 let MarksSpreadsheet = withSelection(RawMarksSpreadsheet);
 
-export {MarksSpreadsheet};
+export {MarksSpreadsheet, GradeEntryCell};
