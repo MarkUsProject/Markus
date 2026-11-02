@@ -24,9 +24,7 @@ class CoursesController < ApplicationController
     end
   end
 
-  def edit
-    @lti_deployments = @current_course.lti_deployments
-  end
+  def edit; end
 
   def update
     @current_course.update(course_params)

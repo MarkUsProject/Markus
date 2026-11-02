@@ -25,9 +25,7 @@ module Admin
       respond_with @current_course, location: -> { admin_courses_path }
     end
 
-    def edit
-      @lti_deployments = @current_course.lti_deployments
-    end
+    def edit; end
 
     def update
       current_course.update(course_update_params)
