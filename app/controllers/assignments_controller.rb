@@ -685,7 +685,6 @@ class AssignmentsController < ApplicationController
 
   def create_lti_line_items
     @assignment = record
-    @lti_deployments = LtiDeployment.where(course: @current_course)
     if params.key?(:lti_deployment)
       items_to_create = params[:lti_deployment].select { |_key, val| val == '1' }.keys.map(&:to_i)
       if items_to_create.empty?
