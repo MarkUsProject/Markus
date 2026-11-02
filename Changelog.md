@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
 - Replaced `MarkusLogger` and the default Rails logger with Semantic Logger (`rails_semantic_logger`). All log entries, including audit events, are now written as structured entries to a single log file, in JSON format by default in production. The `logging.enabled`, `logging.rotate_by_interval`, `logging.rotate_interval`, `logging.size_threshold`, `logging.old_files`, and `logging.error_file` settings have been removed, and a `logging.format` setting has been added (#8204)
@@ -29,6 +30,7 @@
 - Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 - Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
+- Fixed ActionCable processes permanently losing their Redis pub/sub subscriptions after a Redis restart, by configuring reconnection retries in `config/cable.yml` (#8244)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
