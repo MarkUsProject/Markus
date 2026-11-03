@@ -8,6 +8,7 @@ on:
 
 jobs:
   test_rspec:
+    name: Run RSpec and active_record_doctor
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     services:
@@ -147,8 +148,6 @@ jobs:
         run: bundle exec rake javascript:build
       - name: Set up databases
         run: bundle exec rails parallel:setup
-      - name: Run active_record_doctor
-        run: bundle exec rails active_record_doctor
       - name: Restore runtime log
         uses: actions/cache/restore@v6
         with:
@@ -168,6 +167,8 @@ jobs:
         run: bundle exec rspec spec/system
         env:
           MARKUS__PYTHON: ./venv/bin/python3
+      - name: Run active_record_doctor
+        run: bundle exec rails active_record_doctor
       - name: Save new runtime chunk
         uses: actions/cache/save@v6
         with:
