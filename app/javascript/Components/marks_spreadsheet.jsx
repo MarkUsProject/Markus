@@ -347,9 +347,8 @@ class GradeEntryCell extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    // Only reset the input when the underlying value or the row (react-table reuses cells across rows
-    // when sorting) changes. The table can re-render with stale row data (e.g. when resizing a column),
-    // which must not overwrite a grade that has been entered and saved.
+    // Only reset the input value when the underlying value or the row (react-table reuses cells across rows
+    // when sorting) changes.
     if (
       prevProps.default_value !== this.props.default_value ||
       prevProps.student_id !== this.props.student_id
