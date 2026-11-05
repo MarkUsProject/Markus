@@ -437,3 +437,35 @@ describe("tests for the table component", () => {
     });
   });
 });
+
+describe("Table with grouped column headers", () => {
+  it("renders one filter row for the visible leaf columns and filters their data", async () => {
+    const user = userEvent.setup();
+    const columns = [
+      {id: "group", header: "Grouped columns", columns: mockColumns()},
+      {accessorKey: "col4", header: "Unfiltered", enableColumnFilter: false},
+    ];
+    const {table} = renderTable(columns, mockData(), null, {
+      initialState: {columnVisibility: {col2: false}},
+    });
+
+    expectTextInDocument("Grouped columns");
+    const filterRows = table.querySelectorAll(".rt-thead.-filters > .rt-tr");
+    expect(filterRows).toHaveLength(1);
+    expect(filterRows[0]).toHaveAttribute("aria-rowindex", "3");
+    expect(within(filterRows[0]).getAllByRole("columnheader")).toHaveLength(3);
+    expect(within(filterRows[0]).getAllByRole("textbox")).toHaveLength(1);
+    expect(within(filterRows[0]).getAllByRole("combobox")).toHaveLength(1);
+    expect(screen.queryByRole("textbox", {name: defaultSearchPlaceholderText("col2")})).toBeNull();
+
+    await user.type(
+      screen.getByRole("textbox", {name: defaultSearchPlaceholderText("col1")}),
+      "abc"
+    );
+    expectTextNotInDocument("a");
+    expectTextNotInDocument("ab");
+    expectTextInDocument("abc");
+    expectTextInDocument("abcd");
+    expect(screen.getByRole("grid")).toHaveAttribute("aria-rowcount", "5");
+  });
+});

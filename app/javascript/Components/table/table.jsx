@@ -200,12 +200,10 @@ export default function Table({
     ? rowVirtualizer.getTotalSize() - (virtualRows.at(-1)?.end ?? 0)
     : 0;
 
-  const showFilters = React.useMemo(
-    () => table.getAllColumns().some(column => column.getCanFilter()),
-    [table, finalColumns]
-  );
+  const filterColumns = table.getVisibleLeafColumns();
+  const showFilters = filterColumns.some(column => column.getCanFilter());
   const headerGroups = table.getHeaderGroups();
-  const headerRowCount = headerGroups.length * (showFilters ? 2 : 1);
+  const headerRowCount = headerGroups.length + (showFilters ? 1 : 0);
 
   const renderRow = (row, index) => (
     <TableRow
@@ -248,28 +246,21 @@ export default function Table({
 
   const tableFilters = showFilters && (
     <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
-      {headerGroups.map((headerGroup, index) => (
-        <div
-          className="rt-tr"
-          role="row"
-          aria-rowindex={headerGroups.length + index + 1}
-          key={headerGroup.id}
-        >
-          {headerGroup.headers.map(header => (
-            <FilterCell
-              key={header.id}
-              size={header.getSize()}
-              column={header.column}
-              filterValue={header.column.getFilterValue()}
-              facetedUniqueValues={
-                header.column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
-                  ? header.column.getFacetedUniqueValues()
-                  : null
-              }
-            />
-          ))}
-        </div>
-      ))}
+      <div className="rt-tr" role="row" aria-rowindex={headerRowCount}>
+        {filterColumns.map(column => (
+          <FilterCell
+            key={column.id}
+            size={column.getSize()}
+            column={column}
+            filterValue={column.getFilterValue()}
+            facetedUniqueValues={
+              column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
+                ? column.getFacetedUniqueValues()
+                : null
+            }
+          />
+        ))}
+      </div>
     </div>
   );
 
