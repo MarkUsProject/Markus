@@ -1,19 +1,17 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import Modal from "react-modal";
 
 export default function RenameGroupModal({initialGroupName, isOpen, onRequestClose, onSubmit}) {
   const [groupName, setGroupName] = useState(initialGroupName || "");
-  const previousIsOpen = useRef(isOpen);
 
   useEffect(() => {
     Modal.setAppElement("body");
   }, []);
 
   useEffect(() => {
-    if (isOpen && !previousIsOpen.current && initialGroupName) {
+    if (isOpen && initialGroupName) {
       setGroupName(initialGroupName);
     }
-    previousIsOpen.current = isOpen;
   }, [initialGroupName, isOpen]);
 
   const handleChange = event => {
