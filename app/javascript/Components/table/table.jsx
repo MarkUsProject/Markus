@@ -205,28 +205,31 @@ export default function Table({
   );
 
   const showFilters = React.useMemo(
-    () => table.getAllColumns().some(column => column.getCanFilter()),
+    () => table.getAllLeafColumns().some(column => column.getCanFilter()),
     [table, finalColumns]
   );
   const tableFilters = showFilters && (
     <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
-      {table.getHeaderGroups().map(headerGroup => (
-        <div className="rt-tr" role="row" key={headerGroup.id}>
-          {headerGroup.headers.map(header => (
-            <FilterCell
-              key={header.id}
-              size={header.getSize()}
-              column={header.column}
-              filterValue={header.column.getFilterValue()}
-              facetedUniqueValues={
-                header.column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
-                  ? header.column.getFacetedUniqueValues()
-                  : null
-              }
-            />
-          ))}
-        </div>
-      ))}
+      {table
+        .getHeaderGroups()
+        .slice(-1)
+        .map(headerGroup => (
+          <div className="rt-tr" role="row" key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <FilterCell
+                key={header.id}
+                size={header.getSize()}
+                column={header.column}
+                filterValue={header.column.getFilterValue()}
+                facetedUniqueValues={
+                  header.column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
+                    ? header.column.getFacetedUniqueValues()
+                    : null
+                }
+              />
+            ))}
+          </div>
+        ))}
     </div>
   );
 
