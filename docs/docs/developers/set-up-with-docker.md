@@ -154,6 +154,7 @@ After this, these checks will run every time you make a commit. If all checks pa
 - Some checks will just report problems that you'll need to fix manually. After fixing them, you'll need to add and commit those changes.
 
 The Ruby- and JavaScript-based hooks run inside the `rails` Docker Compose service, and so Docker must be running when you commit. These hooks use the running `rails` container if there is one, and otherwise start a temporary one.
+The `active_record_doctor` hook also requires the `postgres` service to be running and the development database to be migrated.
 
 ## Running Commands in Docker
 
