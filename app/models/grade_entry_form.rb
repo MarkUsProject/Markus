@@ -272,7 +272,7 @@ class GradeEntryForm < Assessment
   end
 
   def display_average_to_students
-    false
+    true
   end
 
   def display_median_to_students

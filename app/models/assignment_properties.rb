@@ -11,7 +11,7 @@
 #  api_submit                       :boolean          default(FALSE), not null
 #  assign_graders_to_criteria       :boolean          default(FALSE), not null
 #  autotest_settings                :json
-#  display_average_to_students      :boolean          default(FALSE), not null
+#  display_average_to_students      :boolean          default(TRUE), not null
 #  display_grader_names_to_students :boolean          default(FALSE), not null
 #  display_median_to_students       :boolean          default(FALSE), not null
 #  duration                         :interval
