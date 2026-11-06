@@ -1,4 +1,3 @@
-import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import EditTagModal from "../Modals/edit_tag_modal";
 import Modal from "react-modal";
@@ -6,14 +5,15 @@ import fetchMock from "jest-fetch-mock";
 
 describe("EditTagModal", () => {
   let props;
-  let component;
   let mockToken;
+  let csrfToken;
 
   beforeAll(() => {
     mockToken = "mockToken";
-    document.querySelector = jest.fn(() => ({
-      content: mockToken, // Return a mock value for the content property
-    }));
+    csrfToken = document.createElement("meta");
+    csrfToken.name = "csrf-token";
+    csrfToken.content = mockToken;
+    document.head.appendChild(csrfToken);
   });
 
   beforeEach(() => {
@@ -29,20 +29,33 @@ describe("EditTagModal", () => {
 
     // Set the app element for React Modal
     Modal.setAppElement("body");
-    component = render(<EditTagModal {...props} />);
+    render(<EditTagModal {...props} />);
   });
 
   afterEach(() => {
     fetchMock.resetMocks();
+    jest.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    csrfToken.remove();
   });
 
   it("should be called with correct params on successful submit", async () => {
+    const updatedName = "updated tag";
+    const updatedDescription = "updated description";
+    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: updatedName}});
+    fireEvent.change(screen.getByTestId("tag_description_input"), {
+      target: {value: updatedDescription},
+    });
     const data = {
       tag: {
-        name: props.currentTagName,
-        description: props.currentTagDescription,
+        name: updatedName,
+        description: updatedDescription,
       },
-      grouping_id: props.grouping_id,
+      course_id: props.course_id,
+      id: props.tag_id,
+      submit: "Save",
     };
     const options = {
       method: "PUT",
@@ -57,6 +70,7 @@ describe("EditTagModal", () => {
       expect(req.method).toBe(options.method);
       expect(req.headers.get("Content-Type")).toEqual(options.headers["Content-Type"]);
       expect(req.headers.get("X-CSRF-Token")).toEqual(options.headers["X-CSRF-Token"]);
+      expect(await req.json()).toEqual(data);
 
       return JSON.stringify({status: "success"});
     });
@@ -74,6 +88,11 @@ describe("EditTagModal", () => {
     });
   });
 
+  it("should initialize both inputs from the current tag", () => {
+    expect(screen.getByTestId("tag_name_input")).toHaveValue(props.currentTagName);
+    expect(screen.getByTestId("tag_description_input")).toHaveValue(props.currentTagDescription);
+  });
+
   it("should console error on error", async () => {
     const customError = new Error();
     customError.message = "msg";
@@ -83,6 +102,7 @@ describe("EditTagModal", () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(mockedConsoleError).toHaveBeenNthCalledWith(1, customError.message);
+      expect(props.onRequestClose).not.toHaveBeenCalled();
     });
   });
 });

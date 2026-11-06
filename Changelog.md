@@ -26,6 +26,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
 - Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)
 - Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
 - Fixed a file download error (404) when switching between submissions in the grading view (#8230)
@@ -39,7 +40,9 @@
 
 ### 🔧 Internal changes
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
+- Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
 - Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
+- Converted `CreateTagModal`, `EditTagModal`, `CreateGroupModal`, and `RenameGroupModal` to functional React components (#8232)
 - Moved the RuboCop, erb_lint and i18n-tasks dependencies into the Gemfile and run them in pre-commit hooks using the `rails` Docker Compose service (#8224)
 - Moved the Prettier and stylelint dependencies into `package.json` and run them in pre-commit hooks using the `rails` Docker Compose service (#8225)
 - Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
@@ -57,6 +60,7 @@
 - Added tests for timed and untimed extensions returned by `GroupsController#index` (#8180)
 - Added tests for `StudentsController#download` to test downloading a CSV or YAML of students (#8183)
 - Added tests for `ExamTemplatesController#show_cover` for existing and missing cover pages (#8185)
+- Removed unused LTI line item code from the assignment create and update actions, and unused `@lti_deployments` assignments from the assignment and course controllers (#8242)
 
 ## [v2.10.5]
 
