@@ -39,6 +39,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
 - Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
 - Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
 - Converted `CreateTagModal`, `EditTagModal`, `CreateGroupModal`, and `RenameGroupModal` to functional React components (#8232)

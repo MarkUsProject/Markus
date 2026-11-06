@@ -47,6 +47,22 @@ describe CreateGroupsJob do
     it_behaves_like 'background job'
   end
 
+  context 'when a repository collision occurs' do
+    let(:job) { CreateGroupsJob.new(assignment, [[group_name, student1.user_name]]) }
+
+    before do
+      allow(Repository.get_class).to receive(:create).and_raise(Repository::RepositoryCollision, 'repo already exists')
+    end
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(Repository::RepositoryCollision)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'Repository::RepositoryCollision', message: 'repo already exists' }
+      )
+    end
+  end
+
   context 'when creating one group from scratch' do
     context 'and group limit is set to 1' do
       context 'and there are two students specified for the group' do
@@ -193,12 +209,11 @@ describe CreateGroupsJob do
         end
 
         context 'and the assignment is in a different course' do
-          skip 'enable this when there is a validation checking if students are in the same course' do
-            let(:assignment2) { create(:assignment) }
-            it 'should raise a validation error' do
-              data = [[group.group_name, student1.user_name]]
-              expect { CreateGroupsJob.perform_now(assignment2, data) }.to raise_exception(ActiveRecord::RecordInvalid)
-            end
+          let(:assignment2) { create(:assignment, course: create(:course)) }
+
+          it 'should not create a new grouping' do
+            data = [[group.group_name, student1.user_name]]
+            expect { CreateGroupsJob.perform_now(assignment2, data) }.not_to(change { Grouping.count })
           end
         end
       end
@@ -216,12 +231,11 @@ describe CreateGroupsJob do
         end
 
         context 'and the assignment is in a different course' do
-          skip 'enable this when there is a validation checking if students are in the same course' do
-            let(:assignment2) { create(:assignment) }
-            it 'should raise a validation error' do
-              data = [[group.group_name, student1.user_name, student2.user_name]]
-              expect { CreateGroupsJob.perform_now(assignment2, data) }.to raise_exception(ActiveRecord::RecordInvalid)
-            end
+          let(:assignment2) { create(:assignment, course: create(:course)) }
+
+          it 'should not create a new grouping' do
+            data = [[group.group_name, student1.user_name, student2.user_name]]
+            expect { CreateGroupsJob.perform_now(assignment2, data) }.not_to(change { Grouping.count })
           end
         end
       end
