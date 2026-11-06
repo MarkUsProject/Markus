@@ -11,6 +11,18 @@ describe GenerateJob do
     it_behaves_like 'background job'
   end
 
+  context 'when the exam template file is missing' do
+    let(:job) { GenerateJob.new(exam_template, 2, 0) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(Errno::ENOENT)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'Errno::ENOENT', message: a_string_including(exam_template.file_path.to_s) }
+      )
+    end
+  end
+
   describe '#perform' do
     before do
       allow(CombinePDF).to(receive(:load).and_wrap_original { |m| m.call file })

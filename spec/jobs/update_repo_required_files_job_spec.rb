@@ -8,6 +8,19 @@ describe UpdateRepoRequiredFilesJob do
     it_behaves_like 'background job'
   end
 
+  context 'when the assignment does not exist' do
+    let(:job) { UpdateRepoRequiredFilesJob.new(-1) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(ActiveRecord::RecordNotFound)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'ActiveRecord::RecordNotFound',
+                     message: a_string_starting_with("Couldn't find Assignment with 'id'=-1") }
+      )
+    end
+  end
+
   context 'updating required files' do
     include_context 'git'
 

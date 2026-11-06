@@ -129,7 +129,6 @@ describe AssignmentProperties do
       let!(:period) { create(:period, submission_rule: rule) }
 
       it 'should return the duration plus penalty period hours' do
-        skip 'fails on travis only because the object is not properly reloaded'
         expect(assignment.reload.adjusted_duration).to eq(assignment.duration + period.hours.hours)
       end
     end
