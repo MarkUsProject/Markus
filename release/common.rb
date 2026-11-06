@@ -2,6 +2,8 @@
 
 require 'open3'
 
+Encoding.default_external = Encoding::UTF_8
+
 # Shared helper methods for release scripts.
 module ReleaseHelpers
   REPO = 'MarkUsProject/Markus'
