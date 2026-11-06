@@ -417,7 +417,7 @@ describe Course do
           let!(:new_assignment_attr) do
             ['new', 'abc', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, false, true, true, false, nil, nil, true, false]
+             true, true, false, true, true, true, true, false, nil, nil, true, false, false]
           end
           let!(:returned) do
             # create the old assignment
