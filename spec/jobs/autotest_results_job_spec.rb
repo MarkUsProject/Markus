@@ -314,6 +314,15 @@ describe AutotestResultsJob do
       it 'should try again with reduced retries' do
         expect { subject }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
       end
+
+      it 'stores the error in the job status' do
+        job = AutotestResultsJob.new
+        expect { job.perform_now }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
+        expect(job.status.to_h).to include(
+          status: :failed,
+          exception: { class: 'RuntimeError', message: I18n.t('automated_tests.settings_not_setup') }
+        )
+      end
     end
   end
 end

@@ -27,6 +27,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
 - Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)
 - Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
 - Fixed a file download error (404) when switching between submissions in the grading view (#8230)
@@ -39,6 +40,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
 - Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
 - Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
 - Converted `CreateTagModal`, `EditTagModal`, `CreateGroupModal`, and `RenameGroupModal` to functional React components (#8232)

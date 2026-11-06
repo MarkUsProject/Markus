@@ -37,6 +37,18 @@ describe LtiRosterSyncJob do
     it_behaves_like 'background job'
   end
 
+  context 'when the deployment does not exist' do
+    let(:job) { LtiRosterSyncJob.new({ deployment_id: -1, role_types: [LtiDeployment::LTI_ROLES[:learner]] }) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(ActiveRecord::RecordNotFound)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'ActiveRecord::RecordNotFound', message: "Couldn't find LtiDeployment with 'id'=-1" }
+      )
+    end
+  end
+
   context 'when roster sync completes' do
     let(:job_args) do
       { deployment_id: lti_deployment.id,

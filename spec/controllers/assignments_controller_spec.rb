@@ -66,7 +66,7 @@ describe AssignmentsController do
       context 'when a grouping does not exist' do
         before { put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id } }
 
-        xcontext 'when the group_max is 1' do
+        context 'when the group_max is 1' do
           let(:assignment) { create(:timed_assignment, assignment_properties_attributes: { group_max: 1 }) }
 
           it 'should create a grouping' do
@@ -621,6 +621,8 @@ describe AssignmentsController do
         post_as role, :show, params: { course_id: course.id, id: assignment.id }
       end
 
+      # TODO: set_repo_vars fails because MemoryRevision#changes_at_path? ignores the empty assignment folder,
+      #       so get_revision_by_timestamp returns nil (GitRepository adds a .gitkeep, so this works in production)
       xcontext 'a regular assignment' do
         it 'should create a new grouping' do
           expect(role.student_memberships.size).to eq 1
@@ -641,6 +643,7 @@ describe AssignmentsController do
           end
         end
 
+        # TODO: see 'a regular assignment' above
         xcontext 'after the due date' do
           let(:assignment) { create(:timed_assignment, due_date: 1.hour.ago) }
 
@@ -654,6 +657,7 @@ describe AssignmentsController do
       end
     end
 
+    # TODO: see 'a regular assignment' above
     xcontext 'when the assignment is a group assignment and the student belongs to a group' do
       it 'responds with a success' do
         assignment.update!(group_min: 1, group_max: 3)
