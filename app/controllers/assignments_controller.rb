@@ -1027,6 +1027,7 @@ class AssignmentsController < ApplicationController
         :vcs_submit,
         :url_submit,
         :api_submit,
+        :display_average_to_students,
         :display_median_to_students,
         :display_grader_names_to_students,
         :group_min,
