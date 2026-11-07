@@ -271,6 +271,10 @@ class GradeEntryForm < Assessment
     self.grade_entry_items.reload
   end
 
+  def display_average_to_students
+    true
+  end
+
   def display_median_to_students
     false
   end

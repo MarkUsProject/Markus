@@ -10,6 +10,7 @@ en:
         assignment_files: Required files
         collection_date: Due date including maximum late penalty (if any)
         description: Assignment description
+        display_average_to_students: Display assignment average to students
         display_grader_names_to_students: Display grader names to students
         display_median_to_students: Display assignment median to students
         due_date: Due date
