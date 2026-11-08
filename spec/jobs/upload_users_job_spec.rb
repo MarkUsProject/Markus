@@ -6,6 +6,18 @@ describe UploadUsersJob do
     it_behaves_like 'background job'
   end
 
+  context 'when a user in the file is invalid' do
+    let(:job) { UploadUsersJob.new(EndUser, "frasid\n", nil) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(RuntimeError, /\Afrasid: /)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'RuntimeError', message: a_string_starting_with('frasid: ') }
+      )
+    end
+  end
+
   describe '#perform' do
     shared_examples 'uploading users' do
       subject { UploadUsersJob.perform_now(user_type, data, nil) }

@@ -25,9 +25,7 @@ module Admin
       respond_with @current_course, location: -> { admin_courses_path }
     end
 
-    def edit
-      @lti_deployments = @current_course.lti_deployments
-    end
+    def edit; end
 
     def update
       current_course.update(course_update_params)
@@ -78,7 +76,7 @@ module Admin
     end
 
     def destroy_lti_deployment
-      deployment = LtiDeployment.find(params[:lti_deployment_id])
+      deployment = @current_course.lti_deployments.find(params[:lti_deployment_id])
       deployment.destroy!
       redirect_to edit_admin_course_path(@current_course)
     end

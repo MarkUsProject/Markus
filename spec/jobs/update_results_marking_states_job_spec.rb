@@ -9,6 +9,20 @@ describe UpdateResultsMarkingStatesJob do
     it_behaves_like 'background job'
   end
 
+  context 'when a result has been released' do
+    let(:job) { UpdateResultsMarkingStatesJob.new(assignment_id, :incomplete) }
+
+    before { Result.first.update!(released_to_students: true) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(ActiveRecord::RecordNotSaved)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'ActiveRecord::RecordNotSaved', message: 'Failed to save the record' }
+      )
+    end
+  end
+
   context 'when not running as a background job' do
     let(:job) { UpdateResultsMarkingStatesJob.perform_now(assignment_id, status) }
     let(:results) { Result.includes(submission: :grouping).where(groupings: { assessment_id: assignment.id }) }

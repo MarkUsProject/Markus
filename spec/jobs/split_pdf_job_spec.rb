@@ -46,6 +46,26 @@ describe SplitPdfJob do
     it_behaves_like 'background job'
   end
 
+  context 'when the uploaded file is missing' do
+    let(:split_pdf_log) do
+      exam_template.split_pdf_logs.create(filename: 'midterm_scan_1-20.pdf',
+                                          original_num_pages: 6,
+                                          num_groups_in_complete: 0,
+                                          num_groups_in_incomplete: 0,
+                                          num_pages_qr_scan_error: 0,
+                                          role: instructor)
+    end
+    let(:job) { SplitPdfJob.new(exam_template, '', split_pdf_log, 'midterm_scan_1-20.pdf', instructor) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(Errno::ENOENT)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'Errno::ENOENT', message: a_string_including("raw_upload_#{split_pdf_log.id}.pdf") }
+      )
+    end
+  end
+
   it 'correctly splits a PDF with one valid test paper with pages out of order' do
     filename = 'midterm_scan_100.pdf'
     split_pdf_log = exam_template.split_pdf_logs.create(

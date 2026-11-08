@@ -24,9 +24,7 @@ class CoursesController < ApplicationController
     end
   end
 
-  def edit
-    @lti_deployments = @current_course.lti_deployments
-  end
+  def edit; end
 
   def update
     @current_course.update(course_params)
@@ -155,13 +153,13 @@ class CoursesController < ApplicationController
   end
 
   def destroy_lti_deployment
-    deployment = LtiDeployment.find(params[:lti_deployment_id])
+    deployment = @current_course.lti_deployments.find(params[:lti_deployment_id])
     deployment.destroy!
     redirect_to edit_course_path(@current_course), status: :see_other
   end
 
   def sync_roster
-    deployment = LtiDeployment.find(params[:lti_deployment_id])
+    deployment = @current_course.lti_deployments.find(params[:lti_deployment_id])
     roles = []
     if params[:include_tas] == 'true'
       roles.append(LtiDeployment::LTI_ROLES[:ta])

@@ -7,6 +7,18 @@ describe UpdateRepoPermissionsJob do
     it_behaves_like 'background job'
   end
 
+  context 'when the repository class does not exist' do
+    let(:job) { UpdateRepoPermissionsJob.new('NotARepository') }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(NameError)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'NameError', message: 'uninitialized constant NotARepository' }
+      )
+    end
+  end
+
   describe '#perform' do
     it 'should delete the redis key when finished' do
       UpdateRepoPermissionsJob.perform_now('MemoryRepository')
