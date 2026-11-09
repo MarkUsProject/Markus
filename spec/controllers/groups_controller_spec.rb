@@ -2019,4 +2019,78 @@ describe GroupsController do
       end
     end
   end
+
+  describe '#download' do
+    subject do
+      get_as role, :download, params: { course_id: course.id, assignment_id: assignment.id, select_file_id: file.id }
+    end
+
+    let!(:file) { create(:submission_file, submission: create(:submission, grouping: grouping)) }
+
+    before { allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return('file contents') }
+
+    shared_examples 'sends the file' do
+      it 'responds with the file contents' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to eq 'file contents'
+      end
+    end
+
+    shared_examples 'denies the download' do
+      it 'responds with 403' do
+        subject
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'an instructor' do
+      let(:role) { create(:instructor) }
+
+      it_behaves_like 'sends the file'
+
+      it 'responds with 404 for a file from another assignment' do
+        other_grouping = create(:grouping, assignment: create(:assignment, course: course))
+        other_file = create(:submission_file, submission: create(:submission, grouping: other_grouping))
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id, select_file_id: other_file.id }
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'responds with 404 for a file from another course' do
+        other_assignment = create(:assignment, course: create(:course))
+        other_file = create(:submission_file,
+                            submission: create(:submission, grouping: create(:grouping, assignment: other_assignment)))
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: other_assignment.id, select_file_id: other_file.id }
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'a grader assigned to the group' do
+      let(:role) { create(:ta, manage_assessments: true) }
+
+      before { create(:ta_membership, role: role, grouping: grouping) }
+
+      it_behaves_like 'sends the file'
+
+      context 'without the manage assessments permission' do
+        let(:role) { create(:ta) }
+
+        it_behaves_like 'denies the download'
+      end
+    end
+
+    context 'a grader who manages assessments and is not assigned' do
+      let(:role) { create(:ta, manage_assessments: true) }
+
+      it_behaves_like 'denies the download'
+
+      context 'on a scanned exam' do
+        let(:grouping) { create(:grouping, assignment: create(:assignment_for_scanned_exam)) }
+
+        it_behaves_like 'sends the file'
+      end
+    end
+  end
 end

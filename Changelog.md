@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
 - Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
 - Ignored the remote authentication header when remote authentication is not configured (#8269)
 - Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)

@@ -56,6 +56,31 @@ describe GroupingPolicy do
     end
   end
 
+  describe_rule :download_submission_file? do
+    succeed 'role is an instructor' do
+      let(:role) { create(:instructor) }
+    end
+    context 'role is a ta' do
+      succeed 'that is assigned to the grouping' do
+        let(:role) { create(:ta_membership, grouping: grouping).role }
+      end
+      succeed 'that can manage submissions' do
+        let(:role) { create(:ta, manage_submissions: true) }
+      end
+      failed 'that cannot manage submissions and is not assigned' do
+        let(:role) { create(:ta) }
+      end
+      context 'that can manage assessments and is not assigned' do
+        let(:role) { create(:ta, manage_assessments: true) }
+
+        failed 'on a normal assignment'
+        succeed 'on a scanned exam' do
+          let(:grouping) { create(:grouping, assignment: create(:assignment_for_scanned_exam)) }
+        end
+      end
+    end
+  end
+
   describe_rule :not_in_progress? do
     succeed 'test not in progress' do
       before { allow(grouping).to receive(:student_test_run_in_progress?).and_return false }
