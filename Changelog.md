@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Ignored the remote authentication header when remote authentication is not configured (#8269)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
