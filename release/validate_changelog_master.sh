@@ -27,7 +27,7 @@
 #   3. Every entry in [v2.X.Y] was present in origin/master's [unreleased]
 #   4. No entries disappeared: every entry removed from [unreleased] is in [v2.X.Y]
 #   5. Everything from the previous version downward is identical to origin/master
-#   6. No repeated version headers (except changelog_duplicate_headers.txt)
+#   6. No repeated version headers
 #      and no empty version sections anywhere in the file
 #   7. Entries match the picks (--prs): no entry for an unpicked PR, and an
 #      entry for every picked PR except bots (--bots) and PRs whose only
@@ -48,7 +48,7 @@ usage() {
     echo "Run from the repo root on the v2.X.Y-changelog branch."
 }
 
-# Shared checks; common.rb and changelog_duplicate_headers.txt sit beside them.
+# Shared checks; common.rb sits beside them.
 CHECKS="$(dirname "$0")/changelog_checks.sh"
 # shellcheck source=release/changelog_checks.sh
 source "$CHECKS" 2>/dev/null || { echo "Error: $CHECKS not found. Copy it with the validator."; exit 2; }

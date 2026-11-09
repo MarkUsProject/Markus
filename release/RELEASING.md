@@ -30,14 +30,11 @@ Copy `release/` into `$T` from one of these places:
 | On a branch, not merged yet | `git archive origin/<branch> release \| tar -x -C "$T"` |
 | A working tree, with files not yet committed | `cp -R /path/to/worktree/release "$T/"` |
 
-`git archive` copies committed files alone. The copy must hold `changelog_duplicate_headers.txt`. Without it, the changelog check fails on three old repeated headers.
-
 Check the copy before you go on:
 
 ```bash
 ruby "$RELEASE_TOOLS/recon.rb" --help 2>&1 | grep -q MIGRATIONS \
   && ruby "$RELEASE_TOOLS/verify.rb" --help 2>&1 | grep -q '<merge_sha>' \
-  && test -f "$RELEASE_TOOLS/changelog_duplicate_headers.txt" \
   && echo "release tools OK" || echo "STOP: $RELEASE_TOOLS is an older copy of release/"
 ```
 
@@ -163,7 +160,7 @@ It checks that:
 - Each version section has entries.
 - The versions run newest first.
 - Each PR shows up in one version at most.
-- Each version header shows up once, except the three in `changelog_duplicate_headers.txt`.
+- Each version header shows up once.
 - The older sections match `origin/release`.
 - Each picked PR has an entry, except bots and PRs that change `Changelog.md` alone.
 - Each entry belongs to a picked PR.

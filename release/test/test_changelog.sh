@@ -69,7 +69,6 @@ unreleased() { # $1 = new-feature entries, $2 = bug-fix entries (newline lists)
 
 old_sections() {
   printf '## [v3.0.0]\n\n%s\n- Old fix (#50)\n\n' "$BUG"
-  printf '## [v2.2.4]\n\n%s\n- Ancient fix (#10)\n\n' "$BUG"
   printf '## [v2.2.4]\n\n%s\n- Ancient fix (#10)\n' "$BUG"
 }
 
@@ -134,13 +133,9 @@ check 'separator-only --prs is rejected' 2 'Error: --prs is empty' rel "$F/rel_g
 check '--help prints usage' 0 'Usage:' rel --help
 mkdir -p "$T/tools" && cp "$REL_VALIDATOR" "$T/tools/"
 check 'missing shared checks file fails clearly' 2 'changelog_checks.sh' bash "$T/tools/validate_changelog.sh" v3.0.1 "$F/rel_good.md"
-cp "$REPO/release/changelog_checks.sh" "$REPO/release/common.rb" "$T/tools/" 2>/dev/null
-check 'missing duplicate-header allowlist fails clearly' 2 'changelog_duplicate_headers.txt' \
-  bash "$T/tools/validate_changelog.sh" v3.0.1 "$F/rel_good.md"
 
 { unreleased '' ''; v301 '- Feature A (#101)' '- Fix B (#102)'; printf '## [v3.0.0]\n\n%s\n- Dup (#51)\n\n' "$BUG"; old_sections; } >"$T/dup.md"
 check 'repeated version header fails' 1 'Repeated version header [v3.0.0]' rel "$T/dup.md" "${PICKS[@]}"
-check_absent 'allowlisted repeated header passes' 'Repeated version header [v2.2.4]' rel "$F/rel_good.md" "${PICKS[@]}"
 
 { unreleased '' ''; printf '## [v3.0.1]\n\n%s\n\n' "$BUG"; old_sections; } >"$T/empty.md"
 check 'empty target section fails' 1 'FAIL  [v3.0.1] section has no entries' rel "$T/empty.md"

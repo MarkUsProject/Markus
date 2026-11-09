@@ -21,7 +21,7 @@
 #   4. Version sections appear in correct descending order
 #   5. No PR numbers duplicated across different version sections
 #   6. Sections below the release version match the original release branch
-#   7. No repeated version headers (except changelog_duplicate_headers.txt)
+#   7. No repeated version headers
 #      and no empty version sections anywhere in the file
 #   8. Entries match the picks (--prs): no entry for an unpicked PR, and an
 #      entry for every picked PR except bots (--bots) and PRs whose only
@@ -37,7 +37,7 @@ usage() {
     echo "  e.g. $0 v2.9.3 --prs 8056,8171,8194 --bots 8194"
 }
 
-# Shared checks; common.rb and changelog_duplicate_headers.txt sit beside them.
+# Shared checks; common.rb sits beside them.
 CHECKS="$(dirname "$0")/changelog_checks.sh"
 # shellcheck source=release/changelog_checks.sh
 source "$CHECKS" 2>/dev/null || { echo "Error: $CHECKS not found. Copy it with the validator."; exit 2; }

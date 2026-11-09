@@ -7,7 +7,6 @@
 # absent --prs (pick check skipped with a WARN) differs from an empty one (error).
 
 CHECKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ALLOWLIST="$CHECKS_DIR/changelog_duplicate_headers.txt"
 VERSION=""
 CHANGELOG="Changelog.md"
 BOTS=""
@@ -50,7 +49,6 @@ check_args() {
         exit 2
     }
     [ -f "$CHANGELOG" ] || { echo "Error: $CHANGELOG not found. Run from the repo root or pass the path."; exit 2; }
-    [ -f "$ALLOWLIST" ] || { echo "Error: $ALLOWLIST not found. Copy it with the validator."; exit 2; }
 }
 
 # Bullet entries ("- ...") of section $2 (e.g. "unreleased", "v2.9.6") in file $1
@@ -91,13 +89,11 @@ changelog_only() {
     [ -n "$sha" ] && [ "$(git diff --name-only "$sha^1" "$sha" 2>/dev/null)" = "Changelog.md" ]
 }
 
-# Repeated ## [vX.Y.Z] headers (minus the allowlist) and empty version sections
+# Repeated ## [vX.Y.Z] headers and empty version sections
 check_structure() {
-    local allowed dups empty v
-    allowed=$(grep -v -e '^#' -e '^[[:space:]]*$' "$ALLOWLIST")
+    local dups empty v
     dups=$(version_headers | sort | uniq -d)
     for v in $dups; do
-        in_list "$v" "$allowed" && { info "[$v] repeats (allowlisted in $(basename "$ALLOWLIST"))"; continue; }
         fail "Repeated version header [$v]"
     done
     empty=$(awk '
