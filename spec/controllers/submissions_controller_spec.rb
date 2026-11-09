@@ -2017,6 +2017,22 @@ describe SubmissionsController do
         expect { post_as instructor, :run_tests, params: params }.not_to have_enqueued_job(AutotestRunJob)
       end
     end
+
+    context 'when a TA with run_tests permission runs the tests' do
+      let(:assignment) { create(:assignment_with_test_groups_instructor_runnable) }
+      let(:ta) { create(:ta, run_tests: true) }
+      let(:params) { { course_id: assignment.course_id, assignment_id: assignment.id, groupings: [grouping.id] } }
+
+      it 'does not enqueue an AutotestRunJob for a group the TA does not grade' do
+        expect { post_as ta, :run_tests, params: params }.not_to have_enqueued_job(AutotestRunJob)
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'enqueues an AutotestRunJob for a group the TA grades' do
+        create(:ta_membership, role: ta, grouping: grouping)
+        expect { post_as ta, :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
+      end
+    end
   end
 
   def self.test_assigns_not_nil(key)
