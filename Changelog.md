@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
