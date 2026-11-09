@@ -817,9 +817,15 @@ class SubmissionsController < ApplicationController
     end
 
     if is_review
-      results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
+      results = Result.where(id: assignment.pr_peer_reviews.where(id: params[:peer_reviews]).select(:result_id))
     else
       results = assignment.current_results.where('groupings.id': params[:groupings])
+    end
+
+    unless results.all? { |result| allowed_to?(:grade?, result) }
+      flash_now(:error, t('action_policy.policy.result.grade?'))
+      head :forbidden
+      return
     end
 
     errors = Hash.new { |h, k| h[k] = [] }
