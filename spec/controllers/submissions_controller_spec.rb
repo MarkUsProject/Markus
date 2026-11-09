@@ -881,7 +881,7 @@ describe SubmissionsController do
     end
 
     describe '#set_resulting_marking_state' do
-      let(:role) { create(:ta) }
+      let(:role) { grader }
       let(:grouping) { @grouping1 }
 
       it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
@@ -1102,6 +1102,8 @@ describe SubmissionsController do
       describe '#set_resulting_marking_state' do
         let(:role) { create(:ta) }
         let(:grouping) { @grouping }
+
+        before { create(:ta_membership, role: role, grouping: grouping) }
 
         it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
       end
@@ -1982,6 +1984,69 @@ describe SubmissionsController do
 
       it 'should be forbidden' do
         expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
+  describe '#set_result_marking_state access' do
+    let(:assignment) { create(:assignment) }
+    let(:groupings) { create_list(:grouping_with_inviter_and_submission, 2, assignment: assignment) }
+    let(:results) { groupings.map(&:current_result) }
+    let(:complete) { Result::MARKING_STATES[:complete] }
+    let(:ta) { create(:ta) }
+    let(:params) do
+      { course_id: course.id, assignment_id: assignment.id, groupings: groupings.map(&:id), marking_state: complete }
+    end
+
+    def marking_states
+      results.map { |result| result.reload.marking_state }
+    end
+
+    it 'denies a TA who grades neither group' do
+      post_as ta, :set_result_marking_state, params: params
+      expect(response).to have_http_status(:forbidden)
+      expect(marking_states).not_to include complete
+    end
+
+    it 'denies a TA who grades one of the two groups, and changes neither' do
+      create(:ta_membership, role: ta, grouping: groupings.first)
+      post_as ta, :set_result_marking_state, params: params
+      expect(response).to have_http_status(:forbidden)
+      expect(marking_states).not_to include complete
+    end
+
+    it 'updates the groups a TA grades' do
+      groupings.each { |grouping| create(:ta_membership, role: ta, grouping: grouping) }
+      post_as ta, :set_result_marking_state, params: params
+      expect(response).to have_http_status(:success)
+      expect(marking_states).to all(eq complete)
+    end
+
+    it 'updates every group for a TA who manages submissions' do
+      post_as create(:ta, manage_submissions: true), :set_result_marking_state, params: params
+      expect(response).to have_http_status(:success)
+      expect(marking_states).to all(eq complete)
+    end
+
+    context 'with peer reviews' do
+      let(:peer_review) { create(:peer_review) }
+      let(:pr_assignment) { peer_review.result.grouping.assignment.pr_assignment }
+      let(:instructor) { create(:instructor) }
+
+      def post_peer_review(assignment_id)
+        post_as instructor, :set_result_marking_state,
+                params: { course_id: course.id, assignment_id: assignment_id, peer_reviews: [peer_review.id],
+                          marking_state: complete }
+      end
+
+      it 'updates a peer review of this assignment' do
+        post_peer_review(pr_assignment.id)
+        expect(peer_review.result.reload.marking_state).to eq complete
+      end
+
+      it 'skips a peer review of another assignment' do
+        post_peer_review(create(:peer_review_assignment).id)
+        expect(peer_review.result.reload.marking_state).not_to eq complete
       end
     end
   end
