@@ -8,14 +8,15 @@
 # Tests repository permissions (get_student_permissions_bulk) and
 # TA statistics (cache_ta_results).
 
-require 'factory_bot_rails'
-
 namespace :markus do
   namespace :benchmark do
     DATA_FILE = Rails.root.join('tmp/benchmark_data.json')
 
     desc 'Create benchmark test data'
     task create: :environment do
+      # factory_bot_rails is a test-group gem; load it here so other rake tasks run without it
+      require 'factory_bot_rails'
+
       num_assignments = ENV.fetch('NUM_ASSIGNMENTS', '5').to_i
       num_groupings = ENV.fetch('GROUPINGS', '50').to_i
       complete_ratio = ENV.fetch('COMPLETE_RATIO', '0.5').to_f
