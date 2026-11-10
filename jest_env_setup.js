@@ -15,6 +15,7 @@ window.I18n = new I18n(translations);
 // jsdom has no ResizeObserver
 global.ResizeObserver = class {
   observe() {}
+  unobserve() {}
   disconnect() {}
 };
 
