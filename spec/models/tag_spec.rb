@@ -22,7 +22,7 @@ describe Tag do
       data = CSV.generate_line([max_name, 'description', user_name])
 
       result = nil
-      expect { result = Tag.from_csv(data, course, assignment.id) }.to change(Tag.count).by(1)
+      expect { result = Tag.from_csv(data, course, assignment.id) }.to change { Tag.count }.by(1)
       expect(result[:invalid_lines]).to be_blank
     end
 
@@ -30,7 +30,7 @@ describe Tag do
       data = CSV.generate_line([too_long_name, 'description', user_name])
 
       result = nil
-      expect { result = Tag.from_csv(data, course, assignment.id) }.not_to change(Tag.count)
+      expect { result = Tag.from_csv(data, course, assignment.id) }.not_to(change { Tag.count })
       expect(result[:invalid_lines]).not_to be_empty
     end
   end
@@ -45,14 +45,14 @@ describe Tag do
     it 'accepts a tag whose name is exactly the maximum length' do
       result = nil
       expect { result = Tag.from_yml([yml_row(max_name)], course, assignment.id) }
-        .to change(Tag.count).by(1)
+        .to change { Tag.count }.by(1)
       expect(result).not_to be_a(StandardError)
     end
 
     it 'rejects tags with names longer than the maximum length' do
       result = nil
       expect { result = Tag.from_yml([yml_row(too_long_name)], course, assignment.id) }
-        .not_to change(Tag.count)
+        .not_to(change { Tag.count })
       expect(result).to be_a(ArgumentError)
     end
   end
