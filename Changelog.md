@@ -10,6 +10,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
 - Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
 - Added optional OpenTelemetry tracing of requests and background jobs, controlled by the new `telemetry` settings, and a `telemetry` Docker Compose profile that runs a local Grafana for viewing traces in development (#8223)
