@@ -15,5 +15,13 @@ RSpec.describe MarkusCsv do
 
       expect(CSV.parse(csv)).to eq([[' =header'], ['value']])
     end
+
+    it 'does not modify ordinary string values' do
+      values = ['John Smith', '12345', 'hello@example.com']
+
+      csv = MarkusCsv.generate([values]) { |row| row }
+
+      expect(CSV.parse(csv)).to eq([values])
+    end
   end
 end
