@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - master
+      - release
+    tags:
+      - "v*"
 
 jobs:
   test_rspec:
@@ -36,7 +39,8 @@ jobs:
           --health-retries 5
           --entrypoint redis-server
     env:
-      BUNDLE_WITHOUT: development:production:console:unicorn
+      # The development group holds annotaterb, used by the migration check
+      BUNDLE_WITHOUT: production:console:unicorn
       COVERAGE: true
       RAILS_ENV: test
       RSPEC_RENDER_VIEWS: true
@@ -118,7 +122,7 @@ jobs:
       - name: Get pip cache dir
         id: pip-cache
         run: |
-          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+          echo "dir=$(pip cache dir)" >> "$GITHUB_OUTPUT"
       - name: Cache pip
         uses: actions/cache@v6
         with:
@@ -144,6 +148,16 @@ jobs:
           sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
           sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
           cp config/database.yml.ci config/database.yml
+      - name: Check migrations match db/structure.sql and model annotations
+        # A separate database, so parallel:setup below still starts from an empty markus_test
+        env:
+          TEST_ENV_NUMBER: _migrations
+        run: |
+          bundle exec rails db:create db:migrate
+          bundle exec annotaterb models
+          # Drop the trailing blank line of the dump, as the end-of-file-fixer hook does
+          printf '%s\n' "$(cat db/structure.sql)" > db/structure.sql
+          git diff --exit-code db/structure.sql app/models
       - name: Build assets
         run: bundle exec rake javascript:build
       - name: Set up databases
@@ -356,6 +370,54 @@ jobs:
           for hook in prettier stylelint rubocop erb_lint i18n-tasks-health; do
             pre-commit run --all-files --show-diff-on-failure "$hook"
           done
+
+  production_boot:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    env:
+      # Same gem groups and boot flags as the production image (.dockerfiles/Dockerfile).
+      # NODE_ENV stays unset, as on servers installed from the docs.
+      BUNDLE_WITHOUT: development:test:offline:production_test
+      RAILS_ENV: production
+      SECRET_KEY_BASE: dummy
+      NO_INIT_SCHEDULER: 1
+      PGDATABASE: dummy
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+      - name: Update apt package lists
+        run: sudo apt-get update
+      - name: Install and cache system dependencies
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: |
+            libpq-dev
+            cmake
+            pkg-config
+            libmagickwand-dev
+          version: 1.0.2
+      - name: Set up ruby and cache gems
+        uses: ruby/setup-ruby@v1
+        with:
+          # Some production servers run Ruby 3.3; the other jobs and the production image use 3.4
+          ruby-version: ruby-3.3
+          bundler-cache: true
+      - name: Set up node and cache packages
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install npm packages
+        run: npm ci
+      - name: Configure server
+        run: cp .dockerfiles/database.yml.postgresql config/database.yml
+      - name: Precompile assets
+        # Also runs javascript:build (npm run build), as on the production server
+        run: bundle exec rails assets:precompile
+      - name: Check eager loading
+        run: bundle exec rails zeitwerk:check
 
   finish:
     needs: [test_rspec, test_jest]
