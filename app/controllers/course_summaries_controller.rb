@@ -142,7 +142,9 @@ class CourseSummariesController < ApplicationController
       median: nil
     }
     if current_role.instructor? || (current_role.student? && current_role.released_result_for?(assessment))
-      data[:average] = get_assessment_data(assessment, :average)
+      if current_role.instructor? || assessment.display_average_to_students
+        data[:average] = get_assessment_data(assessment, :average)
+      end
       if current_role.instructor? || assessment.display_median_to_students
         data[:median] = get_assessment_data(assessment, :median)
       end
