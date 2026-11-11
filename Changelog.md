@@ -10,6 +10,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
 - Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
 - Added optional OpenTelemetry tracing of requests and background jobs, controlled by the new `telemetry` settings, and a `telemetry` Docker Compose profile that runs a local Grafana for viewing traces in development (#8223)
@@ -17,6 +18,7 @@
 - Pre-filled the autotester url field on the admin course creation form with the `autotest.default_url` setting, so courses created by an admin are connected to the default autotester unless the field is changed (#8221)
 - Added JupyterLab integration course and assignment data endpoings (#8170)
 - Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
+- Expanded the `markus:check` rake task to check that the database has run exactly the migrations in the code (#8226)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
@@ -35,6 +37,7 @@
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 - Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
 - Fixed ActionCable processes permanently losing their Redis pub/sub subscriptions after a Redis restart, by configuring reconnection retries in `config/cable.yml` (#8244)
+- Fixed rake tasks such as `assets:precompile` and `db:migrate` failing with a `LoadError` for `factory_bot_rails` on installations without the `test` gem group (#8226)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
