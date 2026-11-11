@@ -10,6 +10,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FileUploadModal from "./Modals/file_upload_modal";
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
 import {flashMessage} from "../common/flash";
+import {
+  aiConfigUiSchema,
+  CardItemTemplate,
+  FieldTemplate,
+  ObjectFieldTemplate,
+  testerTypeNames,
+  TitleFieldTemplate,
+} from "./Helpers/autotest_form_templates";
 
 class AutotestManager extends React.Component {
   constructor(props) {
@@ -19,10 +27,15 @@ class AutotestManager extends React.Component {
       schema: {},
       uiSchema: {
         testers: {
+          "ui:ArrayFieldItemTemplate": CardItemTemplate,
           items: {
             "ui:classNames": "tester-item",
             "ui:placeholder": I18n.t("automated_tests.tester", {count: 1}),
             "ui:title": I18n.t("automated_tests.tester", {count: 1}),
+            tester_type: {
+              "ui:enumNames": testerTypeNames(),
+              "ui:placeholder": I18n.t("automated_tests.choose_one"),
+            },
             env_data: {
               pip_requirements: {
                 "ui:widget": "textarea",
@@ -39,14 +52,31 @@ class AutotestManager extends React.Component {
               },
             },
             test_data: {
+              "ui:ArrayFieldItemTemplate": CardItemTemplate,
               items: {
                 "ui:placeholder": I18n.t("automated_tests.test_group", {count: 1}),
                 "ui:title": I18n.t("automated_tests.test_group", {count: 1}),
-                "ui:order": ["extra_info", "*", "feedback_file_names"],
+                "ui:order": [
+                  "extra_info",
+                  "category",
+                  "test_label",
+                  "output",
+                  "timeout",
+                  "*",
+                  "feedback_file_names",
+                ],
                 "ui:options": {label: false},
                 category: {
                   "ui:title": I18n.t("automated_tests.category"),
+                  "ui:widget": "checkboxes",
+                  items: {
+                    "ui:enumNames": {
+                      instructor: I18n.t("automated_tests.run_by.instructor"),
+                      student: I18n.t("automated_tests.run_by.student"),
+                    },
+                  },
                 },
+                config: aiConfigUiSchema(),
                 feedback_file_names: {
                   "ui:classNames": "feedback-file-names",
                   "ui:options": {orderable: false},
@@ -65,6 +95,17 @@ class AutotestManager extends React.Component {
                   items: {
                     "ui:options": {label: false},
                   },
+                },
+                output: {
+                  "ui:placeholder": I18n.t("automated_tests.choose_one"),
+                  "ui:enumNames": {
+                    overall_comment: I18n.t("automated_tests.output_display.overall_comment"),
+                    annotations: I18n.t("automated_tests.output_display.annotations"),
+                    message: I18n.t("automated_tests.output_display.message"),
+                  },
+                },
+                test_label: {
+                  "ui:title": I18n.t("automated_tests.test_label"),
                 },
                 timeout: {
                   "ui:title": I18n.t("automated_tests.timeout"),
@@ -497,6 +538,7 @@ class AutotestManager extends React.Component {
               {I18n.t("upload")}
             </a>
           </div>
+          <p className="required-legend">{I18n.t("automated_tests.required_legend")}</p>
           <Form
             disabled={!this.state.enable_test}
             schema={this.state.schema}
@@ -506,6 +548,9 @@ class AutotestManager extends React.Component {
             validator={this.props.validator}
             templates={{
               ErrorListTemplate: AutotestErrorList,
+              FieldTemplate,
+              ObjectFieldTemplate,
+              TitleFieldTemplate,
               ButtonTemplates: {
                 AddButton,
                 MoveDownButton,
@@ -588,17 +633,14 @@ function AddButton(props) {
 function RemoveButton(props) {
   const {
     uiSchema,
+    className,
     registry: {translateString},
     ...btnProps
   } = props;
   return (
-    <button
-      type="button"
-      className={`btn btn-danger array-item-remove`}
-      title={translateString(TranslatableString.RemoveButton)}
-      {...btnProps}
-    >
-      <FontAwesomeIcon icon="fa-solid fa-close" />
+    <button type="button" className={`btn btn-remove ${className ?? ""}`} {...btnProps}>
+      <FontAwesomeIcon icon="fa-solid fa-trash" />
+      {translateString(TranslatableString.RemoveButton)}
     </button>
   );
 }

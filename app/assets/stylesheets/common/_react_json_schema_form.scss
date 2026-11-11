@@ -4,14 +4,14 @@
 @use 'constants' as *;
 
 .rjsf {
+  // One readable column; inputs inside stay sized to their content
+  max-width: 50rem;
+
   // Fieldsets and legends
   fieldset {
+    border: 0;
     margin: 0;
     padding: 0;
-  }
-
-  .form-group fieldset {
-    border: 0;
   }
 
   legend {
@@ -23,9 +23,51 @@
     }
   }
 
-  .tester-item > fieldset > div > fieldset > legend {
-    font-size: 1.25em;
-    padding: 0.75em 0;
+  // Section titles inside a card, like "AI Feedback Settings" and "Test Groups"
+  .settings-card-body > .rjsf-field-object > fieldset > div > fieldset > legend,
+  .tester-config > fieldset > legend {
+    font-size: 1.1em;
+    font-weight: 600;
+    padding: 0.75em 0 0.5em;
+  }
+
+  .required-legend {
+    font-size: 0.9em;
+    opacity: 0.8;
+  }
+
+  // Cards: one per tester and one per test group
+  .settings-card {
+    background-color: $background-main;
+    border: 1px solid $primary-two;
+    border-radius: $radius;
+    margin-bottom: 1em;
+    width: 100%;
+  }
+
+  .settings-card-header {
+    align-items: center;
+    background-color: $background-support;
+    border-bottom: 1px solid $primary-two;
+    border-radius: $radius $radius 0 0;
+    display: flex;
+    gap: 1em;
+    justify-content: space-between;
+    padding: 0.4em 1em;
+  }
+
+  .settings-card-title {
+    font-size: 1.1em;
+    margin: 0;
+  }
+
+  .settings-card-actions {
+    display: flex;
+    gap: 0.4em;
+  }
+
+  .settings-card-body {
+    padding: 0.5em 1em 1em;
   }
 
   // Buttons
@@ -41,6 +83,14 @@
     }
   }
 
+  .settings-card-actions .btn {
+    padding: 0.25em 0.6em;
+  }
+
+  .btn-remove > .svg-inline--fa {
+    padding-right: 0.4em;
+  }
+
   .rjsf-array-item-add > .svg-inline--fa {
     padding-right: 0;
   }
@@ -49,19 +99,17 @@
     min-width: 150px;
   }
 
+  // Array items that keep the default template, like feedback file names
   .rjsf-array-item {
-    border: 1px solid $primary-two;
-    border-radius: $radius;
     display: flex;
-    padding: 10px;
+    gap: 0.5em;
 
     > .col-xs-9 {
       flex: 1;
     }
 
     > .col-xs-3 {
-      flex: 0.2;
-      max-width: 150px;
+      flex: 0 0 auto;
     }
 
     &:not(:last-child) {
@@ -69,23 +117,59 @@
     }
   }
 
-  // Form inputs
-  .tester-item label,
-  .checkbox > label > span {
-    display: inline-block;
-    line-height: 1.6em;
-    min-width: 170pt;
-    padding-right: 3pt;
-    text-align: right;
+  // Fields: label on top, then the help line, the input and any errors
+  .tester-item .rjsf-field:not(.rjsf-field-object, .rjsf-field-array),
+  .tester-item .rjsf-field-array:has(> .checkboxes) {
+    margin-bottom: 1em;
   }
 
-  label[for*='tester_type'] {
-    font-size: 1.4em;
-    min-width: max-content;
+  .control-label {
+    display: block;
+    padding-bottom: 0.25em;
+    text-align: left;
   }
 
-  select[id*='tester_type'] {
-    font-size: 1.4em;
+  .field-description {
+    font-size: 0.9em;
+    margin-bottom: 0.35em;
+    opacity: 0.8;
+  }
+
+  .optional-label {
+    font-size: 0.85em;
+    margin-left: 0.4em;
+    opacity: 0.75;
+  }
+
+  .required {
+    color: $severe-error;
+  }
+
+  input,
+  select,
+  textarea {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.3em 0.5em;
+  }
+
+  // Inputs sized to what they hold
+  .form-control {
+    max-width: 30rem;
+    width: 100%;
+
+    &[multiple=''] {
+      vertical-align: middle;
+    }
+  }
+
+  input[type='number'].form-control {
+    max-width: 8rem;
+  }
+
+  textarea.form-control {
+    height: 6em;
+    max-width: 40rem;
   }
 
   select[multiple] > option:checked {
@@ -93,44 +177,30 @@
     color: $sharp-line;
   }
 
-  input,
-  textarea {
-    margin: 5px;
-    padding: 0.25em;
-  }
-
+  // Single checkboxes and checkbox lists, like "Run by": box first, then its label
   input[type='checkbox'] {
-    float: right;
+    float: none;
+    margin-right: 0.4em;
+    width: auto;
   }
 
-  .required {
-    color: $severe-error;
+  .checkbox > label,
+  .checkbox > label > span {
+    display: inline-flex;
+    gap: 0.4em;
   }
 
-  .form-control {
-    min-width: 75pt;
-
-    &[type='text'] {
-      min-width: 150pt;
-    }
-
-    &[multiple=''] {
-      vertical-align: middle;
-    }
+  // Empty required fields turn red after the user edits them, rather than on page load
+  input:invalid,
+  select:invalid,
+  textarea:invalid {
+    background-color: $background-main;
   }
 
-  select.form-control {
-    min-width: 150pt;
-  }
-
-  textarea.form-control {
-    height: 5em;
-    min-width: 400pt;
-  }
-
-  .control-label {
-    padding-top: 5px;
-    vertical-align: top;
+  input:user-invalid,
+  select:user-invalid,
+  textarea:user-invalid {
+    background-color: $light-error;
   }
 
   /* stylelint-disable property-no-vendor-prefix */
@@ -162,10 +232,6 @@
     legend {
       width: initial;
     }
-
-    .rjsf-array-item {
-      border: 0;
-    }
   }
 
   // Error messages
@@ -174,12 +240,17 @@
     border: 1px solid $severe-error;
     border-radius: $radius;
     list-style: none;
-    margin-bottom: 1em;
-    margin-left: 170px;
+    margin: 0.35em 0 0;
+    max-width: 30rem;
     padding: 0.25em 0.5em;
   }
 
   .pip_requirements_file_title:hover {
     cursor: help;
+  }
+
+  .advanced-settings > .inline-button {
+    margin: 0 0 1em;
+    width: auto;
   }
 }

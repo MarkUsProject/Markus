@@ -1,6 +1,64 @@
 ---
 en:
   automated_tests:
+    ai_config:
+      json_schema:
+        description: A JSON schema file that sets the shape of the reply.
+        title: JSON schema file
+      llama_mode:
+        description: 'How to call llama.cpp: cli or server.'
+        title: llama.cpp mode
+      model:
+        description: Where the model runs. Pick an OpenAI-style server for the AI gateway.
+        options:
+          openai-remote: OpenAI-style server, like the AI gateway
+          remote: MarkUs AI server
+        title: Model location
+      model_name:
+        description: The model to use, like gpt-4o.
+        title: Model name
+      output:
+        description: A file to save the reply in. Leave it blank to show the reply in MarkUs.
+        title: Output file
+      output_template:
+        description: How to lay out the reply. The default shows the reply alone.
+        title: Reply template
+      prompt:
+        description: A built-in prompt name, like code_overall, or the path to a prompt file.
+        title: Prompt
+      prompt_text:
+        title: Prompt text
+      question:
+        description: The question number to review, when the assignment has more than one.
+        title: Question
+      remote_url:
+        title: Server URL
+      scope:
+        description: 'What the model reads: code, text, or an image.'
+        options:
+          code: Code
+          image: Image
+          text: Text
+        title: Scope
+      solution:
+        description: A solution file for the model to compare against.
+        title: Solution file
+      solution_image:
+        title: Solution image
+      submission:
+        description: The student file to review, like hello.py.
+        title: Submission file
+      submission_image:
+        title: Submission image
+      submission_type:
+        description: The file format, like a Jupyter notebook or a Python script. Leave it blank to detect it from the file name.
+        title: Submission type
+      system_prompt:
+        description: A built-in system prompt name, or the path to a system prompt file.
+        title: System prompt
+      test_output:
+        title: Test output
+      title: Model and prompt settings
     autotest_results_job:
       status:
         completed: Tests have been run and results are available.
@@ -10,6 +68,7 @@ en:
         in_progress: Setting up tests.
     cancel_tests: Cancel tests
     category: Run by
+    choose_one: Choose one
     display_output:
       instructors: Never display test output to students
       instructors_and_student_tests: Only display test output to students for student-run tests
@@ -18,6 +77,7 @@ en:
     errors:
       settings_invalid: There is an error in your autotest configuration. Please check the settings below carefully.
     files: Test Files
+    hide_advanced_settings: Hide advanced settings
     invalid_specs_file: Settings file is not a valid json file
     job_messages:
       resetting_test_settings: Resetting test settings
@@ -49,13 +109,23 @@ en:
     no_instructor_runnable_tests: No tests are available for instructors to run.
     no_results: No test results to display
     no_student_runnable_tests: No tests are available for students to run.
+    optional: "(optional)"
+    output_display:
+      annotations: Annotations on the code
+      message: Message in the test results
+      overall_comment: Overall comment
+    required_legend: Fields marked with * are required.
     requirements_file: Package requirements file
     requirements_file_tooltip: Upload a requirements file along with the test files
     results:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
+    run_by:
+      instructor: Instructors
+      student: Students
     run_tests: Run tests
     settings_not_setup: 'Cannot find test script files: please upload some before running tests'
+    show_advanced_settings: Show advanced settings
     specs_file_upload_message: File must be a valid json file
     stop_batch: Stop batch
     stop_test: Stop test
@@ -63,6 +133,7 @@ en:
     test_group:
       one: Test Group
       other: Test Groups
+    test_label: Test name
     test_runs_status: Test Runs Status
     test_runs_statuses:
       cancelled: cancelled
@@ -72,6 +143,17 @@ en:
     tester:
       one: Tester
       other: Testers
+    tester_types:
+      ai: AI feedback
+      custom: Custom
+      haskell: Haskell
+      java: Java
+      js: JavaScript
+      jupyter: Jupyter
+      py: Python
+      pyta: PyTA
+      r: R
+      racket: Racket
     testing_disabled: Automated testing is not enabled for this assignment.
     tests_run: Tests have been run for this assignment. Please re-run tests once the settings have been updated.
     timeout: Timeout (s)

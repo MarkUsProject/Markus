@@ -107,6 +107,7 @@ ignore_unused:
   - 'action_policy.*'
   - 'flash.*'
   - 'datetime.distance_in_words.*'
+  - 'automated_tests.ai_config.*'  # keys built from the ai tester's config field names
   - 'automated_tests.test_runs_statuses.*'  # TODO: Figure out how to handle interpolation so we don't ignore this one
   - 'number.*'
   - 'support.*'
