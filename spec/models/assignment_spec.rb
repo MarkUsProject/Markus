@@ -2557,7 +2557,8 @@ describe Assignment do
       end
 
       it 'sanitizes student values' do
-        allow_any_instance_of(User).to receive(:user_name).and_return("\t=user")
+        student = assignment.groupings.first.student_memberships.first.role
+        student.user.update_column(:user_name, "\t=user")
 
         expect(summary.flatten).to include(' =user')
       end
