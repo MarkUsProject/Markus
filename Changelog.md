@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted graders to setting the marking state of the groups they grade, and limited peer review marking states to the current assignment (#8267)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
