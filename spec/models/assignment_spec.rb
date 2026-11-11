@@ -1006,6 +1006,15 @@ describe Assignment do
           expect(expected_string).to eql(@assignment.get_repo_list(ssh: true)), 'Repo access url list string is wrong!'
         end
 
+        it 'sanitizes repository list values' do
+          allow_any_instance_of(Group).to receive(:group_name).and_return('=group')
+          allow_any_instance_of(Group).to receive(:repository_external_access_url).and_return("\t+url")
+
+          csv = CSV.parse(@assignment.get_repo_list)
+
+          expect(csv).to include([' =group', ' +url'])
+        end
+
         context 'with two groups of a single student each' do
           before do
             2.times do
@@ -2547,6 +2556,13 @@ describe Assignment do
         end
       end
 
+      it 'sanitizes student values' do
+        student = assignment.groupings.first.student_memberships.first.role
+        student.user.update_column(:user_name, "\t=user")
+
+        expect(summary.flatten).to include(' =user')
+      end
+
       context 'when all criteria are pre-created' do
         it_behaves_like 'check csv content'
       end
@@ -2556,6 +2572,23 @@ describe Assignment do
 
         it_behaves_like 'check csv content'
       end
+    end
+  end
+
+  describe '#summary_test_result_csv' do
+    let(:assignment) { create(:assignment) }
+
+    it 'sanitizes test result values' do
+      allow(assignment).to receive(:summary_test_results).and_return(
+        [{ 'group_name' => '@group',
+           'name' => 'test',
+           'test_result_name' => 'case',
+           'status' => "\t-status" }]
+      )
+
+      csv = CSV.parse(assignment.summary_test_result_csv)
+
+      expect(csv).to eq([[nil, 'test:case'], [' @group', ' -status']])
     end
   end
 

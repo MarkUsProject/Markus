@@ -3,14 +3,15 @@ require 'csv'
 class MarkusCsv
   MAX_INVALID_LINES = 10
   INVALID_LINE_SEP = ' - '.freeze
+  CSV_INJECTION_PREFIXES = /\A[="\-@+]/
 
   # Returns a CSV string representation of an array of data.
   # 'objects' is an array of data, and gen_csv is a block which
   # takes an object and returns an array of strings.
   def self.generate(objects, headers = [])
     CSV.generate do |csv|
-      headers.each { |obj| csv << obj }
-      objects.each { |obj| csv << yield(obj) }
+      headers.each { |header| csv << sanitize_row(header) }
+      objects.each { |obj| csv << sanitize_row(yield(obj)) }
     end
   end
 
@@ -57,4 +58,14 @@ class MarkusCsv
     end
     result
   end
+
+  def self.sanitize_row(row)
+    row.map do |cell|
+      next cell unless cell.is_a?(String)
+
+      sanitized_cell = cell.delete("\t")
+      sanitized_cell.match?(CSV_INJECTION_PREFIXES) ? " #{sanitized_cell}" : sanitized_cell
+    end
+  end
+  private_class_method :sanitize_row
 end

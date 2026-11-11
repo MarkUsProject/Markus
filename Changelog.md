@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
