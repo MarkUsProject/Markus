@@ -70,8 +70,11 @@ class LtiDeployment < ApplicationRecord
   class UnauthorizedException < StandardError; end
 
   class LtiCannotConnectException < StandardError; end
+  class UntrustedHostException < StandardError; end
 
   def send_lti_request(req, uri, auth_data)
+    raise UntrustedHostException, I18n.t('lti.untrusted_lms_host', host: uri.host) unless lms_url?(uri)
+
     req['Authorization'] = "#{auth_data['token_type']} #{auth_data['access_token']}"
     Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.request(req)
@@ -98,5 +101,14 @@ class LtiDeployment < ApplicationRecord
     raise LtiCannotConnectException if token_resets >= 5
     lti_client.get_oauth_token(scopes)
     retry
+  end
+
+  private
+
+  # True when +uri+ uses the scheme and port of the LMS host and its host is one of the LMS domains in the settings.
+  def lms_url?(uri)
+    lms_uri = URI(lti_client.host)
+    lms_domains = Settings.lti.domains.map(&:downcase)
+    uri.scheme == lms_uri.scheme && uri.port == lms_uri.port && lms_domains.include?(uri.host&.downcase)
   end
 end
