@@ -120,6 +120,7 @@ en:
         manage_subdirectories?: You do not have permission to create subdirectories.
         view_files?: You do not have permission to view files.
       ta:
+        grades_grouping?: You can only run tests for groups you are assigned to grade.
         manage_assessments?: You do not have permission to manage assessments.
         manage_submissions?: You do not have permission to manage submissions.
         run_tests?: You do not have permission to run tests.

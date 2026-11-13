@@ -2028,6 +2028,11 @@ describe SubmissionsController do
         expect(response).to have_http_status(:bad_request)
       end
 
+      it 'flashes the grades_grouping? failure reason for a group the TA does not grade' do
+        post_as ta, :run_tests, params: params
+        expect(flash[:error]).to have_message(I18n.t('action_policy.policy.ta.grades_grouping?'))
+      end
+
       it 'enqueues an AutotestRunJob for a group the TA grades' do
         create(:ta_membership, role: ta, grouping: grouping)
         expect { post_as ta, :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
