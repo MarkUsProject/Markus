@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Restricted graders to running tests on the groups they grade (#8266)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
