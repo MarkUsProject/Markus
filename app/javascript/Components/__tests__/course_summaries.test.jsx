@@ -15,7 +15,7 @@ describe("For each CourseSummaries' loading status", () => {
   it("shows loading spinner when data is being fetched", async () => {
     render(<CourseSummaryTable loading={true} LoadingComponent={customLoadingProp} />);
 
-    const spinner = await screen.findByLabelText("grid-loading");
+    const spinner = await screen.findByLabelText(I18n.t("working"));
     expect(spinner).toBeInTheDocument();
   });
 });
