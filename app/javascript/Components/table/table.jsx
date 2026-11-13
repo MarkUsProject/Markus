@@ -235,6 +235,7 @@ export default function Table({
               header={header}
               size={header.getSize()}
               isSorted={header.column.getIsSorted()}
+              sortIndex={header.column.getSortIndex()}
               isResizing={header.column.getIsResizing()}
               allRowsSelected={
                 header.column.id === SELECTION_COLUMN_ID ? table.getIsAllRowsSelected() : undefined
