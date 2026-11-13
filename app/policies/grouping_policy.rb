@@ -16,6 +16,12 @@ class GroupingPolicy < ApplicationPolicy
     check?(:manage_submissions?, role) || check?(:assigned_grader?) || check?(:member?)
   end
 
+  # Anyone who can manage the repository files can download a submission file.
+  # Graders who manage assessments can download any file on a scanned exam, for assign scans.
+  def download_submission_file?
+    check?(:manage_repo_files?) || (record.assignment.scanned_exam? && check?(:manage_assessments?, role))
+  end
+
   def not_in_progress?
     !record.student_test_run_in_progress?
   end

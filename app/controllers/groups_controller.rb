@@ -327,9 +327,10 @@ class GroupsController < ApplicationController
 
   def download
     # TODO: make this a member route in a new SubmissionFileController
-    file = SubmissionFile.find(params[:select_file_id])
-    # TODO: remove this check once this is moved to a new SubmissionFileController
-    return page_not_found unless file.course == current_course
+    file = SubmissionFile.joins(submission: :grouping)
+                         .find_by(id: params[:select_file_id], 'groupings.assessment_id': params[:assignment_id])
+    return page_not_found if file.nil?
+    authorize! file.submission.grouping, to: :download_submission_file?
 
     file_contents = file.retrieve_file
 
