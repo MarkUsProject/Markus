@@ -112,6 +112,15 @@ shared_examples 'lti deployment controller' do
                                     client_id: 'LMS defined ID', target_link_uri: target_link_uri }
             expect(cookies.encrypted[:lti_launch_data]).not_to be_nil
           end
+
+          it 'leaves the LMS domains setting unchanged' do
+            request.headers['Referer'] = host
+            expect do
+              post :launch, params: { lti_message_hint: lti_message_hint,
+                                      login_hint: login_hint,
+                                      client_id: 'LMS defined ID', target_link_uri: target_link_uri }
+            end.not_to(change { Settings.lti.domains.dup })
+          end
         end
       end
     end

@@ -67,6 +67,7 @@ en:
     sync_tas: Sync TA roster
     unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
     unlink_courses: Unlink this course
+    untrusted_lms_host: 'MarkUs did not contact %{host}: it is outside the LMS domains in the MarkUs settings.'
   markus: MarkUs
   max: Max
   min: Min
