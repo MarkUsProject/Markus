@@ -69,6 +69,10 @@ describe GroupingPolicy do
       end
       failed 'that cannot manage submissions and is not assigned' do
         let(:role) { create(:ta) }
+
+        it 'gives the download_submission_file? failure reason' do
+          expect(subject.message).to eq I18n.t('action_policy.policy.grouping.download_submission_file?')
+        end
       end
       context 'that can manage assessments and is not assigned' do
         let(:role) { create(:ta, manage_assessments: true) }
