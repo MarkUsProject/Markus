@@ -201,6 +201,8 @@ Here are a few things to consider when setting up the configuration files for yo
 
 - If you have enabled [remote authentication](configuration.md#user-authentication-options) make sure that:
     - the user name value is forwarded in the request header as the "HTTP_X_FORWARDED_USER" key
+    - the web server always sets this header itself (for example with `RequestHeader set`) on every route it forwards to MarkUs, so a value sent by a client never reaches MarkUs
+    - MarkUs is only reachable through the web server (for example, puma listens on `127.0.0.1`), since a request sent to puma directly can set this header to any user name
     - authentication is optional: since MarkUs supports both local and remote authentication, we don't want to force a user to use the remote authentication option if they can also log in with the local option.
 
   For example, you might have the following snippet in your Apache config file when using [shibboleth](https://www.shibboleth.net/) for remote authentication, making all routes under '/' optionally protected by shibboleth authentication and forwarding the "user" variable from the shibboleth authentication to the header:

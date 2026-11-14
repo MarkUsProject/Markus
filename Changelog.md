@@ -3,6 +3,8 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Ignored the remote authentication header when remote authentication is not configured (#8269)
+- Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
@@ -30,6 +32,7 @@
 
 ### 🐛 Bug fixes
 - Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
+- Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
 - Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
 - Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)
 - Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
@@ -44,6 +47,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
 - Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
 - Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)

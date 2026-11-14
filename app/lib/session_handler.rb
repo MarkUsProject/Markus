@@ -167,6 +167,6 @@ module SessionHandler
   end
 
   def remote_auth?
-    session[:auth_type] == 'remote'
+    session[:auth_type] == 'remote' && Settings.remote_auth_login_url.present?
   end
 end
