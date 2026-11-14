@@ -31,6 +31,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
 - Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
 - Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
 - Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)

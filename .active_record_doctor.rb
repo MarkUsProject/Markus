@@ -1,7 +1,7 @@
 ActiveRecordDoctor.configure do
   # Remove each override when the detector's existing findings are fixed.
   detector :incorrect_dependent_option, enabled: false
-  detector :incorrect_length_validation, enabled: false
+  detector :incorrect_length_validation, enabled: true
   detector :mismatched_foreign_key_type, enabled: false
   detector :missing_foreign_keys, enabled: false
   detector :missing_non_null_constraint, enabled: false
