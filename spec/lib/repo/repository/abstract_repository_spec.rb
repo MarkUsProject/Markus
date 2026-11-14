@@ -1,39 +1,44 @@
 describe Repository::AbstractRepository do
   context 'update repo permissions' do
+    include_context 'without enqueue deduplication'
+
     before { Thread.current[:requested?] = false } # simulates each test happening in its own thread
 
     context 'repository permissions should be updated' do
       context 'exactly once' do
         it 'for a single update' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions
+          expect { Repository.get_class.update_permissions }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'at the end of a batch update' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
+          expect do
+            Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'at the end of a batch update only if requested' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after(only_on_request: true) do
-            Repository.get_class.update_permissions
-          end
+          expect do
+            Repository.get_class.update_permissions_after(only_on_request: true) do
+              Repository.get_class.update_permissions
+            end
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'at the end of the most outer nested batch update' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after do
-            Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
-          end
+          expect do
+            Repository.get_class.update_permissions_after do
+              Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
+            end
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
       end
 
       context 'multiple times' do
         it 'for multiple updates made by the same thread' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).twice
-          Repository.get_class.update_permissions
-          Repository.get_class.update_permissions
+          expect do
+            Repository.get_class.update_permissions
+            Repository.get_class.update_permissions
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).twice
         end
       end
     end
@@ -41,20 +46,21 @@ describe Repository::AbstractRepository do
     context 'repository permissions should not be updated' do
       it 'when not in authoritative mode' do
         allow(Settings.repository).to receive(:is_repository_admin).and_return(false)
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions
+        expect { Repository.get_class.update_permissions }.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'at the end of a batch update if not requested' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
+        expect do
+          Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
+        end.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'at the end of the most outer nested batch update only if requested' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions_after(only_on_request: true) do
-          Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
-        end
+        expect do
+          Repository.get_class.update_permissions_after(only_on_request: true) do
+            Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
+          end
+        end.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
     end
   end

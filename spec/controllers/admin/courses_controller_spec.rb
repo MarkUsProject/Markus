@@ -241,19 +241,19 @@ describe Admin::CoursesController do
       end
 
       it 'updates the autotest_url' do
-        expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+        expect do
+          post_as admin, :create, params: {
+            course: {
+              name: 'CSC207',
+              display_name: 'Software Design',
+              is_hidden: true,
+              autotest_url: 'http://example.com'
+            }
+          }
+        end.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, *|
           expect(course_).to eq Course.find_by(name: 'CSC207')
           expect(url).to eq 'http://example.com'
-          nil # mocked return value
-        end
-        post_as admin, :create, params: {
-          course: {
-            name: 'CSC207',
-            display_name: 'Software Design',
-            is_hidden: true,
-            autotest_url: 'http://example.com'
-          }
-        }
+        end)
       end
 
       it 'persists start_at and end_at when provided' do
@@ -350,12 +350,12 @@ describe Admin::CoursesController do
 
       context 'updating the autotest_url' do
         it 'does update the autotest_url as an admin' do
-          expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+          expect do
+            put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, *|
             expect(course_).to eq course
             expect(url).to eq 'http://example.com'
-            nil # mocked return value
-          end
-          put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end)
         end
       end
 
@@ -479,13 +479,11 @@ describe Admin::CoursesController do
       context 'there is an autotest_setting' do
         include_context 'course with an autotest setting'
         it 'should call AutotestResetUrlJob with the correct settings' do
-          expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url, _markus_url, options|
+          expect { subject }.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, _markus_url, options|
             expect(course_.id).to eq course.id
             expect(url).to eq course.autotest_setting.url
             expect(options[:refresh]).to be_truthy
-            OpenStruct.new job_id: 1 # mock return value so that the job id can be set on the session
-          end
-          subject
+          end)
         end
       end
     end

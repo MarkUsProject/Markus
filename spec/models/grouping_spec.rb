@@ -87,6 +87,8 @@ describe Grouping do
   end
 
   describe 'assigning and unassigning TAs' do
+    include_context 'without enqueue deduplication'
+
     let!(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping) }
     let(:groupings) do
@@ -223,17 +225,18 @@ describe Grouping do
       end
 
       it 'updates repository permissions exactly once after bulk assign TAs' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        Grouping.assign_all_tas([], grouping_ids, assignment)
+        expect { Grouping.assign_all_tas([], grouping_ids, assignment) }
+          .to have_enqueued_job(UpdateRepoPermissionsJob).once
       end
     end
 
     describe '.assign_tas' do
       it 'updates repository permissions exactly once after assigning all TAs' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        Grouping.assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
-          grouping_ids.zip(ta_ids.cycle)
-        end
+        expect do
+          Grouping.assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+            grouping_ids.zip(ta_ids.cycle)
+          end
+        end.to have_enqueued_job(UpdateRepoPermissionsJob).once
       end
 
       it 'only assigns groupings from the given assignment' do
@@ -294,8 +297,8 @@ describe Grouping do
       end
 
       it 'updates repository permissions exactly once after bulk unassign TAs' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        Grouping.unassign_tas([], grouping_ids, assignment)
+        expect { Grouping.unassign_tas([], grouping_ids, assignment) }
+          .to have_enqueued_job(UpdateRepoPermissionsJob).once
       end
     end
 
