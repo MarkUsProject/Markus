@@ -294,6 +294,65 @@ describe("tests for the table component", () => {
         expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(columns.length)
       );
     });
+
+    it("renders sortable column headers as buttons", () => {
+      const columns = [...mockColumns(), {id: "actions", header: "Actions", cell: () => null}];
+      columns[0].enableSorting = false;
+      renderTable(columns, mockData());
+
+      expect(screen.queryByRole("button", {name: columns[0].header})).not.toBeInTheDocument();
+      expect(screen.getByRole("button", {name: columns[1].header})).toBeInTheDocument();
+      // A display column has no accessor, so it can't be sorted
+      expect(screen.queryByRole("button", {name: "Actions"})).not.toBeInTheDocument();
+      expect(screen.getByRole("columnheader", {name: "Actions"})).not.toHaveClass(
+        "-cursor-pointer"
+      );
+    });
+
+    it("sorts with the keyboard", async () => {
+      const {table, columns, data} = renderTableWithMockData();
+      const header = columns[1].header;
+
+      await user.tab();
+      await user.tab();
+      expect(screen.getByRole("button", {name: header})).toHaveFocus();
+      await user.keyboard("{Enter}");
+      sortDataByKey(data, header, false);
+      expectRowsInTableInOrder(table, columns, data);
+
+      await user.keyboard(" ");
+      sortDataByKey(data, header, true);
+      expectRowsInTableInOrder(table, columns, data);
+    });
+
+    it("sets aria-sort on the header of the sorted column", async () => {
+      const {columns} = renderTableWithMockData();
+      const header = columns[0].header;
+      const columnHeader = screen.getByRole("columnheader", {name: header});
+
+      expect(columnHeader).not.toHaveAttribute("aria-sort");
+      await clickHeader(header);
+      expect(columnHeader).toHaveAttribute("aria-sort", "ascending");
+      await clickHeader(header);
+      expect(columnHeader).toHaveAttribute("aria-sort", "descending");
+    });
+
+    it("sets aria-sort only on the primary column when sorting by several columns", async () => {
+      const {columns} = renderTableWithMockData();
+
+      await clickHeader(columns[0].header);
+      await user.keyboard("{Shift>}");
+      await clickHeader(columns[1].header);
+      await user.keyboard("{/Shift}");
+
+      const secondHeader = screen.getByRole("columnheader", {name: columns[1].header});
+      expect(screen.getByRole("columnheader", {name: columns[0].header})).toHaveAttribute(
+        "aria-sort",
+        "ascending"
+      );
+      expect(secondHeader).toHaveClass("-sort-asc");
+      expect(secondHeader).not.toHaveAttribute("aria-sort");
+    });
   });
 
   describe("filtering", () => {
