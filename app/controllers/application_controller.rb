@@ -108,13 +108,13 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    if current_user
-      render 'shared/error_page',
-             locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
-             status: :forbidden,
-             layout: 'content'
-    else
-      redirect_to root_path
+    return redirect_to root_path unless current_user
+
+    locals = { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }
+    respond_to do |format|
+      format.html { render 'shared/error_page', locals: locals, status: :forbidden, layout: 'content' }
+      format.json { render 'shared/http_status', locals: locals, status: :forbidden }
+      format.any { head :forbidden }
     end
   end
 
