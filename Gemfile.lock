@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.7.7)
+    action_policy (0.7.8)
       ruby-next-core (>= 1.0)
     action_text-trix (2.1.19)
       railties
