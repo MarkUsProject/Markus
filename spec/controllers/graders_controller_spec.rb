@@ -135,12 +135,17 @@ describe GradersController do
         end
       end
 
-      it 'and a successful call updates repository permissions exactly once' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later)
-        post_as @instructor,
-                :upload,
-                params: { course_id: course.id, assignment_id: @assignment.id,
-                          upload_file: @group_grader_map_file, groupings: true }
+      context 'when checking repository permission updates' do
+        include_context 'without enqueue deduplication'
+
+        it 'and a successful call updates repository permissions exactly once' do
+          expect do
+            post_as @instructor,
+                    :upload,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              upload_file: @group_grader_map_file, groupings: true }
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
+        end
       end
 
       it 'and some graders are invalid' do

@@ -246,18 +246,19 @@ describe CoursesController do
 
         context 'updating the autotest_url' do
           it 'does not update the autotest_url as an instructor' do
-            expect(AutotestResetUrlJob).not_to receive(:perform_later)
-            put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            expect do
+              put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            end.not_to have_enqueued_job(AutotestResetUrlJob)
           end
 
           it 'does update the autotest_url as an admin' do
-            expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+            admin = create(:admin_role)
+            expect do
+              put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            end.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, *|
               expect(course_).to eq course
               expect(url).to eq 'http://example.com'
-              nil # mocked return value
-            end
-            put_as create(:admin_role), :update,
-                   params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            end)
           end
         end
 

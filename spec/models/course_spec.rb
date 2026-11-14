@@ -65,8 +65,7 @@ describe Course do
         before { allow(Settings.repository).to receive(:type).and_return('mem') }
 
         it 'should not schedule a background job' do
-          expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
-          subject
+          expect { subject }.not_to have_enqueued_job(UpdateRepoMaxFileSizeJob)
         end
       end
 
@@ -85,8 +84,7 @@ describe Course do
         context 'when using git repos' do
           include_context 'git repos'
           it 'should schedule a background job' do
-            expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later)
-            subject
+            expect { subject }.to have_enqueued_job(UpdateRepoMaxFileSizeJob)
           end
         end
 
@@ -103,8 +101,7 @@ describe Course do
           after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
 
           it 'should schedule a background job' do
-            expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later).with(course.id)
-            subject
+            expect { subject }.to have_enqueued_job(UpdateRepoMaxFileSizeJob).with(course.id)
           end
         end
 
@@ -119,8 +116,7 @@ describe Course do
         context 'when using git repos' do
           include_context 'git repos'
           it 'should not schedule a background job' do
-            expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
-            subject
+            expect { subject }.not_to have_enqueued_job(UpdateRepoMaxFileSizeJob)
           end
         end
 
@@ -129,10 +125,11 @@ describe Course do
     end
 
     context 'The repository permissions file' do
+      include_context 'without enqueue deduplication'
+
       context 'should be updated' do
         it 'when changing toggling the hidden status for a course' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          course.update(is_hidden: true)
+          expect { course.update(is_hidden: true) }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
       end
     end

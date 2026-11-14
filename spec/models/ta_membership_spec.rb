@@ -17,16 +17,16 @@ describe TaMembership do
   end
 
   context 'should update permissions' do
+    include_context 'without enqueue deduplication'
+
     it 'when created' do
       grouping = create(:grouping)
-      expect(UpdateRepoPermissionsJob).to receive(:perform_later)
-      create(:ta_membership, grouping: grouping)
+      expect { create(:ta_membership, grouping: grouping) }.to have_enqueued_job(UpdateRepoPermissionsJob)
     end
 
     it 'when destroyed' do
       membership = create(:ta_membership)
-      expect(UpdateRepoPermissionsJob).to receive(:perform_later)
-      membership.destroy
+      expect { membership.destroy }.to have_enqueued_job(UpdateRepoPermissionsJob)
     end
   end
 
