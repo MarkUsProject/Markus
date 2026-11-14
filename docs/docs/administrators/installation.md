@@ -177,11 +177,17 @@ RAILS_ENV=production ./bin/bundle exec rails assets:precompile
 
 ### Check your installation
 
-Once MarkUs is configured, run the following command as the `markus` user to check that the paths in your settings are accessible and that the dependencies needed by each enabled feature (for example, scanned exams and Jupyter notebook rendering) are installed:
+Once MarkUs is configured, run this command as the `markus` user:
 
 ```sh
 RAILS_ENV=production ./bin/bundle exec rails markus:check
 ```
+
+It checks that:
+
+- MarkUs can create and read files in the folders your settings name.
+- The database has run each migration in the code, and no others.
+- Each enabled feature, such as scanned exams or Jupyter notebook rendering, has the tools it uses.
 
 Each check is reported as `PASS`, `FAIL`, or `SKIP` (for features that are disabled in your settings), and failures include a suggestion for how to fix them. The command exits with a non-zero status if any check fails. We recommend running this command again after upgrading MarkUs or changing your settings.
 

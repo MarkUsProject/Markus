@@ -1,6 +1,6 @@
-import {render, screen, within} from "@testing-library/react";
+import {fireEvent, render, screen, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {expect, describe, it, beforeEach} from "@jest/globals";
+import {expect, describe, it, beforeEach, jest} from "@jest/globals";
 
 import {defaultSearchPlaceholderText} from "../table/search_filter";
 import {defaultNoDataText} from "../table/table";
@@ -201,6 +201,37 @@ describe("tests for the table component", () => {
         expect(tableRow.querySelector(".rt-row-number")).not.toBeInTheDocument();
       });
     });
+  });
+
+  it("renders only nearby rows and preserves positional numbering when scrolling", () => {
+    const rowHeight = 34;
+    const offsetHeight = jest.spyOn(HTMLElement.prototype, "offsetHeight", "get");
+    offsetHeight.mockReturnValue(rowHeight);
+    const clientHeight = jest.spyOn(HTMLElement.prototype, "clientHeight", "get");
+    clientHeight.mockReturnValue(340);
+
+    try {
+      const columns = [{accessorKey: "name", header: "Name"}];
+      const data = Array.from({length: 1000}, (_, index) => ({name: `Student ${index + 1}`}));
+      const {container, unmount} = render(<Table columns={columns} data={data} showRowNumbers />);
+
+      expect(screen.getByRole("grid")).toHaveAttribute("aria-rowcount", "1002");
+      expect(screen.getByText("Student 1")).toBeInTheDocument();
+      expect(screen.queryByText("Student 501")).not.toBeInTheDocument();
+
+      const body = container.querySelector(".rt-tbody");
+      fireEvent.scroll(body, {target: {scrollTop: 500 * rowHeight}});
+
+      expect(screen.queryByText("Student 1")).not.toBeInTheDocument();
+      const row = screen.getByText("Student 501").closest('[role="row"]');
+      expect(row).toHaveAttribute("data-row-number", "501");
+      expect(row).toHaveAttribute("aria-rowindex", "503");
+      expect(within(body).getAllByRole("row").length).toBeLessThan(30);
+      unmount();
+    } finally {
+      clientHeight.mockRestore();
+      offsetHeight.mockRestore();
+    }
   });
 
   describe("rendering of the no-data component when data is empty", () => {
