@@ -296,6 +296,38 @@ describe("tests for the table component", () => {
     });
   });
 
+  describe("expandable rows", () => {
+    function renderExpandableTable() {
+      return renderTableWithMockData({
+        getRowCanExpand: () => true,
+        renderSubComponent: ({row}) => <p>{`Details for ${row.original.col1}`}</p>,
+      });
+    }
+
+    it("renders a collapsed expand button for each row", () => {
+      renderExpandableTable();
+
+      const buttons = screen.getAllByRole("button", {name: I18n.t("table.show_details")});
+      expect(buttons).toHaveLength(mockData().length);
+      buttons.forEach(button => expect(button).toHaveAttribute("aria-expanded", "false"));
+    });
+
+    it("expands and collapses a row with the keyboard", async () => {
+      renderExpandableTable();
+
+      screen.getAllByRole("button", {name: I18n.t("table.show_details")})[0].focus();
+      await user.keyboard("{Enter}");
+      const button = screen.getByRole("button", {name: I18n.t("table.hide_details")});
+      expect(button).toHaveFocus();
+      expect(button).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Details for a")).toBeInTheDocument();
+
+      await user.keyboard(" ");
+      expect(button).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByText("Details for a")).not.toBeInTheDocument();
+    });
+  });
+
   describe("filtering", () => {
     it("shows search inputs for filterable columns", () => {
       renderTableWithMockData();
