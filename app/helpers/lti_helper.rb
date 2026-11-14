@@ -193,13 +193,10 @@ module LtiHelper
     payload[:endDateTime] = assessment.due_date.iso8601 if assessment.due_date.present?
     auth_data = lti_deployment.lti_client.get_oauth_token([LtiDeployment::LTI_SCOPES[:ags_lineitem]])
     lineitem_service = lti_deployment.lti_services.find_by!(service_type: 'agslineitem')
-    lineitem_uri = URI(lineitem_service.url)
     line_item = lti_deployment.lti_line_items.find_or_initialize_by(assessment: assessment)
-    if line_item.lti_line_item_id?
-      req = Net::HTTP::Put.new(line_item.lti_line_item_id)
-    else
-      req = Net::HTTP::Post.new(lineitem_uri)
-    end
+    # Update an existing line item at its own URL; create a new one at the line items service URL.
+    lineitem_uri = URI(line_item.lti_line_item_id || lineitem_service.url)
+    req = (line_item.lti_line_item_id? ? Net::HTTP::Put : Net::HTTP::Post).new(lineitem_uri)
     req.content_type = 'application/vnd.ims.lis.v2.lineitem+json'
     req.body = payload.to_json
     res = lti_deployment.send_lti_request!(req, lineitem_uri, auth_data, [LtiDeployment::LTI_SCOPES[:ags_lineitem]])
