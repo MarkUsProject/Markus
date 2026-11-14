@@ -143,9 +143,12 @@ describe AutotestRunJob do
         end
       end
 
-      it 'should enqueue an AutotestResultsJob job' do
-        expect(AutotestResultsJob).to receive(:perform_later).once
-        subject
+      context 'when enqueuing results jobs' do
+        include_context 'without enqueue deduplication'
+
+        it 'should enqueue an AutotestResultsJob job' do
+          expect { subject }.to have_enqueued_job(AutotestResultsJob).once
+        end
       end
 
       it 'should send an api request to the autotester' do

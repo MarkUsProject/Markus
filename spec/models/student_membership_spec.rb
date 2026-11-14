@@ -37,23 +37,17 @@ shared_examples 'vcs_submit=true' do |class_type, update_hash|
   let(:membership) { create(class_type, grouping: grouping) }
 
   context 'when vcs_submit is true' do
+    include_context 'without enqueue deduplication'
+
     it "#{namer update_hash[:create]} permission file when created" do
-      if update_hash[:create]
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-      else
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-      end
-      membership
+      expect { membership }
+        .to have_enqueued_job(UpdateRepoPermissionsJob).exactly(update_hash[:create] ? 1 : 0).times
     end
 
     it "#{namer update_hash[:destroy]} permission file when destroyed" do
       m = membership
-      if update_hash[:destroy]
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-      else
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-      end
-      m.destroy
+      expect { m.destroy }
+        .to have_enqueued_job(UpdateRepoPermissionsJob).exactly(update_hash[:destroy] ? 1 : 0).times
     end
 
     status_hash = update_hash.reject { |key| [:create, :destroy].include?(key) }
@@ -61,13 +55,8 @@ shared_examples 'vcs_submit=true' do |class_type, update_hash|
     status_hash.each do |key, val|
       it "#{namer update_hash[key]} permission file when status is changed to #{key}" do
         m = membership
-        if val
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        else
-          expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        end
         m.membership_status = key
-        m.save!
+        expect { m.save! }.to have_enqueued_job(UpdateRepoPermissionsJob).exactly(val ? 1 : 0).times
       end
     end
   end

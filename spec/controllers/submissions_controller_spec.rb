@@ -1163,12 +1163,16 @@ describe SubmissionsController do
             repo.commit(txn)
           end
           @assignment.update!(due_date: 1.week.ago)
-          allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
         end
 
         it 'should collect all groupings when override is true' do
           enqueuing_user = @instructor.user
-          expect(SubmissionsJob).to receive(:perform_later).with(
+          expect do
+            post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                                 assignment_id: @assignment.id,
+                                                                 groupings: [@grouping.id, uncollected_grouping.id],
+                                                                 override: true }
+          end.to have_performed_job(SubmissionsJob).with(
             array_including(@grouping, uncollected_grouping),
             enqueuing_user: enqueuing_user,
             notify_socket: true,
@@ -1178,15 +1182,16 @@ describe SubmissionsController do
             retain_existing_grading: false,
             assign_zero_to_empty: false
           )
-          post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                               assignment_id: @assignment.id,
-                                                               groupings: [@grouping.id, uncollected_grouping.id],
-                                                               override: true }
         end
 
         it 'should retain existing grading data on all groupings when override and retain_existing_grading are true' do
           enqueuing_user = @instructor.user
-          expect(SubmissionsJob).to receive(:perform_later).with(
+          expect do
+            post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                                 assignment_id: @assignment.id,
+                                                                 groupings: [@grouping.id, uncollected_grouping.id],
+                                                                 override: true, retain_existing_grading: true }
+          end.to have_performed_job(SubmissionsJob).with(
             array_including(@grouping, uncollected_grouping),
             enqueuing_user: enqueuing_user,
             notify_socket: true,
@@ -1196,15 +1201,16 @@ describe SubmissionsController do
             retain_existing_grading: true,
             assign_zero_to_empty: false
           )
-          post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                               assignment_id: @assignment.id,
-                                                               groupings: [@grouping.id, uncollected_grouping.id],
-                                                               override: true, retain_existing_grading: true }
         end
 
         it 'should assign a grade of zero to empty submissions when assign_zero_to_empty is true' do
           enqueuing_user = @instructor.user
-          expect(SubmissionsJob).to receive(:perform_later).with(
+          expect do
+            post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                                 assignment_id: @assignment.id,
+                                                                 groupings: [@grouping.id, uncollected_grouping.id],
+                                                                 override: true, assign_zero_to_empty: true }
+          end.to have_performed_job(SubmissionsJob).with(
             array_including(@grouping, uncollected_grouping),
             enqueuing_user: enqueuing_user,
             notify_socket: true,
@@ -1214,15 +1220,16 @@ describe SubmissionsController do
             retain_existing_grading: false,
             assign_zero_to_empty: true
           )
-          post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                               assignment_id: @assignment.id,
-                                                               groupings: [@grouping.id, uncollected_grouping.id],
-                                                               override: true, assign_zero_to_empty: true }
         end
 
         it 'should collect the uncollected grouping only when override is false' do
           enqueuing_user = @instructor.user
-          expect(SubmissionsJob).to receive(:perform_later).with(
+          expect do
+            post_as @instructor, :collect_submissions, params: { course_id: course.id,
+                                                                 assignment_id: @assignment.id,
+                                                                 groupings: [@grouping.id, uncollected_grouping.id],
+                                                                 override: false }
+          end.to have_performed_job(SubmissionsJob).with(
             [uncollected_grouping],
             enqueuing_user: enqueuing_user,
             notify_socket: true,
@@ -1232,10 +1239,6 @@ describe SubmissionsController do
             retain_existing_grading: false,
             assign_zero_to_empty: false
           )
-          post_as @instructor, :collect_submissions, params: { course_id: course.id,
-                                                               assignment_id: @assignment.id,
-                                                               groupings: [@grouping.id, uncollected_grouping.id],
-                                                               override: false }
         end
       end
 
@@ -1562,65 +1565,65 @@ describe SubmissionsController do
 
       describe '#zip_groupings_files' do
         it 'should be able to download all groups\' submissions' do
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
-            expect(grouping_ids).to match_array(grouping_ids)
-            DownloadSubmissionsJob.new
-          end
-          post_as @instructor, :zip_groupings_files,
-                  params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          expect do
+            post_as @instructor, :zip_groupings_files,
+                    params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          end.to(have_enqueued_job(DownloadSubmissionsJob).with do |gids, _zip_file, _assignment_id|
+            expect(gids).to match_array(grouping_ids)
+          end)
           expect(subject).to respond_with(:success)
         end
 
         it 'should be able to download a subset of the submissions' do
           subset = grouping_ids[0...2]
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
-            expect(grouping_ids).to match_array(subset)
-            DownloadSubmissionsJob.new
-          end
-          post_as @instructor, :zip_groupings_files,
-                  params: { course_id: course.id, assignment_id: assignment.id, groupings: subset }
+          expect do
+            post_as @instructor, :zip_groupings_files,
+                    params: { course_id: course.id, assignment_id: assignment.id, groupings: subset }
+          end.to(have_enqueued_job(DownloadSubmissionsJob).with do |gids, _zip_file, _assignment_id|
+            expect(gids).to match_array(subset)
+          end)
           expect(subject).to respond_with(:success)
         end
 
         it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
-            expect(grouping_ids).to be_empty
-            DownloadSubmissionsJob.new
-          end
-          post_as unassigned_ta, :zip_groupings_files,
-                  params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          expect do
+            post_as unassigned_ta, :zip_groupings_files,
+                    params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          end.to(have_enqueued_job(DownloadSubmissionsJob).with do |gids, _zip_file, _assignment_id|
+            expect(gids).to be_empty
+          end)
           expect(subject).to respond_with(:success)
         end
 
         it 'should - as Ta - be able to download all groups\' submissions when assigned' do
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |gids, _zip_file, _assignment_id|
+          expect do
+            post_as assigned_ta, :zip_groupings_files,
+                    params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          end.to(have_enqueued_job(DownloadSubmissionsJob).with do |gids, _zip_file, _assignment_id|
             expect(gids).to match_array(grouping_ids)
-            DownloadSubmissionsJob.new
-          end
-          post_as assigned_ta, :zip_groupings_files,
-                  params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          end)
           expect(subject).to respond_with(:success)
         end
 
         it 'should create a zip file named after the current role and the assignment' do
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |_grouping_ids, zip_file, _assignment_id|
+          expect do
+            post_as @instructor, :zip_groupings_files,
+                    params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          end.to(have_enqueued_job(DownloadSubmissionsJob).with do |_grouping_ids, zip_file, _assignment_id|
             expect(zip_file).to include(assignment.short_identifier)
             expect(zip_file).to include(@instructor.user_name)
-            DownloadSubmissionsJob.new
-          end
-          post_as @instructor, :zip_groupings_files,
-                  params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids }
+          end)
           expect(subject).to respond_with(:success)
         end
 
         it 'should pass the print parameter to DownloadSubmissionsJob when given' do
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |_gids, _zip_file, _assignment_id, _course_id,
-                                                                        kwargs|
+          expect do
+            post_as assigned_ta, :zip_groupings_files,
+                    params: { course_id: course.id, assignment_id: assignment.id,
+                              groupings: grouping_ids, print: 'true' }
+          end.to(have_enqueued_job(DownloadSubmissionsJob).with do |*, kwargs|
             expect(kwargs[:print]).to be true
-            DownloadSubmissionsJob.new
-          end
-          post_as assigned_ta, :zip_groupings_files,
-                  params: { course_id: course.id, assignment_id: assignment.id, groupings: grouping_ids, print: 'true' }
+          end)
           expect(subject).to respond_with(:success)
         end
       end
