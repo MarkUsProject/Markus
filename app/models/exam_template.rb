@@ -11,7 +11,7 @@
 #  crop_x            :decimal(, )
 #  crop_y            :decimal(, )
 #  filename          :string           not null
-#  name              :string           not null
+#  name              :string(20)       not null
 #  num_pages         :integer          not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null

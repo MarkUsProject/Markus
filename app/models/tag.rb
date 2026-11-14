@@ -5,7 +5,7 @@
 #
 #  id            :integer          not null, primary key
 #  description   :string
-#  name          :string           not null
+#  name          :string(30)       not null
 #  created_at    :datetime
 #  updated_at    :datetime
 #  assessment_id :bigint
