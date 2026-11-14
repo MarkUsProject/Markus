@@ -97,6 +97,8 @@ en:
     hide_details: Hide details
     no_data: No rows found
     search: Search
+    select_all_rows: Select all rows
+    select_row: Select row
     show_details: Show details
   to: to
   working: Loading
