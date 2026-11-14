@@ -91,6 +91,8 @@ class MainController < ApplicationController
   end
 
   def login_remote_auth
+    return page_not_found if Settings.remote_auth_login_url.blank?
+
     session[:auth_type] = 'remote'
     redirect_to Settings.remote_auth_login_url, allow_other_host: true
   end
