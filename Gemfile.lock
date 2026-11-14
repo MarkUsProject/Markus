@@ -332,7 +332,7 @@ GEM
       drb (~> 2.0)
       prism (~> 1.5)
     mono_logger (1.1.2)
-    msgpack (1.8.4)
+    msgpack (1.8.7)
     multi_json (1.21.2)
     mustermann (3.1.1)
     net-imap (0.6.6)
