@@ -51,7 +51,7 @@ gem 'csv'
 gem 'json'
 gem 'mini_mime'
 gem 'redcarpet'
-gem 'rubyzip', '~> 3.4.1'
+gem 'rubyzip', '~> 3.7.0'
 gem 'rugged'
 
 # Rails miscellany
