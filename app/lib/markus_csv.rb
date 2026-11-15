@@ -64,7 +64,7 @@ class MarkusCsv
       next cell unless cell.is_a?(String)
 
       sanitized_cell = cell.delete("\t")
-      sanitized_cell.match?(CSV_INJECTION_PREFIXES) ? " #{sanitized_cell}" : sanitized_cell
+      sanitized_cell.start_with?(CSV_INJECTION_PREFIXES) ? " #{sanitized_cell}" : sanitized_cell
     end
   end
   private_class_method :sanitize_row
