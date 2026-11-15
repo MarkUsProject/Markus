@@ -1008,11 +1008,11 @@ describe Assignment do
 
         it 'sanitizes repository list values' do
           allow_any_instance_of(Group).to receive(:group_name).and_return('=group')
-          allow_any_instance_of(Group).to receive(:repository_external_access_url).and_return("\t+url")
+          allow_any_instance_of(Group).to receive(:repository_external_access_url).and_return("+url\tvalue")
 
           csv = CSV.parse(@assignment.get_repo_list)
 
-          expect(csv).to include([' =group', ' +url'])
+          expect(csv).to include([' =group', ' +urlvalue'])
         end
 
         context 'with two groups of a single student each' do
@@ -2558,9 +2558,9 @@ describe Assignment do
 
       it 'sanitizes student values' do
         student = assignment.groupings.first.student_memberships.first.role
-        student.user.update_column(:user_name, "\t=user")
+        student.user.update_column(:user_name, "=user\tvalue")
 
-        expect(summary.flatten).to include(' =user')
+        expect(summary.flatten).to include(' =uservalue')
       end
 
       context 'when all criteria are pre-created' do
@@ -2583,12 +2583,12 @@ describe Assignment do
         [{ 'group_name' => '@group',
            'name' => 'test',
            'test_result_name' => 'case',
-           'status' => "\t-status" }]
+           'status' => "-status\tvalue" }]
       )
 
       csv = CSV.parse(assignment.summary_test_result_csv)
 
-      expect(csv).to eq([[nil, 'test:case'], [' @group', ' -status']])
+      expect(csv).to eq([[nil, 'test:case'], [' @group', ' -statusvalue']])
     end
   end
 
