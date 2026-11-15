@@ -48,6 +48,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Updated `AdminCourseList` to use `@tanstack/react-table` v8 (#8303)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
 - Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
