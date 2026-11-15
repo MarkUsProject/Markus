@@ -1,7 +1,11 @@
 describe ExamTemplate do
+  subject { exam_template }
+
   let(:exam_template) { create(:exam_template_midterm) }
   let(:group) { create(:group, course: exam_template.course) }
   let(:grouping) { create(:grouping, group: group, assignment: exam_template.assignment) }
+
+  it { is_expected.to validate_length_of(:name).is_at_most(ExamTemplate::NAME_MAX_LENGTH) }
 
   describe '#missing_pages' do
     it 'returns all page numbers when no pages have been scanned' do

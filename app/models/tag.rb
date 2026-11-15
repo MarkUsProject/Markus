@@ -5,7 +5,7 @@
 #
 #  id            :integer          not null, primary key
 #  description   :string
-#  name          :string           not null
+#  name          :string(30)       not null
 #  created_at    :datetime
 #  updated_at    :datetime
 #  assessment_id :bigint
@@ -23,18 +23,22 @@
 #
 # rubocop:enable Layout/LineLength, Lint/RedundantCopDisableDirective
 class Tag < ApplicationRecord
+  # Constants
+  NUM_CSV_FIELDS = 3
+  NAME_MAX_LENGTH = 30
+
   has_and_belongs_to_many :groupings
   belongs_to :role
   belongs_to :assessment, optional: true
 
   has_one :course, through: :role
   validate :courses_should_match
-  validates :name, presence: true, length: { maximum: 30 }, uniqueness: { scope: :assessment_id, conditions: -> {
-    where.not(assessment_id: nil)
-  } }
-
-  # Constants
-  NUM_CSV_FIELDS = 3
+  validates :name,
+            presence: true,
+            length: { maximum: NAME_MAX_LENGTH },
+            uniqueness: { scope: :assessment_id, conditions: -> {
+              where.not(assessment_id: nil)
+            } }
 
   def ==(other)
     description == other.description &&
@@ -47,7 +51,7 @@ class Tag < ApplicationRecord
     result = MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
       name, description, role_id = row[0], row[1], instructors[row[2]]
-      if name.nil? || name.strip.blank? || role_id.nil?
+      if name.nil? || name.strip.blank? || role_id.nil? || name.length > NAME_MAX_LENGTH
         raise CsvInvalidLineError
       end
 
@@ -74,7 +78,7 @@ class Tag < ApplicationRecord
           author = ta_author.id unless ta_author.nil? || !ta_author.grader_permission.manage_assessments
         end
         name, description, role_id = row[:name], row[:description], author
-        if name.nil? || name.strip.blank? || role_id.nil?
+        if name.nil? || name.strip.blank? || role_id.nil? || name.strip.length > NAME_MAX_LENGTH
           raise ArgumentError, I18n.t('tags.invalid_tag_data', item: row)
         end
 

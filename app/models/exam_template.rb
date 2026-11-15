@@ -11,7 +11,7 @@
 #  crop_x            :decimal(, )
 #  crop_y            :decimal(, )
 #  filename          :string           not null
-#  name              :string           not null
+#  name              :string(20)       not null
 #  num_pages         :integer          not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
@@ -29,6 +29,9 @@
 require 'fileutils'
 
 class ExamTemplate < ApplicationRecord
+  # Constants
+  NAME_MAX_LENGTH = 20
+
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   before_save :undo_mark_for_destruction
   after_create_commit :create_base_path
@@ -37,7 +40,7 @@ class ExamTemplate < ApplicationRecord
   validates :filename, :num_pages, :name, presence: true
   validates :name,
             uniqueness: { scope: :assignment },
-            length: { maximum: 20 }
+            length: { maximum: NAME_MAX_LENGTH }
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
   validates :automatic_parsing, inclusion: { in: [true, false] }
