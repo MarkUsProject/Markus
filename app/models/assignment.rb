@@ -576,13 +576,12 @@ class Assignment < Assessment
 
   # Get a list of group_name, repo-url pairs
   def get_repo_list(ssh: false)
-    CSV.generate do |csv|
-      self.groupings.includes(:group).find_each do |grouping|
-        group = grouping.group
-        data = [group.group_name, group.repository_external_access_url]
-        data << group.repository_ssh_access_url if ssh
-        csv << data
-      end
+    groupings = self.groupings.includes(:group)
+    MarkusCsv.generate(groupings.find_each) do |grouping|
+      group = grouping.group
+      data = [group.group_name, group.repository_external_access_url]
+      data << group.repository_ssh_access_url if ssh
+      data
     end
   end
 
@@ -793,21 +792,17 @@ class Assignment < Assessment
     end
     headers = headers.sort
 
-    CSV.generate do |csv|
-      csv << [nil, *headers]
+    MarkusCsv.generate(results.sort_by(&:first), [[nil, *headers]]) do |(group_name, _test_group)|
+      row = [group_name]
 
-      results.sort_by(&:first).each do |(group_name, _test_group)|
-        row = [group_name]
-
-        headers.each do |header|
-          if results[group_name].key?(header)
-            row << results[group_name][header]
-          else
-            row << nil
-          end
+      headers.each do |header|
+        if results[group_name].key?(header)
+          row << results[group_name][header]
+        else
+          row << nil
         end
-        csv << row
       end
+      row
     end
   end
 
@@ -852,26 +847,21 @@ class Assignment < Assessment
     subtotals = Result.get_subtotals(result_ids)
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark, subtotals: subtotals)
     total_marks_hash = Result.get_total_marks(result_ids, subtotals: subtotals, extra_marks: extra_marks_hash)
-    CSV.generate do |csv|
-      csv << headers[0]
-      csv << headers[1]
-
-      students.each do |student|
-        # filtered to keep only the groupings for this assignment when defining students above
-        g = student.accepted_groupings.first
-        result = g&.current_result
-        marks = result.nil? ? {} : result.mark_hash
-        other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
-        row = [g&.group&.group_name] + other_info
-        if result.nil?
-          row += Array.new(2 + self.ta_criteria.count, nil)
-        else
-          row << total_marks_hash[result.id]
-          row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
-          row << extra_marks_hash[result.id]
-        end
-        csv << row
+    MarkusCsv.generate(students, headers) do |student|
+      # filtered to keep only the groupings for this assignment when defining students above
+      g = student.accepted_groupings.first
+      result = g&.current_result
+      marks = result.nil? ? {} : result.mark_hash
+      other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
+      row = [g&.group&.group_name] + other_info
+      if result.nil?
+        row += Array.new(2 + self.ta_criteria.count, nil)
+      else
+        row << total_marks_hash[result.id]
+        row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
+        row << extra_marks_hash[result.id]
       end
+      row
     end
   end
 
