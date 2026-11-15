@@ -648,7 +648,7 @@ CREATE TABLE public.exam_templates (
     num_pages integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    name character varying NOT NULL,
+    name character varying(20) NOT NULL,
     cover_fields character varying DEFAULT ''::character varying NOT NULL,
     automatic_parsing boolean DEFAULT false NOT NULL,
     crop_x numeric,
@@ -2061,7 +2061,7 @@ ALTER SEQUENCE public.submissions_id_seq OWNED BY public.submissions.id;
 
 CREATE TABLE public.tags (
     id integer NOT NULL,
-    name character varying NOT NULL,
+    name character varying(30) NOT NULL,
     description character varying,
     assessment_id bigint,
     role_id bigint NOT NULL,
@@ -4824,6 +4824,7 @@ ALTER TABLE ONLY public.submission_files
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261110055739'),
 ('20261106010918'),
 ('20261030000000'),
 ('20260926233000'),

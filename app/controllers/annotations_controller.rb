@@ -1,8 +1,9 @@
 class AnnotationsController < ApplicationController
+  before_action :check_result, only: [:add_existing_annotation, :create]
   before_action { authorize! }
 
   def add_existing_annotation
-    result = Result.find(params[:result_id])
+    result = course_result
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
 
@@ -11,8 +12,7 @@ class AnnotationsController < ApplicationController
       is_remark: submission.has_remark?,
       annotation_text_id: params[:annotation_text_id],
       annotation_number: result.annotations.size + 1,
-      creator: current_role,
-      result_id: params[:result_id]
+      creator: current_role
     }
 
     annotation_class = submission_file.annotation_class
@@ -25,7 +25,7 @@ class AnnotationsController < ApplicationController
   end
 
   def create
-    result = Result.find(params[:result_id])
+    result = course_result
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
 
@@ -122,7 +122,21 @@ class AnnotationsController < ApplicationController
 
   protected
 
-  def identification_params
-    params.permit(:id, :result_id)
+  # Authorize the annotation named in the URL, or a new annotation on the requested result.
+  def implicit_authorization_target
+    record || Annotation.new(result: course_result)
+  end
+
+  private
+
+  def check_result
+    page_not_found if course_result.nil?
+  end
+
+  def course_result
+    return @course_result if defined?(@course_result)
+
+    @course_result = Result.joins(grouping: :assignment)
+                           .find_by(id: params[:result_id], 'assessments.course_id': current_course.id)
   end
 end

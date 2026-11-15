@@ -50,10 +50,11 @@ describe StudentsController do
         ext_string = extension.empty? ? 'none' : extension
         it "calls perform_later on a background job on a valid file with extension '#{ext_string}'" do
           file = fixture_file_upload("students/form_good#{extension}", 'text/csv')
-          expect(UploadRolesJob).to receive(:perform_later).and_return OpenStruct.new(job_id: 1)
-          post_as instructor,
-                  :upload,
-                  params: { course_id: course.id, upload_file: file }
+          expect do
+            post_as instructor,
+                    :upload,
+                    params: { course_id: course.id, upload_file: file }
+          end.to have_enqueued_job(UploadRolesJob)
         end
       end
 
