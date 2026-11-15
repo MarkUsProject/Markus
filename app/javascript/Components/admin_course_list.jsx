@@ -1,11 +1,12 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
-import ReactTable from "react-table";
-import {selectFilter} from "./Helpers/table_helpers";
+import Table from "./table/table";
+import {createColumnHelper} from "@tanstack/react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
 
-class AdminCourseList extends React.Component {
+const columnHelper = createColumnHelper();
+export class AdminCourseList extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -35,47 +36,39 @@ class AdminCourseList extends React.Component {
   };
 
   columns = [
-    {
-      Header: I18n.t("activerecord.attributes.course.name"),
-      accessor: "name",
-      minWidth: 70,
-    },
-    {
-      Header: I18n.t("activerecord.attributes.course.display_name"),
-      accessor: "display_name",
-      minWidth: 120,
-    },
-    {
-      Header: I18n.t("activerecord.attributes.course.is_hidden"),
-      accessor: "is_hidden",
-      minWidth: 70,
-      Cell: ({value}) => {
-        return value ? I18n.t("courses.hidden") : I18n.t("courses.visible");
+    columnHelper.accessor("name", {
+      header: () => I18n.t("activerecord.attributes.course.name"),
+      minSize: 70,
+    }),
+    columnHelper.accessor("display_name", {
+      header: () => I18n.t("activerecord.attributes.course.display_name"),
+      minSize: 120,
+    }),
+    columnHelper.accessor("is_hidden", {
+      header: () => I18n.t("activerecord.attributes.course.is_hidden"),
+      minSize: 70,
+      cell: info => (info.getValue() ? I18n.t("courses.hidden") : I18n.t("courses.visible")),
+      filterFn: (row, columnId, filterValue) =>
+        filterValue === "" || String(row.getValue(columnId)) === filterValue,
+      meta: {
+        filterVariant: "select",
+        filterOptions: [
+          {
+            text: I18n.t("courses.hidden"),
+            value: "true",
+          },
+          {
+            text: I18n.t("courses.visible"),
+            value: "false",
+          },
+        ],
       },
-      filterMethod: (filter, row) => {
-        if (filter.value === "all") {
-          return true;
-        } else {
-          return filter.value === row[filter.id].toString();
-        }
-      },
-      Filter: selectFilter,
-      filterOptions: [
-        {
-          text: I18n.t("courses.hidden"),
-          value: true,
-        },
-        {
-          text: I18n.t("courses.visible"),
-          value: false,
-        },
-      ],
-    },
-    {
-      Header: I18n.t("actions"),
-      accessor: "id",
-      minWidth: 70,
-      Cell: ({value}) => {
+    }),
+    columnHelper.accessor("id", {
+      header: () => I18n.t("actions"),
+      minSize: 70,
+      cell: info => {
+        const value = info.getValue();
         return (
           <span>
             <a
@@ -90,18 +83,17 @@ class AdminCourseList extends React.Component {
           </span>
         );
       },
-      sortable: false,
-      filterable: false,
-    },
+      enableSorting: false,
+      enableColumnFilter: false,
+    }),
   ];
 
   render() {
     return (
-      <ReactTable
+      <Table
         data={this.state.courses}
         columns={this.columns}
-        filterable
-        defaultSorted={[{id: "name"}]}
+        initialState={{sorting: [{id: "name", desc: false}]}}
         loading={this.state.loading}
       />
     );
