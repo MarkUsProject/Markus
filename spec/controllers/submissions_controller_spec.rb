@@ -2025,6 +2025,24 @@ describe SubmissionsController do
       expect(marking_states).to all(eq complete)
     end
 
+    # Counts the membership reads while a TA who grades +count+ new groups sets their marking state.
+    def membership_queries(count)
+      selected = create_list(:grouping_with_inviter_and_submission, count, assignment: assignment)
+      selected.each { |grouping| create(:ta_membership, role: ta, grouping: grouping) }
+      request_params = params.merge(groupings: selected.map(&:id))
+      queries = []
+      record = ->(*, payload) { queries << payload[:sql] if payload[:sql].match?(/\ASELECT.*memberships/m) }
+      ActiveSupport::Notifications.subscribed(record, 'sql.active_record') do
+        post_as ta, :set_result_marking_state, params: request_params
+      end
+      expect(response).to have_http_status(:success)
+      queries.size
+    end
+
+    it 'checks a TA with the same number of membership queries for any number of groups' do
+      expect(membership_queries(4)).to eq membership_queries(1)
+    end
+
     it 'updates every group for a TA who manages submissions' do
       post_as create(:ta, manage_submissions: true), :set_result_marking_state, params: params
       expect(response).to have_http_status(:success)
