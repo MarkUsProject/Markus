@@ -8,6 +8,16 @@ describe UploadRolesJob do
     it_behaves_like 'background job'
   end
 
+  context 'when a user in the file does not exist' do
+    let(:job) { UploadRolesJob.new(Student, course, "unknown_user\n", nil) }
+
+    it 'stores the error in the job status' do
+      message = I18n.t('users.not_found', user_names: 'unknown_user')
+      expect { job.perform_now }.to raise_error(message)
+      expect(job.status.to_h).to include(status: :failed, exception: { class: 'RuntimeError', message: message })
+    end
+  end
+
   describe '#perform' do
     shared_examples 'uploading roles' do
       subject { UploadRolesJob.perform_now(role_type, course, data, nil) }

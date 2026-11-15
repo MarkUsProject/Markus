@@ -3,18 +3,25 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
+- Ignored the remote authentication header when remote authentication is not configured (#8269)
+- Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)
+- Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
 - Replaced `MarkusLogger` and the default Rails logger with Semantic Logger (`rails_semantic_logger`). All log entries, including audit events, are now written as structured entries to a single log file, in JSON format by default in production. The `logging.enabled`, `logging.rotate_by_interval`, `logging.rotate_interval`, `logging.size_threshold`, `logging.old_files`, and `logging.error_file` settings have been removed, and a `logging.format` setting has been added (#8204)
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Improved loading of large tables by rendering rows as they come into view (#8261)
+- Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
 - Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
 - Added optional OpenTelemetry tracing of requests and background jobs, controlled by the new `telemetry` settings, and a `telemetry` Docker Compose profile that runs a local Grafana for viewing traces in development (#8223)
 - Courses created through the API (`POST /api/courses`) are now connected to the autotester given by the `autotest.default_url` setting, unless the request includes its own `autotest_url` parameter (#8222)
 - Pre-filled the autotester url field on the admin course creation form with the `autotest.default_url` setting, so courses created by an admin are connected to the default autotester unless the field is changed (#8221)
 - Added JupyterLab integration course and assignment data endpoings (#8170)
 - Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
+- Expanded the `markus:check` rake task to check that the database has run exactly the migrations in the code (#8226)
 - Added JupyterHub session tokens in `jupyter/create_session` route (#8135)
 - Added experimental support for JupyterHub integration for assignment submission (#7986)
 - Allowed instructors assigned as graders to switch between all submissions and only their assigned submissions in the submissions, summary, and grading views (#8083)
@@ -25,14 +32,27 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
+- Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
+- Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
+- Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)
+- Fixed `add_tag` and `remove_tag` in `results_controller.rb` to search tags within the current course (#8234)
+- Fixed a file download error (404) when switching between submissions in the grading view (#8230)
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 - Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
+- Fixed ActionCable processes permanently losing their Redis pub/sub subscriptions after a Redis restart, by configuring reconnection retries in `config/cable.yml` (#8244)
+- Fixed rake tasks such as `assets:precompile` and `db:migrate` failing with a `LoadError` for `factory_bot_rails` on installations without the `test` gem group (#8226)
 
 ### 📚 Documentation changes
 - Updated `README.md` links to point to the new documentation website (#8181)
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
+- Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
+- Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
+- Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
+- Converted `CreateTagModal`, `EditTagModal`, `CreateGroupModal`, and `RenameGroupModal` to functional React components (#8232)
 - Moved the RuboCop, erb_lint and i18n-tasks dependencies into the Gemfile and run them in pre-commit hooks using the `rails` Docker Compose service (#8224)
 - Moved the Prettier and stylelint dependencies into `package.json` and run them in pre-commit hooks using the `rails` Docker Compose service (#8225)
 - Converted `AssignmentSummary`, `AssessmentChart`, `CoreStatistics`, and `FractionStat` to functional React components (#8220)
@@ -50,6 +70,7 @@
 - Added tests for timed and untimed extensions returned by `GroupsController#index` (#8180)
 - Added tests for `StudentsController#download` to test downloading a CSV or YAML of students (#8183)
 - Added tests for `ExamTemplatesController#show_cover` for existing and missing cover pages (#8185)
+- Removed unused LTI line item code from the assignment create and update actions, and unused `@lti_deployments` assignments from the assignment and course controllers (#8242)
 
 ## [v2.10.5]
 

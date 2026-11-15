@@ -45,6 +45,26 @@ describe ApplicationCable::Connection do
       end
     end
 
+    context 'when remote auth is off' do
+      let(:instructor) { create(:instructor) }
+      let(:ta) { create(:ta) }
+
+      before { allow(Settings).to receive_messages(remote_auth_login_url: nil) }
+
+      it 'should reject the connection' do
+        expect do
+          connect '/cable', session: { auth_type: 'remote' }, headers: { HTTP_X_FORWARDED_USER: instructor.user_name }
+        end.to have_rejected_connection
+      end
+
+      it 'should reject a role switched connection' do
+        expect do
+          connect '/cable', session: { auth_type: 'remote', user_name: ta.user_name },
+                            headers: { HTTP_X_FORWARDED_USER: instructor.user_name }
+        end.to have_rejected_connection
+      end
+    end
+
     context 'as a student' do
       let(:student) { create(:student) }
       let(:user_name) { student.user_name }

@@ -13,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import FilterCell from "./filter";
 import TableHeaderCell from "./table_header_cell";
 import TableRow from "./table_row";
@@ -22,6 +23,7 @@ export const defaultNoDataText = () => I18n.t("table.no_data");
 const columnHelper = createColumnHelper();
 export const SELECTION_COLUMN_ID = "select";
 const FILTER_VARIANT_SELECT = "select";
+const VIRTUALIZATION_THRESHOLD = 50;
 
 export const expanderColumn = columnHelper.display({
   id: "expander",
@@ -182,11 +184,51 @@ export default function Table({
     ? `calc(${centerTotalSize}px + var(--row-number-gutter-width))`
     : centerTotalSize;
   const rows = table.getRowModel().rows;
+  const bodyRef = React.useRef(null);
+  const virtualizeRows = rows.length > VIRTUALIZATION_THRESHOLD;
+  const rowVirtualizer = useVirtualizer({
+    enabled: virtualizeRows,
+    count: rows.length,
+    getScrollElement: () => bodyRef.current,
+    getItemKey: React.useCallback(index => rows[index].id, [rows]),
+    estimateSize: () => 34,
+    overscan: 5,
+  });
+  const virtualRows = rowVirtualizer.getVirtualItems();
+  const topSpacerHeight = virtualRows[0]?.start ?? 0;
+  const bottomSpacerHeight = virtualizeRows
+    ? rowVirtualizer.getTotalSize() - (virtualRows.at(-1)?.end ?? 0)
+    : 0;
+
+  const showFilters = React.useMemo(
+    () => table.getAllColumns().some(column => column.getCanFilter()),
+    [table, finalColumns]
+  );
+  const headerGroups = table.getHeaderGroups();
+  const headerRowCount = headerGroups.length * (showFilters ? 2 : 1);
+
+  const renderRow = (row, index) => (
+    <TableRow
+      row={row}
+      index={index}
+      ariaRowIndex={headerRowCount + index + 1}
+      measureRow={virtualizeRows ? rowVirtualizer.measureElement : undefined}
+      isExpanded={row.getIsExpanded()}
+      isGrouped={row.getIsGrouped()}
+      isSelected={row.getIsSelected()}
+      key={row.id}
+      renderSubComponent={renderSubComponent}
+      // columnSizing is not used directly in TableRow, but is passed to trigger
+      // re-render when column sizes change
+      columnSizing={columnSizing}
+      columns={finalColumns}
+    />
+  );
 
   const tableHeaders = (
     <div className="rt-thead -header" style={{minWidth: tableMinWidth}}>
-      {table.getHeaderGroups().map(headerGroup => (
-        <div className="rt-tr" role="row" key={headerGroup.id}>
+      {headerGroups.map((headerGroup, index) => (
+        <div className="rt-tr" role="row" aria-rowindex={index + 1} key={headerGroup.id}>
           {headerGroup.headers.map(header => (
             <TableHeaderCell
               key={header.id}
@@ -204,14 +246,15 @@ export default function Table({
     </div>
   );
 
-  const showFilters = React.useMemo(
-    () => table.getAllColumns().some(column => column.getCanFilter()),
-    [table, finalColumns]
-  );
   const tableFilters = showFilters && (
     <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
-      {table.getHeaderGroups().map(headerGroup => (
-        <div className="rt-tr" role="row" key={headerGroup.id}>
+      {headerGroups.map((headerGroup, index) => (
+        <div
+          className="rt-tr"
+          role="row"
+          aria-rowindex={headerGroups.length + index + 1}
+          key={headerGroup.id}
+        >
           {headerGroup.headers.map(header => (
             <FilterCell
               key={header.id}
@@ -235,24 +278,23 @@ export default function Table({
       className={`Table -highlight${showRowNumbers ? " -show-row-numbers" : ""}`}
       style={{maxHeight: "500px"}}
     >
-      <div className="rt-table" role="grid">
+      <div className="rt-table" role="grid" aria-rowcount={headerRowCount + rows.length}>
         {tableHeaders}
         {tableFilters}
-        <div className="rt-tbody" style={{minWidth: tableMinWidth}}>
-          {rows.map(row => (
-            <TableRow
-              row={row}
-              isExpanded={row.getIsExpanded()}
-              isGrouped={row.getIsGrouped()}
-              isSelected={row.getIsSelected()}
-              key={row.id}
-              renderSubComponent={renderSubComponent}
-              // columnSizing is not used directly in TableRow, but is passed to trigger
-              // re-render when column sizes change
-              columnSizing={columnSizing}
-              columns={finalColumns}
-            />
-          ))}
+        <div
+          className="rt-tbody"
+          style={{minWidth: tableMinWidth, overflowAnchor: virtualizeRows ? "none" : undefined}}
+          ref={bodyRef}
+        >
+          {topSpacerHeight > 0 && (
+            <div aria-hidden="true" style={{flex: `0 0 ${topSpacerHeight}px`}} />
+          )}
+          {virtualizeRows
+            ? virtualRows.map(({index}) => renderRow(rows[index], index))
+            : rows.map(renderRow)}
+          {bottomSpacerHeight > 0 && (
+            <div aria-hidden="true" style={{flex: `0 0 ${bottomSpacerHeight}px`}} />
+          )}
           {loading && rows.length > 0 && (
             <div
               className="loading-spinner"

@@ -16,6 +16,21 @@ describe DownloadSubmissionsJob do
     it_behaves_like 'background job'
   end
 
+  context 'when printing and the assignment does not exist' do
+    let(:job) do
+      DownloadSubmissionsJob.new(groupings.map(&:id), 'tmp/test_file.zip', -1, assignment.course_id, print: true)
+    end
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(ActiveRecord::RecordNotFound)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'ActiveRecord::RecordNotFound',
+                     message: a_string_starting_with("Couldn't find Assignment with 'id'=-1") }
+      )
+    end
+  end
+
   context 'when print is false' do
     it 'should create a zip file containing all submission files for the given groupings' do
       zip_path = 'tmp/test_file.zip'

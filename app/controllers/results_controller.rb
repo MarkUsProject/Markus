@@ -310,7 +310,8 @@ class ResultsController < ApplicationController
   def add_tag
     # TODO: this should be in the grouping or tag controller
     result = record
-    tag = Tag.find(params[:tag_id])
+    grouping = result.submission.grouping
+    tag = current_course.tags.where(assessment_id: [grouping.assessment_id, nil]).find(params[:tag_id])
     result.submission.grouping.tags << tag
     head :ok
   end
@@ -318,7 +319,8 @@ class ResultsController < ApplicationController
   def remove_tag
     # TODO: this should be in the grouping or tag controller
     result = record
-    tag = Tag.find(params[:tag_id])
+    grouping = result.submission.grouping
+    tag = current_course.tags.where(assessment_id: [grouping.assessment_id, nil]).find(params[:tag_id])
     result.submission.grouping.tags.destroy(tag)
     head :ok
   end

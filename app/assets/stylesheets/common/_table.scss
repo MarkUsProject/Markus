@@ -217,27 +217,19 @@
   }
 
   &.-show-row-numbers {
-    .rt-tbody {
-      counter-reset: table-row-number;
-
-      .rt-tr {
-        counter-increment: table-row-number;
-
-        &::before {
-          align-items: center;
-          background-color: $background-support;
-          bottom: 0;
-          content: counter(table-row-number);
-          display: flex;
-          font-size: 0.85em;
-          font-variant-numeric: tabular-nums;
-          justify-content: center;
-          left: 0;
-          position: absolute;
-          top: 0;
-          width: var(--row-number-gutter-width);
-        }
-      }
+    .rt-tbody .rt-tr::before {
+      align-items: center;
+      background-color: $background-support;
+      bottom: 0;
+      content: attr(data-row-number);
+      display: flex;
+      font-size: 0.85em;
+      font-variant-numeric: tabular-nums;
+      justify-content: center;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: var(--row-number-gutter-width);
     }
 
     .rt-tr {

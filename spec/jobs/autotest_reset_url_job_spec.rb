@@ -176,6 +176,22 @@ describe AutotestResetUrlJob do
           end
         end
 
+        context 'when updating the test settings for an assignment fails' do
+          let!(:assignment) do
+            create(:assignment, course: course, assignment_properties_attributes: { autotest_settings: '{}' })
+          end
+          let(:job) { AutotestResetUrlJob.new(course, url, host_with_port, refresh: refresh) }
+
+          before { allow(AutotestSpecsJob).to receive(:perform_now).and_raise(StandardError, 'connection refused') }
+
+          it 'stores the error in the job status' do
+            message = I18n.t('automated_tests.job_messages.resetting_test_settings_error',
+                             short_identifier: assignment.short_identifier, error: 'connection refused')
+            expect { job.perform_now }.to raise_error(message)
+            expect(job.status.to_h).to include(status: :failed, exception: { class: 'RuntimeError', message: message })
+          end
+        end
+
         context 'when assignments exist for the course and some have autotest settings' do
           before do
             2.times do |i|

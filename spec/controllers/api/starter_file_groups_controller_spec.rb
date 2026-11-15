@@ -246,22 +246,22 @@ describe Api::StarterFileGroupsController do
       end
     end
 
-    context 'when there are starter file groups for another assignment' do
-      let(:starter_file_group) { create(:starter_file_group) }
+    context 'when the starter file group belongs to a different course' do
+      let(:starter_file_group) { create(:starter_file_group, assignment: create(:assignment, course: create(:course))) }
 
       before { subject }
 
       context 'expecting xml' do
-        it 'should return empty data' do
-          expect(Hash.from_xml(response.body['starter_file_group'])).to be_nil
+        it 'should respond with 404' do
+          expect(response).to have_http_status(:not_found)
         end
       end
 
       context 'expecting json' do
         let(:http_accept) { 'application/json' }
 
-        xit 'should return empty data' do # this fails on travis only
-          expect(response.body).to be_empty
+        it 'should respond with 404' do
+          expect(response).to have_http_status(:not_found)
         end
       end
     end

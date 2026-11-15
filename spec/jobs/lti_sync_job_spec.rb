@@ -48,5 +48,14 @@ describe LtiSyncJob do
     it 'should raise an error' do
       expect { LtiSyncJob.perform_now(*job_args) }.to raise_error(RuntimeError)
     end
+
+    it 'stores the error in the job status' do
+      job = LtiSyncJob.new(*job_args)
+      expect { job.perform_now }.to raise_error(I18n.t('lti.no_platform'))
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'RuntimeError', message: I18n.t('lti.no_platform') }
+      )
+    end
   end
 end

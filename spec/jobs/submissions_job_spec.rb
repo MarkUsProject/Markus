@@ -104,6 +104,16 @@ describe SubmissionsJob do
         g = groupings.first.reload
         expect(g.current_submission_used).to be_nil
       end
+
+      it 'stores the error in the job status' do
+        revision_id = revision_ids[groupings.first.id] + 'aaaaa'
+        job = SubmissionsJob.new(groupings[0...1], revision_identifier: revision_id)
+        expect { job.perform_now }.to raise_error(Repository::RevisionDoesNotExist)
+        expect(job.status.to_h).to include(
+          status: :failed,
+          exception: { class: 'Repository::RevisionDoesNotExist', message: 'Repository::RevisionDoesNotExist' }
+        )
+      end
     end
   end
 
@@ -439,8 +449,7 @@ describe SubmissionsJob do
     end
   end
 
-  xcontext 'when applying a late penalty' do
-    # TODO: the following tests are failing on travis occasionally. Figure out why and re-enable them.
+  context 'when applying a late penalty' do
     before do
       create(:period, submission_rule: submission_rule, hours: 2)
       groupings.each do |g|
@@ -454,7 +463,7 @@ describe SubmissionsJob do
 
       before do
         groupings.each do |g|
-          g.inviter_membership.user.update(grace_credits: 5)
+          g.inviter_membership.role.update(grace_credits: 5)
           create(:grace_period_deduction, membership: g.inviter_membership)
         end
       end
@@ -469,7 +478,7 @@ describe SubmissionsJob do
       it 'should add a deduction' do
         SubmissionsJob.perform_now(groupings, apply_late_penalty: true)
         groupings.each do |g|
-          expect(g.inviter_membership.user.reload.remaining_grace_credits).to eq 4
+          expect(g.inviter_membership.role.reload.remaining_grace_credits).to eq 4
         end
       end
     end

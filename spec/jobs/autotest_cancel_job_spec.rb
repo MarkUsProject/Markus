@@ -78,6 +78,15 @@ describe AutotestCancelJob do
       it 'should raise an error' do
         expect { subject }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
       end
+
+      it 'stores the error in the job status' do
+        job = AutotestCancelJob.new(assignment.id, test_run_ids)
+        expect { job.perform_now }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
+        expect(job.status.to_h).to include(
+          status: :failed,
+          exception: { class: 'RuntimeError', message: I18n.t('automated_tests.settings_not_setup') }
+        )
+      end
     end
   end
 end

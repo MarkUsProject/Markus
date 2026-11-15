@@ -1,22 +1,20 @@
-import React from "react";
 import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import CreateTagModal from "../Modals/create_tag_modal";
 import Modal from "react-modal";
 import fetchMock from "jest-fetch-mock";
-import {ResultContext} from "../Result/result_context";
 import {DEFAULT_RESULT_CONTEXT_VALUE, renderInResultContext} from "./result_context_renderer";
 
 describe("CreateTagModal", () => {
   let props;
-  let component;
   let mockToken;
-  let tagName;
+  let csrfToken;
 
   beforeAll(() => {
     mockToken = "mockToken";
-    document.querySelector = jest.fn(() => ({
-      content: mockToken, // Return a mock value for the content property
-    }));
+    csrfToken = document.createElement("meta");
+    csrfToken.name = "csrf-token";
+    csrfToken.content = mockToken;
+    document.head.appendChild(csrfToken);
   });
 
   beforeEach(() => {
@@ -28,23 +26,29 @@ describe("CreateTagModal", () => {
     // Set the app element for React Modal
     Modal.setAppElement("body");
 
-    component = renderInResultContext(<CreateTagModal {...props} />, {role: "Student"});
-
-    // Enable submit
-    tagName = "Name";
-    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: tagName}});
+    renderInResultContext(<CreateTagModal {...props} />, {role: "Student"});
   });
 
   afterEach(() => {
     fetchMock.resetMocks();
+    jest.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    csrfToken.remove();
   });
 
   it("should be called with correct params on successful submit", async () => {
+    const tagName = "Name";
+    const tagDescription = "Description";
     fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: tagName}});
+    fireEvent.change(screen.getByTestId("tag_description_input"), {
+      target: {value: tagDescription},
+    });
     const data = {
       tag: {
         name: tagName,
-        description: "",
+        description: tagDescription,
       },
       grouping_id: DEFAULT_RESULT_CONTEXT_VALUE.grouping_id,
     };
@@ -65,6 +69,7 @@ describe("CreateTagModal", () => {
       expect(req.method).toBe(options.method);
       expect(req.headers.get("Content-Type")).toEqual(options.headers["Content-Type"]);
       expect(req.headers.get("X-CSRF-Token")).toEqual(options.headers["X-CSRF-Token"]);
+      expect(await req.json()).toEqual(data);
 
       return JSON.stringify({status: "success"});
     });
@@ -76,9 +81,24 @@ describe("CreateTagModal", () => {
   });
 
   it("should call onRequestClose on successful submit", async () => {
+    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: "Name"}});
     fireEvent.click(screen.getByText(I18n.t("save")));
     await waitFor(() => {
       expect(props.onRequestClose).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should clear both inputs after submitting", async () => {
+    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: "Name"}});
+    fireEvent.change(screen.getByTestId("tag_description_input"), {
+      target: {value: "Description"},
+    });
+
+    fireEvent.click(screen.getByText(I18n.t("save")));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tag_name_input")).toHaveValue("");
+      expect(screen.getByTestId("tag_description_input")).toHaveValue("");
     });
   });
 
@@ -87,6 +107,7 @@ describe("CreateTagModal", () => {
     customError.message = "msg";
     fetchMock.mockRejectOnce(customError);
     const mockedConsoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
+    fireEvent.change(screen.getByTestId("tag_name_input"), {target: {value: "Name"}});
     fireEvent.click(screen.getByText(I18n.t("save")));
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);

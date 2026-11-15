@@ -32,74 +32,67 @@ describe Role do
   end
 
   context 'The repository permissions file' do
+    include_context 'without enqueue deduplication'
+
     context 'should be upated' do
       it 'when creating an instructor' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        create(:instructor)
+        expect { create(:instructor) }.to have_enqueued_job(UpdateRepoPermissionsJob).once
       end
 
       it 'when destroying an instructor' do
         instructor = create(:instructor)
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        instructor.destroy
+        expect { instructor.destroy }.to have_enqueued_job(UpdateRepoPermissionsJob).once
       end
 
       context 'when updating the hidden status' do
         it 'for a single instructor' do
           instructor = create(:instructor)
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          instructor.update(hidden: true)
+          expect { instructor.update(hidden: true) }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'for a single ta' do
           grader = create(:ta)
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          grader.update(hidden: true)
+          expect { grader.update(hidden: true) }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'for a single student' do
           student = create(:student)
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          student.update(hidden: true)
+          expect { student.update(hidden: true) }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'after bulk hiding students' do
           student1 = create(:student)
           student2 = create(:student)
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Student.hide_students([student1.id, student2.id])
+          expect { Student.hide_students([student1.id, student2.id]) }
+            .to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'after bulk unhiding students' do
           student1 = create(:student, hidden: true)
           student2 = create(:student, hidden: true)
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Student.unhide_students([student1.id, student2.id])
+          expect { Student.unhide_students([student1.id, student2.id]) }
+            .to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
       end
     end
 
     context 'should not be updated' do
       it 'when creating a ta' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        create(:ta)
+        expect { create(:ta) }.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'when destroying a ta without memberships' do
         ta = create(:ta)
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        ta.destroy
+        expect { ta.destroy }.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'when creating a student' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        create(:student)
+        expect { create(:student) }.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'when destroying a student without memberships' do
         student = create(:student)
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        student.destroy
+        expect { student.destroy }.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
     end
   end

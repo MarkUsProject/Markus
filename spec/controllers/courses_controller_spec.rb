@@ -246,18 +246,19 @@ describe CoursesController do
 
         context 'updating the autotest_url' do
           it 'does not update the autotest_url as an instructor' do
-            expect(AutotestResetUrlJob).not_to receive(:perform_later)
-            put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            expect do
+              put_as instructor, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            end.not_to have_enqueued_job(AutotestResetUrlJob)
           end
 
           it 'does update the autotest_url as an admin' do
-            expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+            admin = create(:admin_role)
+            expect do
+              put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            end.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, *|
               expect(course_).to eq course
               expect(url).to eq 'http://example.com'
-              nil # mocked return value
-            end
-            put_as create(:admin_role), :update,
-                   params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+            end)
           end
         end
 
@@ -685,6 +686,18 @@ describe CoursesController do
         expect(LtiUser.count).to eq(1)
       end
     end
+
+    context 'with a deployment from another course' do
+      let!(:other_deployment) { create(:lti_deployment, course: create(:course)) }
+
+      it 'raises a not found error and keeps the deployment' do
+        expect do
+          delete_as instructor, :destroy_lti_deployment,
+                    params: { id: course.id, lti_deployment_id: other_deployment.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect(LtiDeployment.exists?(other_deployment.id)).to be true
+      end
+    end
   end
 
   describe 'get lti deployments' do
@@ -742,6 +755,18 @@ describe CoursesController do
       post_as instructor, :sync_roster,
               params: { id: course.id, lti_deployment_id: lti_deployment.id, include_students: 'true' }
       expect(response).to have_http_status :redirect
+    end
+
+    context 'with a deployment from another course' do
+      let!(:other_deployment) { create(:lti_deployment, course: create(:course)) }
+
+      it 'raises a not found error without enqueuing a job' do
+        expect do
+          post_as instructor, :sync_roster,
+                  params: { id: course.id, lti_deployment_id: other_deployment.id, include_students: 'true' }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect(LtiRosterSyncJob).not_to have_been_enqueued
+      end
     end
   end
 end

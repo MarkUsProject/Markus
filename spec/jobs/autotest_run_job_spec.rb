@@ -143,9 +143,12 @@ describe AutotestRunJob do
         end
       end
 
-      it 'should enqueue an AutotestResultsJob job' do
-        expect(AutotestResultsJob).to receive(:perform_later).once
-        subject
+      context 'when enqueuing results jobs' do
+        include_context 'without enqueue deduplication'
+
+        it 'should enqueue an AutotestResultsJob job' do
+          expect { subject }.to have_enqueued_job(AutotestResultsJob).once
+        end
       end
 
       it 'should send an api request to the autotester' do
@@ -339,6 +342,15 @@ describe AutotestRunJob do
     context 'tests are not set up' do
       it 'should raise an error' do
         expect { subject }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
+      end
+
+      it 'stores the error in the job status' do
+        job = AutotestRunJob.new(host_with_port, role.id, assignment.id, groups.map(&:id), collected: collected)
+        expect { job.perform_now }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
+        expect(job.status.to_h).to include(
+          status: :failed,
+          exception: { class: 'RuntimeError', message: I18n.t('automated_tests.settings_not_setup') }
+        )
       end
     end
 

@@ -16,6 +16,8 @@
 # Indexes
 #
 #  index_annotation_texts_on_annotation_category_id  (annotation_category_id)
+#  index_annotation_texts_on_creator_id              (creator_id)
+#  index_annotation_texts_on_last_editor_id          (last_editor_id)
 #
 # Foreign Keys
 #

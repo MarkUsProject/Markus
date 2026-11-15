@@ -11,6 +11,7 @@
 #  api_submit                       :boolean          default(FALSE), not null
 #  assign_graders_to_criteria       :boolean          default(FALSE), not null
 #  autotest_settings                :json
+#  display_average_to_students      :boolean          default(TRUE), not null
 #  display_grader_names_to_students :boolean          default(FALSE), not null
 #  display_median_to_students       :boolean          default(FALSE), not null
 #  duration                         :interval
@@ -53,6 +54,7 @@
 #
 #  index_assignment_properties_on_assessment_id                  (assessment_id) UNIQUE
 #  index_assignment_properties_on_default_starter_file_group_id  (default_starter_file_group_id)
+#  index_assignment_properties_on_remote_autotest_settings_id    (remote_autotest_settings_id)
 #
 # Foreign Keys
 #
@@ -77,6 +79,7 @@ class AssignmentProperties < ApplicationRecord
   validates :allow_web_submits, inclusion: { in: [true, false] }
   validates :vcs_submit, inclusion: { in: [true, false] }
   validates :display_grader_names_to_students, inclusion: { in: [true, false] }
+  validates :display_average_to_students, inclusion: { in: [true, false] }
   validates :display_median_to_students, inclusion: { in: [true, false] }
   validates :has_peer_review, inclusion: { in: [true, false] }
   validates :assign_graders_to_criteria, inclusion: { in: [true, false] }

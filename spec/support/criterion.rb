@@ -10,8 +10,8 @@ shared_examples 'a criterion' do
       let(:assignment) { create(:assignment) }
 
       it 'should trigger job' do
-        expect(UpdateResultsMarkingStatesJob).to receive(:perform_later).with(assignment.id, :incomplete)
-        create(criterion_factory_name, assignment: assignment)
+        expect { create(criterion_factory_name, assignment: assignment) }
+          .to have_enqueued_job(UpdateResultsMarkingStatesJob).with(assignment.id, :incomplete)
       end
     end
   end

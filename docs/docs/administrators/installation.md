@@ -177,11 +177,17 @@ RAILS_ENV=production ./bin/bundle exec rails assets:precompile
 
 ### Check your installation
 
-Once MarkUs is configured, run the following command as the `markus` user to check that the paths in your settings are accessible and that the dependencies needed by each enabled feature (for example, scanned exams and Jupyter notebook rendering) are installed:
+Once MarkUs is configured, run this command as the `markus` user:
 
 ```sh
 RAILS_ENV=production ./bin/bundle exec rails markus:check
 ```
+
+It checks that:
+
+- MarkUs can create and read files in the folders your settings name.
+- The database has run each migration in the code, and no others.
+- Each enabled feature, such as scanned exams or Jupyter notebook rendering, has the tools it uses.
 
 Each check is reported as `PASS`, `FAIL`, or `SKIP` (for features that are disabled in your settings), and failures include a suggestion for how to fix them. The command exits with a non-zero status if any check fails. We recommend running this command again after upgrading MarkUs or changing your settings.
 
@@ -195,6 +201,8 @@ Here are a few things to consider when setting up the configuration files for yo
 
 - If you have enabled [remote authentication](configuration.md#user-authentication-options) make sure that:
     - the user name value is forwarded in the request header as the "HTTP_X_FORWARDED_USER" key
+    - the web server always sets this header itself (for example with `RequestHeader set`) on every route it forwards to MarkUs, so a value sent by a client never reaches MarkUs
+    - MarkUs is only reachable through the web server (for example, puma listens on `127.0.0.1`), since a request sent to puma directly can set this header to any user name
     - authentication is optional: since MarkUs supports both local and remote authentication, we don't want to force a user to use the remote authentication option if they can also log in with the local option.
 
   For example, you might have the following snippet in your Apache config file when using [shibboleth](https://www.shibboleth.net/) for remote authentication, making all routes under '/' optionally protected by shibboleth authentication and forwarding the "user" variable from the shibboleth authentication to the header:

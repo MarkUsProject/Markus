@@ -18,6 +18,7 @@
 # Indexes
 #
 #  index_lti_deployments_on_course_id                        (course_id)
+#  index_lti_deployments_on_lms_course_id                    (lms_course_id)
 #  index_lti_deployments_on_lti_client_id_and_lms_course_id  (lti_client_id,lms_course_id) UNIQUE
 #
 # Foreign Keys

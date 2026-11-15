@@ -1,59 +1,46 @@
-import React from "react";
+import {useEffect, useState} from "react";
 import Modal from "react-modal";
 
-export default class CreateGroupModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      groupName: "",
-    };
-  }
+export default function CreateGroupModal({isOpen, onRequestClose, onSubmit}) {
+  const [groupName, setGroupName] = useState("");
 
-  componentDidMount() {
+  useEffect(() => {
     Modal.setAppElement("body");
-  }
+  }, []);
 
-  handleChange = event => {
-    this.setState({groupName: event.target.value});
+  const handleChange = event => {
+    setGroupName(event.target.value);
   };
 
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    if (!this.state.groupName) {
+    if (!groupName) {
       return;
     }
-    this.props.onSubmit(this.state.groupName);
-    this.setState({groupName: ""});
+    onSubmit(groupName);
+    setGroupName("");
   };
 
-  render() {
-    return (
-      <Modal
-        className="react-modal markus-dialog"
-        isOpen={this.props.isOpen}
-        onRequestClose={this.props.onRequestClose}
-        id="create_group_modal"
-      >
-        <h2>{I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}</h2>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor="groupName">{I18n.t("activerecord.models.group.one")}</label>
-          <input
-            id="groupName"
-            type="text"
-            value={this.state.groupName}
-            onChange={event => this.handleChange(event)}
-            autoFocus
-          />
-          <div className={"dialog-actions"}>
-            <button className="button" type="submit" disabled={!this.state.groupName}>
-              {I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}
-            </button>
-            <button className="button" type="reset" onClick={this.props.onRequestClose}>
-              {I18n.t("cancel")}
-            </button>
-          </div>
-        </form>
-      </Modal>
-    );
-  }
+  return (
+    <Modal
+      className="react-modal markus-dialog"
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      id="create_group_modal"
+    >
+      <h2>{I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="groupName">{I18n.t("activerecord.models.group.one")}</label>
+        <input id="groupName" type="text" value={groupName} onChange={handleChange} autoFocus />
+        <div className={"dialog-actions"}>
+          <button className="button" type="submit" disabled={!groupName}>
+            {I18n.t("helpers.submit.create", {model: I18n.t("activerecord.models.group.one")})}
+          </button>
+          <button className="button" type="reset" onClick={onRequestClose}>
+            {I18n.t("cancel")}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
 }

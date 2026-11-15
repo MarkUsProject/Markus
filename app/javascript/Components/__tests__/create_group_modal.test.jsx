@@ -19,7 +19,8 @@ describe("CreateGroupModal", () => {
 
   it("should add the correct group name on successful submit", async () => {
     const groupName = "Test Group";
-    fireEvent.change(screen.getByLabelText(I18n.t("activerecord.models.group.one")), {
+    const groupNameInput = screen.getByLabelText(I18n.t("activerecord.models.group.one"));
+    fireEvent.change(groupNameInput, {
       target: {value: groupName},
     });
 
@@ -34,6 +35,7 @@ describe("CreateGroupModal", () => {
     await waitFor(() => {
       expect(props.onSubmit).toHaveBeenCalledTimes(1);
       expect(props.onSubmit).toHaveBeenCalledWith(groupName);
+      expect(groupNameInput).toHaveValue("");
     });
   });
 

@@ -7,6 +7,18 @@ describe UpdateRepoMaxFileSizeJob do
     it_behaves_like 'background job'
   end
 
+  context 'when the course does not exist' do
+    let(:job) { UpdateRepoMaxFileSizeJob.new(-1) }
+
+    it 'stores the error in the job status' do
+      expect { job.perform_now }.to raise_error(ActiveRecord::RecordNotFound)
+      expect(job.status.to_h).to include(
+        status: :failed,
+        exception: { class: 'ActiveRecord::RecordNotFound', message: "Couldn't find Course with 'id'=-1" }
+      )
+    end
+  end
+
   context 'updating required files' do
     before do
       allow(Settings.repository).to receive(:type).and_return('git')

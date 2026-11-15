@@ -22,6 +22,7 @@ class InstallationCheck
   def run
     check_paths
     check_logout_redirect
+    check_migrations
     check_feature('scanned_exams.enabled', Settings.scanned_exams.enabled) { check_scanned_exams }
     check_feature('nbconvert_enabled', Rails.application.config.nbconvert_enabled) { check_nbconvert }
     check_feature('rmd_convert_enabled', Rails.application.config.rmd_convert_enabled) do
@@ -78,6 +79,28 @@ class InstallationCheck
       failure "logout_redirect: #{logout_redirect} is invalid. Only 'DEFAULT', 'NONE' or a valid http:// " \
               'or https:// URL are valid values.'
     end
+  end
+
+  # Checks that the database has run exactly the migrations in this version of the code. The database has
+  # migrations the code lacks right after a code rollback, since rolling back the code keeps the newer schema.
+  def check_migrations
+    context = ActiveRecord::Base.connection_pool.migration_context
+    code_versions = context.migrations.map(&:version)
+    db_versions = context.get_all_versions
+    pending = code_versions - db_versions
+    unknown = db_versions - code_versions
+    if pending.any?
+      failure "migrations: #{pending.size} pending #{'migration'.pluralize(pending.size)}: #{pending.join(', ')}. " \
+              'To fix this, run: bundle exec rails db:migrate'
+    end
+    if unknown.any?
+      failure "migrations: #{unknown.size} #{'migration'.pluralize(unknown.size)} not in the code: " \
+              "#{unknown.join(', ')}. The database is ahead of the code, as after a code rollback. " \
+              'To fix this, deploy the code that includes them'
+    end
+    pass "migrations: all #{code_versions.size} migrations have been run" if pending.empty? && unknown.empty?
+  rescue ActiveRecord::ActiveRecordError => e
+    failure "migrations: could not read the migration status: #{e.message}"
   end
 
   # Returns whether +url+ is a valid absolute http or https URL

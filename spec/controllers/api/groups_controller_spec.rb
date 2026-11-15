@@ -757,7 +757,7 @@ describe Api::GroupsController do
     end
 
     describe 'GET annotations' do
-      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:grouping) { create(:grouping, group: group, assignment: assignment) }
       let(:submission) { create(:version_used_submission, grouping: grouping) }
       let(:submission_file) { create(:submission_file, submission: submission) }
       let!(:annotation) { create(:text_annotation, submission_file: submission_file) }
@@ -770,7 +770,6 @@ describe Api::GroupsController do
 
       it_behaves_like 'for a different course'
       it 'should get annotations for the given group' do
-        skip 'fails on travis only'
         content = Hash.from_xml(response.body)
         expect(content.dig('annotations', 'annotation', 'content')).to eq annotation.annotation_text.content
       end

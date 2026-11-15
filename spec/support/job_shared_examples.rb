@@ -18,12 +18,6 @@ shared_examples 'background job' do
   it 'adds the job_class to status' do
     expect(job.status[:job_class]).to eq(described_class)
   end
-
-  xit 'stores the error message' do
-    # TODO: add a test that checks if the error message is stored in the job
-    #       status when an error is raised in the test. I am currently unaware
-    #       of a way to check this in a test environment.
-  end
 end
 
 shared_examples 'autotest jobs' do

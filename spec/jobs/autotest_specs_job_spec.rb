@@ -11,6 +11,9 @@ describe AutotestSpecsJob do
 
   context 'when running as a foreground job' do
     before do
+      # MARKUS_URL overrides host_with_port when set, so unset it here to keep these
+      # expectations independent of the developer's environment.
+      stub_const('ENV', ENV.to_h.except('MARKUS_URL'))
       allow_any_instance_of(AutotestSetting).to(
         receive(:send_request!).and_return(OpenStruct.new(body: { api_key: 'someapikey' }.to_json))
       )
@@ -96,6 +99,15 @@ describe AutotestSpecsJob do
 
         it 'raises with the invalid criterion name' do
           expect { subject }.to raise_error(/Unable to find a criterion with name/)
+        end
+
+        it 'stores the error in the job status' do
+          job = AutotestSpecsJob.new(host_with_port, assignment, bad_specs)
+          expect { job.perform_now }.to raise_error(/Unable to find a criterion with name/)
+          expect(job.status.to_h).to include(
+            status: :failed,
+            exception: { class: 'RuntimeError', message: a_string_including('nonexistent_criterion') }
+          )
         end
 
         it 'does not persist any test groups' do

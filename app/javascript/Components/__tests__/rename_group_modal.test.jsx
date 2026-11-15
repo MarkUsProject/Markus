@@ -14,12 +14,15 @@ describe("RenameGroupModal", () => {
     };
 
     Modal.setAppElement("body");
-    render(<RenameGroupModal {...props} />);
   });
 
   it("should rename the group on successful submit", async () => {
+    render(<RenameGroupModal {...props} />);
     const groupName = "new_group";
-    fireEvent.change(screen.getByLabelText(I18n.t("activerecord.attributes.group.group_name")), {
+    const groupNameInput = screen.getByLabelText(
+      I18n.t("activerecord.attributes.group.group_name")
+    );
+    fireEvent.change(groupNameInput, {
       target: {value: groupName},
     });
 
@@ -29,10 +32,12 @@ describe("RenameGroupModal", () => {
     await waitFor(() => {
       expect(props.onSubmit).toHaveBeenCalledTimes(1);
       expect(props.onSubmit).toHaveBeenCalledWith(groupName);
+      expect(groupNameInput).toHaveValue("");
     });
   });
 
   it("should call onRequestClose on successful call", async () => {
+    render(<RenameGroupModal {...props} />);
     fireEvent.click(screen.getByText(I18n.t("cancel")));
     await waitFor(() => {
       expect(props.onRequestClose).toHaveBeenCalledTimes(1);
@@ -40,6 +45,7 @@ describe("RenameGroupModal", () => {
   });
 
   it("should not add the new group when the inputted group name is empty", async () => {
+    render(<RenameGroupModal {...props} />);
     const renameGroupButton = screen.getByTestId("rename-submit-button");
     fireEvent.click(renameGroupButton);
 
@@ -48,21 +54,34 @@ describe("RenameGroupModal", () => {
     });
   });
 
-  it("should populate input with initialGroupName when modal opens", async () => {
+  it("should populate input with the selected group name each time the modal opens", () => {
     const propsWithInitialName = {
       isOpen: true,
       onRequestClose: jest.fn(),
       onSubmit: jest.fn(),
-      initialGroupName: "Original Group Name",
+      initialGroupName: "First Group Name",
     };
 
-    const {rerender} = render(<RenameGroupModal {...propsWithInitialName} isOpen={false} />);
-    rerender(<RenameGroupModal {...propsWithInitialName} isOpen={true} />);
+    const {rerender} = render(<RenameGroupModal {...propsWithInitialName} />);
+    expect(screen.getByDisplayValue("First Group Name")).toBeInTheDocument();
 
-    expect(screen.getByDisplayValue("Original Group Name")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(I18n.t("activerecord.attributes.group.group_name")), {
+      target: {value: "Unsaved First Group Name"},
+    });
+    rerender(<RenameGroupModal {...propsWithInitialName} isOpen={false} initialGroupName="" />);
+    rerender(
+      <RenameGroupModal
+        {...propsWithInitialName}
+        isOpen={true}
+        initialGroupName="Second Group Name"
+      />
+    );
+
+    expect(screen.getByDisplayValue("Second Group Name")).toBeInTheDocument();
   });
 
   it("should not submit when group name is empty", async () => {
+    render(<RenameGroupModal {...props} />);
     fireEvent.change(screen.getByLabelText(I18n.t("activerecord.attributes.group.group_name")), {
       target: {value: ""},
     });
