@@ -331,7 +331,7 @@ jobs:
         with:
           ruby-version: ruby-3.4
       - name: Run brakeman with reviewdog
-        uses: reviewdog/action-brakeman@v2.19.2
+        uses: reviewdog/action-brakeman@v2.21.0
         with:
           brakeman_version: gemfile
           reporter: github-pr-check
