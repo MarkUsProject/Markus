@@ -817,9 +817,15 @@ class SubmissionsController < ApplicationController
     end
 
     if is_review
-      results = Result.joins(:peer_reviews).where('peer_reviews.id': params[:peer_reviews])
+      results = Result.where(id: assignment.pr_peer_reviews.where(id: params[:peer_reviews]).select(:result_id))
     else
       results = assignment.current_results.where('groupings.id': params[:groupings])
+    end
+
+    unless grades_all_results?(results)
+      flash_now(:error, t('action_policy.policy.result.grade?'))
+      head :forbidden
+      return
     end
 
     errors = Hash.new { |h, k| h[k] = [] }
@@ -876,6 +882,16 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+  # Whether the current role grades every result in +results+, as ResultPolicy#grade? would decide for each one.
+  # Uses two count queries for the whole set, in place of one policy check per result.
+  def grades_all_results?(results)
+    return true if allowed_to?(:manage_submissions?, current_role)
+    return false unless current_role.ta?
+
+    graded = results.joins(grouping: :ta_memberships).where('memberships.role_id': current_role.id)
+    graded.distinct.count(:id) == results.distinct.count(:id)
+  end
 
   def view_token_param
     if !record.nil?
