@@ -1,6 +1,8 @@
 require 'net/http'
 module LtiHelper
   USER_SYNC_ATTRIBUTES = %i[first_name last_name email id_number].freeze
+  # Stops a roster sync whose LMS keeps sending next page links.
+  MAX_ROSTER_PAGES = 1000
 
   # Synchronize LMS user with MarkUs users.
   # if role is not nil, attempt to create users
@@ -22,9 +24,12 @@ module LtiHelper
       membership_uri.query = URI.encode_www_form(query)
     end
     member_info, follow = get_member_data(lti_deployment, membership_uri, auth_data)
-    while follow != false
+    pages = 1
+    while follow
+      raise I18n.t('lti.roster_sync_too_many_pages', max: MAX_ROSTER_PAGES) if pages >= MAX_ROSTER_PAGES
       additional_data, follow = get_member_data(lti_deployment, follow, auth_data)
       member_info.concat(additional_data)
+      pages += 1
     end
     if member_info.blank?
       raise I18n.t('lti.no_users')
@@ -218,16 +223,17 @@ module LtiHelper
     req = Net::HTTP::Get.new(url)
     res = lti_deployment.send_lti_request!(req, url, auth_data, [LtiDeployment::LTI_SCOPES[:names_role]])
     member_info = JSON.parse(res.body)
-    links = res['link']
-    unless links
-      return [member_info['members'], false]
-    end
-    split_links = links.split(',')
-    split_next = split_links.find { |link| link.include?('next') }
-    next_link = split_next&.split(';')&.[](0)&.tr('<>', '')&.strip
-    next_uri = URI(next_link) if next_link
-    follow_link = false
-    follow_link = next_uri if next_uri
-    [member_info['members'], follow_link]
+    next_link = res['link']&.split(',')&.find { |link| link.match?(/;\s*rel\s*=\s*["']?next\b/i) }
+    return [member_info['members'], false] if next_link.nil?
+
+    next_uri = URI(next_link.split(';').first.tr('<>', '').strip)
+    raise I18n.t('lti.roster_sync_invalid_next_link') unless same_lms_origin?(url, next_uri)
+
+    [member_info['members'], next_uri]
+  end
+
+  # True when both URIs share a scheme, host and port, so a request to +other+ stays on the LMS.
+  def same_lms_origin?(uri, other)
+    uri.scheme == other.scheme && uri.host&.downcase == other.host&.downcase && uri.port == other.port
   end
 end
