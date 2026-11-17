@@ -4,6 +4,7 @@
 
 ### 🛡️ Security
 - Limited LTI roster sync to roster pages on the LMS host, and stopped it after 1000 pages (#8285)
+- Restricted graders to setting the marking state of the groups they grade, and limited peer review marking states to the current assignment (#8267)
 - Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
 - Ignored the remote authentication header when remote authentication is not configured (#8269)
 - Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)
