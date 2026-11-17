@@ -292,7 +292,8 @@ class SubmissionsController < ApplicationController
       next unless g.has_non_empty_submission?
 
       submission = g.current_submission_used
-      unless flash_allowance(:error, allowance_to(:run_tests?, current_role, context: { submission: submission })).value
+      allowance = allowance_to(:run_tests?, current_role, context: { grouping: g, submission: submission })
+      unless flash_allowance(:error, allowance).value
         head :bad_request
         return
       end
