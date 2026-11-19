@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Limited LTI roster and grade sync requests to hosts in the `lti.domains` setting (#8286)
 - Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
 - Limited LTI roster sync to roster pages on the LMS host, and stopped it after 1000 pages (#8285)
 - Restricted graders to setting the marking state of the groups they grade, and limited peer review marking states to the current assignment (#8267)
