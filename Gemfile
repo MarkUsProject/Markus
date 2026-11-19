@@ -27,6 +27,9 @@ gem 'resque-scheduler'
 gem 'action_policy'
 gem 'rack-cors'
 
+# Throttling
+gem 'rack-attack', '~> 6.8'
+
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
 gem 'histogram'
