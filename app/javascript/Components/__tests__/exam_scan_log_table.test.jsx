@@ -69,7 +69,7 @@ function scanRow(filename) {
 async function renderLogs(data = scanLogs) {
   fetch.mockResponseOnce(JSON.stringify(data));
   const result = render(<ExamScanLogTable course_id={7} assignment_id={9} />);
-  await waitForElementToBeRemoved(() => screen.queryByLabelText("grid-loading"));
+  await waitForElementToBeRemoved(() => screen.queryByLabelText(I18n.t("working")));
   return result;
 }
 
@@ -109,20 +109,20 @@ describe("ExamScanLogTable", () => {
     render(<ExamScanLogTable course_id={7} assignment_id={9} />);
 
     expect(await screen.findByText(I18n.t("table.no_data"))).toBeInTheDocument();
-    expect(screen.queryByLabelText("grid-loading")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(I18n.t("working"))).not.toBeInTheDocument();
   });
 
   it("loads the assignment's scan logs and shows a loading indicator until they arrive", async () => {
     fetch.mockResponseOnce(JSON.stringify(scanLogs));
     render(<ExamScanLogTable course_id={7} assignment_id={9} />);
 
-    expect(screen.getByLabelText("grid-loading")).toBeInTheDocument();
+    expect(screen.getByLabelText(I18n.t("working"))).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledWith(
       Routes.view_logs_course_assignment_exam_templates_path(7, 9),
       {headers: {Accept: "application/json"}}
     );
     await screen.findByRole("link", {name: "final-scan.pdf"});
-    expect(screen.queryByLabelText("grid-loading")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(I18n.t("working"))).not.toBeInTheDocument();
   });
 
   it("keeps the grouped headers and sorts dates newest first, then toggles to oldest first", async () => {

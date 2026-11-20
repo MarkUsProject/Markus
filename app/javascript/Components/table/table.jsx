@@ -24,6 +24,7 @@ const columnHelper = createColumnHelper();
 export const SELECTION_COLUMN_ID = "select";
 const FILTER_VARIANT_SELECT = "select";
 const VIRTUALIZATION_THRESHOLD = 50;
+const STATUS_MESSAGE_DELAY = 500;
 
 // A cell's id, unique across all tables on the page
 export const getCellId = cell => `${cell.getContext().table.options.meta.tableId}-${cell.id}`;
@@ -35,15 +36,18 @@ export const expanderColumn = columnHelper.display({
   maxSize: 30,
   cell: ({row}) => {
     const icon = row.getIsExpanded() ? "fa-chevron-up" : "fa-chevron-down";
-    const title = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
+    const label = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
     return row.getCanExpand() ? (
-      <div
+      <button
+        type="button"
         className={`rt-expandable ${row.getIsExpanded() ? "-open" : ""}`}
         onClick={row.getToggleExpandedHandler()}
+        aria-expanded={row.getIsExpanded()}
+        aria-label={label}
         data-testid="expander-button"
       >
-        <FontAwesomeIcon icon={icon} title={title} />
-      </div>
+        <FontAwesomeIcon icon={icon} />
+      </button>
     ) : null;
   },
 });
@@ -222,6 +226,31 @@ export default function Table({
   const headerGroups = table.getHeaderGroups();
   const headerRowCount = headerGroups.length + (showFilters ? 1 : 0);
 
+  // Counts the rows shown before any are expanded, so a grouped table counts its groups
+  const rowCount = table.getPreExpandedRowModel().rows.length;
+  const [statusMessage, setStatusMessage] = React.useState("");
+  const hasLoaded = React.useRef(false);
+
+  // Tells screen readers when the table is loading and how many rows it shows after a change.
+  // The first load is not announced, so that pages with several tables stay quiet when they open.
+  React.useEffect(() => {
+    if (!hasLoaded.current) {
+      hasLoaded.current = !loading;
+      return;
+    }
+    if (loading) {
+      setStatusMessage(I18n.t("working"));
+      return;
+    }
+    // Cleared first, so that the same count is announced again after a filter change
+    setStatusMessage("");
+    const timeout = setTimeout(
+      () => setStatusMessage(I18n.t("table.row_count", {count: rowCount})),
+      STATUS_MESSAGE_DELAY
+    );
+    return () => clearTimeout(timeout);
+  }, [loading, rowCount, columnFilters]);
+
   const renderRow = (row, index) => (
     <TableRow
       row={row}
@@ -285,12 +314,33 @@ export default function Table({
     </div>
   );
 
+  const loadingSpinner = (
+    <Grid
+      visible={true}
+      height="25"
+      width="25"
+      color="#31649B"
+      ariaLabel={I18n.t("working")}
+      radius="12.5"
+      wrapperStyle={{}}
+      wrapperClass="grid-wrapper"
+    />
+  );
+
   return (
     <div
       className={`Table -highlight${showRowNumbers ? " -show-row-numbers" : ""}`}
       style={{maxHeight: "500px"}}
     >
-      <div className="rt-table" role="grid" aria-rowcount={headerRowCount + rows.length}>
+      <div
+        className="rt-table"
+        role="grid"
+        // An empty table has one row, which holds the no data message or the loading spinner
+        aria-rowcount={headerRowCount + (rows.length || 1)}
+        // Only rows that are being reloaded are marked busy, so that the spinner in an empty
+        // table is not hidden from screen readers that skip busy content
+        aria-busy={(loading && rows.length > 0) || undefined}
+      >
         {tableHeaders}
         {tableFilters}
         <div
@@ -307,50 +357,38 @@ export default function Table({
           {bottomSpacerHeight > 0 && (
             <div aria-hidden="true" style={{flex: `0 0 ${bottomSpacerHeight}px`}} />
           )}
-          {loading && rows.length > 0 && (
-            <div
-              className="loading-spinner"
-              style={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: "auto",
-                backgroundColor: "#fff",
-                zIndex: 10,
-                border: "solid 1px rgba(0, 0, 0, 0.05)",
-              }}
-            >
-              <Grid
-                visible={true}
-                height="25"
-                width="25"
-                color="#31649B"
-                ariaLabel="grid-loading"
-                radius="12.5"
-                wrapperStyle={{}}
-                wrapperClass="grid-wrapper"
-              />
+          {!rows.length && (
+            <div role="row" aria-rowindex={headerRowCount + 1}>
+              <div role="gridcell" aria-colspan={table.getVisibleLeafColumns().length || undefined}>
+                {loading ? (
+                  <div className="loading-spinner">{loadingSpinner}</div>
+                ) : (
+                  <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
+                )}
+              </div>
             </div>
           )}
-          {!rows.length &&
-            (loading ? (
-              <div className="loading-spinner">
-                <Grid
-                  visible={true}
-                  height="25"
-                  width="25"
-                  color="#31649B"
-                  ariaLabel="grid-loading"
-                  radius="12.5"
-                  wrapperStyle={{}}
-                  wrapperClass="grid-wrapper"
-                />
-              </div>
-            ) : (
-              <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
-            ))}
         </div>
+      </div>
+      {loading && rows.length > 0 && (
+        <div
+          className="loading-spinner"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "auto",
+            backgroundColor: "#fff",
+            zIndex: 10,
+            border: "solid 1px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          {loadingSpinner}
+        </div>
+      )}
+      <div className="visually-hidden" role="status">
+        {statusMessage}
       </div>
     </div>
   );
