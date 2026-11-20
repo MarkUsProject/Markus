@@ -524,6 +524,19 @@ describe("tests for the table component", () => {
         mockData().length
       );
     });
+
+    it("names each row's checkbox after its row header cell", () => {
+      const [firstColumn, ...otherColumns] = mockColumns();
+      const columns = [{...firstColumn, meta: {rowheader: true}}, ...otherColumns];
+      renderTable(columns, mockData(), null, {enableRowSelection: true});
+
+      expect(screen.getAllByRole("rowheader")).toHaveLength(mockData().length);
+      mockData().forEach(({col1}) =>
+        expect(
+          screen.getByRole("checkbox", {name: `${I18n.t("table.select_row")} ${col1}`})
+        ).toBeInTheDocument()
+      );
+    });
   });
 });
 

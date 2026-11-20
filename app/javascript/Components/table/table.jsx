@@ -25,6 +25,9 @@ export const SELECTION_COLUMN_ID = "select";
 const FILTER_VARIANT_SELECT = "select";
 const VIRTUALIZATION_THRESHOLD = 50;
 
+// A cell's id, unique across all tables on the page
+export const getCellId = cell => `${cell.getContext().table.options.meta.tableId}-${cell.id}`;
+
 export const expanderColumn = columnHelper.display({
   id: "expander",
   header: () => null,
@@ -73,17 +76,27 @@ export const selectionColumn = columnHelper.display({
   maxSize: 30,
   enableResizing: false,
   enableSorting: false,
-  cell: ({row}) => (
-    <div style={{textAlign: "center"}}>
-      <input
-        type="checkbox"
-        checked={row.getIsSelected()}
-        disabled={!row.getCanSelect()}
-        onChange={row.getToggleSelectedHandler()}
-        aria-label={I18n.t("table.select_row")}
-      />
-    </div>
-  ),
+  cell: ({row, cell}) => {
+    const checkboxId = `${getCellId(cell)}-checkbox`;
+    const rowHeaderIds = row
+      .getVisibleCells()
+      .filter(rowCell => rowCell.column.columnDef.meta?.rowheader)
+      .map(getCellId);
+    return (
+      <div style={{textAlign: "center"}}>
+        <input
+          id={checkboxId}
+          type="checkbox"
+          checked={row.getIsSelected()}
+          disabled={!row.getCanSelect()}
+          onChange={row.getToggleSelectedHandler()}
+          // Named "Select row" plus the text of the row's header cells, e.g. "Select row c5bennet"
+          aria-label={I18n.t("table.select_row")}
+          aria-labelledby={[checkboxId, ...rowHeaderIds].join(" ")}
+        />
+      </div>
+    );
+  },
 });
 
 export default function Table({
@@ -180,6 +193,7 @@ export default function Table({
     enableColumnResizing: true,
     enableRowSelection: enableRowSelection,
     columnResizeMode: "onChange",
+    meta: {tableId},
   });
 
   const centerTotalSize = table.getCenterTotalSize();

@@ -487,6 +487,7 @@ class GradersTable extends React.Component {
           },
           enableSorting: true,
           minSize: 90,
+          meta: {rowheader: true},
         }),
         columnHelper.accessor(
           row => {
@@ -679,6 +680,7 @@ class GroupsTable extends React.Component {
         minSize: 150,
         meta: {
           filterVariant: "case-sensitive-text",
+          rowheader: true,
         },
         filterFn: (row, columnId, filterValue) => {
           if (!filterValue) {
@@ -793,6 +795,7 @@ class CriteriaTable extends React.Component {
         columnHelper.accessor("name", {
           header: I18n.t("activerecord.attributes.criterion.name"),
           minSize: 150,
+          meta: {rowheader: true},
         }),
         columnHelper.accessor("graders", {
           header: I18n.t("activerecord.models.ta.other"),
