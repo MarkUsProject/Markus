@@ -25,7 +25,6 @@ function FilterCell({size, column, filterValue, facetedUniqueValues}) {
     <div
       className={`rt-th ${column.columnDef.meta?.headerClassName || ""}`}
       role="columnheader"
-      tabIndex="-1"
       style={{
         width: size,
         maxWidth: column.columnDef.maxSize || "none",
