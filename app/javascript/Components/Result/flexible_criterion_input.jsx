@@ -151,14 +151,6 @@ export default function FlexibleCriterionInput({
     }
   }, [active]);
 
-  // Auto-expand when this criterion becomes active. This only runs when `active` changes,
-  // so that an active criterion can still be collapsed manually.
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active]);
-
   useEffect(() => {
     if (active && inputRef.current && expanded) {
       // Focus at end of input

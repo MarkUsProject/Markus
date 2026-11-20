@@ -34,14 +34,6 @@ export default function CheckboxCriterionInput({
     }
   }, [active]);
 
-  // Auto-expand when this criterion becomes active. This only runs when `active` changes,
-  // so that an active criterion can still be collapsed manually.
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active]);
-
   useEffect(() => {
     if (!active) {
       yesInputRef.current?.blur();

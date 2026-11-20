@@ -107,6 +107,83 @@ describe("MarksPanel", () => {
 
     const firstCriterion = document.querySelector("#checkbox_criterion_67");
     expect(firstCriterion).toHaveClass("active-criterion");
+    expect(firstCriterion).toHaveClass("expanded");
+  });
+
+  it("collapses and expands criteria when their names are clicked, whether or not they are active", () => {
+    const props = {
+      ...basicProps,
+      assigned_criteria: null,
+      marks: [
+        {
+          criterion_type: "CheckboxCriterion",
+          id: 67,
+          name: "Criterion 1",
+          mark: 0,
+          max_mark: 1,
+          description: "testing",
+        },
+        {
+          criterion_type: "FlexibleCriterion",
+          id: 66,
+          name: "Criterion 2",
+          mark: 0,
+          max_mark: 2,
+          description: "testing",
+        },
+      ],
+      old_marks: {67: {}, 66: {}},
+    };
+
+    render(<MarksPanel {...props} />);
+
+    const firstCriterion = document.querySelector("#checkbox_criterion_67");
+    const secondCriterion = document.querySelector("#flexible_criterion_66");
+    expect(firstCriterion).toHaveClass("expanded");
+    expect(secondCriterion).toHaveClass("collapsed");
+
+    // Expand the second (inactive) criterion, which also makes it active
+    fireEvent.click(screen.getByText("Criterion 2"));
+    expect(secondCriterion).toHaveClass("active-criterion");
+    expect(secondCriterion).toHaveClass("expanded");
+
+    // Collapse the first criterion while it is not active
+    fireEvent.click(screen.getByText("Criterion 1"));
+    expect(firstCriterion).toHaveClass("active-criterion");
+    expect(firstCriterion).toHaveClass("collapsed");
+
+    // Collapse the first criterion again after expanding it while it is active
+    fireEvent.click(screen.getByText("Criterion 1"));
+    expect(firstCriterion).toHaveClass("expanded");
+    fireEvent.click(screen.getByText("Criterion 1"));
+    expect(firstCriterion).toHaveClass("collapsed");
+  });
+
+  it("collapses the active criterion when Collapse All is clicked", () => {
+    const props = {
+      ...basicProps,
+      assigned_criteria: null,
+      marks: [
+        {
+          criterion_type: "CheckboxCriterion",
+          id: 67,
+          name: "Criterion 1",
+          mark: 0,
+          max_mark: 1,
+          description: "testing",
+        },
+      ],
+      old_marks: {67: {}},
+    };
+
+    render(<MarksPanel {...props} />);
+
+    const firstCriterion = document.querySelector("#checkbox_criterion_67");
+    expect(firstCriterion).toHaveClass("active-criterion");
+    expect(firstCriterion).toHaveClass("expanded");
+
+    fireEvent.click(screen.getByText(I18n.t("results.collapse_all")));
+    expect(firstCriterion).toHaveClass("collapsed");
   });
 
   it("changes active criterion when clicked", () => {
@@ -180,6 +257,7 @@ describe("MarksPanel", () => {
     const secondCriterion = document.querySelector("#flexible_criterion_66");
 
     expect(firstCriterion).toHaveClass("active-criterion");
+    expect(secondCriterion).toHaveClass("collapsed");
 
     // Dispatch to the focused input (radio button auto-focused by CheckboxCriterionInput).
     // This goes through Mousetrap's stopCallback, which must be patched (via jest_after_env_setup.js)
@@ -194,6 +272,8 @@ describe("MarksPanel", () => {
     await waitFor(() => {
       expect(firstCriterion).not.toHaveClass("active-criterion");
       expect(secondCriterion).toHaveClass("active-criterion");
+      // Navigating to a criterion with the keyboard expands it
+      expect(secondCriterion).toHaveClass("expanded");
     });
   });
 
@@ -344,15 +424,11 @@ describe("CheckboxCriterionInput", () => {
     expect(deleteLinks.length).toBeGreaterThan(0);
   });
 
-  it("auto-expands when active prop changes", () => {
+  it("does not expand itself when it becomes active", () => {
     const {rerender} = render(<CheckboxCriterionInput {...basicProps} active={false} />);
 
-    // Initially not active & not expanded
-    expect(basicProps.expanded).toBe(false);
-
-    // Make component active
     rerender(<CheckboxCriterionInput {...basicProps} active={true} />);
-    expect(basicProps.expanded).toBe(true);
+    expect(basicProps.toggleExpanded).not.toHaveBeenCalled();
   });
 
   it("does not re-expand when collapsed while active", () => {
@@ -627,17 +703,12 @@ describe("FlexibleCriterionInput", () => {
     expect(input.value).toBe("");
   });
 
-  it("auto-expands when becoming active while collapsed", () => {
+  it("does not expand itself when it becomes active", () => {
     const props = {...basicProps, expanded: false, active: false};
     const {rerender} = render(<FlexibleCriterionInput {...props} />);
 
-    expect(basicProps.expanded).toBe(false);
-
-    // Make component active
     rerender(<FlexibleCriterionInput {...{...props, active: true}} />);
-
-    expect(basicProps.toggleExpanded).toHaveBeenCalled();
-    expect(basicProps.expanded).toBe(true);
+    expect(basicProps.toggleExpanded).not.toHaveBeenCalled();
   });
 
   it("does not re-expand when collapsed while active", () => {
@@ -825,15 +896,11 @@ describe("RubricCriterionInput", () => {
     expect(descriptions).toHaveLength(2);
   });
 
-  it("auto-expands when active becomes true", () => {
+  it("does not expand itself when it becomes active", () => {
     const {rerender} = render(<RubricCriterionInput {...basicProps} active={false} />);
 
-    // Initially not active & not expanded
-    expect(basicProps.expanded).toBe(false);
-
-    // Make component active
     rerender(<RubricCriterionInput {...basicProps} active={true} />);
-    expect(basicProps.expanded).toBe(true);
+    expect(basicProps.toggleExpanded).not.toHaveBeenCalled();
   });
 
   it("does not re-expand when collapsed while active", () => {

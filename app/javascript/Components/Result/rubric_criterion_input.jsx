@@ -129,14 +129,6 @@ export default function RubricCriterionInput({
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
 
-  // Auto-expand when this criterion becomes active. This only runs when `active` changes,
-  // so that an active criterion can still be collapsed manually.
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active]);
-
   return (
     <li
       ref={liRef}
