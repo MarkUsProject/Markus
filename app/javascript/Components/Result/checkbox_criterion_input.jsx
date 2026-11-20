@@ -41,11 +41,6 @@ export default function CheckboxCriterionInput({
       return;
     }
 
-    // Auto-expand if not already
-    if (!expanded) {
-      toggleExpanded();
-    }
-
     // Focus the checked input OR the first input if none is checked
     let inputToFocus = null;
     if (mark === max_mark && yesInputRef.current) {
