@@ -99,6 +99,9 @@ en:
     case_sensitive_search: Match case
     hide_details: Hide details
     no_data: No rows found
+    row_count:
+      one: 1 row
+      other: "%{count} rows"
     search: Search
     select_all_rows: Select all rows
     select_row: Select row
