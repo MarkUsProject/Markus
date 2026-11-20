@@ -57,6 +57,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Migrated the annotation table on the result page to `@tanstack/react-table` v8 (#8311)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
 - Migrated the three scanned exam log tables to `@tanstack/react-table` v8 (#8262)
