@@ -67,6 +67,7 @@ export const selectionColumn = columnHelper.display({
           type="checkbox"
           checked={table.getIsAllRowsSelected()}
           onChange={table.getToggleAllRowsSelectedHandler()}
+          aria-label={I18n.t("table.select_all_rows")}
         />
       </div>
     );
@@ -82,6 +83,7 @@ export const selectionColumn = columnHelper.display({
         checked={row.getIsSelected()}
         disabled={!row.getCanSelect()}
         onChange={row.getToggleSelectedHandler()}
+        aria-label={I18n.t("table.select_row")}
       />
     </div>
   ),
@@ -104,6 +106,7 @@ export default function Table({
   onRowSelectionChange,
   showRowNumbers = false,
 }) {
+  const tableId = React.useId();
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState({
@@ -233,6 +236,7 @@ export default function Table({
           {headerGroup.headers.map(header => (
             <TableHeaderCell
               key={header.id}
+              id={`${tableId}-${header.id}`}
               header={header}
               size={header.getSize()}
               isSorted={header.column.getIsSorted()}
@@ -254,6 +258,8 @@ export default function Table({
         {filterColumns.map(column => (
           <FilterCell
             key={column.id}
+            // A leaf column's header in the bottom header row has the column's id as its id
+            headerId={`${tableId}-${column.id}`}
             size={column.getSize()}
             column={column}
             filterValue={column.getFilterValue()}
