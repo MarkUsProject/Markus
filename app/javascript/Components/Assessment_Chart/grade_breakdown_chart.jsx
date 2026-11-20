@@ -38,6 +38,7 @@ export class GradeBreakdownChart extends React.Component {
         <div className="flex-row-expand">
           <div className="grade-breakdown-summary-table">
             <Table
+              label={this.props.chart_title}
               data={this.props.summary}
               columns={columns}
               initialState={{

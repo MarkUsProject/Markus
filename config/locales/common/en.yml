@@ -104,6 +104,7 @@ en:
       other: "%{count} rows"
     search: Search
     show_details: Show details
+    status_with_label: "%{label}: %{status}"
   to: to
   working: Loading
   write: Write

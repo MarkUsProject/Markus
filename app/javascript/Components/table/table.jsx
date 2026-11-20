@@ -88,6 +88,7 @@ export const selectionColumn = columnHelper.display({
 export default function Table({
   columns,
   data,
+  label,
   noDataText,
   initialState,
   loading,
@@ -231,6 +232,13 @@ export default function Table({
     return () => clearTimeout(timeout);
   }, [loading, rowCount, columnFilters]);
 
+  // Starts each message with the table's label, so that pages with several tables say which one
+  // the message is about
+  const labelledStatusMessage =
+    statusMessage && label
+      ? I18n.t("table.status_with_label", {label, status: statusMessage})
+      : statusMessage;
+
   const renderRow = (row, index) => (
     <TableRow
       row={row}
@@ -312,6 +320,7 @@ export default function Table({
       <div
         className="rt-table"
         role="grid"
+        aria-label={label}
         // An empty table has one row, which holds the no data message or the loading spinner
         aria-rowcount={headerRowCount + (rows.length || 1)}
         // Only rows that are being reloaded are marked busy, so that the spinner in an empty
@@ -365,7 +374,7 @@ export default function Table({
         </div>
       )}
       <div className="visually-hidden" role="status">
-        {statusMessage}
+        {labelledStatusMessage}
       </div>
     </div>
   );
