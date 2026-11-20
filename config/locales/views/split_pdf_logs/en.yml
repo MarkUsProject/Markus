@@ -1,6 +1,7 @@
 ---
 en:
   split_pdf_logs:
+    exam_page_number: Exam page number
     file_information: File information
     incomplete_papers_found: Incomplete papers found
     missing_pages: Missing page numbers
@@ -9,3 +10,5 @@ en:
     pages_fixed: Number fixed
     paper: Paper
     papers_found: Papers found
+    raw_page_number: Raw page number
+    status: Status
