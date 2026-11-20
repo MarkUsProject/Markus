@@ -2332,6 +2332,26 @@ describe ResultsController do
       it_behaves_like 'shared ta and instructor tests'
     end
 
+    describe '#run_tests' do
+      let(:ta) { create(:ta, course: course, run_tests: true) }
+      let(:assignment) { create(:assignment_with_test_groups_instructor_runnable) }
+      let(:params) { { course_id: course.id, id: incomplete_result.id } }
+
+      before do
+        assignment.update!(enable_test: true, remote_autotest_settings_id: 1)
+      end
+
+      it 'does not enqueue an AutotestRunJob for a group the TA does not grade' do
+        expect { post :run_tests, params: params }.not_to have_enqueued_job(AutotestRunJob)
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'enqueues an AutotestRunJob for a group the TA grades' do
+        create(:ta_membership, role: ta, grouping: grouping)
+        expect { post :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
+      end
+    end
+
     context 'when groups information is anonymized' do
       let(:data) { response.parsed_body }
 

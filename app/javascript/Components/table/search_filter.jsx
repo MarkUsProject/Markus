@@ -1,4 +1,7 @@
-export const defaultSearchPlaceholderText = () => I18n.t("table.search");
+export const defaultSearchPlaceholderText = (header = "") => {
+  const base = I18n.t("table.search");
+  return header ? `${base} ${header}` : base;
+};
 
 export default function SearchFilter({column, filterValue, headerId}) {
   const inputId = `${headerId}-filter`;

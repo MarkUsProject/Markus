@@ -1,11 +1,14 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {createColumnHelper} from "@tanstack/react-table";
 
-import ReactTable from "react-table";
+import Table from "./table/table";
 import {dateSort} from "./Helpers/table_helpers";
 
-class ExamScanLogTable extends React.Component {
+const columnHelper = createColumnHelper();
+
+export class ExamScanLogTable extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -41,92 +44,107 @@ class ExamScanLogTable extends React.Component {
   };
 
   columns = [
-    {
-      Header: I18n.t("split_pdf_logs.file_information"),
+    columnHelper.group({
+      id: "file_information",
+      header: I18n.t("split_pdf_logs.file_information"),
+      enableSorting: false,
       columns: [
-        {
-          Header: I18n.t("activerecord.attributes.split_pdf_log.exam_template"),
-          accessor: "exam_template",
-        },
-        {
-          Header: I18n.t("attributes.date"),
-          accessor: "date",
-          sortMethod: dateSort,
-          minWidth: 250,
-        },
-        {
-          Header: I18n.t("activerecord.attributes.split_pdf_log.filename"),
-          id: "filename",
-          Cell: row => {
+        columnHelper.accessor("exam_template", {
+          header: I18n.t("activerecord.attributes.split_pdf_log.exam_template"),
+          size: 100,
+        }),
+        columnHelper.accessor("date", {
+          header: I18n.t("attributes.date"),
+          sortingFn: (a, b, columnId) => dateSort(a.getValue(columnId), b.getValue(columnId)),
+          minSize: 250,
+        }),
+        columnHelper.accessor("filename", {
+          header: I18n.t("activerecord.attributes.split_pdf_log.filename"),
+          cell: ({row, getValue}) => {
             const path = Routes.download_raw_split_file_course_exam_template_path(
               this.props.course_id,
               row.original.exam_template_id,
               {split_pdf_log_id: row.original.file_id}
             );
-            return <a href={path}>{row.original.filename}</a>;
+            return <a href={path}>{getValue()}</a>;
           },
-          minWidth: 200,
-        },
+          minSize: 200,
+        }),
       ],
-    },
-    {
-      Header: I18n.t("split_pdf_logs.pages"),
+    }),
+    columnHelper.group({
+      id: "pages",
+      header: I18n.t("split_pdf_logs.pages"),
+      enableSorting: false,
       columns: [
-        {
-          Header: I18n.t("activerecord.attributes.split_pdf_log.original_num_pages"),
-          accessor: "original_num_pages",
-          className: "number",
-        },
-        {
-          Header: I18n.t("split_pdf_logs.pages_error"),
-          Cell: row => {
-            let errors = row.original.page_data.filter(p => p.status.startsWith("ERROR")).length;
-            if (errors > 0) {
-              return (
-                <span className={"error-with-icon"}>
-                  <FontAwesomeIcon icon="fa-solid fa-warning" className="icon-left" />
-                  {errors}
-                </span>
-              );
-            } else {
-              return <span></span>;
-            }
-          },
-          className: "number",
-        },
-        {
-          Header: I18n.t("split_pdf_logs.pages_fixed"),
-          Cell: row => row.original.page_data.filter(p => p.status === "FIXED").length,
-          className: "number",
-        },
+        columnHelper.accessor("original_num_pages", {
+          header: I18n.t("activerecord.attributes.split_pdf_log.original_num_pages"),
+          size: 100,
+          filterFn: "includesString",
+          meta: {className: "number"},
+        }),
+        columnHelper.accessor(
+          row => row.page_data.filter(p => p.status.startsWith("ERROR")).length,
+          {
+            id: "pages_error",
+            header: I18n.t("split_pdf_logs.pages_error"),
+            size: 100,
+            filterFn: "includesString",
+            cell: ({getValue}) => {
+              const errors = getValue();
+              if (errors > 0) {
+                return (
+                  <span className={"error-with-icon"}>
+                    <FontAwesomeIcon icon="fa-solid fa-warning" className="icon-left" />
+                    {errors}
+                  </span>
+                );
+              } else {
+                return <span></span>;
+              }
+            },
+            meta: {className: "number"},
+          }
+        ),
+        columnHelper.accessor(row => row.page_data.filter(p => p.status === "FIXED").length, {
+          id: "pages_fixed",
+          header: I18n.t("split_pdf_logs.pages_fixed"),
+          size: 100,
+          filterFn: "includesString",
+          meta: {className: "number"},
+        }),
       ],
-    },
-    {
-      Header: I18n.t("split_pdf_logs.papers_found"),
+    }),
+    columnHelper.group({
+      id: "papers_found",
+      header: I18n.t("split_pdf_logs.papers_found"),
+      enableSorting: false,
       columns: [
-        {
-          Header: I18n.t("submissions.state.complete"),
-          accessor: "num_groups_in_complete",
-          className: "number",
-        },
-        {
-          Header: I18n.t("submissions.state.incomplete"),
-          accessor: "num_groups_in_incomplete",
-          className: "number",
-        },
+        columnHelper.accessor("num_groups_in_complete", {
+          header: I18n.t("submissions.state.complete"),
+          size: 100,
+          filterFn: "includesString",
+          meta: {className: "number"},
+        }),
+        columnHelper.accessor("num_groups_in_incomplete", {
+          header: I18n.t("submissions.state.incomplete"),
+          size: 100,
+          filterFn: "includesString",
+          meta: {className: "number"},
+        }),
       ],
-    },
+    }),
   ];
 
   render() {
-    const {data} = this.state;
+    const {data = []} = this.state;
     return (
-      <ReactTable
+      <Table
         data={data}
         columns={this.columns}
-        filterable
-        defaultSorted={[{id: "date", desc: true}]}
-        SubComponent={row => (
+        initialState={{sorting: [{id: "date", desc: true}]}}
+        getRowCanExpand={() => true}
+        renderSubComponent={({row}) => (
           <div>
             <h4>{I18n.t("split_pdf_logs.pages_error")}</h4>
             <ExamScanErrorsTable
@@ -147,28 +165,24 @@ class ExamScanLogTable extends React.Component {
 }
 
 class ExamScanErrorsTable extends React.Component {
-  constructor() {
-    super();
-  }
-
   columns = [
-    {
-      Header: "Raw page number",
-      accessor: "raw_page_number",
-      maxWidth: 120,
-      className: "number",
-    },
-    {
-      Header: "Status",
-      accessor: "status",
-      className: "-wrap",
-      Cell: row => {
-        if (row.value === "FIXED") {
-          return row.value;
+    columnHelper.accessor("raw_page_number", {
+      header: I18n.t("split_pdf_logs.raw_page_number"),
+      maxSize: 120,
+      enableColumnFilter: false,
+      meta: {className: "number"},
+    }),
+    columnHelper.accessor("status", {
+      header: I18n.t("split_pdf_logs.status"),
+      enableColumnFilter: false,
+      meta: {className: "-wrap"},
+      cell: ({row, getValue}) => {
+        if (getValue() === "FIXED") {
+          return getValue();
         } else {
           return (
             <span>
-              {row.value}&nbsp; (
+              {getValue()}&nbsp; (
               <a
                 href={Routes.assign_errors_course_exam_template_path(
                   this.props.course_id,
@@ -186,53 +200,47 @@ class ExamScanErrorsTable extends React.Component {
           );
         }
       },
-    },
-    {
-      Header: I18n.t("activerecord.models.group.one"),
-      accessor: "group",
-      maxWidth: 150,
-    },
-    {
-      Header: "Exam page number",
-      accessor: "exam_page_number",
-      maxWidth: 120,
-      className: "number",
-    },
+    }),
+    columnHelper.accessor("group", {
+      header: I18n.t("activerecord.models.group.one"),
+      maxSize: 150,
+      enableColumnFilter: false,
+    }),
+    columnHelper.accessor("exam_page_number", {
+      header: I18n.t("split_pdf_logs.exam_page_number"),
+      maxSize: 120,
+      enableColumnFilter: false,
+      meta: {className: "number"},
+    }),
   ];
 
   render() {
     return (
-      <ReactTable
-        data={this.props.data}
-        columns={this.columns}
-        style={{maxWidth: "800px", marginTop: "5px", marginBottom: "5px"}}
-        minRows={1}
-      />
+      <div style={{maxWidth: "800px", marginTop: "5px", marginBottom: "5px"}}>
+        <Table data={this.props.data} columns={this.columns} />
+      </div>
     );
   }
 }
 
 class ExamScanGroupsTable extends React.Component {
   columns = [
-    {
-      Header: I18n.t("split_pdf_logs.paper"),
-      accessor: "group",
-    },
-    {
-      Header: I18n.t("split_pdf_logs.missing_pages"),
-      accessor: "missing_pages",
-      Cell: row => row.value.join(", "),
-    },
+    columnHelper.accessor("group", {
+      header: I18n.t("split_pdf_logs.paper"),
+      enableColumnFilter: false,
+    }),
+    columnHelper.accessor("missing_pages", {
+      header: I18n.t("split_pdf_logs.missing_pages"),
+      enableColumnFilter: false,
+      cell: ({getValue}) => getValue().join(", "),
+    }),
   ];
 
   render() {
     return (
-      <ReactTable
-        data={this.props.data}
-        columns={this.columns}
-        style={{maxWidth: "500px", marginTop: "5px", marginBottom: "5px"}}
-        minRows={1}
-      />
+      <div style={{maxWidth: "500px", marginTop: "5px", marginBottom: "5px"}}>
+        <Table data={this.props.data} columns={this.columns} />
+      </div>
     );
   }
 }

@@ -294,6 +294,65 @@ describe("tests for the table component", () => {
         expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(columns.length)
       );
     });
+
+    it("renders sortable column headers as buttons", () => {
+      const columns = [...mockColumns(), {id: "actions", header: "Actions", cell: () => null}];
+      columns[0].enableSorting = false;
+      renderTable(columns, mockData());
+
+      expect(screen.queryByRole("button", {name: columns[0].header})).not.toBeInTheDocument();
+      expect(screen.getByRole("button", {name: columns[1].header})).toBeInTheDocument();
+      // A display column has no accessor, so it can't be sorted
+      expect(screen.queryByRole("button", {name: "Actions"})).not.toBeInTheDocument();
+      expect(screen.getByRole("columnheader", {name: "Actions"})).not.toHaveClass(
+        "-cursor-pointer"
+      );
+    });
+
+    it("sorts with the keyboard", async () => {
+      const {table, columns, data} = renderTableWithMockData();
+      const header = columns[1].header;
+
+      await user.tab();
+      await user.tab();
+      expect(screen.getByRole("button", {name: header})).toHaveFocus();
+      await user.keyboard("{Enter}");
+      sortDataByKey(data, header, false);
+      expectRowsInTableInOrder(table, columns, data);
+
+      await user.keyboard(" ");
+      sortDataByKey(data, header, true);
+      expectRowsInTableInOrder(table, columns, data);
+    });
+
+    it("sets aria-sort on the header of the sorted column", async () => {
+      const {columns} = renderTableWithMockData();
+      const header = columns[0].header;
+      const columnHeader = screen.getByRole("columnheader", {name: header});
+
+      expect(columnHeader).not.toHaveAttribute("aria-sort");
+      await clickHeader(header);
+      expect(columnHeader).toHaveAttribute("aria-sort", "ascending");
+      await clickHeader(header);
+      expect(columnHeader).toHaveAttribute("aria-sort", "descending");
+    });
+
+    it("sets aria-sort only on the primary column when sorting by several columns", async () => {
+      const {columns} = renderTableWithMockData();
+
+      await clickHeader(columns[0].header);
+      await user.keyboard("{Shift>}");
+      await clickHeader(columns[1].header);
+      await user.keyboard("{/Shift}");
+
+      const secondHeader = screen.getByRole("columnheader", {name: columns[1].header});
+      expect(screen.getByRole("columnheader", {name: columns[0].header})).toHaveAttribute(
+        "aria-sort",
+        "ascending"
+      );
+      expect(secondHeader).toHaveClass("-sort-asc");
+      expect(secondHeader).not.toHaveAttribute("aria-sort");
+    });
   });
 
   describe("filtering", () => {
@@ -465,5 +524,37 @@ describe("tests for the table component", () => {
         mockData().length
       );
     });
+  });
+});
+
+describe("Table with grouped column headers", () => {
+  it("renders one filter row for the visible leaf columns and filters their data", async () => {
+    const user = userEvent.setup();
+    const columns = [
+      {id: "group", header: "Grouped columns", columns: mockColumns()},
+      {accessorKey: "col4", header: "Unfiltered", enableColumnFilter: false},
+    ];
+    const {table} = renderTable(columns, mockData(), null, {
+      initialState: {columnVisibility: {col2: false}},
+    });
+
+    expectTextInDocument("Grouped columns");
+    const filterRows = table.querySelectorAll(".rt-thead.-filters > .rt-tr");
+    expect(filterRows).toHaveLength(1);
+    expect(filterRows[0]).toHaveAttribute("aria-rowindex", "3");
+    expect(within(filterRows[0]).getAllByRole("columnheader")).toHaveLength(3);
+    expect(within(filterRows[0]).getAllByRole("textbox")).toHaveLength(1);
+    expect(within(filterRows[0]).getAllByRole("combobox")).toHaveLength(1);
+    expect(screen.queryByRole("textbox", {name: defaultSearchPlaceholderText("col2")})).toBeNull();
+
+    await user.type(
+      screen.getByRole("textbox", {name: defaultSearchPlaceholderText("col1")}),
+      "abc"
+    );
+    expectTextNotInDocument("a");
+    expectTextNotInDocument("ab");
+    expectTextInDocument("abc");
+    expectTextInDocument("abcd");
+    expect(screen.getByRole("grid")).toHaveAttribute("aria-rowcount", "5");
   });
 });

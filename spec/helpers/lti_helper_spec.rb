@@ -672,6 +672,120 @@ describe LtiHelper do
         end
       end
     end
+
+    context 'with a next page link' do
+      subject do
+        roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true, can_create_roles: true
+      end
+
+      let(:url) { lti_service_namesrole.url }
+      let(:missing_student) { create(:student, course: course) }
+
+      before do
+        create(:lti_user, user: missing_student.user, lti_client: lti_deployment.lti_client)
+        stub_request(:get, url).to_return(body: { members: [memberships[0]] }.to_json,
+                                          headers: { 'Link' => "<#{next_url}>; rel=\"next\"" })
+      end
+
+      shared_examples 'a rejected next link' do
+        it 'raises an error' do
+          expect { subject }.to raise_error(RuntimeError, I18n.t('lti.roster_sync_invalid_next_link'))
+        end
+
+        it 'does not request the next link' do
+          expect { subject }.to raise_error(RuntimeError)
+          expect(a_request(:get, next_url)).not_to have_been_made
+        end
+
+        it 'does not hide students missing from the partial roster' do
+          expect { subject }.to raise_error(RuntimeError)
+          expect(missing_student.reload.hidden).to be false
+        end
+      end
+
+      context 'when the link points to another host' do
+        let(:next_url) { 'http://169.254.169.254/latest/meta-data' }
+
+        it_behaves_like 'a rejected next link'
+      end
+
+      context 'when the link uses another scheme' do
+        let(:next_url) { url.sub(/\Ahttps:/, 'http:') }
+
+        it_behaves_like 'a rejected next link'
+      end
+
+      context 'when the link uses another port' do
+        let(:next_url) { URI(url).tap { |uri| uri.port = 6379 }.to_s }
+
+        it_behaves_like 'a rejected next link'
+      end
+
+      context 'when the link host is in upper case' do
+        let(:next_url) { URI(url).tap { |uri| uri.host = uri.host.upcase }.to_s }
+
+        # WebMock matches hosts in any case, so one stub serves both pages in turn.
+        before do
+          stub_request(:get, url).to_return({ body: { members: [memberships[0]] }.to_json,
+                                              headers: { 'Link' => "<#{next_url}>; rel=\"next\"" } },
+                                            { body: { members: [memberships[1]] }.to_json })
+        end
+
+        it 'follows the link' do
+          subject
+          expect(a_request(:get, url)).to have_been_made.twice
+        end
+      end
+
+      context 'when the link always points back to the same page' do
+        let(:next_url) { url }
+
+        before { stub_const('LtiHelper::MAX_ROSTER_PAGES', 3) }
+
+        it 'raises an error' do
+          expect { subject }.to raise_error(RuntimeError, I18n.t('lti.roster_sync_too_many_pages', max: 3))
+        end
+
+        it 'stops after the maximum number of pages' do
+          expect { subject }.to raise_error(RuntimeError)
+          expect(a_request(:get, url)).to have_been_made.times(3)
+        end
+      end
+    end
+
+    context 'when the LMS host contains "next"' do
+      subject do
+        roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true, can_create_roles: true
+      end
+
+      let(:url) { 'https://lms.nextu.example.com/api/names_and_roles' }
+      let(:links) { "<#{url}>; rel=\"current\", <#{url}?page=2>; rel=\"next\"" }
+
+      before do
+        allow(Settings.lti).to receive(:domains).and_return(%w[lms.nextu.example.com])
+        lti_service_namesrole.update!(url: url)
+        stub_request(:get, url).to_return(body: { members: [memberships[0]] }.to_json, headers: { 'Link' => links })
+        stub_request(:get, "#{url}?page=2").to_return(body: { members: [memberships[1]] }.to_json)
+      end
+
+      it 'follows the rel="next" link' do
+        subject
+        expect(a_request(:get, "#{url}?page=2")).to have_been_made.once
+      end
+    end
+
+    context 'when the names and roles service url is outside the LMS domains' do
+      subject { roster_sync lti_deployment, [LtiDeployment::LTI_ROLES[:learner]], can_create_users: true }
+
+      let(:outside_url) { 'https://outside.example.com/api/lti/courses/1/names_and_roles' }
+
+      before { lti_service_namesrole.update!(url: outside_url) }
+
+      it 'raises an error and sends no request' do
+        expect { subject }.to raise_error(LtiDeployment::UntrustedHostException)
+        expect(a_request(:any, outside_url)).not_to have_been_made
+      end
+    end
   end
 
   describe '#get_assignment_grades' do
@@ -867,6 +981,32 @@ describe LtiHelper do
         grade_sync(lti_deployment, assessment)
       end
     end
+
+    context 'when the line item url is outside the LMS domains' do
+      before do
+        LtiLineItem.find_by(assessment: assessment).update!(lti_line_item_id: 'https://outside.example.com/lineitems/1')
+        allow(lti_deployment).to receive(:send_lti_request!).and_call_original
+      end
+
+      it 'raises an error and sends no scores' do
+        expect { grade_sync(lti_deployment, assessment) }.to raise_error(LtiDeployment::UntrustedHostException)
+        expect(a_request(:any, /outside\.example\.com/)).not_to have_been_made
+      end
+    end
+  end
+
+  describe '#get_current_results' do
+    let(:line_item) { create(:lti_line_item, lti_deployment: lti_deployment) }
+    let(:auth_data) { { 'token_type' => 'Bearer', 'access_token' => 'access_token' } }
+
+    context 'when the line item url is outside the LMS domains' do
+      before { line_item.update!(lti_line_item_id: 'https://outside.example.com/lineitems/1') }
+
+      it 'raises an error and sends no request' do
+        expect { get_current_results(line_item, auth_data, [scope]) }.to raise_error(LtiDeployment::UntrustedHostException)
+        expect(a_request(:any, /outside\.example\.com/)).not_to have_been_made
+      end
+    end
   end
 
   describe '#create_or_update_lti_assessment' do
@@ -924,7 +1064,26 @@ describe LtiHelper do
     end
 
     context 'when a line item already exists' do
-      before { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
+      let!(:line_item) { create(:lti_line_item, lti_deployment: lti_deployment, assessment: assessment) }
+
+      it 'sends the PUT request to the line item url' do
+        expect(lti_deployment).to receive(:send_lti_request!)
+          .with(an_instance_of(Net::HTTP::Put), URI(line_item.lti_line_item_id), anything, anything)
+          .and_return(OpenStruct.new(body: { id: line_item.lti_line_item_id }.to_json))
+        subject
+      end
+
+      context 'when the line item url is outside the LMS domains' do
+        before do
+          line_item.update!(lti_line_item_id: 'https://outside.example.com/lineitems/1')
+          allow(lti_deployment).to receive(:send_lti_request!).and_call_original
+        end
+
+        it 'raises an error and sends no request' do
+          expect { subject }.to raise_error(LtiDeployment::UntrustedHostException)
+          expect(a_request(:any, /outside\.example\.com/)).not_to have_been_made
+        end
+      end
 
       it 'does not create a new line item' do
         expect { subject }.not_to(change { LtiLineItem.count })

@@ -155,9 +155,15 @@ describe ResultPolicy do
           context 'with test enabled' do
             let(:assignment) { create(:assignment, assignment_properties_attributes: { enable_test: true }) }
 
-            succeed 'when remote_autotest_settings exist' do
+            context 'when remote_autotest_settings exist' do
               before { assignment.update! remote_autotest_settings_id: 1 }
+
+              succeed 'when assigned to the grouping' do
+                before { create(:ta_membership, role: role, grouping: grouping) }
+              end
+              failed 'when not assigned to the grouping'
             end
+
             failed 'without test groups'
           end
         end

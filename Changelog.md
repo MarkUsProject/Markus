@@ -3,6 +3,12 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Limited LTI roster and grade sync requests to hosts in the `lti.domains` setting (#8286)
+- Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
+- Limited LTI roster sync to roster pages on the LMS host, and stopped it after 1000 pages (#8285)
+- Restricted graders to setting the marking state of the groups they grade, and limited peer review marking states to the current assignment (#8267)
+- Restricted graders to running tests on the groups they grade (#8266)
+- Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
 - Ignored the remote authentication header when remote authentication is not configured (#8269)
 - Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)
 - Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
@@ -13,6 +19,7 @@
 
 ### ✨ New features and improvements
 - Gave table filters and row selection checkboxes accessible names for screen readers (#8289)
+- Made sortable table columns keyboard accessible and announced their sort order to screen readers (#8287)
 - Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
 - Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
@@ -50,6 +57,7 @@
 ### 🔧 Internal changes
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
+- Migrated the three scanned exam log tables to `@tanstack/react-table` v8 (#8262)
 - Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
 - Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
 - Converted `CreateTagModal`, `EditTagModal`, `CreateGroupModal`, and `RenameGroupModal` to functional React components (#8232)
