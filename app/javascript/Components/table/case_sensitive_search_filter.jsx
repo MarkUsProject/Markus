@@ -1,15 +1,19 @@
 export const defaultSearchPlaceholderText = () => I18n.t("table.search");
 
-export default function CaseSensitiveSearchFilter({column, filterValue}) {
+export default function CaseSensitiveSearchFilter({column, filterValue, headerId}) {
+  const inputId = `${headerId}-filter`;
   let caseSensitive = filterValue?.caseSensitive ?? false;
   return (
     <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
       <input
+        id={inputId}
         placeholder={defaultSearchPlaceholderText()}
         type="text"
         style={{flex: 1, minWidth: 0}}
         value={filterValue?.value ?? ""}
-        aria-label={`${I18n.t("search")} ${column.columnDef.header || ""}`}
+        // Named "Search" followed by the header cell's text, e.g. "Search Group"
+        aria-label={I18n.t("search")}
+        aria-labelledby={`${inputId} ${headerId}`}
         onChange={event => {
           column.setFilterValue({
             value: event.target.value,
