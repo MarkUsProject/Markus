@@ -354,6 +354,17 @@ describe("CheckboxCriterionInput", () => {
     rerender(<CheckboxCriterionInput {...basicProps} active={true} />);
     expect(basicProps.expanded).toBe(true);
   });
+
+  it("does not re-expand when collapsed while active", () => {
+    const {rerender} = render(
+      <CheckboxCriterionInput {...basicProps} active={true} expanded={true} />
+    );
+    basicProps.toggleExpanded.mockClear();
+
+    // Collapse while still active (e.g., after selecting a mark or clicking "Collapse All")
+    rerender(<CheckboxCriterionInput {...basicProps} active={true} expanded={false} />);
+    expect(basicProps.toggleExpanded).not.toHaveBeenCalled();
+  });
   it("focuses the checked input when active or the first input if none checked", () => {
     // Case 1: First input (Yes) checked
     basicProps.mark = 1;
@@ -629,6 +640,16 @@ describe("FlexibleCriterionInput", () => {
     expect(basicProps.expanded).toBe(true);
   });
 
+  it("does not re-expand when collapsed while active", () => {
+    const {rerender} = render(
+      <FlexibleCriterionInput {...basicProps} active={true} expanded={true} />
+    );
+
+    // Collapse while still active (e.g., after entering a mark or clicking "Collapse All")
+    rerender(<FlexibleCriterionInput {...basicProps} active={true} expanded={false} />);
+    expect(basicProps.toggleExpanded).not.toHaveBeenCalled();
+  });
+
   it("does not focus input when active but not expanded", () => {
     const props = {...basicProps, expanded: false, active: false};
     const {rerender} = render(<FlexibleCriterionInput {...props} />);
@@ -813,6 +834,16 @@ describe("RubricCriterionInput", () => {
     // Make component active
     rerender(<RubricCriterionInput {...basicProps} active={true} />);
     expect(basicProps.expanded).toBe(true);
+  });
+
+  it("does not re-expand when collapsed while active", () => {
+    const {rerender} = render(
+      <RubricCriterionInput {...basicProps} active={true} expanded={true} />
+    );
+
+    // Collapse while still active (e.g., after selecting a level or clicking "Collapse All")
+    rerender(<RubricCriterionInput {...basicProps} active={true} expanded={false} />);
+    expect(basicProps.toggleExpanded).not.toHaveBeenCalled();
   });
 
   it("highlights the selected rubric level based on mark", () => {
