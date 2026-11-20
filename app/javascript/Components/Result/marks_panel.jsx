@@ -18,13 +18,22 @@ export class MarksPanel extends React.Component {
     const first = !props.released_to_students && hasMarks ? props.marks[0] : null;
 
     this.state = {
-      expanded: new Set(),
+      expanded: first ? new Set([first.id]) : new Set(),
       activeCriterionId: first ? first.id : null,
     };
   }
 
   setActiveCriterionId = id => {
     this.setState({activeCriterionId: id});
+  };
+
+  // Make a criterion active and expand it. This is used for keyboard navigation between criteria;
+  // activating a criterion by clicking on it does not change whether it is expanded.
+  activateAndExpandCriterion = id => {
+    this.setState(state => ({
+      activeCriterionId: id,
+      expanded: new Set(state.expanded).add(id),
+    }));
   };
 
   nextCriterion = () => {
@@ -40,7 +49,7 @@ export class MarksPanel extends React.Component {
 
     const idx = criteria.findIndex(c => c.id === this.state.activeCriterionId);
     const next = idx === -1 || idx === criteria.length - 1 ? criteria[0] : criteria[idx + 1];
-    this.setActiveCriterionId(next.id);
+    this.activateAndExpandCriterion(next.id);
   };
 
   prevCriterion = () => {
@@ -56,7 +65,7 @@ export class MarksPanel extends React.Component {
 
     const idx = criteria.findIndex(c => c.id === this.state.activeCriterionId);
     const prev = idx <= 0 ? criteria[criteria.length - 1] : criteria[idx - 1];
-    this.setActiveCriterionId(prev.id);
+    this.activateAndExpandCriterion(prev.id);
   };
 
   componentDidMount() {

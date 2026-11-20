@@ -129,12 +129,6 @@ export default function RubricCriterionInput({
   const expandedClass = expanded ? "expanded" : "collapsed";
   const unassignedClass = unassigned ? "unassigned" : "";
 
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active, expanded]);
-
   return (
     <li
       ref={liRef}

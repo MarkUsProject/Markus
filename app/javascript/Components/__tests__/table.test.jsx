@@ -482,6 +482,38 @@ describe("tests for the table component", () => {
     });
   });
 
+  describe("expandable rows", () => {
+    function renderExpandableTable() {
+      return renderTableWithMockData({
+        getRowCanExpand: () => true,
+        renderSubComponent: ({row}) => <p>{`Details for ${row.original.col1}`}</p>,
+      });
+    }
+
+    it("renders a collapsed expand button for each row", () => {
+      renderExpandableTable();
+
+      const buttons = screen.getAllByRole("button", {name: I18n.t("table.show_details")});
+      expect(buttons).toHaveLength(mockData().length);
+      buttons.forEach(button => expect(button).toHaveAttribute("aria-expanded", "false"));
+    });
+
+    it("expands and collapses a row with the keyboard", async () => {
+      renderExpandableTable();
+
+      screen.getAllByRole("button", {name: I18n.t("table.show_details")})[0].focus();
+      await user.keyboard("{Enter}");
+      const button = screen.getByRole("button", {name: I18n.t("table.hide_details")});
+      expect(button).toHaveFocus();
+      expect(button).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Details for a")).toBeInTheDocument();
+
+      await user.keyboard(" ");
+      expect(button).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByText("Details for a")).not.toBeInTheDocument();
+    });
+  });
+
   describe("filtering", () => {
     it("shows search inputs for filterable columns", () => {
       renderTableWithMockData();
@@ -592,6 +624,25 @@ describe("tests for the table component", () => {
         {col1: "abc", col2: "pq", col3: "David"},
       ]);
     });
+
+    it("names text filters after their column header", () => {
+      const columns = [
+        {accessorKey: "col1", header: () => "First column"},
+        {accessorKey: "col2", header: "col2", meta: {filterVariant: "case-sensitive-text"}},
+      ];
+      renderTable(columns, mockData());
+
+      expect(
+        screen.getByRole("textbox", {name: `${defaultSearchPlaceholderText()} First column`})
+      ).toBeInTheDocument();
+      expect(screen.getByRole("textbox", {name: `${I18n.t("search")} col2`})).toBeInTheDocument();
+    });
+
+    it("names select filters after their column header", () => {
+      const {columns} = renderTableWithMockData();
+
+      expect(screen.getByRole("combobox", {name: columns[2].header})).toBeInTheDocument();
+    });
   });
 
   describe("checking and unchecking of the select column checkboxes", () => {
@@ -620,6 +671,17 @@ describe("tests for the table component", () => {
       const body = document.querySelector(".rt-tbody");
       const rowCheckboxes = within(body).getAllByRole("checkbox");
       rowCheckboxes.forEach(checkbox => expect(checkbox).not.toBeChecked());
+    });
+
+    it("names the select column checkboxes", () => {
+      renderTableWithMockData({enableRowSelection: true});
+
+      expect(
+        screen.getByRole("checkbox", {name: I18n.t("table.select_all_rows")})
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole("checkbox", {name: I18n.t("table.select_row")})).toHaveLength(
+        mockData().length
+      );
     });
   });
 });

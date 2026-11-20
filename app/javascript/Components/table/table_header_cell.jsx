@@ -3,7 +3,7 @@ import {flexRender} from "@tanstack/react-table";
 
 const ARIA_SORT = {asc: "ascending", desc: "descending"};
 
-function TableHeaderCell({header, size, isSorted, sortIndex, isResizing, allRowsSelected}) {
+function TableHeaderCell({id, header, size, isSorted, sortIndex, isResizing, allRowsSelected}) {
   const resizable = header.column.columnDef.enableResizing !== false;
   const sortable = header.column.getCanSort();
   const content = flexRender(header.column.columnDef.header, header.getContext());
@@ -19,6 +19,7 @@ function TableHeaderCell({header, size, isSorted, sortIndex, isResizing, allRows
 
   return (
     <div
+      id={id}
       className={`${class_name} ${header.column.columnDef.meta?.headerClassName || ""}`}
       role="columnheader"
       // ARIA expects aria-sort on one header at a time, so only the primary sort column gets it

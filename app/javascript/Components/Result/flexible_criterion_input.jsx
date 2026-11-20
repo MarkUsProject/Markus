@@ -151,13 +151,6 @@ export default function FlexibleCriterionInput({
     }
   }, [active]);
 
-  // Auto-expand if not already when active
-  useEffect(() => {
-    if (active && !expanded) {
-      toggleExpanded();
-    }
-  }, [active, expanded]);
-
   useEffect(() => {
     if (active && inputRef.current && expanded) {
       // Focus at end of input

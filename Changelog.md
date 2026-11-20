@@ -20,6 +20,8 @@
 ### ✨ New features and improvements
 - Named tables for screen readers and started their loading and row count announcements with the table's name (#8307)
 - Announced table loading and the number of rows shown to screen readers (#8290)
+- Gave table filters and row selection checkboxes accessible names for screen readers (#8289)
+- Made the toggles that expand table rows keyboard accessible (#8288)
 - Made sortable table columns keyboard accessible and announced their sort order to screen readers (#8287)
 - Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
@@ -40,6 +42,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
 - Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
 - Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
 - Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
