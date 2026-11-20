@@ -1,9 +1,12 @@
 import React from "react";
 import {flexRender} from "@tanstack/react-table";
 
-function TableHeaderCell({header, size, isSorted, isResizing, allRowsSelected}) {
+const ARIA_SORT = {asc: "ascending", desc: "descending"};
+
+function TableHeaderCell({header, size, isSorted, sortIndex, isResizing, allRowsSelected}) {
   const resizable = header.column.columnDef.enableResizing !== false;
-  const sortable = header.column.columnDef.enableSorting !== false;
+  const sortable = header.column.getCanSort();
+  const content = flexRender(header.column.columnDef.header, header.getContext());
 
   let class_name = "rt-th";
   if (resizable) {
@@ -18,18 +21,24 @@ function TableHeaderCell({header, size, isSorted, isResizing, allRowsSelected}) 
     <div
       className={`${class_name} ${header.column.columnDef.meta?.headerClassName || ""}`}
       role="columnheader"
-      tabIndex="-1"
+      // ARIA expects aria-sort on one header at a time, so only the primary sort column gets it
+      aria-sort={sortIndex === 0 ? ARIA_SORT[isSorted] : undefined}
       style={{
         width: size,
         maxWidth: header.column.columnDef.maxSize || "none",
       }}
     >
-      <div
-        className="rt-resizable-header-content"
-        onClick={header.column.getToggleSortingHandler()}
-      >
-        {flexRender(header.column.columnDef.header, header.getContext())}
-      </div>
+      {sortable ? (
+        <button
+          type="button"
+          className="rt-resizable-header-content rt-sort-button"
+          onClick={header.column.getToggleSortingHandler()}
+        >
+          {content}
+        </button>
+      ) : (
+        <div className="rt-resizable-header-content">{content}</div>
+      )}
       {resizable && (
         <div
           onMouseDown={header.getResizeHandler()}

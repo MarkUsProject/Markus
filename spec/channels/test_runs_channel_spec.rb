@@ -59,6 +59,24 @@ describe TestRunsChannel do
     context 'when the ta can run tests' do
       it_behaves_like 'can subscribe'
     end
+
+    context 'when subscribing to a group' do
+      let(:assignment) do
+        create(:assignment, assignment_properties_attributes: { enable_test: true, remote_autotest_settings_id: 1 })
+      end
+      let(:grouping) { create(:grouping, assignment: assignment) }
+
+      it 'rejects a group the TA does not grade' do
+        subscribe course_id: role.course_id, assignment_id: assignment.id, grouping_id: grouping.id
+        expect(subscription).to be_rejected
+      end
+
+      it 'confirms a group the TA grades' do
+        create(:ta_membership, role: role, grouping: grouping)
+        subscribe course_id: role.course_id, assignment_id: assignment.id, grouping_id: grouping.id
+        expect(subscription).to be_confirmed
+      end
+    end
   end
 
   context 'when the role is an instructor' do
