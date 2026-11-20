@@ -106,10 +106,6 @@
       }
     }
 
-    .rt-th:focus {
-      outline-width: 0;
-    }
-
     .rt-td {
       border-bottom: 1px solid $gridline;
       padding: 0;
@@ -131,6 +127,29 @@
     .rt-resizable-header-content {
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    // Undoes the global button styles so the sort button looks like the header text
+    .rt-sort-button {
+      background: none;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      color: inherit;
+      display: block;
+      font: inherit;
+      min-width: 0;
+      padding: 0;
+      text-align: inherit;
+      transition: none;
+      white-space: inherit;
+      width: 100%;
+
+      // An offset of 0 keeps the outline off the sort direction stripe in the header's padding
+      &:focus-visible {
+        outline: 2px solid $primary-one;
+        outline-offset: 0;
+      }
     }
 
     .rt-header-pivot {
