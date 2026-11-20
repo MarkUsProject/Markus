@@ -19,6 +19,7 @@
 
 ### ✨ New features and improvements
 - Announced table loading and the number of rows shown to screen readers (#8290)
+- Made sortable table columns keyboard accessible and announced their sort order to screen readers (#8287)
 - Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
 - Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
