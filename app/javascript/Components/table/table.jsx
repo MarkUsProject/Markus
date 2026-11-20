@@ -32,15 +32,18 @@ export const expanderColumn = columnHelper.display({
   maxSize: 30,
   cell: ({row}) => {
     const icon = row.getIsExpanded() ? "fa-chevron-up" : "fa-chevron-down";
-    const title = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
+    const label = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
     return row.getCanExpand() ? (
-      <div
+      <button
+        type="button"
         className={`rt-expandable ${row.getIsExpanded() ? "-open" : ""}`}
         onClick={row.getToggleExpandedHandler()}
+        aria-expanded={row.getIsExpanded()}
+        aria-label={label}
         data-testid="expander-button"
       >
-        <FontAwesomeIcon icon={icon} title={title} />
-      </div>
+        <FontAwesomeIcon icon={icon} />
+      </button>
     ) : null;
   },
 });
