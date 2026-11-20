@@ -103,6 +103,8 @@ en:
       one: 1 row
       other: "%{count} rows"
     search: Search
+    select_all_rows: Select all rows
+    select_row: Select row
     show_details: Show details
   to: to
   working: Loading

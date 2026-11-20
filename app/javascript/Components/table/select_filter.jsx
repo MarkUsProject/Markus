@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function SelectFilter({column, filterValue, facetedUniqueValues}) {
+export default function SelectFilter({column, filterValue, facetedUniqueValues, headerId}) {
   const sortedUniqueValues = React.useMemo(() => {
     return Array.from(facetedUniqueValues.keys())
       .filter(value => value !== "")
@@ -16,6 +16,7 @@ export default function SelectFilter({column, filterValue, facetedUniqueValues})
       onChange={e => column.setFilterValue(e.target.value)}
       value={filterValue?.toString() || ""}
       style={{width: "100%"}}
+      aria-labelledby={headerId}
     >
       <option value="">All ({totalRowCount})</option>
       {sortedUniqueValues.map(value => (
