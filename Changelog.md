@@ -18,6 +18,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Named tables for screen readers and started their loading and row count announcements with the table's name (#8307)
 - Announced table loading and the number of rows shown to screen readers (#8290)
 - Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
