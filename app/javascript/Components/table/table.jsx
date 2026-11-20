@@ -105,6 +105,8 @@ export default function Table({
   columnFilters: externalColumnFilters,
   onColumnFiltersChange: externalOnColumnFiltersChange,
   onRowSelectionChange,
+  sorting: externalSorting,
+  onSortingChange: externalOnSortingChange,
   showRowNumbers = false,
 }) {
   const tableId = React.useId();
@@ -117,6 +119,7 @@ export default function Table({
   const [expanded, setExpanded] = React.useState({});
   const [internalRowSelection, setInternalRowSelection] = React.useState({});
   const [grouping, setGrouping] = React.useState(initialState?.grouping ?? []);
+  const [internalSorting, setInternalSorting] = React.useState(initialState?.sorting ?? []);
 
   const columnFilters = React.useMemo(
     () => (externalColumnFilters !== undefined ? externalColumnFilters : internalColumnFilters),
@@ -141,6 +144,16 @@ export default function Table({
     [onRowSelectionChange]
   );
 
+  const sorting = React.useMemo(
+    () => (externalSorting !== undefined ? externalSorting : internalSorting),
+    [externalSorting, internalSorting]
+  );
+
+  const handleSortingChange = React.useMemo(
+    () => (externalOnSortingChange !== undefined ? externalOnSortingChange : setInternalSorting),
+    [externalOnSortingChange]
+  );
+
   const finalColumns = React.useMemo(() => {
     let cols = [...columns];
     if (enableRowSelection) {
@@ -162,6 +175,7 @@ export default function Table({
       expanded,
       rowSelection,
       grouping,
+      sorting,
     },
     initialState: initialState,
     onColumnFiltersChange: handleColumnFiltersChange,
@@ -170,6 +184,7 @@ export default function Table({
     onExpandedChange: setExpanded,
     onGroupingChange: setGrouping,
     onRowSelectionChange: handleRowSelectionChange,
+    onSortingChange: handleSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
