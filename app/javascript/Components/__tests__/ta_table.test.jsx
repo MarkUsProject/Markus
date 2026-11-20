@@ -169,7 +169,7 @@ describe("For each TATable's loading status", () => {
     it("shows loading spinner when data is being fetched", async () => {
       render(<TATable course_id={mock_course_id} />);
 
-      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      const spinner = await screen.findByLabelText(I18n.t("working"), {}, {timeout: 3000});
       expect(spinner).toBeInTheDocument();
     });
   });
