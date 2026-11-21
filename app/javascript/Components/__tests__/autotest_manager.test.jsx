@@ -1,6 +1,7 @@
 import React from "react";
 import {render, screen, fireEvent, act} from "@testing-library/react";
 import {AutotestManager} from "../autotest_manager";
+import {flushPromises, renderAndLoad} from "./test_helpers";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => null,
@@ -49,15 +50,15 @@ const fetchPayload = {
   unlimited_tokens: false,
 };
 
+const manager = <AutotestManager course_id={1} assignment_id={1} validator={{}} />;
+
 function renderManager() {
-  return render(<AutotestManager course_id={1} assignment_id={1} validator={{}} />);
+  return render(manager);
 }
 
 // Renders the manager and waits for the settings fetched on mount to load
-async function renderLoadedManager() {
-  const result = renderManager();
-  await act(async () => {});
-  return result;
+function renderLoadedManager() {
+  return renderAndLoad(manager);
 }
 
 describe("AutotestManager navigation warning", () => {
@@ -100,7 +101,7 @@ describe("AutotestManager navigation warning", () => {
       mockFormOnChange({formData: {}});
     });
     expect(window.onbeforeunload()).toBeUndefined();
-    await act(async () => {}); // let the fetch resolve before the test ends
+    await flushPromises(); // let the fetch resolve before the test ends
   });
 
   it("marks dirty when rjsf fires onChange after fetch resolves", async () => {

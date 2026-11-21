@@ -3,14 +3,9 @@
  */
 
 import {TestRunTable} from "../test_run_table";
-import {act, render, screen} from "@testing-library/react";
+import {screen} from "@testing-library/react";
 import {expect} from "@jest/globals";
-
-// Renders the table and waits for the test runs fetched on mount to load
-const renderAndLoad = async ui => {
-  render(ui);
-  await act(async () => {});
-};
+import {renderAndLoad} from "./test_helpers";
 
 describe("For the TestRunTable's display of correct data", () => {
   let test_run_data;

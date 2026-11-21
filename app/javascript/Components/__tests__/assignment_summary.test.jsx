@@ -3,13 +3,10 @@
  */
 
 import {AssignmentSummaryTable} from "../assignment_summary_table";
-import {render, screen, fireEvent, waitFor, act} from "@testing-library/react";
+import {render, screen, fireEvent, act} from "@testing-library/react";
 import {expect} from "@jest/globals";
 import {defaultSearchPlaceholderText} from "../table/search_filter";
-
-// Waits for the table to finish loading the data fetched when it mounts
-const waitForLoad = () =>
-  waitFor(() => expect(screen.queryByLabelText(I18n.t("working"))).not.toBeInTheDocument());
+import {waitForTableLoad} from "./test_helpers";
 
 describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   let groups_sample;
@@ -256,7 +253,7 @@ describe("For graders who cannot view all assignment summary submissions", () =>
       />
     );
 
-    await waitForLoad();
+    await waitForTableLoad();
     expect(screen.queryByTestId("show_assigned_submissions_only")).not.toBeInTheDocument();
   });
 });
@@ -286,7 +283,7 @@ describe("For the AssignmentSummaryTable's display of an assignment with automat
         lti_deployments={[]}
       />
     );
-    await waitForLoad();
+    await waitForTableLoad();
   });
 
   it("should render the Download Test Results button", () => {
@@ -323,7 +320,7 @@ describe("For the AssignmentSummaryTable's display of an assignment without auto
         lti_deployments={[]}
       />
     );
-    await waitForLoad();
+    await waitForTableLoad();
   });
 
   it("should not render the Download Test Results button", () => {

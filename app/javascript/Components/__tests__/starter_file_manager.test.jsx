@@ -1,5 +1,6 @@
 import {StarterFileManager} from "../starter_file_manager";
 import {render, screen, fireEvent, act} from "@testing-library/react";
+import {flushPromises, renderAndLoad} from "./test_helpers";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
@@ -136,18 +137,15 @@ const minimalFetchPayload = {
   defaultStarterFileGroup: "",
 };
 
+const manager = <StarterFileManager course_id={1} assignment_id={1} read_only={false} />;
+
 function renderManager() {
-  return render(<StarterFileManager course_id={1} assignment_id={1} read_only={false} />);
+  return render(manager);
 }
 
-// Lets pending fetches resolve and update the manager's state
-const flushFetches = () => act(() => new Promise(resolve => setTimeout(resolve, 0)));
-
 // Renders the manager and waits for the data fetched on mount to load
-async function renderLoadedManager() {
-  const result = renderManager();
-  await flushFetches();
-  return result;
+function renderLoadedManager() {
+  return renderAndLoad(manager);
 }
 
 describe("StarterFileManager navigation warning", () => {
@@ -183,7 +181,7 @@ describe("StarterFileManager navigation warning", () => {
       fireEvent.click(screen.getByTestId("save_button"));
     });
     expect(window.onbeforeunload()).toBeUndefined();
-    await flushFetches(); // the manager reloads its data after saving
+    await flushPromises(); // the manager reloads its data after saving
   });
 
   it("restores window.onbeforeunload to null on unmount", () => {

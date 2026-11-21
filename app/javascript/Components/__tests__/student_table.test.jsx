@@ -5,16 +5,13 @@
 import {StudentTable, StudentsActionBox} from "../student_table";
 import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
-// Waits for the table to finish loading the students fetched when it mounts
-const waitForLoad = () =>
-  waitFor(() => expect(screen.queryByLabelText(I18n.t("working"))).not.toBeInTheDocument());
+import {waitForTableLoad} from "./test_helpers";
 
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
     beforeAll(async () => {
       render(<StudentTable selection={["c5anthei"]} course_id={1} />);
-      await waitForLoad();
+      await waitForTableLoad();
     });
 
     it("sets selection and selectAll to empty list", async () => {
@@ -30,7 +27,7 @@ describe("For the StudentTable component's states and props", () => {
     let instance;
     beforeEach(async () => {
       render(<StudentTable course_id={1} ref={r => (instance = r)} />);
-      await waitForLoad();
+      await waitForTableLoad();
     });
 
     const makeRow = values => ({
@@ -76,7 +73,7 @@ describe("For the StudentTable component's states and props", () => {
 describe("For the StudentTable component's rendering", () => {
   beforeEach(async () => {
     render(<StudentTable selection={["c5anthei"]} course_id={1} />);
-    await waitForLoad();
+    await waitForTableLoad();
   });
 
   describe("the parent component", () => {
@@ -302,7 +299,7 @@ describe("For the StudentTable onSubmit", () => {
       }),
     });
     render(<StudentTable course_id={1} />);
-    await waitForLoad();
+    await waitForTableLoad();
   });
   it("calls $.ajax with bulk_modify path on submit", async () => {
     fireEvent.submit(screen.getByTestId("student_action_box"));
