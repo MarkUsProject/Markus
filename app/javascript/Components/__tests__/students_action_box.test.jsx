@@ -15,7 +15,7 @@ describe("For the StudentsActionBox component's non-conditional rendering", () =
     });
 
     it("renders a child select element", () => {
-      expect(screen.getByRole("combobox")).toBeInTheDocument;
+      expect(screen.getByRole("combobox")).toBeInTheDocument();
     });
   });
 

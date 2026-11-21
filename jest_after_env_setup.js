@@ -10,6 +10,19 @@ global.React = React;
 // Jest dom (testing env)
 import "@testing-library/jest-dom";
 
+// Fail any test that writes to the console (e.g. React act(...) or key warnings).
+// Tests that expect console output should mock it, e.g.
+// jest.spyOn(console, "error").mockImplementation(() => {}), and assert on the calls.
+import failOnConsole from "jest-fail-on-console";
+failOnConsole({
+  shouldFailOnAssert: true,
+  shouldFailOnDebug: true,
+  shouldFailOnError: true,
+  shouldFailOnInfo: true,
+  shouldFailOnLog: true,
+  shouldFailOnWarn: true,
+});
+
 // Routes
 window.Routes = global.Routes = require("./app/javascript/routes");
 

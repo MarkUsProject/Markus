@@ -529,7 +529,7 @@ describe("FlexibleCriterionInput", () => {
     const bonusText = await screen.findByText(I18n.t("activerecord.attributes.criterion.bonus"), {
       exact: false,
     });
-    expect(bonusText).toBeTruthy;
+    expect(bonusText).toBeTruthy();
   });
 
   it("should show list deductions correctly when there is a deduction", async () => {

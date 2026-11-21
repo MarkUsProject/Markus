@@ -80,6 +80,7 @@ export class MultiSelectDropdown extends React.Component {
         <div className={"tags-box"} data-testid={"tags-box"}>
           {selected.map(tag => (
             <div
+              key={tag}
               className="tag"
               onClick={e => {
                 this.onSelect(e, tag);

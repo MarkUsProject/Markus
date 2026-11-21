@@ -19,11 +19,18 @@ describe("FileViewer", () => {
       selectedFileURL: "/",
     };
 
-    await render(<FileViewer {...props} />);
+    // The viewer logs the oversize error after showing its message
+    const consoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
+
+    render(<FileViewer {...props} />);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(
       await screen.findByText(I18n.t("submissions.oversize_submission_file"))
     ).toBeInTheDocument();
+    expect(consoleError).toHaveBeenCalledWith(
+      new Error(I18n.t("submissions.oversize_submission_file"))
+    );
+    consoleError.mockRestore();
   });
 });
