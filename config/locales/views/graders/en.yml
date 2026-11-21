@@ -28,7 +28,7 @@ en:
     random_instruction: Assign a weight for each grader for randomized assignment. With the default weights of 1, all graders will be assigned an equal number of groups.
     select_a_criterion: Select at least one criterion
     select_a_grader: Select at least one grader to assign.
-    skip_empty_submissions: Assign graders to groups with no files submitted
+    skip_empty_submissions: Assign graders to collected submissions with no files submitted
     skip_empty_submissions_tooltip: When unchecked, groups are skipped if their submissions have been collected and no files were submitted.
     upload:
       remove_existing_mappings: Remove existing grader assignments
