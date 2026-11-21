@@ -41,6 +41,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed graders not being assigned to groups whose submissions have not been collected when skipping groups with empty submissions (#8315)
 - Fixed an error when changing an annotation's deduction on a result with no mark yet for the annotation category's criterion (#8313)
 - Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
 - Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
