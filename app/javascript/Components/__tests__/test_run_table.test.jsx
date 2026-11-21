@@ -3,8 +3,9 @@
  */
 
 import {TestRunTable} from "../test_run_table";
-import {render, screen} from "@testing-library/react";
+import {screen} from "@testing-library/react";
 import {expect} from "@jest/globals";
+import {renderAndLoad} from "./test_helpers";
 
 describe("For the TestRunTable's display of correct data", () => {
   let test_run_data;
@@ -35,7 +36,7 @@ describe("For the TestRunTable's display of correct data", () => {
       json: jest.fn().mockResolvedValueOnce(test_run_data),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}
@@ -111,7 +112,7 @@ describe("For the TestRunTable's display of failed status", () => {
       json: jest.fn().mockResolvedValueOnce(test_run_data),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}
@@ -165,7 +166,7 @@ describe("For the TestRunTable's display of cancelled status", () => {
       json: jest.fn().mockResolvedValueOnce(test_run_data),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}
@@ -218,7 +219,7 @@ describe("For the TestRunTable's display of in_progress status", () => {
       json: jest.fn().mockResolvedValueOnce(test_run_data),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}
@@ -271,7 +272,7 @@ describe("For the TestRunTable's display of timeout error type", () => {
       json: jest.fn().mockResolvedValueOnce(test_run_data),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}
@@ -313,7 +314,7 @@ describe("For the TestRunTable's SubComponent display of problems", () => {
       json: jest.fn().mockResolvedValueOnce(test_run_data),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}
@@ -340,7 +341,7 @@ describe("For the TestRunTable's display when no data is available", () => {
       json: jest.fn().mockResolvedValueOnce([]),
     });
 
-    render(
+    await renderAndLoad(
       <TestRunTable
         course_id={1}
         result_id={1}

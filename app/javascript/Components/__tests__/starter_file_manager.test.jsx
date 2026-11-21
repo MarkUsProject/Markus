@@ -1,5 +1,6 @@
 import {StarterFileManager} from "../starter_file_manager";
 import {render, screen, fireEvent, act} from "@testing-library/react";
+import {flushPromises, renderAndLoad} from "./test_helpers";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => {
@@ -136,8 +137,15 @@ const minimalFetchPayload = {
   defaultStarterFileGroup: "",
 };
 
+const manager = <StarterFileManager course_id={1} assignment_id={1} read_only={false} />;
+
 function renderManager() {
-  return render(<StarterFileManager course_id={1} assignment_id={1} read_only={false} />);
+  return render(manager);
+}
+
+// Renders the manager and waits for the data fetched on mount to load
+function renderLoadedManager() {
+  return renderAndLoad(manager);
 }
 
 describe("StarterFileManager navigation warning", () => {
@@ -150,21 +158,19 @@ describe("StarterFileManager navigation warning", () => {
     window.onbeforeunload = null;
   });
 
-  it("does not warn when no changes have been made", () => {
-    renderManager();
+  it("does not warn when no changes have been made", async () => {
+    await renderLoadedManager();
     expect(window.onbeforeunload()).toBeUndefined();
   });
 
   it("warns after a field is changed", async () => {
-    renderManager();
-    await screen.findByTestId("available_after_due_checkbox");
+    await renderLoadedManager();
     fireEvent.click(screen.getByTestId("available_after_due_checkbox"));
     expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
   });
 
   it("clears the warning after form is saved", async () => {
-    renderManager();
-    await screen.findByTestId("available_after_due_checkbox");
+    await renderLoadedManager();
     fireEvent.click(screen.getByTestId("available_after_due_checkbox"));
     expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
 
@@ -175,6 +181,7 @@ describe("StarterFileManager navigation warning", () => {
       fireEvent.click(screen.getByTestId("save_button"));
     });
     expect(window.onbeforeunload()).toBeUndefined();
+    await flushPromises(); // the manager reloads its data after saving
   });
 
   it("restores window.onbeforeunload to null on unmount", () => {

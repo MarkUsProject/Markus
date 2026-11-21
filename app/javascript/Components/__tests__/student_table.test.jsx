@@ -5,11 +5,13 @@
 import {StudentTable, StudentsActionBox} from "../student_table";
 import {render, screen, within, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import {waitForTableLoad} from "./test_helpers";
 
 describe("For the StudentTable component's states and props", () => {
   describe("submitting the child StudentsActionBox component", () => {
     beforeAll(async () => {
       render(<StudentTable selection={["c5anthei"]} course_id={1} />);
+      await waitForTableLoad();
     });
 
     it("sets selection and selectAll to empty list", async () => {
@@ -23,8 +25,9 @@ describe("For the StudentTable component's states and props", () => {
 
   describe("each filterable column has a custom filter method", () => {
     let instance;
-    beforeEach(() => {
+    beforeEach(async () => {
       render(<StudentTable course_id={1} ref={r => (instance = r)} />);
+      await waitForTableLoad();
     });
 
     const makeRow = values => ({
@@ -68,8 +71,9 @@ describe("For the StudentTable component's states and props", () => {
 });
 
 describe("For the StudentTable component's rendering", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     render(<StudentTable selection={["c5anthei"]} course_id={1} />);
+    await waitForTableLoad();
   });
 
   describe("the parent component", () => {
@@ -78,8 +82,9 @@ describe("For the StudentTable component's rendering", () => {
     });
 
     it("renders a child StudentsActionBox", () => {
-      expect(within(screen.getByTestId("raw_student_table")).getByTestId("student_action_box"))
-        .toBeInTheDocument;
+      expect(
+        within(screen.getByTestId("raw_student_table")).getByTestId("student_action_box")
+      ).toBeInTheDocument();
     });
 
     it("renders a child CheckboxTable containing the specified headers", () => {
@@ -94,7 +99,7 @@ describe("For the StudentTable component's rendering", () => {
         I18n.t("roles.active") + "?",
         I18n.t("actions"),
       ].forEach(text => {
-        expect(within(screen.getByTestId("raw_student_table")).getByText(text)).toBeInTheDocument;
+        expect(within(screen.getByTestId("raw_student_table")).getByText(text)).toBeInTheDocument();
       });
     });
   });
@@ -187,7 +192,7 @@ describe("For the StudentTable's display of students", () => {
   });
 
   describe("when no students are fetched", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       students_sample = [];
       // Mocking the response returned by $.ajax, used in StudentTable fetchData
       fetch.mockReset();
@@ -201,10 +206,11 @@ describe("For the StudentTable's display of students", () => {
         }),
       });
       render(<StudentTable selection={[]} course_id={1} />);
+      await screen.findByText(I18n.t("students.empty_table"));
     });
 
-    it("No rows found is shown", async () => {
-      await screen.findByText(I18n.t("students.empty_table"));
+    it("No rows found is shown", () => {
+      expect(screen.getByText(I18n.t("students.empty_table"))).toBeInTheDocument();
     });
   });
 
@@ -280,11 +286,20 @@ describe("For each StudentTable's loading status", () => {
 });
 
 describe("For the StudentTable onSubmit", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     global.$ = {
       ajax: jest.fn(() => ({then: jest.fn()})),
     };
+    jest.spyOn(global, "fetch").mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        students: [],
+        sections: {},
+        counts: {all: 0, active: 0, inactive: 0},
+      }),
+    });
     render(<StudentTable course_id={1} />);
+    await waitForTableLoad();
   });
   it("calls $.ajax with bulk_modify path on submit", async () => {
     fireEvent.submit(screen.getByTestId("student_action_box"));
