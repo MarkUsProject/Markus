@@ -196,8 +196,7 @@ class LtiDeploymentsController < ApplicationController
   end
 
   def check_host
-    known_lti_hosts = Settings.lti.domains
-    known_lti_hosts << URI(root_url).host
+    known_lti_hosts = Settings.lti.domains + [URI(root_url).host]
     if known_lti_hosts.exclude?(URI(request.referer).host)
       render 'shared/http_status', locals: { code: '422', message: I18n.t('lti.config_error') },
                                    status: :unprocessable_content, layout: false

@@ -3,6 +3,8 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Limited LTI roster and grade sync requests to hosts in the `lti.domains` setting (#8286)
+- Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
 - Limited LTI roster sync to roster pages on the LMS host, and stopped it after 1000 pages (#8285)
 - Restricted graders to setting the marking state of the groups they grade, and limited peer review marking states to the current assignment (#8267)
 - Restricted graders to running tests on the groups they grade (#8266)
@@ -16,6 +18,10 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Announced table loading and the number of rows shown to screen readers (#8290)
+- Gave table filters and row selection checkboxes accessible names for screen readers (#8289)
+- Made the toggles that expand table rows keyboard accessible (#8288)
+- Made sortable table columns keyboard accessible and announced their sort order to screen readers (#8287)
 - Improved loading of large tables by rendering rows as they come into view (#8261)
 - Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
 - Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
@@ -35,6 +41,8 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed an error when changing an annotation's deduction on a result with no mark yet for the annotation category's criterion (#8313)
+- Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
 - Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
 - Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
 - Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
@@ -51,8 +59,10 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Configured Jest tests to fail on console output, and fixed the tests and components that produced warnings (#8314)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
+- Migrated the three scanned exam log tables to `@tanstack/react-table` v8 (#8262)
 - Added the passing `active_record_doctor` checks to the pre-commit hooks and CI (#8259)
 - Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
 - Converted `CreateTagModal`, `EditTagModal`, `CreateGroupModal`, and `RenameGroupModal` to functional React components (#8232)

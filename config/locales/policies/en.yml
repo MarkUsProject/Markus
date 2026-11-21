@@ -63,6 +63,7 @@ en:
         delete_rejected?: Only the inviter can delete a declined invitation.
         destroy?: You do not have permission to delete groupings.
         disinvite_member?: Only the inviter can cancel a pending invitation.
+        download_submission_file?: You do not have permission to download files for this group.
         invite_member?: You are not allowed to invite members.
         member?: You cannot run tests because you do not have a group yet, or your group is not valid.
         no_extension?: This group has an extension. You cannot update the group membership.

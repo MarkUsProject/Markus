@@ -33,7 +33,7 @@ jest.mock("../table/table", () => {
       }
 
       if (typeof col.cell === "function") {
-        return <div key={col.id || col.accessor}>{col.cell({row: {original: firstRow}})}</div>;
+        return <div key={col.id || col.accessorKey}>{col.cell({row: {original: firstRow}})}</div>;
       }
 
       return null;

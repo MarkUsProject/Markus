@@ -3,9 +3,10 @@
  */
 
 import {AssignmentSummaryTable} from "../assignment_summary_table";
-import {render, screen, fireEvent, waitFor, act} from "@testing-library/react";
+import {render, screen, fireEvent, act} from "@testing-library/react";
 import {expect} from "@jest/globals";
 import {defaultSearchPlaceholderText} from "../table/search_filter";
+import {waitForTableLoad} from "./test_helpers";
 
 describe("For the AssignmentSummaryTable's display of inactive groups", () => {
   let groups_sample;
@@ -252,13 +253,13 @@ describe("For graders who cannot view all assignment summary submissions", () =>
       />
     );
 
-    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+    await waitForTableLoad();
     expect(screen.queryByTestId("show_assigned_submissions_only")).not.toBeInTheDocument();
   });
 });
 
 describe("For the AssignmentSummaryTable's display of an assignment with automated testing", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     fetch.mockReset();
     fetch.mockResolvedValueOnce(
       Promise.resolve({
@@ -282,21 +283,20 @@ describe("For the AssignmentSummaryTable's display of an assignment with automat
         lti_deployments={[]}
       />
     );
+    await waitForTableLoad();
   });
 
-  it("should render the Download Test Results button", async () => {
-    await waitFor(() => {
-      expect(
-        screen.getByText(
-          I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
-        )
-      ).toBeInTheDocument();
-    });
+  it("should render the Download Test Results button", () => {
+    expect(
+      screen.getByText(
+        I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
+      )
+    ).toBeInTheDocument();
   });
 });
 
 describe("For the AssignmentSummaryTable's display of an assignment without automated testing", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     fetch.mockReset();
     fetch.mockResolvedValueOnce(
       Promise.resolve({
@@ -320,16 +320,15 @@ describe("For the AssignmentSummaryTable's display of an assignment without auto
         lti_deployments={[]}
       />
     );
+    await waitForTableLoad();
   });
 
-  it("should not render the Download Test Results button", async () => {
-    await waitFor(() => {
-      expect(
-        screen.queryByText(
-          I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
-        )
-      ).not.toBeInTheDocument();
-    });
+  it("should not render the Download Test Results button", () => {
+    expect(
+      screen.queryByText(
+        I18n.t("download_the", {item: I18n.t("activerecord.models.test_result.other")})
+      )
+    ).not.toBeInTheDocument();
   });
 });
 

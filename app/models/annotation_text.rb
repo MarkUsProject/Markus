@@ -104,8 +104,9 @@ class AnnotationText < ApplicationRecord
     criterion_id = self.annotation_category.flexible_criterion_id
     annotations = self.annotations.includes(:result)
     annotations.each do |annotation|
+      # The mark may not exist yet, e.g. if the criterion was created after the result
       annotation.result.marks
-                .find_by(criterion_id: criterion_id)
+                .find_or_create_by(criterion_id: criterion_id)
                 .update_deduction
     end
   end

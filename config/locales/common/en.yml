@@ -69,6 +69,7 @@ en:
     sync_tas: Sync TA roster
     unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
     unlink_courses: Unlink this course
+    untrusted_lms_host: 'MarkUs did not contact %{host}: it is outside the LMS domains in the MarkUs settings.'
   markus: MarkUs
   max: Max
   min: Min
@@ -98,7 +99,12 @@ en:
     case_sensitive_search: Match case
     hide_details: Hide details
     no_data: No rows found
+    row_count:
+      one: 1 row
+      other: "%{count} rows"
     search: Search
+    select_all_rows: Select all rows
+    select_row: Select row
     show_details: Show details
   to: to
   working: Loading
