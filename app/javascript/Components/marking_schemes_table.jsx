@@ -91,6 +91,7 @@ export class MarkingSchemeTable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.marking_scheme.other")}
         data={this.state.data}
         columns={this.state.columns}
         initialState={{

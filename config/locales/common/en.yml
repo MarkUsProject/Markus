@@ -106,6 +106,7 @@ en:
     select_all_rows: Select all rows
     select_row: Select row
     show_details: Show details
+    status_with_label: "%{label}: %{status}"
   to: to
   working: Loading
   write: Write
