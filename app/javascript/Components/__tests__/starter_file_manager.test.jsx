@@ -140,6 +140,16 @@ function renderManager() {
   return render(<StarterFileManager course_id={1} assignment_id={1} read_only={false} />);
 }
 
+// Lets pending fetches resolve and update the manager's state
+const flushFetches = () => act(() => new Promise(resolve => setTimeout(resolve, 0)));
+
+// Renders the manager and waits for the data fetched on mount to load
+async function renderLoadedManager() {
+  const result = renderManager();
+  await flushFetches();
+  return result;
+}
+
 describe("StarterFileManager navigation warning", () => {
   beforeEach(() => {
     fetch.resetMocks();
@@ -150,21 +160,19 @@ describe("StarterFileManager navigation warning", () => {
     window.onbeforeunload = null;
   });
 
-  it("does not warn when no changes have been made", () => {
-    renderManager();
+  it("does not warn when no changes have been made", async () => {
+    await renderLoadedManager();
     expect(window.onbeforeunload()).toBeUndefined();
   });
 
   it("warns after a field is changed", async () => {
-    renderManager();
-    await screen.findByTestId("available_after_due_checkbox");
+    await renderLoadedManager();
     fireEvent.click(screen.getByTestId("available_after_due_checkbox"));
     expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
   });
 
   it("clears the warning after form is saved", async () => {
-    renderManager();
-    await screen.findByTestId("available_after_due_checkbox");
+    await renderLoadedManager();
     fireEvent.click(screen.getByTestId("available_after_due_checkbox"));
     expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
 
@@ -175,6 +183,7 @@ describe("StarterFileManager navigation warning", () => {
       fireEvent.click(screen.getByTestId("save_button"));
     });
     expect(window.onbeforeunload()).toBeUndefined();
+    await flushFetches(); // the manager reloads its data after saving
   });
 
   it("restores window.onbeforeunload to null on unmount", () => {

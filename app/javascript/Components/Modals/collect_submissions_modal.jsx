@@ -139,13 +139,14 @@ class CollectSubmissionsModal extends React.Component {
                     {I18n.t("submissions.collect.retain_existing_grading")}
                   </label>
                   {!this.state.retain_existing_grading && (
-                    <div
+                    // A span, since a div cannot be inside a paragraph
+                    <span
                       data-testid="div_grading_data_will_be_lost"
                       className="warning"
-                      style={{marginTop: "4px"}}
+                      style={{display: "block", marginTop: "4px"}}
                     >
                       {I18n.t("submissions.collect.grading_data_will_be_lost")}
-                    </div>
+                    </span>
                   )}
                 </p>
               )}

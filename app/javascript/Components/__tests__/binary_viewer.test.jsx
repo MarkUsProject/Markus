@@ -53,6 +53,7 @@ describe("BinaryViewer", () => {
 
   it("should call an error callback when the requested file content is too large", async () => {
     fetchMock.mockOnce({}, {status: 413});
+    const consoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     render(<BinaryViewer {...props} />);
 
@@ -66,58 +67,67 @@ describe("BinaryViewer", () => {
       expect(loadingCallback.mock.calls).toHaveLength(1);
       expect(loadingCallback.mock.calls[0][0]).toBe(false);
     });
+    expect(consoleError).toHaveBeenCalledWith(
+      new Error(I18n.t("submissions.oversize_submission_file"))
+    );
+    consoleError.mockRestore();
   });
 
   it("should console error on error", async () => {
     const fetchError = new Error("fetch error");
     fetchMock.mockRejectOnce(fetchError);
+    const mockedConsoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     render(<BinaryViewer {...props} />);
-
-    const mockedConsoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(mockedConsoleError).toHaveBeenCalledWith(fetchError);
     });
+    mockedConsoleError.mockRestore();
   });
+
+  // The viewer calls the loading callback with false once its fetched content is loaded
+  const waitForContent = () => waitFor(() => expect(loadingCallback).toHaveBeenCalledWith(false));
 
   it("should not perform a fetch request if the URL hasn't changed", async () => {
     fetchMock.mockOnce(successfulFetchResp);
-    const {rerender} = await render(<BinaryViewer {...props} />);
-    await rerender(<BinaryViewer {...props} submission_file_id={props.submission_file_id + 1} />);
+    const {rerender} = render(<BinaryViewer {...props} />);
+    rerender(<BinaryViewer {...props} submission_file_id={props.submission_file_id + 1} />);
+    await waitForContent();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("should render on the same component that doesn't remount on prop update", async () => {
     fetchMock.mockOnce(successfulFetchResp);
 
-    const {rerender} = await render(<BinaryViewer {...props} />);
+    const {rerender} = render(<BinaryViewer {...props} />);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitForContent();
     expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
     expect(screen.getByText(I18n.t("submissions.get_anyway"))).toBeInTheDocument();
 
-    await fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
-    await screen.findByText(successfulFetchResp);
+    fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
 
     expect(screen.getByText(successfulFetchResp)).toBeInTheDocument();
     expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
 
     // Prepare a different fetch response to test component rerender
     fetchMock.mockOnce(successfulFetchResp.repeat(2));
+    loadingCallback.mockClear();
 
-    await rerender(<BinaryViewer {...props} url={"/double"} />);
+    rerender(<BinaryViewer {...props} url={"/double"} />);
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    await waitForContent();
     expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
     expect(screen.queryByText(successfulFetchResp.repeat(2))).not.toBeInTheDocument();
     expect(screen.getByText(I18n.t("submissions.get_anyway"))).toBeInTheDocument();
 
-    await fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
-    await screen.findByText(successfulFetchResp);
+    fireEvent.click(screen.getByText(I18n.t("submissions.get_anyway")));
 
-    await screen.findByText(successfulFetchResp.repeat(2));
+    expect(screen.getByText(successfulFetchResp.repeat(2))).toBeInTheDocument();
     expect(screen.queryByText(successfulFetchResp)).not.toBeInTheDocument();
     expect(screen.queryByText(I18n.t("submissions.get_anyway"))).not.toBeInTheDocument();
   });

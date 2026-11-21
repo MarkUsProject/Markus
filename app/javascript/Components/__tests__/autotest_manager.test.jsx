@@ -53,6 +53,13 @@ function renderManager() {
   return render(<AutotestManager course_id={1} assignment_id={1} validator={{}} />);
 }
 
+// Renders the manager and waits for the settings fetched on mount to load
+async function renderLoadedManager() {
+  const result = renderManager();
+  await act(async () => {});
+  return result;
+}
+
 describe("AutotestManager navigation warning", () => {
   beforeEach(() => {
     fetch.mockReset();
@@ -63,19 +70,19 @@ describe("AutotestManager navigation warning", () => {
     window.onbeforeunload = null;
   });
 
-  it("does not warn when no changes have been made", () => {
-    renderManager();
+  it("does not warn when no changes have been made", async () => {
+    await renderLoadedManager();
     expect(window.onbeforeunload()).toBeUndefined();
   });
 
-  it("warns after a field is changed", () => {
-    renderManager();
+  it("warns after a field is changed", async () => {
+    await renderLoadedManager();
     fireEvent.click(screen.getAllByRole("checkbox")[0]);
     expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
   });
 
   it("clears the warning after form is saved", async () => {
-    renderManager();
+    await renderLoadedManager();
     fireEvent.click(screen.getAllByRole("checkbox")[0]);
     expect(window.onbeforeunload()).toBe(I18n.t("uncommitted_changes_warning"));
 
@@ -86,18 +93,18 @@ describe("AutotestManager navigation warning", () => {
     expect(window.onbeforeunload()).toBeUndefined();
   });
 
-  it("does not mark dirty when rjsf fires onChange before fetch resolves", () => {
+  it("does not mark dirty when rjsf fires onChange before fetch resolves", async () => {
     renderManager();
     // formData is null until fetch resolves, so onChange is suppressed
     act(() => {
       mockFormOnChange({formData: {}});
     });
     expect(window.onbeforeunload()).toBeUndefined();
+    await act(async () => {}); // let the fetch resolve before the test ends
   });
 
   it("marks dirty when rjsf fires onChange after fetch resolves", async () => {
-    renderManager();
-    await act(async () => {}); // flush fetch promise, formData is now non-null
+    await renderLoadedManager(); // formData is now non-null
 
     act(() => {
       mockFormOnChange({formData: {testers: []}});
