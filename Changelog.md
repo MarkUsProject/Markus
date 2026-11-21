@@ -41,6 +41,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed an error when changing an annotation's deduction on a result with no mark yet for the annotation category's criterion (#8313)
 - Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
 - Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
 - Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
