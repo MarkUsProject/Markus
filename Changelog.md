@@ -42,6 +42,7 @@
 
 ### 🐛 Bug fixes
 - Fixed a cookie overflow error when uploading a CSV file with long invalid rows, by limiting the length of flash messages (#8317)
+- Fixed inline help icons not appearing in the Graders tab and starter file settings (#8316)
 - Fixed graders not being assigned to groups whose submissions have not been collected when skipping groups with empty submissions (#8315)
 - Fixed an error when changing an annotation's deduction on a result with no mark yet for the annotation category's criterion (#8313)
 - Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
