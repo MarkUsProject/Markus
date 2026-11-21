@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Table from "./table/table";
 import {createColumnHelper} from "@tanstack/react-table";
 import {caseSensitiveIncludes} from "./Helpers/table_helpers";
+import InlineHelp from "./Helpers/inline_help";
 import {GraderDistributionModal} from "./Modals/graders_distribution_modal";
 import {SectionDistributionModal} from "./Modals/section_distribution_modal";
 
@@ -371,9 +372,7 @@ class GradersManager extends React.Component {
                     />
                     {I18n.t("graders.skip_empty_submissions")}
                   </label>
-                  <div className="inline-help">
-                    <p>{I18n.t("graders.skip_empty_submissions_tooltip")}</p>
-                  </div>
+                  <InlineHelp>{I18n.t("graders.skip_empty_submissions_tooltip")}</InlineHelp>
                 </div>
                 <div style={{marginBottom: "1em"}}>
                   <label>
