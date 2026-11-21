@@ -65,6 +65,12 @@ Upon clicking the button, a modal will prompt you to assign a weighting to each 
 
 ![Unassign Graders](/images/graders-unassign.png)
 
+#### Groups with Empty Submissions
+
+By default, when graders are assigned to groups, any selected group whose collected submission contains no files is skipped, and a message is displayed indicating that a grader was not assigned. Groups whose submissions have not yet been collected are always assigned, so graders can be assigned before submissions are collected.
+
+To also assign graders to groups whose collected submission contains no files, check "Assign graders to collected submissions with no files submitted" above the groups table.
+
 #### Assign to Criteria
 
 Graders can also be assigned to mark individual criteria from the "Criteria" tab (not available for marks spreadsheets).
