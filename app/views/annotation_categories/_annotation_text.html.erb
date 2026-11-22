@@ -88,7 +88,7 @@
       <% unless annotation_text[:deduction].nil? %>
         <div class='inline-labels'>
           <% max_mark = annotation_text[:max_mark] %>
-          <% marks_released = annotation_text[:released] > 0 %>
+          <% marks_released = annotation_text[:released] %>
           <%= f.label :deduction,
                       AnnotationText.human_attribute_name(:deduction) %>
           <%= f.number_field :deduction, { min: 0.0,

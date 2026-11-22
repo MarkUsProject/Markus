@@ -591,6 +591,30 @@ describe AnnotationCategoriesController do
         expect(text.reload.content).to eq(prev_content)
       end
 
+      it 'successfully updates a deductive annotation text\'s deduction after a released remark result ' \
+         'has been unreleased' do
+        assignment_w_deductions = create(:assignment_with_deductive_annotations)
+        category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+        text = category.annotation_texts.first
+        grouping = assignment_w_deductions.groupings.first
+        submission = grouping.current_submission_used
+        submission.make_remark_result
+        remark_result = submission.reload.submitted_remark
+        remark_result.update!(marking_state: Result::MARKING_STATES[:complete])
+        remark_result.update!(released_to_students: true)
+        remark_result.update!(released_to_students: false)
+
+        put_as role, :update_annotation_text,
+               params: { assignment_id: category.assessment_id,
+                         course_id: course.id,
+                         annotation_text_id: text.id,
+                         deduction: 2.0,
+                         format: :js }
+
+        expect(response).to have_http_status(:success)
+        expect(text.reload.deduction).to eq 2.0
+      end
+
       it 'successfully updates an annotation text\'s (not associated with an annotation category) content' do
         create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
         put_as role, :update_annotation_text,
