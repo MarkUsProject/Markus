@@ -104,7 +104,12 @@ describe AnnotationCategoriesController do
         let(:assignment_w_deductions) { create(:assignment_with_deductive_annotations) }
         let(:category) { assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first }
         let(:text) { category.annotation_texts.first }
-        let(:locked_message) { ERB::Util.html_escape(I18n.t('annotation_categories.annotation_text_locked')) }
+        let(:with_remarks_message) do
+          ERB::Util.html_escape(I18n.t('annotation_categories.annotation_text_locked.with_remark_requests'))
+        end
+        let(:without_remarks_message) do
+          ERB::Util.html_escape(I18n.t('annotation_categories.annotation_text_locked.without_remark_requests'))
+        end
         # The response is JavaScript that inserts the rendered HTML, so closing tags are escaped
         let(:edit_link) { ">#{I18n.t(:edit)}<\\/a>" }
         let(:delete_path) { "destroy_annotation_text?annotation_text_id=#{text.id}" }
@@ -118,17 +123,35 @@ describe AnnotationCategoriesController do
           show_category
           expect(assigns(:annotation_texts).pluck('released')).to eq [false]
           expect(response.body).to include(edit_link, delete_path)
-          expect(response.body).not_to include(locked_message)
+          expect(response.body).not_to include(with_remarks_message)
+          expect(response.body).not_to include(without_remarks_message)
         end
 
-        it 'disables editing and deleting the annotation text when it has been used in a submission with ' \
-           'a remark request' do
-          assignment_w_deductions.groupings.first.current_submission_used.make_remark_result
-          show_category
-          expect(assigns(:annotation_texts).pluck('released')).to eq [true]
-          expect(response.body).not_to include(edit_link)
-          expect(response.body).not_to include(delete_path)
-          expect(response.body).to include(locked_message)
+        context 'when the assignment allows remark requests' do
+          before { assignment_w_deductions.update!(allow_remarks: true) }
+
+          it 'disables editing and deleting the annotation text when it has been used in a submission with ' \
+             'a remark request' do
+            assignment_w_deductions.groupings.first.current_submission_used.make_remark_result
+            show_category
+            expect(assigns(:annotation_texts).pluck('released')).to eq [true]
+            expect(response.body).not_to include(edit_link)
+            expect(response.body).not_to include(delete_path)
+            expect(response.body).to include(with_remarks_message)
+          end
+        end
+
+        context 'when the assignment does not allow remark requests' do
+          before { assignment_w_deductions.update!(allow_remarks: false) }
+
+          it 'disables editing and deleting the annotation text when it has been used in a released result' do
+            assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
+            show_category
+            expect(assigns(:annotation_texts).pluck('released')).to eq [true]
+            expect(response.body).not_to include(edit_link)
+            expect(response.body).not_to include(delete_path)
+            expect(response.body).to include(without_remarks_message)
+          end
         end
       end
 

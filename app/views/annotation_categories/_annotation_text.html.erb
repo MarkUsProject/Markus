@@ -50,7 +50,11 @@
     </div>
     <% if annotation_text[:released] %>
       <div class='annotation-text-details'>
-        <%= t('annotation_categories.annotation_text_locked') %>
+        <% if @assignment.allow_remarks? %>
+          <%= t('annotation_categories.annotation_text_locked.with_remark_requests') %>
+        <% else %>
+          <%= t('annotation_categories.annotation_text_locked.without_remark_requests') %>
+        <% end %>
       </div>
     <% end %>
     <div class='annotation-text-details'>

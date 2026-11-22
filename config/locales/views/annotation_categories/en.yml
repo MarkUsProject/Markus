@@ -2,7 +2,9 @@
 en:
   annotation_categories:
     add_annotation: Add Annotation
-    annotation_text_locked: This annotation cannot be edited or deleted because it has been used in a released result or in a submission with a remark request.
+    annotation_text_locked:
+      with_remark_requests: This annotation cannot be edited or deleted because it has been used in a released result or in a submission with a remark request.
+      without_remark_requests: This annotation cannot be edited or deleted because it has been used in a released result.
     create:
       success: This annotation category was successfully created.
     create_annotation_text:
