@@ -6,8 +6,7 @@ class AnnotationsController < ApplicationController
     result = course_result
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
-    text = Assignment.reusable_texts_for(result.grouping.assignment, current_role)
-                     .find_by(id: params[:annotation_text_id])
+    text = result.grouping.assignment.reusable_texts_for(current_role).find_by(id: params[:annotation_text_id])
     if text.nil?
       head :not_found
       return
@@ -38,7 +37,7 @@ class AnnotationsController < ApplicationController
     assignment = result.grouping.assignment
     category = assignment.annotation_categories.find_by(id: params[:category_id]) if params[:category_id].present?
     if params[:annotation_text_id].present?
-      reused = Assignment.reusable_texts_for(assignment, current_role).find_by(id: params[:annotation_text_id])
+      reused = assignment.reusable_texts_for(current_role).find_by(id: params[:annotation_text_id])
     end
     missing_category = params[:category_id].present? && category.nil?
     missing_text = params[:annotation_text_id].present? && reused.nil?

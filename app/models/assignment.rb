@@ -1233,17 +1233,17 @@ class Assignment < Assessment
     end
   end
 
+  # The annotation texts +role+ may reuse on this assignment: the texts in its annotation categories,
+  # plus the role's own one-time texts. This covers every text that find_annotation_text suggests.
+  def reusable_texts_for(role)
+    texts = AnnotationText.left_joins(:annotation_category)
+    texts.where('annotation_categories.assessment_id': self.id)
+         .or(texts.where(annotation_category_id: nil, creator_id: role.id))
+  end
+
   # Query for all current results for this assignment
   def current_results
     Assignment.current_results([self.id])
-  end
-
-  # The annotation texts +role+ may reuse on +assignment+: the texts in its annotation categories,
-  # plus the role's own one-time texts. This covers every text that find_annotation_text suggests.
-  def self.reusable_texts_for(assignment, role)
-    texts = AnnotationText.left_joins(:annotation_category)
-    texts.where('annotation_categories.assessment_id': assignment.id)
-         .or(texts.where(annotation_category_id: nil, creator_id: role.id))
   end
 
   def self.current_results(assessment_ids)
