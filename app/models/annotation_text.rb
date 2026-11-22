@@ -87,16 +87,12 @@ class AnnotationText < ApplicationRecord
   end
 
   # Returns the ids of the annotation texts in +texts+ that cannot be changed or deleted because they are used in a
-  # released result, or in a submission with a remark request in progress (since submitting a remark request
-  # unreleases the original result). Once a remark result has been marked as complete, its submission's annotation
-  # texts can be changed again unless it is released. (Annotation texts used in an original result with a remark
-  # request still cannot be deleted, as Annotation#check_if_released prevents the deletion of their annotations.)
+  # released result, or in a submission with a remark request (whatever the state of the remark result).
   def self.released_ids(texts)
     annotations = Annotation.joins(:result).where(annotation_text_id: texts)
-    remarks_in_progress = Result.where.not(remark_request_submitted_at: nil)
-                                .where(marking_state: Result::MARKING_STATES[:incomplete])
+    remarked_submission_ids = Result.where.not(remark_request_submitted_at: nil).select(:submission_id)
     annotations.where('results.released_to_students': true)
-               .or(annotations.where('results.submission_id': remarks_in_progress.select(:submission_id)))
+               .or(annotations.where('results.submission_id': remarked_submission_ids))
                .distinct
                .pluck(:annotation_text_id)
   end
