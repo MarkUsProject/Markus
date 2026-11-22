@@ -25,7 +25,7 @@
     <i class="fa-solid fa-grip-vertical"></i>
     <%= markdown(annotation_text[:content]) %>
 
-    <div class='annotation-text-details'>
+    <div class='annotation-text-details <%= 'annotation-text-locked' if annotation_text[:released] %>'>
       <% if annotation_text[:released] %>
         <%= button_tag t(:edit), type: 'button', disabled: true, class: 'inline-button' %>
         <%= button_tag t(:delete), type: 'button', disabled: true, class: 'inline-button' %>
