@@ -1,4 +1,6 @@
 class SubmissionsJob < ApplicationJob
+  accesses_repositories_in_bulk
+
   def add_warning_messages(messages)
     msg = [status[:warning_message], *messages].compact.join("\n")
     status.update(warning_message: msg)

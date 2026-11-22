@@ -1330,17 +1330,19 @@ class Assignment < Assessment
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo(&block)
-    failed_groupings = []
-    self.groupings.each do |grouping|
-      grouping.access_repo(&block)
-    rescue StandardError
-      # in the event of a concurrent repo modification, retry later
-      failed_groupings << grouping
-    end
-    failed_groupings.each do |grouping|
-      grouping.access_repo(&block)
-    rescue StandardError
-      # give up
+    Repository.get_class.bulk_access do
+      failed_groupings = []
+      self.groupings.each do |grouping|
+        grouping.access_repo(&block)
+      rescue StandardError
+        # in the event of a concurrent repo modification, retry later
+        failed_groupings << grouping
+      end
+      failed_groupings.each do |grouping|
+        grouping.access_repo(&block)
+      rescue StandardError
+        # give up
+      end
     end
   end
 

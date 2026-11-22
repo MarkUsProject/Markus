@@ -114,6 +114,38 @@ module Repository
       raise NotImplementedError
     end
 
+    # Number of repository accesses within a +bulk_access+ block between releases of unused repository resources.
+    BULK_ACCESS_RELEASE_INTERVAL = 50
+
+    # Static method: Runs a block that accesses many repositories, such as a loop over all groups.
+    #
+    # Some repository resources (e.g., open git pack files) remain held after a repository is closed until the
+    # Ruby objects referencing them are garbage collected. Bulk operations allocate few Ruby objects, so garbage
+    # collection may not run during them, and these resources can accumulate until the process runs out of file
+    # descriptors. Inside this block, every +BULK_ACCESS_RELEASE_INTERVAL+ repository accesses trigger a
+    # (minor) garbage collection to release them.
+    def self.bulk_access
+      outermost = Thread.current[:repository_bulk_access_count].nil?
+      Thread.current[:repository_bulk_access_count] = 0 if outermost
+      yield
+    ensure
+      Thread.current[:repository_bulk_access_count] = nil if outermost
+    end
+
+    # Static method: Records that a repository was accessed. Inside a +bulk_access+ block, periodically releases
+    # repository resources that are no longer in use.
+    def self.track_bulk_access
+      count = Thread.current[:repository_bulk_access_count]
+      return if count.nil?
+
+      count += 1
+      if count >= BULK_ACCESS_RELEASE_INTERVAL
+        GC.start(full_mark: false, immediate_sweep: true)
+        count = 0
+      end
+      Thread.current[:repository_bulk_access_count] = count
+    end
+
     # Static method: Deletes an existing repository
     def self.delete(connect_string)
       raise NotImplementedError
