@@ -1,4 +1,6 @@
 class SplitPdfJob < ApplicationJob
+  accesses_repositories_in_bulk
+
   def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _role = nil,
               on_duplicate = nil, enqueuing_user = nil)
     # Create directory for files whose QR code couldn't be parsed

@@ -45,5 +45,39 @@ describe GitRepository do
         expect { GitRepository.create(repo_path, course) }.to raise_error(IOError)
       end
     end
+
+    describe '.bulk_access', if: File.directory?('/proc/self/fd') do
+      let(:repo_paths) do
+        Array.new(8) do |i|
+          path = File.join(Repository::ROOT_DIR, course.name, "bulk_access_repo_#{i}")
+          GitRepository.create(path, course)
+          # pack the repository's objects, as happens to repositories that students push to
+          system('git', '-C', GitRepository.bare_path(path), 'gc', '--quiet', exception: true)
+          path
+        end
+      end
+
+      # Returns the number of file descriptors this process has open on files in the repositories
+      def open_repo_file_count
+        Dir.children('/proc/self/fd').count do |fd|
+          File.readlink("/proc/self/fd/#{fd}").start_with?(Repository::ROOT_DIR)
+        rescue SystemCallError
+          false # the file descriptor was closed while listing
+        end
+      end
+
+      before { stub_const('Repository::AbstractRepository::BULK_ACCESS_RELEASE_INTERVAL', 3) }
+
+      it 'limits the number of files held open after accessing many repositories' do
+        repo_paths
+        open_file_counts = GitRepository.bulk_access do
+          repo_paths.map do |path|
+            GitRepository.access(path, &:get_all_revisions)
+            open_repo_file_count
+          end
+        end
+        expect(open_file_counts.max).to be <= Repository::AbstractRepository::BULK_ACCESS_RELEASE_INTERVAL
+      end
+    end
   end
 end

@@ -293,3 +293,32 @@ describe("For the GradersManager's group name search", () => {
     expect(screen.getByText("alpha_group_lower")).toBeInTheDocument();
   });
 });
+
+describe("For the GradersManager's tables", () => {
+  it("names the graders and groups tables", async () => {
+    fetch.mockReset();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValueOnce({
+        graders: [],
+        criteria: [],
+        assign_graders_to_criteria: false,
+        loading: false,
+        sections: {},
+        anonymize_groups: false,
+        hide_unassigned_criteria: false,
+        isGraderDistributionModalOpen: false,
+        groups: [],
+      }),
+    });
+    render(<GradersManager sections={{}} course_id={1} assignment_id={1} />);
+    await screen.findAllByText(I18n.t("table.no_data")); // Wait for data to be rendered
+
+    expect(
+      screen.getByRole("grid", {name: I18n.t("activerecord.models.ta.other")})
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("grid", {name: I18n.t("activerecord.models.group.other")})
+    ).toBeInTheDocument();
+  });
+});

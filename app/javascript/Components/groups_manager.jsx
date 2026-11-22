@@ -668,6 +668,7 @@ class GroupsTable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.group.other")}
         loading={this.props.loading}
         data={this.props.groups}
         columns={this.state.columns}
@@ -795,6 +796,7 @@ class StudentsTable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.student.other")}
         loading={this.props.loading}
         data={this.props.students}
         columns={this.state.columns}

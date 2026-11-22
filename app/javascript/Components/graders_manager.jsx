@@ -565,6 +565,7 @@ class GradersTable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.ta.other")}
         loading={this.props.loading}
         data={this.props.graders}
         columns={this.state.columns}
@@ -749,6 +750,7 @@ class GroupsTable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.group.other")}
         loading={this.props.loading}
         data={this.props.groups}
         columns={this.state.columns}
@@ -849,6 +851,7 @@ class CriteriaTable extends React.Component {
     if (this.props.display) {
       return (
         <Table
+          label={I18n.t("activerecord.models.criterion.other")}
           loading={this.props.loading}
           data={this.props.criteria}
           columns={this.state.columns}

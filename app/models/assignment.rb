@@ -1233,6 +1233,14 @@ class Assignment < Assessment
     end
   end
 
+  # The annotation texts +role+ may reuse on this assignment: the texts in its annotation categories,
+  # plus the role's own one-time texts. This covers every text that find_annotation_text suggests.
+  def reusable_texts_for(role)
+    texts = AnnotationText.left_joins(:annotation_category)
+    texts.where('annotation_categories.assessment_id': self.id)
+         .or(texts.where(annotation_category_id: nil, creator_id: role.id))
+  end
+
   # Query for all current results for this assignment
   def current_results
     Assignment.current_results([self.id])
@@ -1338,17 +1346,19 @@ class Assignment < Assessment
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo(&block)
-    failed_groupings = []
-    self.groupings.each do |grouping|
-      grouping.access_repo(&block)
-    rescue StandardError
-      # in the event of a concurrent repo modification, retry later
-      failed_groupings << grouping
-    end
-    failed_groupings.each do |grouping|
-      grouping.access_repo(&block)
-    rescue StandardError
-      # give up
+    Repository.get_class.bulk_access do
+      failed_groupings = []
+      self.groupings.each do |grouping|
+        grouping.access_repo(&block)
+      rescue StandardError
+        # in the event of a concurrent repo modification, retry later
+        failed_groupings << grouping
+      end
+      failed_groupings.each do |grouping|
+        grouping.access_repo(&block)
+      rescue StandardError
+        # give up
+      end
     end
   end
 
