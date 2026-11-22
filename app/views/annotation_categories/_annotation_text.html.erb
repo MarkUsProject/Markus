@@ -50,6 +50,7 @@
     </div>
     <% if annotation_text[:released] %>
       <div class='notice'>
+        <i class="fa-solid fa-circle-info left-icon"></i>
         <% if @assignment.allow_remarks? %>
           <%= t('annotation_categories.annotation_text_locked.with_remark_requests') %>
         <% else %>
