@@ -455,6 +455,7 @@ export class AssignmentSummaryTable extends React.Component {
           )}
         </div>
         <Table
+          label={I18n.t("assignments.grades")}
           data={data}
           columns={this.state.columns}
           initialState={{
