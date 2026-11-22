@@ -6,11 +6,16 @@ class AnnotationsController < ApplicationController
     result = course_result
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
+    text = result.grouping.assignment.reusable_texts_for(current_role).find_by(id: params[:annotation_text_id])
+    if text.nil?
+      head :not_found
+      return
+    end
 
     base_attributes = {
       submission_file_id: submission_file.id,
       is_remark: submission.has_remark?,
-      annotation_text_id: params[:annotation_text_id],
+      annotation_text_id: text.id,
       annotation_number: result.annotations.size + 1,
       creator: current_role
     }
@@ -29,20 +34,32 @@ class AnnotationsController < ApplicationController
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
 
-    d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
+    assignment = result.grouping.assignment
+    category = assignment.annotation_categories.find_by(id: params[:category_id]) if params[:category_id].present?
+    if params[:annotation_text_id].present?
+      reused = assignment.reusable_texts_for(current_role).find_by(id: params[:annotation_text_id])
+    end
+    missing_category = params[:category_id].present? && category.nil?
+    missing_text = params[:annotation_text_id].present? && reused.nil?
+    if missing_category || missing_text
+      head :not_found
+      return
+    end
 
-    if params[:annotation_text_id].present? && params[:category_id].present?
-      text = AnnotationText.find(params[:annotation_text_id])
-      unless text.annotation_category_id == params[:category_id].to_i
+    d = category&.flexible_criterion_id
+
+    if reused && category
+      text = reused
+      unless text.annotation_category_id == category.id
         text.update!(
-          annotation_category_id: params[:category_id],
+          annotation_category_id: category.id,
           last_editor_id: current_role.id
         )
       end
     else
       text = AnnotationText.create!(
         content: params[:content],
-        annotation_category_id: params[:category_id],
+        annotation_category_id: category&.id,
         creator_id: current_role.id,
         last_editor_id: current_role.id,
         deduction: d.nil? ? nil : 0.0
