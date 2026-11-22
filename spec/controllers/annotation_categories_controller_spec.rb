@@ -99,23 +99,36 @@ describe AnnotationCategoriesController do
       end
 
       context 'with a deductive annotation text' do
+        render_views
+
         let(:assignment_w_deductions) { create(:assignment_with_deductive_annotations) }
         let(:category) { assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first }
+        let(:text) { category.annotation_texts.first }
+        let(:locked_message) { ERB::Util.html_escape(I18n.t('annotation_categories.annotation_text_locked')) }
+        # The response is JavaScript that inserts the rendered HTML, so closing tags are escaped
+        let(:edit_link) { ">#{I18n.t(:edit)}<\\/a>" }
+        let(:delete_path) { "destroy_annotation_text?annotation_text_id=#{text.id}" }
 
         def show_category
           get_as role, :show, params: { course_id: course.id, assignment_id: assignment_w_deductions.id,
-                                        id: category.id }
+                                        id: category.id }, format: :js
         end
 
-        it 'does not mark the annotation text as released when it can be changed' do
+        it 'allows the annotation text to be edited and deleted when it can be changed' do
           show_category
           expect(assigns(:annotation_texts).pluck('released')).to eq [false]
+          expect(response.body).to include(edit_link, delete_path)
+          expect(response.body).not_to include(locked_message)
         end
 
-        it 'marks the annotation text as released when it has been used in a submission with a remark request' do
+        it 'disables editing and deleting the annotation text when it has been used in a submission with ' \
+           'a remark request' do
           assignment_w_deductions.groupings.first.current_submission_used.make_remark_result
           show_category
           expect(assigns(:annotation_texts).pluck('released')).to eq [true]
+          expect(response.body).not_to include(edit_link)
+          expect(response.body).not_to include(delete_path)
+          expect(response.body).to include(locked_message)
         end
       end
 
