@@ -6,8 +6,12 @@ class AnnotationsController < ApplicationController
     result = course_result
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
-    text = reusable_texts(result.grouping.assignment).find_by(id: params[:annotation_text_id])
-    return head :not_found if text.nil?
+    text = Assignment.reusable_texts_for(result.grouping.assignment, current_role)
+                     .find_by(id: params[:annotation_text_id])
+    if text.nil?
+      head :not_found
+      return
+    end
 
     base_attributes = {
       submission_file_id: submission_file.id,
@@ -33,9 +37,14 @@ class AnnotationsController < ApplicationController
 
     assignment = result.grouping.assignment
     category = assignment.annotation_categories.find_by(id: params[:category_id]) if params[:category_id].present?
-    reused = reusable_texts(assignment).find_by(id: params[:annotation_text_id]) if params[:annotation_text_id].present?
-    if (params[:category_id].present? && category.nil?) || (params[:annotation_text_id].present? && reused.nil?)
-      return head :not_found
+    if params[:annotation_text_id].present?
+      reused = Assignment.reusable_texts_for(assignment, current_role).find_by(id: params[:annotation_text_id])
+    end
+    missing_category = params[:category_id].present? && category.nil?
+    missing_text = params[:annotation_text_id].present? && reused.nil?
+    if missing_category || missing_text
+      head :not_found
+      return
     end
 
     d = category&.flexible_criterion_id
@@ -140,14 +149,6 @@ class AnnotationsController < ApplicationController
 
   def check_result
     page_not_found if course_result.nil?
-  end
-
-  # The annotation texts a grader may reuse on +assignment+: the texts in its annotation categories,
-  # plus the grader's own one-time texts. This covers every text that find_annotation_text suggests.
-  def reusable_texts(assignment)
-    texts = AnnotationText.left_joins(:annotation_category)
-    texts.where('annotation_categories.assessment_id': assignment.id)
-         .or(texts.where(annotation_category_id: nil, creator_id: current_role.id))
   end
 
   def course_result

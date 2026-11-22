@@ -1238,6 +1238,14 @@ class Assignment < Assessment
     Assignment.current_results([self.id])
   end
 
+  # The annotation texts +role+ may reuse on +assignment+: the texts in its annotation categories,
+  # plus the role's own one-time texts. This covers every text that find_annotation_text suggests.
+  def self.reusable_texts_for(assignment, role)
+    texts = AnnotationText.left_joins(:annotation_category)
+    texts.where('annotation_categories.assessment_id': assignment.id)
+         .or(texts.where(annotation_category_id: nil, creator_id: role.id))
+  end
+
   def self.current_results(assessment_ids)
     # The timestamps of all current results. This duplicates #non_pr_results,
     # except it renames the groupings table to avoid a name conflict with the second query below.
