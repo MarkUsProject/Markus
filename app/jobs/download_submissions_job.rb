@@ -1,6 +1,8 @@
 # Prepares submission files from a list of groupings for download
 # by zipping them up into a single zipfile
 class DownloadSubmissionsJob < ApplicationJob
+  accesses_repositories_in_bulk
+
   def self.show_status(status)
     if status[:progress] == status[:total]
       I18n.t('poll_job.download_submissions_finalizing')
