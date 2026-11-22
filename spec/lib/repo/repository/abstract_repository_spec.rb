@@ -1,4 +1,41 @@
 describe Repository::AbstractRepository do
+  describe '.bulk_access' do
+    before { stub_const('Repository::AbstractRepository::BULK_ACCESS_RELEASE_INTERVAL', 3) }
+
+    def access_repos(count)
+      count.times { Repository::AbstractRepository.track_bulk_access }
+    end
+
+    it 'releases resources once every BULK_ACCESS_RELEASE_INTERVAL accesses' do
+      expect(GC).to receive(:start).with(full_mark: false, immediate_sweep: true).twice
+      Repository::AbstractRepository.bulk_access { access_repos(7) }
+    end
+
+    it 'does not release resources for accesses outside of a bulk_access block' do
+      expect(GC).not_to receive(:start)
+      access_repos(7)
+    end
+
+    it 'counts accesses across nested bulk_access blocks' do
+      expect(GC).to receive(:start).twice
+      Repository::AbstractRepository.bulk_access do
+        access_repos(2)
+        Repository::AbstractRepository.bulk_access { access_repos(2) }
+        access_repos(2)
+      end
+    end
+
+    it 'stops counting accesses once the block raises an error' do
+      expect(GC).not_to receive(:start)
+      expect { Repository::AbstractRepository.bulk_access { raise 'error' } }.to raise_error('error')
+      access_repos(7)
+    end
+
+    it 'returns the value of the block' do
+      expect(Repository::AbstractRepository.bulk_access { 42 }).to eq 42
+    end
+  end
+
   context 'update repo permissions' do
     include_context 'without enqueue deduplication'
 
