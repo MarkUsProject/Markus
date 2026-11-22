@@ -4,6 +4,7 @@
 
 import {AnnotationUsagePanel} from "../annotation_usage_panel";
 import {render, screen, fireEvent} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => null,
@@ -49,24 +50,24 @@ describe("For the AnnotationUsagePanel's group name search", () => {
     await screen.findByText("(alice) Alice First");
   });
 
-  it("is case-insensitive by default", () => {
+  it("is case-insensitive by default", async () => {
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.submission.one")}`,
     });
-    fireEvent.change(groupSearch, {target: {value: "alpha"}});
+    await userEvent.type(groupSearch, "alpha");
 
     expect(screen.getByText("(alice) Alice First")).toBeInTheDocument();
     expect(screen.getByText("(bob) Bob Second")).toBeInTheDocument();
     expect(screen.queryByText("(carol) Carol Third")).not.toBeInTheDocument();
   });
 
-  it("becomes case-sensitive when the toggle is checked", () => {
-    fireEvent.click(screen.getByTestId("group_name_case_sensitive"));
+  it("becomes case-sensitive when the toggle is checked", async () => {
+    await userEvent.click(screen.getByTestId("group_name_case_sensitive"));
 
     const groupSearch = screen.getByRole("textbox", {
       name: `${I18n.t("search")} ${I18n.t("activerecord.models.submission.one")}`,
     });
-    fireEvent.change(groupSearch, {target: {value: "Alpha"}});
+    await userEvent.type(groupSearch, "Alpha");
 
     expect(screen.getByText("(alice) Alice First")).toBeInTheDocument();
     expect(screen.queryByText("(bob) Bob Second")).not.toBeInTheDocument();

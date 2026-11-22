@@ -62,6 +62,7 @@
     "jest": "^30.5.2",
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^30.5.2",
+    "jest-fail-on-console": "^3.3.4",
     "jest-fetch-mock": "^3.0.3",
     "jsdom-worker": "^0.3.0",
     "mini-css-extract-plugin": "^2.9.2",

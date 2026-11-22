@@ -198,6 +198,8 @@ export default function Table({
     enableRowSelection: enableRowSelection,
     columnResizeMode: "onChange",
     meta: {tableId},
+    // Rows are not paginated, so there is no page index to reset when the data changes
+    autoResetPageIndex: false,
   });
 
   const centerTotalSize = table.getCenterTotalSize();

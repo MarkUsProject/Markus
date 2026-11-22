@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "@testing-library/react";
+import {act} from "@testing-library/react";
 import {LeftPane} from "../Result/left_pane";
 import {renderInResultContext} from "./result_context_renderer";
 
@@ -7,10 +7,11 @@ jest.mock("../Result/annotation_panel", () => ({AnnotationPanel: () => <div />})
 jest.mock("../Result/feedback_file_panel", () => ({FeedbackFilePanel: () => <div />}));
 jest.mock("../Result/remark_panel", () => ({RemarkPanel: () => <div />}));
 jest.mock("../test_run_table", () => ({TestRunTable: () => <div />}));
+const mockSelectFile = jest.fn();
 jest.mock("../Result/submission_file_panel", () => {
   const React = require("react");
   const MockSubmissionFilePanel = React.forwardRef((props, ref) => {
-    React.useImperativeHandle(ref, () => ({selectFile: jest.fn()}));
+    React.useImperativeHandle(ref, () => ({selectFile: mockSelectFile}));
     return null;
   });
   MockSubmissionFilePanel.displayName = "MockSubmissionFilePanel";
@@ -79,6 +80,8 @@ const basicProps = {
 };
 
 describe("LeftPane", () => {
+  beforeEach(() => mockSelectFile.mockClear());
+
   describe("selectFile", () => {
     it("passes the file type for a file at the root level", () => {
       const leftPaneRef = React.createRef();
@@ -86,15 +89,9 @@ describe("LeftPane", () => {
         <LeftPane ref={leftPaneRef} {...basicProps} submission_files={flatFileData} />
       );
 
-      leftPaneRef.current.selectFile("report.pdf", 1, undefined, 42);
+      act(() => leftPaneRef.current.selectFile("report.pdf", 1, undefined, 42));
 
-      expect(leftPaneRef.current.submissionFilePanel.current.selectFile).toHaveBeenCalledWith(
-        "report.pdf",
-        1,
-        "pdf",
-        undefined,
-        42
-      );
+      expect(mockSelectFile).toHaveBeenCalledWith("report.pdf", 1, "pdf", undefined, 42);
     });
 
     it("passes the correct file type for a file in a nested subdirectory", () => {
@@ -103,15 +100,9 @@ describe("LeftPane", () => {
         <LeftPane ref={leftPaneRef} {...basicProps} submission_files={nestedFileData} />
       );
 
-      leftPaneRef.current.selectFile("subdir/image.png", 2, undefined, 42);
+      act(() => leftPaneRef.current.selectFile("subdir/image.png", 2, undefined, 42));
 
-      expect(leftPaneRef.current.submissionFilePanel.current.selectFile).toHaveBeenCalledWith(
-        "subdir/image.png",
-        2,
-        "image",
-        undefined,
-        42
-      );
+      expect(mockSelectFile).toHaveBeenCalledWith("subdir/image.png", 2, "image", undefined, 42);
     });
   });
 });

@@ -29,7 +29,7 @@ describe("For the GradersManager's display of inactive groups", () => {
         criteria_coverage_count: 0,
       },
       {
-        _id: 15,
+        _id: 14,
         members: [
           ["d2lifese", "inviter", false],
           ["a3kjcbod", "accepted", false],

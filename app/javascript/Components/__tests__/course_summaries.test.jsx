@@ -47,7 +47,8 @@ describe("CourseSummaryTable show/hide inactive students", () => {
     const table = new CourseSummaryTable({assessments: [], marking_schemes: []});
 
     // Spy on setState
-    const setStateSpy = jest.spyOn(table, "setState");
+    // The table is not mounted, so setState is stubbed out and the state is updated manually
+    const setStateSpy = jest.spyOn(table, "setState").mockImplementation(() => {});
 
     // Initial state
     expect(table.state.showHidden).toBe(false);
@@ -78,7 +79,8 @@ describe("CourseSummaryTable show/hide inactive students", () => {
 
   it("updateShowHidden preserves other column filters", () => {
     const table = new CourseSummaryTable({assessments: [], marking_schemes: []});
-    const setStateSpy = jest.spyOn(table, "setState");
+    // The table is not mounted, so setState is stubbed out and the state is updated manually
+    const setStateSpy = jest.spyOn(table, "setState").mockImplementation(() => {});
 
     // Set up state with multiple filters
     table.state.columnFilters = [

@@ -72,7 +72,7 @@ describe("For the InstructorTable's display of instructors", () => {
   });
 
   describe("when no instructors are fetched", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       instructors_sample = [];
       // Mocking the response returned by fetch, used in InstructorTable fetchData
       fetch.mockReset();
@@ -84,10 +84,11 @@ describe("For the InstructorTable's display of instructors", () => {
         }),
       });
       render(<InstructorTable course_id={1} />);
+      await screen.findByText(I18n.t("instructors.empty_table"));
     });
 
-    it("No rows found is shown", async () => {
-      await screen.findByText(I18n.t("instructors.empty_table"));
+    it("No rows found is shown", () => {
+      expect(screen.getByText(I18n.t("instructors.empty_table"))).toBeInTheDocument();
     });
   });
 });

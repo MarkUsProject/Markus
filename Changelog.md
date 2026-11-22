@@ -42,6 +42,10 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed a cookie overflow error when uploading a CSV file with long invalid rows, by limiting the length of flash messages (#8317)
+- Fixed inline help icons not appearing in the Graders tab and starter file settings (#8316)
+- Fixed graders not being assigned to groups whose submissions have not been collected when skipping groups with empty submissions (#8315)
+- Fixed an error when changing an annotation's deduction on a result with no mark yet for the annotation category's criterion (#8313)
 - Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
 - Fixed validations not matching schema length limit by adding a schema limit for exam template names and tag names (#8272)
 - Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
@@ -59,6 +63,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Configured Jest tests to fail on console output, and fixed the tests and components that produced warnings (#8314)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
 - Migrated the three scanned exam log tables to `@tanstack/react-table` v8 (#8262)

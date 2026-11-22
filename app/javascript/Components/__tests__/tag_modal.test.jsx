@@ -14,7 +14,11 @@ describe("TagModal", () => {
       isOpen: true,
       onRequestClose: jest.fn().mockImplementation(() => (props.isOpen = false)),
       tagModalHeading: "Heading",
-      onSubmit: jest.fn().mockImplementation(() => (props.isOpen = false)),
+      onSubmit: jest.fn().mockImplementation(event => {
+        // Like the real handlers, prevent the browser from submitting the form
+        event.preventDefault();
+        props.isOpen = false;
+      }),
       handleNameChange: jest.fn().mockImplementation(() => {}),
       handleDescriptionChange: jest.fn().mockImplementation(() => {}),
     };
