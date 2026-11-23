@@ -72,7 +72,7 @@ describe("For the InstructorTable's display of instructors", () => {
   });
 
   describe("when no instructors are fetched", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       instructors_sample = [];
       // Mocking the response returned by fetch, used in InstructorTable fetchData
       fetch.mockReset();
@@ -84,10 +84,11 @@ describe("For the InstructorTable's display of instructors", () => {
         }),
       });
       render(<InstructorTable course_id={1} />);
+      await screen.findByText(I18n.t("instructors.empty_table"));
     });
 
-    it("No rows found is shown", async () => {
-      await screen.findByText(I18n.t("instructors.empty_table"));
+    it("No rows found is shown", () => {
+      expect(screen.getByText(I18n.t("instructors.empty_table"))).toBeInTheDocument();
     });
   });
 });
@@ -188,7 +189,7 @@ describe("For each InstructorTable's loading status", () => {
     it("shows loading spinner when data is being fetched", async () => {
       render(<InstructorTable course_id={1} />);
 
-      const spinner = await screen.findByLabelText("grid-loading", {}, {timeout: 3000});
+      const spinner = await screen.findByLabelText(I18n.t("working"), {}, {timeout: 3000});
       expect(spinner).toBeInTheDocument();
     });
   });

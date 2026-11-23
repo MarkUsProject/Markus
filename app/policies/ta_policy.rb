@@ -1,14 +1,19 @@
 # Ta policy class
 class TaPolicy < RolePolicy
-  authorize :assignment, :criterion_id, :submission, optional: true
+  authorize :assignment, :criterion_id, :grouping, :submission, optional: true
 
   def run_tests?
     allowed = record.grader_permission.run_tests
     unless assignment.nil?
       allowed &&= check?(:tests_enabled?, assignment) && check?(:tests_set_up?, assignment)
     end
+    allowed &&= check?(:grades_grouping?) unless grouping.nil?
     allowed &&= check?(:before_release?, submission) unless submission.nil?
     allowed
+  end
+
+  def grades_grouping?
+    check?(:manage_submissions?) || check?(:assigned_grader?, grouping)
   end
 
   def manage_submissions?

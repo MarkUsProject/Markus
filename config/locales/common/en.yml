@@ -55,6 +55,8 @@ en:
     roster_sync_complete: Roster Sync Complete
     roster_sync_errors: Some students could not be synced.
     roster_sync_instructions: This will synchronize the MarkUs course roster with the LMS roster, creating accounts if they do not exist.
+    roster_sync_invalid_next_link: The LMS sent a link to the next roster page on a different server. The roster was not synced.
+    roster_sync_too_many_pages: The LMS sent more than %{max} roster pages. The roster was not synced.
     select_course: Select the course that matches %{course_name}
     start_grade_sync: Syncing Grades
     start_roster_sync: Syncing Roster
@@ -67,6 +69,7 @@ en:
     sync_tas: Sync TA roster
     unlink_confirm: This will unlink the course and any assessments from this LMS. Continue?
     unlink_courses: Unlink this course
+    untrusted_lms_host: 'MarkUs did not contact %{host}: it is outside the LMS domains in the MarkUs settings.'
   markus: MarkUs
   max: Max
   min: Min
@@ -96,8 +99,14 @@ en:
     case_sensitive_search: Match case
     hide_details: Hide details
     no_data: No rows found
+    row_count:
+      one: 1 row
+      other: "%{count} rows"
     search: Search
+    select_all_rows: Select all rows
+    select_row: Select row
     show_details: Show details
+    status_with_label: "%{label}: %{status}"
   to: to
   working: Loading
   write: Write

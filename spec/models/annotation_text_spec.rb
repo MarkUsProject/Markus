@@ -194,6 +194,18 @@ describe AnnotationText do
       expect(marks).to eq [2.0, 2.0, 2.0]
     end
 
+    it 'creates and updates a mark that does not exist yet when its deduction changes' do
+      result = assignment.groupings.first.current_result
+      new_flex = create(:flexible_criterion, assignment: assignment, max_mark: 3.0)
+      category = create(:annotation_category, assignment: assignment, flexible_criterion: new_flex)
+      text = create(:annotation_text, annotation_category: category, deduction: 0.0)
+      create(:text_annotation, annotation_text: text, result: result)
+      result.marks.where(criterion: new_flex).destroy_all
+
+      text.update!(deduction: 1.0)
+      expect(result.marks.find_by(criterion: new_flex).mark).to eq 2.0
+    end
+
     it 'creates marks if criterion was created after annotation texts' do
       old_criterion = flexible_criterion
       new_flex = create(:flexible_criterion, assignment: assignment)

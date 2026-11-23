@@ -98,12 +98,18 @@ describe("TextViewer", () => {
 
   it("should remove local storage text_viewer_font_size when it is not a number", async () => {
     localStorage.setItem("text_viewer_font_size", "not a number");
+    const consoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     render(<TextViewer {...props} />);
 
     await waitFor(() => {
       expect(localStorage.getItem("text_viewer_font_size")).toBeNull();
     });
+    expect(consoleError).toHaveBeenCalledWith(
+      "An error occurred:",
+      "Local storage item 'text_viewer_font_size' is not a number."
+    );
+    consoleError.mockRestore();
   });
 
   it("should render using font size from localStorage", async () => {
@@ -157,6 +163,7 @@ describe("TextViewer", () => {
 
   it("should call an error callback when the requested file content is too large", async () => {
     fetchMock.mockOnce({}, {status: 413});
+    const consoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     render(<TextViewer {...props} url={"/"} />);
 
@@ -170,20 +177,24 @@ describe("TextViewer", () => {
       expect(loadingCallback.mock.calls).toHaveLength(1);
       expect(loadingCallback.mock.calls[0][0]).toBe(false);
     });
+    expect(consoleError).toHaveBeenCalledWith(
+      new Error(I18n.t("submissions.oversize_submission_file"))
+    );
+    consoleError.mockRestore();
   });
 
   it("should console error on error", async () => {
     const fetchError = new Error("fetch error");
     fetchMock.mockRejectOnce(fetchError);
+    const mockedConsoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     render(<TextViewer {...props} url={"/"} />);
-
-    const mockedConsoleError = jest.spyOn(global.console, "error").mockImplementation(() => {});
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(mockedConsoleError).toHaveBeenCalledWith(fetchError);
     });
+    mockedConsoleError.mockRestore();
   });
 
   it("should not perform a fetch request if the URL hasn't changed", async () => {

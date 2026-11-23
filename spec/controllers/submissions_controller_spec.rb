@@ -881,7 +881,7 @@ describe SubmissionsController do
     end
 
     describe '#set_resulting_marking_state' do
-      let(:role) { create(:ta) }
+      let(:role) { grader }
       let(:grouping) { @grouping1 }
 
       it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
@@ -1102,6 +1102,8 @@ describe SubmissionsController do
       describe '#set_resulting_marking_state' do
         let(:role) { create(:ta) }
         let(:grouping) { @grouping }
+
+        before { create(:ta_membership, role: role, grouping: grouping) }
 
         it_behaves_like 'An authorized instructor and grader accessing #set_result_marking_state'
       end
@@ -1989,6 +1991,87 @@ describe SubmissionsController do
     end
   end
 
+  describe '#set_result_marking_state access' do
+    let(:assignment) { create(:assignment) }
+    let(:groupings) { create_list(:grouping_with_inviter_and_submission, 2, assignment: assignment) }
+    let(:results) { groupings.map(&:current_result) }
+    let(:complete) { Result::MARKING_STATES[:complete] }
+    let(:ta) { create(:ta) }
+    let(:params) do
+      { course_id: course.id, assignment_id: assignment.id, groupings: groupings.map(&:id), marking_state: complete }
+    end
+
+    def marking_states
+      results.map { |result| result.reload.marking_state }
+    end
+
+    it 'denies a TA who grades neither group' do
+      post_as ta, :set_result_marking_state, params: params
+      expect(response).to have_http_status(:forbidden)
+      expect(marking_states).not_to include complete
+    end
+
+    it 'denies a TA who grades one of the two groups, and changes neither' do
+      create(:ta_membership, role: ta, grouping: groupings.first)
+      post_as ta, :set_result_marking_state, params: params
+      expect(response).to have_http_status(:forbidden)
+      expect(marking_states).not_to include complete
+    end
+
+    it 'updates the groups a TA grades' do
+      groupings.each { |grouping| create(:ta_membership, role: ta, grouping: grouping) }
+      post_as ta, :set_result_marking_state, params: params
+      expect(response).to have_http_status(:success)
+      expect(marking_states).to all(eq complete)
+    end
+
+    # Counts the membership reads while a TA who grades +count+ new groups sets their marking state.
+    def membership_queries(count)
+      selected = create_list(:grouping_with_inviter_and_submission, count, assignment: assignment)
+      selected.each { |grouping| create(:ta_membership, role: ta, grouping: grouping) }
+      request_params = params.merge(groupings: selected.map(&:id))
+      queries = []
+      record = ->(*, payload) { queries << payload[:sql] if payload[:sql].match?(/\ASELECT.*memberships/m) }
+      ActiveSupport::Notifications.subscribed(record, 'sql.active_record') do
+        post_as ta, :set_result_marking_state, params: request_params
+      end
+      expect(response).to have_http_status(:success)
+      queries.size
+    end
+
+    it 'checks a TA with the same number of membership queries for any number of groups' do
+      expect(membership_queries(4)).to eq membership_queries(1)
+    end
+
+    it 'updates every group for a TA who manages submissions' do
+      post_as create(:ta, manage_submissions: true), :set_result_marking_state, params: params
+      expect(response).to have_http_status(:success)
+      expect(marking_states).to all(eq complete)
+    end
+
+    context 'with peer reviews' do
+      let(:peer_review) { create(:peer_review) }
+      let(:pr_assignment) { peer_review.result.grouping.assignment.pr_assignment }
+      let(:instructor) { create(:instructor) }
+
+      def post_peer_review(assignment_id)
+        post_as instructor, :set_result_marking_state,
+                params: { course_id: course.id, assignment_id: assignment_id, peer_reviews: [peer_review.id],
+                          marking_state: complete }
+      end
+
+      it 'updates a peer review of this assignment' do
+        post_peer_review(pr_assignment.id)
+        expect(peer_review.result.reload.marking_state).to eq complete
+      end
+
+      it 'skips a peer review of another assignment' do
+        post_peer_review(create(:peer_review_assignment).id)
+        expect(peer_review.result.reload.marking_state).not_to eq complete
+      end
+    end
+  end
+
   describe '#run_tests' do
     let(:assignment) { create(:assignment) }
     let(:instructor) { create(:instructor) }
@@ -2018,6 +2101,27 @@ describe SubmissionsController do
       it 'does not enqueue an AutotestRunJob' do
         params = { course_id: assignment.course_id, assignment_id: assignment.id, groupings: [grouping.id] }
         expect { post_as instructor, :run_tests, params: params }.not_to have_enqueued_job(AutotestRunJob)
+      end
+    end
+
+    context 'when a TA with run_tests permission runs the tests' do
+      let(:assignment) { create(:assignment_with_test_groups_instructor_runnable) }
+      let(:ta) { create(:ta, run_tests: true) }
+      let(:params) { { course_id: assignment.course_id, assignment_id: assignment.id, groupings: [grouping.id] } }
+
+      it 'does not enqueue an AutotestRunJob for a group the TA does not grade' do
+        expect { post_as ta, :run_tests, params: params }.not_to have_enqueued_job(AutotestRunJob)
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it 'flashes the grades_grouping? failure reason for a group the TA does not grade' do
+        post_as ta, :run_tests, params: params
+        expect(flash[:error]).to have_message(I18n.t('action_policy.policy.ta.grades_grouping?'))
+      end
+
+      it 'enqueues an AutotestRunJob for a group the TA grades' do
+        create(:ta_membership, role: ta, grouping: grouping)
+        expect { post_as ta, :run_tests, params: params }.to have_enqueued_job(AutotestRunJob)
       end
     end
   end

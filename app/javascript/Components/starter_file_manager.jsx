@@ -5,6 +5,7 @@ import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {flashMessage} from "../common/flash";
+import InlineHelp from "./Helpers/inline_help";
 
 function blurOnEnter(event) {
   if (event.key === "Enter") {
@@ -477,9 +478,7 @@ class StarterFileManager extends React.Component {
           />
           {I18n.t("assignments.starter_file.available_after_due")}
         </label>
-        <div className="inline-help">
-          <p>{I18n.t("assignments.starter_file.available_after_due_help")}</p>
-        </div>
+        <InlineHelp>{I18n.t("assignments.starter_file.available_after_due_help")}</InlineHelp>
       </Fragment>
     );
   };

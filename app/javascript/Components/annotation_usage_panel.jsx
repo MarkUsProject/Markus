@@ -113,6 +113,7 @@ class AnnotationUsagePanel extends React.Component {
     if (this.state.details) {
       let annotation_table = (
         <Table
+          label={I18n.t("annotations.usage")}
           data={this.state.applications}
           columns={this.columns}
           initialState={{
