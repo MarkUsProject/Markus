@@ -43,6 +43,7 @@
 - Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
+- Fixed PDF annotation boxes going away after a grader resizes the file pane (#8321)
 - Fixed git repository files being left open during bulk operations over many groups, which could exceed the open file limit (#8318)
 - Fixed a cookie overflow error when uploading a CSV file with long invalid rows, by limiting the length of flash messages (#8317)
 - Fixed inline help icons not appearing in the Graders tab and starter file settings (#8316)

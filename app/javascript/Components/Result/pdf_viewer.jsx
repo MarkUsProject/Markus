@@ -96,6 +96,11 @@ export class PDFViewer extends React.PureComponent {
     const width = entry.borderBoxSize[0].inlineSize;
     if (width === this.paneWidth) return;
     this.paneWidth = width;
+    // A refit makes pdf.js rebuild its pages, which drops the annotation boxes drawn on them.
+    if (this.props.resultView) {
+      this.refresh_annotations();
+      return;
+    }
     this.update_pdf_view();
   };
 
@@ -197,6 +202,9 @@ export class PDFViewer extends React.PureComponent {
   refresh_annotations = () => {
     $(".annotation_holder").remove();
     this.update_pdf_view();
+    // The annotation manager exists once pdf.js has set up the pages ("pagesinit");
+    // "pagesloaded" then draws the annotations.
+    if (!this.annotation_manager) return;
     this.props.annotations.forEach(this.display_annotation);
     if (this.props.annotationFocus) {
       document.getElementById("annotation_holder_" + this.props.annotationFocus).scrollIntoView();
