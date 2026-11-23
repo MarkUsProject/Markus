@@ -31,7 +31,11 @@ export class AdminCourseList extends React.Component {
         }
       })
       .then(data => {
-        this.setState({courses: data, loading: false});
+        const courses = data.map(course => ({
+          ...course,
+          is_hidden: course.is_hidden ? I18n.t("courses.hidden") : I18n.t("courses.visible"),
+        }));
+        this.setState({courses, loading: false});
       });
   };
 
@@ -47,21 +51,9 @@ export class AdminCourseList extends React.Component {
     columnHelper.accessor("is_hidden", {
       header: () => I18n.t("activerecord.attributes.course.is_hidden"),
       minSize: 70,
-      cell: info => (info.getValue() ? I18n.t("courses.hidden") : I18n.t("courses.visible")),
-      filterFn: (row, columnId, filterValue) =>
-        filterValue === "" || String(row.getValue(columnId)) === filterValue,
+      filterFn: "equalsString",
       meta: {
         filterVariant: "select",
-        filterOptions: [
-          {
-            text: I18n.t("courses.hidden"),
-            value: "true",
-          },
-          {
-            text: I18n.t("courses.visible"),
-            value: "false",
-          },
-        ],
       },
     }),
     columnHelper.accessor("id", {

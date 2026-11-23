@@ -58,9 +58,9 @@ describe("AdminCourseList", () => {
     await screen.findByText("Course A");
 
     const visibilityFilter = screen.getByRole("combobox");
-    expect(within(visibilityFilter).getByRole("option", {name: "Hidden"})).toBeInTheDocument();
-    expect(within(visibilityFilter).getByRole("option", {name: "Visible"})).toBeInTheDocument();
-    await user.selectOptions(visibilityFilter, "true");
+    expect(within(visibilityFilter).getByRole("option", {name: "Hidden (1)"})).toBeInTheDocument();
+    expect(within(visibilityFilter).getByRole("option", {name: "Visible (1)"})).toBeInTheDocument();
+    await user.selectOptions(visibilityFilter, "Hidden (1)");
 
     expect(screen.getByText("Course B")).toBeInTheDocument();
     expect(screen.queryByText("Course A")).not.toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("AdminCourseList", () => {
     await screen.findByText("Course A");
 
     const visibilityFilter = screen.getByRole("combobox");
-    await user.selectOptions(visibilityFilter, "false");
+    await user.selectOptions(visibilityFilter, "Visible (1)");
 
     expect(screen.getByText("Course A")).toBeInTheDocument();
     expect(screen.queryByText("Course B")).not.toBeInTheDocument();
