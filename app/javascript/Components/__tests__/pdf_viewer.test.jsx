@@ -1,6 +1,9 @@
 import {render, screen, fireEvent} from "@testing-library/react";
 import {PDFViewer} from "../Result/pdf_viewer";
 import {ResultContext} from "../Result/result_context";
+import {PdfAnnotationManager} from "../../common/annotations/pdf_annotation_manager";
+
+jest.mock("../../common/annotations/pdf_annotation_manager");
 
 describe("PDFViewer", () => {
   let mockPdfViewer;
@@ -96,6 +99,54 @@ describe("PDFViewer", () => {
       resize(800);
 
       expect(mockPdfViewer.update).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("annotations when the pane is resized", () => {
+    const annotation = {
+      id: 7,
+      annotation_text_id: 3,
+      content: "Check this",
+      x_range: {start: 1, end: 2},
+      y_range: {start: 3, end: 4},
+      page: 1,
+    };
+    let resize;
+
+    beforeEach(() => {
+      jest.spyOn(global, "ResizeObserver").mockImplementation(callback => {
+        resize = width => callback([{borderBoxSize: [{inlineSize: width}]}]);
+        return {observe: jest.fn(), disconnect: jest.fn()};
+      });
+      window.ANNOTATION_TYPES = {PDF: "pdf"};
+      global.safe_marked = jest.fn(content => content);
+      render(<PDFViewer resultView={true} annotations={[annotation]} />);
+    });
+
+    afterEach(() => {
+      delete window.ANNOTATION_TYPES;
+      delete global.safe_marked;
+    });
+
+    it("draws the annotations again after the refit", () => {
+      eventBusInstances[0].dispatch("pagesinit");
+      const manager = PdfAnnotationManager.mock.instances[0];
+
+      resize(800);
+
+      expect(manager.addAnnotation).toHaveBeenCalledTimes(1);
+      expect(manager.addAnnotation).toHaveBeenCalledWith(
+        3,
+        "Check this",
+        {x1: 1, x2: 2, y1: 3, y2: 4, page: 1},
+        7,
+        undefined
+      );
+    });
+
+    it("waits for pdf.js to set up the pages before drawing annotations", () => {
+      expect(() => resize(800)).not.toThrow();
+      expect(mockPdfViewer.update).toHaveBeenCalled();
     });
   });
 
