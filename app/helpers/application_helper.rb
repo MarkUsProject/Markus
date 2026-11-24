@@ -1,5 +1,10 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  # Maximum number of characters in a flash message's text; longer messages are truncated.
+  # Flash messages are stored in the session cookie (limited to 4KB) or sent in response headers,
+  # so long messages can cause a CookieOverflow error or an oversized response.
+  MAX_FLASH_MESSAGE_LENGTH = 1000
+
   # A more robust flash method. Easier to add multiple messages of each type:
   # :error, :success, :warning and :notice
   def flash_message(type, text = '', flash_type = flash, **kwargs)
@@ -12,7 +17,11 @@ module ApplicationHelper
     type = :notice unless available_types.include?(type)
     # If a flash with that type doesn't exist, create a new array
     flash_type[type] ||= []
-    content = kwargs.empty? ? "<p>#{text.to_s.gsub("\n", '<br/>')}</p>" : render_to_string(**kwargs).split("\n").join
+    content = if kwargs.empty?
+                "<p>#{text.to_s.truncate(MAX_FLASH_MESSAGE_LENGTH).gsub("\n", '<br/>')}</p>"
+              else
+                render_to_string(**kwargs).split("\n").join
+              end
     # If the message doesn't already exist, add it
     flash_type[type].push(content) unless flash_type[type].include?(content)
   end

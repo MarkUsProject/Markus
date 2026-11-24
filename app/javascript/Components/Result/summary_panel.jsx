@@ -284,7 +284,13 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <h4>{I18n.t("activerecord.models.extra_mark.other")}</h4>
-        {data.length > 0 && <Table columns={this.state.extraMarksColumns} data={data} />}
+        {data.length > 0 && (
+          <Table
+            label={I18n.t("activerecord.models.extra_mark.other")}
+            columns={this.state.extraMarksColumns}
+            data={data}
+          />
+        )}
         {!this.props.released_to_students && (
           <p>
             <button className="inline-button" onClick={this.newExtraMark}>
@@ -374,6 +380,7 @@ export class SummaryPanel extends React.Component {
           />
         </Modal>
         <Table
+          label={I18n.t("activerecord.models.criterion.other")}
           columns={this.state.criterionColumns}
           data={this.props.criterionSummaryData}
           className="auto-overflow"

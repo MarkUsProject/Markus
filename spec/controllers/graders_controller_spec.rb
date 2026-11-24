@@ -877,8 +877,22 @@ describe GradersController do
           context 'and the group has no submission' do
             let(:submission) { nil }
 
-            it 'should not assign graders' do
-              expect(@grouping1.tas).to be_empty
+            it 'should assign graders' do
+              expect(@grouping1.tas).to include(@ta1)
+            end
+
+            it 'should not display a message about skipped groups' do
+              expect(flash[:notice]).to be_nil
+            end
+          end
+
+          context 'and the group has an uncollected submission' do
+            let(:submission) do
+              create(:submission, grouping: @grouping1, is_empty: true, submission_version_used: false)
+            end
+
+            it 'should assign graders' do
+              expect(@grouping1.tas).to include(@ta1)
             end
           end
 
@@ -893,8 +907,12 @@ describe GradersController do
           context 'and the group has an empty submission' do
             let(:submission) { create(:version_used_submission, grouping: @grouping1, is_empty: true) }
 
-            it 'should assign graders' do
+            it 'should not assign graders' do
               expect(@grouping1.tas).to be_empty
+            end
+
+            it 'should display a message about skipped groups' do
+              expect(flash[:notice]).to have_message(I18n.t('graders.group_submission_no_files'))
             end
           end
         end

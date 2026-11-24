@@ -2,6 +2,9 @@ require 'csv'
 
 class MarkusCsv
   MAX_INVALID_LINES = 10
+  # Maximum number of characters of each invalid row's contents to report. The report is shown as a flash
+  # message, and long messages can overflow the session cookie.
+  MAX_INVALID_LINE_LENGTH = 100
   INVALID_LINE_SEP = ' - '.freeze
   CSV_INJECTION_PREFIXES = /\A[="\-@+]/
 
@@ -37,7 +40,7 @@ class MarkusCsv
         valid_line_count += 1
       rescue CsvInvalidLineError => e
         # append individual error messages to each entry
-        line = row.join(',')
+        line = row.join(',').truncate(MAX_INVALID_LINE_LENGTH)
         unless e.message.blank? || e.message == 'CsvInvalidLineError'
           line.concat(" (#{e.message})")
         end

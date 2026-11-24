@@ -251,10 +251,13 @@ class GradersController < ApplicationController
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 
-  # Returns array of grouping ids with non empty submissions
+  # Returns the subset of +grouping_ids+ excluding groupings whose collected submission is empty.
+  # Groupings whose submissions have not yet been collected are kept.
   def filter_empty_submissions(grouping_ids)
-    Submission.where(grouping_id: grouping_ids, is_empty: false, submission_version_used: true)
-              .pluck(:grouping_id)
+    empty_grouping_ids = Submission.where(grouping_id: grouping_ids, is_empty: true, submission_version_used: true)
+                                   .pluck(:grouping_id)
+                                   .to_set
+    grouping_ids.reject { |id| empty_grouping_ids.include?(id.to_i) }
   end
 
   def filter_grouping_by_section(section_assignments, assignment)
