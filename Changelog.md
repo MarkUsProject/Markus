@@ -3,16 +3,57 @@
 ## [unreleased]
 
 ### 🛡️ Security
-- Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
-- Ignored the remote authentication header when remote authentication is not configured (#8269)
-- Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)
-- Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
 
 ### 🚨 Breaking changes
 
 ### ✨ New features and improvements
 
 ### 🐛 Bug fixes
+
+### 📚 Documentation changes
+
+### 🔧 Internal changes
+
+## [v2.10.6]
+
+### 🛡️ Security
+- Limited LTI roster and grade sync requests to hosts in the `lti.domains` setting (#8286)
+- Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
+- Limited LTI roster sync to roster pages on the LMS host, and stopped it after 1000 pages (#8285)
+- Restricted graders to setting the marking state of the groups they grade, and limited peer review marking states to the current assignment (#8267)
+- Restricted graders to running tests on the groups they grade (#8266)
+- Limited reused annotation texts to the categories of the current assignment and the grader's own one-time texts (#8304)
+- Added CSV cell sanitization to prevent formula injection in CSV exports (#8280)
+- Ignored the remote authentication header when remote authentication is not configured (#8269)
+- Restricted grader access to annotations to the groups they grade, and limited annotation results to the current course (#8264)
+- Limited LTI deployment deletes, roster syncs, and grade columns to the current course (#8241)
+
+### 🚨 Breaking changes
+- Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
+
+### ✨ New features and improvements
+- Named tables for screen readers and started their loading and row count announcements with the table's name (#8307)
+- Announced table loading and the number of rows shown to screen readers (#8290)
+- Gave table filters and row selection checkboxes accessible names for screen readers (#8289)
+- Made the toggles that expand table rows keyboard accessible (#8288)
+- Made sortable table columns keyboard accessible and announced their sort order to screen readers (#8287)
+- Improved loading of large tables by rendering rows as they come into view (#8261)
+- Added a new toggle to display assignment averages to students when viewing their grade summary (#8243)
+- Implemented new model, `GroupingsTags`, and added corresponding tests (#8233)
+- Courses created through the API (`POST /api/courses`) are now connected to the autotester given by the `autotest.default_url` setting, unless the request includes its own `autotest_url` parameter (#8222)
+- Pre-filled the autotester url field on the admin course creation form with the `autotest.default_url` setting, so courses created by an admin are connected to the default autotester unless the field is changed (#8221)
+- Expanded the `markus:check` rake task to check that the dependencies of enabled features (scanned exams, Jupyter notebook rendering and RMarkdown conversion) are installed (#8208)
+- Expanded the `markus:check` rake task to check that the database has run exactly the migrations in the code (#8226)
+- Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
+
+### 🐛 Bug fixes
+- Fixed PDF annotation boxes going away after a grader resizes the file pane (#8321)
+- Fixed git repository files being left open during bulk operations over many groups, which could exceed the open file limit (#8318)
+- Fixed a cookie overflow error when uploading a CSV file with long invalid rows, by limiting the length of flash messages (#8317)
+- Fixed inline help icons not appearing in the Graders tab and starter file settings (#8316)
+- Fixed graders not being assigned to groups whose submissions have not been collected when skipping groups with empty submissions (#8315)
+- Fixed an error when changing an annotation's deduction on a result with no mark yet for the annotation category's criterion (#8313)
+- Fixed active marking criteria re-expanding immediately after being collapsed (#8309)
 - Fixed denied JSON requests returning an HTML page in place of a JSON 403 response (#8265)
 - Fixed edited grades in the marks spreadsheet reverting to their previous value after being saved (#8260)
 - Fixed `extensions_controller.rb` to only create extensions for groupings within the current course (#8258)
@@ -21,10 +62,18 @@
 - Fixed annotation markers being placed on the wrong page in printed PDFs when a submission has multiple PDF files (#8227)
 - Fixed a blank PDF in the grading view that stayed blank until the window was resized (#8231)
 - Fixed ActionCable processes permanently losing their Redis pub/sub subscriptions after a Redis restart, by configuring reconnection retries in `config/cable.yml` (#8244)
-
-### 📚 Documentation changes
+- Fixed rake tasks such as `assets:precompile` and `db:migrate` failing with a `LoadError` for `factory_bot_rails` on installations without the `test` gem group (#8226)
 
 ### 🔧 Internal changes
+- Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
+- Migrated the three scanned exam log tables to `@tanstack/react-table` v8 (#8262)
+- Added indexes on the 22 foreign key columns reported by `rails active_record_doctor:unindexed_foreign_keys` (#8245)
+- Refactored calculating the remaining grace credits when displaying the Students table (#8216)
+- Refactored Action Cable channel authorization into `Channel` superclass (#8054)
+- Refactored `AuthenticationHelper#sign_in` to set session values directly instead of going through `MainController#login` (#7962)
+- Updated `MainController` specs to dispatch `post :login` directly in tests that assert on login's response, instead of relying on `sign_in`'s internal request (#7962)
+- Removed unused LTI line item code from the assignment create and update actions, and unused `@lti_deployments` assignments from the assignment and course controllers (#8242)
+- Improved the release cherry-pick automation and runbook (#8148)
 
 ## [v2.10.5]
 
@@ -41,7 +90,6 @@
 - Added a submission collection option that assigns a grade of 0 and marks the result complete for collected submissions that contain no files (#8168)
 - Add multi-key JWKS rotation for LTI 1.3 signing keys (#8056)
 - Added `refresh_autotest_schema` API route so a course's autotester schema can be refreshed without the admin UI (#8172)
-- Added additional details to the account settings and renamed the Settings dropdown to Account (#8207)
 
 ### 🐛 Bug fixes
 - Fixed the Results tab appearing for students when a result was unreleased and no remark request had been submitted (#8215)
@@ -560,79 +608,6 @@
 
 ### ✨ New features and improvements
 
-- Fix front-end content shift when an input element is focused (#7384)
-- Tooltip text for Package requirements file for Python autotester settings (#7383)
-- Pass back tags and overall comments from Autotester to MarkUs (#7387)
-- Render download test result button on assignment summary page only if the assignment has automated testing (#7417)
-- Group test results by Test Groups id (#7422)
-- Display HTML previews of RMarkdown files (#7394)
-- Allow instructors to assign scans to inactive students (#7482)
-- Added members parameter to add_group_api to support explicit member assignment during group creation (#7481)
-- Modified add_group_api to use username as group name for individual assignments (#7481)
-- Improved styling of markdown previews in `MarkdownPreview` component and annotation displays (#7487)
-- Allow creating image annotations from a test run's outputs (#7486)
-- Added an API that collects a single submission (#7494)
-- Enable removal of a student from a course (#7480)
-
-### 🐛 Bug fixes
-
-- Ensures row selection for peer reviewer unassigning has the same validation checks as individual selections (#7274)
-- Ensures mark levels on a rubric criterion are properly scaled when its max mark is updated (#7311)
-- Refactor contributors list in About section to read from markus-contributors.txt (#7374)
-- Optimized the querying of submissions when assigning graders (#7381)
-- Update remote_autotest_settings_id validation to be unique to an autotester (#7393)
-- Fix tag creation failing in tags table (#7426)
-- Ensure tag names are unique within an assignment (#7430)
-- Update flash style to "notice" for "setting up test env" message (#7445)
-- Fixed bug in `ImageViewer` where image width was set to 0 on initial load (#7485)
-- Fixed bug in `ImageViewer` where annotations did not disappear when moving the mouse out of the image (#7485)
-- Ensured annotations appear in results view when in fullscreen mode (#7487)
-- Fixed bug in `ImageViewer` where annotations did not always appear on initial image load (#7487)
-
-### 🔧 Internal changes
-
-- Reorganize Javascript files to separate Sprockets and Webpack compilation (#7345)
-- Replace moment.js dependency with much smaller dayjs (#7346)
-- Refactor `FileViewer`, `TextViewer`, `BinaryViewer` and `ImageViewer` components (#7270)
-- Pin `mistune` Python dependency to preserve compatibility with `nbconvert` (#7371)
-- Cache playwright's chromium installation on GitHub Actions (#7372)
-- Fix broken link to the Vagrant installation guide in `README.md` (#7349)
-- Fix `extra_hosts` configuration in `compose.yaml` (#7375)
-- Add unit tests for `marks_graders_controller` (#7382)
-- Convert front-end tests from enzyme to react testing library; add `@testing-library/user-event` (#7379)
-- Refactor the `Result` component and its children to use React context API (#7380)
-- Implement `contain_message` and `have_message` custom Rspec matchers to check for flash message content (#7386)
-- Update Python version to 3.13 in seed autotest schemas (#7388)
-- Rename jupyter notebook content functions and files to generalize to html content (#7391)
-- Update to React v18 (#7392)
-- Remove unused Javascript files (#7442)
-- Refactor scanned test generation and test splitting from polling to websockets (#7428)
-- Move Docker dependency updates into separate service (#7451)
-- Fixed flaky test due to daylight savings time issue (#7452)
-- Updated Python autotest seed file to illustrate pytest metadata custom markers (#7457)
-- Updated to react-flatpickr v4.0.0 (#7478)
-- Remove `mistune` Python explicit dependency (#7483)
-- Applied pre-commit (specifically Rubocop) changes to use it_behaves_like over include_examples (#7492)
-- Added explicit permissions to GitHub Actions workflow configuration (#7495)
-
-## [v2.6.1]
-
-### ✨ New features and improvements
-
-- Give instructors the ability to delete a TA from the Users Graders Tab (#7304)
-- Added zoom and rotate functionality to PDF viewer (#7306)
-
-### 🐛 Bug fixes
-
-- Ensure we handle JSON parsing exceptions when converting Jupyter Notebooks (#7308)
-- Fixed bug in grading context menu for editing/deleting annotations (#7314)
-- Fixed bug in grading annotations table when deleting annotations (#7314)
-- Ensure correct LTI version of lti_user_id is used on launch (#7335)
-
-## [v2.6.0]
-
-### ✨ New features and improvements
-
 - Prevent instructors from unassigning peer reviewers who have existing peer review data (#7263)
 - Add visual indicator on a per-assignment basis for used grace credits (#7226)
 - Change default disabled text area colour to ligher grey on light mode (#7269)
@@ -892,9 +867,6 @@
 ## [v2.2.4]
 - Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 
-
-## [v2.2.4]
-- Add feature to generate a PDF report of a result (PDF submission files only) (#6635)
 
 ## [v2.2.3]
 - Fix bug where in some circumstances the wrong result would be displayed to students (#6465)
