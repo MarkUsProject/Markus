@@ -180,17 +180,19 @@ class Course < ApplicationRecord
   # Yield an open repo for each group of this course, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo(&block)
-    failed_groups = []
-    self.groups.each do |group|
-      group.access_repo(&block)
-    rescue StandardError
-      # in the event of a concurrent repo modification, retry later
-      failed_groups << group
-    end
-    failed_groups.each do |grouping|
-      grouping.access_repo(&block)
-    rescue StandardError
-      # give up
+    Repository.get_class.bulk_access do
+      failed_groups = []
+      self.groups.each do |group|
+        group.access_repo(&block)
+      rescue StandardError
+        # in the event of a concurrent repo modification, retry later
+        failed_groups << group
+      end
+      failed_groups.each do |grouping|
+        grouping.access_repo(&block)
+      rescue StandardError
+        # give up
+      end
     end
   end
 

@@ -147,6 +147,7 @@ export class CourseSummaryTable extends React.Component {
           </div>
         )}
         <Table
+          label={I18n.t("course_summary.title")}
           data={this.props.data}
           columns={this.state.columns}
           columnFilters={this.state.columnFilters}

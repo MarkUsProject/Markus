@@ -120,6 +120,7 @@ class InstructorTable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.instructor.other")}
         data={this.state.data}
         columns={this.columns}
         noDataText={I18n.t("instructors.empty_table")}
