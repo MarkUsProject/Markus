@@ -302,14 +302,47 @@ describe("AnnotationTable", () => {
       makeAnnotation({id: 12, number: 12, filename: "main.py", annotation_category: null}),
     ];
 
+    const numberFilter = () =>
+      screen.getByRole("textbox", {name: defaultSearchPlaceholderText("#")});
+    const filenameFilter = () =>
+      screen.getByRole("textbox", {name: defaultSearchPlaceholderText(filenameHeader())});
+
     it("filters by number", async () => {
       const {container} = renderAnnotationTable({annotations});
 
-      await userEvent.type(
-        screen.getByRole("textbox", {name: defaultSearchPlaceholderText("#")}),
-        "2"
-      );
-      expect(annotationNumbers(container)).toEqual(["2", "12"]);
+      await userEvent.type(numberFilter(), "2");
+      expect(annotationNumbers(container)).toEqual(["2"]);
+    });
+
+    it("matches the number exactly", async () => {
+      const {container} = renderAnnotationTable({
+        annotations: [
+          makeAnnotation({id: 1, number: 1}),
+          makeAnnotation({id: 10, number: 10}),
+          makeAnnotation({id: 11, number: 11}),
+        ],
+      });
+
+      await userEvent.type(numberFilter(), "1");
+      expect(annotationNumbers(container)).toEqual(["1"]);
+    });
+
+    it("shows the rows matching the other filters when the number filter is cleared", async () => {
+      const {container} = renderAnnotationTable({annotations});
+
+      await userEvent.type(filenameFilter(), "main");
+      await userEvent.type(numberFilter(), "1");
+      expect(annotationNumbers(container)).toEqual(["1"]);
+
+      await userEvent.clear(numberFilter());
+      expect(annotationNumbers(container)).toEqual(["1", "12"]);
+    });
+
+    it("filters by filename with a partial match", async () => {
+      const {container} = renderAnnotationTable({annotations});
+
+      await userEvent.type(filenameFilter(), "help");
+      expect(annotationNumbers(container)).toEqual(["2"]);
     });
 
     it("filters by category when the first annotation has no category", async () => {

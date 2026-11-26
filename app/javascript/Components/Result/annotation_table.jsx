@@ -36,7 +36,7 @@ export class AnnotationTable extends React.Component {
     columnHelper.accessor("number", {
       header: "#",
       maxSize: 50,
-      filterFn: "includesString",
+      filterFn: "equalsString",
       meta: {className: "-wrap"},
       cell: ({row}) => {
         let remove_button = "";
