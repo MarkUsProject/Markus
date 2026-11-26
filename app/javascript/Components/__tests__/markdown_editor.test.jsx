@@ -45,7 +45,7 @@ describe("MarkdownEditor", () => {
 
     await userEvent.click(screen.getByRole("tab", {name: "Preview"}));
 
-    const preview = document.querySelector("#annotation-preview");
+    const preview = document.querySelector("#markdown-preview");
     expect(preview).toBeTruthy();
     expect(preview.textContent.trim()).toEqual(props.content);
   });

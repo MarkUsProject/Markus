@@ -160,6 +160,55 @@ describe("AnnotationTable", () => {
       expect(screen.queryByText("$x^2$", {exact: false})).not.toBeInTheDocument();
     });
 
+    it("renders each annotation's text in its own preview", () => {
+      const {container} = renderAnnotationTable({
+        annotations: [
+          makeAnnotation({id: 1, number: 1, content: "**first** $a$"}),
+          makeAnnotation({id: 2, number: 2, content: "_second_ $b$"}),
+        ],
+      });
+
+      const first = container.querySelector("#annotation-preview-1");
+      const second = container.querySelector("#annotation-preview-2");
+      expect(first.querySelector("strong")).toHaveTextContent("first");
+      expect(first.querySelector(".katex")).toBeInTheDocument();
+      expect(second.querySelector("em")).toHaveTextContent("second");
+      expect(second.querySelector(".katex")).toBeInTheDocument();
+      expect(container.querySelector("#annotation-preview")).toBeNull();
+    });
+
+    it("sanitizes the annotation text", () => {
+      const {container} = renderAnnotationTable({
+        annotations: [
+          makeAnnotation({content: '<img src="x" onerror="alert(1)"><script>x</script>'}),
+        ],
+      });
+
+      const preview = container.querySelector("#annotation-preview-1");
+      expect(preview.querySelector("script")).toBeNull();
+      expect(preview.querySelector("img")).not.toHaveAttribute("onerror");
+    });
+
+    it("renders math in only the edited annotation's preview", () => {
+      const annotations = [
+        makeAnnotation({id: 1, number: 1, content: "$a$"}),
+        makeAnnotation({id: 2, number: 2, content: "plain"}),
+      ];
+      const {container, props, rerender} = renderAnnotationTable({annotations});
+
+      rerender(
+        <AnnotationTable
+          {...props}
+          annotations={[annotations[0], {...annotations[1], content: "**edited** $b$"}]}
+        />
+      );
+      const first = container.querySelector("#annotation-preview-1");
+      const second = container.querySelector("#annotation-preview-2");
+      expect(first.querySelectorAll(".katex")).toHaveLength(1);
+      expect(second.querySelector("strong")).toHaveTextContent("edited");
+      expect(second.querySelectorAll(".katex")).toHaveLength(1);
+    });
+
     it("flags remark annotations in the text and creator columns", () => {
       renderAnnotationTable({
         detailed: true,

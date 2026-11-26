@@ -3,20 +3,9 @@ import {createColumnHelper} from "@tanstack/react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import Table from "../table/table";
-import {renderMathInElement} from "../../common/math_helper";
+import MarkdownPreview from "../markdown_preview";
 
 const columnHelper = createColumnHelper();
-
-function AnnotationContent({content}) {
-  const contentRef = React.useRef(null);
-  const html = React.useMemo(() => ({__html: safe_marked(content)}), [content]);
-
-  React.useLayoutEffect(() => {
-    renderMathInElement(contentRef.current);
-  }, [html]);
-
-  return <div ref={contentRef} dangerouslySetInnerHTML={html} />;
-}
 
 export class AnnotationTable extends React.Component {
   constructor(props) {
@@ -132,7 +121,11 @@ export class AnnotationTable extends React.Component {
         }
         return (
           <div>
-            <AnnotationContent content={value} />
+            <MarkdownPreview
+              id={`annotation-preview-${row.original.id}`}
+              className=""
+              content={value}
+            />
             <div className={"alignright"}>{edit_button}</div>
           </div>
         );
