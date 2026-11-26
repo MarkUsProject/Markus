@@ -292,6 +292,79 @@ describe Result do
     end
   end
 
+  describe '#create_marks' do
+    let(:assignment) { create(:assignment) }
+    let!(:criteria) { create_list(:flexible_criterion, 3, assignment: assignment) }
+    let(:result) { create(:grouping_with_inviter_and_submission, assignment: assignment).current_result }
+
+    it 'creates a blank mark for each TA-visible criterion when the result is created' do
+      create(:flexible_criterion, assignment: assignment, ta_visible: false, peer_visible: true)
+      expect(result.marks.pluck(:criterion_id, :mark, :override, :last_updated_by_id))
+        .to match_array(criteria.map { |criterion| [criterion.id, nil, false, nil] })
+    end
+
+    it 'creates a blank mark for a criterion added after the result was created' do
+      result
+      criterion = create(:flexible_criterion, assignment: assignment)
+      result.create_marks
+      expect(result.marks.where(criterion: criterion).pluck(:mark, :override)).to eq [[nil, false]]
+    end
+
+    it 'does not change or duplicate existing marks' do
+      result.marks.first.update!(mark: 1)
+      expect { result.create_marks }.not_to(change { result.marks.order(:id).pluck(:id, :mark, :updated_at) })
+    end
+
+    context 'when the result is released' do
+      before do
+        result.marks.delete_all
+        result.update!(released_to_students: true)
+      end
+
+      it 'does not create marks' do
+        result.create_marks
+        expect(result.marks.reload).to be_empty
+      end
+    end
+
+    context 'when the result is complete' do
+      before do
+        result.marks.each { |mark| mark.update!(mark: 1) }
+        result.update!(marking_state: Result::MARKING_STATES[:complete])
+      end
+
+      it 'sets the result to incomplete when it creates a mark' do
+        create(:flexible_criterion, assignment: assignment)
+        result.create_marks
+        expect(result.reload.marking_state).to eq Result::MARKING_STATES[:incomplete]
+      end
+
+      it 'leaves the result complete when it creates no marks' do
+        result.create_marks
+        expect(result.reload.marking_state).to eq Result::MARKING_STATES[:complete]
+      end
+    end
+
+    # Returns the queries create_marks runs to add marks for +count+ new criteria.
+    def create_marks_queries(count)
+      result_id = result.id
+      create_list(:flexible_criterion, count, assignment: assignment)
+      reloaded_result = Result.find(result_id)
+      queries = []
+      record = ->(*, payload) { queries << payload[:sql] unless payload[:name] == 'SCHEMA' || payload[:cached] }
+      ActiveSupport::Notifications.subscribed(record, 'sql.active_record') { reloaded_result.create_marks }
+      queries
+    end
+
+    it 'runs the same number of queries for any number of new criteria' do
+      expect(create_marks_queries(4).size).to eq create_marks_queries(1).size
+    end
+
+    it 'does not run an INSERT when every TA criterion already has a mark' do
+      expect(create_marks_queries(0).grep(/\AINSERT/)).to be_empty
+    end
+  end
+
   describe '#view_token_expired?' do
     subject { result.view_token_expired? }
 
