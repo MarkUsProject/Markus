@@ -823,10 +823,14 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    students = Student.includes(:accepted_groupings, :section)
+    students = Student.includes(:accepted_groupings, :section, :user)
                       .where('accepted_groupings.assessment_id': self.id)
                       .joins(:user)
                       .order('users.user_name')
+    # Preload onto the groupings loaded above, which are filtered to this assignment. A .preload on the
+    # query would instead load each student's groupings for every assignment and leave these unloaded.
+    ActiveRecord::Associations::Preloader.new(records: students.flat_map(&:accepted_groupings),
+                                              associations: [:group, { current_result: :marks }]).call
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
@@ -851,14 +855,14 @@ class Assignment < Assessment
       # filtered to keep only the groupings for this assignment when defining students above
       g = student.accepted_groupings.first
       result = g&.current_result
-      marks = result.nil? ? {} : result.mark_hash
+      marks = result.nil? ? {} : result.marks.index_by(&:criterion_id)
       other_info = Student::CSV_ORDER.map { |field| student.public_send(field) }
       row = [g&.group&.group_name] + other_info
       if result.nil?
-        row += Array.new(2 + self.ta_criteria.count, nil)
+        row += Array.new(2 + self.ta_criteria.size, nil)
       else
         row << total_marks_hash[result.id]
-        row += self.ta_criteria.map { |crit| marks[crit.id]&.[](:mark) }
+        row += self.ta_criteria.map { |crit| marks[crit.id]&.mark }
         row << extra_marks_hash[result.id]
       end
       row
