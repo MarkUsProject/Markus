@@ -68,6 +68,20 @@ describe Api::TagsController do
           expect(response.parsed_body&.first&.dig('id')).to eq(tag.id)
         end
       end
+
+      context 'with an assignment from another course' do
+        let(:other_assignment) { create(:assignment, course: create(:course)) }
+
+        before do
+          create(:tag, role: create(:instructor, course: other_assignment.course), assessment: other_assignment)
+          request.env['HTTP_ACCEPT'] = 'application/json'
+          get :index, params: { course_id: course.id, assignment_id: other_assignment.id }
+        end
+
+        it 'should respond with 404' do
+          expect(response).to have_http_status(:not_found)
+        end
+      end
     end
 
     context 'POST create' do
