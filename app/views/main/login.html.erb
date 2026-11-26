@@ -1,16 +1,60 @@
+<% user_login = local_assigns[:user_login].to_s
+   remote_login = Settings.remote_auth_login_url.present?
+   # Secondary layout: remote login is the primary action and local login is a collapsed option below it
+   local_secondary = remote_login && Settings.local_auth_login_secondary
+   # In the secondary layout the local form is collapsed, except after a failed local attempt
+   local_form_focus = !local_secondary || user_login.present?
+   local_login_label = t('main.login_with',
+                         name: Settings.local_auth_login_name || t('main.local_authentication_default_name')) %>
+
 <% content_for :head do %>
   <%= javascript_include_tag 'cookies_eu', nonce: true %>
-  <%= javascript_tag nonce: true do %>
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('local-login-selector').addEventListener('click', () => {
-        const formElem = document.getElementById('local-login-form');
-        if (getComputedStyle(formElem).display === 'none') {
-          formElem.style.display = 'block';
-        } else {
-          formElem.style.display = 'none';
-        }
+  <% if remote_login && !local_secondary %>
+    <%= javascript_tag nonce: true do %>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('local-login-selector').addEventListener('click', () => {
+          const formElem = document.getElementById('local-login-form');
+          if (getComputedStyle(formElem).display === 'none') {
+            formElem.style.display = 'block';
+          } else {
+            formElem.style.display = 'none';
+          }
+        })
       })
-    })
+    <% end %>
+  <% end %>
+<% end %>
+
+<% remote_login_button = capture do %>
+  <div class="login-selector">
+    <a class="button"
+       href="<%= login_remote_auth_main_index_path %>"><%= t('main.login_with',
+           name: Settings.remote_auth_login_name || t('main.external_authentication_default_name') ) %></a>
+  </div>
+<% end %>
+
+<% local_login_form = capture do %>
+  <%= form_tag({ action: 'login' },
+               { id: 'local-login-form', class: remote_login && !local_secondary ? 'no-display' : '' }) do %>
+    <%= text_field_tag 'user_login',
+                       nil,
+                       placeholder: User.human_attribute_name(:user_name),
+                       'aria-label': User.human_attribute_name(:user_name),
+                       autocomplete: 'off',
+                       autocorrect: 'off',
+                       autocapitalize: 'off',
+                       autofocus: local_form_focus && user_login.blank?,
+                       value: user_login %>
+    <%= password_field_tag 'user_password',
+                           nil,
+                           placeholder: t('main.password'),
+                           'aria-label': t('main.password'),
+                           autofocus: local_form_focus && user_login.present?,
+                           autocomplete: 'off' %>
+    <div class='submit'>
+      <%= submit_tag t('main.log_in'),
+                     data: { disable_with: t('main.logging_in') } %>
+    </div>
   <% end %>
 <% end %>
 
@@ -22,49 +66,29 @@
   </div>
 
   <div class='login-form'>
-    <% if Settings.validate_file %>
-      <% if Settings.remote_auth_login_url %>
-        <div class="login-selector">
-          <a class="button" id="local-login-selector"><%= t('main.login_with',
-                                                            name: Settings.local_auth_login_name ||
-                                                                  t('main.local_authentication_default_name') ) %></a>
-        </div>
+    <% if local_secondary %>
+      <%= remote_login_button %>
+      <% if Settings.validate_file %>
+        <%= tag.details(class: 'local-login', open: user_login.present?) do %>
+          <summary id='local-login-selector'><%= local_login_label %></summary>
+          <%= local_login_form %>
+        <% end %>
       <% end %>
-      <%= form_tag({ action: 'login' },
-                   { id: 'local-login-form', class: Settings.remote_auth_login_url ? 'no-display' : '' }) do %>
-        <% unless defined? user_login
-             user_login = ''
-           end %>
-        <%= text_field_tag 'user_login',
-                           nil,
-                           placeholder: User.human_attribute_name(:user_name),
-                           'aria-label': User.human_attribute_name(:user_name),
-                           autocomplete: 'off',
-                           autocorrect: 'off',
-                           autocapitalize: 'off',
-                           autofocus: user_login == '',
-                           value: user_login %>
-        <%= password_field_tag 'user_password',
-                               nil,
-                               placeholder: t('main.password'),
-                               'aria-label': t('main.password'),
-                               autofocus: user_login != '',
-                               autocomplete: 'off' %>
-        <div class='submit'>
-          <%= submit_tag t('main.log_in'),
-                         data: { disable_with: t('main.logging_in') } %>
-        </div>
+    <% else %>
+      <% if Settings.validate_file %>
+        <% if remote_login %>
+          <div class="login-selector">
+            <a class="button" id="local-login-selector"><%= local_login_label %></a>
+          </div>
+        <% end %>
+        <%= local_login_form %>
+        <% if remote_login %>
+          <div id='login-or-container'><h4 id="login-or"><%= I18n.t('or').upcase %></h4></div>
+        <% end %>
       <% end %>
-      <% if Settings.remote_auth_login_url %>
-        <div id='login-or-container'><h4 id="login-or"><%= I18n.t('or').upcase %></h4></div>
+      <% if remote_login %>
+        <%= remote_login_button %>
       <% end %>
-  <% end %>
-    <% if Settings.remote_auth_login_url %>
-      <div class="login-selector">
-        <a class="button"
-           href="<%= login_remote_auth_main_index_path %>"><%= t('main.login_with',
-               name: Settings.remote_auth_login_name || t('main.external_authentication_default_name') ) %></a>
-      </div>
     <% end %>
   </div>
 </main>

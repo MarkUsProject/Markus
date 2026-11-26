@@ -102,6 +102,7 @@ incorrect_login_message: # (See "User Authentication Options" below)
 remote_auth_login_url: # (See "User Authentication Options" below)
 remote_auth_login_name: # (See "User Authentication Options" below)
 local_auth_login_name: # (See "User Authentication Options" below)
+local_auth_login_secondary: # (See "User Authentication Options" below)
 logout_redirect: # (See "User Authentication Options" below)
 student_csv_order: # column order of student csv upload file (choices are: user_name, last_name, first_name, section_name, id_number, email)
 jupyter_server:
@@ -227,6 +228,8 @@ MarkUs can be set up to use only one of the authentication options or both depen
 ```yaml
 local_auth_login_name: My super secret method
 ```
+
+- `local_auth_login_secondary:` a boolean value that only has an effect when both local and remote authentication are enabled. By default (`false`), the login page shows the local and remote login options as two equally prominent buttons. If `true`, the remote login button is shown first as the main way to log in, and local login appears below it as a small link that expands the user name and password form. This is useful when only a few users (for example, administrators) log in with local authentication.
 
 - `validate_custom_status_message:` a hash containing exit statuses (integers) as keys and user facing messages (strings) as values. This allows you to choose what message is displayed to your users depending on the exit status returned by the validate_file script. For example, lets say your validate_file script checks if a user name contains whitespace characters and warns the user if so, you could have the following in your settings:
 
