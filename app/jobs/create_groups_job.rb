@@ -1,5 +1,7 @@
 # create groups job
 class CreateGroupsJob < ApplicationJob
+  accesses_repositories_in_bulk
+
   def self.on_complete_js(_status)
     '() => {window.groupsManager && window.groupsManager.current.fetchData()}'
   end

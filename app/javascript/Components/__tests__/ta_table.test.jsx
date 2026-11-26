@@ -84,7 +84,7 @@ describe("For the TATable's display of TAs", () => {
   });
 
   describe("when no TAs are fetched", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       tas_sample = [];
       // Mocking the response returned by fetch, used in TATable fetchData
       fetch.mockReset();
@@ -96,10 +96,11 @@ describe("For the TATable's display of TAs", () => {
         }),
       });
       render(<TATable course_id={1} />);
+      await screen.findByText(I18n.t("tas.empty_table"));
     });
 
-    it("No rows found is shown", async () => {
-      await screen.findByText(I18n.t("tas.empty_table"), {}, {timeout: 3000});
+    it("No rows found is shown", () => {
+      expect(screen.getByText(I18n.t("tas.empty_table"))).toBeInTheDocument();
     });
   });
 

@@ -140,6 +140,7 @@ export class ExamScanLogTable extends React.Component {
     const {data = []} = this.state;
     return (
       <Table
+        label={I18n.t("activerecord.models.split_pdf_log.one")}
         data={data}
         columns={this.columns}
         initialState={{sorting: [{id: "date", desc: true}]}}
@@ -217,7 +218,11 @@ class ExamScanErrorsTable extends React.Component {
   render() {
     return (
       <div style={{maxWidth: "800px", marginTop: "5px", marginBottom: "5px"}}>
-        <Table data={this.props.data} columns={this.columns} />
+        <Table
+          label={I18n.t("split_pdf_logs.pages_error")}
+          data={this.props.data}
+          columns={this.columns}
+        />
       </div>
     );
   }
@@ -239,7 +244,11 @@ class ExamScanGroupsTable extends React.Component {
   render() {
     return (
       <div style={{maxWidth: "500px", marginTop: "5px", marginBottom: "5px"}}>
-        <Table data={this.props.data} columns={this.columns} />
+        <Table
+          label={I18n.t("split_pdf_logs.incomplete_papers_found")}
+          data={this.props.data}
+          columns={this.columns}
+        />
       </div>
     );
   }

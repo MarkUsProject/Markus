@@ -3454,4 +3454,27 @@ describe Assignment do
       end
     end
   end
+
+  describe '#reusable_texts_for' do
+    let(:assignment) { create(:assignment) }
+    let(:grader) { create(:ta, course: assignment.course) }
+    let(:category) { create(:annotation_category, assignment: assignment) }
+    let!(:category_text) { create(:annotation_text, annotation_category: category) }
+    let!(:own_text) { create(:annotation_text, annotation_category: nil, creator: grader) }
+
+    it 'includes texts in the assignment categories and the role\'s own one-time texts' do
+      expect(assignment.reusable_texts_for(grader)).to contain_exactly(category_text, own_text)
+    end
+
+    it 'excludes texts from categories of another assignment' do
+      other_category = create(:annotation_category, assignment: create(:assignment, course: assignment.course))
+      create(:annotation_text, annotation_category: other_category)
+      expect(assignment.reusable_texts_for(grader)).to contain_exactly(category_text, own_text)
+    end
+
+    it 'excludes one-time texts written by another role' do
+      create(:annotation_text, annotation_category: nil, creator: create(:ta, course: assignment.course))
+      expect(assignment.reusable_texts_for(grader)).to contain_exactly(category_text, own_text)
+    end
+  end
 end
