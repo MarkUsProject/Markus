@@ -18,6 +18,49 @@ describe MainController do
       expect(flash[:error]).to have_message(I18n.t('main.password_not_blank'))
     end
 
+    describe 'login page layout' do
+      render_views
+
+      let(:page) { response.parsed_body }
+
+      context 'when local_auth_login_secondary is not set' do
+        before do
+          allow(Settings).to receive_messages(local_auth_login_secondary: nil)
+          get :login
+        end
+
+        it 'should show the local login button and form before the remote login button' do
+          expect(page.at_css('a.button#local-login-selector')).not_to be_nil
+          expect(page.at_css('form#local-login-form.no-display ~ #login-or-container ~ .login-selector')).not_to be_nil
+        end
+
+        it 'should not show the collapsed local login option' do
+          expect(page.at_css('details.local-login')).to be_nil
+        end
+      end
+
+      context 'when local_auth_login_secondary is true' do
+        before { allow(Settings).to receive_messages(local_auth_login_secondary: true) }
+
+        it 'should show the remote login button before a collapsed local login form' do
+          get :login
+          expect(page.at_css('.login-selector ~ details.local-login:not([open]) form#local-login-form')).not_to be_nil
+        end
+
+        it 'should keep the local login form open after a failed local login' do
+          post :login, params: { user_login: 'unknown', user_password: 'a' }
+          expect(page.at_css('details.local-login[open] form#local-login-form')).not_to be_nil
+        end
+
+        it 'should show the local login form directly when remote auth is off' do
+          allow(Settings).to receive_messages(remote_auth_login_url: nil)
+          get :login
+          expect(page.at_css('details.local-login')).to be_nil
+          expect(page.at_css('form#local-login-form:not(.no-display)')).not_to be_nil
+        end
+      end
+    end
+
     describe 'login_remote_auth' do
       before do
         get :login_remote_auth
