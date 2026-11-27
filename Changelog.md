@@ -68,6 +68,7 @@
 
 ### 🔧 Internal changes
 - Cleared browser data between system tests in a way Chrome 158 accepts (#8326)
+- Migrated the annotation table on the result page to `@tanstack/react-table` v8 (#8311)
 - Configured Jest tests to fail on console output, and fixed the tests and components that produced warnings (#8314)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)

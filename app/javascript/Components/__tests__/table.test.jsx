@@ -480,6 +480,34 @@ describe("tests for the table component", () => {
       expect(secondHeader).toHaveClass("-sort-asc");
       expect(secondHeader).not.toHaveAttribute("aria-sort");
     });
+
+    it("sorts by the initial sorting state", () => {
+      const {table, columns, data} = renderTableWithMockData({
+        initialState: {sorting: [{id: "col2", desc: false}]},
+      });
+
+      sortDataByKey(data, columns[1].header, false);
+      expectRowsInTableInOrder(table, columns, data);
+    });
+
+    it("sorts by the sorting passed to it", () => {
+      const {table, columns, data} = renderTableWithMockData({
+        sorting: [{id: "col2", desc: true}],
+        onSortingChange: jest.fn(),
+      });
+
+      sortDataByKey(data, columns[1].header, true);
+      expectRowsInTableInOrder(table, columns, data);
+    });
+
+    it("calls onSortingChange instead of sorting itself when the sorting is passed to it", async () => {
+      const onSortingChange = jest.fn();
+      const {table, columns, data} = renderTableWithMockData({sorting: [], onSortingChange});
+
+      await clickHeader(columns[1].header);
+      expect(onSortingChange).toHaveBeenCalledTimes(1);
+      expectRowsInTableInOrder(table, columns, data);
+    });
   });
 
   describe("expandable rows", () => {

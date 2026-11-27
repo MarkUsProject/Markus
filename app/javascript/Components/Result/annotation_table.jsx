@@ -1,42 +1,50 @@
 import React from "react";
-import ReactTable from "react-table";
+import {createColumnHelper, functionalUpdate} from "@tanstack/react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-import {renderMathInElement} from "../../common/math_helper";
+import Table from "../table/table";
+import MarkdownPreview from "../markdown_preview";
+
+const columnHelper = createColumnHelper();
 
 export class AnnotationTable extends React.Component {
   constructor(props) {
     super(props);
-    this.annotationTable = React.createRef();
     this.state = {
       columns: this.getColumns(
         props.detailed,
         props.annotations.some(a => !!a.deduction)
       ),
+      columnFilters: [],
+      sorting: [{id: "deduction"}, {id: "filename"}, {id: "number"}],
     };
   }
 
   componentDidUpdate(prevProps) {
-    renderMathInElement(this.annotationTable.current);
     const hadDeductions = prevProps.annotations.some(a => !!a.deduction);
     const hasDeductions = this.props.annotations.some(a => !!a.deduction);
-    if (prevProps.detailed !== this.props.detailed || hadDeductions !== hasDeductions) {
-      this.setState({columns: this.getColumns(this.props.detailed, hasDeductions)});
+    if (
+      prevProps.detailed !== this.props.detailed ||
+      hadDeductions !== hasDeductions ||
+      prevProps.released_to_students !== this.props.released_to_students ||
+      prevProps.remark_submitted !== this.props.remark_submitted
+    ) {
+      const columns = this.getColumns(this.props.detailed, hasDeductions);
+      const columnIds = new Set(columns.map(column => column.id ?? column.accessorKey));
+      this.setState(({columnFilters}) => ({
+        columns,
+        columnFilters: columnFilters.filter(({id}) => columnIds.has(id)),
+      }));
     }
   }
 
-  deductionFilter = (filter, row) => {
-    return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
-  };
-
   columns = [
-    {
-      Header: "#",
-      accessor: "number",
-      id: "number",
-      maxWidth: 50,
-      resizeable: false,
-      Cell: row => {
+    columnHelper.accessor("number", {
+      header: "#",
+      maxSize: 50,
+      filterFn: "equalsString",
+      meta: {className: "-wrap"},
+      cell: ({row}) => {
         let remove_button = "";
         if (!this.props.released_to_students && !this.props.remark_submitted) {
           remove_button = (
@@ -56,18 +64,21 @@ export class AnnotationTable extends React.Component {
           </div>
         );
       },
-    },
-    {
-      Header: I18n.t("attributes.filename"),
-      accessor: "filename",
-      id: "filename",
-      Cell: row => {
+    }),
+    columnHelper.accessor("filename", {
+      header: I18n.t("attributes.filename"),
+      maxSize: 150,
+      meta: {className: "-wrap"},
+      cell: ({row}) => {
         let full_path = row.original.path
           ? row.original.path + "/" + row.original.filename
           : row.original.filename;
         let name;
         if (row.original.line_start !== undefined) {
-          name = `${full_path} (line ${row.original.line_start})`;
+          name = I18n.t("results.annotation.filename_with_line", {
+            filename: full_path,
+            line: row.original.line_start,
+          });
         } else {
           name = full_path;
         }
@@ -86,102 +97,110 @@ export class AnnotationTable extends React.Component {
           </a>
         );
       },
-      maxWidth: 150,
-    },
-    {
-      Header: I18n.t("annotations.text"),
-      accessor: "content",
-      Cell: data => {
+    }),
+    columnHelper.accessor("content", {
+      header: I18n.t("annotations.text"),
+      meta: {className: "-wrap"},
+      cell: ({row, getValue}) => {
         let value,
           edit_button = "";
         if (
           !this.props.released_to_students &&
-          !data.original.deduction &&
+          !row.original.deduction &&
           !this.props.remark_submitted
         ) {
           edit_button = (
             <a
               href="#"
               title={I18n.t("edit")}
-              onClick={() => this.props.editAnnotation(data.original.id)}
+              onClick={() => this.props.editAnnotation(row.original.id)}
             >
               <FontAwesomeIcon icon="fa-solid fa-pen" />
             </a>
           );
         }
 
-        if (data.original.is_remark) {
-          value = `${data.value} (${I18n.t("results.annotation.remark_flag")})`;
+        if (row.original.is_remark) {
+          value = `${getValue()} (${I18n.t("results.annotation.remark_flag")})`;
         } else {
-          value = data.value;
+          value = getValue();
         }
         return (
           <div>
-            <div dangerouslySetInnerHTML={{__html: safe_marked(value)}} />
+            <MarkdownPreview
+              id={`annotation-preview-${row.original.id}`}
+              className=""
+              content={value}
+            />
             <div className={"alignright"}>{edit_button}</div>
           </div>
         );
       },
-    },
+    }),
   ];
 
   detailedColumns = [
-    {
-      Header: I18n.t("activerecord.attributes.annotation.creator"),
-      accessor: "creator",
-      Cell: row => {
+    columnHelper.accessor("creator", {
+      header: I18n.t("activerecord.attributes.annotation.creator"),
+      maxSize: 120,
+      meta: {className: "-wrap"},
+      cell: ({row, getValue}) => {
         if (row.original.is_remark) {
-          return `${row.value} (${I18n.t("results.annotation.remark_flag")})`;
+          return `${getValue()} (${I18n.t("results.annotation.remark_flag")})`;
         } else {
-          return row.value;
+          return getValue();
         }
       },
-      maxWidth: 120,
-    },
-    {
-      Header: I18n.t("activerecord.models.annotation_category", {count: 1}),
-      accessor: "annotation_category",
-      maxWidth: 150,
-    },
+    }),
+    columnHelper.accessor("annotation_category", {
+      header: I18n.t("activerecord.models.annotation_category", {count: 1}),
+      maxSize: 150,
+      filterFn: "includesString",
+      meta: {className: "-wrap"},
+    }),
   ];
 
-  deductionColumn = {
-    Header: I18n.t("activerecord.attributes.annotation_text.deduction"),
-    accessor: row => {
+  deductionColumn = columnHelper.accessor(
+    row => {
       if (!row.deduction) {
         return "";
       } else {
         return "[" + row.criterion_name + "] -" + row.deduction;
       }
     },
-    id: "deduction",
-    filterMethod: this.deductionFilter,
-    Cell: data => {
-      if (!data.original.deduction) {
-        return "";
-      } else {
-        return (
-          <div>
-            {"[" + data.original.criterion_name + "] "}
-            <span className={"red-text"}>{"-" + data.original.deduction}</span>
-          </div>
-        );
-      }
-    },
-    sortMethod: (a, b) => {
-      if (a === "") {
-        return 1;
-      } else if (b === "") {
+    {
+      id: "deduction",
+      header: I18n.t("activerecord.attributes.annotation_text.deduction"),
+      maxSize: 120,
+      meta: {className: "-wrap"},
+      cell: ({row}) => {
+        if (!row.original.deduction) {
+          return "";
+        } else {
+          return (
+            <div>
+              {"[" + row.original.criterion_name + "] "}
+              <span className={"red-text"}>{"-" + row.original.deduction}</span>
+            </div>
+          );
+        }
+      },
+      sortingFn: (rowA, rowB, columnId) => {
+        const a = rowA.getValue(columnId);
+        const b = rowB.getValue(columnId);
+        if (a === b) {
+          return 0;
+        } else if (a === "") {
+          return 1;
+        } else if (b === "") {
+          return -1;
+        } else if (a > b) {
+          return 1;
+        }
         return -1;
-      } else if (a > b) {
-        return 1;
-      } else if (a < b) {
-        return -1;
-      }
-      return 0;
-    },
-    maxWidth: 120,
-  };
+      },
+    }
+  );
 
   getColumns = (detailed, hasDeductions) => {
     const columns = detailed ? [...this.columns, ...this.detailedColumns] : [...this.columns];
@@ -189,23 +208,33 @@ export class AnnotationTable extends React.Component {
     return columns;
   };
 
-  componentDidMount() {
-    renderMathInElement(this.annotationTable.current);
-  }
+  onColumnFiltersChange = updater => {
+    this.setState(({columnFilters}) => ({
+      columnFilters: functionalUpdate(updater, columnFilters),
+    }));
+  };
+
+  onSortingChange = updaterOrValue => {
+    this.setState(prevState => ({
+      sorting:
+        typeof updaterOrValue === "function" ? updaterOrValue(prevState.sorting) : updaterOrValue,
+    }));
+  };
 
   render() {
+    const sorting = this.state.columns.includes(this.deductionColumn)
+      ? this.state.sorting
+      : this.state.sorting.filter(sort => sort.id !== "deduction");
+
     return (
-      <div id={"annotation_table"} ref={this.annotationTable}>
-        <ReactTable
-          className="auto-overflow"
+      <div id={"annotation_table"}>
+        <Table
           data={this.props.annotations}
           columns={this.state.columns}
-          getTdProps={() => {
-            return {className: "-wrap"};
-          }}
-          filterable
-          resizable
-          defaultSorted={[{id: "deduction"}, {id: "filename"}, {id: "number"}]}
+          columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={this.onColumnFiltersChange}
+          sorting={sorting}
+          onSortingChange={this.onSortingChange}
         />
       </div>
     );
