@@ -1,5 +1,5 @@
 import React from "react";
-import {createColumnHelper} from "@tanstack/react-table";
+import {createColumnHelper, functionalUpdate} from "@tanstack/react-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import Table from "../table/table";
@@ -15,6 +15,7 @@ export class AnnotationTable extends React.Component {
         props.detailed,
         props.annotations.some(a => !!a.deduction)
       ),
+      columnFilters: [],
       sorting: [{id: "deduction"}, {id: "filename"}, {id: "number"}],
     };
   }
@@ -28,7 +29,12 @@ export class AnnotationTable extends React.Component {
       prevProps.released_to_students !== this.props.released_to_students ||
       prevProps.remark_submitted !== this.props.remark_submitted
     ) {
-      this.setState({columns: this.getColumns(this.props.detailed, hasDeductions)});
+      const columns = this.getColumns(this.props.detailed, hasDeductions);
+      const columnIds = new Set(columns.map(column => column.id ?? column.accessorKey));
+      this.setState(({columnFilters}) => ({
+        columns,
+        columnFilters: columnFilters.filter(({id}) => columnIds.has(id)),
+      }));
     }
   }
 
@@ -202,6 +208,12 @@ export class AnnotationTable extends React.Component {
     return columns;
   };
 
+  onColumnFiltersChange = updater => {
+    this.setState(({columnFilters}) => ({
+      columnFilters: functionalUpdate(updater, columnFilters),
+    }));
+  };
+
   onSortingChange = updaterOrValue => {
     this.setState(prevState => ({
       sorting:
@@ -219,6 +231,8 @@ export class AnnotationTable extends React.Component {
         <Table
           data={this.props.annotations}
           columns={this.state.columns}
+          columnFilters={this.state.columnFilters}
+          onColumnFiltersChange={this.onColumnFiltersChange}
           sorting={sorting}
           onSortingChange={this.onSortingChange}
         />

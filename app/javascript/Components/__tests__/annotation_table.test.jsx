@@ -373,6 +373,34 @@ describe("AnnotationTable", () => {
       );
       expect(annotationNumbers(container)).toEqual(["1"]);
     });
+
+    it("keeps the remaining annotations visible when the last deduction is deleted", async () => {
+      const plain = makeAnnotation({filename: "main.py"});
+      const deducted = makeAnnotation({
+        id: 2,
+        number: 2,
+        filename: "main.py",
+        deduction: 1,
+        criterion_name: "Correctness",
+      });
+      const otherFile = makeAnnotation({id: 3, number: 3, filename: "other.py"});
+      const {container, props, rerender} = renderAnnotationTable({
+        annotations: [plain, deducted, otherFile],
+      });
+      const deductionFilterName = defaultSearchPlaceholderText(deductionHeader());
+
+      await userEvent.type(filenameFilter(), "main");
+      await userEvent.type(screen.getByRole("textbox", {name: deductionFilterName}), "correct");
+      expect(annotationNumbers(container)).toEqual(["2"]);
+
+      await userEvent.click(screen.getByTitle(I18n.t("delete")));
+      expect(props.removeAnnotation).toHaveBeenCalledWith(2);
+      rerender(<AnnotationTable {...props} annotations={[plain, otherFile]} />);
+
+      expect(screen.queryByRole("textbox", {name: deductionFilterName})).not.toBeInTheDocument();
+      expect(filenameFilter()).toHaveValue("main");
+      expect(annotationNumbers(container)).toEqual(["1"]);
+    });
   });
 
   it("renders math in rows that are shown after scrolling a large table", () => {
