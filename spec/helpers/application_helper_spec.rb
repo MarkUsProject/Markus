@@ -1,4 +1,25 @@
 describe ApplicationHelper do
+  describe '#flash_message' do
+    let(:flash_hash) { {} }
+
+    it 'adds a short message in full' do
+      helper.flash_message(:error, 'short message', flash_hash)
+      expect(flash_hash[:error]).to eq ['<p>short message</p>']
+    end
+
+    it 'truncates a long message' do
+      text = 'a' * (ApplicationHelper::MAX_FLASH_MESSAGE_LENGTH * 2)
+      helper.flash_message(:error, text, flash_hash)
+      expect(flash_hash[:error]).to eq ["<p>#{text.truncate(ApplicationHelper::MAX_FLASH_MESSAGE_LENGTH)}</p>"]
+    end
+
+    it 'truncates before converting newlines to line breaks' do
+      text = "#{'a' * ApplicationHelper::MAX_FLASH_MESSAGE_LENGTH}\nmore"
+      helper.flash_message(:error, text, flash_hash)
+      expect(flash_hash[:error].first).not_to include('<br/>')
+    end
+  end
+
   describe '#inline_svg_data_uris' do
     # Build an <img> tag whose src is a base64 SVG data URI.
     #   quote: wrap the src value in " or '

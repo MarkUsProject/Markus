@@ -2,15 +2,19 @@ require 'csv'
 
 class MarkusCsv
   MAX_INVALID_LINES = 10
+  # Maximum number of characters of each invalid row's contents to report. The report is shown as a flash
+  # message, and long messages can overflow the session cookie.
+  MAX_INVALID_LINE_LENGTH = 100
   INVALID_LINE_SEP = ' - '.freeze
+  CSV_INJECTION_PREFIXES = /\A[="\-@+]/
 
   # Returns a CSV string representation of an array of data.
   # 'objects' is an array of data, and gen_csv is a block which
   # takes an object and returns an array of strings.
   def self.generate(objects, headers = [])
     CSV.generate do |csv|
-      headers.each { |obj| csv << obj }
-      objects.each { |obj| csv << yield(obj) }
+      headers.each { |header| csv << sanitize_row(header) }
+      objects.each { |obj| csv << sanitize_row(yield(obj)) }
     end
   end
 
@@ -36,7 +40,7 @@ class MarkusCsv
         valid_line_count += 1
       rescue CsvInvalidLineError => e
         # append individual error messages to each entry
-        line = row.join(',')
+        line = row.join(',').truncate(MAX_INVALID_LINE_LENGTH)
         unless e.message.blank? || e.message == 'CsvInvalidLineError'
           line.concat(" (#{e.message})")
         end
@@ -57,4 +61,18 @@ class MarkusCsv
     end
     result
   end
+
+  def self.sanitize_row(row)
+    row.map do |cell|
+      next cell unless cell.is_a?(String)
+
+      if cell.start_with?(CSV_INJECTION_PREFIXES)
+        sanitized_cell = cell.delete("\t")
+        " #{sanitized_cell}"
+      else
+        cell
+      end
+    end
+  end
+  private_class_method :sanitize_row
 end

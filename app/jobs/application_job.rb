@@ -24,6 +24,14 @@ class ApplicationJob < ActiveJob::Base
     I18n.t('poll_job.completed')
   end
 
+  # Declares that this job accesses many repositories, so that resources held by closed repositories are
+  # released periodically while it runs (see Repository::AbstractRepository.bulk_access).
+  def self.accesses_repositories_in_bulk
+    around_perform do |_job, block|
+      Repository.get_class.bulk_access(&block)
+    end
+  end
+
   before_enqueue do |job|
     self.status.update(job_class: job.class)
   end

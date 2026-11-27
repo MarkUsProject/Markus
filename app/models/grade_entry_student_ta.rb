@@ -12,7 +12,8 @@
 #
 # Indexes
 #
-#  index_grade_entry_students_tas  (grade_entry_student_id,ta_id) UNIQUE
+#  index_grade_entry_students_tas           (grade_entry_student_id,ta_id) UNIQUE
+#  index_grade_entry_students_tas_on_ta_id  (ta_id)
 #
 # Foreign Keys
 #

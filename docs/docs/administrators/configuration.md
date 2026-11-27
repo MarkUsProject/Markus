@@ -124,16 +124,17 @@ logging:
   error_file: # relative path (from the MarkUs root) to the error log file
   tag_with_usernames: # boolean indicating whether to tag each request written to the logs with the user_name of the user who made the request (note: this requires that rails.session_store.type == 'cookie_store')
 scanned_exams:
-  enable: # boolean indicating whether to enable scanned exams
+  enabled: # boolean indicating whether to enable scanned exams (default: true; requires the python dependencies in requirements-scanner.txt, see the Installation page)
 resque_scheduler: # configuration for scheduling background jobs (this section can be omitted entirely)
 autotest:
   student_test_buffer_minutes: # maximum number of minutes between student tests (see "Student Tests" below)
   max_batch_size: # maximum number of tests to send to the markus-autotesting server in a single batch
-  default_url: # (optional) url of a markus-autotesting server that new courses are connected to automatically (currently only applies to courses created through LTI)
+  default_url: # (optional) url of a markus-autotesting server that new courses are connected to by default (see "Default Autotester" below)
 i18n:
   available_locales: # list of locale strings (Note that 'en' is the only option that is supported)
   default_locale: # locale string to use as default (must be one of the options in available_locales)
-python: # location of a python executable where python dependencies are installed (optional)
+python: # (optional) location of the python executable where MarkUs's python dependencies are installed (if not set, python3 will be used)
+nbconvert_enabled: # boolean indicating whether to render Jupyter notebooks as HTML and include them in PDF downloads of results (default: true; requires the python dependencies in requirements-jupyter.txt, see the Installation page)
 rails_performance:
   enabled: # boolean whether to enable the rails performance dashboard (See the "Admin Guide" page for more information about this dashboard)
   duration: # duration in minutes for rails performance to store data for monitoring
@@ -196,6 +197,16 @@ resque_scheduler:
 ## Student Tests
 
 Students are only allowed to run one test at a time. This means that a student must wait until the results from a previous test have returned before they can run another one. If a test result never returns (because of an unexpected error) a student will instead have to wait `student_test_buffer_minutes` before they can run a new test.
+
+## Default Autotester
+
+If you wish new courses to be connected to an autotester by default, set `autotest.default_url` to the url of a markus-autotesting server. When this key is set:
+
+- The autotester url field on the admin course creation form is pre-filled with this url, so a course created by an admin is connected to this autotester unless the admin changes or clears the field.
+- A course created through the API (`POST /api/courses`) is connected to this autotester unless the request includes its own `autotest_url` parameter (see the [API documentation](../technical-guides/restful-api.md#post-apicourses)).
+- Every course created through LTI is connected to this autotester automatically, as if an admin had set the course's autotester url.
+
+If this key is not set, the autotester url must be set manually for each new course.
 
 ## User Authentication Options
 
@@ -299,7 +310,7 @@ If you wish to filter course creation requests from LTI deployments, add the fol
 - `lti.unpermitted_new_course_message` must be a message to display if an LTI deployment is rejected by the filter. The message must be a string with interpolation key `%{course_name}`, which will be bound to the `title` field in the launch claim `https://purl.imsglobal.org/spec/lti/claim/context`.
     - Example: `"You are not permitted to create a new MarkUs course for %{course_name}. Please contact your system administrator."`
 
-If you wish courses created from LTI deployments to be connected to an autotester automatically, set `autotest.default_url` to the url of a markus-autotesting server. Every course created through LTI will be connected to this autotester, as if an admin had set the course's autotester url. If this key is not set, the autotester url must be set manually for each new course.
+If you wish courses created from LTI deployments to be connected to an autotester automatically, set `autotest.default_url` (see "Default Autotester" above).
 
 ### LTI Key Rotation
 
@@ -348,9 +359,11 @@ Confirm that the `public_jwk` endpoint still serves the same key, then delete th
 
 ## Optional Features
 
+Some optional features require additional software to be installed. After enabling one of these features, run `rails markus:check` to verify that its dependencies are installed (see [Check your installation](installation.md#check-your-installation)).
+
 ### Preview RMarkdown Files as HTML
 
-To preview RMarkdown (.Rmd) submission files as rendered HTML instead of displaying the raw RMarkdown source, enable the following setting:
+To preview RMarkdown (.Rmd) submission files as rendered HTML instead of displaying the raw RMarkdown source, install [pandoc](https://pandoc.org/) and enable the following setting:
 
 ```yaml
 rmd_convert_enabled: true

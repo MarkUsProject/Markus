@@ -1,9 +1,9 @@
 module AuthenticationHelper
   def sign_in(user)
-    real_controller = @controller
-    @controller = MainController.new
-    post :login, params: { user_login: user.user_name, user_password: 'x' }
-    @controller = real_controller
+    session[:auth_type] = 'local'
+    session[:real_user_name] = user.user_name
+    session[:timeout] = Settings.session_timeout.seconds.from_now.to_s
+    session[:has_warned] = false
   end
 
   def get_as(user, action, params: {}, format: nil, session: {})

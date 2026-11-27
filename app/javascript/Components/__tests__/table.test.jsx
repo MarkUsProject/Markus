@@ -1,6 +1,6 @@
-import {render, screen, within} from "@testing-library/react";
+import {act, fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {expect, describe, it, beforeEach} from "@jest/globals";
+import {expect, describe, it, beforeEach, jest} from "@jest/globals";
 
 import {defaultSearchPlaceholderText} from "../table/search_filter";
 import {defaultNoDataText} from "../table/table";
@@ -178,6 +178,12 @@ describe("tests for the table component", () => {
       expectRowsInTableInOrder(table, columns, data);
     });
 
+    it("is named by its label", () => {
+      renderTableWithMockData({label: "Groups"});
+
+      expect(screen.getByRole("grid", {name: "Groups"})).toBeInTheDocument();
+    });
+
     it("does not show row numbers by default", () => {
       const {table} = renderTableWithMockData();
       const tableElement = table.querySelector(".Table");
@@ -203,6 +209,37 @@ describe("tests for the table component", () => {
     });
   });
 
+  it("renders only nearby rows and preserves positional numbering when scrolling", () => {
+    const rowHeight = 34;
+    const offsetHeight = jest.spyOn(HTMLElement.prototype, "offsetHeight", "get");
+    offsetHeight.mockReturnValue(rowHeight);
+    const clientHeight = jest.spyOn(HTMLElement.prototype, "clientHeight", "get");
+    clientHeight.mockReturnValue(340);
+
+    try {
+      const columns = [{accessorKey: "name", header: "Name"}];
+      const data = Array.from({length: 1000}, (_, index) => ({name: `Student ${index + 1}`}));
+      const {container, unmount} = render(<Table columns={columns} data={data} showRowNumbers />);
+
+      expect(screen.getByRole("grid")).toHaveAttribute("aria-rowcount", "1002");
+      expect(screen.getByText("Student 1")).toBeInTheDocument();
+      expect(screen.queryByText("Student 501")).not.toBeInTheDocument();
+
+      const body = container.querySelector(".rt-tbody");
+      fireEvent.scroll(body, {target: {scrollTop: 500 * rowHeight}});
+
+      expect(screen.queryByText("Student 1")).not.toBeInTheDocument();
+      const row = screen.getByText("Student 501").closest('[role="row"]');
+      expect(row).toHaveAttribute("data-row-number", "501");
+      expect(row).toHaveAttribute("aria-rowindex", "503");
+      expect(within(body).getAllByRole("row").length).toBeLessThan(30);
+      unmount();
+    } finally {
+      clientHeight.mockRestore();
+      offsetHeight.mockRestore();
+    }
+  });
+
   describe("rendering of the no-data component when data is empty", () => {
     it("shows default no data message", () => {
       const {table} = renderTableWithoutData();
@@ -222,6 +259,127 @@ describe("tests for the table component", () => {
       const {table} = renderTableWithMockData();
 
       expectNoDataComponentNotInDocument(table);
+    });
+
+    it("shows the no data message in a row of the table", () => {
+      renderTableWithoutData();
+
+      const grid = screen.getByRole("grid");
+      expect(within(grid).getByRole("gridcell")).toHaveTextContent(defaultNoDataText());
+      expect(grid).toHaveAttribute("aria-rowcount", "3");
+    });
+  });
+
+  describe("loading and status messages", () => {
+    it("marks the rows as busy and shows the spinner outside the grid while rows reload", () => {
+      renderTable(mockColumns(), mockData(), null, {loading: true});
+
+      const grid = screen.getByRole("grid");
+      expect(grid).toHaveAttribute("aria-busy", "true");
+      expect(within(grid).queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(screen.getByRole("progressbar", {name: I18n.t("working")})).toBeInTheDocument();
+    });
+
+    it("shows a labelled spinner in the row of an empty table while it loads", () => {
+      renderTable(mockColumns(), [], null, {loading: true});
+
+      const grid = screen.getByRole("grid");
+      expect(grid).not.toHaveAttribute("aria-busy");
+      expect(
+        within(within(grid).getByRole("gridcell")).getByRole("progressbar", {
+          name: I18n.t("working"),
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("is not busy when it is not loading", () => {
+      renderTableWithMockData();
+
+      expect(screen.getByRole("grid")).not.toHaveAttribute("aria-busy");
+    });
+
+    it("does not announce the first load", () => {
+      jest.useFakeTimers();
+      try {
+        const {rerender} = render(<Table columns={mockColumns()} data={[]} loading={true} />);
+        rerender(<Table columns={mockColumns()} data={mockData()} loading={false} />);
+        act(() => jest.runAllTimers());
+
+        expect(screen.getByRole("status")).toBeEmptyDOMElement();
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it("announces the number of matching rows after filtering", async () => {
+      renderTableWithMockData();
+
+      await user.type(searchInputs()[0], "abc");
+
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(I18n.t("table.row_count", {count: 2}))
+      );
+    });
+
+    it("announces the count again when a filter change keeps the same number of rows", async () => {
+      renderTableWithMockData();
+      const inputs = searchInputs();
+
+      await user.type(inputs[0], "abc");
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(I18n.t("table.row_count", {count: 2}))
+      );
+
+      await user.clear(inputs[0]);
+      await user.type(inputs[1], "pqr");
+      expect(screen.getByRole("status")).toBeEmptyDOMElement();
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(I18n.t("table.row_count", {count: 2}))
+      );
+    });
+
+    it("counts groups rather than the rows inside them", async () => {
+      renderTableWithMockData({initialState: {grouping: ["col3"]}});
+
+      await user.type(searchInputs()[1], "pq");
+
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(I18n.t("table.row_count", {count: 1}))
+      );
+    });
+
+    it("announces loading and the number of rows when the table reloads", async () => {
+      const {rerender, columns, data} = renderTableWithMockData();
+
+      rerender(<Table columns={columns} data={data} loading={true} />);
+      expect(screen.getByRole("status")).toHaveTextContent(I18n.t("working"));
+
+      rerender(<Table columns={columns} data={data} loading={false} />);
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(
+          I18n.t("table.row_count", {count: data.length})
+        )
+      );
+    });
+
+    it("starts its messages with its label", async () => {
+      const label = "Groups";
+      const {rerender, columns, data} = renderTableWithMockData({label});
+
+      rerender(<Table columns={columns} data={data} label={label} loading={true} />);
+      expect(screen.getByRole("status")).toHaveTextContent(
+        I18n.t("table.status_with_label", {label, status: I18n.t("working")})
+      );
+
+      rerender(<Table columns={columns} data={data} label={label} loading={false} />);
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(
+          I18n.t("table.status_with_label", {
+            label,
+            status: I18n.t("table.row_count", {count: data.length}),
+          })
+        )
+      );
     });
   });
 
@@ -262,6 +420,97 @@ describe("tests for the table component", () => {
       tableRows.forEach(tableRow =>
         expect(tableRow.querySelectorAll(".rt-td")).toHaveLength(columns.length)
       );
+    });
+
+    it("renders sortable column headers as buttons", () => {
+      const columns = [...mockColumns(), {id: "actions", header: "Actions", cell: () => null}];
+      columns[0].enableSorting = false;
+      renderTable(columns, mockData());
+
+      expect(screen.queryByRole("button", {name: columns[0].header})).not.toBeInTheDocument();
+      expect(screen.getByRole("button", {name: columns[1].header})).toBeInTheDocument();
+      // A display column has no accessor, so it can't be sorted
+      expect(screen.queryByRole("button", {name: "Actions"})).not.toBeInTheDocument();
+      expect(screen.getByRole("columnheader", {name: "Actions"})).not.toHaveClass(
+        "-cursor-pointer"
+      );
+    });
+
+    it("sorts with the keyboard", async () => {
+      const {table, columns, data} = renderTableWithMockData();
+      const header = columns[1].header;
+
+      await user.tab();
+      await user.tab();
+      expect(screen.getByRole("button", {name: header})).toHaveFocus();
+      await user.keyboard("{Enter}");
+      sortDataByKey(data, header, false);
+      expectRowsInTableInOrder(table, columns, data);
+
+      await user.keyboard(" ");
+      sortDataByKey(data, header, true);
+      expectRowsInTableInOrder(table, columns, data);
+    });
+
+    it("sets aria-sort on the header of the sorted column", async () => {
+      const {columns} = renderTableWithMockData();
+      const header = columns[0].header;
+      const columnHeader = screen.getByRole("columnheader", {name: header});
+
+      expect(columnHeader).not.toHaveAttribute("aria-sort");
+      await clickHeader(header);
+      expect(columnHeader).toHaveAttribute("aria-sort", "ascending");
+      await clickHeader(header);
+      expect(columnHeader).toHaveAttribute("aria-sort", "descending");
+    });
+
+    it("sets aria-sort only on the primary column when sorting by several columns", async () => {
+      const {columns} = renderTableWithMockData();
+
+      await clickHeader(columns[0].header);
+      await user.keyboard("{Shift>}");
+      await clickHeader(columns[1].header);
+      await user.keyboard("{/Shift}");
+
+      const secondHeader = screen.getByRole("columnheader", {name: columns[1].header});
+      expect(screen.getByRole("columnheader", {name: columns[0].header})).toHaveAttribute(
+        "aria-sort",
+        "ascending"
+      );
+      expect(secondHeader).toHaveClass("-sort-asc");
+      expect(secondHeader).not.toHaveAttribute("aria-sort");
+    });
+  });
+
+  describe("expandable rows", () => {
+    function renderExpandableTable() {
+      return renderTableWithMockData({
+        getRowCanExpand: () => true,
+        renderSubComponent: ({row}) => <p>{`Details for ${row.original.col1}`}</p>,
+      });
+    }
+
+    it("renders a collapsed expand button for each row", () => {
+      renderExpandableTable();
+
+      const buttons = screen.getAllByRole("button", {name: I18n.t("table.show_details")});
+      expect(buttons).toHaveLength(mockData().length);
+      buttons.forEach(button => expect(button).toHaveAttribute("aria-expanded", "false"));
+    });
+
+    it("expands and collapses a row with the keyboard", async () => {
+      renderExpandableTable();
+
+      screen.getAllByRole("button", {name: I18n.t("table.show_details")})[0].focus();
+      await user.keyboard("{Enter}");
+      const button = screen.getByRole("button", {name: I18n.t("table.hide_details")});
+      expect(button).toHaveFocus();
+      expect(button).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByText("Details for a")).toBeInTheDocument();
+
+      await user.keyboard(" ");
+      expect(button).toHaveAttribute("aria-expanded", "false");
+      expect(screen.queryByText("Details for a")).not.toBeInTheDocument();
     });
   });
 
@@ -375,6 +624,25 @@ describe("tests for the table component", () => {
         {col1: "abc", col2: "pq", col3: "David"},
       ]);
     });
+
+    it("names text filters after their column header", () => {
+      const columns = [
+        {accessorKey: "col1", header: () => "First column"},
+        {accessorKey: "col2", header: "col2", meta: {filterVariant: "case-sensitive-text"}},
+      ];
+      renderTable(columns, mockData());
+
+      expect(
+        screen.getByRole("textbox", {name: `${defaultSearchPlaceholderText()} First column`})
+      ).toBeInTheDocument();
+      expect(screen.getByRole("textbox", {name: `${I18n.t("search")} col2`})).toBeInTheDocument();
+    });
+
+    it("names select filters after their column header", () => {
+      const {columns} = renderTableWithMockData();
+
+      expect(screen.getByRole("combobox", {name: columns[2].header})).toBeInTheDocument();
+    });
   });
 
   describe("checking and unchecking of the select column checkboxes", () => {
@@ -404,5 +672,48 @@ describe("tests for the table component", () => {
       const rowCheckboxes = within(body).getAllByRole("checkbox");
       rowCheckboxes.forEach(checkbox => expect(checkbox).not.toBeChecked());
     });
+
+    it("names the select column checkboxes", () => {
+      renderTableWithMockData({enableRowSelection: true});
+
+      expect(
+        screen.getByRole("checkbox", {name: I18n.t("table.select_all_rows")})
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole("checkbox", {name: I18n.t("table.select_row")})).toHaveLength(
+        mockData().length
+      );
+    });
+  });
+});
+
+describe("Table with grouped column headers", () => {
+  it("renders one filter row for the visible leaf columns and filters their data", async () => {
+    const user = userEvent.setup();
+    const columns = [
+      {id: "group", header: "Grouped columns", columns: mockColumns()},
+      {accessorKey: "col4", header: "Unfiltered", enableColumnFilter: false},
+    ];
+    const {table} = renderTable(columns, mockData(), null, {
+      initialState: {columnVisibility: {col2: false}},
+    });
+
+    expectTextInDocument("Grouped columns");
+    const filterRows = table.querySelectorAll(".rt-thead.-filters > .rt-tr");
+    expect(filterRows).toHaveLength(1);
+    expect(filterRows[0]).toHaveAttribute("aria-rowindex", "3");
+    expect(within(filterRows[0]).getAllByRole("columnheader")).toHaveLength(3);
+    expect(within(filterRows[0]).getAllByRole("textbox")).toHaveLength(1);
+    expect(within(filterRows[0]).getAllByRole("combobox")).toHaveLength(1);
+    expect(screen.queryByRole("textbox", {name: defaultSearchPlaceholderText("col2")})).toBeNull();
+
+    await user.type(
+      screen.getByRole("textbox", {name: defaultSearchPlaceholderText("col1")}),
+      "abc"
+    );
+    expectTextNotInDocument("a");
+    expectTextNotInDocument("ab");
+    expectTextInDocument("abc");
+    expectTextInDocument("abcd");
+    expect(screen.getByRole("grid")).toHaveAttribute("aria-rowcount", "5");
   });
 });

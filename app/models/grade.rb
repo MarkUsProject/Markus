@@ -15,6 +15,7 @@
 # Indexes
 #
 #  index_grades_on_grade_entry_item_id_and_grade_entry_student_id  (grade_entry_item_id,grade_entry_student_id) UNIQUE
+#  index_grades_on_grade_entry_student_id                          (grade_entry_student_id)
 #  index_grades_on_last_updated_by_id                              (last_updated_by_id)
 #
 # Foreign Keys

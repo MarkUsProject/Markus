@@ -13,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import FilterCell from "./filter";
 import TableHeaderCell from "./table_header_cell";
 import TableRow from "./table_row";
@@ -22,6 +23,8 @@ export const defaultNoDataText = () => I18n.t("table.no_data");
 const columnHelper = createColumnHelper();
 export const SELECTION_COLUMN_ID = "select";
 const FILTER_VARIANT_SELECT = "select";
+const VIRTUALIZATION_THRESHOLD = 50;
+const STATUS_MESSAGE_DELAY = 500;
 
 export const expanderColumn = columnHelper.display({
   id: "expander",
@@ -30,15 +33,18 @@ export const expanderColumn = columnHelper.display({
   maxSize: 30,
   cell: ({row}) => {
     const icon = row.getIsExpanded() ? "fa-chevron-up" : "fa-chevron-down";
-    const title = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
+    const label = row.getIsExpanded() ? I18n.t("table.hide_details") : I18n.t("table.show_details");
     return row.getCanExpand() ? (
-      <div
+      <button
+        type="button"
         className={`rt-expandable ${row.getIsExpanded() ? "-open" : ""}`}
         onClick={row.getToggleExpandedHandler()}
+        aria-expanded={row.getIsExpanded()}
+        aria-label={label}
         data-testid="expander-button"
       >
-        <FontAwesomeIcon icon={icon} title={title} />
-      </div>
+        <FontAwesomeIcon icon={icon} />
+      </button>
     ) : null;
   },
 });
@@ -62,6 +68,7 @@ export const selectionColumn = columnHelper.display({
           type="checkbox"
           checked={table.getIsAllRowsSelected()}
           onChange={table.getToggleAllRowsSelectedHandler()}
+          aria-label={I18n.t("table.select_all_rows")}
         />
       </div>
     );
@@ -77,6 +84,7 @@ export const selectionColumn = columnHelper.display({
         checked={row.getIsSelected()}
         disabled={!row.getCanSelect()}
         onChange={row.getToggleSelectedHandler()}
+        aria-label={I18n.t("table.select_row")}
       />
     </div>
   ),
@@ -85,6 +93,7 @@ export const selectionColumn = columnHelper.display({
 export default function Table({
   columns,
   data,
+  label,
   noDataText,
   initialState,
   loading,
@@ -99,6 +108,7 @@ export default function Table({
   onRowSelectionChange,
   showRowNumbers = false,
 }) {
+  const tableId = React.useId();
   const [internalColumnFilters, setInternalColumnFilters] = React.useState([]);
   const [columnSizing, setColumnSizing] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState({
@@ -182,17 +192,89 @@ export default function Table({
     ? `calc(${centerTotalSize}px + var(--row-number-gutter-width))`
     : centerTotalSize;
   const rows = table.getRowModel().rows;
+  const bodyRef = React.useRef(null);
+  const virtualizeRows = rows.length > VIRTUALIZATION_THRESHOLD;
+  const rowVirtualizer = useVirtualizer({
+    enabled: virtualizeRows,
+    count: rows.length,
+    getScrollElement: () => bodyRef.current,
+    getItemKey: React.useCallback(index => rows[index].id, [rows]),
+    estimateSize: () => 34,
+    overscan: 5,
+  });
+  const virtualRows = rowVirtualizer.getVirtualItems();
+  const topSpacerHeight = virtualRows[0]?.start ?? 0;
+  const bottomSpacerHeight = virtualizeRows
+    ? rowVirtualizer.getTotalSize() - (virtualRows.at(-1)?.end ?? 0)
+    : 0;
+
+  const filterColumns = table.getVisibleLeafColumns();
+  const showFilters = filterColumns.some(column => column.getCanFilter());
+  const headerGroups = table.getHeaderGroups();
+  const headerRowCount = headerGroups.length + (showFilters ? 1 : 0);
+
+  // Counts the rows shown before any are expanded, so a grouped table counts its groups
+  const rowCount = table.getPreExpandedRowModel().rows.length;
+  const [statusMessage, setStatusMessage] = React.useState("");
+  const hasLoaded = React.useRef(false);
+
+  // Tells screen readers when the table is loading and how many rows it shows after a change.
+  // The first load is not announced, so that pages with several tables stay quiet when they open.
+  React.useEffect(() => {
+    if (!hasLoaded.current) {
+      hasLoaded.current = !loading;
+      return;
+    }
+    if (loading) {
+      setStatusMessage(I18n.t("working"));
+      return;
+    }
+    // Cleared first, so that the same count is announced again after a filter change
+    setStatusMessage("");
+    const timeout = setTimeout(
+      () => setStatusMessage(I18n.t("table.row_count", {count: rowCount})),
+      STATUS_MESSAGE_DELAY
+    );
+    return () => clearTimeout(timeout);
+  }, [loading, rowCount, columnFilters]);
+
+  // Starts each message with the table's label, so that pages with several tables say which one
+  // the message is about
+  const labelledStatusMessage =
+    statusMessage && label
+      ? I18n.t("table.status_with_label", {label, status: statusMessage})
+      : statusMessage;
+
+  const renderRow = (row, index) => (
+    <TableRow
+      row={row}
+      index={index}
+      ariaRowIndex={headerRowCount + index + 1}
+      measureRow={virtualizeRows ? rowVirtualizer.measureElement : undefined}
+      isExpanded={row.getIsExpanded()}
+      isGrouped={row.getIsGrouped()}
+      isSelected={row.getIsSelected()}
+      key={row.id}
+      renderSubComponent={renderSubComponent}
+      // columnSizing is not used directly in TableRow, but is passed to trigger
+      // re-render when column sizes change
+      columnSizing={columnSizing}
+      columns={finalColumns}
+    />
+  );
 
   const tableHeaders = (
     <div className="rt-thead -header" style={{minWidth: tableMinWidth}}>
-      {table.getHeaderGroups().map(headerGroup => (
-        <div className="rt-tr" role="row" key={headerGroup.id}>
+      {headerGroups.map((headerGroup, index) => (
+        <div className="rt-tr" role="row" aria-rowindex={index + 1} key={headerGroup.id}>
           {headerGroup.headers.map(header => (
             <TableHeaderCell
               key={header.id}
+              id={`${tableId}-${header.id}`}
               header={header}
               size={header.getSize()}
               isSorted={header.column.getIsSorted()}
+              sortIndex={header.column.getSortIndex()}
               isResizing={header.column.getIsResizing()}
               allRowsSelected={
                 header.column.id === SELECTION_COLUMN_ID ? table.getIsAllRowsSelected() : undefined
@@ -204,30 +286,39 @@ export default function Table({
     </div>
   );
 
-  const showFilters = React.useMemo(
-    () => table.getAllColumns().some(column => column.getCanFilter()),
-    [table, finalColumns]
-  );
   const tableFilters = showFilters && (
     <div className="rt-thead -filters" style={{minWidth: tableMinWidth}}>
-      {table.getHeaderGroups().map(headerGroup => (
-        <div className="rt-tr" role="row" key={headerGroup.id}>
-          {headerGroup.headers.map(header => (
-            <FilterCell
-              key={header.id}
-              size={header.getSize()}
-              column={header.column}
-              filterValue={header.column.getFilterValue()}
-              facetedUniqueValues={
-                header.column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
-                  ? header.column.getFacetedUniqueValues()
-                  : null
-              }
-            />
-          ))}
-        </div>
-      ))}
+      <div className="rt-tr" role="row" aria-rowindex={headerRowCount}>
+        {filterColumns.map(column => (
+          <FilterCell
+            key={column.id}
+            // A leaf column's header in the bottom header row has the column's id as its id
+            headerId={`${tableId}-${column.id}`}
+            size={column.getSize()}
+            column={column}
+            filterValue={column.getFilterValue()}
+            facetedUniqueValues={
+              column.columnDef.meta?.filterVariant === FILTER_VARIANT_SELECT
+                ? column.getFacetedUniqueValues()
+                : null
+            }
+          />
+        ))}
+      </div>
     </div>
+  );
+
+  const loadingSpinner = (
+    <Grid
+      visible={true}
+      height="25"
+      width="25"
+      color="#31649B"
+      ariaLabel={I18n.t("working")}
+      radius="12.5"
+      wrapperStyle={{}}
+      wrapperClass="grid-wrapper"
+    />
   );
 
   return (
@@ -235,68 +326,64 @@ export default function Table({
       className={`Table -highlight${showRowNumbers ? " -show-row-numbers" : ""}`}
       style={{maxHeight: "500px"}}
     >
-      <div className="rt-table" role="grid">
+      <div
+        className="rt-table"
+        role="grid"
+        aria-label={label}
+        // An empty table has one row, which holds the no data message or the loading spinner
+        aria-rowcount={headerRowCount + (rows.length || 1)}
+        // Only rows that are being reloaded are marked busy, so that the spinner in an empty
+        // table is not hidden from screen readers that skip busy content
+        aria-busy={(loading && rows.length > 0) || undefined}
+      >
         {tableHeaders}
         {tableFilters}
-        <div className="rt-tbody" style={{minWidth: tableMinWidth}}>
-          {rows.map(row => (
-            <TableRow
-              row={row}
-              isExpanded={row.getIsExpanded()}
-              isGrouped={row.getIsGrouped()}
-              isSelected={row.getIsSelected()}
-              key={row.id}
-              renderSubComponent={renderSubComponent}
-              // columnSizing is not used directly in TableRow, but is passed to trigger
-              // re-render when column sizes change
-              columnSizing={columnSizing}
-              columns={finalColumns}
-            />
-          ))}
-          {loading && rows.length > 0 && (
-            <div
-              className="loading-spinner"
-              style={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: "auto",
-                backgroundColor: "#fff",
-                zIndex: 10,
-                border: "solid 1px rgba(0, 0, 0, 0.05)",
-              }}
-            >
-              <Grid
-                visible={true}
-                height="25"
-                width="25"
-                color="#31649B"
-                ariaLabel="grid-loading"
-                radius="12.5"
-                wrapperStyle={{}}
-                wrapperClass="grid-wrapper"
-              />
+        <div
+          className="rt-tbody"
+          style={{minWidth: tableMinWidth, overflowAnchor: virtualizeRows ? "none" : undefined}}
+          ref={bodyRef}
+        >
+          {topSpacerHeight > 0 && (
+            <div aria-hidden="true" style={{flex: `0 0 ${topSpacerHeight}px`}} />
+          )}
+          {virtualizeRows
+            ? virtualRows.map(({index}) => renderRow(rows[index], index))
+            : rows.map(renderRow)}
+          {bottomSpacerHeight > 0 && (
+            <div aria-hidden="true" style={{flex: `0 0 ${bottomSpacerHeight}px`}} />
+          )}
+          {!rows.length && (
+            <div role="row" aria-rowindex={headerRowCount + 1}>
+              <div role="gridcell" aria-colspan={table.getVisibleLeafColumns().length || undefined}>
+                {loading ? (
+                  <div className="loading-spinner">{loadingSpinner}</div>
+                ) : (
+                  <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
+                )}
+              </div>
             </div>
           )}
-          {!rows.length &&
-            (loading ? (
-              <div className="loading-spinner">
-                <Grid
-                  visible={true}
-                  height="25"
-                  width="25"
-                  color="#31649B"
-                  ariaLabel="grid-loading"
-                  radius="12.5"
-                  wrapperStyle={{}}
-                  wrapperClass="grid-wrapper"
-                />
-              </div>
-            ) : (
-              <p className="rt-no-data">{noDataText || defaultNoDataText()}</p>
-            ))}
         </div>
+      </div>
+      {loading && rows.length > 0 && (
+        <div
+          className="loading-spinner"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "auto",
+            backgroundColor: "#fff",
+            zIndex: 10,
+            border: "solid 1px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          {loadingSpinner}
+        </div>
+      )}
+      <div className="visually-hidden" role="status">
+        {labelledStatusMessage}
       </div>
     </div>
   );

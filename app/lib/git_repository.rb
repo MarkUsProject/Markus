@@ -90,7 +90,10 @@ class GitRepository < Repository::AbstractRepository
     rescue StandardError
       FileUtils.rm_rf(barepath)
       raise
+    ensure
+      repo&.close
     end
+    track_bulk_access
     true
   end
 
@@ -106,6 +109,7 @@ class GitRepository < Repository::AbstractRepository
     yield repo
   ensure
     repo&.close
+    track_bulk_access
   end
 
   # static method that deletes the git repo

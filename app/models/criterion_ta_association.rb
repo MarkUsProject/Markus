@@ -12,8 +12,9 @@
 #
 # Indexes
 #
-#  index_criterion_ta_associations_on_criterion_id  (criterion_id)
-#  index_criterion_ta_associations_on_ta_id         (ta_id)
+#  index_criterion_ta_associations_on_assessment_id  (assessment_id)
+#  index_criterion_ta_associations_on_criterion_id   (criterion_id)
+#  index_criterion_ta_associations_on_ta_id          (ta_id)
 #
 # Foreign Keys
 #

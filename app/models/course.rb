@@ -144,6 +144,12 @@ class Course < ApplicationRecord
     end.join("\n")
   end
 
+  def get_all_grace_credit_deductions
+    students.joins(memberships: :grace_period_deductions)
+            .group('roles.id')
+            .sum('grace_period_deductions.deduction')
+  end
+
   def export_student_data_csv
     students = self.students.joins(:user).order('users.user_name').includes(:section)
     MarkusCsv.generate(students) do |student|
@@ -173,17 +179,19 @@ class Course < ApplicationRecord
   # Yield an open repo for each group of this course, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo(&block)
-    failed_groups = []
-    self.groups.each do |group|
-      group.access_repo(&block)
-    rescue StandardError
-      # in the event of a concurrent repo modification, retry later
-      failed_groups << group
-    end
-    failed_groups.each do |grouping|
-      grouping.access_repo(&block)
-    rescue StandardError
-      # give up
+    Repository.get_class.bulk_access do
+      failed_groups = []
+      self.groups.each do |group|
+        group.access_repo(&block)
+      rescue StandardError
+        # in the event of a concurrent repo modification, retry later
+        failed_groups << group
+      end
+      failed_groups.each do |grouping|
+        grouping.access_repo(&block)
+      rescue StandardError
+        # give up
+      end
     end
   end
 

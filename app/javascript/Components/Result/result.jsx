@@ -118,7 +118,8 @@ class Result extends React.Component {
   }
 
   fetchData = () => {
-    fetch(Routes.course_result_path(this.props.course_id, this.state.result_id), {
+    const result_id = this.state.result_id;
+    fetch(Routes.course_result_path(this.props.course_id, result_id), {
       headers: {Accept: "application/json"},
     })
       .then(response => {
@@ -127,6 +128,10 @@ class Result extends React.Component {
         }
       })
       .then(res => {
+        // Another submission was opened while this one loaded; its own fetch applies.
+        if (this.state.result_id !== result_id) {
+          return;
+        }
         if (res.submission_files) {
           res.submission_files = this.processSubmissionFiles(res.submission_files);
         }

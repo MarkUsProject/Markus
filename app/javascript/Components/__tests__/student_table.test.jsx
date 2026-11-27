@@ -274,7 +274,7 @@ describe("For each StudentTable's loading status", () => {
   it("shows loading spinner when data is being fetched", async () => {
     render(<StudentTable course_id={mock_course_id} />);
 
-    const spinner = await screen.findByLabelText("grid-loading");
+    const spinner = await screen.findByLabelText(I18n.t("working"));
     expect(spinner).toBeInTheDocument();
   });
 });

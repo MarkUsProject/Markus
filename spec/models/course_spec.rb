@@ -65,8 +65,7 @@ describe Course do
         before { allow(Settings.repository).to receive(:type).and_return('mem') }
 
         it 'should not schedule a background job' do
-          expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
-          subject
+          expect { subject }.not_to have_enqueued_job(UpdateRepoMaxFileSizeJob)
         end
       end
 
@@ -85,8 +84,7 @@ describe Course do
         context 'when using git repos' do
           include_context 'git repos'
           it 'should schedule a background job' do
-            expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later)
-            subject
+            expect { subject }.to have_enqueued_job(UpdateRepoMaxFileSizeJob)
           end
         end
 
@@ -103,8 +101,7 @@ describe Course do
           after { FileUtils.rm_r(Dir.glob(File.join(Repository::ROOT_DIR, '*'))) }
 
           it 'should schedule a background job' do
-            expect(UpdateRepoMaxFileSizeJob).to receive(:perform_later).with(course.id)
-            subject
+            expect { subject }.to have_enqueued_job(UpdateRepoMaxFileSizeJob).with(course.id)
           end
         end
 
@@ -119,8 +116,7 @@ describe Course do
         context 'when using git repos' do
           include_context 'git repos'
           it 'should not schedule a background job' do
-            expect(UpdateRepoMaxFileSizeJob).not_to receive(:perform_later).with(course.id)
-            subject
+            expect { subject }.not_to have_enqueued_job(UpdateRepoMaxFileSizeJob)
           end
         end
 
@@ -129,10 +125,11 @@ describe Course do
     end
 
     context 'The repository permissions file' do
+      include_context 'without enqueue deduplication'
+
       context 'should be updated' do
         it 'when changing toggling the hidden status for a course' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          course.update(is_hidden: true)
+          expect { course.update(is_hidden: true) }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
       end
     end
@@ -264,7 +261,7 @@ describe Course do
           let(:desired_attributes) do
             ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, true, true, false, nil, nil, true, true]
+             true, true, false, true, true, true, true, false, nil, nil, true, true, false]
           end
           let(:assignment) do
             csv = desired_attributes.to_csv
@@ -384,7 +381,7 @@ describe Course do
           let(:desired_attributes) do
             ['short_identifier', 'description', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, true, true, false, nil, nil, true, true]
+             true, true, false, true, true, true, true, false, nil, nil, true, true, false]
           end
           let(:assignment) do
             desired_attribute_value_hash = Assignment::DEFAULT_FIELDS.zip(desired_attributes).to_h
@@ -416,7 +413,7 @@ describe Course do
           let!(:new_assignment_attr) do
             ['new', 'abc', 1.day.from_now.at_beginning_of_minute, 'message',
              1, 2, 1, true, true, 2.days.from_now.at_beginning_of_minute, 'remark_message',
-             true, true, false, true, true, true, true, false, nil, nil, true, false]
+             true, true, false, true, true, true, true, false, nil, nil, true, false, false]
           end
           let!(:returned) do
             # create the old assignment
@@ -638,6 +635,48 @@ describe Course do
     end
   end
 
+  describe '#get_all_grace_credit_deductions' do
+    subject(:deductions) { course.get_all_grace_credit_deductions }
+
+    def add_deduction(student, amount, assignment: create(:assignment, course: course))
+      grouping = create(:grouping, assignment: assignment)
+      membership = create(:student_membership, role: student, grouping: grouping)
+      create(:grace_period_deduction, membership: membership, deduction: amount)
+    end
+
+    it 'returns an empty hash for a course with no students' do
+      expect(deductions).to eq({})
+    end
+
+    it 'omits students who are not members of any grouping' do
+      create(:student, course: course)
+      expect(deductions).to eq({})
+    end
+
+    it 'omits students whose memberships have no deductions' do
+      student = create(:student, course: course)
+      assignment = create(:assignment, course: course)
+      grouping = create(:grouping, assignment: assignment)
+      create(:student_membership, role: student, grouping: grouping)
+      expect(deductions).to eq({})
+    end
+
+    it "maps a student's role id to the sum of their deductions" do
+      student = create(:student, course: course)
+      add_deduction(student, 2)
+      add_deduction(student, 3)
+      expect(deductions).to eq({ student.id => 5 })
+    end
+
+    it 'keeps a separate total for each student and leaves out students with none' do
+      student1, student2 = create_list(:student, 3, course: course)
+      add_deduction(student1, 1)
+      add_deduction(student1, 2)
+      add_deduction(student2, 4)
+      expect(deductions).to eq({ student1.id => 3, student2.id => 4 })
+    end
+  end
+
   describe '#export_student_data_csv' do
     context 'when there are no students in the course' do
       it 'returns empty string' do
@@ -759,7 +798,7 @@ def create_assignment_csv_string(assignment)
    assignment.assign_graders_to_criteria, assignment.enable_test, assignment.enable_student_tests,
    assignment.allow_remarks, assignment.display_grader_names_to_students, assignment.display_median_to_students,
    assignment.group_name_autogenerated, assignment.is_hidden, assignment.visible_on, assignment.visible_until,
-   assignment.vcs_submit, assignment.has_peer_review].to_csv
+   assignment.vcs_submit, assignment.has_peer_review, assignment.display_average_to_students].to_csv
 end
 
 def create_assignment_symbol_to_value_map(assignment)
@@ -785,6 +824,7 @@ def create_assignment_symbol_to_value_map(assignment)
       enable_student_tests: assignment.enable_student_tests,
       allow_remarks: assignment.allow_remarks,
       display_grader_names_to_students: assignment.display_grader_names_to_students,
+      display_average_to_students: assignment.display_average_to_students,
       display_median_to_students: assignment.display_median_to_students,
       group_name_autogenerated: assignment.group_name_autogenerated,
       vcs_submit: assignment.vcs_submit,

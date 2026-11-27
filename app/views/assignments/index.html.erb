@@ -21,7 +21,7 @@
   <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
               new_course_assignment_path(@current_course),
               class: 'button' %>
-  <% if Settings.scanned_exams.enable %>
+  <% if Settings.scanned_exams.enabled %>
     <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
                 new_course_assignment_path(@current_course, scanned: true),
                 class: 'button' %>

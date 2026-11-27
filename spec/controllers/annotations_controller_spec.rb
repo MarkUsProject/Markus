@@ -1,6 +1,6 @@
 describe AnnotationsController do
   # TODO: add 'role is from a different course' shared tests to each route test below
-  let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil) }
+  let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil, creator: user) }
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
   let(:notebook_submission_file) { create(:notebook_submission_file, submission: submission) }
@@ -319,6 +319,7 @@ describe AnnotationsController do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
         result = assignment.groupings.first.current_result
+        create(:ta_membership, role: user, grouping: result.grouping) if user.ta?
         submission_file = create(:submission_file, submission: result.submission)
         post_as user,
                 :create,
@@ -335,6 +336,7 @@ describe AnnotationsController do
       it 'includes a mark_update when reusing a deductive annotation text that is not overridden' do
         assignment = create(:assignment_with_deductive_annotations)
         result = assignment.groupings.first.current_result
+        create(:ta_membership, role: user, grouping: result.grouping) if user.ta?
         existing_annotation = result.annotations.first
         deductive_text = existing_annotation.annotation_text
         submission_file = create(:submission_file, submission: result.submission)
@@ -560,6 +562,8 @@ describe AnnotationsController do
   describe 'an authenticated TA' do
     let!(:user) { create(:ta) }
 
+    before { create(:ta_membership, role: user, grouping: result.grouping) }
+
     it_behaves_like 'an authenticated instructor or TA'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
@@ -649,6 +653,175 @@ describe AnnotationsController do
                 format: :json
         expect(result.reload.annotations.size).to eq 0
       end
+    end
+  end
+
+  describe 'a TA who does not grade the group' do
+    let(:user) { create(:ta) }
+    let(:annotation) { create(:text_annotation, submission_file: submission_file, result: result) }
+
+    it 'cannot add an existing annotation' do
+      post_as user,
+              :add_existing_annotation,
+              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id, course_id: course.id },
+              format: :json
+      expect(response).to have_http_status(:forbidden)
+      expect(result.annotations.reload.size).to eq 0
+    end
+
+    it 'cannot create an annotation' do
+      post_as user,
+              :create,
+              params: { content: 'new', category_id: annotation_category.id, submission_file_id: submission_file.id,
+                        line_start: 1, line_end: 1, column_start: 1, column_end: 1, result_id: result.id,
+                        course_id: course.id },
+              format: :json
+      expect(response).to have_http_status(:forbidden)
+      expect(result.annotations.reload.size).to eq 0
+    end
+
+    it 'cannot update an annotation' do
+      put_as user, :update, params: { id: annotation.id, content: 'new content', course_id: course.id }, format: :json
+      expect(response).to have_http_status(:forbidden)
+      expect(annotation.annotation_text.reload.content).not_to eq 'new content'
+    end
+
+    it 'cannot destroy an annotation' do
+      delete_as user, :destroy, params: { id: annotation.id, course_id: course.id }, format: :json
+      expect(response).to have_http_status(:forbidden)
+      expect(result.annotations.reload.size).to eq 1
+    end
+
+    it 'can manage annotations when they can manage submissions' do
+      user.grader_permission.update!(manage_submissions: true)
+      delete_as user, :destroy, params: { id: annotation.id, course_id: course.id }, format: :json
+      expect(response).to have_http_status(:success)
+      expect(result.annotations.reload.size).to eq 0
+    end
+  end
+
+  describe 'a TA who sends the result id of a group they grade' do
+    let(:user) { create(:ta) }
+    let(:other_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+    let(:other_result) { other_grouping.current_result }
+    let(:other_annotation) { create(:text_annotation, result: other_result) }
+
+    before { create(:ta_membership, role: user, grouping: result.grouping) }
+
+    it 'cannot destroy an annotation on another group' do
+      delete_as user, :destroy, params: { id: other_annotation.id, result_id: result.id, course_id: course.id },
+                                format: :json
+      expect(response).to have_http_status(:forbidden)
+      expect(other_result.annotations.reload.size).to eq 1
+    end
+
+    it 'cannot update an annotation on another group' do
+      put_as user, :update,
+             params: { id: other_annotation.id, result_id: result.id, content: 'new content', course_id: course.id },
+             format: :json
+      expect(response).to have_http_status(:forbidden)
+      expect(other_annotation.annotation_text.reload.content).not_to eq 'new content'
+    end
+  end
+
+  describe 'reusing an annotation text the grader was never offered' do
+    let(:user) { create(:instructor) }
+    let(:other_assignment) { create(:assignment, course: course) }
+    let(:other_category) { create(:annotation_category, assignment: other_assignment) }
+    let(:location) do
+      { submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1, column_end: 1,
+        result_id: result.id, course_id: course.id }
+    end
+
+    def create_with(text_id, category_id)
+      post_as user, :create, params: { content: 'new', annotation_text_id: text_id, category_id: category_id,
+                                       **location }, format: :json
+    end
+
+    it 'cannot create with a text from another course, nor move that text into a category' do
+      other_text = create(:annotation_text, annotation_category: nil,
+                                            creator: create(:instructor, course: create(:course)))
+      create_with(other_text.id, annotation_category.id)
+      expect(response).to have_http_status(:not_found)
+      expect(other_text.reload.annotation_category_id).to be_nil
+      expect(result.annotations.reload.size).to eq 0
+    end
+
+    it 'cannot move a text from another assignment into this assignment' do
+      other_text = create(:annotation_text, annotation_category: other_category)
+      create_with(other_text.id, annotation_category.id)
+      expect(response).to have_http_status(:not_found)
+      expect(other_text.reload.annotation_category_id).to eq other_category.id
+    end
+
+    it 'cannot reuse a one-time text that another grader wrote' do
+      other_text = create(:annotation_text, annotation_category: nil, creator: create(:ta, course: course))
+      create_with(other_text.id, annotation_category.id)
+      expect(response).to have_http_status(:not_found)
+      expect(other_text.reload.annotation_category_id).to be_nil
+    end
+
+    it 'cannot move a text of this assignment into a category of another assignment' do
+      create_with(annotation_text.id, other_category.id)
+      expect(response).to have_http_status(:not_found)
+      expect(annotation_text.reload.annotation_category_id).to eq annotation_category.id
+    end
+
+    it 'cannot create a new text in a category of another assignment' do
+      create_with(nil, other_category.id)
+      expect(response).to have_http_status(:not_found)
+      expect(other_category.annotation_texts.reload.size).to eq 0
+    end
+
+    it 'cannot add an existing text from another assignment' do
+      other_text = create(:annotation_text, annotation_category: other_category)
+      post_as user, :add_existing_annotation, params: { annotation_text_id: other_text.id, **location }, format: :json
+      expect(response).to have_http_status(:not_found)
+      expect(result.annotations.reload.size).to eq 0
+    end
+  end
+
+  describe 'a result from another course' do
+    let(:other_course) { create(:course) }
+    let(:other_assignment) { create(:assignment, course: other_course) }
+    let(:other_result) { create(:grouping_with_inviter_and_submission, assignment: other_assignment).current_result }
+    let(:other_file) { create(:submission_file, submission: other_result.submission) }
+    let(:other_text) { create(:annotation_text, annotation_category: nil) }
+
+    shared_examples 'blocks the other course' do
+      it 'cannot create an annotation on it' do
+        post_as user,
+                :create,
+                params: { content: 'new', submission_file_id: other_file.id, line_start: 1, line_end: 1,
+                          column_start: 1, column_end: 1, result_id: other_result.id, course_id: course.id },
+                format: :json
+        expect(response).to have_http_status(:not_found)
+        expect(other_result.annotations.reload.size).to eq 0
+      end
+
+      it 'cannot add an existing annotation to it' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: other_text.id, submission_file_id: other_file.id, line_start: 1,
+                          line_end: 1, column_start: 1, column_end: 1, result_id: other_result.id,
+                          course_id: course.id },
+                format: :json
+        expect(response).to have_http_status(:not_found)
+        expect(other_result.annotations.reload.size).to eq 0
+      end
+    end
+
+    context 'as an instructor' do
+      let(:user) { create(:instructor, course: course) }
+
+      it_behaves_like 'blocks the other course'
+    end
+
+    context 'as a TA who can manage submissions' do
+      let(:user) { create(:ta, course: course, manage_submissions: true) }
+
+      it_behaves_like 'blocks the other course'
     end
   end
 

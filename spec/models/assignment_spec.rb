@@ -1006,6 +1006,15 @@ describe Assignment do
           expect(expected_string).to eql(@assignment.get_repo_list(ssh: true)), 'Repo access url list string is wrong!'
         end
 
+        it 'sanitizes repository list values' do
+          allow_any_instance_of(Group).to receive(:group_name).and_return('=group')
+          allow_any_instance_of(Group).to receive(:repository_external_access_url).and_return("+url\tvalue")
+
+          csv = CSV.parse(@assignment.get_repo_list)
+
+          expect(csv).to include([' =group', ' +urlvalue'])
+        end
+
         context 'with two groups of a single student each' do
           before do
             2.times do
@@ -2470,6 +2479,13 @@ describe Assignment do
         end
       end
 
+      it 'sanitizes student values' do
+        student = assignment.groupings.first.student_memberships.first.role
+        student.user.update_column(:user_name, "=user\tvalue")
+
+        expect(summary.flatten).to include(' =uservalue')
+      end
+
       context 'when all criteria are pre-created' do
         it_behaves_like 'check csv content'
       end
@@ -2479,6 +2495,23 @@ describe Assignment do
 
         it_behaves_like 'check csv content'
       end
+    end
+  end
+
+  describe '#summary_test_result_csv' do
+    let(:assignment) { create(:assignment) }
+
+    it 'sanitizes test result values' do
+      allow(assignment).to receive(:summary_test_results).and_return(
+        [{ 'group_name' => '@group',
+           'name' => 'test',
+           'test_result_name' => 'case',
+           'status' => "-status\tvalue" }]
+      )
+
+      csv = CSV.parse(assignment.summary_test_result_csv)
+
+      expect(csv).to eq([[nil, 'test:case'], [' @group', ' -statusvalue']])
     end
   end
 
@@ -3341,6 +3374,29 @@ describe Assignment do
         expected = assignment.groupings.map { |g| g.current_result.id }
         expect(assignment.current_results.ids).to match_array expected
       end
+    end
+  end
+
+  describe '#reusable_texts_for' do
+    let(:assignment) { create(:assignment) }
+    let(:grader) { create(:ta, course: assignment.course) }
+    let(:category) { create(:annotation_category, assignment: assignment) }
+    let!(:category_text) { create(:annotation_text, annotation_category: category) }
+    let!(:own_text) { create(:annotation_text, annotation_category: nil, creator: grader) }
+
+    it 'includes texts in the assignment categories and the role\'s own one-time texts' do
+      expect(assignment.reusable_texts_for(grader)).to contain_exactly(category_text, own_text)
+    end
+
+    it 'excludes texts from categories of another assignment' do
+      other_category = create(:annotation_category, assignment: create(:assignment, course: assignment.course))
+      create(:annotation_text, annotation_category: other_category)
+      expect(assignment.reusable_texts_for(grader)).to contain_exactly(category_text, own_text)
+    end
+
+    it 'excludes one-time texts written by another role' do
+      create(:annotation_text, annotation_category: nil, creator: create(:ta, course: assignment.course))
+      expect(assignment.reusable_texts_for(grader)).to contain_exactly(category_text, own_text)
     end
   end
 end

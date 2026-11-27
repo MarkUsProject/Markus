@@ -1,4 +1,6 @@
 class AutoMatchJob < ApplicationJob
+  accesses_repositories_in_bulk
+
   def self.on_complete_js(_status)
     '() => {window.groupsManager && window.groupsManager.current.fetchData()}'
   end
@@ -8,7 +10,7 @@ class AutoMatchJob < ApplicationJob
   end
 
   def perform(groupings, exam_template)
-    return unless exam_template.automatic_parsing && Rails.application.config.scanner_enabled
+    return unless exam_template.automatic_parsing && Settings.scanned_exams.enabled
     progress.total = groupings.length
     raw_dir = File.join(exam_template.base_path, 'raw')
 

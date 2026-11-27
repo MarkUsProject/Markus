@@ -3,7 +3,7 @@ import SearchFilter from "./search_filter";
 import SelectFilter from "./select_filter";
 import CaseSensitiveSearchFilter from "./case_sensitive_search_filter";
 
-function Filter({column, filterValue, facetedUniqueValues}) {
+function Filter({column, filterValue, facetedUniqueValues, headerId}) {
   const {filterVariant} = column.columnDef.meta ?? {};
   if (filterVariant === "select") {
     return (
@@ -11,21 +11,23 @@ function Filter({column, filterValue, facetedUniqueValues}) {
         column={column}
         filterValue={filterValue}
         facetedUniqueValues={facetedUniqueValues}
+        headerId={headerId}
       />
     );
   } else if (filterVariant === "case-sensitive-text") {
-    return <CaseSensitiveSearchFilter column={column} filterValue={filterValue} />;
+    return (
+      <CaseSensitiveSearchFilter column={column} filterValue={filterValue} headerId={headerId} />
+    );
   } else {
-    return <SearchFilter column={column} filterValue={filterValue} />;
+    return <SearchFilter column={column} filterValue={filterValue} headerId={headerId} />;
   }
 }
 
-function FilterCell({size, column, filterValue, facetedUniqueValues}) {
+function FilterCell({size, column, filterValue, facetedUniqueValues, headerId}) {
   return (
     <div
       className={`rt-th ${column.columnDef.meta?.headerClassName || ""}`}
       role="columnheader"
-      tabIndex="-1"
       style={{
         width: size,
         maxWidth: column.columnDef.maxSize || "none",
@@ -36,6 +38,7 @@ function FilterCell({size, column, filterValue, facetedUniqueValues}) {
           column={column}
           filterValue={filterValue}
           facetedUniqueValues={facetedUniqueValues}
+          headerId={headerId}
         />
       )}
     </div>

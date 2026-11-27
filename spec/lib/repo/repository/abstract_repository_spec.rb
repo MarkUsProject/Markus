@@ -1,39 +1,81 @@
 describe Repository::AbstractRepository do
+  describe '.bulk_access' do
+    before { stub_const('Repository::AbstractRepository::BULK_ACCESS_RELEASE_INTERVAL', 3) }
+
+    def access_repos(count)
+      count.times { Repository::AbstractRepository.track_bulk_access }
+    end
+
+    it 'releases resources once every BULK_ACCESS_RELEASE_INTERVAL accesses' do
+      expect(GC).to receive(:start).with(full_mark: false, immediate_sweep: true).twice
+      Repository::AbstractRepository.bulk_access { access_repos(7) }
+    end
+
+    it 'does not release resources for accesses outside of a bulk_access block' do
+      expect(GC).not_to receive(:start)
+      access_repos(7)
+    end
+
+    it 'counts accesses across nested bulk_access blocks' do
+      expect(GC).to receive(:start).twice
+      Repository::AbstractRepository.bulk_access do
+        access_repos(2)
+        Repository::AbstractRepository.bulk_access { access_repos(2) }
+        access_repos(2)
+      end
+    end
+
+    it 'stops counting accesses once the block raises an error' do
+      expect(GC).not_to receive(:start)
+      expect { Repository::AbstractRepository.bulk_access { raise 'error' } }.to raise_error('error')
+      access_repos(7)
+    end
+
+    it 'returns the value of the block' do
+      expect(Repository::AbstractRepository.bulk_access { 42 }).to eq 42
+    end
+  end
+
   context 'update repo permissions' do
+    include_context 'without enqueue deduplication'
+
     before { Thread.current[:requested?] = false } # simulates each test happening in its own thread
 
     context 'repository permissions should be updated' do
       context 'exactly once' do
         it 'for a single update' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions
+          expect { Repository.get_class.update_permissions }.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'at the end of a batch update' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
+          expect do
+            Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'at the end of a batch update only if requested' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after(only_on_request: true) do
-            Repository.get_class.update_permissions
-          end
+          expect do
+            Repository.get_class.update_permissions_after(only_on_request: true) do
+              Repository.get_class.update_permissions
+            end
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
 
         it 'at the end of the most outer nested batch update' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after do
-            Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
-          end
+          expect do
+            Repository.get_class.update_permissions_after do
+              Repository.get_class.update_permissions_after {} # rubocop:disable Lint/EmptyBlock
+            end
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
         end
       end
 
       context 'multiple times' do
         it 'for multiple updates made by the same thread' do
-          expect(UpdateRepoPermissionsJob).to receive(:perform_later).twice
-          Repository.get_class.update_permissions
-          Repository.get_class.update_permissions
+          expect do
+            Repository.get_class.update_permissions
+            Repository.get_class.update_permissions
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).twice
         end
       end
     end
@@ -41,20 +83,21 @@ describe Repository::AbstractRepository do
     context 'repository permissions should not be updated' do
       it 'when not in authoritative mode' do
         allow(Settings.repository).to receive(:is_repository_admin).and_return(false)
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions
+        expect { Repository.get_class.update_permissions }.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'at the end of a batch update if not requested' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
+        expect do
+          Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
+        end.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
 
       it 'at the end of the most outer nested batch update only if requested' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        Repository.get_class.update_permissions_after(only_on_request: true) do
-          Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
-        end
+        expect do
+          Repository.get_class.update_permissions_after(only_on_request: true) do
+            Repository.get_class.update_permissions_after(only_on_request: true) {} # rubocop:disable Lint/EmptyBlock
+          end
+        end.not_to have_enqueued_job(UpdateRepoPermissionsJob)
       end
     end
   end

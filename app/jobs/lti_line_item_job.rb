@@ -10,7 +10,7 @@ class LtiLineItemJob < ApplicationJob
   end
 
   def perform(lti_deployment_ids, assessment)
-    lti_deployments = LtiDeployment.where(id: lti_deployment_ids)
+    lti_deployments = assessment.course.lti_deployments.where(id: lti_deployment_ids)
     lti_deployments.each do |deployment|
       create_or_update_lti_assessment(deployment, assessment)
     end

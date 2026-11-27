@@ -46,6 +46,11 @@ export class PDFViewer extends React.PureComponent {
     if (this.props.url) {
       this.loadPDFFile();
     }
+
+    // pdf.js draws only the pages in view, and a hidden pane has none. When the pane is
+    // shown (e.g. once loading ends) or changes width, refit and redraw the pages.
+    this.resizeObserver = new ResizeObserver(this.handleResize);
+    this.resizeObserver.observe(this.scrollContainer.current);
   }
 
   componentDidUpdate(prevProps) {
@@ -85,6 +90,20 @@ export class PDFViewer extends React.PureComponent {
       });
   };
 
+  handleResize = ([entry]) => {
+    // Track the border box: a scrollbar appearing after a refit would change the content
+    // box and trigger another refit.
+    const width = entry.borderBoxSize[0].inlineSize;
+    if (width === this.paneWidth) return;
+    this.paneWidth = width;
+    // A refit makes pdf.js rebuild its pages, which drops the annotation boxes drawn on them.
+    if (this.props.resultView) {
+      this.refresh_annotations();
+      return;
+    }
+    this.update_pdf_view();
+  };
+
   ready_annotations = () => {
     window.annotation_type = window.ANNOTATION_TYPES.PDF;
 
@@ -103,6 +122,7 @@ export class PDFViewer extends React.PureComponent {
     this.eventBus = null;
     window.pdfViewer = undefined;
     this.cancel_scroll_restore();
+    this.resizeObserver.disconnect();
   }
 
   cancel_scroll_restore = () => {
@@ -174,12 +194,17 @@ export class PDFViewer extends React.PureComponent {
     if (container && container.offsetParent) {
       this.pdfViewer.currentScaleValue = this.state.zoom;
       this.pdfViewer.pagesRotation = this.state.rotation;
+      // Draw the pages now in view; an unchanged scale makes pdf.js skip its own redraw.
+      this.pdfViewer.update();
     }
   };
 
   refresh_annotations = () => {
     $(".annotation_holder").remove();
     this.update_pdf_view();
+    // The annotation manager exists once pdf.js has set up the pages ("pagesinit");
+    // "pagesloaded" then draws the annotations.
+    if (!this.annotation_manager) return;
     this.props.annotations.forEach(this.display_annotation);
     if (this.props.annotationFocus) {
       document.getElementById("annotation_holder_" + this.props.annotationFocus).scrollIntoView();

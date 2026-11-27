@@ -31,6 +31,21 @@ describe MainController do
         expect(response).to redirect_to(Settings.remote_auth_login_url)
       end
     end
+
+    describe 'login_remote_auth when remote auth is off' do
+      before do
+        allow(Settings).to receive_messages(remote_auth_login_url: nil)
+        get :login_remote_auth
+      end
+
+      it 'should redirect to the login page' do
+        expect(response).to redirect_to(root_path)
+      end
+
+      it 'should not set the auth_type' do
+        expect(session[:auth_type]).to be_nil
+      end
+    end
   end
 
   context 'An Instructor' do
@@ -82,6 +97,24 @@ describe MainController do
       it 'should redirect the login route to the courses index route' do
         get :login
         expect(response).to redirect_to action: 'index', controller: 'courses'
+      end
+
+      context 'when remote auth is off' do
+        before { allow(Settings).to receive_messages(remote_auth_login_url: nil) }
+
+        it 'should ignore the header' do
+          expect(real_user).to be_nil
+        end
+
+        it 'should show the login page' do
+          get :login
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'should treat the session as expired' do
+          get :check_timeout
+          expect(response).to have_http_status(:unauthorized)
+        end
       end
 
       context 'when MarkUs is in restricted mode' do
@@ -152,14 +185,15 @@ describe MainController do
 
     context 'logging in during an LTI launch' do
       let(:lti) { create(:lti_deployment) }
+      let(:lti_redirect_url) { redirect_login_canvas_path }
 
       before do
-        cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: redirect_login_canvas_path })
+        cookies.encrypted.permanent[:lti_data] = JSON.generate({ lti_redirect: lti_redirect_url })
       end
 
       it 'redirects to redirect_login' do
-        sign_in instructor
-        expect(response).to redirect_to action: 'redirect_login', controller: 'canvas'
+        post :login, params: { user_login: instructor.user_name, user_password: 'a' }
+        expect(response).to redirect_to lti_redirect_url
       end
 
       context 'when logged in during lti launch' do
@@ -207,7 +241,7 @@ describe MainController do
 
     context 'after logging in without remote user auth' do
       before do
-        sign_in student
+        post :login, params: { user_login: student.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'student tests'
@@ -217,7 +251,7 @@ describe MainController do
       before do
         env_hash = { HTTP_X_FORWARDED_USER: student.user_name }
         request.headers.merge! env_hash
-        sign_in student
+        post :login, params: { user_login: student.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'student tests'
@@ -233,7 +267,7 @@ describe MainController do
 
     context 'after logging in without remote user auth' do
       before do
-        sign_in ta
+        post :login, params: { user_login: ta.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'ta tests'
@@ -243,7 +277,7 @@ describe MainController do
       before do
         env_hash = { HTTP_X_FORWARDED_USER: ta.user_name }
         request.headers.merge! env_hash
-        sign_in ta
+        post :login, params: { user_login: ta.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'ta tests'
@@ -259,7 +293,7 @@ describe MainController do
 
     context 'after logging in without remote user auth' do
       before do
-        sign_in admin_user
+        post :login, params: { user_login: admin_user.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'admin tests'
@@ -269,7 +303,7 @@ describe MainController do
       before do
         env_hash = { HTTP_X_FORWARDED_USER: admin_user.user_name }
         request.headers.merge! env_hash
-        sign_in admin_user
+        post :login, params: { user_login: admin_user.user_name, user_password: 'a' }
       end
 
       it_behaves_like 'admin tests'

@@ -76,6 +76,16 @@ describe Admin::CoursesController do
           expect(response).to have_http_status(:forbidden)
         end
       end
+
+      describe '#destroy_lti_deployment' do
+        let!(:lti_deployment) { create(:lti_deployment, course: course) }
+
+        it 'responds with 403 and keeps the deployment' do
+          delete_as user, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+          expect(response).to have_http_status(:forbidden)
+          expect(LtiDeployment.exists?(lti_deployment.id)).to be true
+        end
+      end
     end
 
     context 'Instructor' do
@@ -141,9 +151,31 @@ describe Admin::CoursesController do
     end
 
     describe '#new' do
+      render_views
+
       it 'responds with 200' do
         get_as admin, :new
         expect(response).to have_http_status(:ok)
+      end
+
+      context 'when a default autotest url is configured' do
+        before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+        it 'pre-fills the autotest url field with the default' do
+          get_as admin, :new
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to eq 'http://autotest.example.com'
+        end
+      end
+
+      context 'when no default autotest url is configured' do
+        before { allow(Settings.autotest).to receive(:default_url).and_return(nil) }
+
+        it 'leaves the autotest url field empty' do
+          get_as admin, :new
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to be_blank
+        end
       end
     end
 
@@ -186,20 +218,42 @@ describe Admin::CoursesController do
         expect(created_course).to be_nil
       end
 
+      context 'when parameters are invalid' do
+        render_views
+
+        before { allow(Settings.autotest).to receive(:default_url).and_return('http://autotest.example.com') }
+
+        it 're-renders the form with the submitted autotest url rather than the default' do
+          post_as admin, :create, params: {
+            course: { name: 'CSC207', display_name: nil, is_hidden: true, autotest_url: 'http://custom.example.com' }
+          }
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to eq 'http://custom.example.com'
+        end
+
+        it 're-renders the form with an empty autotest url when it was cleared' do
+          post_as admin, :create, params: {
+            course: { name: 'CSC207', display_name: nil, is_hidden: true, autotest_url: '' }
+          }
+          field = response.parsed_body.at_css('#course_autotest_url')
+          expect(field['value']).to be_blank
+        end
+      end
+
       it 'updates the autotest_url' do
-        expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+        expect do
+          post_as admin, :create, params: {
+            course: {
+              name: 'CSC207',
+              display_name: 'Software Design',
+              is_hidden: true,
+              autotest_url: 'http://example.com'
+            }
+          }
+        end.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, *|
           expect(course_).to eq Course.find_by(name: 'CSC207')
           expect(url).to eq 'http://example.com'
-          nil # mocked return value
-        end
-        post_as admin, :create, params: {
-          course: {
-            name: 'CSC207',
-            display_name: 'Software Design',
-            is_hidden: true,
-            autotest_url: 'http://example.com'
-          }
-        }
+        end)
       end
 
       it 'persists start_at and end_at when provided' do
@@ -296,12 +350,12 @@ describe Admin::CoursesController do
 
       context 'updating the autotest_url' do
         it 'does update the autotest_url as an admin' do
-          expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url|
+          expect do
+            put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, *|
             expect(course_).to eq course
             expect(url).to eq 'http://example.com'
-            nil # mocked return value
-          end
-          put_as admin, :update, params: { id: course.id, course: { autotest_url: 'http://example.com' } }
+          end)
         end
       end
 
@@ -425,13 +479,32 @@ describe Admin::CoursesController do
       context 'there is an autotest_setting' do
         include_context 'course with an autotest setting'
         it 'should call AutotestResetUrlJob with the correct settings' do
-          expect(AutotestResetUrlJob).to receive(:perform_later) do |course_, url, _markus_url, options|
+          expect { subject }.to(have_enqueued_job(AutotestResetUrlJob).with do |course_, url, _markus_url, options|
             expect(course_.id).to eq course.id
             expect(url).to eq course.autotest_setting.url
             expect(options[:refresh]).to be_truthy
-            OpenStruct.new job_id: 1 # mock return value so that the job id can be set on the session
-          end
-          subject
+          end)
+        end
+      end
+    end
+
+    describe '#destroy_lti_deployment' do
+      let!(:lti_deployment) { create(:lti_deployment, course: course) }
+
+      it 'deletes the deployment' do
+        delete_as admin, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: lti_deployment.id }
+        expect(response).to redirect_to(edit_admin_course_path(course))
+        expect(LtiDeployment.exists?(lti_deployment.id)).to be false
+      end
+
+      context 'with a deployment from another course' do
+        let!(:other_deployment) { create(:lti_deployment, course: create(:course)) }
+
+        it 'raises a not found error and keeps the deployment' do
+          expect do
+            delete_as admin, :destroy_lti_deployment, params: { id: course.id, lti_deployment_id: other_deployment.id }
+          end.to raise_error(ActiveRecord::RecordNotFound)
+          expect(LtiDeployment.exists?(other_deployment.id)).to be true
         end
       end
     end

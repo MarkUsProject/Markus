@@ -135,12 +135,17 @@ describe GradersController do
         end
       end
 
-      it 'and a successful call updates repository permissions exactly once' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later)
-        post_as @instructor,
-                :upload,
-                params: { course_id: course.id, assignment_id: @assignment.id,
-                          upload_file: @group_grader_map_file, groupings: true }
+      context 'when checking repository permission updates' do
+        include_context 'without enqueue deduplication'
+
+        it 'and a successful call updates repository permissions exactly once' do
+          expect do
+            post_as @instructor,
+                    :upload,
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              upload_file: @group_grader_map_file, groupings: true }
+          end.to have_enqueued_job(UpdateRepoPermissionsJob).once
+        end
       end
 
       it 'and some graders are invalid' do
@@ -847,8 +852,22 @@ describe GradersController do
           context 'and the group has no submission' do
             let(:submission) { nil }
 
-            it 'should not assign graders' do
-              expect(@grouping1.tas).to be_empty
+            it 'should assign graders' do
+              expect(@grouping1.tas).to include(@ta1)
+            end
+
+            it 'should not display a message about skipped groups' do
+              expect(flash[:notice]).to be_nil
+            end
+          end
+
+          context 'and the group has an uncollected submission' do
+            let(:submission) do
+              create(:submission, grouping: @grouping1, is_empty: true, submission_version_used: false)
+            end
+
+            it 'should assign graders' do
+              expect(@grouping1.tas).to include(@ta1)
             end
           end
 
@@ -863,8 +882,12 @@ describe GradersController do
           context 'and the group has an empty submission' do
             let(:submission) { create(:version_used_submission, grouping: @grouping1, is_empty: true) }
 
-            it 'should assign graders' do
+            it 'should not assign graders' do
               expect(@grouping1.tas).to be_empty
+            end
+
+            it 'should display a message about skipped groups' do
+              expect(flash[:notice]).to have_message(I18n.t('graders.group_submission_no_files'))
             end
           end
         end

@@ -17,10 +17,11 @@
 #
 # Indexes
 #
-#  index_test_runs_on_grouping_id    (grouping_id)
-#  index_test_runs_on_role_id        (role_id)
-#  index_test_runs_on_submission_id  (submission_id)
-#  index_test_runs_on_test_batch_id  (test_batch_id)
+#  index_test_runs_on_autotest_test_id  (autotest_test_id)
+#  index_test_runs_on_grouping_id       (grouping_id)
+#  index_test_runs_on_role_id           (role_id)
+#  index_test_runs_on_submission_id     (submission_id)
+#  index_test_runs_on_test_batch_id     (test_batch_id)
 #
 # Foreign Keys
 #

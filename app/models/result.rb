@@ -355,6 +355,10 @@ class Result < ApplicationRecord
           input_pdf = CombinePDF.load(File.join(workdir, input_file.path, input_file.filename))
           combined_pdf << input_pdf
 
+          # go_to_page (below) leaves the cursor on the last annotated page, and Prawn's start_new_page
+          # inserts after the current page rather than at the end. Move to the last page first so this
+          # file's pages are appended, not inserted into the middle of the previous file's pages.
+          go_to_page(page_count) if page_count.positive?
           num_pages = input_pdf.pages.size
           num_pages.times do
             start_new_page
@@ -391,7 +395,12 @@ class Result < ApplicationRecord
         combined_page << annotation_page
       end
 
-      input_files = submission.submission_files.where("filename LIKE '%.ipynb'").order(:path, :filename)
+      # Jupyter notebooks can only be converted to PDF when nbconvert is enabled
+      input_files = if Rails.application.config.nbconvert_enabled
+                      submission.submission_files.where("filename LIKE '%.ipynb'").order(:path, :filename)
+                    else
+                      SubmissionFile.none
+                    end
       grouping.access_repo do |repo|
         input_files.each do |sf|
           contents = sf.retrieve_file(repo: repo)

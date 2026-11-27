@@ -34,6 +34,19 @@ describe TaPolicy do
           let(:result) { create(:complete_result) }
         end
       end
+
+      context 'authorized with a grouping' do
+        let(:grouping) { create(:grouping) }
+        let(:context) { { role: role, real_user: role.user, grouping: grouping } }
+
+        failed 'when not assigned to the grouping'
+        succeed 'when assigned to the grouping' do
+          before { create(:ta_membership, role: role, grouping: grouping) }
+        end
+        succeed 'when not assigned but can manage submissions' do
+          let(:role) { create(:ta, run_tests: true, manage_submissions: true) }
+        end
+      end
     end
   end
 

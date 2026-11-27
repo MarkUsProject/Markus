@@ -147,6 +147,7 @@ class OneTimeAnnotationsTable extends React.Component {
     return (
       <div id="one_time_annotations_table_wrapper" ref={this.tableRef}>
         <Table
+          label={I18n.t("annotations.uncategorized")}
           key="one_time_annotations_table"
           data={this.state.data}
           columns={this.columns}

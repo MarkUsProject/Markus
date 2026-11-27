@@ -24,9 +24,10 @@
                        readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
     <%= f.label :autotest_url,
                 AutotestSetting.human_attribute_name(:url) %>
+    <% autotest_url = @current_course.new_record? ? (params.dig(:course, :autotest_url) || Settings.autotest.default_url) : @current_course.autotest_setting&.url %>
     <%= f.text_field :autotest_url,
                      size: 35,
-                     value: @current_course.autotest_setting&.url,
+                     value: autotest_url,
                      readonly: !allowed_to?(:edit?, with: Admin::CoursePolicy) %>
     <%= f.label :is_hidden, Course.human_attribute_name(:is_hidden) %>
     <span>

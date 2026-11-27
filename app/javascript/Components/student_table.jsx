@@ -197,6 +197,7 @@ class StudentTable extends React.Component {
           authenticity_token={this.props.authenticity_token}
         />
         <Table
+          label={I18n.t("activerecord.models.student.other")}
           loading={loading}
           data={data.students}
           columns={this.state.columns}
