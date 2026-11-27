@@ -24,7 +24,10 @@ describe MainController do
       let(:page) { response.parsed_body }
 
       context 'when local_auth_login_secondary is not set' do
-        before { get :login }
+        before do
+          allow(Settings).to receive_messages(local_auth_login_secondary: nil)
+          get :login
+        end
 
         it 'should show the local login button and form before the remote login button' do
           expect(page.at_css('a.button#local-login-selector')).not_to be_nil
