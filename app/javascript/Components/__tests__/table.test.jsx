@@ -178,6 +178,12 @@ describe("tests for the table component", () => {
       expectRowsInTableInOrder(table, columns, data);
     });
 
+    it("is named by its label", () => {
+      renderTableWithMockData({label: "Groups"});
+
+      expect(screen.getByRole("grid", {name: "Groups"})).toBeInTheDocument();
+    });
+
     it("does not show row numbers by default", () => {
       const {table} = renderTableWithMockData();
       const tableElement = table.querySelector(".Table");
@@ -352,6 +358,26 @@ describe("tests for the table component", () => {
       await waitFor(() =>
         expect(screen.getByRole("status")).toHaveTextContent(
           I18n.t("table.row_count", {count: data.length})
+        )
+      );
+    });
+
+    it("starts its messages with its label", async () => {
+      const label = "Groups";
+      const {rerender, columns, data} = renderTableWithMockData({label});
+
+      rerender(<Table columns={columns} data={data} label={label} loading={true} />);
+      expect(screen.getByRole("status")).toHaveTextContent(
+        I18n.t("table.status_with_label", {label, status: I18n.t("working")})
+      );
+
+      rerender(<Table columns={columns} data={data} label={label} loading={false} />);
+      await waitFor(() =>
+        expect(screen.getByRole("status")).toHaveTextContent(
+          I18n.t("table.status_with_label", {
+            label,
+            status: I18n.t("table.row_count", {count: data.length}),
+          })
         )
       );
     });
@@ -655,6 +681,19 @@ describe("tests for the table component", () => {
       ).toBeInTheDocument();
       expect(screen.getAllByRole("checkbox", {name: I18n.t("table.select_row")})).toHaveLength(
         mockData().length
+      );
+    });
+
+    it("names each row's checkbox after its row header cell", () => {
+      const [firstColumn, ...otherColumns] = mockColumns();
+      const columns = [{...firstColumn, meta: {rowheader: true}}, ...otherColumns];
+      renderTable(columns, mockData(), null, {enableRowSelection: true});
+
+      expect(screen.getAllByRole("rowheader")).toHaveLength(mockData().length);
+      mockData().forEach(({col1}) =>
+        expect(
+          screen.getByRole("checkbox", {name: `${I18n.t("table.select_row")} ${col1}`})
+        ).toBeInTheDocument()
       );
     });
   });

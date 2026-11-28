@@ -111,6 +111,7 @@ class TATable extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.ta.other")}
         data={this.state.data}
         columns={this.columns}
         noDataText={I18n.t("tas.empty_table")}

@@ -26,6 +26,9 @@ const FILTER_VARIANT_SELECT = "select";
 const VIRTUALIZATION_THRESHOLD = 50;
 const STATUS_MESSAGE_DELAY = 500;
 
+// A cell's id, unique across all tables on the page
+export const getCellId = cell => `${cell.getContext().table.options.meta.tableId}-${cell.id}`;
+
 export const expanderColumn = columnHelper.display({
   id: "expander",
   header: () => null,
@@ -77,22 +80,33 @@ export const selectionColumn = columnHelper.display({
   maxSize: 30,
   enableResizing: false,
   enableSorting: false,
-  cell: ({row}) => (
-    <div style={{textAlign: "center"}}>
-      <input
-        type="checkbox"
-        checked={row.getIsSelected()}
-        disabled={!row.getCanSelect()}
-        onChange={row.getToggleSelectedHandler()}
-        aria-label={I18n.t("table.select_row")}
-      />
-    </div>
-  ),
+  cell: ({row, cell}) => {
+    const checkboxId = `${getCellId(cell)}-checkbox`;
+    const rowHeaderIds = row
+      .getVisibleCells()
+      .filter(rowCell => rowCell.column.columnDef.meta?.rowheader)
+      .map(getCellId);
+    return (
+      <div style={{textAlign: "center"}}>
+        <input
+          id={checkboxId}
+          type="checkbox"
+          checked={row.getIsSelected()}
+          disabled={!row.getCanSelect()}
+          onChange={row.getToggleSelectedHandler()}
+          // Named "Select row" plus the text of the row's header cells, e.g. "Select row c5bennet"
+          aria-label={I18n.t("table.select_row")}
+          aria-labelledby={[checkboxId, ...rowHeaderIds].join(" ")}
+        />
+      </div>
+    );
+  },
 });
 
 export default function Table({
   columns,
   data,
+  label,
   noDataText,
   initialState,
   loading,
@@ -184,6 +198,7 @@ export default function Table({
     enableColumnResizing: true,
     enableRowSelection: enableRowSelection,
     columnResizeMode: "onChange",
+    meta: {tableId},
     // Rows are not paginated, so there is no page index to reset when the data changes
     autoResetPageIndex: false,
   });
@@ -238,6 +253,13 @@ export default function Table({
     );
     return () => clearTimeout(timeout);
   }, [loading, rowCount, columnFilters]);
+
+  // Starts each message with the table's label, so that pages with several tables say which one
+  // the message is about
+  const labelledStatusMessage =
+    statusMessage && label
+      ? I18n.t("table.status_with_label", {label, status: statusMessage})
+      : statusMessage;
 
   const renderRow = (row, index) => (
     <TableRow
@@ -323,6 +345,7 @@ export default function Table({
       <div
         className="rt-table"
         role="grid"
+        aria-label={label}
         // An empty table has one row, which holds the no data message or the loading spinner
         aria-rowcount={headerRowCount + (rows.length || 1)}
         // Only rows that are being reloaded are marked busy, so that the spinner in an empty
@@ -376,7 +399,7 @@ export default function Table({
         </div>
       )}
       <div className="visually-hidden" role="status">
-        {statusMessage}
+        {labelledStatusMessage}
       </div>
     </div>
   );

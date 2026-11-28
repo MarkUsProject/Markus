@@ -89,6 +89,7 @@ class StudentTable extends React.Component {
         header: I18n.t("activerecord.attributes.user.user_name"),
         id: "user_name",
         minSize: 120,
+        meta: {rowheader: true},
       }),
       columnHelper.accessor("first_name", {
         header: I18n.t("activerecord.attributes.user.first_name"),
@@ -197,6 +198,7 @@ class StudentTable extends React.Component {
           authenticity_token={this.props.authenticity_token}
         />
         <Table
+          label={I18n.t("activerecord.models.student.other")}
           loading={loading}
           data={data.students}
           columns={this.state.columns}

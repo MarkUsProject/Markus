@@ -147,6 +147,7 @@ class TagTable extends React.Component {
           </button>
         )}
         <Table
+          label={I18n.t("activerecord.models.tag.other")}
           data={this.state.tags}
           columns={this.columns}
           initialState={{
