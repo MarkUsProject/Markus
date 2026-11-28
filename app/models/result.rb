@@ -230,19 +230,19 @@ class Result < ApplicationRecord
     # Mark#ensure_not_released_to_students (skipped by insert_all) stops marks being saved for a released result
     return if self.released_to_students
 
-    now = Time.current
     # Skip criteria that already have a mark: ON CONFLICT DO NOTHING would still use up a mark id for each of them
-    criterion_ids = self.submission.assignment.ta_criteria.where.not(id: self.marks.select(:criterion_id)).ids
+    criterion_ids = self.submission.assignment.ta_criteria.where.not(id: self.marks.pluck(:criterion_id)).ids
+    return if criterion_ids.empty?
+
+    now = Time.current
     new_marks = criterion_ids.map do |criterion_id|
       { result_id: self.id, criterion_id: criterion_id, created_at: now, updated_at: now }
     end
-    return if new_marks.empty?
-
     inserted = Mark.insert_all(new_marks, unique_by: %i[result_id criterion_id])
 
-    # Like Mark#update_result (skipped by insert_all), set the result to incomplete in the database
+    # Like Mark#update_result (skipped by insert_all), set the result to incomplete
     if inserted.present? && self.marking_state == Result::MARKING_STATES[:complete]
-      Result.where(id: self.id).update_all(marking_state: Result::MARKING_STATES[:incomplete], updated_at: now)
+      self.update(marking_state: Result::MARKING_STATES[:incomplete])
     end
   end
 
