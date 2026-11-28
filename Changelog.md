@@ -20,6 +20,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Named row selection checkboxes after their row's header cell, e.g. "Select row c5bennet", for screen readers (#8308)
 - Named tables for screen readers and started their loading and row count announcements with the table's name (#8307)
 - Announced table loading and the number of rows shown to screen readers (#8290)
 - Gave table filters and row selection checkboxes accessible names for screen readers (#8289)

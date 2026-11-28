@@ -489,6 +489,7 @@ class GroupsTable extends React.Component {
           },
           meta: {
             filterVariant: "case-sensitive-text",
+            rowheader: true,
           },
           filterFn: caseSensitiveStringFilterMethod,
         }),
@@ -738,6 +739,7 @@ class StudentsTable extends React.Component {
           },
           enableSorting: true,
           minSize: 90,
+          meta: {rowheader: true},
         }),
         columnHelper.accessor("last_name", {
           header: I18n.t("activerecord.attributes.user.last_name"),
