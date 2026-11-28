@@ -1258,6 +1258,16 @@ describe ResultsController do
         end.to raise_error(ActiveRecord::RecordNotFound)
         expect(complete_result.submission.grouping.tags).not_to include(other_assessment_tag)
       end
+
+      it 'does not add a tag from another course to a grouping' do
+        other_course_tag = create(:tag, role: create(:instructor, course: create(:course)))
+
+        expect do
+          post :add_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: other_course_tag.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect(complete_result.submission.grouping.tags).not_to include(other_course_tag)
+      end
     end
 
     describe '#remove_tag' do
@@ -1279,6 +1289,17 @@ describe ResultsController do
                params: { course_id: course.id, id: complete_result.id, tag_id: other_assessment_tag.id }
         end.to raise_error(ActiveRecord::RecordNotFound)
         expect(complete_result.submission.grouping.tags).to include(other_assessment_tag)
+      end
+
+      it 'does not remove a tag from another course from a grouping' do
+        other_course_tag = create(:tag, role: create(:instructor, course: create(:course)))
+        submission.grouping.tags << other_course_tag
+
+        expect do
+          post :remove_tag,
+               params: { course_id: course.id, id: complete_result.id, tag_id: other_course_tag.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect(complete_result.submission.grouping.tags).to include(other_course_tag)
       end
     end
 

@@ -3,7 +3,8 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class TagsController < MainApiController
     def index
-      assignment = Assignment.find_by(id: params[:assignment_id])
+      assignment = current_course.assignments.find_by(id: params[:assignment_id])
+      return page_not_found if params[:assignment_id] && assignment.nil?
 
       respond_to do |format|
         parent = assignment || current_course
