@@ -1437,6 +1437,10 @@ nav {
   display: inline-block;
   font-style: italic;
   min-width: 200px;
+
+  &.annotation-text-locked {
+    margin-bottom: 0.5em;
+  }
 }
 
 // Styling for grade entry form inputs

@@ -98,6 +98,63 @@ describe AnnotationCategoriesController do
         expect(assigns(:annotation_texts).pluck('id')).to eq [text3.id, text2.id, text1.id]
       end
 
+      context 'with a deductive annotation text' do
+        render_views
+
+        let(:assignment_w_deductions) { create(:assignment_with_deductive_annotations) }
+        let(:category) { assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first }
+        let(:text) { category.annotation_texts.first }
+        let(:with_remarks_message) do
+          ERB::Util.html_escape(I18n.t('annotation_categories.annotation_text_locked.with_remark_requests'))
+        end
+        let(:without_remarks_message) do
+          ERB::Util.html_escape(I18n.t('annotation_categories.annotation_text_locked.without_remark_requests'))
+        end
+        # The response is JavaScript that inserts the rendered HTML, so closing tags are escaped
+        let(:edit_link) { ">#{I18n.t(:edit)}<\\/a>" }
+        let(:delete_path) { "destroy_annotation_text?annotation_text_id=#{text.id}" }
+
+        def show_category
+          get_as role, :show, params: { course_id: course.id, assignment_id: assignment_w_deductions.id,
+                                        id: category.id }, format: :js
+        end
+
+        it 'allows the annotation text to be edited and deleted when it can be changed' do
+          show_category
+          expect(assigns(:annotation_texts).pluck('released')).to eq [false]
+          expect(response.body).to include(edit_link, delete_path)
+          expect(response.body).not_to include(with_remarks_message)
+          expect(response.body).not_to include(without_remarks_message)
+        end
+
+        context 'when the assignment allows remark requests' do
+          before { assignment_w_deductions.update!(allow_remarks: true) }
+
+          it 'disables editing and deleting the annotation text when it has been used in a submission with ' \
+             'a remark request' do
+            assignment_w_deductions.groupings.first.current_submission_used.make_remark_result
+            show_category
+            expect(assigns(:annotation_texts).pluck('released')).to eq [true]
+            expect(response.body).not_to include(edit_link)
+            expect(response.body).not_to include(delete_path)
+            expect(response.body).to include(with_remarks_message)
+          end
+        end
+
+        context 'when the assignment does not allow remark requests' do
+          before { assignment_w_deductions.update!(allow_remarks: false) }
+
+          it 'disables editing and deleting the annotation text when it has been used in a released result' do
+            assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
+            show_category
+            expect(assigns(:annotation_texts).pluck('released')).to eq [true]
+            expect(response.body).not_to include(edit_link)
+            expect(response.body).not_to include(delete_path)
+            expect(response.body).to include(without_remarks_message)
+          end
+        end
+      end
+
       it_behaves_like 'role is from a different course' do
         subject do
           get_as new_role, :show,

@@ -46,6 +46,7 @@
 
 ### 🐛 Bug fixes
 - Fixed PDF annotation boxes going away after a grader resizes the file pane (#8321)
+- Disabled editing and deleting annotation texts on the annotations page once they have been used in a released result or a submission with a remark request (#8320)
 - Fixed git repository files being left open during bulk operations over many groups, which could exceed the open file limit (#8318)
 - Fixed a cookie overflow error when uploading a CSV file with long invalid rows, by limiting the length of flash messages (#8317)
 - Fixed inline help icons not appearing in the Graders tab and starter file settings (#8316)

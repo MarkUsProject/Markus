@@ -25,24 +25,39 @@
     <i class="fa-solid fa-grip-vertical"></i>
     <%= markdown(annotation_text[:content]) %>
 
-    <div class='annotation-text-details'>
-      <%= link_to t(:edit),
-                  '#',
-                  id: "annotation-text-details-edit-#{annotation_text[:id]}",
-                  key: annotation_text[:id],
-                  class: 'button inline-button' %>
-      <%= button_to t(:delete),
-                    destroy_annotation_text_course_assignment_annotation_categories_path(
-                      @current_course,
-                      @assignment,
-                      annotation_text_id: annotation_text[:id]
-                    ),
-                    method: 'delete',
-                    data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
-                    remote: true,
-                    class: 'inline-button',
-                    form_class: 'display-inline-block' %>
+    <div class='annotation-text-details <%= 'annotation-text-locked' if annotation_text[:released] %>'>
+      <% if annotation_text[:released] %>
+        <%= button_tag t(:edit), type: 'button', disabled: true, class: 'inline-button' %>
+        <%= button_tag t(:delete), type: 'button', disabled: true, class: 'inline-button' %>
+      <% else %>
+        <%= link_to t(:edit),
+                    '#',
+                    id: "annotation-text-details-edit-#{annotation_text[:id]}",
+                    key: annotation_text[:id],
+                    class: 'button inline-button' %>
+        <%= button_to t(:delete),
+                      destroy_annotation_text_course_assignment_annotation_categories_path(
+                        @current_course,
+                        @assignment,
+                        annotation_text_id: annotation_text[:id]
+                      ),
+                      method: 'delete',
+                      data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
+                      remote: true,
+                      class: 'inline-button',
+                      form_class: 'display-inline-block' %>
+      <% end %>
     </div>
+    <% if annotation_text[:released] %>
+      <div class='notice'>
+        <i class="fa-solid fa-circle-info left-icon"></i>
+        <% if @assignment.allow_remarks? %>
+          <%= t('annotation_categories.annotation_text_locked.with_remark_requests') %>
+        <% else %>
+          <%= t('annotation_categories.annotation_text_locked.without_remark_requests') %>
+        <% end %>
+      </div>
+    <% end %>
     <div class='annotation-text-details'>
       <%= AnnotationText.human_attribute_name(:creator) %>
       <% if annotation_text[:creator].nil? %>
@@ -88,7 +103,7 @@
       <% unless annotation_text[:deduction].nil? %>
         <div class='inline-labels'>
           <% max_mark = annotation_text[:max_mark] %>
-          <% marks_released = annotation_text[:released] > 0 %>
+          <% marks_released = annotation_text[:released] %>
           <%= f.label :deduction,
                       AnnotationText.human_attribute_name(:deduction) %>
           <%= f.number_field :deduction, { min: 0.0,

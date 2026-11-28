@@ -126,6 +126,41 @@ describe AnnotationText do
         expect(deductive_text.destroy).to be false
       end
     end
+
+    context 'a remark result has been released and then unreleased' do
+      before do
+        submission = assignment.groupings.first.current_submission_used
+        submission.make_remark_result
+        remark_result = submission.reload.submitted_remark
+        remark_result.update!(marking_state: Result::MARKING_STATES[:complete])
+        remark_result.update!(released_to_students: true)
+        remark_result.update!(released_to_students: false)
+      end
+
+      it 'prevents an update to the deduction' do
+        expect(deductive_text.update(deduction: 2.0)).to be false
+      end
+    end
+  end
+
+  describe '.released_ids' do
+    let(:grouping) { assignment.groupings.first }
+
+    it 'is empty when no results are released and no remark request exists' do
+      expect(AnnotationText.released_ids(AnnotationText.all)).to be_empty
+    end
+
+    it 'includes annotation texts used in a released result' do
+      grouping.current_result.update!(released_to_students: true)
+      used_ids = grouping.current_result.annotations.pluck(:annotation_text_id)
+      expect(AnnotationText.released_ids(AnnotationText.all)).to match_array(used_ids)
+    end
+
+    it 'includes annotation texts used in a submission with a remark request' do
+      used_ids = grouping.current_result.annotations.pluck(:annotation_text_id)
+      grouping.current_submission_used.make_remark_result
+      expect(AnnotationText.released_ids(AnnotationText.all)).to match_array(used_ids)
+    end
   end
 
   describe '#set_position' do

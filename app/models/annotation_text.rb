@@ -86,15 +86,20 @@ class AnnotationText < ApplicationRecord
            .gsub(/\r?\n/, '\\n')
   end
 
-  # Do not update if any associated results have been released. This includes results
-  # that were previously released and are now the subject of a remark request.
-  def check_if_released
-    annotation_results = self.annotations.joins(result: :submission)
+  # Returns the ids of the annotation texts in +texts+ that cannot be changed or deleted because they are used in a
+  # released result, or in a submission with a remark request (whatever the state of the remark result).
+  def self.released_ids(texts)
+    annotations = Annotation.joins(:result).where(annotation_text_id: texts)
+    remarked_submission_ids = Result.where.not(remark_request_submitted_at: nil).select(:submission_id)
+    annotations.where('results.released_to_students': true)
+               .or(annotations.where('results.submission_id': remarked_submission_ids))
+               .distinct
+               .pluck(:annotation_text_id)
+  end
 
-    return if annotation_results.where('results.released_to_students': true).empty? &&
-              Result.where(submission_id: annotation_results.pluck('submissions.id'))
-                    .where.not(remark_request_submitted_at: nil)
-                    .empty?
+  # Do not update or destroy this annotation text if it cannot be changed (see AnnotationText.released_ids).
+  def check_if_released
+    return if AnnotationText.released_ids(self).empty?
     errors.add(:base, :results_already_released)
     throw(:abort)
   end

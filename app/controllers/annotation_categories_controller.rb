@@ -259,13 +259,10 @@ class AnnotationCategoriesController < ApplicationController
                                  .where('annotation_texts.annotation_category_id': category)
                                  .group('annotation_texts.id')
                                  .count('annotations.id')
-      text_released = AnnotationText.left_outer_joins(annotations: :result)
-                                    .where('annotation_texts.annotation_category_id': category)
-                                    .group('annotation_texts.id')
-                                    .count('results.released_to_students OR NULL')
+      released_ids = AnnotationText.released_ids(AnnotationText.where(annotation_category_id: category)).to_set
       text_data.each do |text|
         text['num_uses'] = text_usage[text[:id]]
-        text['released'] = text_released[text[:id]]
+        text['released'] = released_ids.include?(text[:id])
       end
     end
     text_data
