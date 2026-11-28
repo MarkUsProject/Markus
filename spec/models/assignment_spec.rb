@@ -2572,6 +2572,69 @@ describe Assignment do
 
         it_behaves_like 'check csv content'
       end
+
+      context 'when a student has a grouping in another assignment' do
+        let(:student) { create(:student) }
+        let(:grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment, inviter: student) }
+
+        before do
+          # created first, so it comes first among the student's groupings
+          create(:grouping_with_inviter_and_submission, assignment: create(:assignment), inviter: student)
+          grouping.current_result.marks.each { |mark| mark.update!(mark: 1) }
+        end
+
+        it 'uses the group and marks for this assignment' do
+          row = summary.find { |r| r[1] == student.user_name }
+          expect(row.first).to eq grouping.group.group_name
+          # total mark, the three criteria and bonus/deductions
+          expect(row.last(5)).to eq ['3.0', '1.0', '1.0', '1.0', nil]
+        end
+      end
+
+      context 'when a result has a remark' do
+        let(:assignment) { create(:assignment_with_criteria_and_results_with_remark) }
+
+        it 'uses the marks of the remark result' do
+          grouping = assignment.groupings.find(&:submitted_remark)
+          row = summary.find { |r| r[0] == grouping.group.group_name }
+          # the original result has 0 for each criterion
+          expect(row.last(5)).to eq ['3.0', '1.0', '1.0', '1.0', nil]
+        end
+      end
+
+      context 'when a submission has a peer review' do
+        let(:assignment) { create(:assignment_with_peer_review) }
+        let(:grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
+
+        before do
+          create(:flexible_criterion, assignment: assignment)
+          grouping.current_result.marks.first.update!(mark: 1)
+          create(:peer_review, assignment: assignment, result_grouping: grouping)
+        end
+
+        it 'ignores the peer review result' do
+          # the newer peer review result is unmarked
+          expect(summary.last.last(3)).to eq ['1.0', '1.0', nil]
+        end
+      end
+
+      # Counts the database queries summary_csv makes for a freshly loaded assignment (no schema or cached queries)
+      def summary_queries
+        role = instructor
+        fresh_assignment = Assignment.find(assignment.id)
+        queries = []
+        record = ->(*, payload) { queries << payload[:sql] unless payload[:name] == 'SCHEMA' || payload[:cached] }
+        ActiveSupport::Notifications.subscribed(record, 'sql.active_record') { fresh_assignment.summary_csv(role) }
+        queries.size
+      end
+
+      it 'makes the same number of queries for any number of students' do
+        create(:grouping_with_inviter, assignment: assignment) # without a submission
+        queries = summary_queries
+        create_list(:grouping_with_inviter_and_submission, 3, assignment: assignment)
+        create(:grouping_with_inviter, assignment: assignment)
+        expect(summary_queries).to eq queries
+      end
     end
   end
 
