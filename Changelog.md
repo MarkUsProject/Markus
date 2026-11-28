@@ -19,7 +19,6 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
-- Improved the speed of the grades summary CSV and API by loading all students' users, groups, results and marks together instead of one student at a time (#8323)
 - Named tables for screen readers and started their loading and row count announcements with the table's name (#8307)
 - Announced table loading and the number of rows shown to screen readers (#8290)
 - Gave table filters and row selection checkboxes accessible names for screen readers (#8289)
@@ -67,6 +66,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Improved the speed of the grades summary CSV and API by loading all students' users, groups, results and marks together instead of one student at a time (#8323)
 - Configured Jest tests to fail on console output, and fixed the tests and components that produced warnings (#8314)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)
