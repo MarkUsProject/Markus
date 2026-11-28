@@ -823,14 +823,14 @@ class Assignment < Assessment
                       .where('memberships.role_id': role.id)
     end
 
-    students = Student.includes(:accepted_groupings, :section, :user)
+    students = Student.includes(:section, :user, accepted_groupings: :group)
                       .where('accepted_groupings.assessment_id': self.id)
                       .joins(:user)
                       .order('users.user_name')
-    # Preload onto the groupings loaded above, which are filtered to this assignment. A .preload on the
-    # query would instead load each student's groupings for every assignment and leave these unloaded.
+    # current_result can't be added to the includes above: that query joins every included table, and a joined
+    # current_result ignores its newest-first order and its peer review filter, so it can pick the wrong result.
     ActiveRecord::Associations::Preloader.new(records: students.flat_map(&:accepted_groupings),
-                                              associations: [:group, { current_result: :marks }]).call
+                                              associations: { current_result: :marks }).call
 
     first_row = [Group.human_attribute_name(:group_name)] +
       Student::CSV_ORDER.map { |field| User.human_attribute_name(field) } +
