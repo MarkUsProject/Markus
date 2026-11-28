@@ -89,6 +89,7 @@ class StudentTable extends React.Component {
         header: I18n.t("activerecord.attributes.user.user_name"),
         id: "user_name",
         minSize: 120,
+        meta: {rowheader: true},
       }),
       columnHelper.accessor("first_name", {
         header: I18n.t("activerecord.attributes.user.first_name"),
