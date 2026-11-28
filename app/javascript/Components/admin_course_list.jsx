@@ -83,6 +83,7 @@ export class AdminCourseList extends React.Component {
   render() {
     return (
       <Table
+        label={I18n.t("activerecord.models.course.other")}
         data={this.state.courses}
         columns={this.columns}
         initialState={{sorting: [{id: "name", desc: false}]}}

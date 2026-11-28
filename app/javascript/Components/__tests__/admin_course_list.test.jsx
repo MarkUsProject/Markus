@@ -12,6 +12,7 @@ beforeAll(() => {
   global.I18n = {
     t: jest.fn(key => {
       const translations = {
+        "activerecord.models.course.other": "Courses",
         "activerecord.attributes.course.name": "Name",
         "activerecord.attributes.course.display_name": "Display Name",
         "activerecord.attributes.course.is_hidden": "Visibility",
