@@ -3,6 +3,7 @@
 ## [unreleased]
 
 ### 🛡️ Security
+- Limited tag creation to groupings in the current course, and limited the API tag list to assignments in the current course (#8319)
 - Limited LTI roster and grade sync requests to hosts in the `lti.domains` setting (#8286)
 - Restricted graders to downloading submission files from the groups they grade, and limited downloads to the current assignment (#8268)
 - Limited LTI roster sync to roster pages on the LMS host, and stopped it after 1000 pages (#8285)
@@ -19,6 +20,7 @@
 - Scanned exams and Jupyter notebook rendering are now controlled by the `scanned_exams.enabled` (renamed from `scanned_exams.enable`) and `nbconvert_enabled` settings (both enabled by default) (#8208)
 
 ### ✨ New features and improvements
+- Named row selection checkboxes after their row's header cell, e.g. "Select row c5bennet", for screen readers (#8308)
 - Named tables for screen readers and started their loading and row count announcements with the table's name (#8307)
 - Announced table loading and the number of rows shown to screen readers (#8290)
 - Gave table filters and row selection checkboxes accessible names for screen readers (#8289)
@@ -67,6 +69,7 @@
 
 ### 🔧 Internal changes
 - Improved the speed of collecting submissions by creating each new result's blank marks with one insert instead of one save per criterion (#8324)
+- Cleared browser data between system tests in a way Chrome 158 accepts (#8326)
 - Configured Jest tests to fail on console output, and fixed the tests and components that produced warnings (#8314)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
 - Re-enabled skipped specs and added job status error-reporting tests to each job spec (#8263)

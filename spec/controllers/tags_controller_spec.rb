@@ -63,6 +63,52 @@ describe TagsController do
                                              assignment_id: assignment.id, course_id: course.id }
       expect(Tag.find_by(name: 'tag', description: 'tag description').assessment.id).to eq assignment.id
     end
+
+    shared_examples 'rejects the grouping' do
+      it 'responds with 404' do
+        post_as instructor, :create, params: params
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'does not create a tag' do
+        expect { post_as instructor, :create, params: params }.not_to(change { Tag.count })
+      end
+    end
+
+    context 'when the grouping is in another course' do
+      let(:other_grouping) { create(:grouping, assignment: create(:assignment, course: create(:course))) }
+      let(:params) { { tag: { name: 'tag' }, grouping_id: other_grouping.id, course_id: course.id } }
+
+      it_behaves_like 'rejects the grouping'
+
+      it 'does not tag the grouping' do
+        post_as instructor, :create, params: params
+        expect(other_grouping.tags).to be_empty
+      end
+
+      context 'and the assignment is in the current course' do
+        let(:params) do
+          { tag: { name: 'tag' }, grouping_id: other_grouping.id, assignment_id: assignment.id, course_id: course.id }
+        end
+
+        it_behaves_like 'rejects the grouping'
+      end
+    end
+
+    context 'when the grouping does not exist' do
+      let(:params) { { tag: { name: 'tag' }, grouping_id: 0, course_id: course.id } }
+
+      it_behaves_like 'rejects the grouping'
+    end
+
+    context 'when the grouping belongs to another assignment in the course' do
+      let(:other_grouping) { create(:grouping, assignment: create(:assignment, course: course)) }
+      let(:params) do
+        { tag: { name: 'tag' }, grouping_id: other_grouping.id, assignment_id: assignment.id, course_id: course.id }
+      end
+
+      it_behaves_like 'rejects the grouping'
+    end
   end
 
   describe '#update' do

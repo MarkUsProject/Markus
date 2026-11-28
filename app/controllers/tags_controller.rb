@@ -35,17 +35,21 @@ class TagsController < ApplicationController
   # Creates a new instance of the tag.
   def create
     tag_params = params.require(:tag).permit(:name, :description)
-    new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find_by(id: params[:assignment_id])))
-
-    if new_tag.save
-      if params[:grouping_id]
-        grouping = Grouping.find(params[:grouping_id])
-        grouping.tags << new_tag
-      end
-      flash_message(:success, I18n.t('flash.actions.create.success', resource_name: new_tag.model_name.human))
-    else
-      flash_message(:error, I18n.t('flash.actions.create.error', resource_name: new_tag.model_name.human))
+    assessment = Assessment.find_by(id: params[:assignment_id])
+    grouping = Grouping.find_by(id: params[:grouping_id])
+    if grouping && assessment && grouping.assessment_id != assessment.id
+      page_not_found
+      return
     end
+
+    new_tag = Tag.new(tag_params.merge(role: current_role, assessment: assessment))
+    unless new_tag.save
+      flash_message(:error, I18n.t('flash.actions.create.error', resource_name: new_tag.model_name.human))
+      return
+    end
+
+    grouping.tags << new_tag if grouping
+    flash_message(:success, I18n.t('flash.actions.create.success', resource_name: new_tag.model_name.human))
   end
 
   def update
@@ -116,9 +120,9 @@ class TagsController < ApplicationController
 
   private
 
-  # Include assignment_id param in parent_params so that check_record can ensure that
-  # the assignment is in the same course as the current course
+  # Include assignment_id and grouping_id params in parent_params so that check_record can ensure that
+  # the assignment and grouping are in the same course as the current course
   def parent_params
-    params[:assignment_id].nil? ? super : [*super, :assignment_id]
+    [*super, *[:assignment_id, :grouping_id].reject { |key| params[key].nil? }]
   end
 end
