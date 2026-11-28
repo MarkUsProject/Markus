@@ -225,10 +225,24 @@ class Result < ApplicationRecord
     !pr.nil? && submission.grouping == grouping
   end
 
+  # Creates a blank mark for each TA criterion that this result does not have a mark for yet.
   def create_marks
-    assignment = self.submission.assignment
-    assignment.ta_criteria.each do |criterion|
-      criterion.marks.find_or_create_by(result_id: id)
+    # Mark#ensure_not_released_to_students (skipped by insert_all) stops marks being saved for a released result
+    return if self.released_to_students
+
+    # Skip criteria that already have a mark: ON CONFLICT DO NOTHING would still use up a mark id for each of them
+    criterion_ids = self.submission.assignment.ta_criteria.where.not(id: self.marks.pluck(:criterion_id)).ids
+    return if criterion_ids.empty?
+
+    now = Time.current
+    new_marks = criterion_ids.map do |criterion_id|
+      { result_id: self.id, criterion_id: criterion_id, created_at: now, updated_at: now }
+    end
+    inserted = Mark.insert_all(new_marks, unique_by: %i[result_id criterion_id])
+
+    # Like Mark#update_result (skipped by insert_all), set the result to incomplete
+    if inserted.present? && self.marking_state == Result::MARKING_STATES[:complete]
+      self.update(marking_state: Result::MARKING_STATES[:incomplete])
     end
   end
 

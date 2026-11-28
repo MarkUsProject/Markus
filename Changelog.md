@@ -68,6 +68,7 @@
 - Added a Logging page to the administrator documentation (#8204)
 
 ### 🔧 Internal changes
+- Improved the speed of collecting submissions by creating each new result's blank marks with one insert instead of one save per criterion (#8324)
 - Cleared browser data between system tests in a way Chrome 158 accepts (#8326)
 - Configured Jest tests to fail on console output, and fixed the tests and components that produced warnings (#8314)
 - Updated Rails to 8.1.4.1, and grouped Rails gems in Dependabot updates (#8292)
